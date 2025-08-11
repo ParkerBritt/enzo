@@ -92,7 +92,6 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -107,12 +106,6 @@ Inheritance diagram for enzo::nt::NetworkManager:</div>
   <img src="classenzo_1_1nt_1_1NetworkManager.png" alt=""/>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="signals" name="signals"></a>
-Signals</h2></td></tr>
-<tr class="memitem:a30e4b676dc0f76f5cb7ba1e3f0c7f7a8" id="r_a30e4b676dc0f76f5cb7ba1e3f0c7f7a8"><td class="memItemLeft" align="right" valign="top"><a id="a30e4b676dc0f76f5cb7ba1e3f0c7f7a8" name="a30e4b676dc0f76f5cb7ba1e3f0c7f7a8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateDisplay</b> (<a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> &amp;geometry)</td></tr>
-<tr class="separator:a30e4b676dc0f76f5cb7ba1e3f0c7f7a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a69ba6571d43eb6a3a331cb96126de57d" id="r_a69ba6571d43eb6a3a331cb96126de57d"><td class="memItemLeft" align="right" valign="top"><a id="a69ba6571d43eb6a3a331cb96126de57d" name="a69ba6571d43eb6a3a331cb96126de57d"></a>
@@ -142,9 +135,12 @@ static <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManage
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1ace9545cdebcaaabec852858380d8c3" id="r_a1ace9545cdebcaaabec852858380d8c3"><td class="memItemLeft" align="right" valign="top"><a id="a1ace9545cdebcaaabec852858380d8c3" name="a1ace9545cdebcaaabec852858380d8c3"></a>
-boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayNodeChanged</b></td></tr>
-<tr class="separator:a1ace9545cdebcaaabec852858380d8c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28fdcf912cfe264da7bd3cd5d0d33a26" id="r_a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memItemLeft" align="right" valign="top"><a id="a28fdcf912cfe264da7bd3cd5d0d33a26" name="a28fdcf912cfe264da7bd3cd5d0d33a26"></a>
+boost::signals2::signal&lt; void(nt::OpId)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayNodeChanged</b></td></tr>
+<tr class="separator:a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a773f1aaa8a8e65e85a0e503f7edd5038" id="r_a773f1aaa8a8e65e85a0e503f7edd5038"><td class="memItemLeft" align="right" valign="top"><a id="a773f1aaa8a8e65e85a0e503f7edd5038" name="a773f1aaa8a8e65e85a0e503f7edd5038"></a>
+boost::signals2::signal&lt; void(<a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> &amp;geometry)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayGeoChanged</b></td></tr>
+<tr class="separator:a773f1aaa8a8e65e85a0e503f7edd5038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Network/<a class="el" href="NetworkManager_8h_source.html">NetworkManager.h</a></li>

@@ -127,36 +127,37 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    std::vector&lt;std::weak_ptr&lt;prm::Parameter&gt;&gt; getParameters();</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    std::weak_ptr&lt;prm::Parameter&gt; getParameter(std::string parameterName);</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    std::string getTypeName();</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">void</span> dirtyNode(<span class="keywordtype">bool</span> dirtyDescendents=<span class="keyword">true</span>);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">bool</span> isDirty();</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    std::string getLabel(); <span class="comment">// TODO: implement node labels</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    std::string getTypeName();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">void</span> dirtyNode(<span class="keywordtype">bool</span> dirtyDescendents=<span class="keyword">true</span>);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">bool</span> isDirty();</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMinInputs() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMaxInputs() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMaxOutputs() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="comment">// signals</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    boost::signals2::signal&lt;void (nt::OpId opId, <span class="keywordtype">bool</span> dirtyDescendents)&gt; nodeDirtied;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMinInputs() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMaxInputs() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> getMaxOutputs() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">// signals</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    boost::signals2::signal&lt;void (nt::OpId opId, <span class="keywordtype">bool</span> dirtyDescendents)&gt; nodeDirtied;</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> initParameters();</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// TODO: avoid duplicate connections</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    std::vector&lt;std::shared_ptr&lt;nt::GeometryConnection&gt;&gt; inputConnections_;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::vector&lt;std::shared_ptr&lt;nt::GeometryConnection&gt;&gt; outputConnections_;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    std::vector&lt;std::shared_ptr&lt;prm::Parameter&gt;&gt; parameters_; </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    std::unique_ptr&lt;enzo::nt::GeometryOpDef&gt; opDef_;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    enzo::nt::OpId opId_;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <a class="code hl_struct" href="structenzo_1_1op_1_1OpInfo.html">enzo::op::OpInfo</a> opInfo_;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">bool</span> dirty_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>};</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordtype">void</span> initParameters();</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// TODO: avoid duplicate connections</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::vector&lt;std::shared_ptr&lt;nt::GeometryConnection&gt;&gt; inputConnections_;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    std::vector&lt;std::shared_ptr&lt;nt::GeometryConnection&gt;&gt; outputConnections_;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    std::vector&lt;std::shared_ptr&lt;prm::Parameter&gt;&gt; parameters_; </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::unique_ptr&lt;enzo::nt::GeometryOpDef&gt; opDef_;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    enzo::nt::OpId opId_;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <a class="code hl_struct" href="structenzo_1_1op_1_1OpInfo.html">enzo::op::OpInfo</a> opInfo_;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordtype">bool</span> dirty_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>};</div>
 </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
-<div class="ttc" id="aclassenzo_1_1geo_1_1Geometry_html"><div class="ttname"><a href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a></div><div class="ttdef"><b>Definition</b> Geometry.h:23</div></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="ttc" id="aclassenzo_1_1geo_1_1Geometry_html"><div class="ttname"><a href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a></div><div class="ttdef"><b>Definition</b> Geometry.h:28</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1GeometryOperator_html"><div class="ttname"><a href="classenzo_1_1nt_1_1GeometryOperator.html">enzo::nt::GeometryOperator</a></div><div class="ttdef"><b>Definition</b> GeometryOperator.h:14</div></div>
 <div class="ttc" id="aclassenzo_1_1op_1_1Context_html"><div class="ttname"><a href="classenzo_1_1op_1_1Context.html">enzo::op::Context</a></div><div class="ttdef"><b>Definition</b> Context.h:14</div></div>
 <div class="ttc" id="astructenzo_1_1op_1_1OpInfo_html"><div class="ttname"><a href="structenzo_1_1op_1_1OpInfo.html">enzo::op::OpInfo</a></div><div class="ttdef"><b>Definition</b> OpInfo.h:20</div></div>
