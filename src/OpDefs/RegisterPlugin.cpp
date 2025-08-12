@@ -25,28 +25,28 @@ extern "C"
                 1,
             }
         );
-        addOperator(
-            enzo::op::OpInfo {
-                "house",
-                "House",
-                &GOP_house::ctor,
-                GOP_house::parameterList,
-                0,
-                0,
-                1,
-            }
-        );
-        addOperator(
-            enzo::op::OpInfo {
-                "testGeoCube",
-                "Test Cube",
-                &GopTestGeoCube::ctor,
-                GopTestGeoCube::parameterList,
-                0,
-                0,
-                1,
-            }
-        );
+        // addOperator(
+        //     enzo::op::OpInfo {
+        //         "house",
+        //         "House",
+        //         &GOP_house::ctor,
+        //         GOP_house::parameterList,
+        //         0,
+        //         0,
+        //         1,
+        //     }
+        // );
+        // addOperator(
+        //     enzo::op::OpInfo {
+        //         "testGeoCube",
+        //         "Test Cube",
+        //         &GopTestGeoCube::ctor,
+        //         GopTestGeoCube::parameterList,
+        //         0,
+        //         0,
+        //         1,
+        //     }
+        // );
         addOperator(
             enzo::op::OpInfo {
                 "geometryImport",

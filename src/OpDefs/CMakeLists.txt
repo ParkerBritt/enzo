@@ -32,6 +32,12 @@ add_library(${libName} SHARED
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb)
 
+# packaging
+install(TARGETS ${libName}
+    LIBRARY DESTINATION ${ENZO_LIB_DIR}
+    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+)
+
 
 MESSAGE("CURRENT SOURCE DIR" ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(${libName} PUBLIC

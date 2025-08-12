@@ -12,6 +12,8 @@ set(CMAKE_AUTORCC ON)
 # setup project
 project(enzo)
 
+set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
+
 set(ENGINE_SOURCES
     src/Engine/Operator/Attribute.cpp
     src/Engine/Operator/Geometry.cpp
@@ -91,15 +93,27 @@ qt_add_executable(${AppExec}
     ${ENGINE_SOURCES}
 )
 
+target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+
+
 # --- packaging ---
-if(UNIX)
-    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt")
-endif(UNIX)
+set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake)
 
-set(ENZO_BIN_DIR ${CPACK_PACKAGING_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME}/bin)
+set(CPACK_GENERATOR "RPM;TGZ")
 
-install(TARGETS ${AppExec} RUNTIME DESTINATION ${ENZO_BIN_DIR})
+set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin)
+set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib)
+
+install(
+    TARGETS ${AppExec} 
+    RUNTIME DESTINATION ${ENZO_BIN_DIR}
+    LIBRARY DESTINATION ${ENZO_LIB_DIR}
+    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+)
+
 include(CPack)
+
+# set(CPACK_RPM_PACKAGE_REQUIRES "openssl >= 1.1.1, zlib >= 1.2.11")
 
 # --- end packaging
 
