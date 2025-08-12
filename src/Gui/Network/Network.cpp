@@ -21,6 +21,7 @@
 #include <QLine>
 #include <stdexcept>
 #include "Gui/Network/TabMenu.h"
+#include <icecream.hpp>
 
 using namespace enzo;
 
@@ -408,6 +409,26 @@ void Network::mouseReleaseEvent(QMouseEvent *event)
         {
             moveNodeBuffer.clear();
             state_=State::DEFAULT;
+
+            // select node
+            if(
+                QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(hoverItems);
+                clickedNode &&
+                QLineF(event->pos(), leftMouseStart).length()<5.0f)
+            {
+                NodeGraphic* node = static_cast<NodeGraphic*>(clickedNode);
+                // deselect previous
+                auto selectedNodeIds = enzo::nt::nm().getSelectedNodes();
+                for(auto nodeId : selectedNodeIds)
+                {
+                    NodeGraphic* nodeGraphic = nodeStore_.at(nodeId);
+                    nodeGraphic->setSelected(false);
+                }
+
+                bool selected = node->toggleSelected();
+                enzo::nt::nm().setSelectedNode(node->getOpId(), selected);
+            }
+
         }
         else if(floatingEdge_ && hoverSocket)
         {

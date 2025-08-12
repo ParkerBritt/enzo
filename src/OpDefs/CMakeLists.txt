@@ -20,10 +20,15 @@ add_library(${libName} SHARED
     ../Engine/Parameter/Template.cpp
     ../Engine/Parameter/Parameter.cpp
     ../Engine/Parameter/Default.cpp
+    ../Engine/Parameter/Range.cpp
+    ../Engine/Parameter/PrmName.cpp
     GopTransform.cpp
     GopHouse.cpp
     GopTestCube.cpp
     GopGeometryImport.cpp
+    GopGrid.cpp
+    GopSineWave.cpp
+    GopOceanSurface.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb)
 

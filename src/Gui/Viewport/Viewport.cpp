@@ -20,7 +20,7 @@ Viewport::Viewport(QWidget *parent, Qt::WindowFlags f)
     this->setLayout(mainLayout_);
 }
 
-void Viewport::geometryChanged(enzo::geo::Geometry& geometry)
+void Viewport::setGeometry(enzo::geo::Geometry& geometry)
 {
     openGLWidget_->geometryChanged(geometry);
 }

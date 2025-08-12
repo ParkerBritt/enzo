@@ -30,6 +30,7 @@ public:
     std::vector<std::weak_ptr<prm::Parameter>> getParameters();
     std::weak_ptr<prm::Parameter> getParameter(std::string parameterName);
 
+    std::string getLabel(); // TODO: implement node labels
     std::string getTypeName();
 
     void dirtyNode(bool dirtyDescendents=true);

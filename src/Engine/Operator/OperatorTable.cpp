@@ -1,5 +1,6 @@
 #include "Engine/Operator/OperatorTable.h"
 #include "Engine/Operator/OpInfo.h"
+#include "Engine/Types.h"
 #include <boost/dll/import.hpp>
 
 #include <iostream>
@@ -9,7 +10,7 @@ void enzo::op::OperatorTable::addOperator(enzo::op::OpInfo info)
     std::cout << "OPERATOR TABLE ADDED\n";
     std::cout << "adding operator: " << info.displayName << "\n";
 
-    for(const prm::Template* t = info.templates; t->isValid(); ++t)
+    for(const prm::Template* t = info.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
     {
         std::cout << "name: " << t->getName() << "\n";
     }

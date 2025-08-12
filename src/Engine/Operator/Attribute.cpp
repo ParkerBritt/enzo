@@ -15,15 +15,19 @@ ga::Attribute::Attribute(std::string name, ga::AttributeType type)
     {
         case(AttrType::intT):
             intStore_=std::make_shared<std::vector<bt::intT>>();
+            typeSize_=1;
             break;
         case(AttrType::floatT):
             floatStore_=std::make_shared<std::vector<bt::floatT>>();
+            typeSize_=1;
             break;
         case(AttrType::vectorT):
             vector3Store_=std::make_shared<std::vector<enzo::bt::Vector3>>();
+            typeSize_=3;
             break;
         case(AttrType::boolT):
             boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>();
+            typeSize_=1;
             break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute constructor");
@@ -32,6 +36,13 @@ ga::Attribute::Attribute(std::string name, ga::AttributeType type)
 
 }
 
+unsigned int ga::Attribute::Attribute::getTypeSize() const
+{
+    return typeSize_;
+}
+
+
+
 ga::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
@@ -39,6 +50,7 @@ ga::Attribute::Attribute(const Attribute& other)
     hidden_ = other.hidden_;
     readOnly_ = other.readOnly_;
     name_ = other.name_;
+    typeSize_ = other.typeSize_;
 
     switch(type_)
     {
@@ -61,12 +73,12 @@ ga::Attribute::Attribute(const Attribute& other)
 }
 
 
-ga::AttributeType ga::Attribute::getType()
+ga::AttributeType ga::Attribute::getType() const
 {
     return type_;
 }
 
-std::string ga::Attribute::getName()
+std::string ga::Attribute::getName() const
 {
     return name_;
 }

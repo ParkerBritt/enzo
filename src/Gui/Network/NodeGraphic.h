@@ -22,13 +22,11 @@ public:
     QPointF getSocketScenePosition(int socketIndex, enzo::nt::SocketIOType socketType);
     QRectF getBodyRect();
     void setDisplayFlag(bool state);
+    void setSelected(bool selected);
+    bool toggleSelected();
 
-    // void addEdge(NodeEdgeGraphic* edge);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
-    // void setInputEdge(NodeEdgeGraphic* edge, int indx);
-    // void setOutputEdge(NodeEdgeGraphic* edge, int indx);
 
 
 
@@ -44,7 +42,7 @@ private:
     std::vector<SocketGraphic*> outputs_;
 
     // std::vector<NodeEdgeGraphic*> edges_;
-
+    bool selected_=false;
     std::string titleText_="";
     std::string subTitleText_="";
     int maxTitleLen_=10;

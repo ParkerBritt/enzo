@@ -21,13 +21,16 @@ namespace enzo{
         public:
             Attribute(std::string name, ga::AttributeType type);
             Attribute(const Attribute& other);
-            AttributeType getType();
-            std::string getName();
+            AttributeType getType() const;
+            std::string getName() const;
+            unsigned int getTypeSize() const;
 
 
 
             template <typename T>
             friend class AttributeHandle;
+            template <typename T>
+            friend class AttributeHandleRO;
 
         private:
             // private attributes are attributes that are hidden from the user
@@ -40,6 +43,7 @@ namespace enzo{
             bool readOnly_=false;
 
             ga::AttributeType type_;
+            unsigned int typeSize_=1;
 
             std::string name_;
 

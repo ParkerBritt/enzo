@@ -35,12 +35,12 @@ nt::GeometryOperator::GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo)
 
 void nt::GeometryOperator::initParameters()
 {
-    for(const prm::Template* t = opInfo_.templates; t->isValid(); ++t)
+    for(const prm::Template* t = opInfo_.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
     {
-        std::cout << "name: " << t->getName() << "\n";
         // create parameter
         auto parameter = std::make_shared<prm::Parameter>(*t);
         parameter->valueChanged.connect([this](){dirtyNode();});
+        IC(parameter);
 
         parameters_.push_back(parameter);
     }
@@ -123,6 +123,12 @@ std::vector<std::weak_ptr<prm::Parameter>> nt::GeometryOperator::getParameters()
 {
     return {parameters_.begin(), parameters_.end()};
 }
+
+std::string nt::GeometryOperator::getLabel()
+{
+    return getTypeName();
+}
+
 
 std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::getOutputConnections() const
 {

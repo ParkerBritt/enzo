@@ -35,7 +35,7 @@ enzo::nt::OpId enzo::nt::NetworkManager::addOperator(op::OpInfo opInfo)
                     if(getDisplayOp().has_value() && getDisplayOp().value()==dependentId)
                     {
                         cookOp(dependentId);
-                        updateDisplay(dependentOp.getOutputGeo(0));
+                        displayGeoChanged(dependentOp.getOutputGeo(0));
                     }
                 }
             }
@@ -80,8 +80,49 @@ void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
     cookOp(opId);
 
     enzo::nt::GeometryOperator& displayOp = getGeoOperator(opId);
-    updateDisplay(displayOp.getOutputGeo(0));
-    displayNodeChanged();
+    displayGeoChanged(displayOp.getOutputGeo(0));
+    displayNodeChanged(opId);
+}
+
+void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
+{
+    if(add)
+    {
+        auto idIter = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
+        if(selected)
+        {
+            // skip if value is already in selected nodes
+            if(idIter!=selectedNodes_.end()) return;
+            selectedNodes_.push_back(opId);
+            cookOp(opId);
+        }
+        else
+        {
+            // skip if value is not in selected nodes
+            if(idIter==selectedNodes_.end()) return;
+            selectedNodes_.erase(idIter);
+        }
+    }
+    else
+    {
+        if(selected)
+        {
+            selectedNodes_.clear();
+            selectedNodes_.push_back(opId);
+            cookOp(opId);
+        }
+        else
+        {
+            selectedNodes_.clear();
+        }
+    }
+    selectedNodesChanged(selectedNodes_);
+
+}
+
+const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
+{
+    return selectedNodes_;
 }
 
 void enzo::nt::NetworkManager::cookOp(enzo::nt::OpId opId)

@@ -67,6 +67,6 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
 
 enzo::prm::Template GopTestGeoCube::parameterList[] =
 {
-    enzo::prm::Template(enzo::prm::Type::FLOAT, "size", 1),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1),
     enzo::prm::Terminator
 };

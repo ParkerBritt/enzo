@@ -8,16 +8,17 @@
 namespace enzo::ui
 {
 
-class AbstractFormParm
+class FormParm
 : public QWidget
 {
     Q_OBJECT
 public:
-    AbstractFormParm(std::weak_ptr<prm::Parameter> parameter);
+    FormParm(std::weak_ptr<prm::Parameter> parameter);
     int getLeftPadding();
     void setLeftPadding(int padding);
 
 protected Q_SLOTS:
+    void changeValue(bt::intT value, unsigned int index=0);
     void changeValue(bt::floatT value, unsigned int index=0);
     void changeValue(bt::String value, unsigned int index=0);
 

@@ -14,7 +14,7 @@
 Enzo is a 3D animation software application focused on procedural geometry editing.
 </div>
 <br><br>
-<img src="https://github.com/user-attachments/assets/c1de2a74-fdd3-4d9c-8e8a-3c0183eab173">
+<img src="https://github.com/user-attachments/assets/e919e41b-f41f-41b9-8aec-082d53fed470">
 
 > [!IMPORTANT]
 > early work in progress
@@ -29,7 +29,7 @@ Enzo is a 3D animation software application focused on procedural geometry editi
 - oneTBB
 - TBB
 - boost 
-
+- CGAL
 
 
 

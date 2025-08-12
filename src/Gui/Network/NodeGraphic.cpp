@@ -154,6 +154,21 @@ QRectF NodeGraphic::boundingRect() const
     return boundRect;
 }
 
+void NodeGraphic::setSelected(bool selected)
+{
+    selected_=selected;
+    update();
+}
+
+bool NodeGraphic::toggleSelected()
+{
+    bool selected = !selected_;
+
+    setSelected(selected);
+    return selected;
+}
+
+
 void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     // default outline
@@ -169,6 +184,7 @@ void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QBrush whiteBrush = QBrush("white");
     painter->setBrush(QBrush(QColor("#1b1b1b")));
 
+    if(selected_) painter->setPen(QPen(QColor("#fee046"), 2));
     painter->drawRoundedRect(bodyRect_, 5, 5);
 
     painter->setPen(QPen(QColor("white")));

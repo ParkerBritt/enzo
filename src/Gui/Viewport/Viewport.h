@@ -8,6 +8,7 @@ class Viewport
 {
 public:
     Viewport(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    void setGeometry(enzo::geo::Geometry& geometry);
 private:
     QVBoxLayout* mainLayout_;
     ViewportGLWidget* openGLWidget_;
@@ -23,6 +24,4 @@ private:
     QPointF leftStartPos_;
     bool rightMouseDown_=false;
     QPointF rightStartPos_;
-public Q_SLOTS:
-    void geometryChanged(enzo::geo::Geometry& geometry);
 };

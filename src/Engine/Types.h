@@ -39,9 +39,11 @@ namespace enzo
     {
         enum class Type
         {
+            LIST_TERMINATOR,
             STRING,
-            XYZ,
             FLOAT,
+            BOOL,
+            XYZ,
             INT,
             TOGGLE
         };

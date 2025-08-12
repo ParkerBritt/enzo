@@ -76,6 +76,6 @@ void GOP_house::cookOp(enzo::op::Context context)
 
 enzo::prm::Template GOP_house::parameterList[] =
 {
-    enzo::prm::Template(enzo::prm::Type::FLOAT, "size", 1),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1),
     enzo::prm::Terminator
 };

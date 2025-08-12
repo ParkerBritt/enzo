@@ -2,8 +2,11 @@
 #include "Engine/Operator/OperatorTable.h"
 #include "GopGeometryImport.h"
 #include "GopHouse.h"
+#include "GopOceanSurface.h"
 #include "GopTestCube.h"
 #include "OpDefs/GopTransform.hpp"
+#include "OpDefs/GopGrid.h"
+#include "OpDefs/GopSineWave.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -52,6 +55,39 @@ extern "C"
                 GopGeometryImport::parameterList,
                 0,
                 0,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "grid",
+                "Grid",
+                &GopGrid::ctor,
+                GopGrid::parameterList,
+                0,
+                0,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "sineWave",
+                "Sine Wave",
+                &GopSineWave::ctor,
+                GopSineWave::parameterList,
+                1,
+                1,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "oceanSurface",
+                "Ocean Surface",
+                &GopOceanSurface::ctor,
+                GopOceanSurface::parameterList,
+                1,
+                1,
                 1,
             }
         );

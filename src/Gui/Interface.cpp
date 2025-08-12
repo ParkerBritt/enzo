@@ -1,5 +1,6 @@
 #include "Gui/Interface.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Operator/Geometry.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/ParametersPanel/ParametersPanel.h"
 #include "Gui/Viewport/Viewport.h"
@@ -9,6 +10,7 @@
 #include <qsplitter.h>
 #include <QTimer>
 #include <Gui/UtilWidgets/Splitter.h>
+#include <icecream.hpp>
 
 EnzoUI::EnzoUI()
 {
@@ -51,7 +53,7 @@ EnzoUI::EnzoUI()
 
     viewportSplitter_->addWidget(spreadsheetSplitter_);
     viewportSplitter_->addWidget(networkSplitter_);
-    viewportSplitter_->setSizes({100,100});
+    viewportSplitter_->setSizes({100,200});
 
     networkSplitter_->addWidget(parametersPanel);
     networkSplitter_->addWidget(network);
@@ -60,7 +62,18 @@ EnzoUI::EnzoUI()
     mainLayout_->addWidget(viewportSplitter_);
 
     // connect signals
-    connect(&enzo::nt::nm(), &enzo::nt::NetworkManager::updateDisplay, viewport, &Viewport::geometryChanged);
-    enzo::nt::nm().displayNodeChanged.connect([parametersPanel](){parametersPanel->selectionChanged();});
-    // connect(&enzo::nt::nm(), &enzo::nt::NetworkManager::updateDisplay, parametersPanel, &ParametersPanel::selectionChanged);
+    enzo::nt::nm().selectedNodesChanged.connect([parametersPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
+        if(selectedNodeIds.size()<=0) return;
+        parametersPanel->selectionChanged(selectedNodeIds.back());
+    });
+    enzo::nt::nm().selectedNodesChanged.connect([geometrySpreadsheetPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
+        if(selectedNodeIds.size()<=0) return;
+        geometrySpreadsheetPanel->setNode(selectedNodeIds.back());
+    });
+    enzo::nt::nm().selectedNodesChanged.connect([geometrySpreadsheetPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
+        if(selectedNodeIds.size()<=0) return;
+        auto& geometry = enzo::nt::nm().getGeoOperator(selectedNodeIds.back()).getOutputGeo(0);
+        geometrySpreadsheetPanel->geometryChanged(geometry);
+    });
+    enzo::nt::nm().displayGeoChanged.connect([viewport](enzo::geo::Geometry& geometry){viewport->setGeometry(geometry);});
 }

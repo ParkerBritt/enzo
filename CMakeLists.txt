@@ -23,6 +23,8 @@ set(ENGINE_SOURCES
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Default.cpp
+    src/Engine/Parameter/Range.cpp
+    src/Engine/Parameter/PrmName.cpp
     src/Engine/Network/NetworkManager.cpp
 )
 
@@ -51,9 +53,10 @@ set(GUI_SOURCES
     src/Gui/Network/NodeIconGraphic.cpp
     src/Gui/Network/TabMenu.cpp
     src/Gui/ParametersPanel/ParametersPanel.cpp
-    src/Gui/Parameters/AbstractSliderParm.cpp
-    src/Gui/Parameters/AbstractFormParm.cpp
-    src/Gui/Parameters/FloatParm.cpp
+    src/Gui/Parameters/FloatSliderParm.cpp
+    src/Gui/Parameters/IntSliderParm.cpp
+    src/Gui/Parameters/BoolSwitchParm.cpp
+    src/Gui/Parameters/FormParm.cpp
     src/Gui/Parameters/StringParm.cpp
 )
 set(ENGINE_INCLUDE_DIRECTORIES

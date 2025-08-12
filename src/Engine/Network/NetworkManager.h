@@ -23,8 +23,12 @@ public:
     bool isValidOp(nt::OpId opId);
     GeometryOperator& getGeoOperator(nt::OpId opId);
     void setDisplayOp(OpId opId);
+    void setSelectedNode(OpId opId, bool selected, bool add=false);
+    const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
-    boost::signals2::signal<void ()> displayNodeChanged;
+    boost::signals2::signal<void (nt::OpId)> displayNodeChanged;
+    boost::signals2::signal<void (std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;
+    boost::signals2::signal<void (enzo::geo::Geometry& geometry)> displayGeoChanged;
 
     #ifdef UNIT_TEST
         void _reset();
@@ -40,15 +44,13 @@ private:
 
     // variables
     // store for geometry operators
+    std::vector<enzo::nt::OpId> selectedNodes_;
     std::unordered_map<enzo::nt::OpId, std::unique_ptr<enzo::nt::GeometryOperator>> gopStore_;
     // the highest operator id currently stored
     enzo::nt::OpId maxOpId_=0;
     // operator selected for displaying in the viewport
     std::optional<OpId> displayOp_=std::nullopt;
 
-
-Q_SIGNALS:
-    void updateDisplay(enzo::geo::Geometry& geometry);
 
 };
 

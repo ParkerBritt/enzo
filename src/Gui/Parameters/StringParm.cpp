@@ -9,16 +9,25 @@
 #include <algorithm>
 #include <QLineEdit>
 #include <string>
+#include <icecream.hpp>
 
 
-enzo::ui::StringParm::StringParm(bt::String value, QWidget *parent)
+enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent)
 : QLineEdit(parent)
 {
     // tells qt to style the widget even though it's a Q_OBJECT
     setAttribute(Qt::WA_StyledBackground, true);
     setFixedHeight(24);
 
-    value_ = value;
+    parameter_ = parameter;
+    if(auto parameterShared=parameter_.lock())
+    {
+        value_ = parameterShared->evalString();
+    }
+    else
+    {
+        throw std::bad_weak_ptr();
+    }
     setText(QString::fromStdString(value_));
     
 

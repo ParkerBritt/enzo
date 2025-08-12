@@ -1,4 +1,6 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/Operator/GeometryOperator.h"
 #include <QLabel>
 #include <qpainter.h>
 #include <qpushbutton.h>
@@ -28,7 +30,6 @@ GeoSheetModeButton::GeoSheetModeButton(QWidget* parent)
     //     }
     // )");
 
-    setIcon(QIcon(":/node-icons/grid.svg"));
 }
 
 void GeoSheetModeButton::enterEvent(QEnterEvent *event)
@@ -66,8 +67,7 @@ void GeoSheetModeButton::paintEvent(QPaintEvent* event)
 
 
         QPixmap pixmap = buttonIcon.pixmap(size);
-        QPoint center = event->rect().center() - QPoint(size.width() / 2, size.height() / 2);
-        // QPoint center = QPoint(0,0);
+        QPoint center = rect().center() - QPoint(size.width() / 2, size.height() / 2);
         painter.drawPixmap(center, pixmap);
 
     }
@@ -79,6 +79,9 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget *parent, Qt::
 : QWidget(parent, f)
 {
     mainLayout_ = new QHBoxLayout();
+    constexpr int mainMargin = 0;
+    mainLayout_->setContentsMargins(mainMargin,mainMargin,mainMargin,mainMargin);
+
     QWidget* buttonBg = new QWidget();
     buttonBg->setObjectName("GeoSheetMenuBarButtonBg");
     buttonBg->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
@@ -88,7 +91,7 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget *parent, Qt::
     R"(
         #GeoSheetMenuBarButtonBg
         {
-            background-color: #383838;
+            background-color: #242424;
             border-radius: 8px;
         }
 
@@ -99,18 +102,20 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget *parent, Qt::
 
     modeButtonGroup_.setExclusive(true);
 
-    auto newButton = [this, &buttonBgLayout]()
+    auto newButton = [this, &buttonBgLayout](const char* tooltip="", const char* iconPath=":/icons/attributePoint.svg")
     {
         auto newButton = new GeoSheetModeButton();
+        newButton->setToolTip(tooltip);
+        newButton->setIcon(QIcon(iconPath));
         modeButtonGroup_.addButton(newButton);
         buttonBgLayout->addWidget(newButton);
         return newButton;
     };
 
-    auto pointButton = newButton();
-    auto vertButton = newButton();
-    auto primButton = newButton();
-    auto globalButton = newButton();
+    pointButton = newButton("Point Attributes", ":/icons/attributePoint.svg");
+    vertexButton = newButton("Vertex Attributes", ":/icons/attributeVertex.svg");
+    primitiveButton = newButton("Primitive Attributes", ":/icons/attributePrimitive.svg");
+    globalButton = newButton("Global Attributes", ":/icons/attributeGlobal.svg");
 
     pointButton->setChecked(true);
 
@@ -121,12 +126,36 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget *parent, Qt::
     setLayout(mainLayout_);
 }
 
+
+
 GeometrySpreadsheetMenuBar::GeometrySpreadsheetMenuBar(QWidget *parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 {
     mainLayout_ = new QHBoxLayout();
-    mainLayout_->addWidget(new QLabel("Node: testGeometryRat"));
-    mainLayout_->addWidget(new GeoSheetMenuBarModeSelection());
+    nodeLabel_ = new QLabel();
+    modeSelection = new GeoSheetMenuBarModeSelection();
+
+    mainLayout_->addWidget(nodeLabel_);
+    mainLayout_->addStretch();
+    mainLayout_->addWidget(modeSelection);
+    setProperty("class", "GeometrySpreadsheetMenuBar");
+    setStyleSheet(
+    R"(
+        .GeometrySpreadsheetMenuBar,
+        .GeometrySpreadsheetMenuBar *
+        {
+            background-color: #1B1B1B;
+        }
+    )");
+
+    constexpr int margins = 5;
+    mainLayout_->setContentsMargins(margins, margins, margins, margins);
 
     setLayout(mainLayout_);
+}
+
+void GeometrySpreadsheetMenuBar::setNode(enzo::nt::OpId opId)
+{
+    enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(opId);
+    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(geoOp.getLabel()));
 }
