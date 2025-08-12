@@ -126,6 +126,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isValidOp</b> (nt::Op
 <tr class="memitem:a8f4282b7156e1515a094c7da36eccc3d" id="r_a8f4282b7156e1515a094c7da36eccc3d"><td class="memItemLeft" align="right" valign="top"><a id="a8f4282b7156e1515a094c7da36eccc3d" name="a8f4282b7156e1515a094c7da36eccc3d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (OpId opId)</td></tr>
 <tr class="separator:a8f4282b7156e1515a094c7da36eccc3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87db6e7d3bc10c86954afe54c23d9d07" id="r_a87db6e7d3bc10c86954afe54c23d9d07"><td class="memItemLeft" align="right" valign="top"><a id="a87db6e7d3bc10c86954afe54c23d9d07" name="a87db6e7d3bc10c86954afe54c23d9d07"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setSelectedNode</b> (OpId opId, bool selected, bool add=false)</td></tr>
+<tr class="separator:a87db6e7d3bc10c86954afe54c23d9d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5ea59029f6195425e6237c27ee8be3a" id="r_aa5ea59029f6195425e6237c27ee8be3a"><td class="memItemLeft" align="right" valign="top"><a id="aa5ea59029f6195425e6237c27ee8be3a" name="aa5ea59029f6195425e6237c27ee8be3a"></a>
+const std::vector&lt; enzo::nt::OpId &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSelectedNodes</b> ()</td></tr>
+<tr class="separator:aa5ea59029f6195425e6237c27ee8be3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -138,6 +144,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a28fdcf912cfe264da7bd3cd5d0d33a26" id="r_a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memItemLeft" align="right" valign="top"><a id="a28fdcf912cfe264da7bd3cd5d0d33a26" name="a28fdcf912cfe264da7bd3cd5d0d33a26"></a>
 boost::signals2::signal&lt; void(nt::OpId)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayNodeChanged</b></td></tr>
 <tr class="separator:a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c8593f1815ce188026a0b3e2da90540" id="r_a0c8593f1815ce188026a0b3e2da90540"><td class="memItemLeft" align="right" valign="top"><a id="a0c8593f1815ce188026a0b3e2da90540" name="a0c8593f1815ce188026a0b3e2da90540"></a>
+boost::signals2::signal&lt; void(std::vector&lt; nt::OpId &gt; selectedNodeIds)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>selectedNodesChanged</b></td></tr>
+<tr class="separator:a0c8593f1815ce188026a0b3e2da90540"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a773f1aaa8a8e65e85a0e503f7edd5038" id="r_a773f1aaa8a8e65e85a0e503f7edd5038"><td class="memItemLeft" align="right" valign="top"><a id="a773f1aaa8a8e65e85a0e503f7edd5038" name="a773f1aaa8a8e65e85a0e503f7edd5038"></a>
 boost::signals2::signal&lt; void(<a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> &amp;geometry)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayGeoChanged</b></td></tr>
 <tr class="separator:a773f1aaa8a8e65e85a0e503f7edd5038"><td class="memSeparator" colspan="2">&#160;</td></tr>
