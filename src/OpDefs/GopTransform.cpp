@@ -6,8 +6,8 @@
 #include <Eigen/src/Geometry/AngleAxis.h>
 #include <Eigen/src/Geometry/Transform.h>
 #include <cstddef>
-#include <oneapi/tbb/blocked_range.h>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 GopTransform::GopTransform(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 : GeometryOpDef(network, opInfo)

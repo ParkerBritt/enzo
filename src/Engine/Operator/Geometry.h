@@ -5,7 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include "Engine/Operator/AttributeHandle.h"
 #include <memory>
-#include <oneapi/tbb/spin_mutex.h>
+#include <tbb/spin_mutex.h>
 #include <tbb/spin_mutex.h>
 #include <variant>
 

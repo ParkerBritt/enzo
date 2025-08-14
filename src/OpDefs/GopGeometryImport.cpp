@@ -2,7 +2,7 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Types.h"
 #include <cstdio>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
 #include <boost/algorithm/string.hpp>

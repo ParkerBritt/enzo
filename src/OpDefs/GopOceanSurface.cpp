@@ -3,8 +3,8 @@
 #include "Engine/Types.h"
 #include <cmath>
 #include <cstdio>
-#include <oneapi/tbb/blocked_range.h>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
 #include <boost/algorithm/string.hpp>

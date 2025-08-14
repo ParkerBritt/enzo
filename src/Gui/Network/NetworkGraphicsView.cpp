@@ -1,6 +1,7 @@
 #include "Gui/Network/NetworkGraphicsView.h"
 #include <QGraphicsItem>
 #include "Gui/Network/Network.h"
+#include <QCoreApplication>
 #include "Gui/Network/NetworkGraphicsScene.h"
 #include "Gui/Network/SocketGraphic.h"
 #include <iostream>

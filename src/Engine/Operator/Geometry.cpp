@@ -3,8 +3,8 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Types.h"
 #include <memory>
-#include <oneapi/tbb/spin_mutex.h>
-#include <oneapi/tbb/task_group.h>
+#include <tbb/spin_mutex.h>
+#include <tbb/task_group.h>
 #include <stdexcept>
 #include <string>
 #include <CGAL/Polygon_mesh_processing/orientation.h>

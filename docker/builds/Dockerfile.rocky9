@@ -1,0 +1,33 @@
+FROM rockylinux:9
+LABEL Description="Build environment"
+
+WORKDIR /work
+
+RUN dnf -y install dnf-plugins-core
+
+# Enable CRB (CodeReady Builder on EL9)
+RUN dnf config-manager --set-enabled crb
+
+# Add EPEL on UBI by installing the release RPM
+RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+
+RUN dnf install -y \
+tar \
+rpm-build \
+git \
+cmake \
+ninja-build \
+qt6-qtbase-devel \
+qt6-qtsvg-devel \
+eigen3-devel \
+glm-devel \
+tbb \
+tbb-devel \
+boost-devel \
+CGAL-devel
+
+COPY . .
+
+RUN ./build.sh
+
+RUN cd build && cpack -G RPM

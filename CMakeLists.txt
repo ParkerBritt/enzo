@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.26)
 
 # set vars
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -79,7 +79,7 @@ find_package(glm REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # tbb
-find_package(TBB REQUIRED COMPONENTS TBB::tbb)
+find_package(TBB REQUIRED COMPONENTS tbb)
 
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 
@@ -104,14 +104,67 @@ set(CPACK_GENERATOR "RPM;TGZ")
 set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin)
 set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib)
 
-install(
-    TARGETS ${AppExec} 
-    RUNTIME DESTINATION ${ENZO_BIN_DIR}
-    LIBRARY DESTINATION ${ENZO_LIB_DIR}
-    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+
+set_target_properties(${AppExec} PROPERTIES
+    INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
 )
 
 include(CPack)
+
+# cpack_add_component("runtimes")
+# cpack_add_component("tgz-runtimes")
+
+install(TARGETS ${AppExec}
+    RUNTIME DESTINATION ${ENZO_BIN_DIR}
+    LIBRARY DESTINATION ${ENZO_LIB_DIR}
+    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+    # COMPONENT "runtimes"
+)
+
+# install(TARGETS ${AppExec}
+#     RUNTIME_DEPENDENCY_SET app_deps
+#     RUNTIME DESTINATION ${ENZO_BIN_DIR}
+#     LIBRARY DESTINATION ${ENZO_LIB_DIR}
+#     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+#     COMPONENT "tgz-runtimes"
+# )
+
+# install(RUNTIME_DEPENDENCY_SET app_deps
+#     DIRECTORIES "${CMAKE_BINARY_DIR}"
+#     PRE_EXCLUDE_REGEXES
+#     "libc.so.*" "libm.so.*" "libpthread.so.*" "librt.so.*" "libdl.so.*"
+#     "libgcc_s.so.*" "libstdc++.so.*"
+#     DESTINATION ${ENZO_LIB_DIR}
+#     COMPONENT "tgz-runtimes"
+# )
+
+# install(
+#     DIRECTORY /usr/lib64/qt6
+#     DESTINATION ${CMAKE_PROJECT_NAME}
+#     COMPONENT "tgz-runtimes"
+# )
+
+# install(
+#     DIRECTORY /usr/lib64/
+#     DESTINATION ${ENZO_LIB_DIR}
+#     COMPONENT "tgz-runtimes"
+#     FILES_MATCHING PATTERN "*Qt*.so*"
+# )
+
+# file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/packaging/qt.conf
+# "[Paths]
+# Plugins = ../qt6/plugins
+# Libraries = ../lib
+# ")
+
+# install(
+#     FILES ${CMAKE_CURRENT_BINARY_DIR}/packaging/qt.conf
+#     DESTINATION ${ENZO_BIN_DIR}
+#     COMPONENT "tgz-runtimes"
+# )
+
+
+
 
 # set(CPACK_RPM_PACKAGE_REQUIRES "openssl >= 1.1.1, zlib >= 1.2.11")
 

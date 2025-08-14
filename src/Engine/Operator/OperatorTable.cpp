@@ -101,13 +101,12 @@ void enzo::op::OperatorTable::initPlugins()
     static bool pluginsLoaded=false;
     if(pluginsLoaded) return;
 
-    // auto initPlugin = boost::dll::import_symbol<void(enzo::op::addOperatorPtr)>(
-    //     "build/src/OpDefs/libenzoOps1.so", "newSopOperator"
-    // );
-    auto initPlugin = boost::dll::import_symbol<void(enzo::op::addOperatorPtr)>(
-        findPlugin("enzoOps1"), "newSopOperator"
-    );
+    using InitPluginFn = void(enzo::op::addOperatorPtr);
 
+    const auto so = findPlugin("enzoOps1");
+    static boost::dll::shared_library lib(so, boost::dll::load_mode::default_mode);
+
+    auto initPlugin = lib.get<InitPluginFn>("newSopOperator");
     initPlugin(enzo::op::OperatorTable::addOperator);
 
     pluginsLoaded = true;

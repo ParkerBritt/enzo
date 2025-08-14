@@ -5,8 +5,8 @@
 #include "Engine/Operator/Geometry.h"
 #include "Engine/Types.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <oneapi/tbb/blocked_range.h>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include "icecream.hpp"
 
 

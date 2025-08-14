@@ -1,6 +1,6 @@
 #include "OpDefs/GopTestCube.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/parallel_for.h>
 
 GopTestGeoCube::GopTestGeoCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
     : GeometryOpDef(network, opInfo)

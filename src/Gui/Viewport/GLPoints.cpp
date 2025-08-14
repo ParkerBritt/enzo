@@ -4,8 +4,8 @@
 #include <glm/fwd.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <glm/geometric.hpp>
-#include <oneapi/tbb/blocked_range.h>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include "Engine/Types.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "icecream.hpp"

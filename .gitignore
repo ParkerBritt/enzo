@@ -3,3 +3,4 @@ build
 docs/html
 docs/latex
 perf.data*
+artifacts
