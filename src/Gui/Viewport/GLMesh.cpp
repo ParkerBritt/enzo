@@ -89,7 +89,7 @@ void GLMesh::setPosBuffer(enzo::geo::Geometry& geometry)
                 enzo::bt::Vector3 tang2 = (pos3-pos1);
 
                 Normal = tang1.cross(tang2);
-                Mormal.normalize();
+                Normal.normalize();
             }
 
             for(int i=0; i< faceVertCnt; ++i)
