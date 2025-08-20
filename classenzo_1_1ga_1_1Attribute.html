@@ -98,26 +98,35 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::ga::Attribute Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Containers for geometry data.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Attribute_8h_source.html">Attribute.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a30d4e8e7dbe386928d202f95b51109b6" id="r_a30d4e8e7dbe386928d202f95b51109b6"><td class="memItemLeft" align="right" valign="top"><a id="a30d4e8e7dbe386928d202f95b51109b6" name="a30d4e8e7dbe386928d202f95b51109b6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Attribute</b> (std::string name, ga::AttributeType type)</td></tr>
+<tr class="memitem:a30d4e8e7dbe386928d202f95b51109b6" id="r_a30d4e8e7dbe386928d202f95b51109b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30d4e8e7dbe386928d202f95b51109b6">Attribute</a> (std::string name, <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">ga::AttributeType</a> type)</td></tr>
+<tr class="memdesc:a30d4e8e7dbe386928d202f95b51109b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new attribute and initialize its typed storage.  <br /></td></tr>
 <tr class="separator:a30d4e8e7dbe386928d202f95b51109b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61c130ecd82f464fb7695297babb446b" id="r_a61c130ecd82f464fb7695297babb446b"><td class="memItemLeft" align="right" valign="top"><a id="a61c130ecd82f464fb7695297babb446b" name="a61c130ecd82f464fb7695297babb446b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Attribute</b> (const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &amp;other)</td></tr>
 <tr class="separator:a61c130ecd82f464fb7695297babb446b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cbe404447952030d089b6bfc40e5989" id="r_a2cbe404447952030d089b6bfc40e5989"><td class="memItemLeft" align="right" valign="top"><a id="a2cbe404447952030d089b6bfc40e5989" name="a2cbe404447952030d089b6bfc40e5989"></a>
-AttributeType&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> () const</td></tr>
+<a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> () const</td></tr>
+<tr class="memdesc:a2cbe404447952030d089b6bfc40e5989"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute type this attribute stores. <br /></td></tr>
 <tr class="separator:a2cbe404447952030d089b6bfc40e5989"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1af65252d85e13a92c62753876d066e7" id="r_a1af65252d85e13a92c62753876d066e7"><td class="memItemLeft" align="right" valign="top"><a id="a1af65252d85e13a92c62753876d066e7" name="a1af65252d85e13a92c62753876d066e7"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> () const</td></tr>
+<tr class="memdesc:a1af65252d85e13a92c62753876d066e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of this attribute. <br /></td></tr>
 <tr class="separator:a1af65252d85e13a92c62753876d066e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a887f159a8f491b9c3ac8fc0afe2975a7" id="r_a887f159a8f491b9c3ac8fc0afe2975a7"><td class="memItemLeft" align="right" valign="top"><a id="a887f159a8f491b9c3ac8fc0afe2975a7" name="a887f159a8f491b9c3ac8fc0afe2975a7"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getTypeSize</b> () const</td></tr>
+<tr class="memdesc:a887f159a8f491b9c3ac8fc0afe2975a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of components in the type (eg. StringT is 1, vectorT is 3). <br /></td></tr>
 <tr class="separator:a887f159a8f491b9c3ac8fc0afe2975a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5a85b628e9af733326d0d1d52d3bd8b" id="r_af5a85b628e9af733326d0d1d52d3bd8b"><td class="memItemLeft" align="right" valign="top"><a id="af5a85b628e9af733326d0d1d52d3bd8b" name="af5a85b628e9af733326d0d1d52d3bd8b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> (size_t size)</td></tr>
+<tr class="memdesc:af5a85b628e9af733326d0d1d52d3bd8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the number of elements stored. <br /></td></tr>
 <tr class="separator:af5a85b628e9af733326d0d1d52d3bd8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -131,6 +140,41 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a8c9b9486a2f0a3686ab3865561b23ab5"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>AttributeHandleRO</b></td></tr>
 <tr class="separator:a8c9b9486a2f0a3686ab3865561b23ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Containers for geometry data. </p>
+<p>Attributes are the containers for geometry data in the engine. Each attribute is a single column in the spreadsheet that makes up your geometry. The column has a single name and type. Based on the attribute owner it will also have a value for each element. For example, if the owner is a point then your attribute might be Color, your type might be a vector, and the attribute will have a color value for each point in the mesh. Attributes own the underlying storage for their values, which is contiguous and strongly typed (e.g., ints, floats, vectors, bools). This allows a single attribute class to store data regardless of the type without templates. Attributes cannot be read or written from by themselves. For that an attribute handle is required, (see <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>).</p>
+<dl class="section note"><dt>Note</dt><dd>Values are strongly typed; invalid type combinations are guarded both at compile time (via handles) and at runtime (defensive checks). </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a30d4e8e7dbe386928d202f95b51109b6" name="a30d4e8e7dbe386928d202f95b51109b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30d4e8e7dbe386928d202f95b51109b6">&#9670;&#160;</a></span>Attribute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ga::Attribute::Attribute </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">ga::AttributeType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a new attribute and initialize its typed storage. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Human-readable identifier, spaces are not permitted (unique within a collection/scope). </td></tr>
+    <tr><td class="paramname">type</td><td><a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> that attribute values will be stored in. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="Attribute_8h_source.html">Attribute.h</a></li>
 <li>src/Engine/Operator/<b>Attribute.cpp</b></li>
