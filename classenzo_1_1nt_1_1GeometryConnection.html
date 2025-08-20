@@ -99,40 +99,101 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::nt::GeometryConnection Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Directional edges to connect nodes.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="GeometryConnection_8h_source.html">GeometryConnection.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a71ac67802caba40a239b820da5d5f882" id="r_a71ac67802caba40a239b820da5d5f882"><td class="memItemLeft" align="right" valign="top"><a id="a71ac67802caba40a239b820da5d5f882" name="a71ac67802caba40a239b820da5d5f882"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GeometryConnection</b> (enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex)</td></tr>
-<tr class="separator:a71ac67802caba40a239b820da5d5f882"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a924be1c9a6a7500ca133c27c6e5ef1" id="r_a3a924be1c9a6a7500ca133c27c6e5ef1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a924be1c9a6a7500ca133c27c6e5ef1">GeometryConnection</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> inputOpId, unsigned int inputOpIndex, <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> outputOpId, unsigned int outputOpIndex)</td></tr>
+<tr class="memdesc:a3a924be1c9a6a7500ca133c27c6e5ef1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a connection between two nodes.  <br /></td></tr>
+<tr class="separator:a3a924be1c9a6a7500ca133c27c6e5ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94131c0e26bf3d47578c7ea66e52f451" id="r_a94131c0e26bf3d47578c7ea66e52f451"><td class="memItemLeft" align="right" valign="top"><a id="a94131c0e26bf3d47578c7ea66e52f451" name="a94131c0e26bf3d47578c7ea66e52f451"></a>
-enzo::nt::OpId&#160;</td><td class="memItemRight" valign="bottom"><b>getInputOpId</b> () const</td></tr>
+<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getInputOpId</b> () const</td></tr>
+<tr class="memdesc:a94131c0e26bf3d47578c7ea66e52f451"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">Operator ID</a> of the connection input (where data flows from). <br /></td></tr>
 <tr class="separator:a94131c0e26bf3d47578c7ea66e52f451"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ae2c01d9790cb3a4b34426149e40195" id="r_a2ae2c01d9790cb3a4b34426149e40195"><td class="memItemLeft" align="right" valign="top"><a id="a2ae2c01d9790cb3a4b34426149e40195" name="a2ae2c01d9790cb3a4b34426149e40195"></a>
-enzo::nt::OpId&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputOpId</b> () const</td></tr>
+<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputOpId</b> () const</td></tr>
+<tr class="memdesc:a2ae2c01d9790cb3a4b34426149e40195"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">Operator ID</a> of the connection output (where data flows to). <br /></td></tr>
 <tr class="separator:a2ae2c01d9790cb3a4b34426149e40195"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3133580f190e629b5516833724c417ce" id="r_a3133580f190e629b5516833724c417ce"><td class="memItemLeft" align="right" valign="top"><a id="a3133580f190e629b5516833724c417ce" name="a3133580f190e629b5516833724c417ce"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getInputIndex</b> () const</td></tr>
+<tr class="memdesc:a3133580f190e629b5516833724c417ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the socket number of <a class="el" href="#a94131c0e26bf3d47578c7ea66e52f451" title="Returns the Operator ID of the connection input (where data flows from).">getInputOpId</a> in which data flows from. <br /></td></tr>
 <tr class="separator:a3133580f190e629b5516833724c417ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64ef1a0c8cbad1d078bc4dea9767627b" id="r_a64ef1a0c8cbad1d078bc4dea9767627b"><td class="memItemLeft" align="right" valign="top"><a id="a64ef1a0c8cbad1d078bc4dea9767627b" name="a64ef1a0c8cbad1d078bc4dea9767627b"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputIndex</b> () const</td></tr>
+<tr class="memdesc:a64ef1a0c8cbad1d078bc4dea9767627b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the socket number of <a class="el" href="#a2ae2c01d9790cb3a4b34426149e40195" title="Returns the Operator ID of the connection output (where data flows to).">getOutputOpId</a> in which data flows to. <br /></td></tr>
 <tr class="separator:a64ef1a0c8cbad1d078bc4dea9767627b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e9e4175d0fc8286ad0a070b78d42b4e" id="r_a6e9e4175d0fc8286ad0a070b78d42b4e"><td class="memItemLeft" align="right" valign="top"><a id="a6e9e4175d0fc8286ad0a070b78d42b4e" name="a6e9e4175d0fc8286ad0a070b78d42b4e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>remove</b> ()</td></tr>
+<tr class="memdesc:a6e9e4175d0fc8286ad0a070b78d42b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the connection from it's associated nodes. Does not delete the object. <br /></td></tr>
 <tr class="separator:a6e9e4175d0fc8286ad0a070b78d42b4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ab62addb9b48d3c4f195542d8ef961d7e" id="r_ab62addb9b48d3c4f195542d8ef961d7e"><td class="memItemLeft" align="right" valign="top"><a id="ab62addb9b48d3c4f195542d8ef961d7e" name="ab62addb9b48d3c4f195542d8ef961d7e"></a>
 boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>removed</b></td></tr>
+<tr class="memdesc:ab62addb9b48d3c4f195542d8ef961d7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A signal emitted when the connection is removed. <br /></td></tr>
 <tr class="separator:ab62addb9b48d3c4f195542d8ef961d7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:acdd05f5d8c994fc8242ca675f262e91b" id="r_acdd05f5d8c994fc8242ca675f262e91b"><td class="memItemLeft" align="right" valign="top"><a id="acdd05f5d8c994fc8242ca675f262e91b" name="acdd05f5d8c994fc8242ca675f262e91b"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &amp;p)</td></tr>
+<tr class="memdesc:acdd05f5d8c994fc8242ca675f262e91b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides an ostream representation of the connection, useful for debugging. <br /></td></tr>
 <tr class="separator:acdd05f5d8c994fc8242ca675f262e91b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Directional edges to connect nodes. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place</dd></dl>
+<p>Input and output are in relation to data flow.</p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo</a></b></dt><dd>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a3a924be1c9a6a7500ca133c27c6e5ef1" name="a3a924be1c9a6a7500ca133c27c6e5ef1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a924be1c9a6a7500ca133c27c6e5ef1">&#9670;&#160;</a></span>GeometryConnection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enzo::nt::GeometryConnection::GeometryConnection </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></td>          <td class="paramname"><span class="paramname"><em>inputOpId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>inputOpIndex</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></td>          <td class="paramname"><span class="paramname"><em>outputOpId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputOpIndex</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs a connection between two nodes. </p>
+<p>Input and output are in relation to data flow.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputOpId</td><td>The <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">Operator ID</a> in which data flows from. </td></tr>
+    <tr><td class="paramname">outputOpId</td><td>The <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">Operator ID</a> in which data flows to. </td></tr>
+    <tr><td class="paramname">inputOpIndex</td><td>The output socket number of <code>inputOpId</code> in which data flows from. </td></tr>
+    <tr><td class="paramname">outputOpIndex</td><td>The input socket number of <code>outputOpId</code> in which data flows to. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="GeometryConnection_8h_source.html">GeometryConnection.h</a></li>
 <li>src/Engine/Operator/<b>GeometryConnection.cpp</b></li>

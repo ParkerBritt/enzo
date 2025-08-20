@@ -92,19 +92,37 @@ $(function(){ initResizable(false); });
 <div class="contents">
 <div class="textblock"><dl class="reflist">
 <dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a3db782952a7dfb064406e6bf055d8841">enzo::ga::AttributeHandle&lt; T &gt;::getAllValues</a>  () const</dt>
-<dd><a class="anchor" id="_todo000001"></a>Replace with an iterator for accessing many values. </dd>
+<dd><a class="anchor" id="_todo000002"></a>Replace with an iterator for accessing many values. </dd>
 <dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a6c46c4ac5b3c060047c55ec7e6b018c2">enzo::ga::AttributeHandle&lt; T &gt;::getValue</a>  (size_t offset) const</dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000002"></a>protect against invalid positions </p>
-<p class="interdd"></p>
-<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5)  </p>
-</dd>
-<dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a39a719dc702eedd2372e88c9c22eddb1">enzo::ga::AttributeHandle&lt; T &gt;::setValue</a>  (size_t offset, const T &amp;value)</dt>
 <dd><p class="startdd"><a class="anchor" id="_todo000003"></a>protect against invalid positions </p>
 <p class="interdd"></p>
 <p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5)  </p>
 </dd>
+<dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a39a719dc702eedd2372e88c9c22eddb1">enzo::ga::AttributeHandle&lt; T &gt;::setValue</a>  (size_t offset, const T &amp;value)</dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000004"></a>protect against invalid positions </p>
+<p class="interdd"></p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5)  </p>
+</dd>
 <dt>Member <a class="el" href="classenzo_1_1geo_1_1Geometry.html#ad75737de589ffecedd7a256e63fa182d">enzo::geo::Geometry::computePrimStartVertices</a>  () const</dt>
-<dd><a class="anchor" id="_todo000004"></a>Automatically lazy evaluate when requested (make thread safe) </dd>
+<dd><a class="anchor" id="_todo000005"></a>Automatically lazy evaluate when requested (make thread safe)  </dd>
+<dt>Class <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">enzo::nt::GeometryConnection</a>  </dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000006"></a>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place</p>
+<p class="enddd"><a class="anchor" id="_todo000007"></a>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place  </p>
+</dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#a6975704e8499edd426a301427af1abb8">enzo::nt::GeometryOpDef::getOutputGeo</a>  (unsigned outputIndex)</dt>
+<dd><a class="anchor" id="_todo000008"></a>move to friend class Node  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#a6c2dcbb16f44219223e0c71761d8b7f3">enzo::nt::GeometryOpDef::throwError</a>  (std::string error)</dt>
+<dd><a class="anchor" id="_todo000009"></a>Add visual error to GUI  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a091c279297bc26c4abc38ebd4eebde4f">enzo::nt::GeometryOperator::getLabel</a>  ()</dt>
+<dd><a class="anchor" id="_todo000013"></a>implement  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a3fb3d73d00d84c1b3e46d31b56eb708d">enzo::nt::GeometryOperator::getOutputGeo</a>  (unsigned int outputIndex) const</dt>
+<dd><a class="anchor" id="_todo000010"></a>Add option to force cook or cook if dirty.  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a735087152d60a92a193a02a7fc827ba4">enzo::nt::GeometryOperator::removeInputConnection</a>  (unsigned int inputIndex)</dt>
+<dd><a class="anchor" id="_todo000011"></a>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes.  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a74b9bf6af47b93a1a0d98a312cbba47d">enzo::nt::GeometryOperator::removeOutputConnection</a>  (const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">nt::GeometryConnection</a> *connection)</dt>
+<dd><a class="anchor" id="_todo000012"></a>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes.  </dd>
+<dt>Class <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>  </dt>
+<dd><a class="anchor" id="_todo000001"></a>remove Qobject inheritance, this is no longer needed since switching to boost signals.</dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
