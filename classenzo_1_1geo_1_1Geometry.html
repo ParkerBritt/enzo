@@ -97,95 +97,731 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::geo::Geometry Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Geometry_8h_source.html">Geometry.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac18fc7232af499b946f54231079dcca7" id="r_ac18fc7232af499b946f54231079dcca7"><td class="memItemLeft" align="right" valign="top"><a id="ac18fc7232af499b946f54231079dcca7" name="ac18fc7232af499b946f54231079dcca7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Geometry</b> (const <a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;other)</td></tr>
-<tr class="separator:ac18fc7232af499b946f54231079dcca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ccfabcb96e11b2ae20970ac90f21980" id="r_a5ccfabcb96e11b2ae20970ac90f21980"><td class="memItemLeft" align="right" valign="top"><a id="a5ccfabcb96e11b2ae20970ac90f21980" name="a5ccfabcb96e11b2ae20970ac90f21980"></a>
-<a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;rhs)</td></tr>
+<tr class="memitem:a5ccfabcb96e11b2ae20970ac90f21980" id="r_a5ccfabcb96e11b2ae20970ac90f21980"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ccfabcb96e11b2ae20970ac90f21980">operator=</a> (const <a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;rhs)</td></tr>
+<tr class="memdesc:a5ccfabcb96e11b2ae20970ac90f21980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator. Performs a deep copy of another <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a>.  <br /></td></tr>
 <tr class="separator:a5ccfabcb96e11b2ae20970ac90f21980"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a956c2cc547a48789e77f985de922b33a" id="r_a956c2cc547a48789e77f985de922b33a"><td class="memItemLeft" align="right" valign="top"><a id="a956c2cc547a48789e77f985de922b33a" name="a956c2cc547a48789e77f985de922b33a"></a>
-<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addIntAttribute</b> (ga::AttributeOwner owner, std::string name)</td></tr>
+<tr class="memitem:a956c2cc547a48789e77f985de922b33a" id="r_a956c2cc547a48789e77f985de922b33a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a956c2cc547a48789e77f985de922b33a">addIntAttribute</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
+<tr class="memdesc:a956c2cc547a48789e77f985de922b33a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an integer attribute to the geometry.  <br /></td></tr>
 <tr class="separator:a956c2cc547a48789e77f985de922b33a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ff85faa417b3765d207e0013f3e0b32" id="r_a7ff85faa417b3765d207e0013f3e0b32"><td class="memItemLeft" align="right" valign="top"><a id="a7ff85faa417b3765d207e0013f3e0b32" name="a7ff85faa417b3765d207e0013f3e0b32"></a>
-<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addBoolAttribute</b> (ga::AttributeOwner owner, std::string name)</td></tr>
+<tr class="memitem:a7ff85faa417b3765d207e0013f3e0b32" id="r_a7ff85faa417b3765d207e0013f3e0b32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ff85faa417b3765d207e0013f3e0b32">addBoolAttribute</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
+<tr class="memdesc:a7ff85faa417b3765d207e0013f3e0b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a boolean attribute to the geometry.  <br /></td></tr>
 <tr class="separator:a7ff85faa417b3765d207e0013f3e0b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0817c098e66ac0b6a3cc16ae88b735bd" id="r_a0817c098e66ac0b6a3cc16ae88b735bd"><td class="memItemLeft" align="right" valign="top"><a id="a0817c098e66ac0b6a3cc16ae88b735bd" name="a0817c098e66ac0b6a3cc16ae88b735bd"></a>
-<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addVector3Attribute</b> (ga::AttributeOwner owner, std::string name)</td></tr>
+<tr class="memitem:a0817c098e66ac0b6a3cc16ae88b735bd" id="r_a0817c098e66ac0b6a3cc16ae88b735bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0817c098e66ac0b6a3cc16ae88b735bd">addVector3Attribute</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
+<tr class="memdesc:a0817c098e66ac0b6a3cc16ae88b735bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a 3D vector attribute to the geometry.  <br /></td></tr>
 <tr class="separator:a0817c098e66ac0b6a3cc16ae88b735bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a32d661ac1b31ce16059bc215322476" id="r_a9a32d661ac1b31ce16059bc215322476"><td class="memItemLeft" align="right" valign="top"><a id="a9a32d661ac1b31ce16059bc215322476" name="a9a32d661ac1b31ce16059bc215322476"></a>
-std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (ga::AttributeOwner owner, std::string name)</td></tr>
+<tr class="memitem:a9a32d661ac1b31ce16059bc215322476" id="r_a9a32d661ac1b31ce16059bc215322476"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a32d661ac1b31ce16059bc215322476">getAttribByName</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
+<tr class="memdesc:a9a32d661ac1b31ce16059bc215322476"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves an attribute by its name.  <br /></td></tr>
 <tr class="separator:a9a32d661ac1b31ce16059bc215322476"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38a0eb5c269e40b9dd6f1b8cecfe155" id="r_aa38a0eb5c269e40b9dd6f1b8cecfe155"><td class="memItemLeft" align="right" valign="top"><a id="aa38a0eb5c269e40b9dd6f1b8cecfe155" name="aa38a0eb5c269e40b9dd6f1b8cecfe155"></a>
-const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumAttributes</b> (const ga::AttributeOwner owner) const</td></tr>
+<tr class="memitem:aa38a0eb5c269e40b9dd6f1b8cecfe155" id="r_aa38a0eb5c269e40b9dd6f1b8cecfe155"><td class="memItemLeft" align="right" valign="top">const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa38a0eb5c269e40b9dd6f1b8cecfe155">getNumAttributes</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner) const</td></tr>
+<tr class="memdesc:aa38a0eb5c269e40b9dd6f1b8cecfe155"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of attributes owned by a specific element type.  <br /></td></tr>
 <tr class="separator:aa38a0eb5c269e40b9dd6f1b8cecfe155"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a1a17007c7307a6b2c9fbf9d7e89f61" id="r_a1a1a17007c7307a6b2c9fbf9d7e89f61"><td class="memItemLeft" align="right" valign="top"><a id="a1a1a17007c7307a6b2c9fbf9d7e89f61" name="a1a1a17007c7307a6b2c9fbf9d7e89f61"></a>
-std::weak_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttributeByIndex</b> (ga::AttributeOwner owner, unsigned int index) const</td></tr>
+<tr class="memitem:a1a1a17007c7307a6b2c9fbf9d7e89f61" id="r_a1a1a17007c7307a6b2c9fbf9d7e89f61"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a1a17007c7307a6b2c9fbf9d7e89f61">getAttributeByIndex</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, unsigned int index) const</td></tr>
+<tr class="memdesc:a1a1a17007c7307a6b2c9fbf9d7e89f61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves an attribute by its index.  <br /></td></tr>
 <tr class="separator:a1a1a17007c7307a6b2c9fbf9d7e89f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a449b86d4e1b3223e24ccff532a31a1f3" id="r_a449b86d4e1b3223e24ccff532a31a1f3"><td class="memItemLeft" align="right" valign="top"><a id="a449b86d4e1b3223e24ccff532a31a1f3" name="a449b86d4e1b3223e24ccff532a31a1f3"></a>
-std::vector&lt; bt::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>derivePointNormals</b> ()</td></tr>
-<tr class="separator:a449b86d4e1b3223e24ccff532a31a1f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95a6551e5131b627635134efdec84dad" id="r_a95a6551e5131b627635134efdec84dad"><td class="memItemLeft" align="right" valign="top"><a id="a95a6551e5131b627635134efdec84dad" name="a95a6551e5131b627635134efdec84dad"></a>
-HeMesh&#160;</td><td class="memItemRight" valign="bottom"><b>computeHalfEdgeMesh</b> ()</td></tr>
+<tr class="memitem:a95a6551e5131b627635134efdec84dad" id="r_a95a6551e5131b627635134efdec84dad"><td class="memItemLeft" align="right" valign="top">HeMesh&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95a6551e5131b627635134efdec84dad">computeHalfEdgeMesh</a> ()</td></tr>
+<tr class="memdesc:a95a6551e5131b627635134efdec84dad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes per-point normals for the geometry.  <br /></td></tr>
 <tr class="separator:a95a6551e5131b627635134efdec84dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a222b88a2da5d0e64768241d3d792f863" id="r_a222b88a2da5d0e64768241d3d792f863"><td class="memItemLeft" align="right" valign="top"><a id="a222b88a2da5d0e64768241d3d792f863" name="a222b88a2da5d0e64768241d3d792f863"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addFace</b> (const std::vector&lt; ga::Offset &gt; &amp;pointOffsets, bool closed=true)</td></tr>
+<tr class="memitem:a222b88a2da5d0e64768241d3d792f863" id="r_a222b88a2da5d0e64768241d3d792f863"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a222b88a2da5d0e64768241d3d792f863">addFace</a> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;pointOffsets, bool closed=true)</td></tr>
+<tr class="memdesc:a222b88a2da5d0e64768241d3d792f863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a polygonal face to the geometry.  <br /></td></tr>
 <tr class="separator:a222b88a2da5d0e64768241d3d792f863"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3445db1d7dd6d7928da12ab3b17b4053" id="r_a3445db1d7dd6d7928da12ab3b17b4053"><td class="memTemplParams" colspan="2"><a id="a3445db1d7dd6d7928da12ab3b17b4053" name="a3445db1d7dd6d7928da12ab3b17b4053"></a>
-template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a3445db1d7dd6d7928da12ab3b17b4053"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>addFace</b> (Args... args)</td></tr>
-<tr class="separator:a3445db1d7dd6d7928da12ab3b17b4053"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f2ec15a21d6bc9b1bc931d907593e37" id="r_a5f2ec15a21d6bc9b1bc931d907593e37"><td class="memItemLeft" align="right" valign="top"><a id="a5f2ec15a21d6bc9b1bc931d907593e37" name="a5f2ec15a21d6bc9b1bc931d907593e37"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addPoint</b> (const bt::Vector3 &amp;pos)</td></tr>
+<tr class="memitem:a5f2ec15a21d6bc9b1bc931d907593e37" id="r_a5f2ec15a21d6bc9b1bc931d907593e37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f2ec15a21d6bc9b1bc931d907593e37">addPoint</a> (const bt::Vector3 &amp;pos)</td></tr>
+<tr class="memdesc:a5f2ec15a21d6bc9b1bc931d907593e37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a point to the geometry.  <br /></td></tr>
 <tr class="separator:a5f2ec15a21d6bc9b1bc931d907593e37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a664cea9fe5b2957d069e24d6ebce9bcc" id="r_a664cea9fe5b2957d069e24d6ebce9bcc"><td class="memItemLeft" align="right" valign="top"><a id="a664cea9fe5b2957d069e24d6ebce9bcc" name="a664cea9fe5b2957d069e24d6ebce9bcc"></a>
-std::set&lt; ga::Offset &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><b>soloPointsBegin</b> ()</td></tr>
+<tr class="memitem:a664cea9fe5b2957d069e24d6ebce9bcc" id="r_a664cea9fe5b2957d069e24d6ebce9bcc"><td class="memItemLeft" align="right" valign="top">std::set&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a664cea9fe5b2957d069e24d6ebce9bcc">soloPointsBegin</a> ()</td></tr>
+<tr class="memdesc:a664cea9fe5b2957d069e24d6ebce9bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterator to the beginning of the set of solo (isolated) points.  <br /></td></tr>
 <tr class="separator:a664cea9fe5b2957d069e24d6ebce9bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a084569e67281f57fe2f4b41314a929e9" id="r_a084569e67281f57fe2f4b41314a929e9"><td class="memItemLeft" align="right" valign="top"><a id="a084569e67281f57fe2f4b41314a929e9" name="a084569e67281f57fe2f4b41314a929e9"></a>
-std::set&lt; ga::Offset &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><b>soloPointsEnd</b> ()</td></tr>
+<tr class="memitem:a084569e67281f57fe2f4b41314a929e9" id="r_a084569e67281f57fe2f4b41314a929e9"><td class="memItemLeft" align="right" valign="top">std::set&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a084569e67281f57fe2f4b41314a929e9">soloPointsEnd</a> ()</td></tr>
+<tr class="memdesc:a084569e67281f57fe2f4b41314a929e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterator to the end of the set of solo (isolated) points.  <br /></td></tr>
 <tr class="separator:a084569e67281f57fe2f4b41314a929e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a743205bad38cde28c3645f0eeab22e89" id="r_a743205bad38cde28c3645f0eeab22e89"><td class="memItemLeft" align="right" valign="top"><a id="a743205bad38cde28c3645f0eeab22e89" name="a743205bad38cde28c3645f0eeab22e89"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setPointPos</b> (const ga::Offset offset, const bt::Vector3 &amp;pos)</td></tr>
+<tr class="memitem:a743205bad38cde28c3645f0eeab22e89" id="r_a743205bad38cde28c3645f0eeab22e89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a743205bad38cde28c3645f0eeab22e89">setPointPos</a> (const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> offset, const bt::Vector3 &amp;pos)</td></tr>
+<tr class="memdesc:a743205bad38cde28c3645f0eeab22e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the position of a point.  <br /></td></tr>
 <tr class="separator:a743205bad38cde28c3645f0eeab22e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9501a538173c09d40f2bdd0b9598f7f6" id="r_a9501a538173c09d40f2bdd0b9598f7f6"><td class="memItemLeft" align="right" valign="top"><a id="a9501a538173c09d40f2bdd0b9598f7f6" name="a9501a538173c09d40f2bdd0b9598f7f6"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimStartVertex</b> (ga::Offset primOffset) const</td></tr>
+<tr class="memitem:a9501a538173c09d40f2bdd0b9598f7f6" id="r_a9501a538173c09d40f2bdd0b9598f7f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9501a538173c09d40f2bdd0b9598f7f6">getPrimStartVertex</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
+<tr class="memdesc:a9501a538173c09d40f2bdd0b9598f7f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the first vertex of a primitive.  <br /></td></tr>
 <tr class="separator:a9501a538173c09d40f2bdd0b9598f7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bb16252377ca9ad31903538b6c5d48f" id="r_a0bb16252377ca9ad31903538b6c5d48f"><td class="memItemLeft" align="right" valign="top"><a id="a0bb16252377ca9ad31903538b6c5d48f" name="a0bb16252377ca9ad31903538b6c5d48f"></a>
-bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>getPosFromVert</b> (ga::Offset vertexOffset) const</td></tr>
+<tr class="memitem:a0bb16252377ca9ad31903538b6c5d48f" id="r_a0bb16252377ca9ad31903538b6c5d48f"><td class="memItemLeft" align="right" valign="top">bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0bb16252377ca9ad31903538b6c5d48f">getPosFromVert</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
+<tr class="memdesc:a0bb16252377ca9ad31903538b6c5d48f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the 3 dimensional position from a vertex offset.  <br /></td></tr>
 <tr class="separator:a0bb16252377ca9ad31903538b6c5d48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36694b922a0505174a86294384c569de" id="r_a36694b922a0505174a86294384c569de"><td class="memItemLeft" align="right" valign="top"><a id="a36694b922a0505174a86294384c569de" name="a36694b922a0505174a86294384c569de"></a>
-bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>getPointPos</b> (ga::Offset pointOffset) const</td></tr>
+<tr class="memitem:a36694b922a0505174a86294384c569de" id="r_a36694b922a0505174a86294384c569de"><td class="memItemLeft" align="right" valign="top">bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36694b922a0505174a86294384c569de">getPointPos</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> pointOffset) const</td></tr>
+<tr class="memdesc:a36694b922a0505174a86294384c569de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the position of a point.  <br /></td></tr>
 <tr class="separator:a36694b922a0505174a86294384c569de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa020a5e510e97d427f64cb939da8a291" id="r_aa020a5e510e97d427f64cb939da8a291"><td class="memItemLeft" align="right" valign="top"><a id="aa020a5e510e97d427f64cb939da8a291" name="aa020a5e510e97d427f64cb939da8a291"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimVertCount</b> (ga::Offset primOffset) const</td></tr>
+<tr class="memitem:aa020a5e510e97d427f64cb939da8a291" id="r_aa020a5e510e97d427f64cb939da8a291"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa020a5e510e97d427f64cb939da8a291">getPrimVertCount</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
+<tr class="memdesc:aa020a5e510e97d427f64cb939da8a291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of vertices in a primitive.  <br /></td></tr>
 <tr class="separator:aa020a5e510e97d427f64cb939da8a291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae365ee594b5fcd078c1b9b6669ecbf21" id="r_ae365ee594b5fcd078c1b9b6669ecbf21"><td class="memItemLeft" align="right" valign="top"><a id="ae365ee594b5fcd078c1b9b6669ecbf21" name="ae365ee594b5fcd078c1b9b6669ecbf21"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getVertexPrim</b> (ga::Offset vertexOffset) const</td></tr>
+<tr class="memitem:ae365ee594b5fcd078c1b9b6669ecbf21" id="r_ae365ee594b5fcd078c1b9b6669ecbf21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae365ee594b5fcd078c1b9b6669ecbf21">getVertexPrim</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
+<tr class="memdesc:ae365ee594b5fcd078c1b9b6669ecbf21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the primitive that owns a given vertex.  <br /></td></tr>
 <tr class="separator:ae365ee594b5fcd078c1b9b6669ecbf21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00fc86a323fff791c4ee00ffcdb0b49d" id="r_a00fc86a323fff791c4ee00ffcdb0b49d"><td class="memItemLeft" align="right" valign="top"><a id="a00fc86a323fff791c4ee00ffcdb0b49d" name="a00fc86a323fff791c4ee00ffcdb0b49d"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getNumPrims</b> () const</td></tr>
+<tr class="memitem:a00fc86a323fff791c4ee00ffcdb0b49d" id="r_a00fc86a323fff791c4ee00ffcdb0b49d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00fc86a323fff791c4ee00ffcdb0b49d">getNumPrims</a> () const</td></tr>
+<tr class="memdesc:a00fc86a323fff791c4ee00ffcdb0b49d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of primitives in the geometry.  <br /></td></tr>
 <tr class="separator:a00fc86a323fff791c4ee00ffcdb0b49d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab96b5c98aeaa1216cc3816559885bab" id="r_aab96b5c98aeaa1216cc3816559885bab"><td class="memItemLeft" align="right" valign="top"><a id="aab96b5c98aeaa1216cc3816559885bab" name="aab96b5c98aeaa1216cc3816559885bab"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getNumVerts</b> () const</td></tr>
+<tr class="memitem:aab96b5c98aeaa1216cc3816559885bab" id="r_aab96b5c98aeaa1216cc3816559885bab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab96b5c98aeaa1216cc3816559885bab">getNumVerts</a> () const</td></tr>
+<tr class="memdesc:aab96b5c98aeaa1216cc3816559885bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of vertices in the geometry.  <br /></td></tr>
 <tr class="separator:aab96b5c98aeaa1216cc3816559885bab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff4701e5566dea6c52e74df56a866f56" id="r_aff4701e5566dea6c52e74df56a866f56"><td class="memItemLeft" align="right" valign="top"><a id="aff4701e5566dea6c52e74df56a866f56" name="aff4701e5566dea6c52e74df56a866f56"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getNumPoints</b> () const</td></tr>
+<tr class="memitem:aff4701e5566dea6c52e74df56a866f56" id="r_aff4701e5566dea6c52e74df56a866f56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff4701e5566dea6c52e74df56a866f56">getNumPoints</a> () const</td></tr>
+<tr class="memdesc:aff4701e5566dea6c52e74df56a866f56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of points in the geometry.  <br /></td></tr>
 <tr class="separator:aff4701e5566dea6c52e74df56a866f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fe8a2f15b7da455e50b10f1ae494892" id="r_a0fe8a2f15b7da455e50b10f1ae494892"><td class="memItemLeft" align="right" valign="top"><a id="a0fe8a2f15b7da455e50b10f1ae494892" name="a0fe8a2f15b7da455e50b10f1ae494892"></a>
-ga::Offset&#160;</td><td class="memItemRight" valign="bottom"><b>getNumSoloPoints</b> () const</td></tr>
+<tr class="memitem:a0fe8a2f15b7da455e50b10f1ae494892" id="r_a0fe8a2f15b7da455e50b10f1ae494892"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fe8a2f15b7da455e50b10f1ae494892">getNumSoloPoints</a> () const</td></tr>
+<tr class="memdesc:a0fe8a2f15b7da455e50b10f1ae494892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of isolated points in the geometry. Isolated points are points that are not connnected to any other point and don't belong to a primitive.  <br /></td></tr>
 <tr class="separator:a0fe8a2f15b7da455e50b10f1ae494892"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a1747a9e5b89df72c859c3e8408351b" id="r_a9a1747a9e5b89df72c859c3e8408351b"><td class="memItemLeft" align="right" valign="top"><a id="a9a1747a9e5b89df72c859c3e8408351b" name="a9a1747a9e5b89df72c859c3e8408351b"></a>
-bt::boolT&#160;</td><td class="memItemRight" valign="bottom"><b>isClosed</b> (ga::Offset primOffset) const</td></tr>
+<tr class="memitem:a9a1747a9e5b89df72c859c3e8408351b" id="r_a9a1747a9e5b89df72c859c3e8408351b"><td class="memItemLeft" align="right" valign="top">bt::boolT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a1747a9e5b89df72c859c3e8408351b">isClosed</a> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
+<tr class="memdesc:a9a1747a9e5b89df72c859c3e8408351b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a primitive is closed or open.  <br /></td></tr>
 <tr class="separator:a9a1747a9e5b89df72c859c3e8408351b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a146d3992036c898d0760be5c69ba2662" id="r_a146d3992036c898d0760be5c69ba2662"><td class="memItemLeft" align="right" valign="top"><a id="a146d3992036c898d0760be5c69ba2662" name="a146d3992036c898d0760be5c69ba2662"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>merge</b> (<a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;other)</td></tr>
+<tr class="memitem:a146d3992036c898d0760be5c69ba2662" id="r_a146d3992036c898d0760be5c69ba2662"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a146d3992036c898d0760be5c69ba2662">merge</a> (<a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;other)</td></tr>
+<tr class="memdesc:a146d3992036c898d0760be5c69ba2662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merges another geometry into this one.  <br /></td></tr>
 <tr class="separator:a146d3992036c898d0760be5c69ba2662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad75737de589ffecedd7a256e63fa182d" id="r_ad75737de589ffecedd7a256e63fa182d"><td class="memItemLeft" align="right" valign="top"><a id="ad75737de589ffecedd7a256e63fa182d" name="ad75737de589ffecedd7a256e63fa182d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>computePrimStartVertices</b> () const</td></tr>
+<tr class="memitem:ad75737de589ffecedd7a256e63fa182d" id="r_ad75737de589ffecedd7a256e63fa182d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad75737de589ffecedd7a256e63fa182d">computePrimStartVertices</a> () const</td></tr>
+<tr class="memdesc:ad75737de589ffecedd7a256e63fa182d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the starting vertex for each primitive in the geometry.  <br /></td></tr>
 <tr class="separator:ad75737de589ffecedd7a256e63fa182d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes. </p>
+<p>The <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a> class represents the core data being passed between nodes in the engine. It is the operand of the network. Nodes read, modify, and output geometry, which is then used to populate the viewport and the geometry spreadsheet. <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a> is stored in an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> based structure, similar to a spreadsheet, where each column is an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> owned by points, vertices, primitives, or the global context. Most geometry information, including built in properties such as positions and connectivity, is stored through this same system. These built in <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> are intrinsic, but they share the same base as user-defined <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> to keep the data model consistent.</p>
+<p>The class provides methods for constructing and querying geometry, including adding points and faces, computing normals, and building a CGAL half-edge mesh representation. It also exposes accessors for reading positions, primitive connectivity, and vertex data, while tracking special cases such as isolated points.</p>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a> in instatiated with some intrinsic attributes required to construct geometry, such as P (position) on point attributes, vertexCount and closed on primitive attributes, and point on vertices. It is recommended not to modify these directy but instead use the helper functions. </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7ff85faa417b3765d207e0013f3e0b32" name="a7ff85faa417b3765d207e0013f3e0b32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ff85faa417b3765d207e0013f3e0b32">&#9670;&#160;</a></span>addBoolAttribute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a> geo::Geometry::addBoolAttribute </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a boolean attribute to the geometry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner (point, vertex, primitive, detail). </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the created boolean attribute. </dd></dl>
+
+</div>
+</div>
+<a id="a222b88a2da5d0e64768241d3d792f863" name="a222b88a2da5d0e64768241d3d792f863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a222b88a2da5d0e64768241d3d792f863">&#9670;&#160;</a></span>addFace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Geometry::addFace </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>pointOffsets</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>closed</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a polygonal face to the geometry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointOffsets</td><td>Offsets of the points forming the face. </td></tr>
+    <tr><td class="paramname">closed</td><td>Whether the face is closed (default true). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a956c2cc547a48789e77f985de922b33a" name="a956c2cc547a48789e77f985de922b33a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a956c2cc547a48789e77f985de922b33a">&#9670;&#160;</a></span>addIntAttribute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleInt</a> geo::Geometry::addIntAttribute </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds an integer attribute to the geometry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner (point, vertex, primitive, detail). </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the created integer attribute. </dd></dl>
+
+</div>
+</div>
+<a id="a5f2ec15a21d6bc9b1bc931d907593e37" name="a5f2ec15a21d6bc9b1bc931d907593e37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f2ec15a21d6bc9b1bc931d907593e37">&#9670;&#160;</a></span>addPoint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Geometry::addPoint </td>
+          <td>(</td>
+          <td class="paramtype">const bt::Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>pos</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a point to the geometry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>Position of the new point. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0817c098e66ac0b6a3cc16ae88b735bd" name="a0817c098e66ac0b6a3cc16ae88b735bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0817c098e66ac0b6a3cc16ae88b735bd">&#9670;&#160;</a></span>addVector3Attribute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::Vector3 &gt; geo::Geometry::addVector3Attribute </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a 3D vector attribute to the geometry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner (point, vertex, primitive, detail). </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the created Vector3 attribute. </dd></dl>
+
+</div>
+</div>
+<a id="a95a6551e5131b627635134efdec84dad" name="a95a6551e5131b627635134efdec84dad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95a6551e5131b627635134efdec84dad">&#9670;&#160;</a></span>computeHalfEdgeMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enzo::geo::HeMesh geo::Geometry::computeHalfEdgeMesh </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes per-point normals for the geometry. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of computed normals corresponding to each point.</dd></dl>
+<p>Builds a CGAL half-edge mesh representation of the geometry. </p><dl class="section return"><dt>Returns</dt><dd>The constructed half-edge mesh. </dd></dl>
+
+</div>
+</div>
+<a id="ad75737de589ffecedd7a256e63fa182d" name="ad75737de589ffecedd7a256e63fa182d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad75737de589ffecedd7a256e63fa182d">&#9670;&#160;</a></span>computePrimStartVertices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Geometry::computePrimStartVertices </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the starting vertex for each primitive in the geometry. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>Automatically lazy evaluate when requested (make thread safe) </dd></dl>
+
+</div>
+</div>
+<a id="a9a32d661ac1b31ce16059bc215322476" name="a9a32d661ac1b31ce16059bc215322476"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a32d661ac1b31ce16059bc215322476">&#9670;&#160;</a></span>getAttribByName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt; geo::Geometry::getAttribByName </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves an attribute by its name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner. </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Shared pointer to the attribute if found, otherwise nullptr. </dd></dl>
+
+</div>
+</div>
+<a id="a1a1a17007c7307a6b2c9fbf9d7e89f61" name="a1a1a17007c7307a6b2c9fbf9d7e89f61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a1a17007c7307a6b2c9fbf9d7e89f61">&#9670;&#160;</a></span>getAttributeByIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::weak_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt; geo::Geometry::getAttributeByIndex </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves an attribute by its index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner. </td></tr>
+    <tr><td class="paramname">index</td><td>Index of the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Weak pointer to the attribute. </dd></dl>
+
+</div>
+</div>
+<a id="aa38a0eb5c269e40b9dd6f1b8cecfe155" name="aa38a0eb5c269e40b9dd6f1b8cecfe155"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa38a0eb5c269e40b9dd6f1b8cecfe155">&#9670;&#160;</a></span>getNumAttributes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const size_t geo::Geometry::getNumAttributes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of attributes owned by a specific element type. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">owner</td><td>The attribute owner. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of attributes. </dd></dl>
+
+</div>
+</div>
+<a id="aff4701e5566dea6c52e74df56a866f56" name="aff4701e5566dea6c52e74df56a866f56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff4701e5566dea6c52e74df56a866f56">&#9670;&#160;</a></span>getNumPoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getNumPoints </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of points in the geometry. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of points. </dd></dl>
+
+</div>
+</div>
+<a id="a00fc86a323fff791c4ee00ffcdb0b49d" name="a00fc86a323fff791c4ee00ffcdb0b49d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00fc86a323fff791c4ee00ffcdb0b49d">&#9670;&#160;</a></span>getNumPrims()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getNumPrims </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of primitives in the geometry. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of primitives. </dd></dl>
+
+</div>
+</div>
+<a id="a0fe8a2f15b7da455e50b10f1ae494892" name="a0fe8a2f15b7da455e50b10f1ae494892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fe8a2f15b7da455e50b10f1ae494892">&#9670;&#160;</a></span>getNumSoloPoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getNumSoloPoints </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of isolated points in the geometry. Isolated points are points that are not connnected to any other point and don't belong to a primitive. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of solo points. </dd></dl>
+
+</div>
+</div>
+<a id="aab96b5c98aeaa1216cc3816559885bab" name="aab96b5c98aeaa1216cc3816559885bab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab96b5c98aeaa1216cc3816559885bab">&#9670;&#160;</a></span>getNumVerts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getNumVerts </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of vertices in the geometry. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of vertices. </dd></dl>
+
+</div>
+</div>
+<a id="a36694b922a0505174a86294384c569de" name="a36694b922a0505174a86294384c569de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36694b922a0505174a86294384c569de">&#9670;&#160;</a></span>getPointPos()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bt::Vector3 geo::Geometry::getPointPos </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>pointOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the position of a point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointOffset</td><td>Offset of the point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Position of the point. </dd></dl>
+
+</div>
+</div>
+<a id="a0bb16252377ca9ad31903538b6c5d48f" name="a0bb16252377ca9ad31903538b6c5d48f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bb16252377ca9ad31903538b6c5d48f">&#9670;&#160;</a></span>getPosFromVert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bt::Vector3 geo::Geometry::getPosFromVert </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>vertexOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the 3 dimensional position from a vertex offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vertexOffset</td><td>Offset of the vertex. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Position of the vertex. </dd></dl>
+
+</div>
+</div>
+<a id="a9501a538173c09d40f2bdd0b9598f7f6" name="a9501a538173c09d40f2bdd0b9598f7f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9501a538173c09d40f2bdd0b9598f7f6">&#9670;&#160;</a></span>getPrimStartVertex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getPrimStartVertex </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>primOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the first vertex of a primitive. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">primOffset</td><td>Offset of the primitive. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Offset of the first vertex. </dd></dl>
+
+</div>
+</div>
+<a id="aa020a5e510e97d427f64cb939da8a291" name="aa020a5e510e97d427f64cb939da8a291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa020a5e510e97d427f64cb939da8a291">&#9670;&#160;</a></span>getPrimVertCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int geo::Geometry::getPrimVertCount </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>primOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of vertices in a primitive. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">primOffset</td><td>Offset of the primitive. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of vertices. </dd></dl>
+
+</div>
+</div>
+<a id="ae365ee594b5fcd078c1b9b6669ecbf21" name="ae365ee594b5fcd078c1b9b6669ecbf21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae365ee594b5fcd078c1b9b6669ecbf21">&#9670;&#160;</a></span>getVertexPrim()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Geometry::getVertexPrim </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>vertexOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the primitive that owns a given vertex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vertexOffset</td><td>Offset of the vertex. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Offset of the owning primitive. </dd></dl>
+
+</div>
+</div>
+<a id="a9a1747a9e5b89df72c859c3e8408351b" name="a9a1747a9e5b89df72c859c3e8408351b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a1747a9e5b89df72c859c3e8408351b">&#9670;&#160;</a></span>isClosed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bt::boolT geo::Geometry::isClosed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>primOffset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if a primitive is closed or open. </p>
+<p>Open primitives are treated and rendered as curves.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">primOffset</td><td>Offset of the primitive. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the primitive is closed, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a146d3992036c898d0760be5c69ba2662" name="a146d3992036c898d0760be5c69ba2662"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a146d3992036c898d0760be5c69ba2662">&#9670;&#160;</a></span>merge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::geo::Geometry::merge </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Merges another geometry into this one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The geometry to merge. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5ccfabcb96e11b2ae20970ac90f21980" name="a5ccfabcb96e11b2ae20970ac90f21980"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ccfabcb96e11b2ae20970ac90f21980">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> &amp; enzo::geo::Geometry::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1geo_1_1Geometry.html">Geometry</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assignment operator. Performs a deep copy of another <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rhs</td><td>The <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a> object to copy from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this <a class="el" href="classenzo_1_1geo_1_1Geometry.html" title="Attribute based geometry container exchanged and modified by nodes.">Geometry</a>. </dd></dl>
+
+</div>
+</div>
+<a id="a743205bad38cde28c3645f0eeab22e89" name="a743205bad38cde28c3645f0eeab22e89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a743205bad38cde28c3645f0eeab22e89">&#9670;&#160;</a></span>setPointPos()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Geometry::setPointPos </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a></td>          <td class="paramname"><span class="paramname"><em>offset</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bt::Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>pos</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the position of a point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">offset</td><td>Offset of the point. </td></tr>
+    <tr><td class="paramname">pos</td><td>New position. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a664cea9fe5b2957d069e24d6ebce9bcc" name="a664cea9fe5b2957d069e24d6ebce9bcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a664cea9fe5b2957d069e24d6ebce9bcc">&#9670;&#160;</a></span>soloPointsBegin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::set&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;::const_iterator geo::Geometry::soloPointsBegin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Iterator to the beginning of the set of solo (isolated) points. </p>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator to the first solo point. </dd></dl>
+
+</div>
+</div>
+<a id="a084569e67281f57fe2f4b41314a929e9" name="a084569e67281f57fe2f4b41314a929e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a084569e67281f57fe2f4b41314a929e9">&#9670;&#160;</a></span>soloPointsEnd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::set&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;::const_iterator geo::Geometry::soloPointsEnd </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Iterator to the end of the set of solo (isolated) points. </p>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator past the last solo point. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="Geometry_8h_source.html">Geometry.h</a></li>
 <li>src/Engine/Operator/<b>Geometry.cpp</b></li>

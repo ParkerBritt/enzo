@@ -98,32 +98,39 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::ga::AttributeHandle&lt; T &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Read write accessor for <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">enzo::ga::Attribute</a>.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="AttributeHandle_8h_source.html">AttributeHandle.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa884d29c649c3178ef14ea07f9a06001" id="r_aa884d29c649c3178ef14ea07f9a06001"><td class="memItemLeft" align="right" valign="top"><a id="aa884d29c649c3178ef14ea07f9a06001" name="aa884d29c649c3178ef14ea07f9a06001"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>AttributeHandle</b> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &gt; attribute)</td></tr>
+<tr class="memitem:aa884d29c649c3178ef14ea07f9a06001" id="r_aa884d29c649c3178ef14ea07f9a06001"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa884d29c649c3178ef14ea07f9a06001">AttributeHandle</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &gt; attribute)</td></tr>
+<tr class="memdesc:aa884d29c649c3178ef14ea07f9a06001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new typed handle linked to a target attribute.  <br /></td></tr>
 <tr class="separator:aa884d29c649c3178ef14ea07f9a06001"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46b5049f2b329204488ce16fc29e255e" id="r_a46b5049f2b329204488ce16fc29e255e"><td class="memItemLeft" align="right" valign="top"><a id="a46b5049f2b329204488ce16fc29e255e" name="a46b5049f2b329204488ce16fc29e255e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addValue</b> (T value)</td></tr>
+<tr class="memitem:a46b5049f2b329204488ce16fc29e255e" id="r_a46b5049f2b329204488ce16fc29e255e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46b5049f2b329204488ce16fc29e255e">addValue</a> (T value)</td></tr>
+<tr class="memdesc:a46b5049f2b329204488ce16fc29e255e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an element to the end of the attribute.  <br /></td></tr>
 <tr class="separator:a46b5049f2b329204488ce16fc29e255e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec803d8fe06814f734e0ef6984e9f10a" id="r_aec803d8fe06814f734e0ef6984e9f10a"><td class="memItemLeft" align="right" valign="top"><a id="aec803d8fe06814f734e0ef6984e9f10a" name="aec803d8fe06814f734e0ef6984e9f10a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reserve</b> (std::size_t newCap)</td></tr>
+<tr class="memitem:aec803d8fe06814f734e0ef6984e9f10a" id="r_aec803d8fe06814f734e0ef6984e9f10a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec803d8fe06814f734e0ef6984e9f10a">reserve</a> (std::size_t newCap)</td></tr>
+<tr class="memdesc:aec803d8fe06814f734e0ef6984e9f10a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserves more space in the attribute to add new elements.  <br /></td></tr>
 <tr class="separator:aec803d8fe06814f734e0ef6984e9f10a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3db782952a7dfb064406e6bf055d8841" id="r_a3db782952a7dfb064406e6bf055d8841"><td class="memItemLeft" align="right" valign="top"><a id="a3db782952a7dfb064406e6bf055d8841" name="a3db782952a7dfb064406e6bf055d8841"></a>
-std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAllValues</b> () const</td></tr>
+<tr class="memitem:a3db782952a7dfb064406e6bf055d8841" id="r_a3db782952a7dfb064406e6bf055d8841"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3db782952a7dfb064406e6bf055d8841">getAllValues</a> () const</td></tr>
+<tr class="memdesc:a3db782952a7dfb064406e6bf055d8841"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a vector containing all the values stored in this attribute.  <br /></td></tr>
 <tr class="separator:a3db782952a7dfb064406e6bf055d8841"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6878b34c96155ec8bb9c403593292839" id="r_a6878b34c96155ec8bb9c403593292839"><td class="memItemLeft" align="right" valign="top"><a id="a6878b34c96155ec8bb9c403593292839" name="a6878b34c96155ec8bb9c403593292839"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getSize</b> () const</td></tr>
+<tr class="memdesc:a6878b34c96155ec8bb9c403593292839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of element stored in the attribute. <br /></td></tr>
 <tr class="separator:a6878b34c96155ec8bb9c403593292839"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15252d9e4737122b254f22a48fd35317" id="r_a15252d9e4737122b254f22a48fd35317"><td class="memItemLeft" align="right" valign="top"><a id="a15252d9e4737122b254f22a48fd35317" name="a15252d9e4737122b254f22a48fd35317"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>getValue</b> (size_t pos) const</td></tr>
-<tr class="separator:a15252d9e4737122b254f22a48fd35317"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fd65c260f8cfea28419e24627b5d015" id="r_a4fd65c260f8cfea28419e24627b5d015"><td class="memItemLeft" align="right" valign="top"><a id="a4fd65c260f8cfea28419e24627b5d015" name="a4fd65c260f8cfea28419e24627b5d015"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (size_t pos, const T &amp;value)</td></tr>
-<tr class="separator:a4fd65c260f8cfea28419e24627b5d015"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c46c4ac5b3c060047c55ec7e6b018c2" id="r_a6c46c4ac5b3c060047c55ec7e6b018c2"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c46c4ac5b3c060047c55ec7e6b018c2">getValue</a> (size_t offset) const</td></tr>
+<tr class="memdesc:a6c46c4ac5b3c060047c55ec7e6b018c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value at a given offset.  <br /></td></tr>
+<tr class="separator:a6c46c4ac5b3c060047c55ec7e6b018c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39a719dc702eedd2372e88c9c22eddb1" id="r_a39a719dc702eedd2372e88c9c22eddb1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39a719dc702eedd2372e88c9c22eddb1">setValue</a> (size_t offset, const T &amp;value)</td></tr>
+<tr class="memdesc:a39a719dc702eedd2372e88c9c22eddb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value at a given offset.  <br /></td></tr>
+<tr class="separator:a39a719dc702eedd2372e88c9c22eddb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d5efa2337bc31ba2b61770820262ab1" id="r_a3d5efa2337bc31ba2b61770820262ab1"><td class="memItemLeft" align="right" valign="top"><a id="a3d5efa2337bc31ba2b61770820262ab1" name="a3d5efa2337bc31ba2b61770820262ab1"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> () const</td></tr>
+<tr class="memdesc:a3d5efa2337bc31ba2b61770820262ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returs the attribute name as a string. <br /></td></tr>
 <tr class="separator:a3d5efa2337bc31ba2b61770820262ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -132,6 +139,226 @@ Public Attributes</h2></td></tr>
 <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">ga::AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type_</b></td></tr>
 <tr class="separator:a5dcdb47809e6af49e1adbae0e64d0372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename T&gt;<br />
+class enzo::ga::AttributeHandle&lt; T &gt;</div><p>Read write accessor for <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">enzo::ga::Attribute</a>. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>C++ value type matching the Attribute’s logical type (e.g., bt::intT, bt::floatT, bt::Vector3, bt::boolT).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>An <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">Attribute</a> Handle is a typed view into an attribute’s storage. It binds at construction to a concrete type and exposes operations like reserving capacity, appending values, and reading/writing by index. Because the handle uses templating, most misuse is caught at compile time, and runtime guards raise errors if an attribute/handle type combination isn’t accounted for. In the future implicit casting can be added for convenience. Handles don’t own data, they just reference the attribute’s storage.</p>
+<p>There is also a read-only handle variant that provides the same typed accessors without mutation. This is useful when an operator needs to inspect data but must not modify it, when the engine exposes attributes to user code with limited permissions, or when implementing const member functions that require attribute access.</p>
+<p>Together, attributes define the schema and storage, while handles provide the typed access that nodes and tools use to operate on data directly. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aa884d29c649c3178ef14ea07f9a06001" name="aa884d29c649c3178ef14ea07f9a06001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa884d29c649c3178ef14ea07f9a06001">&#9670;&#160;</a></span>AttributeHandle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::AttributeHandle </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new typed handle linked to a target attribute. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">attribute</td><td>The target attribute this handle will modify </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a46b5049f2b329204488ce16fc29e255e" name="a46b5049f2b329204488ce16fc29e255e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46b5049f2b329204488ce16fc29e255e">&#9670;&#160;</a></span>addValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::addValue </td>
+          <td>(</td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Adds an element to the end of the attribute. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">The</td><td>element value the value to add to the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3db782952a7dfb064406e6bf055d8841" name="a3db782952a7dfb064406e6bf055d8841"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3db782952a7dfb064406e6bf055d8841">&#9670;&#160;</a></span>getAllValues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::getAllValues </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a vector containing all the values stored in this attribute. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo</a></b></dt><dd>Replace with an iterator for accessing many values.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector containing all the values stored in this attribute. </dd></dl>
+
+</div>
+</div>
+<a id="a6c46c4ac5b3c060047c55ec7e6b018c2" name="a6c46c4ac5b3c060047c55ec7e6b018c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c46c4ac5b3c060047c55ec7e6b018c2">&#9670;&#160;</a></span>getValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::getValue </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value at a given offset. </p>
+<dl class="section return"><dt>Returns</dt><dd>The value stored at a given offset </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo</a></b></dt><dd><p class="startdd">protect against invalid positions </p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5) </p>
+</dd></dl>
+
+</div>
+</div>
+<a id="aec803d8fe06814f734e0ef6984e9f10a" name="aec803d8fe06814f734e0ef6984e9f10a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec803d8fe06814f734e0ef6984e9f10a">&#9670;&#160;</a></span>reserve()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::reserve </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>newCap</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reserves more space in the attribute to add new elements. </p>
+<p>This is important when adding many elements to the attribute as automatic resizing is expensive.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newCap</td><td>The new maximum number of elements the attribute can hold before needing to automatically allocate more. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a39a719dc702eedd2372e88c9c22eddb1" name="a39a719dc702eedd2372e88c9c22eddb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39a719dc702eedd2372e88c9c22eddb1">&#9670;&#160;</a></span>setValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::setValue </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the value at a given offset. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo</a></b></dt><dd><p class="startdd">protect against invalid positions </p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5) </p>
+</dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="Attribute_8h_source.html">Attribute.h</a></li>
 <li>src/Engine/Operator/<a class="el" href="AttributeHandle_8h_source.html">AttributeHandle.h</a></li>

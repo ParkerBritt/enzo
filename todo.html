@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: Member List</title>
+<title>Enzo: Todo List</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -84,26 +84,30 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>ga</b></li><li class="navelem"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">AttributeHandleRO</a></li>  </ul>
-</div>
 </div><!-- top -->
 <div id="doc-content">
-<div class="header">
-  <div class="headertitle"><div class="title">enzo::ga::AttributeHandleRO&lt; T &gt; Member List</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">Todo List</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html#a36dfe2d9025084c13614e80227d0c21a">AttributeHandleRO</a>(std::shared_ptr&lt; const Attribute &gt; attribute)</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html#accb81708e6c9174cb2a8ee6447676e54">getAllValues</a>() const</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html#a68ba2150581e8c751c0e5632a50f1c49">getName</a>() const</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html#a8863541123a8fe8f9d4d2d614457fbcd">getSize</a>() const</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html#abe88c16be26734cab7c135dfdcaae150">getValue</a>(size_t pos) const</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>type_</b> (defined in <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO&lt; T &gt;</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><dl class="reflist">
+<dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a3db782952a7dfb064406e6bf055d8841">enzo::ga::AttributeHandle&lt; T &gt;::getAllValues</a>  () const</dt>
+<dd><a class="anchor" id="_todo000001"></a>Replace with an iterator for accessing many values. </dd>
+<dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a6c46c4ac5b3c060047c55ec7e6b018c2">enzo::ga::AttributeHandle&lt; T &gt;::getValue</a>  (size_t offset) const</dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000002"></a>protect against invalid positions </p>
+<p class="interdd"></p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5)  </p>
+</dd>
+<dt>Member <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html#a39a719dc702eedd2372e88c9c22eddb1">enzo::ga::AttributeHandle&lt; T &gt;::setValue</a>  (size_t offset, const T &amp;value)</dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000003"></a>protect against invalid positions </p>
+<p class="interdd"></p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5)  </p>
+</dd>
+<dt>Member <a class="el" href="classenzo_1_1geo_1_1Geometry.html#ad75737de589ffecedd7a256e63fa182d">enzo::geo::Geometry::computePrimStartVertices</a>  () const</dt>
+<dd><a class="anchor" id="_todo000004"></a>Automatically lazy evaluate when requested (make thread safe) </dd>
+</dl>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

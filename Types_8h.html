@@ -110,10 +110,10 @@ Typedefs</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::AttrType</b> = <a class="el" href="#a6ab89474f03231b839b5d10df296e156">AttributeType</a></td></tr>
 <tr class="separator:ae8c9ab45e701f3e4b4f8c83bb59935bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bdf8ce75d3fe2c571f3bbfa9694c15d" id="r_a1bdf8ce75d3fe2c571f3bbfa9694c15d"><td class="memItemLeft" align="right" valign="top"><a id="a1bdf8ce75d3fe2c571f3bbfa9694c15d" name="a1bdf8ce75d3fe2c571f3bbfa9694c15d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::AttrOwner</b> = AttributeOwner</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::AttrOwner</b> = <a class="el" href="#a284ac41ae9685e6eff96cdddd2a4c110">AttributeOwner</a></td></tr>
 <tr class="separator:a1bdf8ce75d3fe2c571f3bbfa9694c15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13eee29e1dadf2c0ad228646e639ad69" id="r_a13eee29e1dadf2c0ad228646e639ad69"><td class="memItemLeft" align="right" valign="top"><a id="a13eee29e1dadf2c0ad228646e639ad69" name="a13eee29e1dadf2c0ad228646e639ad69"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::Offset</b> = size_t</td></tr>
+<tr class="memitem:a13eee29e1dadf2c0ad228646e639ad69" id="r_a13eee29e1dadf2c0ad228646e639ad69"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69">enzo::ga::Offset</a> = size_t</td></tr>
+<tr class="memdesc:a13eee29e1dadf2c0ad228646e639ad69"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69" title="ga::Offset is the index of an element in a given AttributeOwner.">ga::Offset</a> is the index of an element in a given AttributeOwner.  <br /></td></tr>
 <tr class="separator:a13eee29e1dadf2c0ad228646e639ad69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ea4b106db38c2c881414c5daf6936f3" id="r_a8ea4b106db38c2c881414c5daf6936f3"><td class="memItemLeft" align="right" valign="top"><a id="a8ea4b106db38c2c881414c5daf6936f3" name="a8ea4b106db38c2c881414c5daf6936f3"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::floatT</b> = double</td></tr>
@@ -139,11 +139,12 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::nt::OpId</b> =
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a284ac41ae9685e6eff96cdddd2a4c110" id="r_a284ac41ae9685e6eff96cdddd2a4c110"><td class="memItemLeft" align="right" valign="top"><a id="a284ac41ae9685e6eff96cdddd2a4c110" name="a284ac41ae9685e6eff96cdddd2a4c110"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>AttributeOwner</b> { <b>POINT</b>
+<tr class="memitem:a284ac41ae9685e6eff96cdddd2a4c110" id="r_a284ac41ae9685e6eff96cdddd2a4c110"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a284ac41ae9685e6eff96cdddd2a4c110">enzo::ga::AttributeOwner</a> { <b>POINT</b>
 , <b>VERTEX</b>
 , <b>PRIMITIVE</b>
 , <b>GLOBAL</b>
  }</td></tr>
+<tr class="memdesc:a284ac41ae9685e6eff96cdddd2a4c110"><td class="mdescLeft">&#160;</td><td class="mdescRight">The segment of geometry that owns a particular attribute.  <a href="#a284ac41ae9685e6eff96cdddd2a4c110">More...</a><br /></td></tr>
 <tr class="separator:a284ac41ae9685e6eff96cdddd2a4c110"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ab89474f03231b839b5d10df296e156" id="r_a6ab89474f03231b839b5d10df296e156"><td class="memItemLeft" align="right" valign="top"><a id="a6ab89474f03231b839b5d10df296e156" name="a6ab89474f03231b839b5d10df296e156"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ab89474f03231b839b5d10df296e156">enzo::ga::AttributeType</a> { <br />
 &#160;&#160;<b>intT</b>
@@ -175,7 +176,56 @@ Enumerations</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Basic attribute, parameter, and node types for Enzo. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a13eee29e1dadf2c0ad228646e639ad69" name="a13eee29e1dadf2c0ad228646e639ad69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13eee29e1dadf2c0ad228646e639ad69">&#9670;&#160;</a></span>Offset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69">enzo::ga::Offset</a> = size_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>ga::Offset is the index of an element in a given AttributeOwner. </p>
+<p>Eg. point index, vertex index, primitive index, or global index. This different but similar in concept to a point number. This value will stay consistant through geometry modification such as adding and deleting points unlress defragmented. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a284ac41ae9685e6eff96cdddd2a4c110" name="a284ac41ae9685e6eff96cdddd2a4c110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a284ac41ae9685e6eff96cdddd2a4c110">&#9670;&#160;</a></span>AttributeOwner</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a284ac41ae9685e6eff96cdddd2a4c110">enzo::ga::AttributeOwner</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The segment of geometry that owns a particular attribute. </p>
+<ul>
+<li>POINT attributes are stored per point, these attributes have an value for each point.</li>
+<li>VERTEX attributes are stored per vertex, these attributes have an value for each vertex.</li>
+<li>PRIMITIVE attributes are stored per primitive, these attributes have an value for each primitive.</li>
+<li>GLOBAL attributes are stored globaly, these attributes only have one value. </li>
+</ul>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
