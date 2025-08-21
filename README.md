@@ -36,5 +36,5 @@
 
 
 
-## Docs
-Check out the api [here!](https://parkerbritt.github.io/enzo/)
+## Documentation
+Doxygen documentation is generated automatically and can be accessed [here.](https://parkerbritt.github.io/enzo/)
