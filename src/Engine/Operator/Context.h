@@ -10,6 +10,12 @@ namespace enzo::nt
 
 namespace enzo::op
 {
+/**
+* @class Context
+* @brief Provides network context for the cookOp function.
+*
+* The context class is an interface for the cookOp function that provides important runtime context about the network. It allows querying parameters, reading input geometry, and in the future provides values like time.
+*/
 class Context
 {
 public:
