@@ -3,11 +3,11 @@
 </div>
 <h1 align="center">Enzo 3D</h1>
 
-<img align="left" src="https://parkerbritt.com/jenkins_badge?job=enzo">
+<img align="left" src="https://cards.parkerbritt.com/jenkins_badge?job=enzo">
 <div align="right">
-<img src="https://parkerbritt.com/badge?label=C%2B%2B&icon=cplusplus&color=00599C">
-<img src="https://parkerbritt.com/badge?label=opengl&icon=opengl&color=5586A4">
-<img src="https://parkerbritt.com/badge?label=qt&icon=qt&color=41CD52">
+<img src="https://cards.parkerbritt.com/badge?label=C%2B%2B&icon=cplusplus&color=00599C">
+<img src="https://cards.parkerbritt.com/badge?label=opengl&icon=opengl&color=5586A4">
+<img src="https://cards.parkerbritt.com/badge?label=qt&icon=qt&color=41CD52">
 </div>
 
 <div align="justify">
