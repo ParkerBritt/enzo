@@ -22,7 +22,7 @@ class NetworkManager;
 *
 * The class exposes utility functions for setting outputs and reading information
 * about itself like the number of inputs.
-* 
+*
 * The most important part of this node is the virtual cookOp member function.
 * This must be overridden to implement the node's logic when being cooked.
 * When a node is cooked it takes the optional input geometry from the context
@@ -35,6 +35,8 @@ public:
     * @brief Sets up internal state
     */
     GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo);
+    virtual ~GeometryOpDef() {};
+
     /**
     * @brief This function is called at runtime to create the output geometry
     *
@@ -73,7 +75,7 @@ protected:
     const op::OpInfo opInfo_;
     nt::NetworkManager* network_;
     bool outputRequested(unsigned int outputIndex);
-    
+
     // TODO: std::move geometry instead of copying
     void setOutputGeometry(unsigned int outputIndex, enzo::geo::Geometry geometry);
 };

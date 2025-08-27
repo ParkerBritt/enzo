@@ -8,9 +8,9 @@ class NetworkGraphicsScene
 public:
     NetworkGraphicsScene();
 private:
-    uint sceneWidth_;
-    uint sceneHeight_;
-    uint gridSize_;
+    unsigned int sceneWidth_;
+    unsigned int sceneHeight_;
+    unsigned int gridSize_;
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
 };

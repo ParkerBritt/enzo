@@ -1,4 +1,10 @@
+#if defined(__linux__) || defined(_WIN32)
 #include <GL/gl.h>
+#endif
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#endif
+
 #include <GL/glext.h>
 #include <QOpenGLWidget>
 #include <iostream>

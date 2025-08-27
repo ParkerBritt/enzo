@@ -28,10 +28,10 @@ public:
     * node different to a transform node.
     */
     GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo);
-
-    /// @brief Deleted copy constructor to avoid accidental copies. 
+    virtual ~GeometryOperator()=default;
+    /// @brief Deleted copy constructor to avoid accidental copies.
     GeometryOperator(const GeometryOperator&)            = delete;
-    /// @brief Deleted copy assignment operator to avoid accidental copies. 
+    /// @brief Deleted copy assignment operator to avoid accidental copies.
     GeometryOperator& operator=(const GeometryOperator&) = delete;
 
     /// @brief Computes the output geometry based on the [cookOp](@ref nt::GeometryOpDef::cookOp)
@@ -85,7 +85,7 @@ public:
     */
     void removeOutputConnection(const nt::GeometryConnection* connection);
 
-    /** 
+    /**
     * @brief Returns a vector containing weak pointers for all input connections.
     *
     * Connections returned by this function are weak pointers to indicate
@@ -93,7 +93,7 @@ public:
     */
     std::vector<std::weak_ptr<const GeometryConnection>> getInputConnections() const;
 
-    /** 
+    /**
     * @brief Returns a vector containing weak pointers for all output connections.
     *
     * Connections returned by this function are weak pointers to indicate
@@ -101,7 +101,7 @@ public:
     */
     std::vector<std::weak_ptr<const GeometryConnection>> getOutputConnections() const;
 
-    /** 
+    /**
     * @brief Returns an optional connection from a specific input index.
     *
     * @returns Nullopt if the connection doesn't exist.
@@ -130,7 +130,7 @@ public:
     */
     std::string getTypeName();
 
-    /** 
+    /**
     * @brief Marks the outputed geometry as outdated and notifies the network
     *
     * @param dirtyDescendents Sets whether all descendents (nodes connected
@@ -160,7 +160,7 @@ private:
     // TODO: avoid duplicate connections
     std::vector<std::shared_ptr<nt::GeometryConnection>> inputConnections_;
     std::vector<std::shared_ptr<nt::GeometryConnection>> outputConnections_;
-    std::vector<std::shared_ptr<prm::Parameter>> parameters_; 
+    std::vector<std::shared_ptr<prm::Parameter>> parameters_;
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;

@@ -1,5 +1,11 @@
 #include "Gui/Viewport/GLMesh.h"
+#if defined(__linux__) || defined(_WIN32)
 #include <GL/gl.h>
+#endif
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#endif
+
 #include <iostream>
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/Geometry.h"
@@ -42,7 +48,7 @@ void GLMesh::initBuffers()
     // set purpose
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
-    // gives the shader a way to read buffer data 
+    // gives the shader a way to read buffer data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     // read normal
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
