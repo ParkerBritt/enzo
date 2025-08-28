@@ -12,12 +12,12 @@
 
 using namespace enzo;
 geo::Geometry::Geometry() :
-    vertexCountHandlePrim_{addIntAttribute(ga::AttrOwner::PRIMITIVE, "vertexCount")},
-    closedHandlePrim_{addBoolAttribute(ga::AttrOwner::PRIMITIVE, "closed")},
-    pointOffsetHandleVert_{addIntAttribute(ga::AttrOwner::VERTEX, "point")},
-    posHandlePoint_{addVector3Attribute(ga::AttrOwner::POINT, "P")}
+    vertexCountHandlePrim_{addIntAttribute(ga::AttrOwner::PRIMITIVE, "vertexCount", true)},
+    closedHandlePrim_{addBoolAttribute(ga::AttrOwner::PRIMITIVE, "closed", true)},
+    pointOffsetHandleVert_{addIntAttribute(ga::AttrOwner::VERTEX, "point", true)},
+    posHandlePoint_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)}
 {
-    
+    addIntAttribute(ga::AttrOwner::PRIMITIVE, "foo");
 }
 
 geo::Geometry::Geometry(const Geometry& other):
@@ -28,10 +28,10 @@ geo::Geometry::Geometry(const Geometry& other):
     globalAttributes_{deepCopyAttributes(other.globalAttributes_)},
 
     // handles
-    vertexCountHandlePrim_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::PRIMITIVE, "vertexCount"))},
-    closedHandlePrim_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::PRIMITIVE, "closed"))},
-    pointOffsetHandleVert_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point"))},
-    posHandlePoint_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P"))},
+    vertexCountHandlePrim_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::PRIMITIVE, "vertexCount", true))},
+    closedHandlePrim_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::PRIMITIVE, "closed", true))},
+    pointOffsetHandleVert_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true))},
+    posHandlePoint_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true))},
 
     // other
     soloPoints_{other.soloPoints_},
@@ -51,10 +51,10 @@ enzo::geo::Geometry& enzo::geo::Geometry::operator=(const enzo::geo::Geometry& r
     globalAttributes_     = deepCopyAttributes(rhs.globalAttributes_);
 
     // handles
-    vertexCountHandlePrim_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::PRIMITIVE, "vertexCount"));
-    closedHandlePrim_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::PRIMITIVE, "closed"));
-    pointOffsetHandleVert_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point"));
-    posHandlePoint_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P"));
+    vertexCountHandlePrim_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::PRIMITIVE, "vertexCount", true));
+    closedHandlePrim_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::PRIMITIVE, "closed", true));
+    pointOffsetHandleVert_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true));
+    posHandlePoint_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true));
 
     // other
     soloPoints_           = rhs.soloPoints_;
@@ -66,37 +66,119 @@ enzo::geo::Geometry& enzo::geo::Geometry::operator=(const enzo::geo::Geometry& r
     return *this;
 }
 
-// void geo::Geometry::merge(Geometry& other)
-// {
-//     pointAttributes_.reserve(pointAttributes_.size()+other.pointAttributes_.size());
-//     ga::Offset attributeSize = getNumPoints();
+void geo::Geometry::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src)
+{
+    if(!dst) throw std::runtime_error("Dst empty.");
+    if(!src) throw std::runtime_error("Src empty.");
 
-//     // add each other attribute to self
-//     for(std::shared_ptr<ga::Attribute> otherAttribute : other.pointAttributes_)
-//     {
-//         bt::String otherAttributeName = otherAttribute->getName();
-//         bool alreadyExists = false;
-//         for(std::shared_ptr<ga::Attribute> attribute : pointAttributes_)
-//         {
-//             if(otherAttributeName == attribute->getName())
-//             {
-//                 alreadyExists = true;
-//                 break;
-//             }
-//         }
+    auto dstType = dst->getType();
+    auto srcType = src->getType();
 
-//         if(alreadyExists)
-//         {
-//             for
-//         }
-//         else
-//         {
-//             otherAttribute->resize(attributeSize);
-//         }
-//         
-//     }
+    if(dstType != srcType) throw std::runtime_error("mergeAppend type missmatch.");
 
-// }
+    switch(srcType)
+    {
+        case ga::AttributeType::intT:
+            mergeAppendImpl<bt::intT>(dst, src);  
+            break;
+        case ga::AttributeType::floatT:
+            mergeAppendImpl<bt::floatT>(dst, src);  
+            break;
+        case ga::AttributeType::listT:
+            break;
+        case ga::AttributeType::vectorT:
+            // mergeAppendImpl<bt::vector3>(dst, src);  
+            break;
+        case ga::AttributeType::boolT:
+            mergeAppendImpl<bt::boolT>(dst, src);  
+            break;
+        default:
+            throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
+
+    }
+}
+
+void geo::Geometry::merge(Geometry& other)
+{
+    // primitiveAttributes_.reserve(primitiveAttributes_.size()+other.primitiveAttributes_.size());
+    // ga::Offset attributeSize = getNumPoints();
+
+    // add each other attribute to self
+    for(std::shared_ptr<ga::Attribute> otherAttribute : other.vertexAttributes_)
+    {
+        bt::String otherAttributeName = otherAttribute->getName();
+        std::shared_ptr<ga::Attribute> attribute = getAttribByName(ga::AttrOwner::VERTEX, otherAttributeName);
+        
+        bool alreadyExists = static_cast<bool>(attribute);
+
+        // create mesh
+        const ga::Offset srcPrimNum = other.getNumPrims();
+        for(ga::Offset primOffset=0; primOffset<srcPrimNum; ++primOffset)
+        {
+            const ga::Offset primStartVertex = other.getPrimStartVertex(primOffset);
+            const ga::Offset vertexCount = other.getPrimVertCount(primOffset);
+            
+            std::vector<ga::Offset> pointOffsets;
+            pointOffsets.reserve(vertexCount);
+            for(ga::Offset i=0; i<vertexCount; ++i)
+            {
+                const ga::Offset otherPointOffset = other.pointOffsetHandleVert_.getValue(primStartVertex+i);
+                const ga::Offset newPointOffset = addPoint(other.getPointPos(otherPointOffset));
+                pointOffsets.push_back(newPointOffset);
+            }
+            // TODO: chech closed status
+            addFace(pointOffsets, true);
+
+        }
+
+        if(alreadyExists)
+        {
+            mergeAppend(attribute, otherAttribute);
+        }
+        // else
+        // {
+        //     otherAttribute->resize(attributeSize);
+        // }
+        
+    }
+
+    for(std::shared_ptr<ga::Attribute> otherAttribute : other.pointAttributes_)
+    {
+        bt::String otherAttributeName = otherAttribute->getName();
+        std::shared_ptr<ga::Attribute> attribute = getAttribByName(ga::AttrOwner::POINT, otherAttributeName);
+        
+        bool alreadyExists = static_cast<bool>(attribute);
+
+        if(alreadyExists)
+        {
+            mergeAppend(attribute, otherAttribute);
+        }
+        // else
+        // {
+        //     otherAttribute->resize(attributeSize);
+        // }
+        
+    }
+
+    for(std::shared_ptr<ga::Attribute> otherAttribute : other.primitiveAttributes_)
+    {
+        bt::String otherAttributeName = otherAttribute->getName();
+        std::shared_ptr<ga::Attribute> attribute = getAttribByName(ga::AttrOwner::PRIMITIVE, otherAttributeName);
+        
+        bool alreadyExists = static_cast<bool>(attribute);
+
+        if(alreadyExists)
+        {
+            mergeAppend(attribute, otherAttribute);
+        }
+        // else
+        // {
+        //     otherAttribute->resize(attributeSize);
+        // }
+        
+    }
+
+}
 
 void geo::Geometry::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
 {
@@ -109,13 +191,31 @@ void geo::Geometry::addFace(const std::vector<ga::Offset>& pointOffsets, bool cl
     }
     vertexCountHandlePrim_.addValue(pointOffsets.size());
     closedHandlePrim_.addValue(closed);
+
+    // resize other attributes
+    // TODO: make lazy or resize ahead of time
+    // prims
+    for(auto primAttribute : primitiveAttributes_)
+    {
+        if(primAttribute->isIntrinsic())
+        {
+            continue;
+        }
+
+        primAttribute->resize(primNum+1);
+
+    }
     
 }
 
-void geo::Geometry::addPoint(const bt::Vector3& pos)
+ga::Offset  geo::Geometry::addPoint(const bt::Vector3& pos)
 {
+    const ga::Offset pointOffset = posHandlePoint_.getSize();
+
     posHandlePoint_.addValue(pos);
     soloPoints_.emplace(posHandlePoint_.getSize()-1);
+
+    return pointOffset;
 }
 
 ga::Offset geo::Geometry::getNumSoloPoints() const
@@ -346,16 +446,16 @@ void geo::Geometry::computePrimStartVertices() const
 
 
 
-ga::AttributeHandleInt geo::Geometry::addIntAttribute(ga::AttributeOwner owner, std::string name)
+ga::AttributeHandleInt geo::Geometry::addIntAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::intT);
+    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::intT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleInt(newAttribute);
 }
 
-ga::AttributeHandleBool geo::Geometry::addBoolAttribute(ga::AttributeOwner owner, std::string name)
+ga::AttributeHandleBool geo::Geometry::addBoolAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::boolT);
+    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::boolT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleBool(newAttribute);
 }
@@ -366,9 +466,9 @@ bt::boolT geo::Geometry::isClosed(ga::Offset primOffset) const
 }
 
 
-ga::AttributeHandle<bt::Vector3> geo::Geometry::addVector3Attribute(ga::AttributeOwner owner, std::string name)
+ga::AttributeHandle<bt::Vector3> geo::Geometry::addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::vectorT);
+    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::vectorT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandle<bt::Vector3>(newAttribute);
 }
@@ -415,14 +515,21 @@ const geo::Geometry::attribVector& geo::Geometry::getAttributeStore(const ga::At
     }
 }
 
-std::shared_ptr<ga::Attribute> geo::Geometry::getAttribByName(ga::AttributeOwner owner, std::string name)
+bool geo::Geometry::attributeExists(ga::AttributeOwner owner, std::string name)
+{
+    return static_cast<bool>(getAttribByName(owner, name));
+}
+
+std::shared_ptr<ga::Attribute> geo::Geometry::getAttribByName(ga::AttributeOwner owner, std::string name, bool includeIntrinsics)
 {
     auto& vector = getAttributeStore(owner);
     for(auto it=vector.begin(); it!=vector.end(); ++it)
     {
-        if((*it)->getName()==name)
+        std::shared_ptr<ga::Attribute> attribute = (*it);
+        if(attribute->getName()==name)
         {
-            return (*it);
+            if(!includeIntrinsics && attribute->isIntrinsic()) continue;
+            return attribute;
         }
     }
     return nullptr;

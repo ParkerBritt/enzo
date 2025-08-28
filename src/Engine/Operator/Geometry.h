@@ -69,7 +69,7 @@ public:
     * @param name The name of the attribute.
     * @return Handle to the created integer attribute.
     */
-    ga::AttributeHandle<bt::intT> addIntAttribute(ga::AttributeOwner owner, std::string name);
+    ga::AttributeHandle<bt::intT> addIntAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
 
     /**
     * @brief Adds a boolean attribute to the geometry.
@@ -77,7 +77,7 @@ public:
     * @param name The name of the attribute.
     * @return Handle to the created boolean attribute.
     */
-    ga::AttributeHandleBool addBoolAttribute(ga::AttributeOwner owner, std::string name);
+    ga::AttributeHandleBool addBoolAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
 
     /**
     * @brief Adds a 3D vector attribute to the geometry.
@@ -85,7 +85,7 @@ public:
     * @param name The name of the attribute.
     * @return Handle to the created Vector3 attribute.
     */
-    ga::AttributeHandle<bt::Vector3> addVector3Attribute(ga::AttributeOwner owner, std::string name);
+    ga::AttributeHandle<bt::Vector3> addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
 
     /**
     * @brief Retrieves an attribute by its name.
@@ -93,7 +93,7 @@ public:
     * @param name The name of the attribute.
     * @return Shared pointer to the attribute if found, otherwise nullptr.
     */
-    std::shared_ptr<ga::Attribute> getAttribByName(ga::AttributeOwner owner, std::string name);
+    std::shared_ptr<ga::Attribute> getAttribByName(ga::AttributeOwner owner, std::string name, bool includeIntrinsics=false);
 
     /**
     * @brief Gets the number of attributes owned by a specific element type.
@@ -132,8 +132,9 @@ public:
     /**
     * @brief Adds a point to the geometry.
     * @param pos Position of the new point.
+    * @returns Point offset of the newly created point
     */
-    void addPoint(const bt::Vector3& pos);
+    ga::Offset addPoint(const bt::Vector3& pos);
 
     /**
     * @brief Iterator to the beginning of the set of solo (isolated) points.
@@ -207,6 +208,7 @@ public:
     */
     ga::Offset getNumPoints() const;
 
+
     /**
     * @brief Gets the number of isolated points in the geometry.
     * Isolated points are points that are not connnected to any other point
@@ -232,11 +234,38 @@ public:
     void merge(Geometry& other);
 
     /**
+    * @brief Checks if the given attribute exists
+    * @param attribName The name of the attribute to find
+    */
+    bool attributeExists(ga::AttributeOwner owner, std::string name);
+
+    /**
     * @brief Computes the starting vertex for each primitive in the geometry.
     * @todo Automatically lazy evaluate when requested (make thread safe)
     */
     void computePrimStartVertices() const;
 private:
+    void mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src);
+    template <typename T>
+    void mergeAppendImpl(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src)
+    {
+        auto dstHandle = ga::AttributeHandle<T>(dst);
+        auto srcHandle = ga::AttributeHandle<T>(src);
+
+        const ga::Offset srcCount = srcHandle.getSize();
+        const ga::Offset dstCount = dstHandle.getSize();
+
+        dstHandle.resize(dstCount + srcCount);
+
+        for(ga::Offset i = 0; i< srcCount; ++i)
+        {
+            const T value = srcHandle.getValue(i);
+            const ga::Offset dstOffset = dstCount+i;
+            dstHandle.setValue(dstOffset, value);
+        }
+
+    };
+
     using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
     geo::Geometry::attribVector& getAttributeStore(const ga::AttributeOwner& owner);
     const geo::Geometry::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const;

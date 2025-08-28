@@ -25,7 +25,7 @@ void GopTransform::cookOp(enzo::op::Context context)
         geo::Geometry geo = context.cloneInputGeo(0);
         // geo::Geometry geo;
 
-        auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P");
+        auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P", true);
         ga::AttributeHandleVector3 PAttrHandle(PAttr);
 
         Eigen::Affine3d transform = Eigen::Affine3d::Identity();

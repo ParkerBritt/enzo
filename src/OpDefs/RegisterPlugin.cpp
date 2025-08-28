@@ -6,6 +6,7 @@
 #include "GopTestCube.h"
 #include "OpDefs/GopTransform.hpp"
 #include "OpDefs/GopGrid.h"
+#include "OpDefs/GopMerge.h"
 #include "OpDefs/GopSineWave.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
@@ -22,6 +23,17 @@ extern "C"
                 GopTransform::parameterList,
                 1,
                 1,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "merge",
+                "Merge",
+                &GopMerge::ctor,
+                GopMerge::parameterList,
+                2,
+                2,
                 1,
             }
         );

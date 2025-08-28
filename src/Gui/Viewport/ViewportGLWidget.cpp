@@ -206,7 +206,7 @@ void ViewportGLWidget::paintGL()
 void ViewportGLWidget::geometryChanged(enzo::geo::Geometry& geometry)
 {
     using namespace enzo;
-    std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P");
+    std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P", true);
     ga::AttributeHandleVector3 PAttrHandle = ga::AttributeHandleVector3(PAttr);
 
     triangleMesh_->setPosBuffer(geometry);
