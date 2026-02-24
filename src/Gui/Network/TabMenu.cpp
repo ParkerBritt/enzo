@@ -46,32 +46,6 @@ enzo::ui::TabMenu::TabMenu(QWidget *parent, Qt::WindowFlags f)
         button->nodeName = tableItem.internalName;
         button->setFocusPolicy(Qt::NoFocus);
         connect(button, &TabMenuButton::clicked, this, &enzo::ui::TabMenu::nodeClicked);
-        button->setStyleSheet(R"(
-            QPushButton#TabMenuButton {
-                background-color: transparent;
-                border: 4px solid transparent;
-                padding: 0px;
-                margin: 0px;
-                border-radius: 8px;
-            }
-
-            QPushButton#TabMenuButton[selected="true"] {
-                background-color: #3d3d3d;
-            }
-
-            QPushButton#TabMenuButton[selected="false"] {
-                background-color: transparent;
-            }
-
-            QPushButton#TabMenuButton:hover {
-                background-color: #3d3d3d;
-                color: white;
-            }
-
-            QPushButton#TabMenuButton:pressed {
-                background-color: #b0b0b0;
-            }
-        )");
         nodeHolderLayout_->addWidget(button);
     }
 
@@ -304,15 +278,36 @@ void enzo::ui::TabMenu::moveSelection(SelectionDirection direction)
 enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
 : QPushButton(parent)
 {
-    setSelected(false);
     setObjectName("TabMenuButton");
+    setStyleSheet(R"(
+        QPushButton {
+            background-color: transparent;
+            border: 4px solid transparent;
+            padding: 0px;
+            margin: 0px;
+            border-radius: 8px;
+        }
+
+        QLabel { color: red; background: transparent; }
+
+        QPushButton[selected="true"] { background-color: white; }
+        QPushButton[selected="true"] QLabel { color: blue; }
+
+        QPushButton:hover { background-color: white; }
+        QPushButton:hover QLabel { color: white; }
+
+        QPushButton:pressed { background-color: #b0b0b0; }
+    )");
+
     displayText_ = text;
+    setAttribute(Qt::WA_Hover, true);
+    setMouseTracking(true);
 
-
-    textLabel_ = new QLabel(text);
+    textLabel_ = new QLabel(text, this);
     textLabel_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    // textLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    textLabel_->setStyleSheet("background-color: transparent;");
+    textLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    setSelected(false);
 
     icon_ = new QSvgWidget(":/node-icons/grid.svg");
     icon_->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);
@@ -333,7 +328,10 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
 void enzo::ui::TabMenuButton::setSelected(bool selected)
 {
     setProperty("selected", selected);
+
+    style()->unpolish(this);
     style()->polish(this);
+
     update();
 }
 
