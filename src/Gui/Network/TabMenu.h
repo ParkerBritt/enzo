@@ -20,6 +20,8 @@ public:
     std::string nodeName;
     QString getDisplayText() {return displayText_;}
     void setSelected(bool selected);
+    void enterEvent(QEnterEvent *event);
+    void leaveEvent(QEvent *event);
 private:
 
     QHBoxLayout* mainLayout_;
