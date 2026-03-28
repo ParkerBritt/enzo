@@ -43,6 +43,12 @@ enzo::geo::Geometry enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
     }
 }
 
+unsigned int enzo::op::Context::numInputs()
+{
+    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    return selfOp.getInputConnections().size();
+}
+
 // TODO: cache value
 enzo::bt::floatT enzo::op::Context::evalFloatParm(const char* parmName, const unsigned int index) const
 {
