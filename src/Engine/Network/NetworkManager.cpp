@@ -114,12 +114,20 @@ void enzo::nt::NetworkManager::update()
     // cook display op
     if(getDisplayOp().has_value())
     {
-        
+
         const OpId displayOpId = getDisplayOp().value();
         cookOp(displayOpId);
 
         auto& displayOp = getGeoOperator(displayOpId);
         displayGeoChanged(displayOp.getOutputGeo(0));
+    }
+
+    // cook selected nodes and notify spreadsheet
+    for(OpId selectedId : selectedNodes_)
+    {
+        cookOp(selectedId);
+        auto& selectedOp = getGeoOperator(selectedId);
+        selectedGeoChanged(selectedOp.getOutputGeo(0));
     }
 }
 

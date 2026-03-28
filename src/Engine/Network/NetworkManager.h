@@ -106,6 +106,9 @@ public:
     // in a node can change based on parameters or other factors.
     boost::signals2::signal<void (enzo::geo::Geometry& geometry)> displayGeoChanged;
 
+    // @brief A signal emitted when the selected node's geometry is changed
+    boost::signals2::signal<void (enzo::geo::Geometry& geometry)> selectedGeoChanged;
+
     // @brief A signal emitted when the selection of nodes changes
     boost::signals2::signal<void (std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;
     /** @} */

@@ -76,4 +76,5 @@ EnzoUI::EnzoUI()
         geometrySpreadsheetPanel->geometryChanged(geometry);
     });
     enzo::nt::nm().displayGeoChanged.connect([viewport](enzo::geo::Geometry& geometry){viewport->setGeometry(geometry);});
+    enzo::nt::nm().selectedGeoChanged.connect([geometrySpreadsheetPanel](enzo::geo::Geometry& geometry){geometrySpreadsheetPanel->geometryChanged(geometry);});
 }
