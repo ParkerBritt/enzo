@@ -1,0 +1,87 @@
+app-id: org.enzosoftware.Enzo
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: enzoGui
+
+finish-args:
+  - --device=dri          # OpenGL
+  - --share=ipc           # X11 shared memory
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --filesystem=home:ro  # read-only home for geometry import
+
+modules:
+  # GMP and MPFR are provided by the KDE SDK
+
+  # --- Eigen3 (header-only) ---
+  - name: eigen
+    sources:
+      - type: archive
+        url: https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+        sha256: 8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DBUILD_TESTING=OFF
+
+  # --- GLM (header-only) ---
+  - name: glm
+    sources:
+      - type: archive
+        url: https://github.com/g-truc/glm/archive/refs/tags/1.0.3.tar.gz
+        sha256: 6775e47231a446fd086d660ecc18bcd076531cfedd912fbd66e576b118607001
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DGLM_BUILD_TESTS=OFF
+
+  # --- oneTBB ---
+  - name: tbb
+    sources:
+      - type: archive
+        url: https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v2022.3.0.tar.gz
+        sha256: 01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DTBB_TEST=OFF
+      - -DTBB_EXAMPLES=OFF
+
+  # --- Boost (filesystem, system) ---
+  - name: boost
+    sources:
+      - type: archive
+        url: https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.gz
+        sha256: 3621533e820dcab1e8012afd583c0c73cf0f77694952b81352bf38c1488f9cb4
+    buildsystem: simple
+    build-commands:
+      - ./bootstrap.sh --prefix=/app --with-libraries=filesystem,system
+      - ./b2 install --prefix=/app variant=release link=shared threading=multi
+        -j$FLATPAK_BUILDER_N_JOBS
+
+  # --- CGAL (header-only core, depends on GMP/MPFR) ---
+  - name: cgal
+    sources:
+      - type: archive
+        url: https://github.com/CGAL/cgal/releases/download/v6.1.1/CGAL-6.1.1.tar.xz
+        sha256: 52506935f70e247ed2777e3c65f20e86f79208c2a2d0e180ae7475daf11c96ef
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCGAL_HEADER_ONLY=OFF
+
+  # --- Enzo ---
+  - name: enzo
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .flatpak-builder
+          - build
+          - build-dir
+          - docker
+          - docs
+          - .git
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DENZO_BIN_DIR=bin
+      - -DENZO_LIB_DIR=lib
+      - -DENZO_BUILD_TESTS=OFF

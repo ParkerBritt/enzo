@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Enzo 3D
+Comment=Node-based procedural 3D modeling application
+Exec=enzoGui
+Icon=org.enzosoftware.Enzo
+Terminal=false
+Type=Application
+Categories=Graphics;3DGraphics;
+Keywords=3D;modeling;procedural;nodes;VFX;animation;

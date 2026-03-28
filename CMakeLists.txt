@@ -102,8 +102,8 @@ set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake
 
 set(CPACK_GENERATOR "RPM;TGZ")
 
-set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin)
-set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib)
+set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
+set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
 
 
 set_target_properties(${AppExec} PROPERTIES
@@ -120,6 +120,18 @@ install(TARGETS ${AppExec}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
     # COMPONENT "runtimes"
+)
+
+# desktop integration (Flatpak / Linux desktop)
+install(FILES flatpak/org.enzosoftware.Enzo.desktop
+    DESTINATION share/applications
+)
+install(FILES flatpak/org.enzosoftware.Enzo.metainfo.xml
+    DESTINATION share/metainfo
+)
+install(FILES static/icons/icon-main-white-square.svg
+    DESTINATION share/icons/hicolor/scalable/apps
+    RENAME org.enzosoftware.Enzo.svg
 )
 
 # install(TARGETS ${AppExec}
@@ -181,40 +193,43 @@ target_include_directories(${AppExec} PUBLIC
 add_subdirectory(src/OpDefs)
 
 # tests
-Include(FetchContent)
+option(ENZO_BUILD_TESTS "Build tests and benchmarks" ON)
+if(ENZO_BUILD_TESTS)
+    Include(FetchContent)
 
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.8.1 # or a later release
-)
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG        v3.8.1 # or a later release
+    )
 
-FetchContent_MakeAvailable(Catch2)
+    FetchContent_MakeAvailable(Catch2)
 
-add_executable(${TestExec}
-    ${ENGINE_SOURCES}
-    tests/main-tests.cpp
-    tests/OperatorTests.cpp
-    tests/NetworkTests.cpp
-)
-target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
-target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
-target_include_directories(${TestExec} PUBLIC
-    ${ENGINE_INCLUDE_DIRECTORIES}
-    ${BOOST_INCLUDE_DIRS}
-)
-target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+    add_executable(${TestExec}
+        ${ENGINE_SOURCES}
+        tests/main-tests.cpp
+        tests/OperatorTests.cpp
+        tests/NetworkTests.cpp
+    )
+    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
+    target_include_directories(${TestExec} PUBLIC
+        ${ENGINE_INCLUDE_DIRECTORIES}
+        ${BOOST_INCLUDE_DIRS}
+    )
+    target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 
-# benchmarks
-add_executable(${BenchExec}
-    ${ENGINE_SOURCES}
+    # benchmarks
+    add_executable(${BenchExec}
+        ${ENGINE_SOURCES}
 
-    tests/Benchmarks.cpp
-)
-target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
-target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
-target_include_directories(${BenchExec} PUBLIC 
-    ${ENGINE_INCLUDE_DIRECTORIES}
-)
-target_compile_definitions(${BenchExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+        tests/Benchmarks.cpp
+    )
+    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
+    target_include_directories(${BenchExec} PUBLIC
+        ${ENGINE_INCLUDE_DIRECTORIES}
+    )
+    target_compile_definitions(${BenchExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+endif()
 

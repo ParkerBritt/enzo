@@ -17,6 +17,7 @@ add_library(${libName} SHARED
     ../Engine/Operator/Geometry.cpp
     ../Engine/Operator/Attribute.cpp
     ../Engine/Network/NetworkManager.cpp
+    ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
     ../Engine/Parameter/Parameter.cpp
     ../Engine/Parameter/Default.cpp
