@@ -68,6 +68,7 @@ void NetworkPanel::deleteEdge(QGraphicsItem* edge)
     // I coundn't figure it out so I'm just leaving it for now
     // delete edge;
     static_cast<NodeEdgeGraphic*>(edge)->remove();
+
     std::cout << "finished deleting edge\n----\n";
 }
 

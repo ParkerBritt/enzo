@@ -28,6 +28,7 @@ set(ENGINE_SOURCES
     src/Engine/Parameter/Range.cpp
     src/Engine/Parameter/PrmName.cpp
     src/Engine/Network/NetworkManager.cpp
+    src/Engine/Network/UpdateLock.cpp
 )
 
 set(GUI_SOURCES

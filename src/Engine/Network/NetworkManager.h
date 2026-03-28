@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Network/UpdateLock.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/Geometry.h"
 #include "Engine/Types.h"
@@ -47,6 +48,15 @@ public:
     */
     std::optional<OpId> getDisplayOp();
 
+    /** @brief Creates a lock object that prevents cooking until destroyed
+    */
+    enzo::nt::UpdateLock lockUpdates();
+
+    /**
+     * @brief Cooks dirtied nodes, is called automatically
+     *
+     */
+    void update();
 
     /**
     * @brief Returns whether the node exists in the network and is valid.
@@ -79,6 +89,12 @@ public:
     */
     const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
+    /**
+     * @brief Cooks the given operator
+     * @param opId operator ID to cook
+     */
+    void cookOp(enzo::nt::OpId opId);
+
     /** @name Signals
     * @{
     */
@@ -103,9 +119,13 @@ private:
     NetworkManager() {};
 
     // functions
-    void cookOp(enzo::nt::OpId opId);
     std::vector<enzo::nt::OpId> getDependencyGraph(enzo::nt::OpId opId);
     std::vector<enzo::nt::OpId> getDependentsGraph(enzo::nt::OpId opId);
+
+    /**
+     * @brief Slot called when a node of @p OpId is dirtied
+     */
+    void onNodeDirtied(nt::OpId opId, bool dirtyDependents);
 
     // variables
     // store for geometry operators

@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -24,10 +25,16 @@ enzo::geo::Geometry enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
         std::cout << "no input\n";
         return enzo::geo::Geometry();
     }
+    if(inputIndex>=inputConnections.size())
+    {
+        throw std::runtime_error("Input out of range: " + std::to_string(inputIndex));
+    }
     auto inputConnection = inputConnections.at(inputIndex);
     if(auto inputConnectionSP = inputConnection.lock())
     {
-        const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(inputConnectionSP->getInputOpId());
+        const nt::OpId opId = inputConnectionSP->getInputOpId();
+        const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
+        networkManager_.cookOp(opId);
         return geoOp.getOutputGeo(inputConnectionSP->getInputIndex());
     }
     else

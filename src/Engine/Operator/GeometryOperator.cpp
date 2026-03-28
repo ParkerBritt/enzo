@@ -15,6 +15,7 @@ using namespace enzo;
 std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex)
 {
     auto& nm = nt::nm();
+    auto updateLock = nm.lockUpdates();
 
     auto& inputOp = nm.getGeoOperator(inputOpId);
     auto& outputOp = nm.getGeoOperator(outputOpId);
@@ -25,6 +26,7 @@ std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId 
     inputOp.addOutputConnection(newConnection);
 
     // set input on the lower operator
+    IC();
     outputOp.addInputConnection(newConnection);
 
     return newConnection;
@@ -67,8 +69,11 @@ bool enzo::nt::GeometryOperator::isDirty()
 void enzo::nt::GeometryOperator::cookOp(op::Context context)
 {
     std::cout << "Cooking op: " << opId_ << "\n";
-    opDef_->cookOp(context);
-    dirty_=false;
+    if(dirty_)
+    {
+        opDef_->cookOp(context);
+        dirty_=false;
+    }
 }
 
 geo::Geometry& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) const
@@ -78,6 +83,7 @@ geo::Geometry& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) co
 
 void nt::GeometryOperator::addInputConnection(std::shared_ptr<nt::GeometryConnection> newConnection)
 {
+    IC();
     // delete previous input
     std::shared_ptr<nt::GeometryConnection> previousConection = nullptr;
     IC();
@@ -126,18 +132,22 @@ void nt::GeometryOperator::removeInputConnection(unsigned int inputIndex)
 
 void nt::GeometryOperator::removeOutputConnection(const nt::GeometryConnection* connectionPtr)
 {
+    IC();
+    IC(outputConnections_.size());
     for(auto it=outputConnections_.begin(); it!=outputConnections_.end(); ++it)
     {
         const nt::GeometryConnection* otherConnectionPtr = (*it).get();
-        if(connectionPtr == otherConnectionPtr)
+        IC(*connectionPtr);
+        if(*connectionPtr == *otherConnectionPtr)
         {
             outputConnections_.erase(it);
             dirtyNode();
             std::cout << "removing output connection\n";
+            IC(outputConnections_.size());
             return;
         }
     }
-    std::cerr << "Couldn't remove output connection\n";
+    std::cerr << "-------\nERROR: Couldn't remove output connection\nFailed to find: " << *connectionPtr << " in outputConnections size: " << outputConnections_.size() << "\n-------\n";
 
 }
 

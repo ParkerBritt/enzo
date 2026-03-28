@@ -1,4 +1,5 @@
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/UpdateLock.h"
 #include "Engine/Operator/Geometry.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/Attribute.h"
@@ -21,24 +22,7 @@ enzo::nt::OpId enzo::nt::NetworkManager::addOperator(op::OpInfo opInfo)
     newOp->nodeDirtied.connect(
         [this](nt::OpId opId, bool dirtyDependents)
         {
-            if(dirtyDependents)
-            {
-                std::vector<OpId> dependentIds = getDependentsGraph(opId);
-                for(OpId dependentId : dependentIds)
-                {
-                    // dirty node
-                    enzo::nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
-                    std::cout << "Manager dirtying id: " << dependentId << "\n";
-                    dependentOp.dirtyNode(false);
-
-                    // cook display op
-                    if(getDisplayOp().has_value() && getDisplayOp().value()==dependentId)
-                    {
-                        cookOp(dependentId);
-                        displayGeoChanged(dependentOp.getOutputGeo(0));
-                    }
-                }
-            }
+            onNodeDirtied(opId, dirtyDependents);
 
         });
     gopStore_.emplace(maxOpId_, std::move(newOp));
@@ -120,6 +104,26 @@ void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool ad
 
 }
 
+enzo::nt::UpdateLock enzo::nt::NetworkManager::lockUpdates()
+{
+    return UpdateLock();
+}
+
+void enzo::nt::NetworkManager::update()
+{
+    // cook display op
+    if(getDisplayOp().has_value())
+    {
+        
+        const OpId displayOpId = getDisplayOp().value();
+        cookOp(displayOpId);
+
+        auto& displayOp = getGeoOperator(displayOpId);
+        displayGeoChanged(displayOp.getOutputGeo(0));
+    }
+}
+
+
 const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
 {
     return selectedNodes_;
@@ -197,6 +201,28 @@ std::optional<enzo::nt::OpId> enzo::nt::NetworkManager::getDisplayOp()
 {
     return displayOp_;
 }
+
+void enzo::nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
+{
+    if(dirtyDependents)
+    {
+        std::vector<OpId> dependentIds = getDependentsGraph(opId);
+        for(OpId dependentId : dependentIds)
+        {
+            // dirty node
+            enzo::nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
+            std::cout << "Manager dirtying id: " << dependentId << "\n";
+            dependentOp.dirtyNode(false);
+
+        }
+
+        if(nt::UpdateLock::isUnlocked())
+        {
+            update();
+        }
+    }
+}
+
 
 #ifdef UNIT_TEST
 void enzo::nt::NetworkManager::_reset()
