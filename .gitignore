@@ -4,3 +4,6 @@ docs/html
 docs/latex
 perf.data*
 artifacts
+
+# Flatpak
+repo

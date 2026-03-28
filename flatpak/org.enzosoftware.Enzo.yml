@@ -76,6 +76,7 @@ modules:
         tag: v0.1.0
     buildsystem: cmake-ninja
     config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
       - -DENZO_BIN_DIR=bin
       - -DENZO_LIB_DIR=lib
       - -DENZO_BUILD_TESTS=OFF
