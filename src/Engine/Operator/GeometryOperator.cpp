@@ -118,7 +118,7 @@ void nt::GeometryOperator::removeInputConnection(unsigned int inputIndex)
 {
     for(auto it=inputConnections_.begin(); it!=inputConnections_.end(); ++it)
     {
-        if((*it)->getInputIndex() == inputIndex)
+        if((*it)->getOutputIndex() == inputIndex)
         {
             inputConnections_.erase(it);
             dirtyNode();
@@ -193,7 +193,7 @@ std::string nt::GeometryOperator::getTypeName()
 
 std::optional<std::reference_wrapper<const nt::GeometryConnection>> nt::GeometryOperator::getInputConnection(size_t index) const
 {
-    for(auto it=inputConnections_.begin(); it!=inputConnections_.end();)
+    for(auto it=inputConnections_.begin(); it!=inputConnections_.end(); ++it)
     {
         if((*it)->getOutputIndex()==index)
         {

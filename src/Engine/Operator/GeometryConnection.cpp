@@ -18,7 +18,7 @@ void enzo::nt::GeometryConnection::remove()
     std::cout << "removing connection " << this;
     nm.getGeoOperator(inputOperatorId_).removeOutputConnection(this);
     IC();
-    nm.getGeoOperator(outputOperatorId_).removeInputConnection(inputIndex_);
+    nm.getGeoOperator(outputOperatorId_).removeInputConnection(outputIndex_);
     IC();
     removed();
     IC();

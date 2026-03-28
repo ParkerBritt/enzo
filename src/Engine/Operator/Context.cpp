@@ -19,34 +19,22 @@ enzo::geo::Geometry enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
 {
     // TODO: implement
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::vector<std::weak_ptr<const nt::GeometryConnection>> inputConnections = selfOp.getInputConnections();
-    if(inputConnections.size()==0)
+    auto inputConnection = selfOp.getInputConnection(inputIndex);
+    if(!inputConnection.has_value())
     {
-        std::cout << "no input\n";
         return enzo::geo::Geometry();
     }
-    if(inputIndex>=inputConnections.size())
-    {
-        throw std::runtime_error("Input out of range: " + std::to_string(inputIndex));
-    }
-    auto inputConnection = inputConnections.at(inputIndex);
-    if(auto inputConnectionSP = inputConnection.lock())
-    {
-        const nt::OpId opId = inputConnectionSP->getInputOpId();
-        const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
-        networkManager_.cookOp(opId);
-        return geoOp.getOutputGeo(inputConnectionSP->getInputIndex());
-    }
-    else
-    {
-        throw std::runtime_error("Connection weak ptr doesn't exist");
-    }
+    const nt::GeometryConnection& connection = inputConnection.value().get();
+    const nt::OpId opId = connection.getInputOpId();
+    const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
+    networkManager_.cookOp(opId);
+    return geoOp.getOutputGeo(connection.getInputIndex());
 }
 
-unsigned int enzo::op::Context::numInputs()
+bool enzo::op::Context::hasInput(unsigned int inputIndex)
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    return selfOp.getInputConnections().size();
+    return selfOp.getInputConnection(inputIndex).has_value();
 }
 
 // TODO: cache value

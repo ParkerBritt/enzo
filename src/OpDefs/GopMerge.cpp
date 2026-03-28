@@ -22,7 +22,7 @@ void GopMerge::cookOp(enzo::op::Context context)
     if(outputRequested(0))
     {
         geo::Geometry geo = context.cloneInputGeo(0);
-        if(context.numInputs() > 1)
+        if(context.hasInput(1))
         {
             geo::Geometry geoSrc = context.cloneInputGeo(1);
             geo.merge(geoSrc);
