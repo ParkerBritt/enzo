@@ -100,46 +100,42 @@ void geo::Geometry::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_
 
 void geo::Geometry::merge(Geometry& other)
 {
-    // primitiveAttributes_.reserve(primitiveAttributes_.size()+other.primitiveAttributes_.size());
-    // ga::Offset attributeSize = getNumPoints();
+    // Copy all unique points and build offset mapping
+    const ga::Offset srcPointNum = other.getNumPoints();
+    std::vector<ga::Offset> pointMapping(srcPointNum);
+    for(ga::Offset pointOffset=0; pointOffset<srcPointNum; ++pointOffset)
+    {
+        pointMapping[pointOffset] = addPoint(other.getPointPos(pointOffset));
+    }
 
-    // add each other attribute to self
+    // Create prims using mapped point offsets
+    const ga::Offset srcPrimNum = other.getNumPrims();
+    for(ga::Offset primOffset=0; primOffset<srcPrimNum; ++primOffset)
+    {
+        const ga::Offset primStartVertex = other.getPrimStartVertex(primOffset);
+        const ga::Offset vertexCount = other.getPrimVertCount(primOffset);
+
+        std::vector<ga::Offset> pointOffsets;
+        pointOffsets.reserve(vertexCount);
+        for(ga::Offset i=0; i<vertexCount; ++i)
+        {
+            const ga::Offset otherPointOffset = other.pointOffsetHandleVert_.getValue(primStartVertex+i);
+            pointOffsets.push_back(pointMapping[otherPointOffset]);
+        }
+        // TODO: check closed status
+        addFace(pointOffsets, true);
+    }
+
+    // Merge vertex attributes
     for(std::shared_ptr<ga::Attribute> otherAttribute : other.vertexAttributes_)
     {
         bt::String otherAttributeName = otherAttribute->getName();
         std::shared_ptr<ga::Attribute> attribute = getAttribByName(ga::AttrOwner::VERTEX, otherAttributeName);
-        
-        bool alreadyExists = static_cast<bool>(attribute);
 
-        // create mesh
-        const ga::Offset srcPrimNum = other.getNumPrims();
-        for(ga::Offset primOffset=0; primOffset<srcPrimNum; ++primOffset)
-        {
-            const ga::Offset primStartVertex = other.getPrimStartVertex(primOffset);
-            const ga::Offset vertexCount = other.getPrimVertCount(primOffset);
-            
-            std::vector<ga::Offset> pointOffsets;
-            pointOffsets.reserve(vertexCount);
-            for(ga::Offset i=0; i<vertexCount; ++i)
-            {
-                const ga::Offset otherPointOffset = other.pointOffsetHandleVert_.getValue(primStartVertex+i);
-                const ga::Offset newPointOffset = addPoint(other.getPointPos(otherPointOffset));
-                pointOffsets.push_back(newPointOffset);
-            }
-            // TODO: chech closed status
-            addFace(pointOffsets, true);
-
-        }
-
-        if(alreadyExists)
+        if(attribute)
         {
             mergeAppend(attribute, otherAttribute);
         }
-        // else
-        // {
-        //     otherAttribute->resize(attributeSize);
-        // }
-        
     }
 
     for(std::shared_ptr<ga::Attribute> otherAttribute : other.pointAttributes_)
