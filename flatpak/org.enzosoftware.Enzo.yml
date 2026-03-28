@@ -71,15 +71,9 @@ modules:
   # --- Enzo ---
   - name: enzo
     sources:
-      - type: dir
-        path: ..
-        skip:
-          - .flatpak-builder
-          - build
-          - build-dir
-          - docker
-          - docs
-          - .git
+      - type: git
+        url: https://github.com/ParkerBritt/enzo.git
+        tag: v0.1.0
     buildsystem: cmake-ninja
     config-opts:
       - -DENZO_BIN_DIR=bin
