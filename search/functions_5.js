@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['merge_0',['merge',['../classenzo_1_1geo_1_1Geometry.html#a146d3992036c898d0760be5c69ba2662',1,'enzo::geo::Geometry']]]
+  ['lockupdates_0',['lockUpdates',['../classenzo_1_1nt_1_1NetworkManager.html#ac9c5a52764969042441391a2f0e7db31',1,'enzo::nt::NetworkManager']]]
 ];

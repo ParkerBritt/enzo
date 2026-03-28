@@ -112,9 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a46b5049f2b329204488ce16fc29e255e" id="r_a46b5049f2b329204488ce16fc29e255e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46b5049f2b329204488ce16fc29e255e">addValue</a> (T value)</td></tr>
 <tr class="memdesc:a46b5049f2b329204488ce16fc29e255e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an element to the end of the attribute.  <br /></td></tr>
 <tr class="separator:a46b5049f2b329204488ce16fc29e255e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec803d8fe06814f734e0ef6984e9f10a" id="r_aec803d8fe06814f734e0ef6984e9f10a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec803d8fe06814f734e0ef6984e9f10a">reserve</a> (std::size_t newCap)</td></tr>
-<tr class="memdesc:aec803d8fe06814f734e0ef6984e9f10a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserves more space in the attribute to add new elements.  <br /></td></tr>
-<tr class="separator:aec803d8fe06814f734e0ef6984e9f10a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83911fd950dad181f5fb9169b484582b" id="r_a83911fd950dad181f5fb9169b484582b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83911fd950dad181f5fb9169b484582b">resize</a> (std::size_t newSize)</td></tr>
+<tr class="memdesc:a83911fd950dad181f5fb9169b484582b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserves more space in the attribute to add new elements.  <br /></td></tr>
+<tr class="separator:a83911fd950dad181f5fb9169b484582b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3db782952a7dfb064406e6bf055d8841" id="r_a3db782952a7dfb064406e6bf055d8841"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3db782952a7dfb064406e6bf055d8841">getAllValues</a> () const</td></tr>
 <tr class="memdesc:a3db782952a7dfb064406e6bf055d8841"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a vector containing all the values stored in this attribute.  <br /></td></tr>
 <tr class="separator:a3db782952a7dfb064406e6bf055d8841"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -287,8 +287,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="aec803d8fe06814f734e0ef6984e9f10a" name="aec803d8fe06814f734e0ef6984e9f10a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec803d8fe06814f734e0ef6984e9f10a">&#9670;&#160;</a></span>reserve()</h2>
+<a id="a83911fd950dad181f5fb9169b484582b" name="a83911fd950dad181f5fb9169b484582b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83911fd950dad181f5fb9169b484582b">&#9670;&#160;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,9 +299,9 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::reserve </td>
+          <td class="memname">void <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">enzo::ga::AttributeHandle</a>&lt; T &gt;::resize </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>newCap</em></span></td><td>)</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>newSize</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -314,6 +314,18 @@ template&lt;typename T &gt; </div>
 
 <p>Reserves more space in the attribute to add new elements. </p>
 <p>This is important when adding many elements to the attribute as automatic resizing is expensive.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newCap</td><td>The new maximum number of elements the attribute can hold before needing to automatically allocate more.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Resizes more space in the attribute to add new elements</p>
+<p>Resizes the container to contain count elements, does nothing if count == size().</p>
+<p>If the current size is greater than count, the container is reduced to its first count elements.</p>
+<p>If the current size is less than count, then:</p>
+<p>1) Additional default-inserted elements are appended. 2) Additional copies of value are appended.</p>
+<dl class="section important"><dt>Important</dt><dd>This is important when adding many elements to the attribute as automatic resizing is expensive.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newCap</td><td>The new maximum number of elements the attribute can hold before needing to automatically allocate more. </td></tr>

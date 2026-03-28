@@ -123,6 +123,14 @@ Public Member Functions</h2></td></tr>
 std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getDisplayOp</b> ()</td></tr>
 <tr class="memdesc:ae199c78021ccd6ce53c1bb70d6a3e370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the operator ID for the node with its display flag set. There can only be only be one operator displayed at a time. Return value is nullopt if no node is set to display. <br /></td></tr>
 <tr class="separator:ae199c78021ccd6ce53c1bb70d6a3e370"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9c5a52764969042441391a2f0e7db31" id="r_ac9c5a52764969042441391a2f0e7db31"><td class="memItemLeft" align="right" valign="top"><a id="ac9c5a52764969042441391a2f0e7db31" name="ac9c5a52764969042441391a2f0e7db31"></a>
+<a class="el" href="classenzo_1_1nt_1_1UpdateLock.html">enzo::nt::UpdateLock</a>&#160;</td><td class="memItemRight" valign="bottom"><b>lockUpdates</b> ()</td></tr>
+<tr class="memdesc:ac9c5a52764969042441391a2f0e7db31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a lock object that prevents cooking until destroyed. <br /></td></tr>
+<tr class="separator:ac9c5a52764969042441391a2f0e7db31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9fb66020dcbd4760aa9233bdba095fe" id="r_ae9fb66020dcbd4760aa9233bdba095fe"><td class="memItemLeft" align="right" valign="top"><a id="ae9fb66020dcbd4760aa9233bdba095fe" name="ae9fb66020dcbd4760aa9233bdba095fe"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> ()</td></tr>
+<tr class="memdesc:ae9fb66020dcbd4760aa9233bdba095fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks dirtied nodes, is called automatically. <br /></td></tr>
+<tr class="separator:ae9fb66020dcbd4760aa9233bdba095fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a740e83ec5b9e4708590a6b458300c80b" id="r_a740e83ec5b9e4708590a6b458300c80b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a740e83ec5b9e4708590a6b458300c80b">isValidOp</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> opId)</td></tr>
 <tr class="memdesc:a740e83ec5b9e4708590a6b458300c80b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the node exists in the network and is valid.  <br /></td></tr>
 <tr class="separator:a740e83ec5b9e4708590a6b458300c80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,6 +149,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a 
 const std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSelectedNodes</b> ()</td></tr>
 <tr class="memdesc:aa5ea59029f6195425e6237c27ee8be3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the OpIds for all selected nodes. <br /></td></tr>
 <tr class="separator:aa5ea59029f6195425e6237c27ee8be3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e7d23338f93ae7c795f66029cbe9be4" id="r_a9e7d23338f93ae7c795f66029cbe9be4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e7d23338f93ae7c795f66029cbe9be4">cookOp</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId)</td></tr>
+<tr class="memdesc:a9e7d23338f93ae7c795f66029cbe9be4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks the given operator.  <br /></td></tr>
+<tr class="separator:a9e7d23338f93ae7c795f66029cbe9be4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -190,6 +201,31 @@ boost::signals2::signal&lt; void(std::vector&lt; <a class="el" href="Types_8h.ht
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The operator ID of the newly created node </dd></dl>
+
+</div>
+</div>
+<a id="a9e7d23338f93ae7c795f66029cbe9be4" name="a9e7d23338f93ae7c795f66029cbe9be4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e7d23338f93ae7c795f66029cbe9be4">&#9670;&#160;</a></span>cookOp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::cookOp </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cooks the given operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opId</td><td>operator ID to cook </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
