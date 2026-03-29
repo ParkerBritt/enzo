@@ -82,6 +82,9 @@ void EnzoUI::connectSignals()
     // Operator created
     enzo::nt::nm().operatorCreated.connect([this](enzo::nt::OpId opId){network_->onOperatorCreated(opId);});
 
+    // Connection created
+    enzo::nt::nm().connectionCreated.connect([this](std::weak_ptr<enzo::nt::GeometryConnection> conn){network_->onConnectionCreated(conn);});
+
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect([this](enzo::geo::Geometry& geometry){viewport_->setGeometry(geometry);});
     enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Geometry& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});

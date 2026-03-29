@@ -29,6 +29,8 @@ std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId 
     IC();
     outputOp.addInputConnection(newConnection);
 
+    nm.connectionCreated(newConnection);
+
     return newConnection;
 }
 

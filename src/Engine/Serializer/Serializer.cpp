@@ -8,6 +8,7 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/string.hpp>
 #include <fstream>
+#include <unordered_map>
 
 namespace enzo::nt
 {
@@ -15,32 +16,45 @@ namespace enzo::nt
 void Serializer::save(NetworkManager& networkManager)
 {
     std::cout << "serializing\n";
-    // cereal::JSONOutputArchive output(std::cout); // stream to cout
     std::ofstream file("/home/parker/Downloads/test.enz");
     cereal::JSONOutputArchive save(file);
-    bool arr[] = {true, false};
-    std::vector<int> vec = {1, 2, 3, 4, 5};
 
-    // Create serializable network model
     NetworkSerializable networkModel;
 
-    // Get operators in network
     auto ops = networkManager.operators();
 
-    // Resize model nodes vector for performance
+    // Build OpId -> index mapping and serialize nodes
+    std::unordered_map<nt::OpId, unsigned int> opIdToIndex;
+    unsigned int index = 0;
     networkModel.nodes.reserve(ops.size());
 
-    // Add all nodes to network model
     for(auto [opId, op] : ops)
     {
+        opIdToIndex[opId] = index++;
+
         OperatorSerializable opModel;
         opModel.typeName = op.getTypeName();
         opModel.posX = op.getPosition().x();
         opModel.posY = op.getPosition().y();
-        std::cout << "iterating " << opModel.typeName << "\n";
         networkModel.nodes.push_back(opModel);
     }
 
+    // Serialize connections (collect from output side to avoid duplicates)
+    for(auto [opId, op] : ops)
+    {
+        for(auto weakConn : op.getOutputConnections())
+        {
+            if(auto conn = weakConn.lock())
+            {
+                ConnectionSerializable connModel;
+                connModel.inputNodeIndex = opIdToIndex[conn->getInputOpId()];
+                connModel.inputSocketIndex = conn->getInputIndex();
+                connModel.outputNodeIndex = opIdToIndex[conn->getOutputOpId()];
+                connModel.outputSocketIndex = conn->getOutputIndex();
+                networkModel.connections.push_back(connModel);
+            }
+        }
+    }
 
     save( CEREAL_NVP(networkModel) );
 }
@@ -52,18 +66,28 @@ void Serializer::load(NetworkManager& networkManager)
     std::ifstream file("/home/parker/Downloads/test.enz");
     cereal::JSONInputArchive load(file);
 
-    networkManager.clear();
-
     NetworkSerializable network;
     load(network);
 
-    for( OperatorSerializable node : network.nodes)
+    // Create operators and track their new OpIds by index
+    std::vector<nt::OpId> opIds;
+    opIds.reserve(network.nodes.size());
+
+    for(const OperatorSerializable& node : network.nodes)
     {
-        std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo( node.typeName);
-        nm().createOperator(opInfo.value(), {node.posX, node.posY});
+        std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(node.typeName);
+        nt::OpId id = nm().createOperator(opInfo.value(), {node.posX, node.posY});
+        opIds.push_back(id);
     }
 
-    std::cout << "node name:" << network.nodes[0].typeName << "\n";
+    // Recreate connections
+    for(const ConnectionSerializable& conn : network.connections)
+    {
+        connectOperators(
+            opIds[conn.inputNodeIndex], conn.inputSocketIndex,
+            opIds[conn.outputNodeIndex], conn.outputSocketIndex
+        );
+    }
 }
 
 }

@@ -35,6 +35,7 @@ public:
     };
     void createNode(enzo::op::OpInfo opInfo);
     void onOperatorCreated(enzo::nt::OpId opId);
+    void onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection);
     void clearNetwork();
 
 private:

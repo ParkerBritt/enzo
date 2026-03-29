@@ -154,6 +154,9 @@ public:
     // @brief A signal emitted when a new operator is created in the network
     boost::signals2::signal<void (nt::OpId)> operatorCreated;
 
+    // @brief A signal emitted when a connection is created between two operators
+    boost::signals2::signal<void (std::weak_ptr<nt::GeometryConnection>)> connectionCreated;
+
     // @brief A signal emitted when the network is cleared
     boost::signals2::signal<void ()> networkCleared;
     /** @} */

@@ -159,12 +159,8 @@ void NetworkPanel::socketClicked(SocketGraphic* socket, QMouseEvent *event)
         std::cout << "CONNECTING opid: " << inputNodeSocket->getOpId() << " -> " << outputNodeSocket->getOpId() << "\n";
 
 
-        std::weak_ptr<nt::GeometryConnection> newConnection = nt::connectOperators(inputNodeSocket->getOpId(), inputNodeSocket->getIndex(), outputNodeSocket->getOpId(), outputNodeSocket->getIndex());
+        nt::connectOperators(inputNodeSocket->getOpId(), inputNodeSocket->getIndex(), outputNodeSocket->getOpId(), outputNodeSocket->getIndex());
 
-        NodeEdgeGraphic* newEdgeGraphic = new NodeEdgeGraphic(outputNodeSocket, inputNodeSocket, newConnection);
-
-        newEdgeGraphic->setPos(outputNodeSocket->scenePos(), inputNodeSocket->scenePos());
-        scene_->addItem(newEdgeGraphic);
         destroyFloatingEdge();
     }
 }
@@ -366,6 +362,22 @@ void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
 
     scene_->addItem(newNode);
     nodeStore_.emplace(opId, newNode);
+}
+
+void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection)
+{
+    auto conn = connection.lock();
+    if(!conn) return;
+
+    NodeGraphic* inputNode = nodeStore_.at(conn->getInputOpId());
+    NodeGraphic* outputNode = nodeStore_.at(conn->getOutputOpId());
+
+    SocketGraphic* inputSocket = inputNode->getOutput(conn->getInputIndex());
+    SocketGraphic* outputSocket = outputNode->getInput(conn->getOutputIndex());
+
+    NodeEdgeGraphic* edge = new NodeEdgeGraphic(outputSocket, inputSocket, connection);
+    edge->setPos(outputSocket->scenePos(), inputSocket->scenePos());
+    scene_->addItem(edge);
 }
 
 
