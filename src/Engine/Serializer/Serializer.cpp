@@ -36,6 +36,24 @@ void Serializer::save(NetworkManager& networkManager)
         opModel.typeName = op.getTypeName();
         opModel.posX = op.getPosition().x();
         opModel.posY = op.getPosition().y();
+
+        for(auto weakPrm : op.getParameters())
+        {
+            if(auto prm = weakPrm.lock())
+            {
+                ParameterSerializable prmModel;
+                prmModel.name = prm->getName();
+                unsigned int vecSize = prm->getVectorSize();
+                for(unsigned int i = 0; i < vecSize; i++)
+                {
+                    prmModel.floatValues.push_back(prm->evalFloat(i));
+                    prmModel.intValues.push_back(prm->evalInt(i));
+                    prmModel.stringValues.push_back(prm->evalString(i));
+                }
+                opModel.parameters.push_back(prmModel);
+            }
+        }
+
         networkModel.nodes.push_back(opModel);
     }
 
@@ -78,6 +96,25 @@ void Serializer::load(NetworkManager& networkManager)
         std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(node.typeName);
         nt::OpId id = nm().createOperator(opInfo.value(), {node.posX, node.posY});
         opIds.push_back(id);
+
+        auto& op = networkManager.getGeoOperator(id);
+        for(const ParameterSerializable& prmModel : node.parameters)
+        {
+            auto weakPrm = op.getParameter(prmModel.name);
+            if(auto prm = weakPrm.lock())
+            {
+                unsigned int vecSize = prm->getVectorSize();
+                for(unsigned int i = 0; i < vecSize; i++)
+                {
+                    if(i < prmModel.floatValues.size())
+                        prm->setFloat(prmModel.floatValues[i], i);
+                    if(i < prmModel.intValues.size())
+                        prm->setInt(prmModel.intValues[i], i);
+                    if(i < prmModel.stringValues.size())
+                        prm->setString(prmModel.stringValues[i], i);
+                }
+            }
+        }
     }
 
     // Recreate connections
