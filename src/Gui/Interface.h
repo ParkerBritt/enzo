@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <QBoxLayout>
 #include <QSplitter>
+#include <QMenuBar>
 #include <Gui/UtilWidgets/Splitter.h>
 
 class EnzoUI

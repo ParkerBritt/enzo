@@ -25,6 +25,7 @@ namespace enzo::nt {
 class NetworkManager
 : public QObject
 {
+    // TODO: make not Q_OBJECT
     Q_OBJECT
 public:
     /// @brief Deleted the copy constructor for singleton.

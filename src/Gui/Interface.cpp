@@ -1,6 +1,7 @@
 #include "Gui/Interface.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/Geometry.h"
+#include "Gui/HeaderBar/HeaderBar.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/ParametersPanel/ParametersPanel.h"
 #include "Gui/Viewport/Viewport.h"
@@ -39,7 +40,6 @@ EnzoUI::EnzoUI()
     mainLayout_->setContentsMargins(margin, margin, margin, margin);
 
 
-
     // TODO: dynamic splitters
     viewportSplitter_ = new Splitter(this);
     networkSplitter_ = new Splitter(this);
@@ -59,6 +59,9 @@ EnzoUI::EnzoUI()
     networkSplitter_->addWidget(network);
     networkSplitter_->setSizes({40,100});
 
+    HeaderBar* header = new HeaderBar();
+
+    mainLayout_->addWidget(header);
     mainLayout_->addWidget(viewportSplitter_);
 
     // connect signals

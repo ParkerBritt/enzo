@@ -29,6 +29,7 @@ set(ENGINE_SOURCES
     src/Engine/Parameter/PrmName.cpp
     src/Engine/Network/NetworkManager.cpp
     src/Engine/Network/UpdateLock.cpp
+    src/Engine/Serializer/Serializer.cpp
 )
 
 set(GUI_SOURCES
@@ -61,10 +62,12 @@ set(GUI_SOURCES
     src/Gui/Parameters/BoolSwitchParm.cpp
     src/Gui/Parameters/FormParm.cpp
     src/Gui/Parameters/StringParm.cpp
+    src/Gui/HeaderBar/HeaderBar.cpp
 )
 set(ENGINE_INCLUDE_DIRECTORIES
     src
     extern/icecream-cpp/include
+    extern/cereal/include
 )
 
 
