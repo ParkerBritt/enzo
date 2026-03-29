@@ -146,6 +146,7 @@ void enzo::nt::NetworkManager::clear()
     selectedNodes_.clear();
     maxOpId_ = 0;
     displayOp_.reset();
+    selectedNodesChanged(selectedNodes_);
     networkCleared();
 }
 

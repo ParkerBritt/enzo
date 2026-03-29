@@ -71,7 +71,11 @@ void EnzoUI::connectSignals()
 
     // Selection changed
     enzo::nt::nm().selectedNodesChanged.connect([this](std::vector<enzo::nt::OpId> selectedNodeIds){
-        if(selectedNodeIds.size()<=0) return;
+        if(selectedNodeIds.empty())
+        {
+            parametersPanel_->clearParameters();
+            return;
+        }
         enzo::nt::OpId selectedId = selectedNodeIds.back();
         parametersPanel_->selectionChanged(selectedId);
         geometrySpreadsheetPanel_->setNode(selectedId);
@@ -92,6 +96,8 @@ void EnzoUI::connectSignals()
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this](){
         network_->clearNetwork();
+        viewport_->clearGeometry();
+        geometrySpreadsheetPanel_->clear();
     });
 
 }

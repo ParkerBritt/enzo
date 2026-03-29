@@ -11,6 +11,7 @@ public:
     ParametersPanel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 public Q_SLOTS:
     void selectionChanged(enzo::nt::OpId opId);
+    void clearParameters();
 private:
     QVBoxLayout* mainLayout_;
     QVBoxLayout* parametersLayout_;

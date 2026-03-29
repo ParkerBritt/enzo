@@ -14,6 +14,7 @@ public:
     GeometrySpreadsheetPanel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 public Q_SLOTS:
     void geometryChanged(enzo::geo::Geometry& geometry);
+    void clear();
     void setNode(enzo::nt::OpId opId);
 private:
     QVBoxLayout* mainLayout_;

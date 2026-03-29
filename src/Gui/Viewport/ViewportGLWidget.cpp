@@ -203,6 +203,12 @@ void ViewportGLWidget::paintGL()
 //     return mesh; 
 // }
 
+void ViewportGLWidget::clearGeometry()
+{
+    enzo::geo::Geometry emptyGeo;
+    geometryChanged(emptyGeo);
+}
+
 void ViewportGLWidget::geometryChanged(enzo::geo::Geometry& geometry)
 {
     using namespace enzo;

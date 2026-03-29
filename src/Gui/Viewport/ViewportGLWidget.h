@@ -29,4 +29,5 @@ protected:
 
 public Q_SLOTS:
     void geometryChanged(enzo::geo::Geometry& geometry);
+    void clearGeometry();
 };

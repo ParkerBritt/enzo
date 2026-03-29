@@ -9,8 +9,9 @@ public:
     HeaderBar();
 
 private:
-    void onOpenClicked();
-    void onSaveClicked();
+    void onFileNewClicked();
+    void onFileOpenClicked();
+    void onFileSaveClicked();
 
     QBoxLayout* mainLayout_;
 };

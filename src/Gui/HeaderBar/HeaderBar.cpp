@@ -44,9 +44,10 @@ HeaderBar::HeaderBar()
     QAction* fileOpenAction = new QAction("Open");
     QAction* fileSaveAction = new QAction("Save");
     QAction* fileImportEnzoAction = new QAction("Enzo");
+    QAction* fileNewAction = new QAction("New");
 
     // Add Actions
-    fileMenu->addAction("New");
+    fileMenu->addAction(fileNewAction);
     fileMenu->addAction(fileOpenAction);
     fileMenu->addMenu("Open Recent");
     fileMenu->addMenu(fileImportMenu);
@@ -57,8 +58,9 @@ HeaderBar::HeaderBar()
     fileImportMenu->addAction(fileImportEnzoAction);
 
     // Connect actions
-    connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onOpenClicked);
-    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onSaveClicked);
+    connect(fileNewAction, &QAction::triggered, this, &HeaderBar::onFileNewClicked);
+    connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
+    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
 
     // Edit sub menu
     QMenu* editMenu = header->addMenu("Edit");
@@ -73,7 +75,12 @@ HeaderBar::HeaderBar()
     mainLayout_->addWidget(header);
 }
 
-void HeaderBar::onOpenClicked()
+void HeaderBar::onFileNewClicked()
+{
+    enzo::nt::nm().clear();
+}
+
+void HeaderBar::onFileOpenClicked()
 {
     enzo::nt::Serializer serializer;
     serializer.load(
@@ -84,7 +91,7 @@ enzo::nt::nm()
 
 }
 
-void HeaderBar::onSaveClicked()
+void HeaderBar::onFileSaveClicked()
 {
     enzo::nt::Serializer serializer;
     serializer.save(

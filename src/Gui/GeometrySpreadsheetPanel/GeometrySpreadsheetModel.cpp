@@ -26,6 +26,12 @@ void GeometrySpreadsheetModel::geometryChanged(enzo::geo::Geometry& geometry)
     endResetModel();
 }
 
+void GeometrySpreadsheetModel::clear()
+{
+    enzo::geo::Geometry emptyGeo;
+    geometryChanged(emptyGeo);;
+}
+
 void GeometrySpreadsheetModel::initBuffers()
 {
     // get sizes

@@ -35,18 +35,22 @@ ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
     setLayout(mainLayout_);
 }
 
+void ParametersPanel::clearParameters()
+{
+    QLayoutItem *child;
+    while ((child = parametersLayout_->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+}
+
 void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
 {
     using namespace enzo;
     enzo::nt::NetworkManager& nm = enzo::nt::nm();
     const enzo::nt::OpId displayOpId = opId;
 
-    // clear layout safely
-    QLayoutItem *child;
-    while ((child = parametersLayout_->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
-    }
+    clearParameters();
 
     enzo::nt::GeometryOperator& displayOp = nm.getGeoOperator(displayOpId);
     auto parameters = displayOp.getParameters();

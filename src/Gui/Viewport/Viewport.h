@@ -9,6 +9,7 @@ class Viewport
 public:
     Viewport(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     void setGeometry(enzo::geo::Geometry& geometry);
+    void clearGeometry();
 private:
     QVBoxLayout* mainLayout_;
     ViewportGLWidget* openGLWidget_;

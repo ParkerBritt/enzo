@@ -25,6 +25,11 @@ void Viewport::setGeometry(enzo::geo::Geometry& geometry)
     openGLWidget_->geometryChanged(geometry);
 }
 
+void Viewport::clearGeometry()
+{
+    openGLWidget_->clearGeometry();
+}
+
 void Viewport::resizeEvent(QResizeEvent *event)
 {
     QPainterPath path;

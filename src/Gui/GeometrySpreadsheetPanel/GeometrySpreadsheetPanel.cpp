@@ -72,6 +72,11 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent, Qt::WindowFl
     setLayout(mainLayout_);
 }
 
+void GeometrySpreadsheetPanel::clear()
+{
+    model_->clear();
+}
+
 void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
 {
     menuBar_->setNode(opId);
