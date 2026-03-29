@@ -28,6 +28,37 @@ class NetworkManager
     // TODO: make not Q_OBJECT
     Q_OBJECT
 public:
+
+    /// @brief Iterable range over operators, yields {OpId, GeometryOperator&} pairs.
+    class OperatorRange {
+        using Map = std::unordered_map<OpId, std::unique_ptr<GeometryOperator>>;
+        Map& map_;
+    public:
+        class Iterator {
+            Map::iterator it_;
+        public:
+            using value_type = std::pair<const OpId, GeometryOperator&>;
+            using reference = value_type;
+            using difference_type = std::ptrdiff_t;
+            using iterator_category = std::forward_iterator_tag;
+
+            Iterator(Map::iterator it) : it_(it) {}
+            reference operator*() const { return {it_->first, *it_->second}; }
+            Iterator& operator++() { ++it_; return *this; }
+            Iterator operator++(int) { Iterator tmp = *this; ++it_; return tmp; }
+            bool operator==(const Iterator& other) const { return it_ == other.it_; }
+            bool operator!=(const Iterator& other) const { return it_ != other.it_; }
+        };
+
+        OperatorRange(Map& map) : map_(map) {}
+        Iterator begin() { return Iterator(map_.begin()); }
+        Iterator end() { return Iterator(map_.end()); }
+        std::size_t size() const { return map_.size(); }
+    };
+
+    /// @brief Returns an iterable range over all operators in the network.
+    OperatorRange operators() { return OperatorRange(gopStore_); }
+
     /// @brief Deleted the copy constructor for singleton.
     NetworkManager(const NetworkManager& obj) = delete;
 

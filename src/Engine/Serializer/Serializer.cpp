@@ -11,36 +11,46 @@
 namespace enzo::nt
 {
 
-Serializer::Serializer(NetworkManager& networkManager)
+void Serializer::save(NetworkManager& networkManager)
 {
+    std::cout << "serializing\n";
+    // cereal::JSONOutputArchive output(std::cout); // stream to cout
+    std::ofstream file("/home/parker/Downloads/test.enz");
+    cereal::JSONOutputArchive save(file);
+    bool arr[] = {true, false};
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+
+    // Create serializable network model
+    NetworkSerializable networkModel;
+
+    // Get operators in network
+    auto ops = networkManager.operators();
+
+    // Resize model nodes vector for performance
+    networkModel.nodes.reserve(ops.size());
+
+    // Add all nodes to network model
+    for(auto [opId, op] : ops)
     {
-        std::cout << "serializing\n";
-        // cereal::JSONOutputArchive output(std::cout); // stream to cout
-        std::ofstream file("/home/parker/Downloads/test.enz");
-        cereal::JSONOutputArchive save(file);
-        bool arr[] = {true, false};
-        std::vector<int> vec = {1, 2, 3, 4, 5};
-
-        NetworkSerializable network;
-
-        OperatorSerializable op;
-        op.typeName = "test";
-
-        network.nodes.push_back(op);
-
-        save( CEREAL_NVP(network) );
+        OperatorSerializable opModel;
+        opModel.typeName = op.getTypeName();
+        std::cout << "iterating " << opModel.typeName << "\n";
+        networkModel.nodes.push_back(opModel);
     }
 
 
-    {
-        std::ifstream file("/home/parker/Downloads/test.enz");
-        cereal::JSONInputArchive load(file);
+    save( CEREAL_NVP(networkModel) );
+}
 
-        NetworkSerializable network;
-        load(network);
+void Serializer::load(NetworkManager& networkManager)
+{
+    std::ifstream file("/home/parker/Downloads/test.enz");
+    cereal::JSONInputArchive load(file);
 
-        std::cout << "node name:" << network.nodes[0].typeName << "\n";
-    }
-};
+    NetworkSerializable network;
+    load(network);
+
+    std::cout << "node name:" << network.nodes[0].typeName << "\n";
+}
 
 }
