@@ -39,12 +39,13 @@ HeaderBar::HeaderBar()
     // File menu
     QMenu* fileMenu = header->addMenu("File");
     fileMenu->addAction("New");
-    fileMenu->addAction("Open");
+    QAction* openAction = fileMenu->addAction("Open");
     fileMenu->addMenu("Open Recent");
     QAction* saveAction = fileMenu->addAction("Save");
     fileMenu->addAction("Save As...");
     fileMenu->addAction("Quit");
 
+    connect(openAction, &QAction::triggered, this, &HeaderBar::onOpenClicked);
     connect(saveAction, &QAction::triggered, this, &HeaderBar::onSaveClicked);
 
     // Edit menu
@@ -60,9 +61,21 @@ HeaderBar::HeaderBar()
     mainLayout_->addWidget(header);
 }
 
+void HeaderBar::onOpenClicked()
+{
+    enzo::nt::Serializer serializer;
+    serializer.load(
+enzo::nt::nm()
+            );
+    std::cout << "loading\n";
+
+
+}
+
 void HeaderBar::onSaveClicked()
 {
-    enzo::nt::Serializer serializer(
+    enzo::nt::Serializer serializer;
+    serializer.save(
 enzo::nt::nm()
             );
     std::cout << "SAVING\n";

@@ -176,7 +176,7 @@ std::vector<std::weak_ptr<prm::Parameter>> nt::GeometryOperator::getParameters()
 
 std::string nt::GeometryOperator::getLabel()
 {
-    return getTypeName();
+    return opInfo_.displayName; 
 }
 
 
@@ -187,7 +187,7 @@ std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::g
 
 std::string nt::GeometryOperator::getTypeName()
 {
-    return opInfo_.displayName; 
+    return opInfo_.internalName;
 }
 
 

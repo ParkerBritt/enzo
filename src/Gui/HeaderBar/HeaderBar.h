@@ -9,6 +9,7 @@ public:
     HeaderBar();
 
 private:
+    void onOpenClicked();
     void onSaveClicked();
 
     QBoxLayout* mainLayout_;

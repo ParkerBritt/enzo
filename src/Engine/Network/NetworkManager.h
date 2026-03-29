@@ -71,6 +71,8 @@ public:
     * @param OpInfo Data designating the properties of the node.
     *
     * @returns The operator ID of the newly created node
+    *
+    * @todo Should probably only have to pass type, now entire opInfo. Fix soon!!!
     */
     OpId addOperator(op::OpInfo opInfo);
 

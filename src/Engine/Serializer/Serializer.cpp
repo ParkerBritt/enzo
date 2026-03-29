@@ -1,5 +1,6 @@
 #include "Serializer.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Operator/OperatorTable.h"
 #include "NetworkSerializable.h"
 #include "cereal/details/helpers.hpp"
 #include <iostream>
@@ -49,6 +50,12 @@ void Serializer::load(NetworkManager& networkManager)
 
     NetworkSerializable network;
     load(network);
+
+    for( OperatorSerializable node : network.nodes) 
+    {
+        std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo( node.typeName);
+        nm().addOperator(opInfo.value());
+    }
 
     std::cout << "node name:" << network.nodes[0].typeName << "\n";
 }
