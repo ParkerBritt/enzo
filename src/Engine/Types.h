@@ -55,6 +55,7 @@ namespace enzo
         using floatT = double;
         using intT = int64_t;
         using boolT = bool;
+        using Vector2f = Eigen::Vector2f;
         using Vector3 = Eigen::Vector3d;
         using Vector4 = Eigen::Vector4d;
         using String = std::string;

@@ -34,7 +34,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
 
     auto& nm = nt::nm();
 
-    nt::OpId startOp = nm.addOperator(testOpInfo);
+    nt::OpId startOp = nm.createOperator(testOpInfo);
     nt::OpId prevOp = startOp;
     std::vector<nt::OpId> prevOps;
 
@@ -42,7 +42,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
     {
         for(int i=0; i<4; ++i)
         {
-            nt::OpId newOp = nm.addOperator(testOpInfo);
+            nt::OpId newOp = nm.createOperator(testOpInfo);
             prevOps.push_back(newOp);
             nt::connectOperators(newOp, i, prevOp, 0);
         }
@@ -52,7 +52,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
             for(int i=0; i<size(prevOpsBuffer); ++i)
             {
                 prevOps.clear();
-                nt::OpId newOp = nm.addOperator(testOpInfo);
+                nt::OpId newOp = nm.createOperator(testOpInfo);
                 prevOps.push_back(newOp);
                 nt::connectOperators(newOp, 0, prevOpsBuffer[i], 0);
 

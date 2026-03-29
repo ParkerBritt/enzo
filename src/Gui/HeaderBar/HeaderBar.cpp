@@ -38,23 +38,35 @@ HeaderBar::HeaderBar()
 
     // File menu
     QMenu* fileMenu = header->addMenu("File");
+    QMenu* fileImportMenu = new QMenu("Import");
+
+    // Create actions
+    QAction* fileOpenAction = new QAction("Open");
+    QAction* fileSaveAction = new QAction("Save");
+    QAction* fileImportEnzoAction = new QAction("Enzo");
+
+    // Add Actions
     fileMenu->addAction("New");
-    QAction* openAction = fileMenu->addAction("Open");
+    fileMenu->addAction(fileOpenAction);
     fileMenu->addMenu("Open Recent");
-    QAction* saveAction = fileMenu->addAction("Save");
+    fileMenu->addMenu(fileImportMenu);
+    fileMenu->addAction(fileSaveAction);
     fileMenu->addAction("Save As...");
     fileMenu->addAction("Quit");
 
-    connect(openAction, &QAction::triggered, this, &HeaderBar::onOpenClicked);
-    connect(saveAction, &QAction::triggered, this, &HeaderBar::onSaveClicked);
+    fileImportMenu->addAction(fileImportEnzoAction);
 
-    // Edit menu
+    // Connect actions
+    connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onOpenClicked);
+    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onSaveClicked);
+
+    // Edit sub menu
     QMenu* editMenu = header->addMenu("Edit");
 
-    // Window menu
+    // Window sub menu
     QMenu* windowMenu = header->addMenu("Window");
 
-    // Help menu
+    // Help sub menu
     QMenu* helpMenu = header->addMenu("Help");
     helpMenu->addAction("Info");
 

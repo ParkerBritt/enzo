@@ -14,11 +14,12 @@
 #include <string>
 #include "icecream.hpp"
 
-enzo::nt::OpId enzo::nt::NetworkManager::addOperator(op::OpInfo opInfo)
+enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::Vector2f position)
 {
 
     maxOpId_++;
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
+    newOp->setPosition(position);
     newOp->nodeDirtied.connect(
         [this](nt::OpId opId, bool dirtyDependents)
         {
@@ -26,6 +27,8 @@ enzo::nt::OpId enzo::nt::NetworkManager::addOperator(op::OpInfo opInfo)
 
         });
     gopStore_.emplace(maxOpId_, std::move(newOp));
+
+    operatorCreated(maxOpId_);
 
     return maxOpId_;
 }

@@ -3,7 +3,6 @@
 #include "Engine/Operator/Geometry.h"
 #include "Gui/HeaderBar/HeaderBar.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
-#include "Gui/ParametersPanel/ParametersPanel.h"
 #include "Gui/Viewport/Viewport.h"
 #include "Gui/Network/NetworkPanel.h"
 #include <qnamespace.h>
@@ -27,16 +26,16 @@ EnzoUI::EnzoUI()
     // TODO: unify stylsheet
     setStyleSheet("background-color:#1d2021;");
 
-    Viewport* viewport = new Viewport();
-    NetworkPanel* network = new NetworkPanel();
-    ParametersPanel* parametersPanel = new ParametersPanel();
-    GeometrySpreadsheetPanel* geometrySpreadsheetPanel = new GeometrySpreadsheetPanel();
+    viewport_ = new Viewport();
+    network_ = new NetworkPanel();
+    parametersPanel_ = new ParametersPanel();
+    geometrySpreadsheetPanel_ = new GeometrySpreadsheetPanel();
 
     constexpr int margin = 2;
-    viewport->layout()->setContentsMargins(margin, margin, margin, margin);
-    network->layout()->setContentsMargins(margin, margin, margin, margin);
-    parametersPanel->layout()->setContentsMargins(margin, margin, margin, margin);
-    geometrySpreadsheetPanel->layout()->setContentsMargins(margin, margin, margin, margin);
+    viewport_->layout()->setContentsMargins(margin, margin, margin, margin);
+    network_->layout()->setContentsMargins(margin, margin, margin, margin);
+    parametersPanel_->layout()->setContentsMargins(margin, margin, margin, margin);
+    geometrySpreadsheetPanel_->layout()->setContentsMargins(margin, margin, margin, margin);
     mainLayout_->setContentsMargins(margin, margin, margin, margin);
 
 
@@ -47,16 +46,16 @@ EnzoUI::EnzoUI()
     networkSplitter_->setOrientation(Qt::Vertical);
     spreadsheetSplitter_->setOrientation(Qt::Vertical);
 
-    spreadsheetSplitter_->addWidget(viewport);
-    spreadsheetSplitter_->addWidget(geometrySpreadsheetPanel);
+    spreadsheetSplitter_->addWidget(viewport_);
+    spreadsheetSplitter_->addWidget(geometrySpreadsheetPanel_);
     spreadsheetSplitter_->setSizes({200,100});
 
     viewportSplitter_->addWidget(spreadsheetSplitter_);
     viewportSplitter_->addWidget(networkSplitter_);
     viewportSplitter_->setSizes({100,200});
 
-    networkSplitter_->addWidget(parametersPanel);
-    networkSplitter_->addWidget(network);
+    networkSplitter_->addWidget(parametersPanel_);
+    networkSplitter_->addWidget(network_);
     networkSplitter_->setSizes({40,100});
 
     HeaderBar* header = new HeaderBar();
@@ -64,20 +63,27 @@ EnzoUI::EnzoUI()
     mainLayout_->addWidget(header);
     mainLayout_->addWidget(viewportSplitter_);
 
-    // connect signals
-    enzo::nt::nm().selectedNodesChanged.connect([parametersPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
+    connectSignals();
+}
+
+void EnzoUI::connectSignals()
+{
+
+    // Selection changed
+    enzo::nt::nm().selectedNodesChanged.connect([this](std::vector<enzo::nt::OpId> selectedNodeIds){
         if(selectedNodeIds.size()<=0) return;
-        parametersPanel->selectionChanged(selectedNodeIds.back());
+        enzo::nt::OpId selectedId = selectedNodeIds.back();
+        parametersPanel_->selectionChanged(selectedId);
+        geometrySpreadsheetPanel_->setNode(selectedId);
+        auto& geometry = enzo::nt::nm().getGeoOperator(selectedId).getOutputGeo(0);
+        geometrySpreadsheetPanel_->geometryChanged(geometry);
     });
-    enzo::nt::nm().selectedNodesChanged.connect([geometrySpreadsheetPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
-        if(selectedNodeIds.size()<=0) return;
-        geometrySpreadsheetPanel->setNode(selectedNodeIds.back());
-    });
-    enzo::nt::nm().selectedNodesChanged.connect([geometrySpreadsheetPanel](std::vector<enzo::nt::OpId> selectedNodeIds){
-        if(selectedNodeIds.size()<=0) return;
-        auto& geometry = enzo::nt::nm().getGeoOperator(selectedNodeIds.back()).getOutputGeo(0);
-        geometrySpreadsheetPanel->geometryChanged(geometry);
-    });
-    enzo::nt::nm().displayGeoChanged.connect([viewport](enzo::geo::Geometry& geometry){viewport->setGeometry(geometry);});
-    enzo::nt::nm().selectedGeoChanged.connect([geometrySpreadsheetPanel](enzo::geo::Geometry& geometry){geometrySpreadsheetPanel->geometryChanged(geometry);});
+
+    // Operator created
+    enzo::nt::nm().operatorCreated.connect([this](enzo::nt::OpId opId){network_->onOperatorCreated(opId);});
+
+    // Display/geometry changed
+    enzo::nt::nm().displayGeoChanged.connect([this](enzo::geo::Geometry& geometry){viewport_->setGeometry(geometry);});
+    enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Geometry& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});
+
 }

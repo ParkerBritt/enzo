@@ -33,7 +33,8 @@ public:
         DEFAULT,
         MOVING_NODE
     };
-    NodeGraphic* createNode(enzo::op::OpInfo opInfo);
+    void createNode(enzo::op::OpInfo opInfo);
+    void onOperatorCreated(enzo::nt::OpId opId);
 
 private:
     QLayout* mainLayout_;

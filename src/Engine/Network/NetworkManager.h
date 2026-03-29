@@ -74,7 +74,7 @@ public:
     *
     * @todo Should probably only have to pass type, now entire opInfo. Fix soon!!!
     */
-    OpId addOperator(op::OpInfo opInfo);
+    OpId createOperator(op::OpInfo opInfo, bt::Vector2f position = {0.f, 0.f});
 
     /** @brief Returns the operator ID for the node with its display flag set.
     * There can only be only be one operator displayed at a time.
@@ -145,6 +145,9 @@ public:
 
     // @brief A signal emitted when the selection of nodes changes
     boost::signals2::signal<void (std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;
+
+    // @brief A signal emitted when a new operator is created in the network
+    boost::signals2::signal<void (nt::OpId)> operatorCreated;
     /** @} */
 
     #ifdef UNIT_TEST

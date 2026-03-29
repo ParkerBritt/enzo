@@ -340,23 +340,22 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event)
     }
 }
 
-NodeGraphic* NetworkPanel::createNode(op::OpInfo opInfo)
+void NetworkPanel::createNode(op::OpInfo opInfo)
 {
-    if(nt::OpId id = enzo::nt::nm().addOperator(opInfo))
-    {
-        NodeGraphic* newNode = new NodeGraphic(id);
-        QPointF cursorPos = view_->mapToScene(mapFromGlobal(QCursor::pos()));
-        newNode->setPos(cursorPos);
+    QPointF cursorPos = view_->mapToScene(mapFromGlobal(QCursor::pos()));
+    enzo::nt::nm().createOperator(opInfo, {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())});
+}
 
-        scene_->addItem(newNode);
-        nodeStore_.emplace(id, newNode);
-        
-        return newNode;
-    }
-    else
-    {
-        return nullptr;
-    }
+void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
+{
+    auto& op = enzo::nt::nm().getGeoOperator(opId);
+    auto pos = op.getPosition();
+
+    NodeGraphic* newNode = new NodeGraphic(opId);
+    newNode->setPos(pos.x(), pos.y());
+
+    scene_->addItem(newNode);
+    nodeStore_.emplace(opId, newNode);
 }
 
 
@@ -407,6 +406,13 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event)
         }
         if(state_==State::MOVING_NODE)
         {
+            // Sync moved positions back to engine
+            for(auto* item : moveNodeBuffer)
+            {
+                auto* node = static_cast<NodeGraphic*>(item);
+                QPointF p = node->pos();
+                enzo::nt::nm().getGeoOperator(node->getOpId()).setPosition({static_cast<float>(p.x()), static_cast<float>(p.y())});
+            }
             moveNodeBuffer.clear();
             state_=State::DEFAULT;
 

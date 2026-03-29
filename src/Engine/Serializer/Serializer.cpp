@@ -35,6 +35,8 @@ void Serializer::save(NetworkManager& networkManager)
     {
         OperatorSerializable opModel;
         opModel.typeName = op.getTypeName();
+        opModel.posX = op.getPosition().x();
+        opModel.posY = op.getPosition().y();
         std::cout << "iterating " << opModel.typeName << "\n";
         networkModel.nodes.push_back(opModel);
     }
@@ -51,10 +53,10 @@ void Serializer::load(NetworkManager& networkManager)
     NetworkSerializable network;
     load(network);
 
-    for( OperatorSerializable node : network.nodes) 
+    for( OperatorSerializable node : network.nodes)
     {
         std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo( node.typeName);
-        nm().addOperator(opInfo.value());
+        nm().createOperator(opInfo.value(), {node.posX, node.posY});
     }
 
     std::cout << "node name:" << network.nodes[0].typeName << "\n";
