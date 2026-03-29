@@ -13,10 +13,10 @@
 namespace enzo::nt
 {
 
-void Serializer::save(NetworkManager& networkManager)
+void Serializer::save(NetworkManager& networkManager, std::string filePath)
 {
     std::cout << "serializing\n";
-    std::ofstream file("/home/parker/Downloads/test.enz");
+    std::ofstream file(filePath);
     cereal::JSONOutputArchive save(file);
 
     NetworkSerializable networkModel;
@@ -77,11 +77,11 @@ void Serializer::save(NetworkManager& networkManager)
     save( CEREAL_NVP(networkModel) );
 }
 
-void Serializer::load(NetworkManager& networkManager)
+void Serializer::load(NetworkManager& networkManager, std::string filePath)
 {
     networkManager.clear();
 
-    std::ifstream file("/home/parker/Downloads/test.enz");
+    std::ifstream file(filePath);
     cereal::JSONInputArchive load(file);
 
     NetworkSerializable network;

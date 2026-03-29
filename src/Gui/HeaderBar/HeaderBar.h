@@ -11,7 +11,7 @@ public:
 private:
     void onFileNewClicked();
     void onFileOpenClicked();
-    void onFileSaveClicked();
+    void onFileSaveAsClicked();
 
     QBoxLayout* mainLayout_;
 };

@@ -3,6 +3,9 @@
 #include "Engine/Network/NetworkManager.h"
 #include <qaction.h>
 #include <iostream>
+#include <QFileDialog>
+#include <QDir>
+#include <QStandardPaths>
 
 HeaderBar::HeaderBar()
 {
@@ -43,6 +46,7 @@ HeaderBar::HeaderBar()
     // Create actions
     QAction* fileOpenAction = new QAction("Open");
     QAction* fileSaveAction = new QAction("Save");
+    QAction* fileSaveAsAction = new QAction("Save As...");
     QAction* fileImportEnzoAction = new QAction("Enzo");
     QAction* fileNewAction = new QAction("New");
 
@@ -52,7 +56,7 @@ HeaderBar::HeaderBar()
     fileMenu->addMenu("Open Recent");
     fileMenu->addMenu(fileImportMenu);
     fileMenu->addAction(fileSaveAction);
-    fileMenu->addAction("Save As...");
+    fileMenu->addAction(fileSaveAsAction);
     fileMenu->addAction("Quit");
 
     fileImportMenu->addAction(fileImportEnzoAction);
@@ -60,7 +64,7 @@ HeaderBar::HeaderBar()
     // Connect actions
     connect(fileNewAction, &QAction::triggered, this, &HeaderBar::onFileNewClicked);
     connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
-    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
+    connect(fileSaveAsAction, &QAction::triggered, this, &HeaderBar::onFileSaveAsClicked);
 
     // Edit sub menu
     QMenu* editMenu = header->addMenu("Edit");
@@ -82,21 +86,34 @@ void HeaderBar::onFileNewClicked()
 
 void HeaderBar::onFileOpenClicked()
 {
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+    tr("Open File"), homeDir, tr("Enzo files (*.enzo);;All Files (*)"));
+
+    if (fileName.isEmpty())
+        return;
+
+    if (!QFile::exists(fileName))
+    {
+        std::cerr << "File does not exist: " << fileName.toStdString() << "\n";
+        return;
+    }
+
     enzo::nt::Serializer serializer;
-    serializer.load(
-enzo::nt::nm()
-            );
-    std::cout << "loading\n";
-
-
+    serializer.load( enzo::nt::nm(), fileName.toStdString());
 }
 
-void HeaderBar::onFileSaveClicked()
+void HeaderBar::onFileSaveAsClicked()
 {
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString defaultSavePath = QDir(homeDir).filePath("Untitled.enzo");
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+    tr("Save File"), defaultSavePath, tr("Enzo files (*.enzo);;All Files (*)"));
+
     enzo::nt::Serializer serializer;
-    serializer.save(
-enzo::nt::nm()
-            );
+    serializer.save( enzo::nt::nm(), fileName.toStdString());
     std::cout << "SAVING\n";
 
 }

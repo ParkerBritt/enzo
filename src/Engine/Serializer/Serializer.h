@@ -6,8 +6,8 @@ namespace enzo::nt
 class Serializer
 {
     public:
-        void save(NetworkManager& networkManager);
-        void load(NetworkManager& networkManager);
+        void save(NetworkManager& networkManager, std::string filePath);
+        void load(NetworkManager& networkManager, std::string filePath);
 
 };
 
