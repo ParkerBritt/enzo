@@ -140,6 +140,15 @@ const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
     return selectedNodes_;
 }
 
+void enzo::nt::NetworkManager::clear()
+{
+    gopStore_.clear();
+    selectedNodes_.clear();
+    maxOpId_ = 0;
+    displayOp_.reset();
+    networkCleared();
+}
+
 void enzo::nt::NetworkManager::cookOp(enzo::nt::OpId opId)
 {
     std::vector<enzo::nt::OpId> dependencyGraph = getDependencyGraph(opId);

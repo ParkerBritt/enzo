@@ -47,8 +47,12 @@ void Serializer::save(NetworkManager& networkManager)
 
 void Serializer::load(NetworkManager& networkManager)
 {
+    networkManager.clear();
+
     std::ifstream file("/home/parker/Downloads/test.enz");
     cereal::JSONInputArchive load(file);
+
+    networkManager.clear();
 
     NetworkSerializable network;
     load(network);

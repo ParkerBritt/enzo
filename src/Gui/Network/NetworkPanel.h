@@ -35,6 +35,7 @@ public:
     };
     void createNode(enzo::op::OpInfo opInfo);
     void onOperatorCreated(enzo::nt::OpId opId);
+    void clearNetwork();
 
 private:
     QLayout* mainLayout_;

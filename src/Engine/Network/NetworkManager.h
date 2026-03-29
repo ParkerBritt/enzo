@@ -124,6 +124,11 @@ public:
     const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
     /**
+     * @brief Clears all operators and resets the network to its initial state.
+     */
+    void clear();
+
+    /**
      * @brief Cooks the given operator
      * @param opId operator ID to cook
      */
@@ -148,6 +153,9 @@ public:
 
     // @brief A signal emitted when a new operator is created in the network
     boost::signals2::signal<void (nt::OpId)> operatorCreated;
+
+    // @brief A signal emitted when the network is cleared
+    boost::signals2::signal<void ()> networkCleared;
     /** @} */
 
     #ifdef UNIT_TEST

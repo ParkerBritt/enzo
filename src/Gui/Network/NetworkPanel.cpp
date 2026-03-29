@@ -346,6 +346,16 @@ void NetworkPanel::createNode(op::OpInfo opInfo)
     enzo::nt::nm().createOperator(opInfo, {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())});
 }
 
+void NetworkPanel::clearNetwork()
+{
+    destroyFloatingEdge();
+    scene_->clear();
+    nodeStore_.clear();
+    moveNodeBuffer.clear();
+    prevHoverItems_.clear();
+    state_ = State::DEFAULT;
+}
+
 void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
 {
     auto& op = enzo::nt::nm().getGeoOperator(opId);

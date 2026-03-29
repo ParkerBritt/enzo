@@ -86,4 +86,9 @@ void EnzoUI::connectSignals()
     enzo::nt::nm().displayGeoChanged.connect([this](enzo::geo::Geometry& geometry){viewport_->setGeometry(geometry);});
     enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Geometry& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});
 
+    // Network cleared
+    enzo::nt::nm().networkCleared.connect([this](){
+        network_->clearNetwork();
+    });
+
 }
