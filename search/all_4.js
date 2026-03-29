@@ -33,13 +33,14 @@ var searchData=
   ['getparameters_30',['getParameters',['../classenzo_1_1nt_1_1GeometryOperator.html#afcb85d7bd36fa607b42eaabdae18206f',1,'enzo::nt::GeometryOperator']]],
   ['getpointpos_31',['getPointPos',['../classenzo_1_1geo_1_1Geometry.html#a36694b922a0505174a86294384c569de',1,'enzo::geo::Geometry']]],
   ['getposfromvert_32',['getPosFromVert',['../classenzo_1_1geo_1_1Geometry.html#a0bb16252377ca9ad31903538b6c5d48f',1,'enzo::geo::Geometry']]],
-  ['getprimstartvertex_33',['getPrimStartVertex',['../classenzo_1_1geo_1_1Geometry.html#a9501a538173c09d40f2bdd0b9598f7f6',1,'enzo::geo::Geometry']]],
-  ['getprimvertcount_34',['getPrimVertCount',['../classenzo_1_1geo_1_1Geometry.html#aa020a5e510e97d427f64cb939da8a291',1,'enzo::geo::Geometry']]],
-  ['getselectednodes_35',['getSelectedNodes',['../classenzo_1_1nt_1_1NetworkManager.html#aa5ea59029f6195425e6237c27ee8be3a',1,'enzo::nt::NetworkManager']]],
-  ['getsize_36',['getSize',['../classenzo_1_1ga_1_1AttributeHandle.html#a6878b34c96155ec8bb9c403593292839',1,'enzo::ga::AttributeHandle::getSize()'],['../classenzo_1_1ga_1_1AttributeHandleRO.html#a8863541123a8fe8f9d4d2d614457fbcd',1,'enzo::ga::AttributeHandleRO::getSize()']]],
-  ['gettype_37',['getType',['../classenzo_1_1ga_1_1Attribute.html#a2cbe404447952030d089b6bfc40e5989',1,'enzo::ga::Attribute']]],
-  ['gettypename_38',['getTypeName',['../classenzo_1_1nt_1_1GeometryOperator.html#a9f7c316419a931b6071ca306374898d8',1,'enzo::nt::GeometryOperator']]],
-  ['gettypesize_39',['getTypeSize',['../classenzo_1_1ga_1_1Attribute.html#a887f159a8f491b9c3ac8fc0afe2975a7',1,'enzo::ga::Attribute']]],
-  ['getvalue_40',['getValue',['../classenzo_1_1ga_1_1AttributeHandle.html#a6c46c4ac5b3c060047c55ec7e6b018c2',1,'enzo::ga::AttributeHandle::getValue()'],['../classenzo_1_1ga_1_1AttributeHandleRO.html#a8bed9c8d5b420bad70baa06115beb332',1,'enzo::ga::AttributeHandleRO::getValue()']]],
-  ['getvertexprim_41',['getVertexPrim',['../classenzo_1_1geo_1_1Geometry.html#ae365ee594b5fcd078c1b9b6669ecbf21',1,'enzo::geo::Geometry']]]
+  ['getposition_33',['getPosition',['../classenzo_1_1nt_1_1GeometryOperator.html#aa524882589993243cdcc9f56f0af5a6c',1,'enzo::nt::GeometryOperator']]],
+  ['getprimstartvertex_34',['getPrimStartVertex',['../classenzo_1_1geo_1_1Geometry.html#a9501a538173c09d40f2bdd0b9598f7f6',1,'enzo::geo::Geometry']]],
+  ['getprimvertcount_35',['getPrimVertCount',['../classenzo_1_1geo_1_1Geometry.html#aa020a5e510e97d427f64cb939da8a291',1,'enzo::geo::Geometry']]],
+  ['getselectednodes_36',['getSelectedNodes',['../classenzo_1_1nt_1_1NetworkManager.html#aa5ea59029f6195425e6237c27ee8be3a',1,'enzo::nt::NetworkManager']]],
+  ['getsize_37',['getSize',['../classenzo_1_1ga_1_1AttributeHandle.html#a6878b34c96155ec8bb9c403593292839',1,'enzo::ga::AttributeHandle::getSize()'],['../classenzo_1_1ga_1_1AttributeHandleRO.html#a8863541123a8fe8f9d4d2d614457fbcd',1,'enzo::ga::AttributeHandleRO::getSize()']]],
+  ['gettype_38',['getType',['../classenzo_1_1ga_1_1Attribute.html#a2cbe404447952030d089b6bfc40e5989',1,'enzo::ga::Attribute']]],
+  ['gettypename_39',['getTypeName',['../classenzo_1_1nt_1_1GeometryOperator.html#a9f7c316419a931b6071ca306374898d8',1,'enzo::nt::GeometryOperator']]],
+  ['gettypesize_40',['getTypeSize',['../classenzo_1_1ga_1_1Attribute.html#a887f159a8f491b9c3ac8fc0afe2975a7',1,'enzo::ga::Attribute']]],
+  ['getvalue_41',['getValue',['../classenzo_1_1ga_1_1AttributeHandle.html#a6c46c4ac5b3c060047c55ec7e6b018c2',1,'enzo::ga::AttributeHandle::getValue()'],['../classenzo_1_1ga_1_1AttributeHandleRO.html#a8bed9c8d5b420bad70baa06115beb332',1,'enzo::ga::AttributeHandleRO::getValue()']]],
+  ['getvertexprim_42',['getVertexPrim',['../classenzo_1_1geo_1_1Geometry.html#ae365ee594b5fcd078c1b9b6669ecbf21',1,'enzo::geo::Geometry']]]
 ];

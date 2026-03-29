@@ -177,6 +177,14 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxInputs<
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxOutputs</b> () const</td></tr>
 <tr class="memdesc:a49417aeff42d1c377be3a5f8d4b529ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of available outputs the node provides. <br /></td></tr>
 <tr class="separator:a49417aeff42d1c377be3a5f8d4b529ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa524882589993243cdcc9f56f0af5a6c" id="r_aa524882589993243cdcc9f56f0af5a6c"><td class="memItemLeft" align="right" valign="top"><a id="aa524882589993243cdcc9f56f0af5a6c" name="aa524882589993243cdcc9f56f0af5a6c"></a>
+bt::Vector2f&#160;</td><td class="memItemRight" valign="bottom"><b>getPosition</b> () const</td></tr>
+<tr class="memdesc:aa524882589993243cdcc9f56f0af5a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's position in the network graph. <br /></td></tr>
+<tr class="separator:aa524882589993243cdcc9f56f0af5a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eac4d4bc04ef3c073d858dd37f0a6e5" id="r_a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="memItemLeft" align="right" valign="top"><a id="a7eac4d4bc04ef3c073d858dd37f0a6e5" name="a7eac4d4bc04ef3c073d858dd37f0a6e5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setPosition</b> (bt::Vector2f pos)</td></tr>
+<tr class="memdesc:a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the node's position in the network graph. <br /></td></tr>
+<tr class="separator:a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -342,7 +350,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 </div><div class="memdoc">
 
 <p>NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo</a></b></dt><dd>implement </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo</a></b></dt><dd>implement </dd></dl>
 
 </div>
 </div>
@@ -383,7 +391,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Returns the current output geometry. </p>
 <p>Does not trigger a cook so if the geometry may be outdated if not cooked first.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
 
 </div>
 </div>
@@ -444,7 +452,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Removes an input from the node's container. </p>
 <p>Does not remove the connection from any other node it's connected to, likely causing undefined behavior if called incorrectly.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
 
 </div>
 </div>
@@ -465,7 +473,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Removes an output from the node's container. </p>
 <p>Does not remove the connection from any other node it's connected to, likely causing undefined behavior if called incorrectly.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
 
 </div>
 </div>

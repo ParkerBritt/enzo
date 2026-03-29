@@ -92,6 +92,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classenzo_1_1nt_1_1NetworkManager-members.html">List of all members</a>  </div>
@@ -110,15 +111,25 @@ Inheritance diagram for enzo::nt::NetworkManager:</div>
   <img src="classenzo_1_1nt_1_1NetworkManager.png" alt=""/>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1OperatorRange.html">OperatorRange</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterable range over operators, yields {OpId, <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html" title="The unique runtime representation of a node.">GeometryOperator</a>&amp;} pairs.  <a href="classenzo_1_1nt_1_1NetworkManager_1_1OperatorRange.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aa281e9247b20c60fd6ace5e4f6f5d447" id="r_aa281e9247b20c60fd6ace5e4f6f5d447"><td class="memItemLeft" align="right" valign="top"><a id="aa281e9247b20c60fd6ace5e4f6f5d447" name="aa281e9247b20c60fd6ace5e4f6f5d447"></a>
+<a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1OperatorRange.html">OperatorRange</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operators</b> ()</td></tr>
+<tr class="memdesc:aa281e9247b20c60fd6ace5e4f6f5d447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterable range over all operators in the network. <br /></td></tr>
+<tr class="separator:aa281e9247b20c60fd6ace5e4f6f5d447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69ba6571d43eb6a3a331cb96126de57d" id="r_a69ba6571d43eb6a3a331cb96126de57d"><td class="memItemLeft" align="right" valign="top"><a id="a69ba6571d43eb6a3a331cb96126de57d" name="a69ba6571d43eb6a3a331cb96126de57d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>NetworkManager</b> (const <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;obj)=delete</td></tr>
 <tr class="memdesc:a69ba6571d43eb6a3a331cb96126de57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted the copy constructor for singleton. <br /></td></tr>
 <tr class="separator:a69ba6571d43eb6a3a331cb96126de57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22b971b21b8e4dced2fe0ab5da2fe0f7" id="r_a22b971b21b8e4dced2fe0ab5da2fe0f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22b971b21b8e4dced2fe0ab5da2fe0f7">addOperator</a> (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</td></tr>
-<tr class="memdesc:a22b971b21b8e4dced2fe0ab5da2fe0f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node in the network.  <br /></td></tr>
-<tr class="separator:a22b971b21b8e4dced2fe0ab5da2fe0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfbeca0f082c5c682af489bea9ca0800" id="r_abfbeca0f082c5c682af489bea9ca0800"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfbeca0f082c5c682af489bea9ca0800">createOperator</a> (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo, bt::Vector2f position={0.f, 0.f})</td></tr>
+<tr class="memdesc:abfbeca0f082c5c682af489bea9ca0800"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node in the network.  <br /></td></tr>
+<tr class="separator:abfbeca0f082c5c682af489bea9ca0800"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae199c78021ccd6ce53c1bb70d6a3e370" id="r_ae199c78021ccd6ce53c1bb70d6a3e370"><td class="memItemLeft" align="right" valign="top"><a id="ae199c78021ccd6ce53c1bb70d6a3e370" name="ae199c78021ccd6ce53c1bb70d6a3e370"></a>
 std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getDisplayOp</b> ()</td></tr>
 <tr class="memdesc:ae199c78021ccd6ce53c1bb70d6a3e370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the operator ID for the node with its display flag set. There can only be only be one operator displayed at a time. Return value is nullopt if no node is set to display. <br /></td></tr>
@@ -149,6 +160,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a 
 const std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSelectedNodes</b> ()</td></tr>
 <tr class="memdesc:aa5ea59029f6195425e6237c27ee8be3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the OpIds for all selected nodes. <br /></td></tr>
 <tr class="separator:aa5ea59029f6195425e6237c27ee8be3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad17a838982d5004c16d31700dd74a908" id="r_ad17a838982d5004c16d31700dd74a908"><td class="memItemLeft" align="right" valign="top"><a id="ad17a838982d5004c16d31700dd74a908" name="ad17a838982d5004c16d31700dd74a908"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+<tr class="memdesc:ad17a838982d5004c16d31700dd74a908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all operators and resets the network to its initial state. <br /></td></tr>
+<tr class="separator:ad17a838982d5004c16d31700dd74a908"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e7d23338f93ae7c795f66029cbe9be4" id="r_a9e7d23338f93ae7c795f66029cbe9be4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e7d23338f93ae7c795f66029cbe9be4">cookOp</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId)</td></tr>
 <tr class="memdesc:a9e7d23338f93ae7c795f66029cbe9be4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks the given operator.  <br /></td></tr>
 <tr class="separator:a9e7d23338f93ae7c795f66029cbe9be4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,38 +190,21 @@ boost::signals2::signal&lt; void(<a class="el" href="classenzo_1_1geo_1_1Geometr
 <tr class="memitem:a0c8593f1815ce188026a0b3e2da90540" id="r_a0c8593f1815ce188026a0b3e2da90540"><td class="memItemLeft" align="right" valign="top"><a id="a0c8593f1815ce188026a0b3e2da90540" name="a0c8593f1815ce188026a0b3e2da90540"></a>
 boost::signals2::signal&lt; void(std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> &gt; selectedNodeIds)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>selectedNodesChanged</b></td></tr>
 <tr class="separator:a0c8593f1815ce188026a0b3e2da90540"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634bedc0dda32064ec4e6edf3462d903" id="r_a634bedc0dda32064ec4e6edf3462d903"><td class="memItemLeft" align="right" valign="top"><a id="a634bedc0dda32064ec4e6edf3462d903" name="a634bedc0dda32064ec4e6edf3462d903"></a>
+boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operatorCreated</b></td></tr>
+<tr class="separator:a634bedc0dda32064ec4e6edf3462d903"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a144d11eaf5b3b0e312359f1109a003f6" id="r_a144d11eaf5b3b0e312359f1109a003f6"><td class="memItemLeft" align="right" valign="top"><a id="a144d11eaf5b3b0e312359f1109a003f6" name="a144d11eaf5b3b0e312359f1109a003f6"></a>
+boost::signals2::signal&lt; void(std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>connectionCreated</b></td></tr>
+<tr class="separator:a144d11eaf5b3b0e312359f1109a003f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab78af1bb1431bd81aa68ed10a1f005d4" id="r_ab78af1bb1431bd81aa68ed10a1f005d4"><td class="memItemLeft" align="right" valign="top"><a id="ab78af1bb1431bd81aa68ed10a1f005d4" name="ab78af1bb1431bd81aa68ed10a1f005d4"></a>
+boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>networkCleared</b></td></tr>
+<tr class="separator:ab78af1bb1431bd81aa68ed10a1f005d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The central coordinator of the engine's node system. </p>
 <p>The network manager is the central coordinator of the engine’s node system. It manages the lifecycle of operators, including their creation, storage, and validation, while also tracking dependencies between them. Acting as a singleton, it ensures that all parts of the engine work with a single consistent view of the network, providing global access. Beyond just storing operators, it also controls cooking and traversing dependency graphs, ensuring that updates flow correctly through the network when nodes change.</p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo</a></b></dt><dd>remove Qobject inheritance, this is no longer needed since switching to boost signals.</dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a22b971b21b8e4dced2fe0ab5da2fe0f7" name="a22b971b21b8e4dced2fe0ab5da2fe0f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22b971b21b8e4dced2fe0ab5da2fe0f7">&#9670;&#160;</a></span>addOperator()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> enzo::nt::NetworkManager::addOperator </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a></td>          <td class="paramname"><span class="paramname"><em>opInfo</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates a new node in the network. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">OpInfo</td><td>Data designating the properties of the node.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The operator ID of the newly created node </dd></dl>
-
-</div>
-</div>
 <a id="a9e7d23338f93ae7c795f66029cbe9be4" name="a9e7d23338f93ae7c795f66029cbe9be4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e7d23338f93ae7c795f66029cbe9be4">&#9670;&#160;</a></span>cookOp()</h2>
 
@@ -229,6 +227,37 @@ boost::signals2::signal&lt; void(std::vector&lt; <a class="el" href="Types_8h.ht
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="abfbeca0f082c5c682af489bea9ca0800" name="abfbeca0f082c5c682af489bea9ca0800"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfbeca0f082c5c682af489bea9ca0800">&#9670;&#160;</a></span>createOperator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> enzo::nt::NetworkManager::createOperator </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a></td>          <td class="paramname"><span class="paramname"><em>opInfo</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bt::Vector2f</td>          <td class="paramname"><span class="paramname"><em>position</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{0.f,&#160;0.f}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a new node in the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">OpInfo</td><td>Data designating the properties of the node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The operator ID of the newly created node</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo</a></b></dt><dd>Should probably only have to pass type, now entire opInfo. Fix soon!!! </dd></dl>
 
 </div>
 </div>

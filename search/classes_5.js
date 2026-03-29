@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['operatortable_0',['OperatorTable',['../classenzo_1_1op_1_1OperatorTable.html',1,'enzo::op']]],
-  ['opinfo_1',['OpInfo',['../structenzo_1_1op_1_1OpInfo.html',1,'enzo::op']]]
+  ['name_0',['Name',['../classenzo_1_1prm_1_1Name.html',1,'enzo::prm']]],
+  ['networkmanager_1',['NetworkManager',['../classenzo_1_1nt_1_1NetworkManager.html',1,'enzo::nt']]],
+  ['networkserializable_2',['NetworkSerializable',['../structNetworkSerializable.html',1,'']]]
 ];
