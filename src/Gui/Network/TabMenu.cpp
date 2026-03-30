@@ -257,7 +257,7 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
 
         QPushButton:pressed { background-color: #b0b0b0; }
     )");
-    setFixedHeight(35);
+    setFixedHeight(30);
 
     displayText_ = text;
     setAttribute(Qt::WA_Hover, true);
@@ -275,14 +275,14 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
     icon_ = new QSvgWidget(":/node-icons/grid.svg");
     icon_->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);
     icon_->setStyleSheet("background-color: transparent;");
-    icon_->setFixedSize(16, 16);
+    icon_->setFixedSize(14, 14);
 
     mainLayout_ = new QHBoxLayout();
     constexpr int leftRightMargin = 10;
     mainLayout_->setContentsMargins(leftRightMargin, 0, leftRightMargin, 0);
 
     mainLayout_->addWidget(icon_);
-    mainLayout_->addSpacing(6);
+    mainLayout_->addSpacing(4);
     mainLayout_->addWidget(textLabel_);
 
     setLayout(mainLayout_);

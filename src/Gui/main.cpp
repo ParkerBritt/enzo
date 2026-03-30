@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QFontDatabase>
 #include <QPushButton>
 #include <QSurfaceFormat>
 #include "Engine/Operator/OperatorTable.h"
@@ -19,6 +20,13 @@ int main(int argc, char **argv)
     enzo::op::OperatorTable::initPlugins();
 
     QApplication app (argc, argv);
+
+    // load fonts
+    QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-VariableFont_wght.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf");
+    QFont appFont("Rubik");
+    appFont.setPointSize(9);
+    app.setFont(appFont);
 
     EnzoUI interface;
     interface.show();

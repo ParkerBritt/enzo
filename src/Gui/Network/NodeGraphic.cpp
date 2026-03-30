@@ -42,10 +42,10 @@ NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem *parent)
 void NodeGraphic::initFonts()
 {
     // declare fonts
-    titleFont_ = QFont();
+    titleFont_ = QFont("Rubik");
     titleFont_.setPixelSize(8);
 
-    subTitleFont_ = QFont();
+    subTitleFont_ = QFont("Rubik");
     subTitleFont_.setPixelSize(5);
 
     // compute text positions
@@ -175,16 +175,12 @@ void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QPen defaultPen = Qt::NoPen;
     defaultPen.setWidth(1);
     // outline when selected
-    QPen selectedPen = QPen("#edd044");
-    // choose outline
-    if(isSelected()) painter->setPen(selectedPen);
-    else painter->setPen(defaultPen);
-
+    QPen selectedPen = QPen(QColor("#fee046"), 0.8);
     // set fill
-    QBrush whiteBrush = QBrush("white");
     painter->setBrush(QBrush(QColor("#1b1b1b")));
 
-    if(selected_) painter->setPen(QPen(QColor("#fee046"), 2));
+    if(selected_) painter->setPen(selectedPen);
+    else painter->setPen(defaultPen);
     painter->drawRoundedRect(bodyRect_, 5, 5);
 
     painter->setPen(QPen(QColor("white")));
