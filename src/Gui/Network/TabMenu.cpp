@@ -62,14 +62,14 @@ enzo::ui::TabMenu::TabMenu(QWidget *parent, Qt::WindowFlags f)
   mainLayout_->addWidget(nodeScrollArea_);
 
   nodeHolderLayout_->setSpacing(0);
-  nodeHolderLayout_->setContentsMargins(2, 4, 2, 4);
+  nodeHolderLayout_->setContentsMargins(4, 4, 4, 4);
   nodeHolder_->setLayout(nodeHolderLayout_);
   nodeHolderLayout_->setAlignment(Qt::AlignTop);
 
   nodeScrollArea_->setWidget(nodeHolder_);
   nodeScrollArea_->setWidgetResizable(true);
   nodeScrollArea_->setMinimumHeight(250);
-  nodeScrollArea_->setMinimumWidth(200);
+  nodeScrollArea_->setMinimumWidth(280);
 
   // style
   searchBar_->setAlignment(Qt::AlignCenter);
@@ -82,20 +82,20 @@ enzo::ui::TabMenu::TabMenu(QWidget *parent, Qt::WindowFlags f)
     )");
   nodeScrollArea_->setObjectName("TabMenuNodeScrollArea");
   nodeScrollArea_->setStyleSheet(R"(
-           QWidget#TabMenuNodeScrollArea {
-                background-color: #d9161616;
-                border: 1px solid #363636;
-               border-radius: 8px;
-           }
+    QWidget#TabMenuNodeScrollArea {
+        background-color: rgba(20,20,20,0.8);
+        border: 1px solid rgba(54,54,54, 0.7);
+        border-radius: 8px;
+    }
     )");
   searchBar_->setObjectName("TabMenuSearch");
   searchBar_->setStyleSheet(R"(
-           QWidget#TabMenuSearch {
-                background-color: #d9161616;
-              padding: 3px;
-               border-radius: 6px;
-                border: 1px solid #363636;
-           }
+    QWidget#TabMenuSearch {
+        background-color: rgba(20,20,20,0.8);
+        padding: 3px;
+        border-radius: 6px;
+        border: 1px solid rgba(54,54,54, 0.7);
+    }
     )");
 
   // drop shadow
@@ -243,9 +243,10 @@ void enzo::ui::TabMenu::moveSelection(SelectionDirection direction) {
 }
 
 enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
-    : QPushButton(parent) {
-  setObjectName("TabMenuButton");
-  setStyleSheet(R"(
+: QPushButton(parent)
+{
+    setObjectName("TabMenuButton");
+    setStyleSheet(R"(
         QPushButton {
             background-color: transparent;
             border: 4px solid transparent;
@@ -256,33 +257,35 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
 
         QPushButton:pressed { background-color: #b0b0b0; }
     )");
+    setFixedHeight(35);
 
-  displayText_ = text;
-  setAttribute(Qt::WA_Hover, true);
-  setMouseTracking(true);
+    displayText_ = text;
+    setAttribute(Qt::WA_Hover, true);
+    setMouseTracking(true);
 
-  textLabel_ = new QLabel(text, this);
-  textLabel_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  textLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-  textLabel_->setStyleSheet(
-      "QLabel { color: white; background: transparent; }");
-  this->setStyleSheet("#TabMenuButton {background: transparent; border: none}");
+    textLabel_ = new QLabel(text, this);
+    textLabel_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    textLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    textLabel_->setStyleSheet(
+        "QLabel { color: white; background: transparent; }");
+    this->setStyleSheet("#TabMenuButton {background: transparent; border: none}");
 
-  setSelected(false);
+    setSelected(false);
 
-  icon_ = new QSvgWidget(":/node-icons/grid.svg");
-  icon_->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);
-  icon_->setStyleSheet("background-color: transparent;");
-  icon_->setFixedSize(16, 16);
+    icon_ = new QSvgWidget(":/node-icons/grid.svg");
+    icon_->renderer()->setAspectRatioMode(Qt::KeepAspectRatio);
+    icon_->setStyleSheet("background-color: transparent;");
+    icon_->setFixedSize(16, 16);
 
-  mainLayout_ = new QHBoxLayout();
-  constexpr int leftRightMargin = 10;
-  mainLayout_->setContentsMargins(leftRightMargin, 0, leftRightMargin, 0);
+    mainLayout_ = new QHBoxLayout();
+    constexpr int leftRightMargin = 10;
+    mainLayout_->setContentsMargins(leftRightMargin, 0, leftRightMargin, 0);
 
-  mainLayout_->addWidget(icon_);
-  mainLayout_->addWidget(textLabel_);
+    mainLayout_->addWidget(icon_);
+    mainLayout_->addSpacing(6);
+    mainLayout_->addWidget(textLabel_);
 
-  setLayout(mainLayout_);
+    setLayout(mainLayout_);
 }
 
 void enzo::ui::TabMenuButton::enterEvent(QEnterEvent *event) {
@@ -297,12 +300,12 @@ void enzo::ui::TabMenuButton::leaveEvent(QEvent *event) {
 
 void enzo::ui::TabMenuButton::setSelected(bool selected) {
   if (selected) {
-    textLabel_->setStyleSheet(
-        "QLabel {color: black; background: transparent; }");
+    // textLabel_->setStyleSheet(
+    //     "QLabel {color: white; background: transparent; }");
     this->setStyleSheet(
         R"(
         QPushButton {
-            background-color: white;
+            background-color: rgba(60,60,60,0.6);
             border: 4px solid transparent;
             padding: 0px;
             margin: 0px;
@@ -310,8 +313,8 @@ void enzo::ui::TabMenuButton::setSelected(bool selected) {
         }
     )");
   } else {
-    textLabel_->setStyleSheet(
-        "QLabel { color: white;  background: transparent; }");
+    // textLabel_->setStyleSheet(
+    //     "QLabel { color: white;  background: transparent; }");
     this->setStyleSheet(
         R"(
         QPushButton {
