@@ -53,6 +53,7 @@ private:
     // nodes currently being moved
     std::vector<QGraphicsItem*> moveNodeBuffer;
     QPointF nodeMoveDelta_;
+    QPointF moveStartPos_;
 
     State state_=State::DEFAULT;
     QPointF leftMouseStart;

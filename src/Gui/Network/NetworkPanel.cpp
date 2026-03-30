@@ -2,6 +2,7 @@
 #include "Engine/Operator/GeometryConnection.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/OperatorTable.h"
+#include "Engine/UndoRedo/MoveNodeCommand.h"
 #include "Engine/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
@@ -44,6 +45,12 @@ NetworkPanel::NetworkPanel(QWidget* parent)
 
 
     mainLayout_->addWidget(view_);
+
+    enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::OpId opId, enzo::bt::Vector2f pos) {
+        if(auto it = nodeStore_.find(opId); it != nodeStore_.end()) {
+            it->second->setPos(pos.x(), pos.y());
+        }
+    });
 
 }
 
@@ -110,6 +117,7 @@ void NetworkPanel::leftMousePressed(QMouseEvent *event)
         nodeMoveDelta_=clickedNode->pos()-view_->mapToScene(event->pos());
         std::cout << "move delta: " << nodeMoveDelta_.x() << " " << nodeMoveDelta_.y() << "\n";
         state_=State::MOVING_NODE;
+        moveStartPos_ = clickedNode->pos();
         moveNodeBuffer.clear();
         moveNodeBuffer.push_back(clickedNode);
     }
@@ -301,6 +309,16 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event)
             tabMenu_->showOnMouse();
             break;
         }
+        case(Qt::Key_Z):
+        {
+            if(ctrlMod) enzo::nt::nm().undoStack().undo();
+            break;
+        }
+        case(Qt::Key_Y):
+        {
+            if(ctrlMod) enzo::nt::nm().undoStack().redo();
+            break;
+        }
         // case(Qt::Key_G):
         // {
         //     auto opInfo = op::OperatorTable::getOpInfo("transform");
@@ -425,6 +443,17 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event)
                 auto* node = static_cast<NodeGraphic*>(item);
                 QPointF p = node->pos();
                 enzo::nt::nm().getGeoOperator(node->getOpId()).setPosition({static_cast<float>(p.x()), static_cast<float>(p.y())});
+
+                // Push undo command if the node actually moved
+                if(QLineF(moveStartPos_, p).length() > 0.5)
+                {
+                    auto cmd = std::make_unique<enzo::nt::MoveNodeCommand>(
+                        node->getOpId(),
+                        enzo::bt::Vector2f{static_cast<float>(moveStartPos_.x()), static_cast<float>(moveStartPos_.y())},
+                        enzo::bt::Vector2f{static_cast<float>(p.x()), static_cast<float>(p.y())}
+                    );
+                    enzo::nt::nm().undoStack().push(std::move(cmd));
+                }
             }
             moveNodeBuffer.clear();
             state_=State::DEFAULT;

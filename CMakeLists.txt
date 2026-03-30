@@ -31,6 +31,7 @@ set(ENGINE_SOURCES
     src/Engine/Parameter/PrmName.cpp
     src/Engine/Network/NetworkManager.cpp
     src/Engine/Network/UpdateLock.cpp
+    src/Engine/UndoRedo/UndoStack.cpp
     src/Engine/Serializer/Serializer.cpp
 )
 

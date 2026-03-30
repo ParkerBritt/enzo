@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/UndoRedo/UndoStack.h"
 #include "Engine/Types.h"
 #include <memory>
 #include <unordered_map>
@@ -159,7 +159,12 @@ public:
 
     // @brief A signal emitted when the network is cleared
     boost::signals2::signal<void ()> networkCleared;
+
+    // @brief A signal emitted when a node's position changes programmatically (e.g. undo/redo)
+    boost::signals2::signal<void (nt::OpId, bt::Vector2f)> nodePositionChanged;
     /** @} */
+
+    UndoStack& undoStack() { return undoStack_; }
 
     #ifdef UNIT_TEST
     /// @brief For use in unit tests, resets the state of the operator.
@@ -187,6 +192,7 @@ private:
     // operator selected for displaying in the viewport
     std::optional<OpId> displayOp_=std::nullopt;
 
+    UndoStack undoStack_;
 
 };
 
