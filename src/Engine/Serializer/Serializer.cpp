@@ -9,6 +9,7 @@
 #include <cereal/types/string.hpp>
 #include <fstream>
 #include <unordered_map>
+#include <variant>
 
 namespace enzo::nt
 {
@@ -43,13 +44,15 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
             {
                 ParameterSerializable prmModel;
                 prmModel.name = prm->getName();
-                unsigned int vecSize = prm->getVectorSize();
-                for(unsigned int i = 0; i < vecSize; i++)
-                {
-                    prmModel.floatValues.push_back(prm->evalFloat(i));
-                    prmModel.intValues.push_back(prm->evalInt(i));
-                    prmModel.stringValues.push_back(prm->evalString(i));
-                }
+                std::visit([&prmModel](const auto& v) {
+                    using T = typename std::decay_t<decltype(v)>::value_type;
+                    if constexpr (std::is_same_v<T, bt::floatT>)
+                        prmModel.floatValues = v;
+                    else if constexpr (std::is_same_v<T, bt::intT>)
+                        prmModel.intValues = v;
+                    else
+                        prmModel.stringValues = v;
+                }, prm->getValues());
                 opModel.parameters.push_back(prmModel);
             }
         }
@@ -103,16 +106,12 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
             auto weakPrm = op.getParameter(prmModel.name);
             if(auto prm = weakPrm.lock())
             {
-                unsigned int vecSize = prm->getVectorSize();
-                for(unsigned int i = 0; i < vecSize; i++)
-                {
-                    if(i < prmModel.floatValues.size())
-                        prm->setFloat(prmModel.floatValues[i], i);
-                    if(i < prmModel.intValues.size())
-                        prm->setInt(prmModel.intValues[i], i);
-                    if(i < prmModel.stringValues.size())
-                        prm->setString(prmModel.stringValues[i], i);
-                }
+                if(!prmModel.floatValues.empty())
+                    prm->setValues(prmModel.floatValues);
+                else if(!prmModel.intValues.empty())
+                    prm->setValues(prmModel.intValues);
+                else if(!prmModel.stringValues.empty())
+                    prm->setValues(prmModel.stringValues);
             }
         }
     }

@@ -6,6 +6,9 @@
 
 namespace enzo::prm
 {
+
+using PrmValues = std::variant<std::vector<bt::floatT>, std::vector<bt::intT>, std::vector<bt::String>>;
+
 class Parameter
 {
 public:
@@ -23,14 +26,15 @@ public:
     void setFloat(bt::floatT value, unsigned int index=0);
     void setString(bt::String value, unsigned int index=0);
 
+    PrmValues getValues() const;
+    void setValues(const PrmValues& values);
+
     const Template& getTemplate();
 
     boost::signals2::signal<void ()> valueChanged;
 private:
     Template template_;
-    std::vector<bt::floatT> floatValues_;
-    std::vector<bt::String> stringValues_;
-    std::vector<bt::intT> intValues_;
+    PrmValues values_;
 
 };
 }

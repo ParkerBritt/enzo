@@ -55,7 +55,16 @@ void enzo::nt::NetworkManager::deleteNode(OpId opId)
     std::string typeName = op.getTypeName();
     bt::Vector2f position = op.getPosition();
 
-    auto cmd = std::make_unique<DeleteNodeCommand>(opId, typeName, position);
+    std::vector<SavedParameter> savedParms;
+    for(auto weakPrm : op.getParameters())
+    {
+        if(auto prm = weakPrm.lock())
+        {
+            savedParms.push_back({prm->getName(), prm->getValues()});
+        }
+    }
+
+    auto cmd = std::make_unique<DeleteNodeCommand>(opId, typeName, position, std::move(savedParms));
     undoStack_.push(std::move(cmd));
 
     removeOperator(opId);
