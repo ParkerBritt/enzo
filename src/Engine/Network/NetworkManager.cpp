@@ -6,6 +6,7 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/OpInfo.h"
 #include "Engine/UndoRedo/MoveNodeCommand.h"
+#include "Engine/UndoRedo/DeleteNodeCommand.h"
 #include "Engine/Types.h"
 #include <iostream>
 #include <memory>
@@ -44,6 +45,36 @@ void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos)
     undoStack_.push(std::move(cmd));
 
     nodePositionChanged(opId, newPos);
+}
+
+void enzo::nt::NetworkManager::deleteNode(OpId opId)
+{
+    if(!isValidOp(opId)) return;
+
+    GeometryOperator& op = getGeoOperator(opId);
+    std::string typeName = op.getTypeName();
+    bt::Vector2f position = op.getPosition();
+
+    auto cmd = std::make_unique<DeleteNodeCommand>(opId, typeName, position);
+    undoStack_.push(std::move(cmd));
+
+    removeOperator(opId);
+}
+
+void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo, bt::Vector2f position)
+{
+    std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
+    newOp->setPosition(position);
+    newOp->nodeDirtied.connect(
+        [this](nt::OpId opId, bool dirtyDependents)
+        {
+            onNodeDirtied(opId, dirtyDependents);
+        });
+    gopStore_.emplace(opId, std::move(newOp));
+
+    if(opId > maxOpId_) maxOpId_ = opId;
+
+    operatorCreated(opId);
 }
 
 void enzo::nt::NetworkManager::removeOperator(OpId opId)

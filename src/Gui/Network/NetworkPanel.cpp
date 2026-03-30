@@ -339,7 +339,7 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event)
             auto selectedIds = enzo::nt::nm().getSelectedNodes();
             for(auto opId : selectedIds)
             {
-                enzo::nt::nm().removeOperator(opId);
+                enzo::nt::nm().deleteNode(opId);
             }
             break;
         }

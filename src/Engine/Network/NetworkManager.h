@@ -131,10 +131,24 @@ public:
     void moveNode(OpId opId, bt::Vector2f newPos);
 
     /**
+     * @brief Deletes a node, pushing an undo command.
+     * @param opId The operator to delete.
+     */
+    void deleteNode(OpId opId);
+
+    /**
      * @brief Removes an operator and all its connections from the network.
      * @param opId The operator to remove.
      */
     void removeOperator(OpId opId);
+
+    /**
+     * @brief Restores a previously removed operator with a specific OpId.
+     * @param opId The operator ID to restore.
+     * @param opInfo The operator info.
+     * @param position The position to restore the operator at.
+     */
+    void restoreOperator(OpId opId, op::OpInfo opInfo, bt::Vector2f position);
 
     /**
      * @brief Clears all operators and resets the network to its initial state.

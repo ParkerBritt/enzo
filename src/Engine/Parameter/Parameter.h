@@ -2,6 +2,7 @@
 #include "Engine/Parameter/Template.h"
 #include "Engine/Types.h"
 #include <boost/signals2.hpp>
+#include <variant>
 
 namespace enzo::prm
 {
