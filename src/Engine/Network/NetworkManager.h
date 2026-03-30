@@ -124,6 +124,13 @@ public:
     const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
     /**
+     * @brief Moves a node to a new position, pushing an undo command.
+     * @param opId The operator to move.
+     * @param newPos The new position.
+     */
+    void moveNode(OpId opId, bt::Vector2f newPos);
+
+    /**
      * @brief Removes an operator and all its connections from the network.
      * @param opId The operator to remove.
      */

@@ -2,7 +2,6 @@
 #include "Engine/Operator/GeometryConnection.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/OperatorTable.h"
-#include "Engine/UndoRedo/MoveNodeCommand.h"
 #include "Engine/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
@@ -122,10 +121,7 @@ void NetworkPanel::leftMousePressed(QMouseEvent *event)
     }
     else if(QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(clickedItems))
     {
-        nodeMoveDelta_=clickedNode->pos()-view_->mapToScene(event->pos());
-        std::cout << "move delta: " << nodeMoveDelta_.x() << " " << nodeMoveDelta_.y() << "\n";
-        state_=State::MOVING_NODE;
-        moveStartPos_ = clickedNode->pos();
+        state_=State::MOUSE_DOWN_NODE;
         moveNodeBuffer.clear();
         moveNodeBuffer.push_back(clickedNode);
     }
@@ -208,6 +204,16 @@ void NetworkPanel::mouseMoved(QMouseEvent *event)
 
     QList<QGraphicsItem*> hoverItems = view_->items(event->pos());
 
+
+    if(state_==State::MOUSE_DOWN_NODE)
+    {
+        if(QLineF(event->pos(), leftMouseStart).length() > 4.0f)
+        {
+            state_=State::MOVING_NODE;
+            nodeMoveDelta_=moveNodeBuffer.front()->pos()-view_->mapToScene(event->pos());
+        }
+        return;
+    }
 
     if(state_==State::MOVING_NODE)
     {
@@ -453,37 +459,13 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event)
             static_cast<DisplayFlagButton*>(clickedDisplayFlag)->setEnabled(true);
             nm.setDisplayOp(opId);
         }
-        if(state_==State::MOVING_NODE)
+        if(state_==State::MOUSE_DOWN_NODE)
         {
-            // Sync moved positions back to engine
-            for(auto* item : moveNodeBuffer)
-            {
-                auto* node = static_cast<NodeGraphic*>(item);
-                QPointF p = node->pos();
-                enzo::nt::nm().getGeoOperator(node->getOpId()).setPosition({static_cast<float>(p.x()), static_cast<float>(p.y())});
-
-                // Push undo command if the node actually moved
-                if(QLineF(moveStartPos_, p).length() > 0.5)
-                {
-                    auto cmd = std::make_unique<enzo::nt::MoveNodeCommand>(
-                        node->getOpId(),
-                        enzo::bt::Vector2f{static_cast<float>(moveStartPos_.x()), static_cast<float>(moveStartPos_.y())},
-                        enzo::bt::Vector2f{static_cast<float>(p.x()), static_cast<float>(p.y())}
-                    );
-                    enzo::nt::nm().undoStack().push(std::move(cmd));
-                }
-            }
-            moveNodeBuffer.clear();
-            state_=State::DEFAULT;
-
-            // select node
-            if(
-                QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(hoverItems);
-                clickedNode &&
-                QLineF(event->pos(), leftMouseStart).length()<5.0f)
+            // Threshold was never exceeded — this was a click, not a drag
+            // Handle node selection
+            if(QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(hoverItems))
             {
                 NodeGraphic* node = static_cast<NodeGraphic*>(clickedNode);
-                // deselect previous
                 auto selectedNodeIds = enzo::nt::nm().getSelectedNodes();
                 for(auto nodeId : selectedNodeIds)
                 {
@@ -494,7 +476,19 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event)
                 bool selected = node->toggleSelected();
                 enzo::nt::nm().setSelectedNode(node->getOpId(), selected);
             }
-
+            moveNodeBuffer.clear();
+            state_=State::DEFAULT;
+        }
+        else if(state_==State::MOVING_NODE)
+        {
+            for(auto* item : moveNodeBuffer)
+            {
+                auto* node = static_cast<NodeGraphic*>(item);
+                QPointF p = node->pos();
+                enzo::nt::nm().moveNode(node->getOpId(), {static_cast<float>(p.x()), static_cast<float>(p.y())});
+            }
+            moveNodeBuffer.clear();
+            state_=State::DEFAULT;
         }
         else if(floatingEdge_ && hoverSocket)
         {

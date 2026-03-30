@@ -5,6 +5,7 @@
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/OpInfo.h"
+#include "Engine/UndoRedo/MoveNodeCommand.h"
 #include "Engine/Types.h"
 #include <iostream>
 #include <memory>
@@ -33,6 +34,17 @@ enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::V
     return maxOpId_;
 }
 
+
+void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos)
+{
+    bt::Vector2f oldPos = getGeoOperator(opId).getPosition();
+    getGeoOperator(opId).setPosition(newPos);
+
+    auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
+    undoStack_.push(std::move(cmd));
+
+    nodePositionChanged(opId, newPos);
+}
 
 void enzo::nt::NetworkManager::removeOperator(OpId opId)
 {
