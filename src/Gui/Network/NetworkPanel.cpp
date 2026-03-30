@@ -52,6 +52,14 @@ NetworkPanel::NetworkPanel(QWidget* parent)
         }
     });
 
+    enzo::nt::nm().operatorRemoved.connect([this](enzo::nt::OpId opId) {
+        if(auto it = nodeStore_.find(opId); it != nodeStore_.end()) {
+            scene_->removeItem(it->second);
+            delete it->second;
+            nodeStore_.erase(it);
+        }
+    });
+
 }
 
 void NetworkPanel::deleteEdge(QGraphicsItem* edge)
@@ -317,6 +325,16 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event)
         case(Qt::Key_Y):
         {
             if(ctrlMod) enzo::nt::nm().undoStack().redo();
+            break;
+        }
+        case(Qt::Key_Delete):
+        case(Qt::Key_Backspace):
+        {
+            auto selectedIds = enzo::nt::nm().getSelectedNodes();
+            for(auto opId : selectedIds)
+            {
+                enzo::nt::nm().removeOperator(opId);
+            }
             break;
         }
         // case(Qt::Key_G):

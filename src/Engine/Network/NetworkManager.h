@@ -124,6 +124,12 @@ public:
     const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
     /**
+     * @brief Removes an operator and all its connections from the network.
+     * @param opId The operator to remove.
+     */
+    void removeOperator(OpId opId);
+
+    /**
      * @brief Clears all operators and resets the network to its initial state.
      */
     void clear();
@@ -153,6 +159,9 @@ public:
 
     // @brief A signal emitted when a new operator is created in the network
     boost::signals2::signal<void (nt::OpId)> operatorCreated;
+
+    // @brief A signal emitted when an operator is about to be removed from the network
+    boost::signals2::signal<void (nt::OpId)> operatorRemoved;
 
     // @brief A signal emitted when a connection is created between two operators
     boost::signals2::signal<void (std::weak_ptr<nt::GeometryConnection>)> connectionCreated;

@@ -76,6 +76,7 @@ void EnzoUI::connectSignals()
         if(selectedNodeIds.empty())
         {
             parametersPanel_->clearParameters();
+            geometrySpreadsheetPanel_->clear();
             return;
         }
         enzo::nt::OpId selectedId = selectedNodeIds.back();

@@ -34,6 +34,56 @@ enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::V
 }
 
 
+void enzo::nt::NetworkManager::removeOperator(OpId opId)
+{
+    if(!isValidOp(opId)) return;
+
+    auto updateLock = lockUpdates();
+
+    GeometryOperator& op = getGeoOperator(opId);
+
+    // Remove all connections (collect first to avoid modifying vectors while iterating)
+    {
+        auto inputConns = op.getInputConnections();
+        for(auto& weakConn : inputConns)
+        {
+            if(auto conn = weakConn.lock())
+            {
+                // Use const_cast because remove() is non-const but we only have const weak_ptrs
+                const_cast<GeometryConnection&>(*conn).remove();
+            }
+        }
+
+        auto outputConns = op.getOutputConnections();
+        for(auto& weakConn : outputConns)
+        {
+            if(auto conn = weakConn.lock())
+            {
+                const_cast<GeometryConnection&>(*conn).remove();
+            }
+        }
+    }
+
+    // Clear display if this was the display node
+    if(displayOp_.has_value() && displayOp_.value() == opId)
+    {
+        displayOp_.reset();
+    }
+
+    // Remove from selection
+    auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
+    if(selIt != selectedNodes_.end())
+    {
+        selectedNodes_.erase(selIt);
+        selectedNodesChanged(selectedNodes_);
+    }
+
+    // Signal before erasing so listeners can still query the operator
+    operatorRemoved(opId);
+
+    gopStore_.erase(opId);
+}
+
 enzo::nt::NetworkManager& enzo::nt::NetworkManager::getInstance()
 {
     static enzo::nt::NetworkManager instance;
