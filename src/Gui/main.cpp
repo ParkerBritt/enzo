@@ -20,6 +20,8 @@ int main(int argc, char **argv)
     enzo::op::OperatorTable::initPlugins();
 
     QApplication app (argc, argv);
+    app.setOrganizationName("Enzo");
+    app.setApplicationName("Enzo");
 
     // load fonts
     QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-VariableFont_wght.ttf");

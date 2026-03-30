@@ -6,6 +6,8 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QStandardPaths>
+#include <QSettings>
+#include <QFileInfo>
 
 HeaderBar::HeaderBar()
 {
@@ -53,7 +55,9 @@ HeaderBar::HeaderBar()
     // Add Actions
     fileMenu->addAction(fileNewAction);
     fileMenu->addAction(fileOpenAction);
-    fileMenu->addMenu("Open Recent");
+    recentFilesMenu_ = new QMenu("Open Recent");
+    fileMenu->addMenu(recentFilesMenu_);
+    updateRecentFilesMenu();
     fileMenu->addMenu(fileImportMenu);
     fileMenu->addAction(fileSaveAction);
     fileMenu->addAction(fileSaveAsAction);
@@ -63,6 +67,7 @@ HeaderBar::HeaderBar()
 
     // Connect actions
     connect(fileNewAction, &QAction::triggered, this, &HeaderBar::onFileNewClicked);
+    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
     connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
     connect(fileSaveAsAction, &QAction::triggered, this, &HeaderBar::onFileSaveAsClicked);
 
@@ -94,14 +99,7 @@ void HeaderBar::onFileOpenClicked()
     if (fileName.isEmpty())
         return;
 
-    if (!QFile::exists(fileName))
-    {
-        std::cerr << "File does not exist: " << fileName.toStdString() << "\n";
-        return;
-    }
-
-    enzo::nt::Serializer serializer;
-    serializer.load( enzo::nt::nm(), fileName.toStdString());
+    openFile(fileName);
 }
 
 void HeaderBar::onFileSaveAsClicked()
@@ -109,11 +107,80 @@ void HeaderBar::onFileSaveAsClicked()
     QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString defaultSavePath = QDir(homeDir).filePath("Untitled.enzo");
 
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString filePath = QFileDialog::getSaveFileName(this,
     tr("Save File"), defaultSavePath, tr("Enzo files (*.enzo);;All Files (*)"));
 
-    enzo::nt::Serializer serializer;
-    serializer.save( enzo::nt::nm(), fileName.toStdString());
-    std::cout << "SAVING\n";
+    saveFile(filePath);
+}
 
+void HeaderBar::onFileSaveClicked()
+{
+    if (currentFilePath_.isEmpty())
+    {
+        onFileSaveAsClicked();
+        return;
+    }
+
+    saveFile(currentFilePath_);
+}
+
+void HeaderBar::saveFile(const QString& filePath)
+{
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+
+    enzo::nt::Serializer serializer;
+    serializer.save( enzo::nt::nm(), filePath.toStdString());
+    currentFilePath_ = filePath;
+    addRecentFile(filePath);
+
+}
+
+void HeaderBar::openFile(const QString& filePath)
+{
+    if (!QFile::exists(filePath))
+    {
+        std::cerr << "File does not exist: " << filePath.toStdString() << "\n";
+        return;
+    }
+
+    enzo::nt::Serializer serializer;
+    serializer.load( enzo::nt::nm(), filePath.toStdString());
+    currentFilePath_ = filePath;
+    addRecentFile(filePath);
+}
+
+void HeaderBar::addRecentFile(const QString& filePath)
+{
+    QSettings settings;
+    QStringList recentFiles = settings.value("recentFiles").toStringList();
+    recentFiles.removeAll(filePath);
+    recentFiles.prepend(filePath);
+    recentFiles = recentFiles.mid(0, 10);
+    settings.setValue("recentFiles", recentFiles);
+    updateRecentFilesMenu();
+}
+
+void HeaderBar::updateRecentFilesMenu()
+{
+    recentFilesMenu_->clear();
+
+    QSettings settings;
+    QStringList recentFiles = settings.value("recentFiles").toStringList();
+
+    if (recentFiles.isEmpty())
+    {
+        recentFilesMenu_->addAction("No Recent Files")->setEnabled(false);
+        return;
+    }
+
+    for (const QString& filePath : recentFiles)
+    {
+        QAction* action = recentFilesMenu_->addAction(QFileInfo(filePath).fileName());
+        connect(action, &QAction::triggered, this, [this, filePath]() {
+            openFile(filePath);
+        });
+    }
 }
