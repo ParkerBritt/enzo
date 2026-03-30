@@ -4,6 +4,7 @@
 #include <qaction.h>
 #include <iostream>
 #include <QFileDialog>
+#include <QCoreApplication>
 #include <QDir>
 #include <QStandardPaths>
 #include <QSettings>
@@ -43,7 +44,7 @@ HeaderBar::HeaderBar()
 
     // File menu
     QMenu* fileMenu = header->addMenu("File");
-    QMenu* fileImportMenu = new QMenu("Import");
+    QMenu* fileImportMenu = new QMenu("Import", this);
 
     // Create actions
     QAction* fileOpenAction = new QAction("Open");
@@ -51,17 +52,18 @@ HeaderBar::HeaderBar()
     QAction* fileSaveAsAction = new QAction("Save As...");
     QAction* fileImportEnzoAction = new QAction("Enzo");
     QAction* fileNewAction = new QAction("New");
+    QAction* fileQuitAction = new QAction("Quit");
 
     // Add Actions
     fileMenu->addAction(fileNewAction);
     fileMenu->addAction(fileOpenAction);
-    recentFilesMenu_ = new QMenu("Open Recent");
+    recentFilesMenu_ = new QMenu("Open Recent", this);
     fileMenu->addMenu(recentFilesMenu_);
     updateRecentFilesMenu();
     fileMenu->addMenu(fileImportMenu);
     fileMenu->addAction(fileSaveAction);
     fileMenu->addAction(fileSaveAsAction);
-    fileMenu->addAction("Quit");
+    fileMenu->addAction(fileQuitAction);
 
     fileImportMenu->addAction(fileImportEnzoAction);
 
@@ -70,6 +72,7 @@ HeaderBar::HeaderBar()
     connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
     connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
     connect(fileSaveAsAction, &QAction::triggered, this, &HeaderBar::onFileSaveAsClicked);
+    connect(fileQuitAction, &QAction::triggered, qApp, &QCoreApplication::quit, Qt::QueuedConnection);
 
     // Edit sub menu
     QMenu* editMenu = header->addMenu("Edit");
