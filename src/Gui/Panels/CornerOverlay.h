@@ -10,5 +10,5 @@ public:
 
 protected:
     void paintEvent(QPaintEvent*) override;
-    QPen borderPen_ = QPen(QColor("#353535"));
+    QPen borderPen_ = QPen(QColor("#303030"));
 };

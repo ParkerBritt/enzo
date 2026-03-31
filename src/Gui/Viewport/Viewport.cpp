@@ -14,7 +14,7 @@
 Viewport::Viewport(QWidget *parent)
 : Panel(parent)
 {
-    setBorderColor(QColor("#414141"));
+    setBorderColor(QColor("#3c3c3c"));
 
     mainLayout_=new QVBoxLayout();
     openGLWidget_ = new ViewportGLWidget(this);

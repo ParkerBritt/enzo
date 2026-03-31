@@ -32,7 +32,7 @@ enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> paramet
                   QWidget[type="SliderParm"]
                   {
                       border-radius: 6px;
-                      border: 1px solid #383838;
+                      border: 1px solid #303030;
                   }
                   )");
     mainLayout_->addWidget(valueLabel_);

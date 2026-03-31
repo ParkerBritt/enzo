@@ -12,8 +12,8 @@
 #include <QLineEdit>
 #include <stdexcept>
 
-ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
+ParametersPanel::ParametersPanel(QWidget *parent)
+: Panel(parent)
 {
     mainLayout_ = new QVBoxLayout();
     parametersLayout_ = new QVBoxLayout();
@@ -25,11 +25,8 @@ ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
     bgWidget_->setStyleSheet(R"(
         #ParametersPanelBg {
             background-color: #282828;
-            border-radius: 10px;
-            border: 1px solid #353535;
         }
-    )"
-      );
+    )");
 
     mainLayout_->addWidget(bgWidget_);
 
