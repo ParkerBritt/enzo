@@ -6,6 +6,7 @@
         <file>icons/attributePrimitive.svg</file>
         <file>icons/attributeGlobal.svg</file>
         <file>icons/attributeBase.svg</file>
+        <file>icons/icon-main-white.png</file>
         <file>fonts/Rubik/Rubik-VariableFont_wght.ttf</file>
         <file>fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf</file>
     </qresource>
