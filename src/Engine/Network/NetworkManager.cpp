@@ -7,6 +7,7 @@
 #include "Engine/Operator/OpInfo.h"
 #include "Engine/UndoRedo/MoveNodeCommand.h"
 #include "Engine/UndoRedo/DeleteNodeCommand.h"
+#include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/Types.h"
 #include <iostream>
 #include <memory>
@@ -19,7 +20,9 @@
 enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::Vector2f position)
 {
 
-    maxOpId_++;
+    OpId opId = ++maxOpId_;
+    std::string typeName = opInfo.internalName;
+
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
     newOp->setPosition(position);
     newOp->nodeDirtied.connect(
@@ -28,21 +31,27 @@ enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::V
             onNodeDirtied(opId, dirtyDependents);
 
         });
-    gopStore_.emplace(maxOpId_, std::move(newOp));
+    gopStore_.emplace(opId, std::move(newOp));
 
-    operatorCreated(maxOpId_);
+    operatorCreated(opId);
 
-    return maxOpId_;
+    auto cmd = std::make_unique<CreateNodeCommand>(opId);
+    undoStack_.push(std::move(cmd));
+
+    return opId;
 }
 
 
-void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos)
+void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos, bool skipUndo)
 {
     bt::Vector2f oldPos = getGeoOperator(opId).getPosition();
     getGeoOperator(opId).setPosition(newPos);
 
-    auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
-    undoStack_.push(std::move(cmd));
+    if(!skipUndo)
+    {
+        auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
+        undoStack_.push(std::move(cmd));
+    }
 
     nodePositionChanged(opId, newPos);
 }
@@ -51,29 +60,15 @@ void enzo::nt::NetworkManager::deleteNode(OpId opId)
 {
     if(!isValidOp(opId)) return;
 
-    GeometryOperator& op = getGeoOperator(opId);
-    std::string typeName = op.getTypeName();
-    bt::Vector2f position = op.getPosition();
-
-    std::vector<SavedParameter> savedParms;
-    for(auto weakPrm : op.getParameters())
-    {
-        if(auto prm = weakPrm.lock())
-        {
-            savedParms.push_back({prm->getName(), prm->getValues()});
-        }
-    }
-
-    auto cmd = std::make_unique<DeleteNodeCommand>(opId, typeName, position, std::move(savedParms));
+    auto cmd = std::make_unique<DeleteNodeCommand>(opId);
     undoStack_.push(std::move(cmd));
 
     removeOperator(opId);
 }
 
-void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo, bt::Vector2f position)
+void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
 {
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
-    newOp->setPosition(position);
     newOp->nodeDirtied.connect(
         [this](nt::OpId opId, bool dirtyDependents)
         {

@@ -127,8 +127,10 @@ public:
      * @brief Moves a node to a new position, pushing an undo command.
      * @param opId The operator to move.
      * @param newPos The new position.
+     *
+     * @todo remove skipUndo argument in favour of a global undo RAII lock
      */
-    void moveNode(OpId opId, bt::Vector2f newPos);
+    void moveNode(OpId opId, bt::Vector2f newPos, bool skipUndo=false);
 
     /**
      * @brief Deletes a node, pushing an undo command.
@@ -144,11 +146,15 @@ public:
 
     /**
      * @brief Restores a previously removed operator with a specific OpId.
+     *
+     * @note This does not restore the state the node was in, only creates a new node with the given id.
+     * @todo maybe replace with createNodeWithId
+     *
      * @param opId The operator ID to restore.
      * @param opInfo The operator info.
      * @param position The position to restore the operator at.
      */
-    void restoreOperator(OpId opId, op::OpInfo opInfo, bt::Vector2f position);
+    void restoreOperator(OpId opId, op::OpInfo opInfo);
 
     /**
      * @brief Clears all operators and resets the network to its initial state.

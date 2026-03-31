@@ -9,26 +9,45 @@
 
 namespace enzo::nt {
 
+class DeleteNodeCommand : public UndoCommand
+{
+
 struct SavedParameter
 {
     std::string name;
     prm::PrmValues values;
 };
 
-class DeleteNodeCommand : public UndoCommand
-{
 public:
-    DeleteNodeCommand(OpId opId, std::string typeName, bt::Vector2f position,
-                      std::vector<SavedParameter> savedParms)
-        : opId_(opId), typeName_(std::move(typeName)), position_(position),
-          savedParms_(std::move(savedParms)) {}
+    DeleteNodeCommand(OpId opId) : opId_(opId)
+    {
+        GeometryOperator& op = nm().getGeoOperator(opId_);
+        typeName_ =  op.getTypeName();
+        position_ = op.getPosition();
+
+        // Save parms
+        savedParms_ = std::vector<SavedParameter>();
+        for(auto weakPrm : op.getParameters())
+        {
+            if(auto prm = weakPrm.lock())
+            {
+                savedParms_.push_back({prm->getName(), prm->getValues()});
+            }
+        }
+    }
 
     void undo() override
     {
+        // Restore operator
         auto opInfo = op::OperatorTable::getOpInfo(typeName_);
-        nm().restoreOperator(opId_, opInfo.value(), position_);
+        nm().restoreOperator(opId_, opInfo.value());
 
         GeometryOperator& op = nm().getGeoOperator(opId_);
+
+        // Restore position
+        nm().moveNode(opId_, position_, true);
+
+        // Restore parms
         for(const auto& saved : savedParms_)
         {
             if(auto prm = op.getParameter(saved.name).lock())
