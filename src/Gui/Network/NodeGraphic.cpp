@@ -172,7 +172,7 @@ bool NodeGraphic::toggleSelected()
 void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     // default outline
-    QPen defaultPen = Qt::NoPen;
+    QPen defaultPen = QPen(QColor("#353535"));
     defaultPen.setWidth(1);
     // outline when selected
     QPen selectedPen = QPen(QColor("#fee046"), 0.8);

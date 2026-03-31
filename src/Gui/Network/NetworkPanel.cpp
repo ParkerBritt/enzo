@@ -26,7 +26,7 @@
 using namespace enzo;
 
 NetworkPanel::NetworkPanel(QWidget* parent)
-: QWidget(parent)
+: Panel(parent)
 {
 
     mainLayout_ = new QVBoxLayout(this);
@@ -45,15 +45,6 @@ NetworkPanel::NetworkPanel(QWidget* parent)
 
     mainLayout_->addWidget(view_);
 
-}
-
-void NetworkPanel::resizeEvent(QResizeEvent *event)
-{
-    QPainterPath path;
-    constexpr float radius = 10;
-    path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
-    QRegion region = QRegion(path.toFillPolygon().toPolygon());
-    this->setMask(region);
 }
 
 void NetworkPanel::deleteEdge(QGraphicsItem* edge)

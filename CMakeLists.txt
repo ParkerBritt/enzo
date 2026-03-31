@@ -63,6 +63,8 @@ set(GUI_SOURCES
     src/Gui/Parameters/FormParm.cpp
     src/Gui/Parameters/StringParm.cpp
     src/Gui/HeaderBar/HeaderBar.cpp
+    src/Gui/Panels/Panel.cpp
+    src/Gui/Panels/CornerOverlay.cpp
 )
 set(ENGINE_INCLUDE_DIRECTORIES
     src

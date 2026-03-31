@@ -2,18 +2,18 @@
 #include <qboxlayout.h>
 #include <qwidget.h>
 #include "Gui/Viewport/ViewportGLWidget.h"
+#include "Gui/Panels/Panel.h"
 
 class Viewport
-: public QWidget
+: public Panel
 {
 public:
-    Viewport(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    Viewport(QWidget *parent = nullptr);
     void setGeometry(enzo::geo::Geometry& geometry);
     void clearGeometry();
 private:
     QVBoxLayout* mainLayout_;
     ViewportGLWidget* openGLWidget_;
-    void resizeEvent(QResizeEvent *event) override;
     bool event(QEvent *event) override;
     Qt::Key cameraMod_ = Qt::Key_Space;
     void handleCamera(QEvent *event);

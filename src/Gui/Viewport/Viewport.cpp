@@ -7,12 +7,15 @@
 #include <qpushbutton.h>
 #include <iostream>
 #include <QTimer>
+#include <QPainter>
 #include <QPainterPath>
 #include <QEvent>
 
-Viewport::Viewport(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
+Viewport::Viewport(QWidget *parent)
+: Panel(parent)
 {
+    setBorderColor(QColor("#414141"));
+
     mainLayout_=new QVBoxLayout();
     openGLWidget_ = new ViewportGLWidget(this);
     mainLayout_->addWidget(openGLWidget_);
@@ -28,15 +31,6 @@ void Viewport::setGeometry(enzo::geo::Geometry& geometry)
 void Viewport::clearGeometry()
 {
     openGLWidget_->clearGeometry();
-}
-
-void Viewport::resizeEvent(QResizeEvent *event)
-{
-    QPainterPath path;
-    constexpr float radius = 10;
-    path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
-    QRegion region = QRegion(path.toFillPolygon().toPolygon());
-    this->setMask(region);
 }
 
 bool Viewport::event(QEvent *event)

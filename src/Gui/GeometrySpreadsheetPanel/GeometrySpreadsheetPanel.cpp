@@ -10,8 +10,8 @@
 #include <qtablewidget.h>
 #include <QPainterPath>
 
-GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
+GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
+: Panel(parent)
 {
     mainLayout_ = new QVBoxLayout();
     mainLayout_->setSpacing(0);
@@ -89,12 +89,12 @@ void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Geometry& geometry)
     view_->update();
 }
 
-void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)
-{
-    QPainterPath path;
-    constexpr float radius = 10;
-    path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
-    QRegion region = QRegion(path.toFillPolygon().toPolygon());
-    this->setMask(region);
-}
-
+// void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)
+// {
+//     QPainterPath path;
+//     constexpr float radius = 10;
+//     path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
+//     QRegion region = QRegion(path.toFillPolygon().toPolygon());
+//     this->setMask(region);
+// }
+//

@@ -23,10 +23,11 @@ ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
 
     bgWidget_->setObjectName("ParametersPanelBg");
     bgWidget_->setStyleSheet(R"(
-           QWidget#ParametersPanelBg {
-                background-color: #282828;
-               border-radius: 10px;
-           }
+        #ParametersPanelBg {
+            background-color: #282828;
+            border-radius: 10px;
+            border: 1px solid #353535;
+        }
     )"
       );
 

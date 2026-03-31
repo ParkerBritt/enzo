@@ -6,12 +6,13 @@
 #include "Engine/Types.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
+#include "Gui/Panels/Panel.h"
 
 class GeometrySpreadsheetPanel
-: public QWidget
+: public Panel
 {
 public:
-    GeometrySpreadsheetPanel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    GeometrySpreadsheetPanel(QWidget *parent = nullptr);
 public Q_SLOTS:
     void geometryChanged(enzo::geo::Geometry& geometry);
     void clear();
@@ -22,8 +23,6 @@ private:
     GeometrySpreadsheetModel* model_;
     QTreeView* view_;
     GeometrySpreadsheetMenuBar* menuBar_;
-protected:
-    void resizeEvent(QResizeEvent *event) override;
 
 
 };
