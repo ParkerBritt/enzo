@@ -1,6 +1,7 @@
 #include "Serializer.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/OperatorTable.h"
+#include "Engine/Parameter/Parameter.h"
 #include "NetworkSerializable.h"
 #include "cereal/details/helpers.hpp"
 #include <iostream>
@@ -106,12 +107,26 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
             auto weakPrm = op.getParameter(prmModel.name);
             if(auto prm = weakPrm.lock())
             {
-                if(!prmModel.floatValues.empty())
-                    prm->setValues(prmModel.floatValues);
-                else if(!prmModel.intValues.empty())
-                    prm->setValues(prmModel.intValues);
-                else if(!prmModel.stringValues.empty())
-                    prm->setValues(prmModel.stringValues);
+                switch(prm->getType())
+                {
+                    case prm::Type::FLOAT:
+                    case prm::Type::XYZ:
+                        if(!prmModel.floatValues.empty())
+                            prm->setValues(prmModel.floatValues);
+                        break;
+                    case prm::Type::INT:
+                    case prm::Type::BOOL:
+                    case prm::Type::TOGGLE:
+                        if(!prmModel.intValues.empty())
+                            prm->setValues(prmModel.intValues);
+                        break;
+                    case prm::Type::STRING:
+                        if(!prmModel.stringValues.empty())
+                            prm->setValues(prmModel.stringValues);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
