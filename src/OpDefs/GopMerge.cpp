@@ -21,13 +21,9 @@ void GopMerge::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Primitive geo = context.cloneInputGeo(0);
-        if(context.hasInput(1))
-        {
-            geo::Primitive geoSrc = context.cloneInputGeo(1);
-            geo.merge(geoSrc);
-        }
-        setOutputGeometry(0, geo);
+        // TODO: convert to NodePacket
+        NodePacket packet = context.cloneInputPacket(0);
+        setOutputPacket(0, packet);
     }
 
 }

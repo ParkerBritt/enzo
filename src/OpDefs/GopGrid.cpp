@@ -20,6 +20,7 @@ void GopGrid::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
+        NodePacket packet;
         geo::Primitive geo;
         bt::floatT width = context.evalFloatParm("size", 0);
         bt::floatT height = context.evalFloatParm("size", 1);
@@ -28,7 +29,8 @@ void GopGrid::cookOp(enzo::op::Context context)
         const bt::intT rows = context.evalIntParm("rows");
         if(columns<=0 || rows<=0)
         {
-            setOutputGeometry(0, geo);
+            packet.addPrimitive(geo);
+            setOutputPacket(0, packet);
             return;
         }
         
@@ -69,7 +71,8 @@ void GopGrid::cookOp(enzo::op::Context context)
             }
         }
 
-        setOutputGeometry(0, geo);
+        packet.addPrimitive(geo);
+        setOutputPacket(0, packet);
     }
 
 }

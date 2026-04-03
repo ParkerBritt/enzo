@@ -67,7 +67,7 @@ void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
     cookOp(opId);
 
     enzo::nt::GeometryOperator& displayOp = getGeoOperator(opId);
-    displayGeoChanged(displayOp.getOutputGeo(0));
+    displayGeoChanged(displayOp.getOutputPacket(0));
     displayNodeChanged(opId);
 }
 
@@ -122,7 +122,7 @@ void enzo::nt::NetworkManager::update()
         cookOp(displayOpId);
 
         auto& displayOp = getGeoOperator(displayOpId);
-        displayGeoChanged(displayOp.getOutputGeo(0));
+        displayGeoChanged(displayOp.getOutputPacket(0));
     }
 
     // cook selected nodes and notify spreadsheet
@@ -130,7 +130,7 @@ void enzo::nt::NetworkManager::update()
     {
         cookOp(selectedId);
         auto& selectedOp = getGeoOperator(selectedId);
-        selectedGeoChanged(selectedOp.getOutputGeo(0));
+        selectedGeoChanged(selectedOp.getOutputPacket(0));
     }
 }
 

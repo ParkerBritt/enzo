@@ -15,20 +15,19 @@ enzo::op::Context::Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networ
 
 }
 
-enzo::geo::Primitive enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
+enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
 {
-    // TODO: implement
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     auto inputConnection = selfOp.getInputConnection(inputIndex);
     if(!inputConnection.has_value())
     {
-        return enzo::geo::Primitive();
+        return enzo::NodePacket();
     }
     const nt::GeometryConnection& connection = inputConnection.value().get();
     const nt::OpId opId = connection.getInputOpId();
     const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
     networkManager_.cookOp(opId);
-    return geoOp.getOutputGeo(connection.getInputIndex());
+    return geoOp.getOutputPacket(connection.getInputIndex());
 }
 
 bool enzo::op::Context::hasInput(unsigned int inputIndex)

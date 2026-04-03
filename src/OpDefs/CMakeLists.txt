@@ -15,6 +15,7 @@ add_library(${libName} SHARED
     ../Engine/Operator/GeometryConnection.cpp
     ../Engine/Operator/Context.cpp
     ../Engine/Operator/Primitive.cpp
+    ../Engine/Operator/NodePacket.cpp
     ../Engine/Operator/Attribute.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp

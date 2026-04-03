@@ -2,6 +2,7 @@
 #include "Engine/Operator/GeometryConnection.h"
 #include "Engine/Operator/OpInfo.h"
 #include "Engine/Operator/GeometryOpDef.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
 #include <functional>
@@ -45,7 +46,7 @@ public:
      *
      * @todo Add option to force cook or cook if dirty.
      */
-    geo::Primitive& getOutputGeo(unsigned int outputIndex) const;
+    enzo::NodePacket& getOutputPacket(unsigned int outputIndex) const;
 
     /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
     *

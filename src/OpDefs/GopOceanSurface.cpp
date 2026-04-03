@@ -21,22 +21,24 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Primitive geo = context.cloneInputGeo(0);
-        
-        const ga::Offset pointCount = geo.getNumPoints();
+        // TODO: convert to NodePacket
+        NodePacket packet = context.cloneInputPacket(0);
+        // geo::Primitive geo = context.cloneInputGeo(0);
+        //
+        // const ga::Offset pointCount = geo.getNumPoints();
+        //
+        // tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [this, &geo](tbb::blocked_range<ga::Offset> range){
+        //     for(ga::Offset i=range.begin(); i!=range.end(); ++i)
+        //     {
+        //         bt::Vector3 pos = geo.getPointPos(i);
+        //
+        //         pos = getSurfacePos(pos);
+        //
+        //         geo.setPointPos(i, pos);
+        //     }
+        // });
 
-        tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [this, &geo](tbb::blocked_range<ga::Offset> range){
-            for(ga::Offset i=range.begin(); i!=range.end(); ++i)
-            {
-                bt::Vector3 pos = geo.getPointPos(i);
-
-                pos = getSurfacePos(pos);
-
-                geo.setPointPos(i, pos);
-            }
-        });
-
-        setOutputGeometry(0, geo);
+        setOutputPacket(0, packet);
     }
 
 }

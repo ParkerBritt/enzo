@@ -1,6 +1,6 @@
 #include "Gui/Interface.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Gui/HeaderBar/HeaderBar.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/Viewport/Viewport.h"
@@ -78,9 +78,9 @@ void EnzoUI::connectSignals()
         }
         enzo::nt::OpId selectedId = selectedNodeIds.back();
         parametersPanel_->selectionChanged(selectedId);
-        geometrySpreadsheetPanel_->setNode(selectedId);
-        auto& geometry = enzo::nt::nm().getGeoOperator(selectedId).getOutputGeo(0);
-        geometrySpreadsheetPanel_->geometryChanged(geometry);
+        // geometrySpreadsheetPanel_->setNode(selectedId);
+        // auto& geometry = enzo::nt::nm().getGeoOperator(selectedId).getOutputGeo(0);
+        // geometrySpreadsheetPanel_->geometryChanged(geometry);
     });
 
     // Operator created
@@ -90,8 +90,10 @@ void EnzoUI::connectSignals()
     enzo::nt::nm().connectionCreated.connect([this](std::weak_ptr<enzo::nt::GeometryConnection> conn){network_->onConnectionCreated(conn);});
 
     // Display/geometry changed
-    enzo::nt::nm().displayGeoChanged.connect([this](enzo::geo::Primitive& geometry){viewport_->setGeometry(geometry);});
-    enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Primitive& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});
+    enzo::nt::nm().displayGeoChanged.connect([this](enzo::NodePacket& packet){
+        if(packet.size() > 0) viewport_->setGeometry(packet.getPrimitive(0));
+    });
+    // enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Primitive& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this](){

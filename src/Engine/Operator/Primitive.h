@@ -268,6 +268,9 @@ private:
 
     };
 
+    // TODO: create PrimPath class instead of string
+    std::string path_;
+
     using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
     geo::Primitive::attribVector& getAttributeStore(const ga::AttributeOwner& owner);
     const geo::Primitive::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const;

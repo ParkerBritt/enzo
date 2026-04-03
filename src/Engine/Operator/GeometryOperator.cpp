@@ -78,9 +78,9 @@ void enzo::nt::GeometryOperator::cookOp(op::Context context)
     }
 }
 
-geo::Primitive& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) const
+enzo::NodePacket& enzo::nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
 {
-    return opDef_->getOutputGeo(outputIndex);
+    return opDef_->getOutputPacket(outputIndex);
 }
 
 void nt::GeometryOperator::addInputConnection(std::shared_ptr<nt::GeometryConnection> newConnection)

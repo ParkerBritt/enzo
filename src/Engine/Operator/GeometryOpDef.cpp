@@ -15,13 +15,13 @@ bool enzo::nt::GeometryOpDef::outputRequested(unsigned int outputIndex)
 
 
 
-void enzo::nt::GeometryOpDef::setOutputGeometry(unsigned int outputIndex, enzo::geo::Primitive geometry)
+void enzo::nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet)
 {
     if(outputIndex>getMaxOutputs())
     {
-        throw std::runtime_error("Cannot set output geometry to index > maxOutputs");
+        throw std::runtime_error("Cannot set output packet to index > maxOutputs");
     }
-    outputGeometry_[outputIndex] = geometry;
+    outputPackets_[outputIndex] = std::move(packet);
 }
 
 void enzo::nt::GeometryOpDef::throwError(std::string error)
@@ -51,16 +51,16 @@ unsigned int enzo::nt::GeometryOpDef::getMaxOutputs() const
 enzo::nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
 : opInfo_{opInfo}, network_{network}
 {
-    outputGeometry_ = std::vector<enzo::geo::Primitive>(getMaxOutputs(), enzo::geo::Primitive());
+    outputPackets_.resize(getMaxOutputs());
 }
 
-enzo::geo::Primitive& enzo::nt::GeometryOpDef::getOutputGeo(unsigned outputIndex)
+enzo::NodePacket& enzo::nt::GeometryOpDef::getOutputPacket(unsigned outputIndex)
 {
     if(outputIndex>getMaxOutputs())
     {
-        throw std::runtime_error("Cannot set output geometry to index > maxOutputs");
+        throw std::runtime_error("Cannot get output packet at index > maxOutputs");
     }
 
-    return outputGeometry_.at(outputIndex);
+    return outputPackets_.at(outputIndex);
 }
 

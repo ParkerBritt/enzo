@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Engine/Operator/Context.h"
 #include "Engine/Types.h"
 #include <boost/config.hpp>
@@ -52,7 +52,7 @@ public:
      *
      * @todo move to friend class Node
      */
-    geo::Primitive& getOutputGeo(unsigned outputIndex);
+    enzo::NodePacket& getOutputPacket(unsigned outputIndex);
 
     /**
     * @brief Stops the cook and displays an error. Use inside the #cookOp function.
@@ -67,15 +67,14 @@ public:
     /// @brief Returns the number of available outputs the node provides. Set by op::OpInfo when registering the operator.
     unsigned int getMaxOutputs() const;
 private:
-    std::vector<enzo::geo::Primitive> outputGeometry_;
+    std::vector<enzo::NodePacket> outputPackets_;
 
 protected:
     const op::OpInfo opInfo_;
     nt::NetworkManager* network_;
     bool outputRequested(unsigned int outputIndex);
     
-    // TODO: std::move geometry instead of copying
-    void setOutputGeometry(unsigned int outputIndex, enzo::geo::Primitive geometry);
+    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
 };
 
 using opConstructor = GeometryOpDef* (*)(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);

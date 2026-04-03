@@ -21,12 +21,7 @@ void GopTransform::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        // copy input geometry
-        geo::Primitive geo = context.cloneInputGeo(0);
-        // geo::Geometry geo;
-
-        auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P", true);
-        ga::AttributeHandleVector3 PAttrHandle(PAttr);
+        NodePacket packet = context.cloneInputPacket(0);
 
         Eigen::Affine3d transform = Eigen::Affine3d::Identity();
 
@@ -40,22 +35,25 @@ void GopTransform::cookOp(enzo::op::Context context)
         const Eigen::Matrix3d  R = transform.linear();
         const Eigen::Vector3d  t = bt::Vector3(context.evalFloatParm("translate", 0), context.evalFloatParm("translate", 1), context.evalFloatParm("translate", 2));
 
-        const size_t N = PAttrHandle.getSize();
-
-
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, N), [&](tbb::blocked_range<size_t> range)
+        for(unsigned int p = 0; p < packet.size(); ++p)
         {
-            for(size_t i=range.begin(); i<range.end(); ++i)
+            geo::Primitive& geo = packet.getPrimitive(p);
+            auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P", true);
+            ga::AttributeHandleVector3 PAttrHandle(PAttr);
+            const size_t N = PAttrHandle.getSize();
+
+            tbb::parallel_for(tbb::blocked_range<size_t>(0, N), [&](tbb::blocked_range<size_t> range)
             {
-                enzo::bt::Vector3 pointPos = PAttrHandle.getValue(i);
-                pointPos = (R * pointPos) + t;
-                PAttrHandle.setValue(i, pointPos);
-            }
-        });
+                for(size_t i=range.begin(); i<range.end(); ++i)
+                {
+                    enzo::bt::Vector3 pointPos = PAttrHandle.getValue(i);
+                    pointPos = (R * pointPos) + t;
+                    PAttrHandle.setValue(i, pointPos);
+                }
+            });
+        }
 
-
-        // set output geometry
-        setOutputGeometry(0, geo);
+        setOutputPacket(0, packet);
     }
 
 }
