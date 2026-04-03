@@ -5,6 +5,7 @@
 #include <glm/ext/vector_float3.hpp>
 #include <qopenglversionfunctions.h>
 #include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Gui/Viewport/GLCamera.h"
 
 struct Point
@@ -34,7 +35,7 @@ public:
     void init();
     void initBuffers();
     void initShaderProgram();
-    void setPoints(enzo::geo::Primitive& geometry, GLCamera& camera);
+    void setPoints(enzo::NodePacket& packet, GLCamera& camera);
     void updatePointSize(GLCamera& camera);
     void useProgram();
     void bind();

@@ -8,6 +8,7 @@
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLPoints.h"
 #include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/NodePacket.h"
 
 class ViewportGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_2_Core
 {
@@ -28,6 +29,6 @@ protected:
     void paintGL() override;
 
 public Q_SLOTS:
-    void geometryChanged(enzo::geo::Primitive& geometry);
+    void geometryChanged(enzo::NodePacket& packet);
     void clearGeometry();
 };

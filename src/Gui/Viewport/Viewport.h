@@ -3,13 +3,14 @@
 #include <qwidget.h>
 #include "Gui/Viewport/ViewportGLWidget.h"
 #include "Gui/Panels/Panel.h"
+#include "Engine/Operator/NodePacket.h"
 
 class Viewport
 : public Panel
 {
 public:
     Viewport(QWidget *parent = nullptr);
-    void setGeometry(enzo::geo::Primitive& geometry);
+    void setGeometry(enzo::NodePacket& packet);
     void clearGeometry();
 private:
     QVBoxLayout* mainLayout_;

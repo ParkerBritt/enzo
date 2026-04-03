@@ -56,98 +56,118 @@ void GLMesh::initBuffers()
 
 }
 
-void GLMesh::setPosBuffer(enzo::geo::Primitive& geometry)
+void GLMesh::setPosBuffer(enzo::NodePacket& packet)
 {
     bind();
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
-    const size_t numPrims = geometry.getNumPrims();
+    // compute total vertex count across all primitives
+    size_t totalVerts = 0;
+    for(size_t pi = 0; pi < packet.size(); ++pi)
+        totalVerts += packet.getPrimitive(pi).getNumVerts();
 
-    vertices.resize(geometry.getNumVerts());
-    geometry.computePrimStartVertices();
+    vertices.resize(totalVerts);
 
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, numPrims), [&](tbb::blocked_range<size_t> range)
+    size_t vertOffset = 0;
+    for(size_t pi = 0; pi < packet.size(); ++pi)
     {
-        for (int primOffset=range.begin(); primOffset<range.end(); ++primOffset)
+        auto& geometry = packet.getPrimitive(pi);
+        const size_t numPrims = geometry.getNumPrims();
+        geometry.computePrimStartVertices();
+
+        const size_t localVertOffset = vertOffset;
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, numPrims), [&](tbb::blocked_range<size_t> range)
         {
-            const enzo::ga::Offset primStartVert = geometry.getPrimStartVertex(primOffset);
-            const unsigned int faceVertCnt = geometry.getPrimVertCount(primOffset);
-
-            enzo::bt::Vector3 Normal;
-
-            // compute normal
-            if(faceVertCnt>=3)
+            for (int primOffset=range.begin(); primOffset<range.end(); ++primOffset)
             {
-                const unsigned v1 = primStartVert;
-                const unsigned v2 = primStartVert + 1;
-                const unsigned v3 = primStartVert + 2;
+                const enzo::ga::Offset primStartVert = geometry.getPrimStartVertex(primOffset);
+                const unsigned int faceVertCnt = geometry.getPrimVertCount(primOffset);
 
-                const enzo::bt::Vector3 pos1 = geometry.getPosFromVert(v1);
-                const enzo::bt::Vector3 pos2 = geometry.getPosFromVert(v2);
-                const enzo::bt::Vector3 pos3 = geometry.getPosFromVert(v3);
+                enzo::bt::Vector3 Normal;
 
-                enzo::bt::Vector3 tang1 = (pos2-pos1);
-                enzo::bt::Vector3 tang2 = (pos3-pos1);
+                // compute normal
+                if(faceVertCnt>=3)
+                {
+                    const unsigned v1 = primStartVert;
+                    const unsigned v2 = primStartVert + 1;
+                    const unsigned v3 = primStartVert + 2;
 
-                Normal = tang1.cross(tang2);
-                Normal.normalize();
+                    const enzo::bt::Vector3 pos1 = geometry.getPosFromVert(v1);
+                    const enzo::bt::Vector3 pos2 = geometry.getPosFromVert(v2);
+                    const enzo::bt::Vector3 pos3 = geometry.getPosFromVert(v3);
+
+                    enzo::bt::Vector3 tang1 = (pos2-pos1);
+                    enzo::bt::Vector3 tang2 = (pos3-pos1);
+
+                    Normal = tang1.cross(tang2);
+                    Normal.normalize();
+                }
+
+                for(int i=0; i< faceVertCnt; ++i)
+                {
+                    const unsigned int vertexCount = primStartVert+i;
+                    enzo::bt::Vector3 p = geometry.getPosFromVert(vertexCount);
+
+                    vertices[localVertOffset + vertexCount] ={
+                        { p.x(),
+                          p.y(),
+                          p.z()},
+                        { Normal.x(),
+                          Normal.y(),
+                          Normal.z()}
+                    };
+                }
+
             }
+        });
 
-            for(int i=0; i< faceVertCnt; ++i)
-            {
-                const unsigned int vertexCount = primStartVert+i;
-                enzo::bt::Vector3 p = geometry.getPosFromVert(vertexCount);
-
-                vertices[vertexCount] ={
-                    { p.x(),
-                      p.y(),
-                      p.z()},
-                    { Normal.x(),
-                      Normal.y(),
-                      Normal.z()}
-                };
-            }
-
-        }
-    });
+        vertOffset += geometry.getNumVerts();
+    }
 
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     unbind();
 }
 
-void GLMesh::setIndexBuffer(enzo::geo::Primitive& geometry)
+void GLMesh::setIndexBuffer(enzo::NodePacket& packet)
 {
     bind();
     faceIndexData.clear();
     lineIndexData.clear();
 
-
-    // create triangle fan from potentially ngon inputs
-    for(enzo::ga::Offset primOffset=0; primOffset<geometry.getNumPrims(); ++primOffset)
+    size_t vertOffset = 0;
+    for(size_t pi = 0; pi < packet.size(); ++pi)
     {
-        int primVertexCount = geometry.getPrimVertCount(primOffset);
-        const enzo::ga::Offset startVert = geometry.getPrimStartVertex(primOffset);
-        const enzo::bt::boolT closed = geometry.isClosed(primOffset);
+        auto& geometry = packet.getPrimitive(pi);
 
-        if(!closed && primVertexCount>=2)
+        // create triangle fan from potentially ngon inputs
+        for(enzo::ga::Offset primOffset=0; primOffset<geometry.getNumPrims(); ++primOffset)
         {
-            for(size_t i=0; i<primVertexCount-1; ++i)
-            {
-                lineIndexData.push_back(startVert+i);
-                lineIndexData.push_back(startVert+i+1);
-            }
-        }
-        else if(primVertexCount>=3)
-        {
-            for(size_t i=1; i<primVertexCount-1; ++i)
-            {
-                faceIndexData.push_back(startVert);
-                faceIndexData.push_back(startVert+i);
-                faceIndexData.push_back(startVert+i+1);
+            int primVertexCount = geometry.getPrimVertCount(primOffset);
+            const enzo::ga::Offset startVert = vertOffset + geometry.getPrimStartVertex(primOffset);
+            const enzo::bt::boolT closed = geometry.isClosed(primOffset);
 
+            if(!closed && primVertexCount>=2)
+            {
+                for(size_t i=0; i<primVertexCount-1; ++i)
+                {
+                    lineIndexData.push_back(startVert+i);
+                    lineIndexData.push_back(startVert+i+1);
+                }
             }
+            else if(primVertexCount>=3)
+            {
+                for(size_t i=1; i<primVertexCount-1; ++i)
+                {
+                    faceIndexData.push_back(startVert);
+                    faceIndexData.push_back(startVert+i);
+                    faceIndexData.push_back(startVert+i+1);
+
+                }
+            }
+
         }
 
+        vertOffset += geometry.getNumVerts();
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceIndexBuffer);

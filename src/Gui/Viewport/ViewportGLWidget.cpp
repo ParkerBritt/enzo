@@ -205,18 +205,14 @@ void ViewportGLWidget::paintGL()
 
 void ViewportGLWidget::clearGeometry()
 {
-    enzo::geo::Primitive emptyGeo;
-    geometryChanged(emptyGeo);
+    enzo::NodePacket emptyPacket;
+    geometryChanged(emptyPacket);
 }
 
-void ViewportGLWidget::geometryChanged(enzo::geo::Primitive& geometry)
+void ViewportGLWidget::geometryChanged(enzo::NodePacket& packet)
 {
-    using namespace enzo;
-    std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P", true);
-    ga::AttributeHandleVector3 PAttrHandle = ga::AttributeHandleVector3(PAttr);
+    triangleMesh_->setPosBuffer(packet);
+    triangleMesh_->setIndexBuffer(packet);
 
-    triangleMesh_->setPosBuffer(geometry);
-    triangleMesh_->setIndexBuffer(geometry);
-
-    points_->setPoints(geometry, curCamera);
+    points_->setPoints(packet, curCamera);
 }

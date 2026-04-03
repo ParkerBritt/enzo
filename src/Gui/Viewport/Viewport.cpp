@@ -23,9 +23,9 @@ Viewport::Viewport(QWidget *parent)
     this->setLayout(mainLayout_);
 }
 
-void Viewport::setGeometry(enzo::geo::Primitive& geometry)
+void Viewport::setGeometry(enzo::NodePacket& packet)
 {
-    openGLWidget_->geometryChanged(geometry);
+    openGLWidget_->geometryChanged(packet);
 }
 
 void Viewport::clearGeometry()

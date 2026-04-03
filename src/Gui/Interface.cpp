@@ -93,7 +93,7 @@ void EnzoUI::connectSignals()
 
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect([this](enzo::NodePacket& packet){
-        if(packet.size() > 0) viewport_->setGeometry(packet.getPrimitive(0));
+        viewport_->setGeometry(packet);
     });
     enzo::nt::nm().selectedGeoChanged.connect([this](enzo::NodePacket& packet){geometrySpreadsheetPanel_->packetChanged(packet);});
 
