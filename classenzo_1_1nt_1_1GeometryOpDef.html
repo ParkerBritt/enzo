@@ -114,9 +114,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af8a286880d4169cfbf348d5b9965fe3c" id="r_af8a286880d4169cfbf348d5b9965fe3c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c">cookOp</a> (<a class="el" href="classenzo_1_1op_1_1Context.html">op::Context</a> context)=0</td></tr>
 <tr class="memdesc:af8a286880d4169cfbf348d5b9965fe3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is called at runtime to create the output geometry.  <br /></td></tr>
 <tr class="separator:af8a286880d4169cfbf348d5b9965fe3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6975704e8499edd426a301427af1abb8" id="r_a6975704e8499edd426a301427af1abb8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1geo_1_1Geometry.html">geo::Geometry</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6975704e8499edd426a301427af1abb8">getOutputGeo</a> (unsigned outputIndex)</td></tr>
-<tr class="memdesc:a6975704e8499edd426a301427af1abb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
-<tr class="separator:a6975704e8499edd426a301427af1abb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f3e3e6f988618f3e77764c30c2ad9be" id="r_a8f3e3e6f988618f3e77764c30c2ad9be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f3e3e6f988618f3e77764c30c2ad9be">getOutputPacket</a> (unsigned outputIndex)</td></tr>
+<tr class="memdesc:a8f3e3e6f988618f3e77764c30c2ad9be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
+<tr class="separator:a8f3e3e6f988618f3e77764c30c2ad9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c2dcbb16f44219223e0c71761d8b7f3" id="r_a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c2dcbb16f44219223e0c71761d8b7f3">throwError</a> (std::string error)</td></tr>
 <tr class="memdesc:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
 <tr class="separator:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,9 +138,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:abf63d190b0e264e7ffdd5340c0d5b331" id="r_abf63d190b0e264e7ffdd5340c0d5b331"><td class="memItemLeft" align="right" valign="top"><a id="abf63d190b0e264e7ffdd5340c0d5b331" name="abf63d190b0e264e7ffdd5340c0d5b331"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>outputRequested</b> (unsigned int outputIndex)</td></tr>
 <tr class="separator:abf63d190b0e264e7ffdd5340c0d5b331"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7403792113452ee5bdbb40db6df6a53" id="r_ae7403792113452ee5bdbb40db6df6a53"><td class="memItemLeft" align="right" valign="top"><a id="ae7403792113452ee5bdbb40db6df6a53" name="ae7403792113452ee5bdbb40db6df6a53"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputGeometry</b> (unsigned int outputIndex, <a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> geometry)</td></tr>
-<tr class="separator:ae7403792113452ee5bdbb40db6df6a53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a438f597571905fa3300d47730dac83d5" id="r_a438f597571905fa3300d47730dac83d5"><td class="memItemLeft" align="right" valign="top"><a id="a438f597571905fa3300d47730dac83d5" name="a438f597571905fa3300d47730dac83d5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputPacket</b> (unsigned int outputIndex, <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> packet)</td></tr>
+<tr class="separator:a438f597571905fa3300d47730dac83d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -185,14 +185,14 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 
 </div>
 </div>
-<a id="a6975704e8499edd426a301427af1abb8" name="a6975704e8499edd426a301427af1abb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6975704e8499edd426a301427af1abb8">&#9670;&#160;</a></span>getOutputGeo()</h2>
+<a id="a8f3e3e6f988618f3e77764c30c2ad9be" name="a8f3e3e6f988618f3e77764c30c2ad9be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f3e3e6f988618f3e77764c30c2ad9be">&#9670;&#160;</a></span>getOutputPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1geo_1_1Geometry.html">enzo::geo::Geometry</a> &amp; enzo::nt::GeometryOpDef::getOutputGeo </td>
+          <td class="memname"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp; enzo::nt::GeometryOpDef::getOutputPacket </td>
           <td>(</td>
           <td class="paramtype">unsigned</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span></td><td>)</td>
           <td></td>
@@ -202,7 +202,7 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 
 <p>Returns the current output geometry. </p>
 <p>For use by the runtime Node Does not force a cook.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo</a></b></dt><dd>move to friend class Node </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo</a></b></dt><dd>move to friend class Node </dd></dl>
 
 </div>
 </div>
@@ -222,7 +222,7 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 </div><div class="memdoc">
 
 <p>Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
 
 </div>
 </div>

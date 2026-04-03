@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: Geometry Class Reference</title>
+<title>Enzo: Member List</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -84,27 +84,29 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><a class="el" href="classenzo_1_1PrimPath.html">PrimPath</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">Geometry Class Reference</div></div>
+  <div class="headertitle"><div class="title">enzo::PrimPath Member List</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="Primitive_8h_source.html">Primitive.h</a>&gt;</code></p>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo</a></b></dt><dd>outdated docs, rewrite</dd></dl>
-<p>The Geometry class represents the core data being passed between nodes in the engine. It is the operand of the network. Nodes read, modify, and output geometry, which is then used to populate the viewport and the geometry spreadsheet. Geometry is stored in an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> based structure, similar to a spreadsheet, where each column is an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> owned by points, vertices, primitives, or the global context. Most geometry information, including built in properties such as positions and connectivity, is stored through this same system. These built in <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> are intrinsic, but they share the same base as user-defined <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> to keep the data model consistent.</p>
-<p>The class provides methods for constructing and querying geometry, including adding points and faces, computing normals, and building a CGAL half-edge mesh representation. It also exposes accessors for reading positions, primitive connectivity, and vertex data, while tracking special cases such as isolated points.</p>
-<dl class="section post"><dt>Postcondition</dt><dd>Geometry in instatiated with some intrinsic attributes required to construct geometry, such as P (position) on point attributes, vertexCount and closed on primitive attributes, and point on vertices. It is recommended not to modify these directy but instead use the helper functions. </dd></dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/Operator/<a class="el" href="Primitive_8h_source.html">Primitive.h</a></li>
-</ul>
-</div><!-- contents -->
+<p>This is the complete list of members for <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>, including all inherited members.</p>
+<table class="directory">
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>components</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>Delimiter</b> (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>empty</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>isRoot</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>name</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>parent</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>PrimPath</b>()=default (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>PrimPath</b>(const std::string &amp;path) (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>string</b>() const (defined in <a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a>)</td><td class="entry"><a class="el" href="classenzo_1_1PrimPath.html">enzo::PrimPath</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+</table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

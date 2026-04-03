@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['isclosed_0',['isClosed',['../classenzo_1_1geo_1_1Geometry.html#a9a1747a9e5b89df72c859c3e8408351b',1,'enzo::geo::Geometry']]],
+  ['isclosed_0',['isClosed',['../classenzo_1_1geo_1_1Primitive.html#ac3d67d95451daff1388b1d829aad59fe',1,'enzo::geo::Primitive']]],
   ['isdirty_1',['isDirty',['../classenzo_1_1nt_1_1GeometryOperator.html#a59ef844fdcfb1da8348fb7d24259da61',1,'enzo::nt::GeometryOperator']]],
   ['isintrinsic_2',['isIntrinsic',['../classenzo_1_1ga_1_1Attribute.html#a0ca2078bc8f564a4feca7ed5cd2437d8',1,'enzo::ga::Attribute']]],
   ['islocked_3',['isLocked',['../classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164',1,'enzo::nt::UpdateLock']]],
