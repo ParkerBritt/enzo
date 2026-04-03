@@ -1,6 +1,7 @@
 #pragma once
 #include <QAbstractItemModel>
 #include <memory>
+#include <string>
 #include "Engine/Operator/NodePacket.h"
 
 class PrimitiveTreeItem;
@@ -31,5 +32,6 @@ public:
 
 private:
     PrimitiveTreeItem *getItem(const QModelIndex &index) const;
+    PrimitiveTreeItem *findOrCreateChild(PrimitiveTreeItem *parent, const std::string &name);
     std::unique_ptr<PrimitiveTreeItem> rootItem_;
 };

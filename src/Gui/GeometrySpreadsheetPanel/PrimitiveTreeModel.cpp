@@ -1,6 +1,6 @@
 #include "PrimitiveTreeModel.h"
 #include "PrimitiveTreeItem.h"
-#include <icecream.hpp>
+#include "Engine/Operator/PrimPath.h"
 
 PrimitiveTreeModel::PrimitiveTreeModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -84,13 +84,28 @@ void PrimitiveTreeModel::setPacket(const enzo::NodePacket &packet)
     beginResetModel();
     rootItem_->removeChildren(0, rootItem_->childCount());
     const int count = static_cast<int>(packet.size());
-    rootItem_->insertChildren(0, count, rootItem_->columnCount());
     for (int i = 0; i < count; ++i) {
-        std::string primPath = packet.getPrimitive(i).getPath();
-        IC(primPath);
-        rootItem_->child(i)->setData(0, QString::fromStdString(primPath));
+        enzo::PrimPath primPath(packet.getPrimitive(i).getPath());
+        const auto &components = primPath.components();
+        PrimitiveTreeItem *current = rootItem_.get();
+        for (const auto &component : components) {
+            current = findOrCreateChild(current, component);
+        }
     }
     endResetModel();
+}
+
+PrimitiveTreeItem *PrimitiveTreeModel::findOrCreateChild(PrimitiveTreeItem *parent, const std::string &name)
+{
+    QString qname = QString::fromStdString(name);
+    for (int i = 0; i < parent->childCount(); ++i) {
+        if (parent->child(i)->data(0).toString() == qname)
+            return parent->child(i);
+    }
+    int pos = parent->childCount();
+    parent->insertChildren(pos, 1, rootItem_->columnCount());
+    parent->child(pos)->setData(0, qname);
+    return parent->child(pos);
 }
 
 void PrimitiveTreeModel::clear()
