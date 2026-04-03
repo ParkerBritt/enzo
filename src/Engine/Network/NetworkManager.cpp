@@ -1,6 +1,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/UpdateLock.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"

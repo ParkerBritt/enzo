@@ -1,7 +1,7 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
 #include <icecream.hpp>
 #include <memory>
@@ -17,7 +17,7 @@ GeometrySpreadsheetModel::GeometrySpreadsheetModel(QObject *parent)
 
 }
 
-void GeometrySpreadsheetModel::geometryChanged(enzo::geo::Geometry& geometry)
+void GeometrySpreadsheetModel::geometryChanged(enzo::geo::Primitive& geometry)
 {
     beginResetModel();
     geometry_ = geometry;
@@ -28,7 +28,7 @@ void GeometrySpreadsheetModel::geometryChanged(enzo::geo::Geometry& geometry)
 
 void GeometrySpreadsheetModel::clear()
 {
-    enzo::geo::Geometry emptyGeo;
+    enzo::geo::Primitive emptyGeo;
     geometryChanged(emptyGeo);;
 }
 

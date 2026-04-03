@@ -23,7 +23,7 @@ Viewport::Viewport(QWidget *parent)
     this->setLayout(mainLayout_);
 }
 
-void Viewport::setGeometry(enzo::geo::Geometry& geometry)
+void Viewport::setGeometry(enzo::geo::Primitive& geometry)
 {
     openGLWidget_->geometryChanged(geometry);
 }

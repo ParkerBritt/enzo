@@ -15,14 +15,14 @@ enzo::op::Context::Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networ
 
 }
 
-enzo::geo::Geometry enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
+enzo::geo::Primitive enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
 {
     // TODO: implement
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     auto inputConnection = selfOp.getInputConnection(inputIndex);
     if(!inputConnection.has_value())
     {
-        return enzo::geo::Geometry();
+        return enzo::geo::Primitive();
     }
     const nt::GeometryConnection& connection = inputConnection.value().get();
     const nt::OpId opId = connection.getInputOpId();

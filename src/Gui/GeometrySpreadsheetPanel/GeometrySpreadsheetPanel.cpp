@@ -83,7 +83,7 @@ void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
 }
 
 
-void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Geometry& geometry)
+void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Primitive& geometry)
 {
     model_->geometryChanged(geometry);
     view_->update();

@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
 #include <memory>
 #include <unordered_map>
@@ -143,10 +143,10 @@ public:
     // @brief A signal emitted when the geometry to be displayed is changed
     // This is different to #displayNodeChanged because the state of geometry
     // in a node can change based on parameters or other factors.
-    boost::signals2::signal<void (enzo::geo::Geometry& geometry)> displayGeoChanged;
+    boost::signals2::signal<void (enzo::geo::Primitive& geometry)> displayGeoChanged;
 
     // @brief A signal emitted when the selected node's geometry is changed
-    boost::signals2::signal<void (enzo::geo::Geometry& geometry)> selectedGeoChanged;
+    boost::signals2::signal<void (enzo::geo::Primitive& geometry)> selectedGeoChanged;
 
     // @brief A signal emitted when the selection of nodes changes
     boost::signals2::signal<void (std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;

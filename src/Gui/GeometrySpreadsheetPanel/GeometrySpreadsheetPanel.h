@@ -14,7 +14,7 @@ class GeometrySpreadsheetPanel
 public:
     GeometrySpreadsheetPanel(QWidget *parent = nullptr);
 public Q_SLOTS:
-    void geometryChanged(enzo::geo::Geometry& geometry);
+    void geometryChanged(enzo::geo::Primitive& geometry);
     void clear();
     void setNode(enzo::nt::OpId opId);
 private:

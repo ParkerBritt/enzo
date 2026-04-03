@@ -2,7 +2,7 @@
 #include <GL/gl.h>
 #include <iostream>
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <tbb/blocked_range.h>
@@ -56,7 +56,7 @@ void GLMesh::initBuffers()
 
 }
 
-void GLMesh::setPosBuffer(enzo::geo::Geometry& geometry)
+void GLMesh::setPosBuffer(enzo::geo::Primitive& geometry)
 {
     bind();
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -115,7 +115,7 @@ void GLMesh::setPosBuffer(enzo::geo::Geometry& geometry)
     unbind();
 }
 
-void GLMesh::setIndexBuffer(enzo::geo::Geometry& geometry)
+void GLMesh::setIndexBuffer(enzo::geo::Primitive& geometry)
 {
     bind();
     faceIndexData.clear();

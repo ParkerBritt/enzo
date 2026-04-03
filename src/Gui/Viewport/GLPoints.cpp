@@ -56,7 +56,7 @@ void GLPoints::initBuffers()
 }
 
 
-void GLPoints::setPoints(enzo::geo::Geometry& geometry, GLCamera& camera)
+void GLPoints::setPoints(enzo::geo::Primitive& geometry, GLCamera& camera)
 {
     const enzo::ga::Offset numPoints =  geometry.getNumSoloPoints();
     const glm::vec3 camPosGlm = camera.getPos();

@@ -1,4 +1,4 @@
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Types.h"
@@ -11,7 +11,7 @@
 #include "icecream.hpp"
 
 using namespace enzo;
-geo::Geometry::Geometry() :
+geo::Primitive::Primitive() :
     vertexCountHandlePrim_{addIntAttribute(ga::AttrOwner::PRIMITIVE, "vertexCount", true)},
     closedHandlePrim_{addBoolAttribute(ga::AttrOwner::PRIMITIVE, "closed", true)},
     pointOffsetHandleVert_{addIntAttribute(ga::AttrOwner::VERTEX, "point", true)},
@@ -20,7 +20,7 @@ geo::Geometry::Geometry() :
     addIntAttribute(ga::AttrOwner::PRIMITIVE, "foo");
 }
 
-geo::Geometry::Geometry(const Geometry& other):
+geo::Primitive::Primitive(const Primitive& other):
     // attributes
     pointAttributes_{deepCopyAttributes(other.pointAttributes_)},
     vertexAttributes_{deepCopyAttributes(other.vertexAttributes_)},
@@ -41,7 +41,7 @@ geo::Geometry::Geometry(const Geometry& other):
 {
 }
 
-enzo::geo::Geometry& enzo::geo::Geometry::operator=(const enzo::geo::Geometry& rhs) {
+enzo::geo::Primitive& enzo::geo::Primitive::operator=(const enzo::geo::Primitive& rhs) {
     if (this == &rhs) return *this;
 
     // attributes
@@ -66,7 +66,7 @@ enzo::geo::Geometry& enzo::geo::Geometry::operator=(const enzo::geo::Geometry& r
     return *this;
 }
 
-void geo::Geometry::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src)
+void geo::Primitive::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src)
 {
     if(!dst) throw std::runtime_error("Dst empty.");
     if(!src) throw std::runtime_error("Src empty.");
@@ -98,7 +98,7 @@ void geo::Geometry::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_
     }
 }
 
-void geo::Geometry::merge(Geometry& other)
+void geo::Primitive::merge(Primitive& other)
 {
     // Copy all unique points and build offset mapping
     const ga::Offset srcPointNum = other.getNumPoints();
@@ -176,7 +176,7 @@ void geo::Geometry::merge(Geometry& other)
 
 }
 
-void geo::Geometry::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
+void geo::Primitive::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
 {
     const ga::Offset primNum = vertexCountHandlePrim_.getSize();
     for(ga::Offset pointOffset : pointOffsets)
@@ -204,7 +204,7 @@ void geo::Geometry::addFace(const std::vector<ga::Offset>& pointOffsets, bool cl
     
 }
 
-ga::Offset  geo::Geometry::addPoint(const bt::Vector3& pos)
+ga::Offset  geo::Primitive::addPoint(const bt::Vector3& pos)
 {
     const ga::Offset pointOffset = posHandlePoint_.getSize();
 
@@ -214,7 +214,7 @@ ga::Offset  geo::Geometry::addPoint(const bt::Vector3& pos)
     return pointOffset;
 }
 
-ga::Offset geo::Geometry::getNumSoloPoints() const
+ga::Offset geo::Primitive::getNumSoloPoints() const
 {
     return soloPoints_.size();
 
@@ -232,12 +232,12 @@ ga::Offset geo::Geometry::getNumSoloPoints() const
 //     return getAttributeStore(owner).end();
 // }
 
-const size_t geo::Geometry::getNumAttributes(const ga::AttributeOwner owner) const
+const size_t geo::Primitive::getNumAttributes(const ga::AttributeOwner owner) const
 {
     return getAttributeStore(owner).size();
 }
 
-std::weak_ptr<const ga::Attribute> geo::Geometry::getAttributeByIndex(ga::AttributeOwner owner, unsigned int index) const
+std::weak_ptr<const ga::Attribute> geo::Primitive::getAttributeByIndex(ga::AttributeOwner owner, unsigned int index) const
 {
     auto attribStore = getAttributeStore(owner);
     if(index>=attribStore.size())
@@ -252,19 +252,19 @@ std::weak_ptr<const ga::Attribute> geo::Geometry::getAttributeByIndex(ga::Attrib
 
 
 
-std::set<ga::Offset>::const_iterator geo::Geometry::soloPointsBegin()
+std::set<ga::Offset>::const_iterator geo::Primitive::soloPointsBegin()
 {
     return soloPoints_.begin();
 }
 
-std::set<ga::Offset>::const_iterator geo::Geometry::soloPointsEnd()
+std::set<ga::Offset>::const_iterator geo::Primitive::soloPointsEnd()
 {
     return soloPoints_.end();
 }
 
 
 
-bt::Vector3 geo::Geometry::getPosFromVert(ga::Offset vertexOffset) const
+bt::Vector3 geo::Primitive::getPosFromVert(ga::Offset vertexOffset) const
 {
     // get point offset
     const ga::Offset pointOffset = pointOffsetHandleVert_.getValue(vertexOffset);
@@ -272,38 +272,38 @@ bt::Vector3 geo::Geometry::getPosFromVert(ga::Offset vertexOffset) const
     return posHandlePoint_.getValue(pointOffset);
 }
 
-bt::Vector3 geo::Geometry::getPointPos(ga::Offset pointOffset) const
+bt::Vector3 geo::Primitive::getPointPos(ga::Offset pointOffset) const
 {
     return posHandlePoint_.getValue(pointOffset);
 }
 
-ga::Offset      geo::Geometry::getVertexPrim(ga::Offset vertexOffset) const
+ga::Offset      geo::Primitive::getVertexPrim(ga::Offset vertexOffset) const
 {
     return vertexPrims_[vertexOffset];
 }
 
-void geo::Geometry::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
+void geo::Primitive::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
 {
     posHandlePoint_.setValue(offset, pos);
 }
 
 
-unsigned int geo::Geometry::getPrimVertCount(ga::Offset primOffset) const
+unsigned int geo::Primitive::getPrimVertCount(ga::Offset primOffset) const
 {
     return vertexCountHandlePrim_.getValue(primOffset);
 }
 
-ga::Offset geo::Geometry::getNumPrims() const
+ga::Offset geo::Primitive::getNumPrims() const
 {
     return vertexCountHandlePrim_.getSize();
 }
 
-ga::Offset geo::Geometry::getNumVerts() const
+ga::Offset geo::Primitive::getNumVerts() const
 {
     return pointOffsetHandleVert_.getSize();
 }
 
-ga::Offset geo::Geometry::getNumPoints() const
+ga::Offset geo::Primitive::getNumPoints() const
 {
     return posHandlePoint_.getSize();
 }
@@ -311,9 +311,9 @@ ga::Offset geo::Geometry::getNumPoints() const
 
 
 
-geo::Geometry::attribVector geo::Geometry::deepCopyAttributes(attribVector originalVector)
+geo::Primitive::attribVector geo::Primitive::deepCopyAttributes(attribVector originalVector)
 {
-    geo::Geometry::attribVector copied;
+    geo::Primitive::attribVector copied;
     const size_t sourceSize = originalVector.size();
 
     copied.reserve(sourceSize);
@@ -335,7 +335,7 @@ geo::Geometry::attribVector geo::Geometry::deepCopyAttributes(attribVector origi
 }
 
 
-enzo::geo::HeMesh geo::Geometry::computeHalfEdgeMesh()
+enzo::geo::HeMesh geo::Primitive::computeHalfEdgeMesh()
 {
     HeMesh heMesh;
 
@@ -410,7 +410,7 @@ enzo::geo::HeMesh geo::Geometry::computeHalfEdgeMesh()
     return heMesh;
 }
 
-ga::Offset geo::Geometry::getPrimStartVertex(ga::Offset primOffset) const
+ga::Offset geo::Primitive::getPrimStartVertex(ga::Offset primOffset) const
 {
 
     if(primStartsDirty_.load())
@@ -425,7 +425,7 @@ ga::Offset geo::Geometry::getPrimStartVertex(ga::Offset primOffset) const
 }
 
 // TODO: handle this automatically
-void geo::Geometry::computePrimStartVertices() const
+void geo::Primitive::computePrimStartVertices() const
 {
     const ga::Offset handleSize = vertexCountHandlePrim_.getSize();
     primStarts_.clear();
@@ -442,34 +442,34 @@ void geo::Geometry::computePrimStartVertices() const
 
 
 
-ga::AttributeHandleInt geo::Geometry::addIntAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
+ga::AttributeHandleInt geo::Primitive::addIntAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::intT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleInt(newAttribute);
 }
 
-ga::AttributeHandleBool geo::Geometry::addBoolAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
+ga::AttributeHandleBool geo::Primitive::addBoolAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::boolT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleBool(newAttribute);
 }
 
-bt::boolT geo::Geometry::isClosed(ga::Offset primOffset) const
+bt::boolT geo::Primitive::isClosed(ga::Offset primOffset) const
 {
     return closedHandlePrim_.getValue(primOffset);
 }
 
 
-ga::AttributeHandle<bt::Vector3> geo::Geometry::addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
+ga::AttributeHandle<bt::Vector3> geo::Primitive::addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
 {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::vectorT, intrinsic);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandle<bt::Vector3>(newAttribute);
 }
 
-geo::Geometry::attribVector& geo::Geometry::getAttributeStore(const ga::AttributeOwner& owner)
+geo::Primitive::attribVector& geo::Primitive::getAttributeStore(const ga::AttributeOwner& owner)
 {
     switch(owner)
     {
@@ -490,7 +490,7 @@ geo::Geometry::attribVector& geo::Geometry::getAttributeStore(const ga::Attribut
     }
 }
 
-const geo::Geometry::attribVector& geo::Geometry::getAttributeStore(const ga::AttributeOwner& owner) const
+const geo::Primitive::attribVector& geo::Primitive::getAttributeStore(const ga::AttributeOwner& owner) const
 {
     switch(owner)
     {
@@ -511,12 +511,12 @@ const geo::Geometry::attribVector& geo::Geometry::getAttributeStore(const ga::At
     }
 }
 
-bool geo::Geometry::attributeExists(ga::AttributeOwner owner, std::string name)
+bool geo::Primitive::attributeExists(ga::AttributeOwner owner, std::string name)
 {
     return static_cast<bool>(getAttribByName(owner, name));
 }
 
-std::shared_ptr<ga::Attribute> geo::Geometry::getAttribByName(ga::AttributeOwner owner, std::string name, bool includeIntrinsics)
+std::shared_ptr<ga::Attribute> geo::Primitive::getAttribByName(ga::AttributeOwner owner, std::string name, bool includeIntrinsics)
 {
     auto& vector = getAttributeStore(owner);
     for(auto it=vector.begin(); it!=vector.end(); ++it)

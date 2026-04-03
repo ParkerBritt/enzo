@@ -28,6 +28,8 @@ using attributeIterator = std::vector<std::shared_ptr<ga::Attribute>>::iterator;
 * @class enzo::geo::Geometry
 * @brief [Attribute](@ref enzo::ga::Attribute) based geometry container exchanged and modified by nodes.
 *
+* @todo outdated docs, rewrite
+*
 * The Geometry class represents the core data being passed between nodes
 * in the engine. It is the operand of the network. Nodes read, modify,
 * and output geometry, which is then used to populate the viewport and
@@ -50,18 +52,18 @@ using attributeIterator = std::vector<std::shared_ptr<ga::Attribute>>::iterator;
 * and closed on primitive attributes, and point on vertices. It is recommended
 * not to modify these directy but instead use the helper functions.
 */
-class Geometry
+class Primitive
 {
 public:
-    Geometry();
-    Geometry(const Geometry& other);
+    Primitive();
+    Primitive(const Primitive& other);
 
    /**
     * @brief Assignment operator. Performs a deep copy of another Geometry.
     * @param rhs The Geometry object to copy from.
     * @return Reference to this Geometry.
     */
-    Geometry& operator=(const Geometry& rhs);
+    Primitive& operator=(const Primitive& rhs);
 
     /**
     * @brief Adds an integer attribute to the geometry.
@@ -231,7 +233,7 @@ public:
     * @brief Merges another geometry into this one.
     * @param other The geometry to merge.
     */
-    void merge(Geometry& other);
+    void merge(Primitive& other);
 
     /**
     * @brief Checks if the given attribute exists
@@ -267,8 +269,8 @@ private:
     };
 
     using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
-    geo::Geometry::attribVector& getAttributeStore(const ga::AttributeOwner& owner);
-    const geo::Geometry::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const;
+    geo::Primitive::attribVector& getAttributeStore(const ga::AttributeOwner& owner);
+    const geo::Primitive::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const;
 
     attribVector deepCopyAttributes(attribVector source);
 

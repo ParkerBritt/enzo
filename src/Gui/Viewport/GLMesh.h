@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <QOpenGLFunctions_3_2_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 
 struct Vertex
 {
@@ -28,8 +28,8 @@ public:
 
     void init();
     void initBuffers();
-    void setPosBuffer(enzo::geo::Geometry& geometry);
-    void setIndexBuffer(enzo::geo::Geometry& geometry);
+    void setPosBuffer(enzo::geo::Primitive& geometry);
+    void setIndexBuffer(enzo::geo::Primitive& geometry);
     void bind();
     void unbind();
     void draw();

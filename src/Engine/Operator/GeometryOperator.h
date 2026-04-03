@@ -45,7 +45,7 @@ public:
      *
      * @todo Add option to force cook or cook if dirty.
      */
-    geo::Geometry& getOutputGeo(unsigned int outputIndex) const;
+    geo::Primitive& getOutputGeo(unsigned int outputIndex) const;
 
     /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
     *

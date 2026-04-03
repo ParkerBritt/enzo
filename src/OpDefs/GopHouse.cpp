@@ -16,7 +16,7 @@ void GOP_house::cookOp(enzo::op::Context context)
     if(outputRequested(0))
     {
         // copy input geometry
-        geo::Geometry geo;
+        geo::Primitive geo;
 
         // ----
         // create geometry start

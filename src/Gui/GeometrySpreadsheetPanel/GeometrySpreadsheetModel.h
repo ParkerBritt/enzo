@@ -2,7 +2,7 @@
 
 #include <QAbstractListModel>
 #include "Engine/Types.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 
 class GeometrySpreadsheetModel : public QAbstractListModel
 {
@@ -19,7 +19,7 @@ public:
                         int role = Qt::DisplayRole) const override;
     int indexFromSection(unsigned int section) const;
 
-    void geometryChanged(enzo::geo::Geometry& geometry);
+    void geometryChanged(enzo::geo::Primitive& geometry);
     void setOwner(const enzo::ga::AttributeOwner owner);
     void initBuffers();
 
@@ -27,7 +27,7 @@ public:
 
 private:
     enzo::nt::OpId opId_;
-    enzo::geo::Geometry geometry_;
+    enzo::geo::Primitive geometry_;
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;
     const int attributeColumnPadding_ = 1;

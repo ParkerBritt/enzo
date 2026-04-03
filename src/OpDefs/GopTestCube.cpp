@@ -13,7 +13,7 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
 
     if (outputRequested(0))
     {
-        geo::Geometry geo = context.cloneInputGeo(0);
+        geo::Primitive geo = context.cloneInputGeo(0);
 
         auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P");
         ga::AttributeHandleVector3 PAttrHandle(PAttr);

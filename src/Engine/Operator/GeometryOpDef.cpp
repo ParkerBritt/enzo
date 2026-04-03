@@ -15,7 +15,7 @@ bool enzo::nt::GeometryOpDef::outputRequested(unsigned int outputIndex)
 
 
 
-void enzo::nt::GeometryOpDef::setOutputGeometry(unsigned int outputIndex, enzo::geo::Geometry geometry)
+void enzo::nt::GeometryOpDef::setOutputGeometry(unsigned int outputIndex, enzo::geo::Primitive geometry)
 {
     if(outputIndex>getMaxOutputs())
     {
@@ -51,10 +51,10 @@ unsigned int enzo::nt::GeometryOpDef::getMaxOutputs() const
 enzo::nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
 : opInfo_{opInfo}, network_{network}
 {
-    outputGeometry_ = std::vector<enzo::geo::Geometry>(getMaxOutputs(), enzo::geo::Geometry());
+    outputGeometry_ = std::vector<enzo::geo::Primitive>(getMaxOutputs(), enzo::geo::Primitive());
 }
 
-enzo::geo::Geometry& enzo::nt::GeometryOpDef::getOutputGeo(unsigned outputIndex)
+enzo::geo::Primitive& enzo::nt::GeometryOpDef::getOutputGeo(unsigned outputIndex)
 {
     if(outputIndex>getMaxOutputs())
     {

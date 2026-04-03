@@ -16,7 +16,7 @@ set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(ENGINE_SOURCES
     src/Engine/Operator/Attribute.cpp
-    src/Engine/Operator/Geometry.cpp
+    src/Engine/Operator/Primitive.cpp
     src/Engine/Operator/GeometryOperator.cpp
     src/Engine/Operator/GeometryConnection.cpp
     src/Engine/Operator/GeometryOpDef.cpp

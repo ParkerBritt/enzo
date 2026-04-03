@@ -3,7 +3,7 @@
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Types.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 // #include "Engine/Operator/Primitive.h"
 
 
@@ -22,7 +22,7 @@ TEST_CASE("attrHandleInt")
 TEST_CASE("geometry")
 {
     using namespace enzo;
-    geo::Geometry geo;
+    geo::Primitive geo;
     // check add function
     ga::AttributeHandleInt myHandle = geo.addIntAttribute(ga::AttrOwner::POINT, "index");
     myHandle.addValue(5);

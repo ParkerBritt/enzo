@@ -22,7 +22,7 @@ void GopTransform::cookOp(enzo::op::Context context)
     if(outputRequested(0))
     {
         // copy input geometry
-        geo::Geometry geo = context.cloneInputGeo(0);
+        geo::Primitive geo = context.cloneInputGeo(0);
         // geo::Geometry geo;
 
         auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P", true);

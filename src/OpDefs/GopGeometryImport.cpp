@@ -19,7 +19,7 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Geometry geo;
+        geo::Primitive geo;
 
         bt::String filePath = context.evalStringParm("filePath");
         boost::trim(filePath);

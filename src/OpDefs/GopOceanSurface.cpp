@@ -21,7 +21,7 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Geometry geo = context.cloneInputGeo(0);
+        geo::Primitive geo = context.cloneInputGeo(0);
         
         const ga::Offset pointCount = geo.getNumPoints();
 

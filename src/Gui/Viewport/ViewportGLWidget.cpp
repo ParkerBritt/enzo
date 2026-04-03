@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <qtimer.h>
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Primitive.h"
 
 void ViewportGLWidget::initializeGL()
 {
@@ -21,7 +21,7 @@ void ViewportGLWidget::initializeGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_MULTISAMPLE);
 
-    enzo::geo::Geometry geo = enzo::geo::Geometry();
+    enzo::geo::Primitive geo = enzo::geo::Primitive();
     triangleMesh_ = std::make_unique<GLMesh>();
     gridMesh_ = std::make_unique<GLGrid>();
     points_ = std::make_unique<GLPoints>();
@@ -205,11 +205,11 @@ void ViewportGLWidget::paintGL()
 
 void ViewportGLWidget::clearGeometry()
 {
-    enzo::geo::Geometry emptyGeo;
+    enzo::geo::Primitive emptyGeo;
     geometryChanged(emptyGeo);
 }
 
-void ViewportGLWidget::geometryChanged(enzo::geo::Geometry& geometry)
+void ViewportGLWidget::geometryChanged(enzo::geo::Primitive& geometry)
 {
     using namespace enzo;
     std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P", true);

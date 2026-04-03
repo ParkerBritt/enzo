@@ -78,7 +78,7 @@ void enzo::nt::GeometryOperator::cookOp(op::Context context)
     }
 }
 
-geo::Geometry& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) const
+geo::Primitive& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) const
 {
     return opDef_->getOutputGeo(outputIndex);
 }

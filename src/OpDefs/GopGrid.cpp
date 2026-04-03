@@ -20,7 +20,7 @@ void GopGrid::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Geometry geo;
+        geo::Primitive geo;
         bt::floatT width = context.evalFloatParm("size", 0);
         bt::floatT height = context.evalFloatParm("size", 1);
 
