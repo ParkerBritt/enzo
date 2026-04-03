@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: Geometry Class Reference</title>
+<title>Enzo: enzo::nt::UndoStack Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -84,25 +84,44 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1UndoStack.html">UndoStack</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">Geometry Class Reference</div></div>
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="classenzo_1_1nt_1_1UndoStack-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::nt::UndoStack Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="Primitive_8h_source.html">Primitive.h</a>&gt;</code></p>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo</a></b></dt><dd>outdated docs, rewrite</dd></dl>
-<p>The Geometry class represents the core data being passed between nodes in the engine. It is the operand of the network. Nodes read, modify, and output geometry, which is then used to populate the viewport and the geometry spreadsheet. Geometry is stored in an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> based structure, similar to a spreadsheet, where each column is an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> owned by points, vertices, primitives, or the global context. Most geometry information, including built in properties such as positions and connectivity, is stored through this same system. These built in <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> are intrinsic, but they share the same base as user-defined <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> to keep the data model consistent.</p>
-<p>The class provides methods for constructing and querying geometry, including adding points and faces, computing normals, and building a CGAL half-edge mesh representation. It also exposes accessors for reading positions, primitive connectivity, and vertex data, while tracking special cases such as isolated points.</p>
-<dl class="section post"><dt>Postcondition</dt><dd>Geometry in instatiated with some intrinsic attributes required to construct geometry, such as P (position) on point attributes, vertexCount and closed on primitive attributes, and point on vertices. It is recommended not to modify these directy but instead use the helper functions. </dd></dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/Operator/<a class="el" href="Primitive_8h_source.html">Primitive.h</a></li>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a95f61aa99d46de0813f3ea65136bf3bb" id="r_a95f61aa99d46de0813f3ea65136bf3bb"><td class="memItemLeft" align="right" valign="top"><a id="a95f61aa99d46de0813f3ea65136bf3bb" name="a95f61aa99d46de0813f3ea65136bf3bb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>push</b> (std::unique_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">UndoCommand</a> &gt; command)</td></tr>
+<tr class="separator:a95f61aa99d46de0813f3ea65136bf3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f8d2eaf2b99a0c3df554b57af04acbc" id="r_a1f8d2eaf2b99a0c3df554b57af04acbc"><td class="memItemLeft" align="right" valign="top"><a id="a1f8d2eaf2b99a0c3df554b57af04acbc" name="a1f8d2eaf2b99a0c3df554b57af04acbc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> ()</td></tr>
+<tr class="separator:a1f8d2eaf2b99a0c3df554b57af04acbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa55bf2ed13ad0878ad22961f698853ce" id="r_aa55bf2ed13ad0878ad22961f698853ce"><td class="memItemLeft" align="right" valign="top"><a id="aa55bf2ed13ad0878ad22961f698853ce" name="aa55bf2ed13ad0878ad22961f698853ce"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>redo</b> ()</td></tr>
+<tr class="separator:aa55bf2ed13ad0878ad22961f698853ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f256028a17c3574635abe0f111f8d6e" id="r_a7f256028a17c3574635abe0f111f8d6e"><td class="memItemLeft" align="right" valign="top"><a id="a7f256028a17c3574635abe0f111f8d6e" name="a7f256028a17c3574635abe0f111f8d6e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>canUndo</b> () const</td></tr>
+<tr class="separator:a7f256028a17c3574635abe0f111f8d6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af86243e75aef25c2ba542f32ccd521fb" id="r_af86243e75aef25c2ba542f32ccd521fb"><td class="memItemLeft" align="right" valign="top"><a id="af86243e75aef25c2ba542f32ccd521fb" name="af86243e75aef25c2ba542f32ccd521fb"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>canRedo</b> () const</td></tr>
+<tr class="separator:af86243e75aef25c2ba542f32ccd521fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1494c3457c9f585d1a98308ac6e96fd7" id="r_a1494c3457c9f585d1a98308ac6e96fd7"><td class="memItemLeft" align="right" valign="top"><a id="a1494c3457c9f585d1a98308ac6e96fd7" name="a1494c3457c9f585d1a98308ac6e96fd7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+<tr class="separator:a1494c3457c9f585d1a98308ac6e96fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/Engine/UndoRedo/<a class="el" href="UndoStack_8h_source.html">UndoStack.h</a></li>
+<li>src/Engine/UndoRedo/<b>UndoStack.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

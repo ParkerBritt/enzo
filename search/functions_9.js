@@ -2,6 +2,8 @@ var searchData=
 [
   ['remove_0',['remove',['../classenzo_1_1nt_1_1GeometryConnection.html#a6e9e4175d0fc8286ad0a070b78d42b4e',1,'enzo::nt::GeometryConnection']]],
   ['removeinputconnection_1',['removeInputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a735087152d60a92a193a02a7fc827ba4',1,'enzo::nt::GeometryOperator']]],
-  ['removeoutputconnection_2',['removeOutputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a74b9bf6af47b93a1a0d98a312cbba47d',1,'enzo::nt::GeometryOperator']]],
-  ['resize_3',['resize',['../classenzo_1_1ga_1_1Attribute.html#af5a85b628e9af733326d0d1d52d3bd8b',1,'enzo::ga::Attribute::resize()'],['../classenzo_1_1ga_1_1AttributeHandle.html#a83911fd950dad181f5fb9169b484582b',1,'enzo::ga::AttributeHandle::resize()']]]
+  ['removeoperator_2',['removeOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a1c359b457645bc8772f867955d4ee79a',1,'enzo::nt::NetworkManager']]],
+  ['removeoutputconnection_3',['removeOutputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a74b9bf6af47b93a1a0d98a312cbba47d',1,'enzo::nt::GeometryOperator']]],
+  ['resize_4',['resize',['../classenzo_1_1ga_1_1Attribute.html#af5a85b628e9af733326d0d1d52d3bd8b',1,'enzo::ga::Attribute::resize()'],['../classenzo_1_1ga_1_1AttributeHandle.html#a83911fd950dad181f5fb9169b484582b',1,'enzo::ga::AttributeHandle::resize()']]],
+  ['restoreoperator_5',['restoreOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607',1,'enzo::nt::NetworkManager']]]
 ];

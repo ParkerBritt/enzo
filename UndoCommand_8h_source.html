@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: Geometry Class Reference</title>
+<title>Enzo: src/Engine/UndoRedo/UndoCommand.h Source File</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -84,27 +84,33 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_7e9f197b17d3e40c9b759de4967c47c0.html">UndoRedo</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">Geometry Class Reference</div></div>
+  <div class="headertitle"><div class="title">UndoCommand.h</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="Primitive_8h_source.html">Primitive.h</a>&gt;</code></p>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> based geometry container exchanged and modified by nodes. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo</a></b></dt><dd>outdated docs, rewrite</dd></dl>
-<p>The Geometry class represents the core data being passed between nodes in the engine. It is the operand of the network. Nodes read, modify, and output geometry, which is then used to populate the viewport and the geometry spreadsheet. Geometry is stored in an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> based structure, similar to a spreadsheet, where each column is an <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attribute</a> owned by points, vertices, primitives, or the global context. Most geometry information, including built in properties such as positions and connectivity, is stored through this same system. These built in <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> are intrinsic, but they share the same base as user-defined <a class="el" href="classenzo_1_1ga_1_1Attribute.html">attributes</a> to keep the data model consistent.</p>
-<p>The class provides methods for constructing and querying geometry, including adding points and faces, computing normals, and building a CGAL half-edge mesh representation. It also exposes accessors for reading positions, primitive connectivity, and vertex data, while tracking special cases such as isolated points.</p>
-<dl class="section post"><dt>Postcondition</dt><dd>Geometry in instatiated with some intrinsic attributes required to construct geometry, such as P (position) on point attributes, vertexCount and closed on primitive attributes, and point on vertices. It is recommended not to modify these directy but instead use the helper functions. </dd></dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/Operator/<a class="el" href="Primitive_8h_source.html">Primitive.h</a></li>
-</ul>
-</div><!-- contents -->
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span>enzo::nt {</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="foldopen" id="foldopen00005" data-start="{" data-end="};">
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno"><a class="line" href="classenzo_1_1nt_1_1UndoCommand.html">    5</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1nt_1_1UndoCommand.html">UndoCommand</a></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    <span class="keyword">virtual</span> <a class="code hl_class" href="classenzo_1_1nt_1_1UndoCommand.html">~UndoCommand</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> undo() = 0;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> redo() = 0;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>};</div>
+</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1UndoCommand_html"><div class="ttname"><a href="classenzo_1_1nt_1_1UndoCommand.html">enzo::nt::UndoCommand</a></div><div class="ttdef"><b>Definition</b> UndoCommand.h:6</div></div>
+</div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

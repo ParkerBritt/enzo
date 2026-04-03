@@ -160,6 +160,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a 
 const std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSelectedNodes</b> ()</td></tr>
 <tr class="memdesc:aa5ea59029f6195425e6237c27ee8be3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the OpIds for all selected nodes. <br /></td></tr>
 <tr class="separator:aa5ea59029f6195425e6237c27ee8be3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afacacba379929be4b172edbcf5782e0d" id="r_afacacba379929be4b172edbcf5782e0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afacacba379929be4b172edbcf5782e0d">moveNode</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId, bt::Vector2f newPos, bool skipUndo=false)</td></tr>
+<tr class="memdesc:afacacba379929be4b172edbcf5782e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves a node to a new position, pushing an undo command.  <br /></td></tr>
+<tr class="separator:afacacba379929be4b172edbcf5782e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0921669d2f73b4563ec2b127c943a2b" id="r_aa0921669d2f73b4563ec2b127c943a2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0921669d2f73b4563ec2b127c943a2b">deleteNode</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId)</td></tr>
+<tr class="memdesc:aa0921669d2f73b4563ec2b127c943a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes a node, pushing an undo command.  <br /></td></tr>
+<tr class="separator:aa0921669d2f73b4563ec2b127c943a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c359b457645bc8772f867955d4ee79a" id="r_a1c359b457645bc8772f867955d4ee79a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c359b457645bc8772f867955d4ee79a">removeOperator</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId)</td></tr>
+<tr class="memdesc:a1c359b457645bc8772f867955d4ee79a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an operator and all its connections from the network.  <br /></td></tr>
+<tr class="separator:a1c359b457645bc8772f867955d4ee79a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a046b809503c2115eff4b3265d2aac607" id="r_a046b809503c2115eff4b3265d2aac607"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a046b809503c2115eff4b3265d2aac607">restoreOperator</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</td></tr>
+<tr class="memdesc:a046b809503c2115eff4b3265d2aac607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores a previously removed operator with a specific OpId.  <br /></td></tr>
+<tr class="separator:a046b809503c2115eff4b3265d2aac607"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad17a838982d5004c16d31700dd74a908" id="r_ad17a838982d5004c16d31700dd74a908"><td class="memItemLeft" align="right" valign="top"><a id="ad17a838982d5004c16d31700dd74a908" name="ad17a838982d5004c16d31700dd74a908"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="memdesc:ad17a838982d5004c16d31700dd74a908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all operators and resets the network to its initial state. <br /></td></tr>
@@ -167,6 +179,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 <tr class="memitem:a9e7d23338f93ae7c795f66029cbe9be4" id="r_a9e7d23338f93ae7c795f66029cbe9be4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e7d23338f93ae7c795f66029cbe9be4">cookOp</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId)</td></tr>
 <tr class="memdesc:a9e7d23338f93ae7c795f66029cbe9be4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks the given operator.  <br /></td></tr>
 <tr class="separator:a9e7d23338f93ae7c795f66029cbe9be4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3ef9c17a7e86055e05739c19d5472a3" id="r_ac3ef9c17a7e86055e05739c19d5472a3"><td class="memItemLeft" align="right" valign="top"><a id="ac3ef9c17a7e86055e05739c19d5472a3" name="ac3ef9c17a7e86055e05739c19d5472a3"></a>
+<a class="el" href="classenzo_1_1nt_1_1UndoStack.html">UndoStack</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>undoStack</b> ()</td></tr>
+<tr class="separator:ac3ef9c17a7e86055e05739c19d5472a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -193,12 +208,18 @@ boost::signals2::signal&lt; void(std::vector&lt; <a class="el" href="Types_8h.ht
 <tr class="memitem:a634bedc0dda32064ec4e6edf3462d903" id="r_a634bedc0dda32064ec4e6edf3462d903"><td class="memItemLeft" align="right" valign="top"><a id="a634bedc0dda32064ec4e6edf3462d903" name="a634bedc0dda32064ec4e6edf3462d903"></a>
 boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operatorCreated</b></td></tr>
 <tr class="separator:a634bedc0dda32064ec4e6edf3462d903"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6485c8ab501b08f122825ea9a8bea6cf" id="r_a6485c8ab501b08f122825ea9a8bea6cf"><td class="memItemLeft" align="right" valign="top"><a id="a6485c8ab501b08f122825ea9a8bea6cf" name="a6485c8ab501b08f122825ea9a8bea6cf"></a>
+boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operatorRemoved</b></td></tr>
+<tr class="separator:a6485c8ab501b08f122825ea9a8bea6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a144d11eaf5b3b0e312359f1109a003f6" id="r_a144d11eaf5b3b0e312359f1109a003f6"><td class="memItemLeft" align="right" valign="top"><a id="a144d11eaf5b3b0e312359f1109a003f6" name="a144d11eaf5b3b0e312359f1109a003f6"></a>
 boost::signals2::signal&lt; void(std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>connectionCreated</b></td></tr>
 <tr class="separator:a144d11eaf5b3b0e312359f1109a003f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab78af1bb1431bd81aa68ed10a1f005d4" id="r_ab78af1bb1431bd81aa68ed10a1f005d4"><td class="memItemLeft" align="right" valign="top"><a id="ab78af1bb1431bd81aa68ed10a1f005d4" name="ab78af1bb1431bd81aa68ed10a1f005d4"></a>
 boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>networkCleared</b></td></tr>
 <tr class="separator:ab78af1bb1431bd81aa68ed10a1f005d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2cd25a12a1eb0ab5ab787d569b7265b" id="r_af2cd25a12a1eb0ab5ab787d569b7265b"><td class="memItemLeft" align="right" valign="top"><a id="af2cd25a12a1eb0ab5ab787d569b7265b" name="af2cd25a12a1eb0ab5ab787d569b7265b"></a>
+boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a>, bt::Vector2f)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>nodePositionChanged</b></td></tr>
+<tr class="separator:af2cd25a12a1eb0ab5ab787d569b7265b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The central coordinator of the engine's node system. </p>
@@ -261,6 +282,31 @@ boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign
 
 </div>
 </div>
+<a id="aa0921669d2f73b4563ec2b127c943a2b" name="aa0921669d2f73b4563ec2b127c943a2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0921669d2f73b4563ec2b127c943a2b">&#9670;&#160;</a></span>deleteNode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::deleteNode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deletes a node, pushing an undo command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opId</td><td>The operator to delete. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a740e83ec5b9e4708590a6b458300c80b" name="a740e83ec5b9e4708590a6b458300c80b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a740e83ec5b9e4708590a6b458300c80b">&#9670;&#160;</a></span>isValidOp()</h2>
 
@@ -280,6 +326,100 @@ boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">opId</td><td>Operator ID of the node to check the validity of. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="afacacba379929be4b172edbcf5782e0d" name="afacacba379929be4b172edbcf5782e0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afacacba379929be4b172edbcf5782e0d">&#9670;&#160;</a></span>moveNode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::moveNode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bt::Vector2f</td>          <td class="paramname"><span class="paramname"><em>newPos</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>skipUndo</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Moves a node to a new position, pushing an undo command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opId</td><td>The operator to move. </td></tr>
+    <tr><td class="paramname">newPos</td><td>The new position.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo</a></b></dt><dd>remove skipUndo argument in favour of a global undo RAII lock </dd></dl>
+
+</div>
+</div>
+<a id="a1c359b457645bc8772f867955d4ee79a" name="a1c359b457645bc8772f867955d4ee79a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c359b457645bc8772f867955d4ee79a">&#9670;&#160;</a></span>removeOperator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::removeOperator </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Removes an operator and all its connections from the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opId</td><td>The operator to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a046b809503c2115eff4b3265d2aac607" name="a046b809503c2115eff4b3265d2aac607"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a046b809503c2115eff4b3265d2aac607">&#9670;&#160;</a></span>restoreOperator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::restoreOperator </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a></td>          <td class="paramname"><span class="paramname"><em>opInfo</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Restores a previously removed operator with a specific OpId. </p>
+<dl class="section note"><dt>Note</dt><dd>This does not restore the state the node was in, only creates a new node with the given id. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>maybe replace with createNodeWithId</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">opId</td><td>The operator ID to restore. </td></tr>
+    <tr><td class="paramname">opInfo</td><td>The operator info. </td></tr>
+    <tr><td class="paramname">position</td><td>The position to restore the operator at. </td></tr>
   </table>
   </dd>
 </dl>
