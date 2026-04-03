@@ -58,6 +58,9 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
     primModel_ = new PrimitiveTreeModel(this);
     primView_->setModel(primModel_);
 
+    connect(primView_->selectionModel(), &QItemSelectionModel::currentChanged,
+            this, &GeometrySpreadsheetPanel::onPrimitiveSelected);
+
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
     connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::POINT);});
@@ -94,13 +97,27 @@ void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
 
 void GeometrySpreadsheetPanel::packetChanged(enzo::NodePacket& packet)
 {
+    currentPacket_ = &packet;
     if (packet.size() > 0) {
-        model_->geometryChanged(packet.getPrimitive(0));
         primModel_->setPacket(packet);
+        // select first primitive by default
+        primView_->setCurrentIndex(primModel_->index(0, 0));
     } else {
         clear();
     }
-    attributeView_->update();
+}
+
+void GeometrySpreadsheetPanel::onPrimitiveSelected(const QModelIndex &current, const QModelIndex &previous)
+{
+    Q_UNUSED(previous)
+    if (!current.isValid() || !currentPacket_)
+        return;
+
+    int row = current.row();
+    if (row >= 0 && row < static_cast<int>(currentPacket_->size())) {
+        model_->geometryChanged(currentPacket_->getPrimitive(row));
+        attributeView_->update();
+    }
 }
 
 // void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)

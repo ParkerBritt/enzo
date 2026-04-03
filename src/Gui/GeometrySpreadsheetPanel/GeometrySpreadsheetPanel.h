@@ -24,8 +24,11 @@ private:
     QVBoxLayout* mainLayout_;
     // QHBoxLayout* contentLayout_;
     QWidget* bgWidget_;
+    void onPrimitiveSelected(const QModelIndex &current, const QModelIndex &previous);
+
     GeometrySpreadsheetModel* model_;
     PrimitiveTreeModel* primModel_;
+    enzo::NodePacket* currentPacket_ = nullptr;
 
     QSplitter* contentSplitter_;
 
