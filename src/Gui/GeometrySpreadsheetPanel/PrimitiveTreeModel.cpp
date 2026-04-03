@@ -5,7 +5,7 @@
 PrimitiveTreeModel::PrimitiveTreeModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    rootItem_ = std::make_unique<PrimitiveTreeItem>(QVariantList{tr("Path")});
+    rootItem_ = std::make_unique<PrimitiveTreeItem>(QVariantList{tr("Primitive")});
 }
 
 PrimitiveTreeModel::~PrimitiveTreeModel() = default;
