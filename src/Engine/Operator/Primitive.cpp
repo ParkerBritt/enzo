@@ -34,6 +34,7 @@ geo::Primitive::Primitive(const Primitive& other):
     posHandlePoint_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true))},
 
     // other
+    path_{other.path_},
     soloPoints_{other.soloPoints_},
     vertexPrims_{other.vertexPrims_},
     primStarts_{other.primStarts_},
@@ -57,6 +58,7 @@ enzo::geo::Primitive& enzo::geo::Primitive::operator=(const enzo::geo::Primitive
     posHandlePoint_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true));
 
     // other
+    path_                 = rhs.path_;
     soloPoints_           = rhs.soloPoints_;
     vertexPrims_          = rhs.vertexPrims_;
     primStarts_           = rhs.primStarts_;

@@ -230,6 +230,7 @@ public:
     bt::boolT isClosed(ga::Offset primOffset) const;
 
     bt::String getPath() const { return path_; };
+    void setPath(const bt::String& path) { path_ = path; };
 
     /**
     * @brief Merges another geometry into this one.
@@ -271,7 +272,7 @@ private:
     };
 
     // TODO: create PrimPath class instead of string
-    std::string path_ = "/foo/bar";
+    std::string path_ = "/mesh";
 
     using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
     geo::Primitive::attribVector& getAttributeStore(const ga::AttributeOwner& owner);

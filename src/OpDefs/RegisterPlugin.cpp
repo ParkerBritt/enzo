@@ -8,6 +8,7 @@
 #include "OpDefs/GopGrid.h"
 #include "OpDefs/GopMerge.h"
 #include "OpDefs/GopSineWave.h"
+#include "OpDefs/GopPath.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -98,6 +99,17 @@ extern "C"
                 "Ocean Surface",
                 &GopOceanSurface::ctor,
                 GopOceanSurface::parameterList,
+                1,
+                1,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "path",
+                "Path",
+                &GopPath::ctor,
+                GopPath::parameterList,
                 1,
                 1,
                 1,

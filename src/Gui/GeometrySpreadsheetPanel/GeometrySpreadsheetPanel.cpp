@@ -73,6 +73,8 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
     contentSplitter_ = new QSplitter(Qt::Horizontal); 
     contentSplitter_->addWidget(primView_);
     contentSplitter_->addWidget(attributeView_);
+    contentSplitter_->setStretchFactor(0, 3);
+    contentSplitter_->setStretchFactor(1, 7);
 
 
     mainLayout_ = new QVBoxLayout();

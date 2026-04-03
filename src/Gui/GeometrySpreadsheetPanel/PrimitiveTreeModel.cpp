@@ -1,5 +1,6 @@
 #include "PrimitiveTreeModel.h"
 #include "PrimitiveTreeItem.h"
+#include <icecream.hpp>
 
 PrimitiveTreeModel::PrimitiveTreeModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -85,7 +86,9 @@ void PrimitiveTreeModel::setPacket(const enzo::NodePacket &packet)
     const int count = static_cast<int>(packet.size());
     rootItem_->insertChildren(0, count, rootItem_->columnCount());
     for (int i = 0; i < count; ++i) {
-        rootItem_->child(i)->setData(0, QString::fromStdString(packet.getPrimitive(i).getPath()));
+        std::string primPath = packet.getPrimitive(i).getPath();
+        IC(primPath);
+        rootItem_->child(i)->setData(0, QString::fromStdString(primPath));
     }
     endResetModel();
 }
