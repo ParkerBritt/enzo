@@ -24,7 +24,7 @@ EnzoUI::EnzoUI()
     resize(1920*scale, 1080*scale);
 
     // TODO: unify stylsheet
-    setStyleSheet("background-color:#1d2021;");
+    setStyleSheet("background-color:#1a1a1a;");
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();
