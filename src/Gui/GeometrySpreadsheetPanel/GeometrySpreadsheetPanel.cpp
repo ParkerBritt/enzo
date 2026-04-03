@@ -13,15 +13,13 @@
 GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
 : Panel(parent)
 {
-    mainLayout_ = new QVBoxLayout();
-    mainLayout_->setSpacing(0);
+    primView_ = new QTreeView(parent);
+    attributeView_ = new QTreeView(parent);
 
-
-    view_ = new QTreeView(parent);
-    view_->setRootIsDecorated(false);
-    view_->setAlternatingRowColors(true);
-    view_->setUniformRowHeights(true); // improves performance
-    view_->setStyleSheet(R"(
+    attributeView_->setRootIsDecorated(false);
+    attributeView_->setAlternatingRowColors(true);
+    attributeView_->setUniformRowHeights(true); // improves performance
+    attributeView_->setStyleSheet(R"(
         QTreeView {
             background-color: #282828;
             alternate-background-color: #242424;
@@ -51,10 +49,10 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
             background-color: #1B1B1B;
         }
     )");
-    view_->setFrameStyle(QFrame::NoFrame);
+    attributeView_->setFrameStyle(QFrame::NoFrame);
     
     model_ = new GeometrySpreadsheetModel();
-    view_->setModel(model_);
+    attributeView_->setModel(model_);
 
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
@@ -65,9 +63,15 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
     // set default
     menuBar_->modeSelection->pointButton->click();
 
+    contentSplitter_ = new QSplitter(Qt::Horizontal); 
+    contentSplitter_->addWidget(primView_);
+    contentSplitter_->addWidget(attributeView_);
 
+
+    mainLayout_ = new QVBoxLayout();
+    mainLayout_->setSpacing(0);
     mainLayout_->addWidget(menuBar_);
-    mainLayout_->addWidget(view_);
+    mainLayout_->addWidget(contentSplitter_);
 
     setLayout(mainLayout_);
 }
@@ -86,7 +90,7 @@ void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
 void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Primitive& geometry)
 {
     model_->geometryChanged(geometry);
-    view_->update();
+    attributeView_->update();
 }
 
 // void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)

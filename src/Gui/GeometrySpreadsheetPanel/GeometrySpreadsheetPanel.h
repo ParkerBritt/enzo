@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QSplitter>
 #include <qtreeview.h>
 #include "Engine/Types.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
@@ -19,9 +20,14 @@ public Q_SLOTS:
     void setNode(enzo::nt::OpId opId);
 private:
     QVBoxLayout* mainLayout_;
+    // QHBoxLayout* contentLayout_;
     QWidget* bgWidget_;
     GeometrySpreadsheetModel* model_;
-    QTreeView* view_;
+
+    QSplitter* contentSplitter_;
+
+    QTreeView* primView_;
+    QTreeView* attributeView_;
     GeometrySpreadsheetMenuBar* menuBar_;
 
 

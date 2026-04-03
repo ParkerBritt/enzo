@@ -41,6 +41,7 @@ set(GUI_SOURCES
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.cpp
+    src/Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.cpp
     src/Gui/Viewport/Viewport.cpp
     src/Gui/Viewport/ViewportGLWidget.cpp
     src/Gui/Viewport/GLCamera.cpp
