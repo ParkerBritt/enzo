@@ -77,8 +77,8 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
 
     mainLayout_ = new QVBoxLayout();
     mainLayout_->setSpacing(0);
-    mainLayout_->addWidget(menuBar_);
-    mainLayout_->addWidget(contentSplitter_);
+    mainLayout_->addWidget(menuBar_, 0);
+    mainLayout_->addWidget(contentSplitter_, 1);
 
     setLayout(mainLayout_);
 }
