@@ -229,6 +229,8 @@ public:
     */
     bt::boolT isClosed(ga::Offset primOffset) const;
 
+    bt::String getPath() const { return path_; };
+
     /**
     * @brief Merges another geometry into this one.
     * @param other The geometry to merge.

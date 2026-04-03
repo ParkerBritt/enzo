@@ -1,5 +1,9 @@
 #pragma once
 #include <QAbstractItemModel>
+#include <memory>
+#include "Engine/Operator/NodePacket.h"
+
+class PrimitiveTreeItem;
 
 class PrimitiveTreeModel : public QAbstractItemModel
 {
@@ -8,8 +12,7 @@ class PrimitiveTreeModel : public QAbstractItemModel
 public:
     Q_DISABLE_COPY_MOVE(PrimitiveTreeModel)
 
-    PrimitiveTreeModel(const QStringList &headers, const QString &data,
-              QObject *parent = nullptr);
+    explicit PrimitiveTreeModel(QObject *parent = nullptr);
     ~PrimitiveTreeModel() override;
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -22,4 +25,11 @@ public:
 
     int rowCount(const QModelIndex &parent = {}) const override;
     int columnCount(const QModelIndex &parent = {}) const override;
+
+    void setPacket(const enzo::NodePacket& packet);
+    void clear();
+
+private:
+    PrimitiveTreeItem *getItem(const QModelIndex &index) const;
+    std::unique_ptr<PrimitiveTreeItem> rootItem_;
 };

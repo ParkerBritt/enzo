@@ -7,6 +7,7 @@
 #include "Gui/Network/NetworkPanel.h"
 #include <qnamespace.h>
 #include <qpushbutton.h>
+#include <qsizepolicy.h>
 #include <qsplitter.h>
 #include <QTimer>
 #include <Gui/UtilWidgets/Splitter.h>
@@ -60,6 +61,7 @@ EnzoUI::EnzoUI()
 
     HeaderBar* header = new HeaderBar();
 
+
     mainLayout_->addWidget(header);
     mainLayout_->addWidget(viewportSplitter_);
 
@@ -78,9 +80,9 @@ void EnzoUI::connectSignals()
         }
         enzo::nt::OpId selectedId = selectedNodeIds.back();
         parametersPanel_->selectionChanged(selectedId);
-        // geometrySpreadsheetPanel_->setNode(selectedId);
-        // auto& geometry = enzo::nt::nm().getGeoOperator(selectedId).getOutputGeo(0);
-        // geometrySpreadsheetPanel_->geometryChanged(geometry);
+        geometrySpreadsheetPanel_->setNode(selectedId);
+        auto& packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
+        geometrySpreadsheetPanel_->packetChanged(packet);
     });
 
     // Operator created
@@ -93,7 +95,7 @@ void EnzoUI::connectSignals()
     enzo::nt::nm().displayGeoChanged.connect([this](enzo::NodePacket& packet){
         if(packet.size() > 0) viewport_->setGeometry(packet.getPrimitive(0));
     });
-    // enzo::nt::nm().selectedGeoChanged.connect([this](enzo::geo::Primitive& geometry){geometrySpreadsheetPanel_->geometryChanged(geometry);});
+    enzo::nt::nm().selectedGeoChanged.connect([this](enzo::NodePacket& packet){geometrySpreadsheetPanel_->packetChanged(packet);});
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this](){

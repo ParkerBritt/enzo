@@ -5,8 +5,10 @@
 #include <QSplitter>
 #include <qtreeview.h>
 #include "Engine/Types.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
+#include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
 #include "Gui/Panels/Panel.h"
 
 class GeometrySpreadsheetPanel
@@ -15,7 +17,7 @@ class GeometrySpreadsheetPanel
 public:
     GeometrySpreadsheetPanel(QWidget *parent = nullptr);
 public Q_SLOTS:
-    void geometryChanged(enzo::geo::Primitive& geometry);
+    void packetChanged(enzo::NodePacket& packet);
     void clear();
     void setNode(enzo::nt::OpId opId);
 private:
@@ -23,6 +25,7 @@ private:
     // QHBoxLayout* contentLayout_;
     QWidget* bgWidget_;
     GeometrySpreadsheetModel* model_;
+    PrimitiveTreeModel* primModel_;
 
     QSplitter* contentSplitter_;
 

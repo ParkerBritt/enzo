@@ -1,6 +1,7 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
+#include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
 #include "Engine/Network/NetworkManager.h"
 #include <QTableWidget>
 #include <QTreeWidget>
@@ -54,6 +55,9 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
     model_ = new GeometrySpreadsheetModel();
     attributeView_->setModel(model_);
 
+    primModel_ = new PrimitiveTreeModel(this);
+    primView_->setModel(primModel_);
+
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
     connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::POINT);});
@@ -79,6 +83,7 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
 void GeometrySpreadsheetPanel::clear()
 {
     model_->clear();
+    primModel_->clear();
 }
 
 void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
@@ -87,9 +92,14 @@ void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
 }
 
 
-void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Primitive& geometry)
+void GeometrySpreadsheetPanel::packetChanged(enzo::NodePacket& packet)
 {
-    model_->geometryChanged(geometry);
+    if (packet.size() > 0) {
+        model_->geometryChanged(packet.getPrimitive(0));
+        primModel_->setPacket(packet);
+    } else {
+        clear();
+    }
     attributeView_->update();
 }
 
