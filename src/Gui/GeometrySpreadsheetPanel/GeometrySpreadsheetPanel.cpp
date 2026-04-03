@@ -1,6 +1,6 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
-#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
+#include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
 #include "Engine/Network/NetworkManager.h"
 #include <QTableWidget>
@@ -52,7 +52,7 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent)
     )");
     attributeView_->setFrameStyle(QFrame::NoFrame);
     
-    model_ = new GeometrySpreadsheetModel();
+    model_ = new AttributeSpreadsheetModel();
     attributeView_->setModel(model_);
 
     primModel_ = new PrimitiveTreeModel(this);
@@ -115,7 +115,7 @@ void GeometrySpreadsheetPanel::onPrimitiveSelected(const QModelIndex &current, c
 
     int row = current.row();
     if (row >= 0 && row < static_cast<int>(currentPacket_->size())) {
-        model_->geometryChanged(currentPacket_->getPrimitive(row));
+        model_->primitiveChanged(currentPacket_->getPrimitive(row));
         attributeView_->update();
     }
 }

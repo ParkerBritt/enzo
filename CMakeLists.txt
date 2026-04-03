@@ -40,7 +40,7 @@ set(GUI_SOURCES
     src/Gui/UtilWidgets/Splitter.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
-    src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.cpp
+    src/Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
     src/Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.cpp
     src/Gui/GeometrySpreadsheetPanel/PrimitiveTreeItem.cpp
     src/Gui/Viewport/Viewport.cpp

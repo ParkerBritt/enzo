@@ -6,7 +6,7 @@
 #include <qtreeview.h>
 #include "Engine/Types.h"
 #include "Engine/Operator/NodePacket.h"
-#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
+#include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
 #include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
 #include "Gui/Panels/Panel.h"
@@ -26,7 +26,7 @@ private:
     QWidget* bgWidget_;
     void onPrimitiveSelected(const QModelIndex &current, const QModelIndex &previous);
 
-    GeometrySpreadsheetModel* model_;
+    AttributeSpreadsheetModel* model_;
     PrimitiveTreeModel* primModel_;
     enzo::NodePacket* currentPacket_ = nullptr;
 
