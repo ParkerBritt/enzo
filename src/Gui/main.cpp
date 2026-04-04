@@ -1,13 +1,12 @@
+#include "Engine/Operator/OperatorTable.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QPushButton>
 #include <QSurfaceFormat>
-#include "Engine/Operator/OperatorTable.h"
 
 #include "Interface.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     // set up rendering
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGL);
@@ -19,7 +18,7 @@ int main(int argc, char **argv)
     // init plugins
     enzo::op::OperatorTable::initPlugins();
 
-    QApplication app (argc, argv);
+    QApplication app(argc, argv);
     app.setOrganizationName("Enzo");
     app.setApplicationName("Enzo");
 
