@@ -24,7 +24,17 @@ EnzoUI::EnzoUI() {
     resize(1920 * scale, 1080 * scale);
 
     // TODO: unify stylsheet
-    setStyleSheet("background-color:#1a1a1a; color: rgba(255,255,255,0.8);");
+    setStyleSheet(R"(
+    QWidget
+    {
+        background-color:#1a1a1a; 
+        color: rgba(255,255,255,0.8);
+    }
+    QSplitter::handle
+    {
+        image: none;
+    }
+    )");
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();
