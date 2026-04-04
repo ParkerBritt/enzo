@@ -156,13 +156,6 @@ void ViewportGLWidget::paintGL()
     );
 
 
-    gridMesh_->useProgram();
-    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
-    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
-
-
-    gridMesh_->draw();
-
     glUseProgram(shaderProgram);
     GLint projMLoc = glGetUniformLocation(shaderProgram, "uProj");
     glUniformMatrix4fv(projMLoc, 1, GL_FALSE, glm::value_ptr(projMatrix));
@@ -177,10 +170,15 @@ void ViewportGLWidget::paintGL()
     points_->updatePointSize(curCamera);
     glUniformMatrix4fv(glGetUniformLocation(points_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
     curCamera.setUniform(glGetUniformLocation(points_->shaderProgram, "uView"));
-    
+
     glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraRight"), 1, glm::value_ptr(curCamera.getRight()));
     glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraUp"), 1, glm::value_ptr(curCamera.getUp()));
     points_->draw();
+
+    gridMesh_->useProgram();
+    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
+    gridMesh_->draw();
 
 
 }
