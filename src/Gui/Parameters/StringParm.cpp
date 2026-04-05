@@ -20,19 +20,12 @@ enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidge
     setFixedHeight(24);
 
     parameter_ = parameter;
-    if(auto parameterShared=parameter_.lock())
-    {
-        value_ = parameterShared->evalString();
-    }
-    else
-    {
+    if (auto parameterShared = parameter_.lock()) {
+        setText(QString::fromStdString(parameterShared->evalString()));
+    } else {
         throw std::bad_weak_ptr();
     }
-    setText(QString::fromStdString(value_));
-    
 
-    // setAlignment(Qt::AlignCenter);
-    // setStyleSheet("background-color: none;");
     setProperty("type", "StringParm");
     setStyleSheet(R"(
                   QWidget[type="StringParm"]
@@ -43,22 +36,11 @@ enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidge
                   }
                   )");
 
-    setText(QString::fromStdString(value_));
-
     connect(this, &QLineEdit::textEdited, this, &enzo::ui::StringParm::setValueQString);
 }
 
-void enzo::ui::StringParm::setValue(bt::String value)
-{
-    value_ = value;
-    setText(QString::fromStdString(value_));
-
-    valueChanged(value_);
-
-}
-
-void enzo::ui::StringParm::setValueQString(QString value)
-{
-    value_ = value.toStdString();
-    valueChanged(value_);
+void enzo::ui::StringParm::setValueQString(QString value) {
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setString(value.toStdString());
+    }
 }

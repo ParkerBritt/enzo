@@ -41,17 +41,20 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::Parameter> parameter, 
                   )");
     mainLayout_->addWidget(valueLabel_);
 
-    if(auto parameterShared=parameter_.lock())
-    {
+    if (auto parameterShared = parameter_.lock()) {
         auto range = parameterShared->getTemplate().getRange();
-        minValue_=range.getMin();
-        maxValue_=range.getMax();
-        clampMin_=range.getMinFlag()==prm::RangeFlag::LOCKED;
-        clampMax_=range.getMaxFlag()==prm::RangeFlag::LOCKED;
+        minValue_ = range.getMin();
+        maxValue_ = range.getMax();
+        clampMin_ = range.getMinFlag() == prm::RangeFlag::LOCKED;
+        clampMax_ = range.getMaxFlag() == prm::RangeFlag::LOCKED;
         setValueImpl(parameterShared->evalInt());
-    }
-    else
-    {
+
+        valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
+            if (auto parameterShared = parameter_.lock()) {
+                setValueImpl(parameterShared->evalInt());
+            }
+        });
+    } else {
         throw std::bad_weak_ptr();
     }
 }
@@ -102,31 +105,19 @@ void enzo::ui::IntSliderParm::setValueImpl(bt::intT value)
 
 }
 
-void enzo::ui::IntSliderParm::setValue(bt::intT value)
-{
-
-    setValueImpl(value);
-    update();
-    valueChanged(value_);
-
+void enzo::ui::IntSliderParm::mouseMoveEvent(QMouseEvent *event) {
+    float value = static_cast<float>(event->pos().x()) / rect().width();
+    value = minValue_ + (maxValue_ - minValue_) * value;
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setInt(rint(value));
+    }
 }
 
-
-void enzo::ui::IntSliderParm::mouseMoveEvent(QMouseEvent *event)
-{
-    // normalized
-    float value = static_cast<float>(event->pos().x())/rect().width();
-    //remap
-    value = minValue_+(maxValue_-minValue_)*value;
-    setValue(rint(value));
-}
-
-void enzo::ui::IntSliderParm::mousePressEvent(QMouseEvent *event)
-{
-    // normalized
-    float value = static_cast<float>(event->pos().x())/rect().width();
-    //remap
-    value = minValue_+(maxValue_-minValue_)*value;
-    setValue(rint(value));
+void enzo::ui::IntSliderParm::mousePressEvent(QMouseEvent *event) {
+    float value = static_cast<float>(event->pos().x()) / rect().width();
+    value = minValue_ + (maxValue_ - minValue_) * value;
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setInt(rint(value));
+    }
 }
 
