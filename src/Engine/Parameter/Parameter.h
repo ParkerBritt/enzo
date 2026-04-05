@@ -4,37 +4,39 @@
 #include <boost/signals2.hpp>
 #include <variant>
 
-namespace enzo::prm
-{
+namespace enzo::prm {
 
-using PrmValues = std::variant<std::vector<bt::floatT>, std::vector<bt::intT>, std::vector<bt::String>>;
+using PrmValues =
+    std::variant<std::vector<bt::floatT>, std::vector<bt::intT>, std::vector<bt::String>>;
 
-class Parameter
-{
-public:
+class Parameter {
+  public:
     Parameter(Template prmTemplate);
     std::string getName() const;
     std::string getLabel() const;
     enzo::prm::Type getType() const;
     unsigned int getVectorSize() const;
 
-    bt::floatT evalFloat(unsigned int index=0) const;
-    bt::String evalString(unsigned int index=0) const;
-    bt::intT evalInt(unsigned int index=0) const;
-    
-    void setInt(bt::intT value, unsigned int index=0);
-    void setFloat(bt::floatT value, unsigned int index=0);
-    void setString(bt::String value, unsigned int index=0);
+    bt::floatT evalFloat(unsigned int index = 0) const;
+    bt::String evalString(unsigned int index = 0) const;
+    bt::intT evalInt(unsigned int index = 0) const;
+
+    void setInt(bt::intT value, unsigned int index = 0);
+    void setFloat(bt::floatT value, unsigned int index = 0);
+    void setString(bt::String value, unsigned int index = 0);
 
     PrmValues getValues() const;
-    void setValues(const PrmValues& values);
+    void setValues(const PrmValues &values);
 
-    const Template& getTemplate();
+    const Template &getTemplate();
 
-    boost::signals2::signal<void ()> valueChanged;
-private:
+    boost::signals2::signal<void()> valueChanged;
+
+  private:
+    void addUndo_(enzo::prm::PrmValues before);
+    void handleValueChange_();
+
     Template template_;
     PrmValues values_;
-
 };
-}
+} // namespace enzo::prm
