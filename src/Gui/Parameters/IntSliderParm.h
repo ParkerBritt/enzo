@@ -1,29 +1,23 @@
 #pragma once
+#include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
-#include <QWidget>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QPen>
-#include "Engine/Parameter/Parameter.h"
+#include <QVBoxLayout>
+#include <QWidget>
+#include <boost/signals2/connection.hpp>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class IntSliderParm
-: public QWidget
-{
+class IntSliderParm : public QWidget {
     Q_OBJECT
-public:
-    IntSliderParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    void setValue(bt::intT value);
+  public:
+    IntSliderParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr,
+                  Qt::WindowFlags f = Qt::WindowFlags());
 
-Q_SIGNALS:
-    void valueChanged(bt::intT value); 
-
-private:
-
-    QVBoxLayout* mainLayout_;
-    QLabel* valueLabel_;
+  private:
+    QVBoxLayout *mainLayout_;
+    QLabel *valueLabel_;
     bt::intT value_;
     bool clampMin_;
     bool clampMax_;
@@ -36,13 +30,13 @@ private:
     static constexpr int notchWidth = 2;
 
     void setValueImpl(bt::intT value);
+    boost::signals2::scoped_connection valueChangedConnection_;
 
-protected:
-void paintEvent(QPaintEvent *event) override;
-void mouseMoveEvent(QMouseEvent *event) override;
-void mousePressEvent(QMouseEvent *event) override;
-
+  protected:
+    void paintEvent(QPaintEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 };
 
-}
+} // namespace enzo::ui
 

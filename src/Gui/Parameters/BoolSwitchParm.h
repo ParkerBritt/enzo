@@ -26,7 +26,6 @@ private:
     QColor switchColorOn_=QColor("#B3B3B3");
     QColor switchColor_;
 
-    void setValue(bt::intT);
     void onToggle(bool checked);
 
     qreal switchX() const { return switchX_; }
@@ -39,7 +38,5 @@ protected:
 
 private Q_SLOTS:
     void animateSwitch(bool checked);
-Q_SIGNALS:
-    void valueChanged(bt::intT value); 
 };
 }

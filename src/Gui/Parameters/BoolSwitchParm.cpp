@@ -32,10 +32,11 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> par
 
 }
 
-void enzo::ui::BoolSwitchParm::onToggle(bool checked)
-{
+void enzo::ui::BoolSwitchParm::onToggle(bool checked) {
     animateSwitch(checked);
-    setValue(checked);
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setInt(checked);
+    }
 }
 
 
@@ -52,12 +53,6 @@ void enzo::ui::BoolSwitchParm::paintEvent(QPaintEvent* event)
     constexpr int borderRadius = 7;
     constexpr int margin = 2;
     painter.drawRoundedRect(QRectF(bgRect.left()+margin+switchX_, bgRect.top()+margin, 20, bgRect.height()-margin*2), borderRadius, borderRadius);
-}
-
-void enzo::ui::BoolSwitchParm::setValue(bt::intT value)
-{
-    setChecked(value);
-    valueChanged(value);
 }
 
 void enzo::ui::BoolSwitchParm::animateSwitch(bool checked)

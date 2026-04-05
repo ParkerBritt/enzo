@@ -19,6 +19,7 @@ enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> paramet
     setFixedHeight(24);
 
     parameter_ = parameter;
+    vectorIndex_ = vectorIndex;
 
     mainLayout_ = new QVBoxLayout();
     mainLayout_->setContentsMargins(0, 0, 0, 0);
@@ -89,25 +90,18 @@ void enzo::ui::FloatSliderParm::setValueImpl(bt::floatT value) {
     valueLabel_->setText(valStr);
 }
 
-void enzo::ui::FloatSliderParm::setValue(bt::floatT value) {
-
-    // setValueImpl(value);
-    // update();
-    valueChanged(value_);
-}
-
 void enzo::ui::FloatSliderParm::mouseMoveEvent(QMouseEvent *event) {
-    // normalized
     float value = static_cast<float>(event->pos().x()) / rect().width();
-    // remap
     value = minValue_ + (maxValue_ - minValue_) * value;
-    setValue(value);
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setFloat(value, vectorIndex_);
+    }
 }
 
 void enzo::ui::FloatSliderParm::mousePressEvent(QMouseEvent *event) {
-    // normalized
     float value = static_cast<float>(event->pos().x()) / rect().width();
-    // remap
     value = minValue_ + (maxValue_ - minValue_) * value;
-    setValue(value);
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setFloat(value, vectorIndex_);
+    }
 }

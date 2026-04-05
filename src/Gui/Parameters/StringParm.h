@@ -15,15 +15,10 @@ class StringParm
     Q_OBJECT
 public:
     StringParm(std::weak_ptr<prm::Parameter>, QWidget *parent = nullptr);
-    void setValue(bt::String value);
-    void setValueQString(QString value);
-    std::weak_ptr<prm::Parameter> parameter_;
-
-Q_SIGNALS:
-    void valueChanged(bt::String value); 
 
 private:
-    bt::String value_;
+    void setValueQString(QString value);
+    std::weak_ptr<prm::Parameter> parameter_;
 
 
 protected:

@@ -13,12 +13,9 @@ class FloatSliderParm : public QWidget {
   public:
     FloatSliderParm(std::weak_ptr<prm::Parameter> parameter, unsigned int vectorIndex = 0,
                     QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    void setValue(bt::floatT value);
-
-  Q_SIGNALS:
-    void valueChanged(bt::floatT value);
 
   private:
+    unsigned int vectorIndex_; // index into the parameter's value vector, e.g. 0=X, 1=Y, 2=Z for XYZ types
     QVBoxLayout *mainLayout_;
     QLabel *valueLabel_;
     bt::floatT value_;
