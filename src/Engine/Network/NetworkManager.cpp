@@ -245,6 +245,20 @@ const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
     return selectedNodes_;
 }
 
+void enzo::nt::NetworkManager::setSelectedNodes(std::vector<enzo::nt::OpId> opIds)
+{
+    selectedNodes_.clear();
+    for(OpId opId : opIds)
+    {
+        if(isValidOp(opId))
+        {
+            selectedNodes_.push_back(opId);
+            cookOp(opId);
+        }
+    }
+    selectedNodesChanged(selectedNodes_);
+}
+
 void enzo::nt::NetworkManager::clear()
 {
     gopStore_.clear();
