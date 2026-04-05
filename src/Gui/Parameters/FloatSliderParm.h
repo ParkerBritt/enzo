@@ -1,28 +1,26 @@
 #pragma once
-#include "Engine/Types.h"
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLabel>
 #include "Engine/Parameter/Parameter.h"
+#include "Engine/Types.h"
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QWidget>
+#include <boost/signals2/connection.hpp>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class FloatSliderParm
-: public QWidget
-{
+class FloatSliderParm : public QWidget {
     Q_OBJECT
-public:
-    FloatSliderParm(std::weak_ptr<prm::Parameter> parameter, unsigned int vectorIndex=0, QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+  public:
+    FloatSliderParm(std::weak_ptr<prm::Parameter> parameter, unsigned int vectorIndex = 0,
+                    QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     void setValue(bt::floatT value);
 
-Q_SIGNALS:
-    void valueChanged(bt::floatT value); 
+  Q_SIGNALS:
+    void valueChanged(bt::floatT value);
 
-private:
-
-    QVBoxLayout* mainLayout_;
-    QLabel* valueLabel_;
+  private:
+    QVBoxLayout *mainLayout_;
+    QLabel *valueLabel_;
     bt::floatT value_;
     bool clampMin_;
     bool clampMax_;
@@ -31,13 +29,12 @@ private:
     std::weak_ptr<prm::Parameter> parameter_;
 
     void setValueImpl(bt::floatT value);
+    boost::signals2::scoped_connection valueChangedConnection_;
 
-protected:
-void paintEvent(QPaintEvent *event) override;
-void mouseMoveEvent(QMouseEvent *event) override;
-void mousePressEvent(QMouseEvent *event) override;
-
+  protected:
+    void paintEvent(QPaintEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 };
 
-}
-
+} // namespace enzo::ui
