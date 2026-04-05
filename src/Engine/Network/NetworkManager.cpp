@@ -160,12 +160,20 @@ bool enzo::nt::NetworkManager::isValidOp(nt::OpId opId)
 void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
 {
     displayOp_=opId;
-    
+
     cookOp(opId);
 
     enzo::nt::GeometryOperator& displayOp = getGeoOperator(opId);
     displayGeoChanged(displayOp.getOutputPacket(0));
     displayNodeChanged(opId);
+}
+
+void enzo::nt::NetworkManager::clearDisplayFlag()
+{
+    displayOp_.reset();
+    enzo::NodePacket emptyPacket;
+    displayGeoChanged(emptyPacket);
+    displayNodeChanged(std::nullopt);
 }
 
 void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
