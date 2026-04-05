@@ -129,6 +129,11 @@ public:
     const std::vector<enzo::nt::OpId>& getSelectedNodes();
 
     /**
+    * @brief Replaces the entire selection with the given set of nodes.
+    */
+    void setSelectedNodes(std::vector<enzo::nt::OpId> opIds);
+
+    /**
      * @brief Moves a node to a new position, pushing an undo command.
      * @param opId The operator to move.
      * @param newPos The new position.
