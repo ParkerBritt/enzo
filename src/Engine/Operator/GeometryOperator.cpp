@@ -46,7 +46,7 @@ void nt::GeometryOperator::initParameters()
     for(const prm::Template* t = opInfo_.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
     {
         // create parameter
-        auto parameter = std::make_shared<prm::Parameter>(*t);
+        auto parameter = std::make_shared<prm::Parameter>(*t, opId_);
         parameter->valueChanged.connect([this](){dirtyNode();});
         IC(parameter);
 

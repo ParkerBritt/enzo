@@ -3,21 +3,46 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Types.h"
 #include "Engine/UndoRedo/UndoCommand.h"
+#include <icecream.hpp>
+#include <string>
 
 namespace enzo::nt {
 
 class ChangeParameterCommand : public UndoCommand {
   public:
-    ChangeParameterCommand(enzo::prm::Parameter &parameter, enzo::prm::PrmValues before,
+    ChangeParameterCommand(enzo::nt::OpId opId, std::string paramName, enzo::prm::PrmValues before,
                            enzo::prm::PrmValues after)
-        : parameter_(parameter), before_(before), after_(after) {}
+        : opId_(opId), paramName_(paramName), before_(before), after_(after) {}
 
-    void undo() override { parameter_.setValues(before_); }
+    void undo() override {
+        IC(opId_, paramName_);
+        if (!nm().isValidOp(opId_)) {
+            IC("ChangeParameterCommand::undo — operator not found", opId_);
+            return;
+        }
+        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock()) {
+            prm->setValues(before_);
+        } else {
+            IC("ChangeParameterCommand::undo — parameter not found", opId_, paramName_);
+        }
+    }
 
-    void redo() override { parameter_.setValues(after_); }
+    void redo() override {
+        IC(opId_, paramName_);
+        if (!nm().isValidOp(opId_)) {
+            IC("ChangeParameterCommand::redo — operator not found", opId_);
+            return;
+        }
+        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock()) {
+            prm->setValues(after_);
+        } else {
+            IC("ChangeParameterCommand::redo — parameter not found", opId_, paramName_);
+        }
+    }
 
   private:
-    enzo::prm::Parameter &parameter_;
+    enzo::nt::OpId opId_;
+    std::string paramName_;
     enzo::prm::PrmValues before_;
     enzo::prm::PrmValues after_;
 };

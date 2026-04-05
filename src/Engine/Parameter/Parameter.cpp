@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-enzo::prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate} {
+enzo::prm::Parameter::Parameter(Template prmTemplate, enzo::nt::OpId opId)
+    : template_{prmTemplate}, opId_{opId} {
     const unsigned int size = prmTemplate.getSize();
     const unsigned int numDefaults = prmTemplate.getNumDefaults();
 
@@ -123,7 +124,7 @@ void enzo::prm::Parameter::setValues(const PrmValues &values) {
 }
 
 void enzo::prm::Parameter::addUndo_(enzo::prm::PrmValues before) {
-    auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(*this, before, values_);
+    auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(opId_, getName(), before, values_);
     enzo::nt::nm().undoStack().push(std::move(cmd));
 }
 

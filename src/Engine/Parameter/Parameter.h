@@ -11,7 +11,7 @@ using PrmValues =
 
 class Parameter {
   public:
-    Parameter(Template prmTemplate);
+    Parameter(Template prmTemplate, enzo::nt::OpId opId);
     std::string getName() const;
     std::string getLabel() const;
     enzo::prm::Type getType() const;
@@ -38,5 +38,6 @@ class Parameter {
 
     Template template_;
     PrmValues values_;
+    enzo::nt::OpId opId_;
 };
 } // namespace enzo::prm
