@@ -11,6 +11,7 @@
 #include "Gui/Network/FloatingEdgeGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include <memory>
 #include <qboxlayout.h>
 #include <QPushButton>
@@ -56,6 +57,12 @@ NetworkPanel::NetworkPanel(QWidget* parent)
             scene_->removeItem(it->second);
             delete it->second;
             nodeStore_.erase(it);
+        }
+    });
+
+    enzo::nt::nm().displayNodeChanged.connect([this](std::optional<enzo::nt::OpId> opId) {
+        for(auto& [id, node] : nodeStore_) {
+            node->setDisplayFlag(opId.has_value() && id == *opId);
         }
     });
 
@@ -443,21 +450,15 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event)
     {
         // display flag
         if(
-            QGraphicsItem* clickedDisplayFlag = itemOfType<DisplayFlagButton>(hoverItems);
-            clickedDisplayFlag &&
+            itemOfType<DisplayFlagButton>(hoverItems) &&
             QLineF(event->pos(), leftMouseStart).length()<5.0f
         )
         {
-            enzo::nt::NetworkManager& nm = enzo::nt::nm();
             NodeGraphic* clickedNode = static_cast<NodeGraphic*>(itemOfType<NodeGraphic>(hoverItems));
             enzo::nt::OpId opId = clickedNode->getOpId();
-            if(auto prevDisplayOpId = nm.getDisplayOp(); prevDisplayOpId)
-            {
-                NodeGraphic* prevDisplayNode = nodeStore_.at(*prevDisplayOpId);
-                prevDisplayNode->setDisplayFlag(false);
-            }
-            static_cast<DisplayFlagButton*>(clickedDisplayFlag)->setEnabled(true);
-            nm.setDisplayOp(opId);
+            auto cmd = std::make_unique<enzo::nt::ChangeDisplayFlagCommand>(enzo::nt::nm().getDisplayOp(), opId);
+            enzo::nt::nm().undoStack().push(std::move(cmd));
+            enzo::nt::nm().setDisplayOp(opId);
         }
         if(state_==State::MOUSE_DOWN_NODE)
         {

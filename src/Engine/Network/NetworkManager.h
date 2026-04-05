@@ -109,6 +109,11 @@ public:
     void setDisplayOp(OpId opId);
 
     /**
+    * @brief Clears the display flag so no node is displayed
+    */
+    void clearDisplayFlag();
+
+    /**
     * @brief Set the selection state for the given node.
     *
     * @param opId The node to set the state on.
@@ -171,7 +176,7 @@ public:
     * @{
     */
     // @brief A signal emitted when the display node is changed
-    boost::signals2::signal<void (nt::OpId)> displayNodeChanged;
+    boost::signals2::signal<void (std::optional<nt::OpId>)> displayNodeChanged;
 
     // @brief A signal emitted when the geometry to be displayed is changed
     // This is different to #displayNodeChanged because the state of geometry
