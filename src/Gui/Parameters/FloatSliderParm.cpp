@@ -1,36 +1,12 @@
 #include "Gui/Parameters/FloatSliderParm.h"
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Types.h"
-#include "Engine/UndoRedo/ChangeParameterCommand.h"
-#include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
 #include <algorithm>
-#include <icecream.hpp>
-#include <iostream>
-#include <qboxlayout.h>
-#include <qnamespace.h>
-#include <string>
 
 enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> parameter,
                                            unsigned int vectorIndex, QWidget *parent,
                                            Qt::WindowFlags f)
-    : QWidget(parent, f) {
-    // tells qt to style the widget even though it's a Q_OBJECT
-    setAttribute(Qt::WA_StyledBackground, true);
-    setFixedHeight(24);
-
-    parameter_ = parameter;
-    vectorIndex_ = vectorIndex;
-
-    mainLayout_ = new QVBoxLayout();
-    mainLayout_->setContentsMargins(0, 0, 0, 0);
-    setLayout(mainLayout_);
-
-    valueLabel_ = new QLabel();
-    valueLabel_->setAlignment(Qt::AlignCenter);
-    valueLabel_->setStyleSheet("background-color: none;");
-    setProperty("type", "SliderParm");
+    : SliderParmBase(parameter, vectorIndex, parent, f) {
     setStyleSheet(R"(
                   QWidget[type="SliderParm"]
                   {
@@ -38,25 +14,7 @@ enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> paramet
                       border: 1px solid #303030;
                   }
                   )");
-    mainLayout_->addWidget(valueLabel_);
-
-    if (auto parameterShared = parameter_.lock()) {
-        auto range = parameterShared->getTemplate().getRange(vectorIndex);
-        minValue_ = range.getMin();
-        maxValue_ = range.getMax();
-        clampMin_ = range.getMinFlag() == prm::RangeFlag::LOCKED;
-        clampMax_ = range.getMaxFlag() == prm::RangeFlag::LOCKED;
-        setValueImpl(parameterShared->evalFloat(vectorIndex));
-
-        // connect signals
-        valueChangedConnection_ = parameterShared->valueChanged.connect([this, vectorIndex]() {
-            if (auto parameterShared = parameter_.lock()) {
-                setValueImpl(parameterShared->evalFloat(vectorIndex));
-            }
-        });
-    } else {
-        throw std::bad_weak_ptr();
-    }
+    syncFromParameter();
 }
 
 void enzo::ui::FloatSliderParm::paintEvent(QPaintEvent *event) {
@@ -78,6 +36,19 @@ void enzo::ui::FloatSliderParm::paintEvent(QPaintEvent *event) {
     painter.drawRoundedRect(fillRect, 6, 6);
 }
 
+void enzo::ui::FloatSliderParm::syncFromParameter() {
+    if (auto parameterShared = parameter_.lock()) {
+        setValueImpl(parameterShared->evalFloat(vectorIndex_));
+    }
+}
+
+void enzo::ui::FloatSliderParm::applyValue(float normalizedValue) {
+    float value = minValue_ + (maxValue_ - minValue_) * normalizedValue;
+    if (auto parameterShared = parameter_.lock()) {
+        parameterShared->setFloat(value, vectorIndex_);
+    }
+}
+
 void enzo::ui::FloatSliderParm::setValueImpl(bt::floatT value) {
     if (clampMin_ && value < minValue_) {
         value = minValue_;
@@ -90,33 +61,4 @@ void enzo::ui::FloatSliderParm::setValueImpl(bt::floatT value) {
     QString valStr = QString::number(value_);
     valStr.truncate(4);
     valueLabel_->setText(valStr);
-}
-
-void enzo::ui::FloatSliderParm::mouseMoveEvent(QMouseEvent *event) {
-    float value = static_cast<float>(event->pos().x()) / rect().width();
-    value = minValue_ + (maxValue_ - minValue_) * value;
-    if (auto parameterShared = parameter_.lock()) {
-        parameterShared->setFloat(value, vectorIndex_);
-    }
-}
-
-void enzo::ui::FloatSliderParm::mousePressEvent(QMouseEvent *event) {
-    if (auto parameterShared = parameter_.lock()) {
-        valueBeforeDrag_ = parameterShared->getValues();
-        undoDisabler_.emplace(UndoCommandType::ChangeParameter);
-
-        float value = static_cast<float>(event->pos().x()) / rect().width();
-        value = minValue_ + (maxValue_ - minValue_) * value;
-        parameterShared->setFloat(value, vectorIndex_);
-    }
-}
-
-void enzo::ui::FloatSliderParm::mouseReleaseEvent(QMouseEvent *event) {
-    undoDisabler_.reset();
-    if (auto parameterShared = parameter_.lock()) {
-        auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
-            parameterShared->getValues());
-        enzo::nt::nm().undoStack().push(std::move(cmd));
-    }
 }

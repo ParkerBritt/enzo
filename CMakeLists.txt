@@ -62,6 +62,7 @@ set(GUI_SOURCES
     src/Gui/Network/NodeIconGraphic.cpp
     src/Gui/Network/TabMenu.cpp
     src/Gui/ParametersPanel/ParametersPanel.cpp
+    src/Gui/Parameters/SliderParmBase.cpp
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
