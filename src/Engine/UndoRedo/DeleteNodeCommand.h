@@ -62,6 +62,8 @@ public:
         nm().removeOperator(opId_);
     }
 
+    UndoCommandType type() const override { return UndoCommandType::DeleteNode; }
+
 private:
     OpId opId_;
     std::string typeName_;

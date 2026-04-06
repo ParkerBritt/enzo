@@ -15,6 +15,8 @@ class ChangeSelectionCommand : public UndoCommand {
     void undo() override { nm().setSelectedNodes(prev_); }
     void redo() override { nm().setSelectedNodes(next_); }
 
+    UndoCommandType type() const override { return UndoCommandType::ChangeSelection; }
+
   private:
     std::vector<OpId> prev_;
     std::vector<OpId> next_;

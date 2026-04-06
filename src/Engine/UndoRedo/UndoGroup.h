@@ -24,6 +24,8 @@ class UndoGroup : public UndoCommand {
         }
     }
 
+    UndoCommandType type() const override { return UndoCommandType::UndoGroup; }
+
   private:
     std::vector<UndoCommand> commands_;
 };

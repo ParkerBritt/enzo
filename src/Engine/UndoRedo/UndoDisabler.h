@@ -6,18 +6,23 @@
 
 class UndoDisabler {
   public:
-    UndoDisabler(UndoCommandType command) {
+    UndoDisabler(UndoCommandType command) : blockedCommand_(command) {
         blockedCommands_.push_back(command);
-        blockedCommand_ = command;
     }
     ~UndoDisabler() {
-        // Find current command
         auto it = std::find(blockedCommands_.begin(), blockedCommands_.end(), blockedCommand_);
-        // Erase current command
         blockedCommands_.erase(it);
+    }
+
+    UndoDisabler(const UndoDisabler &) = delete;
+    UndoDisabler &operator=(const UndoDisabler &) = delete;
+
+    static bool isBlocked(UndoCommandType command) {
+        return std::find(blockedCommands_.begin(), blockedCommands_.end(), command) !=
+               blockedCommands_.end();
     }
 
   private:
     UndoCommandType blockedCommand_;
-    static std::vector<UndoCommandType> blockedCommands_;
+    static inline std::vector<UndoCommandType> blockedCommands_;
 };

@@ -40,6 +40,8 @@ class ChangeParameterCommand : public UndoCommand {
         }
     }
 
+    UndoCommandType type() const override { return UndoCommandType::ChangeParameter; }
+
   private:
     enzo::nt::OpId opId_;
     std::string paramName_;
