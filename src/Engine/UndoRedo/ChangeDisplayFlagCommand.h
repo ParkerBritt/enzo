@@ -26,6 +26,8 @@ class ChangeDisplayFlagCommand : public UndoCommand {
         nm().setDisplayOp(next_);
     }
 
+    UndoCommandType type() const override { return UndoCommandType::ChangeDisplayFlag; }
+
   private:
     std::optional<OpId> prev_;
     OpId next_;

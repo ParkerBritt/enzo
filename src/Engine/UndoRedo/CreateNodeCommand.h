@@ -37,6 +37,8 @@ public:
         nm().moveNode(opId_, position_, true);
     }
 
+    UndoCommandType type() const override { return UndoCommandType::CreateNode; }
+
 private:
     OpId opId_;
     std::string typeName_;

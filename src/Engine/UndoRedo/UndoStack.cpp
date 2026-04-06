@@ -1,9 +1,12 @@
 #include "Engine/UndoRedo/UndoStack.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
 
 namespace enzo::nt {
 
 void UndoStack::push(std::unique_ptr<UndoCommand> command)
 {
+    if (UndoDisabler::isBlocked(command->type()))
+        return;
     // Truncate any redo history
     commands_.erase(commands_.begin() + currentIndex_, commands_.end());
     commands_.push_back(std::move(command));

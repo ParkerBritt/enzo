@@ -1,10 +1,13 @@
 #pragma once
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <boost/signals2/connection.hpp>
+#include <memory>
+#include <optional>
 
 namespace enzo::ui {
 
@@ -28,10 +31,14 @@ class FloatSliderParm : public QWidget {
     void setValueImpl(bt::floatT value);
     boost::signals2::scoped_connection valueChangedConnection_;
 
+    std::optional<UndoDisabler> undoDisabler_;
+    prm::PrmValues valueBeforeDrag_;
+
   protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 };
 
 } // namespace enzo::ui

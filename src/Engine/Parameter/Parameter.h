@@ -14,6 +14,7 @@ class Parameter {
     Parameter(Template prmTemplate, enzo::nt::OpId opId);
     std::string getName() const;
     std::string getLabel() const;
+    enzo::nt::OpId getOpId() const { return opId_; }
     enzo::prm::Type getType() const;
     unsigned int getVectorSize() const;
 

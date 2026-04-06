@@ -1,6 +1,7 @@
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Default.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
 #include <iostream>
 #include <memory>
 #include <stdexcept>

@@ -1,5 +1,7 @@
 #include "Gui/Parameters/FloatSliderParm.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/Types.h"
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
@@ -99,9 +101,22 @@ void enzo::ui::FloatSliderParm::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void enzo::ui::FloatSliderParm::mousePressEvent(QMouseEvent *event) {
-    float value = static_cast<float>(event->pos().x()) / rect().width();
-    value = minValue_ + (maxValue_ - minValue_) * value;
     if (auto parameterShared = parameter_.lock()) {
+        valueBeforeDrag_ = parameterShared->getValues();
+        undoDisabler_.emplace(UndoCommandType::ChangeParameter);
+
+        float value = static_cast<float>(event->pos().x()) / rect().width();
+        value = minValue_ + (maxValue_ - minValue_) * value;
         parameterShared->setFloat(value, vectorIndex_);
+    }
+}
+
+void enzo::ui::FloatSliderParm::mouseReleaseEvent(QMouseEvent *event) {
+    undoDisabler_.reset();
+    if (auto parameterShared = parameter_.lock()) {
+        auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
+            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
+            parameterShared->getValues());
+        enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

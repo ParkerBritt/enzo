@@ -24,6 +24,8 @@ public:
         nm().nodePositionChanged(opId_, newPos_);
     }
 
+    UndoCommandType type() const override { return UndoCommandType::MoveNode; }
+
 private:
     OpId opId_;
     bt::Vector2f oldPos_;
