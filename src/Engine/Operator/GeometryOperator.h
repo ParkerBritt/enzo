@@ -92,7 +92,7 @@ public:
     * Connections returned by this function are weak pointers to indicate
     * ownership belongs to the node/network and can be modified or deleted at any time.
     */
-    std::vector<std::weak_ptr<const GeometryConnection>> getInputConnections() const;
+    std::vector<std::weak_ptr<GeometryConnection>> getInputConnections() const;
 
     /** 
     * @brief Returns a vector containing weak pointers for all output connections.
@@ -100,14 +100,14 @@ public:
     * Connections returned by this function are weak pointers to indicate
     * ownership belongs to the node/network and can be modified or deleted at any time.
     */
-    std::vector<std::weak_ptr<const GeometryConnection>> getOutputConnections() const;
+    std::vector<std::weak_ptr<GeometryConnection>> getOutputConnections() const;
 
     /** 
     * @brief Returns an optional connection from a specific input index.
     *
     * @returns Nullopt if the connection doesn't exist.
     */
-    std::optional<std::reference_wrapper<const GeometryConnection>> getInputConnection(size_t index) const;
+    std::weak_ptr<GeometryConnection> getInputConnection(size_t index) const;
 
     /// @brief Returns all parameters belonging to this node.
     std::vector<std::weak_ptr<prm::Parameter>> getParameters();

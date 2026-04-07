@@ -13,9 +13,16 @@ void UndoStack::push(std::unique_ptr<UndoCommand> command)
     currentIndex_++;
 }
 
+// TODO: Currently the other undo commands (MoveNodeCommand, DeleteNodeCommand, etc.) work
+// around creating recursive undo states by calling lower-level functions directly (e.g.
+// setPosition instead of moveNode, removeOperator instead of deleteNode). This is
+// inconsistent with ChangeConnectionCommand which relies on the UndoDisabler block-all
+// in undo()/redo() below. The other commands should probably be updated to use the same
+// pattern so users don't get tripped up by the inconsistency.
 void UndoStack::undo()
 {
     if(!canUndo()) return;
+    UndoDisabler blockAll;
     currentIndex_--;
     commands_[currentIndex_]->undo();
 }
@@ -23,6 +30,7 @@ void UndoStack::undo()
 void UndoStack::redo()
 {
     if(!canRedo()) return;
+    UndoDisabler blockAll;
     commands_[currentIndex_]->redo();
     currentIndex_++;
 }

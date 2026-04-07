@@ -18,22 +18,21 @@ enzo::op::Context::Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networ
 enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    auto inputConnection = selfOp.getInputConnection(inputIndex);
-    if(!inputConnection.has_value())
+    auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
+    if(!inputConnection)
     {
         return enzo::NodePacket();
     }
-    const nt::GeometryConnection& connection = inputConnection.value().get();
-    const nt::OpId opId = connection.getInputOpId();
+    const nt::OpId opId = inputConnection->getInputOpId();
     const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
     networkManager_.cookOp(opId);
-    return geoOp.getOutputPacket(connection.getInputIndex());
+    return geoOp.getOutputPacket(inputConnection->getInputIndex());
 }
 
 bool enzo::op::Context::hasInput(unsigned int inputIndex)
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    return selfOp.getInputConnection(inputIndex).has_value();
+    return !selfOp.getInputConnection(inputIndex).expired();
 }
 
 // TODO: cache value
