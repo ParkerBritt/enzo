@@ -7,5 +7,6 @@ enum class UndoCommandType {
     ChangeParameter,
     ChangeDisplayFlag,
     ChangeSelection,
+    ChangeConnection,
     UndoGroup,
 };

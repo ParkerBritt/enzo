@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include <optional>
 #include "Engine/Operator/Context.h"
 #include "Engine/Parameter/Parameter.h"
@@ -30,6 +31,11 @@ std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId 
     outputOp.addInputConnection(newConnection);
 
     nm.connectionCreated(newConnection);
+
+    auto cmd = std::make_unique<ChangeConnectionCommand>(
+        inputOpId, inputIndex, outputOpId, outputIndex,
+        ChangeConnectionCommand::Action::Connect);
+    nm.undoStack().push(std::move(cmd));
 
     return newConnection;
 }
@@ -167,7 +173,7 @@ std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string par
 
 }
 
-std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const
+std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const
 {
     return {inputConnections_.begin(), inputConnections_.end()};
 }
@@ -182,7 +188,7 @@ std::string nt::GeometryOperator::getLabel()
 }
 
 
-std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::getOutputConnections() const
+std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getOutputConnections() const
 {
     return {outputConnections_.begin(), outputConnections_.end()};
 }
@@ -193,16 +199,16 @@ std::string nt::GeometryOperator::getTypeName()
 }
 
 
-std::optional<std::reference_wrapper<const nt::GeometryConnection>> nt::GeometryOperator::getInputConnection(size_t index) const
+std::weak_ptr<nt::GeometryConnection> nt::GeometryOperator::getInputConnection(size_t index) const
 {
     for(auto it=inputConnections_.begin(); it!=inputConnections_.end(); ++it)
     {
         if((*it)->getOutputIndex()==index)
         {
-            return std::cref(**it);
+            return *it;
         }
     }
-    return std::nullopt;
+    return {};
 }
 
 

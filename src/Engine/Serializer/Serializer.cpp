@@ -1,6 +1,7 @@
 #include "Serializer.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/OperatorTable.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
 #include "Engine/Parameter/Parameter.h"
 #include "NetworkSerializable.h"
 #include "cereal/details/helpers.hpp"
@@ -84,6 +85,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
 void Serializer::load(NetworkManager& networkManager, std::string filePath)
 {
     networkManager.clear();
+    UndoDisabler blockAll;
 
     std::ifstream file(filePath);
     cereal::JSONInputArchive load(file);
