@@ -18,6 +18,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/Attribute.cpp
     src/Engine/Operator/Primitive.cpp
     src/Engine/Operator/Mesh.cpp
+    src/Engine/Operator/Camera.cpp
     src/Engine/Operator/PrimPath.cpp
     src/Engine/Operator/NodePacket.cpp
     src/Engine/Operator/GeometryOperator.cpp
@@ -52,6 +53,7 @@ set(GUI_SOURCES
     src/Gui/Viewport/GLMesh.cpp
     src/Gui/Viewport/GLGrid.cpp
     src/Gui/Viewport/GLPoints.cpp
+    src/Gui/Viewport/GLCameraPrim.cpp
     src/Gui/Network/NetworkGraphicsView.cpp
     src/Gui/Network/NetworkGraphicsScene.cpp
     src/Gui/Network/NetworkPanel.cpp

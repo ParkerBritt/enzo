@@ -16,6 +16,7 @@ add_library(${libName} SHARED
     ../Engine/Operator/Context.cpp
     ../Engine/Operator/Primitive.cpp
     ../Engine/Operator/Mesh.cpp
+    ../Engine/Operator/Camera.cpp
     ../Engine/Operator/NodePacket.cpp
     ../Engine/Operator/Attribute.cpp
     ../Engine/Network/NetworkManager.cpp
@@ -34,6 +35,7 @@ add_library(${libName} SHARED
     GopOceanSurface.cpp
     GopMerge.cpp
     GopPath.cpp
+    GopCamera.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb)
 

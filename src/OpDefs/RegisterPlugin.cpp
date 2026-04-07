@@ -9,6 +9,7 @@
 #include "OpDefs/GopMerge.h"
 #include "OpDefs/GopSineWave.h"
 #include "OpDefs/GopPath.h"
+#include "OpDefs/GopCamera.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -112,6 +113,17 @@ extern "C"
                 GopPath::parameterList,
                 1,
                 1,
+                1,
+            }
+        );
+        addOperator(
+            enzo::op::OpInfo {
+                "camera",
+                "Camera",
+                &GopCamera::ctor,
+                GopCamera::parameterList,
+                0,
+                0,
                 1,
             }
         );

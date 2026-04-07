@@ -25,6 +25,7 @@ void ViewportGLWidget::initializeGL()
     triangleMesh_ = std::make_unique<GLMesh>();
     gridMesh_ = std::make_unique<GLGrid>();
     points_ = std::make_unique<GLPoints>();
+    cameraPrims_ = std::make_unique<GLCameraPrim>();
 
     QSurfaceFormat fmt = context()->format();
     std::cout << "format: " << (fmt.renderableType() == QSurfaceFormat::OpenGLES ? "GLES" : "Desktop") << "\n";
@@ -175,6 +176,11 @@ void ViewportGLWidget::paintGL()
     glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraUp"), 1, glm::value_ptr(curCamera.getUp()));
     points_->draw();
 
+    cameraPrims_->useProgram();
+    glUniformMatrix4fv(glGetUniformLocation(cameraPrims_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    curCamera.setUniform(glGetUniformLocation(cameraPrims_->shaderProgram, "uView"));
+    cameraPrims_->draw();
+
     gridMesh_->useProgram();
     glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
     curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
@@ -213,4 +219,5 @@ void ViewportGLWidget::geometryChanged(enzo::NodePacket& packet)
     triangleMesh_->setIndexBuffer(packet);
 
     points_->setPoints(packet, curCamera);
+    cameraPrims_->setCameras(packet);
 }

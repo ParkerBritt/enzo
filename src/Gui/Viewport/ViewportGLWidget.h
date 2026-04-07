@@ -7,6 +7,7 @@
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLPoints.h"
+#include "Gui/Viewport/GLCameraPrim.h"
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/NodePacket.h"
 
@@ -20,6 +21,7 @@ public:
     std::unique_ptr<GLMesh> triangleMesh_ ;
     std::unique_ptr<GLGrid> gridMesh_ ;
     std::unique_ptr<GLPoints> points_ ;
+    std::unique_ptr<GLCameraPrim> cameraPrims_ ;
 
     // std::unique_ptr<GLMesh> meshFromGeo(enzo::geo::Geometry& geometry);
 
