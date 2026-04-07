@@ -5,7 +5,8 @@ var searchData=
   ['setpointpos_2',['setPointPos',['../classenzo_1_1geo_1_1Primitive.html#a780ad80e3ec771909ece56aec65a7fbb',1,'enzo::geo::Primitive']]],
   ['setposition_3',['setPosition',['../classenzo_1_1nt_1_1GeometryOperator.html#a7eac4d4bc04ef3c073d858dd37f0a6e5',1,'enzo::nt::GeometryOperator']]],
   ['setselectednode_4',['setSelectedNode',['../classenzo_1_1nt_1_1NetworkManager.html#a87db6e7d3bc10c86954afe54c23d9d07',1,'enzo::nt::NetworkManager']]],
-  ['setvalue_5',['setValue',['../classenzo_1_1ga_1_1AttributeHandle.html#a39a719dc702eedd2372e88c9c22eddb1',1,'enzo::ga::AttributeHandle']]],
-  ['solopointsbegin_6',['soloPointsBegin',['../classenzo_1_1geo_1_1Primitive.html#ab90aceabd38a133e806fda139541a5de',1,'enzo::geo::Primitive']]],
-  ['solopointsend_7',['soloPointsEnd',['../classenzo_1_1geo_1_1Primitive.html#ae40dd73612618707afdcf8f5314c52ec',1,'enzo::geo::Primitive']]]
+  ['setselectednodes_5',['setSelectedNodes',['../classenzo_1_1nt_1_1NetworkManager.html#a1faabea92ba39a0d7ff4f6fecd0c70c9',1,'enzo::nt::NetworkManager']]],
+  ['setvalue_6',['setValue',['../classenzo_1_1ga_1_1AttributeHandle.html#a39a719dc702eedd2372e88c9c22eddb1',1,'enzo::ga::AttributeHandle']]],
+  ['solopointsbegin_7',['soloPointsBegin',['../classenzo_1_1geo_1_1Primitive.html#ab90aceabd38a133e806fda139541a5de',1,'enzo::geo::Primitive']]],
+  ['solopointsend_8',['soloPointsEnd',['../classenzo_1_1geo_1_1Primitive.html#ae40dd73612618707afdcf8f5314c52ec',1,'enzo::geo::Primitive']]]
 ];

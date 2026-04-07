@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::nt::CreateNodeCommand Class Reference</title>
+<title>Enzo: enzo::nt::ChangeSelectionCommand Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,43 +86,43 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1CreateNodeCommand.html">CreateNodeCommand</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1ChangeSelectionCommand.html">ChangeSelectionCommand</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classenzo_1_1nt_1_1CreateNodeCommand-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::nt::CreateNodeCommand Class Reference</div></div>
+<a href="classenzo_1_1nt_1_1ChangeSelectionCommand-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::nt::ChangeSelectionCommand Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Inheritance diagram for enzo::nt::CreateNodeCommand:</div>
+Inheritance diagram for enzo::nt::ChangeSelectionCommand:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classenzo_1_1nt_1_1CreateNodeCommand.png" usemap="#enzo::nt::CreateNodeCommand_map" alt=""/>
-  <map id="enzo::nt::CreateNodeCommand_map" name="enzo::nt::CreateNodeCommand_map">
-<area href="classenzo_1_1nt_1_1UndoCommand.html" alt="enzo::nt::UndoCommand" shape="rect" coords="0,0,184,24"/>
+  <img src="classenzo_1_1nt_1_1ChangeSelectionCommand.png" usemap="#enzo::nt::ChangeSelectionCommand_map" alt=""/>
+  <map id="enzo::nt::ChangeSelectionCommand_map" name="enzo::nt::ChangeSelectionCommand_map">
+<area href="classenzo_1_1nt_1_1UndoCommand.html" alt="enzo::nt::UndoCommand" shape="rect" coords="0,0,212,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab03d21df32a1b4d07eac89fb325a8c22" id="r_ab03d21df32a1b4d07eac89fb325a8c22"><td class="memItemLeft" align="right" valign="top"><a id="ab03d21df32a1b4d07eac89fb325a8c22" name="ab03d21df32a1b4d07eac89fb325a8c22"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CreateNodeCommand</b> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId)</td></tr>
-<tr class="separator:ab03d21df32a1b4d07eac89fb325a8c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7756f9666461a6e179e728163378158d" id="r_a7756f9666461a6e179e728163378158d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7756f9666461a6e179e728163378158d">undo</a> () override</td></tr>
-<tr class="separator:a7756f9666461a6e179e728163378158d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a936a3b69e39f6f2dfc89747bd7b091b7" id="r_a936a3b69e39f6f2dfc89747bd7b091b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a936a3b69e39f6f2dfc89747bd7b091b7">redo</a> () override</td></tr>
-<tr class="separator:a936a3b69e39f6f2dfc89747bd7b091b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7cd79a0b5677435a2e11cf9731bd5c8" id="r_af7cd79a0b5677435a2e11cf9731bd5c8"><td class="memItemLeft" align="right" valign="top">UndoCommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7cd79a0b5677435a2e11cf9731bd5c8">type</a> () const override</td></tr>
-<tr class="separator:af7cd79a0b5677435a2e11cf9731bd5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60dc0f0603c82fff645a5aef00d6d2ea" id="r_a60dc0f0603c82fff645a5aef00d6d2ea"><td class="memItemLeft" align="right" valign="top"><a id="a60dc0f0603c82fff645a5aef00d6d2ea" name="a60dc0f0603c82fff645a5aef00d6d2ea"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ChangeSelectionCommand</b> (std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> &gt; prev, std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> &gt; next)</td></tr>
+<tr class="separator:a60dc0f0603c82fff645a5aef00d6d2ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19cd37dbeb5a62967df2f13744d3e1be" id="r_a19cd37dbeb5a62967df2f13744d3e1be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19cd37dbeb5a62967df2f13744d3e1be">undo</a> () override</td></tr>
+<tr class="separator:a19cd37dbeb5a62967df2f13744d3e1be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0c3bbf575dd1047b2a37047d3fccef7" id="r_aa0c3bbf575dd1047b2a37047d3fccef7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0c3bbf575dd1047b2a37047d3fccef7">redo</a> () override</td></tr>
+<tr class="separator:aa0c3bbf575dd1047b2a37047d3fccef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de57e458211fc7e8fb7c629a220290d" id="r_a2de57e458211fc7e8fb7c629a220290d"><td class="memItemLeft" align="right" valign="top">UndoCommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2de57e458211fc7e8fb7c629a220290d">type</a> () const override</td></tr>
+<tr class="separator:a2de57e458211fc7e8fb7c629a220290d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classenzo_1_1nt_1_1UndoCommand"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classenzo_1_1nt_1_1UndoCommand')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">enzo::nt::UndoCommand</a></td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a936a3b69e39f6f2dfc89747bd7b091b7" name="a936a3b69e39f6f2dfc89747bd7b091b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a936a3b69e39f6f2dfc89747bd7b091b7">&#9670;&#160;</a></span>redo()</h2>
+<a id="aa0c3bbf575dd1047b2a37047d3fccef7" name="aa0c3bbf575dd1047b2a37047d3fccef7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0c3bbf575dd1047b2a37047d3fccef7">&#9670;&#160;</a></span>redo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,7 +131,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void enzo::nt::CreateNodeCommand::redo </td>
+          <td class="memname">void enzo::nt::ChangeSelectionCommand::redo </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -148,8 +148,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af7cd79a0b5677435a2e11cf9731bd5c8" name="af7cd79a0b5677435a2e11cf9731bd5c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7cd79a0b5677435a2e11cf9731bd5c8">&#9670;&#160;</a></span>type()</h2>
+<a id="a2de57e458211fc7e8fb7c629a220290d" name="a2de57e458211fc7e8fb7c629a220290d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de57e458211fc7e8fb7c629a220290d">&#9670;&#160;</a></span>type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,7 +158,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">UndoCommandType enzo::nt::CreateNodeCommand::type </td>
+          <td class="memname">UndoCommandType enzo::nt::ChangeSelectionCommand::type </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -175,8 +175,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7756f9666461a6e179e728163378158d" name="a7756f9666461a6e179e728163378158d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7756f9666461a6e179e728163378158d">&#9670;&#160;</a></span>undo()</h2>
+<a id="a19cd37dbeb5a62967df2f13744d3e1be" name="a19cd37dbeb5a62967df2f13744d3e1be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19cd37dbeb5a62967df2f13744d3e1be">&#9670;&#160;</a></span>undo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -185,7 +185,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void enzo::nt::CreateNodeCommand::undo </td>
+          <td class="memname">void enzo::nt::ChangeSelectionCommand::undo </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -203,7 +203,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/UndoRedo/<a class="el" href="CreateNodeCommand_8h_source.html">CreateNodeCommand.h</a></li>
+<li>src/Engine/UndoRedo/<a class="el" href="ChangeSelectionCommand_8h_source.html">ChangeSelectionCommand.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

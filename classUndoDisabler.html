@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::nt::UndoCommand Class Reference</title>
+<title>Enzo: UndoDisabler Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -84,50 +84,42 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">UndoCommand</a></li>  </ul>
-</div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classenzo_1_1nt_1_1UndoCommand-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::nt::UndoCommand Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="classUndoDisabler-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">UndoDisabler Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for enzo::nt::UndoCommand:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classenzo_1_1nt_1_1UndoCommand.png" usemap="#enzo::nt::UndoCommand_map" alt=""/>
-  <map id="enzo::nt::UndoCommand_map" name="enzo::nt::UndoCommand_map">
-<area href="classenzo_1_1nt_1_1ChangeConnectionCommand.html" alt="enzo::nt::ChangeConnectionCommand" shape="rect" coords="237,56,464,80"/>
-<area href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html" alt="enzo::nt::ChangeDisplayFlagCommand" shape="rect" coords="237,112,464,136"/>
-<area href="classenzo_1_1nt_1_1ChangeParameterCommand.html" alt="enzo::nt::ChangeParameterCommand" shape="rect" coords="237,168,464,192"/>
-<area href="classenzo_1_1nt_1_1ChangeSelectionCommand.html" alt="enzo::nt::ChangeSelectionCommand" shape="rect" coords="237,224,464,248"/>
-<area href="classenzo_1_1nt_1_1CreateNodeCommand.html" alt="enzo::nt::CreateNodeCommand" shape="rect" coords="237,280,464,304"/>
-<area href="classenzo_1_1nt_1_1DeleteNodeCommand.html" alt="enzo::nt::DeleteNodeCommand" shape="rect" coords="237,336,464,360"/>
-<area href="classenzo_1_1nt_1_1MoveNodeCommand.html" alt="enzo::nt::MoveNodeCommand" shape="rect" coords="237,392,464,416"/>
-<area href="classenzo_1_1nt_1_1UndoGroup.html" alt="enzo::nt::UndoGroup" shape="rect" coords="237,448,464,472"/>
-  </map>
-</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8a395fc6ab2f2005dcef237a01c98b3d" id="r_a8a395fc6ab2f2005dcef237a01c98b3d"><td class="memItemLeft" align="right" valign="top"><a id="a8a395fc6ab2f2005dcef237a01c98b3d" name="a8a395fc6ab2f2005dcef237a01c98b3d"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> ()=0</td></tr>
-<tr class="separator:a8a395fc6ab2f2005dcef237a01c98b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1349862251b9704e10287de2cca3c14f" id="r_a1349862251b9704e10287de2cca3c14f"><td class="memItemLeft" align="right" valign="top"><a id="a1349862251b9704e10287de2cca3c14f" name="a1349862251b9704e10287de2cca3c14f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>redo</b> ()=0</td></tr>
-<tr class="separator:a1349862251b9704e10287de2cca3c14f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b0c7200e98fe6d5ca5b939970dee8b5" id="r_a4b0c7200e98fe6d5ca5b939970dee8b5"><td class="memItemLeft" align="right" valign="top"><a id="a4b0c7200e98fe6d5ca5b939970dee8b5" name="a4b0c7200e98fe6d5ca5b939970dee8b5"></a>
-virtual UndoCommandType&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const =0</td></tr>
-<tr class="separator:a4b0c7200e98fe6d5ca5b939970dee8b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ffd4d586089802f97707e7d39f23d1e" id="r_a8ffd4d586089802f97707e7d39f23d1e"><td class="memItemLeft" align="right" valign="top"><a id="a8ffd4d586089802f97707e7d39f23d1e" name="a8ffd4d586089802f97707e7d39f23d1e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>UndoDisabler</b> ()</td></tr>
+<tr class="memdesc:a8ffd4d586089802f97707e7d39f23d1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks all undo command types while this object is alive. <br /></td></tr>
+<tr class="separator:a8ffd4d586089802f97707e7d39f23d1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90825f3eb09afa63d350187e8f7c3eea" id="r_a90825f3eb09afa63d350187e8f7c3eea"><td class="memItemLeft" align="right" valign="top"><a id="a90825f3eb09afa63d350187e8f7c3eea" name="a90825f3eb09afa63d350187e8f7c3eea"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>UndoDisabler</b> (UndoCommandType command)</td></tr>
+<tr class="memdesc:a90825f3eb09afa63d350187e8f7c3eea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks a specific undo command type while this object is alive. <br /></td></tr>
+<tr class="separator:a90825f3eb09afa63d350187e8f7c3eea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2e698aa6197c322c64113d6aefd1c5f" id="r_ae2e698aa6197c322c64113d6aefd1c5f"><td class="memItemLeft" align="right" valign="top"><a id="ae2e698aa6197c322c64113d6aefd1c5f" name="ae2e698aa6197c322c64113d6aefd1c5f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>UndoDisabler</b> (const <a class="el" href="classUndoDisabler.html">UndoDisabler</a> &amp;)=delete</td></tr>
+<tr class="separator:ae2e698aa6197c322c64113d6aefd1c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73419323954d59e73f4842bd38dfacb7" id="r_a73419323954d59e73f4842bd38dfacb7"><td class="memItemLeft" align="right" valign="top"><a id="a73419323954d59e73f4842bd38dfacb7" name="a73419323954d59e73f4842bd38dfacb7"></a>
+<a class="el" href="classUndoDisabler.html">UndoDisabler</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classUndoDisabler.html">UndoDisabler</a> &amp;)=delete</td></tr>
+<tr class="separator:a73419323954d59e73f4842bd38dfacb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ac56e7c3d6d4998c42ec79db9d7b4d70f" id="r_ac56e7c3d6d4998c42ec79db9d7b4d70f"><td class="memItemLeft" align="right" valign="top"><a id="ac56e7c3d6d4998c42ec79db9d7b4d70f" name="ac56e7c3d6d4998c42ec79db9d7b4d70f"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBlocked</b> (UndoCommandType command)</td></tr>
+<tr class="separator:ac56e7c3d6d4998c42ec79db9d7b4d70f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/UndoRedo/<a class="el" href="UndoCommand_8h_source.html">UndoCommand.h</a></li>
+<li>src/Engine/UndoRedo/<a class="el" href="UndoDisabler_8h_source.html">UndoDisabler.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

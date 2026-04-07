@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: src/Engine/UndoRedo/UndoCommand.h Source File</title>
+<title>Enzo: Member List</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,34 +86,23 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_7e9f197b17d3e40c9b759de4967c47c0.html">UndoRedo</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">ChangeDisplayFlagCommand</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">UndoCommand.h</div></div>
+  <div class="headertitle"><div class="title">enzo::nt::ChangeDisplayFlagCommand Member List</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;UndoCommands.h&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span>enzo::nt {</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="foldopen" id="foldopen00007" data-start="{" data-end="};">
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="classenzo_1_1nt_1_1UndoCommand.html">    7</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1nt_1_1UndoCommand.html">UndoCommand</a></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keyword">virtual</span> <a class="code hl_class" href="classenzo_1_1nt_1_1UndoCommand.html">~UndoCommand</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> undo() = 0;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> redo() = 0;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">virtual</span> UndoCommandType type() <span class="keyword">const</span> = 0;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>};</div>
-</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>}</div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1UndoCommand_html"><div class="ttname"><a href="classenzo_1_1nt_1_1UndoCommand.html">enzo::nt::UndoCommand</a></div><div class="ttdef"><b>Definition</b> UndoCommand.h:8</div></div>
-</div><!-- fragment --></div><!-- contents -->
+
+<p>This is the complete list of members for <a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a>, including all inherited members.</p>
+<table class="directory">
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ChangeDisplayFlagCommand</b>(std::optional&lt; OpId &gt; prev, OpId next) (defined in <a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a>)</td><td class="entry"><a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>redo</b>() override (defined in <a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a>)</td><td class="entry"><a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>type</b>() const override (defined in <a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a>)</td><td class="entry"><a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>undo</b>() override (defined in <a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a>)</td><td class="entry"><a class="el" href="classenzo_1_1nt_1_1ChangeDisplayFlagCommand.html">enzo::nt::ChangeDisplayFlagCommand</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~UndoCommand</b>()=default (defined in <a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">enzo::nt::UndoCommand</a>)</td><td class="entry"><a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">enzo::nt::UndoCommand</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+</table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

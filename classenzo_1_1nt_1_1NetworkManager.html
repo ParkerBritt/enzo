@@ -153,6 +153,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> ()</td></t
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId)</td></tr>
 <tr class="memdesc:a8f4282b7156e1515a094c7da36eccc3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets given OpId to be displayed, releasing previous display Node. <br /></td></tr>
 <tr class="separator:a8f4282b7156e1515a094c7da36eccc3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a776c58824b2a0ad2bd28a53f5a88017a" id="r_a776c58824b2a0ad2bd28a53f5a88017a"><td class="memItemLeft" align="right" valign="top"><a id="a776c58824b2a0ad2bd28a53f5a88017a" name="a776c58824b2a0ad2bd28a53f5a88017a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clearDisplayFlag</b> ()</td></tr>
+<tr class="memdesc:a776c58824b2a0ad2bd28a53f5a88017a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the display flag so no node is displayed. <br /></td></tr>
+<tr class="separator:a776c58824b2a0ad2bd28a53f5a88017a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87db6e7d3bc10c86954afe54c23d9d07" id="r_a87db6e7d3bc10c86954afe54c23d9d07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87db6e7d3bc10c86954afe54c23d9d07">setSelectedNode</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId, bool selected, bool add=false)</td></tr>
 <tr class="memdesc:a87db6e7d3bc10c86954afe54c23d9d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the selection state for the given node.  <br /></td></tr>
 <tr class="separator:a87db6e7d3bc10c86954afe54c23d9d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +164,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a 
 const std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSelectedNodes</b> ()</td></tr>
 <tr class="memdesc:aa5ea59029f6195425e6237c27ee8be3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the OpIds for all selected nodes. <br /></td></tr>
 <tr class="separator:aa5ea59029f6195425e6237c27ee8be3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1faabea92ba39a0d7ff4f6fecd0c70c9" id="r_a1faabea92ba39a0d7ff4f6fecd0c70c9"><td class="memItemLeft" align="right" valign="top"><a id="a1faabea92ba39a0d7ff4f6fecd0c70c9" name="a1faabea92ba39a0d7ff4f6fecd0c70c9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setSelectedNodes</b> (std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> &gt; opIds)</td></tr>
+<tr class="memdesc:a1faabea92ba39a0d7ff4f6fecd0c70c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the entire selection with the given set of nodes. <br /></td></tr>
+<tr class="separator:a1faabea92ba39a0d7ff4f6fecd0c70c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afacacba379929be4b172edbcf5782e0d" id="r_afacacba379929be4b172edbcf5782e0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afacacba379929be4b172edbcf5782e0d">moveNode</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId, bt::Vector2f newPos, bool skipUndo=false)</td></tr>
 <tr class="memdesc:afacacba379929be4b172edbcf5782e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves a node to a new position, pushing an undo command.  <br /></td></tr>
 <tr class="separator:afacacba379929be4b172edbcf5782e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,9 +201,9 @@ static <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManage
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Signals</div></td></tr>
-<tr class="memitem:a28fdcf912cfe264da7bd3cd5d0d33a26" id="r_a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memItemLeft" align="right" valign="top"><a id="a28fdcf912cfe264da7bd3cd5d0d33a26" name="a28fdcf912cfe264da7bd3cd5d0d33a26"></a>
-boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayNodeChanged</b></td></tr>
-<tr class="separator:a28fdcf912cfe264da7bd3cd5d0d33a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadf94f6d8f09af565ce2110b2b594580" id="r_aadf94f6d8f09af565ce2110b2b594580"><td class="memItemLeft" align="right" valign="top"><a id="aadf94f6d8f09af565ce2110b2b594580" name="aadf94f6d8f09af565ce2110b2b594580"></a>
+boost::signals2::signal&lt; void(std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayNodeChanged</b></td></tr>
+<tr class="separator:aadf94f6d8f09af565ce2110b2b594580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d77e6837a71c08fc5c293da6fd2f082" id="r_a0d77e6837a71c08fc5c293da6fd2f082"><td class="memItemLeft" align="right" valign="top"><a id="a0d77e6837a71c08fc5c293da6fd2f082" name="a0d77e6837a71c08fc5c293da6fd2f082"></a>
 boost::signals2::signal&lt; void(<a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp;packet)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>displayGeoChanged</b></td></tr>
 <tr class="separator:a0d77e6837a71c08fc5c293da6fd2f082"><td class="memSeparator" colspan="2">&#160;</td></tr>
