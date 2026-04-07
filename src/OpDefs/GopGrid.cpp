@@ -1,4 +1,5 @@
 #include "OpDefs/GopGrid.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
 #include <cmath>
@@ -21,7 +22,7 @@ void GopGrid::cookOp(enzo::op::Context context)
     if(outputRequested(0))
     {
         NodePacket packet;
-        geo::Primitive geo;
+        auto geo = std::make_shared<geo::Mesh>();
         bt::floatT width = context.evalFloatParm("size", 0);
         bt::floatT height = context.evalFloatParm("size", 1);
 
@@ -29,7 +30,7 @@ void GopGrid::cookOp(enzo::op::Context context)
         const bt::intT rows = context.evalIntParm("rows");
         if(columns<=0 || rows<=0)
         {
-            packet.addPrimitive(geo);
+            packet.addPrimitive(std::move(geo));
             setOutputPacket(0, packet);
             return;
         }
@@ -46,7 +47,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 const bt::floatT x = i/columnDivisor*width-centerOffsetX;
                 const bt::floatT z = j/rowDivisor*height-centerOffsetY;
-                geo.addPoint(bt::Vector3(x, 0, z));
+                geo->addPoint(bt::Vector3(x, 0, z));
             }
         }
 
@@ -57,7 +58,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 const int endOffset = (i+1)%rows==0;
                 const ga::Offset startPt = i+endOffset; 
-                geo.addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
+                geo->addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
             }
         }
         else
@@ -67,11 +68,11 @@ void GopGrid::cookOp(enzo::op::Context context)
             for(int i=0;i<iterationLimit;i++)
             {
                 const ga::Offset startPt = i; 
-                geo.addFace({startPt,startPt+1}, false);
+                geo->addFace({startPt,startPt+1}, false);
             }
         }
 
-        packet.addPrimitive(geo);
+        packet.addPrimitive(std::move(geo));
         setOutputPacket(0, packet);
     }
 

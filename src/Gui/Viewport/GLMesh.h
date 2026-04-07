@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <QOpenGLFunctions_3_2_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/NodePacket.h"
 
 struct Vertex

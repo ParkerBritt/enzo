@@ -7,7 +7,7 @@
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLPoints.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/NodePacket.h"
 
 class ViewportGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_2_Core

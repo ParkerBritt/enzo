@@ -16,15 +16,15 @@ namespace enzo
          *
          * - POINT attributes are stored per point, these attributes have an value for each point.
          * - VERTEX attributes are stored per vertex, these attributes have an value for each vertex.
-         * - PRIMITIVE attributes are stored per primitive, these attributes have an value for each primitive.
-         * - GLOBAL attributes are stored globaly, these attributes only have one value.
+         * - FACE attributes are stored per face, these attributes have an value for each face.
+         * - PRIMITIVE attributes are stored per primitive object, these attributes only have one value.
          */
         enum class AttributeOwner
         {
             POINT,
             VERTEX,
-            PRIMITIVE,
-            GLOBAL
+            FACE,
+            PRIMITIVE
         };
         /**
          * @brief Data types available to store attribute values in.
@@ -48,6 +48,14 @@ namespace enzo
          * as adding and deleting points unlress defragmented.
          */
         using Offset = size_t;
+    }
+    namespace geo
+    {
+        enum class PrimType
+        {
+            MESH,
+            CAMERA
+        };
     }
     // basic types types
     namespace bt

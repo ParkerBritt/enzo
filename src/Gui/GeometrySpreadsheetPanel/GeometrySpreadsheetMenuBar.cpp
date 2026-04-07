@@ -114,8 +114,8 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget *parent, Qt::
 
     pointButton = newButton("Point Attributes", ":/icons/attributePoint.svg");
     vertexButton = newButton("Vertex Attributes", ":/icons/attributeVertex.svg");
-    primitiveButton = newButton("Primitive Attributes", ":/icons/attributePrimitive.svg");
-    globalButton = newButton("Global Attributes", ":/icons/attributeGlobal.svg");
+    faceButton = newButton("Face Attributes", ":/icons/attributePrimitive.svg");
+    primitiveButton = newButton("Primitive Attributes", ":/icons/attributeGlobal.svg");
 
     pointButton->setChecked(true);
 

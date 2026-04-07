@@ -2,7 +2,7 @@
 #include <GL/gl.h>
 #include <iostream>
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Types.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <tbb/blocked_range.h>
@@ -64,24 +64,30 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
     // compute total vertex count across all primitives
     size_t totalVerts = 0;
     for(size_t pi = 0; pi < packet.size(); ++pi)
-        totalVerts += packet.getPrimitive(pi).getNumVerts();
+    {
+        auto prim = packet.getPrimitive(pi);
+        if(prim->getType() != enzo::geo::PrimType::MESH) continue;
+        totalVerts += std::static_pointer_cast<enzo::geo::Mesh>(prim)->getNumVerts();
+    }
 
     vertices.resize(totalVerts);
 
     size_t vertOffset = 0;
     for(size_t pi = 0; pi < packet.size(); ++pi)
     {
-        auto& geometry = packet.getPrimitive(pi);
-        const size_t numPrims = geometry.getNumPrims();
-        geometry.computePrimStartVertices();
+        auto prim = packet.getPrimitive(pi);
+        if(prim->getType() != enzo::geo::PrimType::MESH) continue;
+        auto geometry = std::static_pointer_cast<enzo::geo::Mesh>(prim);
+        const size_t numPrims = geometry->getNumPrims();
+        geometry->computePrimStartVertices();
 
         const size_t localVertOffset = vertOffset;
         tbb::parallel_for(tbb::blocked_range<size_t>(0, numPrims), [&](tbb::blocked_range<size_t> range)
         {
             for (int primOffset=range.begin(); primOffset<range.end(); ++primOffset)
             {
-                const enzo::ga::Offset primStartVert = geometry.getPrimStartVertex(primOffset);
-                const unsigned int faceVertCnt = geometry.getPrimVertCount(primOffset);
+                const enzo::ga::Offset primStartVert = geometry->getPrimStartVertex(primOffset);
+                const unsigned int faceVertCnt = geometry->getPrimVertCount(primOffset);
 
                 enzo::bt::Vector3 Normal;
 
@@ -92,9 +98,9 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
                     const unsigned v2 = primStartVert + 1;
                     const unsigned v3 = primStartVert + 2;
 
-                    const enzo::bt::Vector3 pos1 = geometry.getPosFromVert(v1);
-                    const enzo::bt::Vector3 pos2 = geometry.getPosFromVert(v2);
-                    const enzo::bt::Vector3 pos3 = geometry.getPosFromVert(v3);
+                    const enzo::bt::Vector3 pos1 = geometry->getPosFromVert(v1);
+                    const enzo::bt::Vector3 pos2 = geometry->getPosFromVert(v2);
+                    const enzo::bt::Vector3 pos3 = geometry->getPosFromVert(v3);
 
                     enzo::bt::Vector3 tang1 = (pos2-pos1);
                     enzo::bt::Vector3 tang2 = (pos3-pos1);
@@ -106,7 +112,7 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
                 for(int i=0; i< faceVertCnt; ++i)
                 {
                     const unsigned int vertexCount = primStartVert+i;
-                    enzo::bt::Vector3 p = geometry.getPosFromVert(vertexCount);
+                    enzo::bt::Vector3 p = geometry->getPosFromVert(vertexCount);
 
                     vertices[localVertOffset + vertexCount] ={
                         { p.x(),
@@ -121,7 +127,7 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
             }
         });
 
-        vertOffset += geometry.getNumVerts();
+        vertOffset += geometry->getNumVerts();
     }
 
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
@@ -137,14 +143,16 @@ void GLMesh::setIndexBuffer(enzo::NodePacket& packet)
     size_t vertOffset = 0;
     for(size_t pi = 0; pi < packet.size(); ++pi)
     {
-        auto& geometry = packet.getPrimitive(pi);
+        auto prim = packet.getPrimitive(pi);
+        if(prim->getType() != enzo::geo::PrimType::MESH) continue;
+        auto geometry = std::static_pointer_cast<enzo::geo::Mesh>(prim);
 
         // create triangle fan from potentially ngon inputs
-        for(enzo::ga::Offset primOffset=0; primOffset<geometry.getNumPrims(); ++primOffset)
+        for(enzo::ga::Offset primOffset=0; primOffset<geometry->getNumPrims(); ++primOffset)
         {
-            int primVertexCount = geometry.getPrimVertCount(primOffset);
-            const enzo::ga::Offset startVert = vertOffset + geometry.getPrimStartVertex(primOffset);
-            const enzo::bt::boolT closed = geometry.isClosed(primOffset);
+            int primVertexCount = geometry->getPrimVertCount(primOffset);
+            const enzo::ga::Offset startVert = vertOffset + geometry->getPrimStartVertex(primOffset);
+            const enzo::bt::boolT closed = geometry->isClosed(primOffset);
 
             if(!closed && primVertexCount>=2)
             {
@@ -167,7 +175,7 @@ void GLMesh::setIndexBuffer(enzo::NodePacket& packet)
 
         }
 
-        vertOffset += geometry.getNumVerts();
+        vertOffset += geometry->getNumVerts();
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceIndexBuffer);

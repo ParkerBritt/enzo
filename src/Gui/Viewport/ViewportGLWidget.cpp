@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <qtimer.h>
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/Mesh.h"
 
 void ViewportGLWidget::initializeGL()
 {
@@ -21,7 +21,7 @@ void ViewportGLWidget::initializeGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_MULTISAMPLE);
 
-    enzo::geo::Primitive geo = enzo::geo::Primitive();
+    enzo::geo::Mesh geo = enzo::geo::Mesh();
     triangleMesh_ = std::make_unique<GLMesh>();
     gridMesh_ = std::make_unique<GLGrid>();
     points_ = std::make_unique<GLPoints>();

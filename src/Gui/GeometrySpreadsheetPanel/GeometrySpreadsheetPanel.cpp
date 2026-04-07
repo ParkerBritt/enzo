@@ -98,10 +98,10 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(pare
             [this]() { model_->setOwner(enzo::ga::AttributeOwner::POINT); });
     connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this,
             [this]() { model_->setOwner(enzo::ga::AttributeOwner::VERTEX); });
+    connect(menuBar_->modeSelection->faceButton, &QPushButton::clicked, this,
+            [this]() { model_->setOwner(enzo::ga::AttributeOwner::FACE); });
     connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this,
             [this]() { model_->setOwner(enzo::ga::AttributeOwner::PRIMITIVE); });
-    connect(menuBar_->modeSelection->globalButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::GLOBAL); });
     // set default
     menuBar_->modeSelection->pointButton->click();
 

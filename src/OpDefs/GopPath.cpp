@@ -18,7 +18,7 @@ void GopPath::cookOp(enzo::op::Context context)
 
         for(unsigned int p = 0; p < packet.size(); ++p)
         {
-            packet.getPrimitive(p).setPath(path);
+            packet.getPrimitive(p)->setPath(path);
         }
 
         setOutputPacket(0, packet);

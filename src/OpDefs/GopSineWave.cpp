@@ -1,4 +1,5 @@
 #include "OpDefs/GopSineWave.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
 #include <cmath>
@@ -28,8 +29,10 @@ void GopSineWave::cookOp(enzo::op::Context context)
 
         for(size_t p = 0; p < packet.size(); ++p)
         {
-            geo::Primitive& geo = packet.getPrimitive(p);
-            const ga::Offset pointCount = geo.getNumPoints();
+            auto prim = packet.getPrimitive(p);
+            if(prim->getType() != geo::PrimType::MESH) continue;
+            auto geo = std::static_pointer_cast<geo::Mesh>(prim);
+            const ga::Offset pointCount = geo->getNumPoints();
 
             if(radial)
             {
@@ -37,9 +40,9 @@ void GopSineWave::cookOp(enzo::op::Context context)
                 tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency, center](tbb::blocked_range<ga::Offset> range){
                     for(ga::Offset i=range.begin(); i!=range.end(); ++i)
                     {
-                        bt::Vector3 pos = geo.getPointPos(i);
+                        bt::Vector3 pos = geo->getPointPos(i);
                         pos += bt::Vector3(0, sin((pos-center).norm()*frequency), 0);
-                        geo.setPointPos(i, pos);
+                        geo->setPointPos(i, pos);
                     }
                 });
             }
@@ -48,9 +51,9 @@ void GopSineWave::cookOp(enzo::op::Context context)
                 tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency](tbb::blocked_range<ga::Offset> range){
                     for(ga::Offset i=range.begin(); i!=range.end(); ++i)
                     {
-                        bt::Vector3 pos = geo.getPointPos(i);
+                        bt::Vector3 pos = geo->getPointPos(i);
                         pos += bt::Vector3(0, sin(pos.x()*frequency), 0);
-                        geo.setPointPos(i, pos);
+                        geo->setPointPos(i, pos);
                     }
                 });
             }

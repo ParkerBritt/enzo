@@ -85,7 +85,7 @@ void PrimitiveTreeModel::setPacket(const enzo::NodePacket &packet)
     rootItem_->removeChildren(0, rootItem_->childCount());
     const int count = static_cast<int>(packet.size());
     for (int i = 0; i < count; ++i) {
-        enzo::PrimPath primPath(packet.getPrimitive(i).getPath());
+        enzo::PrimPath primPath(packet.getPrimitive(i)->getPath());
         const auto &components = primPath.components();
         PrimitiveTreeItem *current = rootItem_.get();
         for (const auto &component : components) {

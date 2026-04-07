@@ -30,8 +30,8 @@ public:
 
     GeoSheetModeButton* pointButton;
     GeoSheetModeButton* vertexButton;
+    GeoSheetModeButton* faceButton;
     GeoSheetModeButton* primitiveButton;
-    GeoSheetModeButton* globalButton;
 private:
     QHBoxLayout* mainLayout_;
     QButtonGroup modeButtonGroup_;

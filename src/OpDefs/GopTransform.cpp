@@ -37,8 +37,8 @@ void GopTransform::cookOp(enzo::op::Context context)
 
         for(unsigned int p = 0; p < packet.size(); ++p)
         {
-            geo::Primitive& geo = packet.getPrimitive(p);
-            auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P", true);
+            auto geo = packet.getPrimitive(p);
+            auto PAttr = geo->getAttribByName(ga::AttrOwner::POINT, "P", true);
             ga::AttributeHandleVector3 PAttrHandle(PAttr);
             const size_t N = PAttrHandle.getSize();
 
