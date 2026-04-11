@@ -21,7 +21,7 @@ void enzo::nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, enzo::No
     {
         throw std::runtime_error("Cannot set output packet to index > maxOutputs");
     }
-    outputPackets_[outputIndex] = std::move(packet);
+    outputPackets_[outputIndex] = std::make_shared<const enzo::NodePacket>(std::move(packet));
 }
 
 void enzo::nt::GeometryOpDef::throwError(std::string error)
@@ -51,10 +51,15 @@ unsigned int enzo::nt::GeometryOpDef::getMaxOutputs() const
 enzo::nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
 : opInfo_{opInfo}, network_{network}
 {
+    // Initialize each slot with an empty packet so consumers never see null.
     outputPackets_.resize(getMaxOutputs());
+    for(auto& slot : outputPackets_)
+    {
+        slot = std::make_shared<const enzo::NodePacket>();
+    }
 }
 
-enzo::NodePacket& enzo::nt::GeometryOpDef::getOutputPacket(unsigned outputIndex)
+std::shared_ptr<const enzo::NodePacket> enzo::nt::GeometryOpDef::getOutputPacket(unsigned outputIndex)
 {
     if(outputIndex>getMaxOutputs())
     {

@@ -209,15 +209,14 @@ void ViewportGLWidget::paintGL()
 
 void ViewportGLWidget::clearGeometry()
 {
-    enzo::NodePacket emptyPacket;
-    geometryChanged(emptyPacket);
+    geometryChanged(std::make_shared<const enzo::NodePacket>());
 }
 
-void ViewportGLWidget::geometryChanged(enzo::NodePacket& packet)
+void ViewportGLWidget::geometryChanged(std::shared_ptr<const enzo::NodePacket> packet)
 {
-    triangleMesh_->setPosBuffer(packet);
-    triangleMesh_->setIndexBuffer(packet);
+    triangleMesh_->setPosBuffer(*packet);
+    triangleMesh_->setIndexBuffer(*packet);
 
-    points_->setPoints(packet, curCamera);
-    cameraPrims_->setCameras(packet);
+    points_->setPoints(*packet, curCamera);
+    cameraPrims_->setCameras(*packet);
 }

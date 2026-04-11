@@ -126,10 +126,10 @@ void GeometrySpreadsheetPanel::clear() {
 
 void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId) { menuBar_->setNode(opId); }
 
-void GeometrySpreadsheetPanel::packetChanged(enzo::NodePacket &packet) {
-    currentPacket_ = &packet;
-    if (packet.size() > 0) {
-        primModel_->setPacket(packet);
+void GeometrySpreadsheetPanel::packetChanged(std::shared_ptr<const enzo::NodePacket> packet) {
+    currentPacket_ = std::move(packet);
+    if (currentPacket_ && currentPacket_->size() > 0) {
+        primModel_->setPacket(*currentPacket_);
         // select first primitive by default
         primView_->setCurrentIndex(primModel_->index(0, 0));
     } else {

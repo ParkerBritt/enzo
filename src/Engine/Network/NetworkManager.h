@@ -186,10 +186,10 @@ public:
     // @brief A signal emitted when the geometry to be displayed is changed
     // This is different to #displayNodeChanged because the state of geometry
     // in a node can change based on parameters or other factors.
-    boost::signals2::signal<void (enzo::NodePacket& packet)> displayGeoChanged;
+    boost::signals2::signal<void (std::shared_ptr<const enzo::NodePacket>)> displayGeoChanged;
 
     // @brief A signal emitted when the selected node's geometry is changed
-    boost::signals2::signal<void (enzo::NodePacket& packet)> selectedGeoChanged;
+    boost::signals2::signal<void (std::shared_ptr<const enzo::NodePacket>)> selectedGeoChanged;
 
     // @brief A signal emitted when the selection of nodes changes
     boost::signals2::signal<void (std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;

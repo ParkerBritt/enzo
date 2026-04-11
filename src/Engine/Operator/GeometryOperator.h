@@ -46,7 +46,7 @@ public:
      *
      * @todo Add option to force cook or cook if dirty.
      */
-    enzo::NodePacket& getOutputPacket(unsigned int outputIndex) const;
+    std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
 
     /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
     *

@@ -20,7 +20,7 @@ public:
     void unbind();
     void draw();
 
-    void setCameras(enzo::NodePacket& packet);
+    void setCameras(const enzo::NodePacket& packet);
 
 private:
     size_t instanceCount_ = 0;

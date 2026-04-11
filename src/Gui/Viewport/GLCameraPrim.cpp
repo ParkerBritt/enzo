@@ -111,14 +111,14 @@ void GLCameraPrim::initShaderProgram() {
     glDeleteShader(fs);
 }
 
-void GLCameraPrim::setCameras(enzo::NodePacket& packet) {
+void GLCameraPrim::setCameras(const enzo::NodePacket& packet) {
     std::vector<glm::mat4> models;
 
     for (size_t i = 0; i < packet.size(); ++i) {
         auto prim = packet.getPrimitive(i);
         if (prim->getType() != enzo::geo::PrimType::CAMERA) continue;
 
-        auto cam = std::static_pointer_cast<enzo::geo::Camera>(prim);
+        auto cam = std::static_pointer_cast<const enzo::geo::Camera>(prim);
         auto eigenMat = cam->getTransform();
 
         // Eigen is column-major, glm is column-major — copy directly

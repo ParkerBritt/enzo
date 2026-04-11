@@ -28,12 +28,9 @@ ViewportOverlay::ViewportOverlay()
     )");
 }
 
-void ViewportOverlay::setPacket(enzo::NodePacket& packet)
+void ViewportOverlay::setPacket(std::shared_ptr<const enzo::NodePacket> packet)
 {
     packet_ = packet;
-    for(auto prim : packet.getPrimitives(enzo::geo::PrimType::CAMERA))
-    {
-        std::cout << prim->getPath() << "\n";
-    }
+    cameraDropdownModel_->setPacket(packet_);
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <qboxlayout.h>
 #include <qwidget.h>
 #include "Gui/Viewport/ViewportGLWidget.h"
@@ -12,7 +13,7 @@ class Viewport
 {
 public:
     Viewport(QWidget *parent = nullptr);
-    void setGeometry(enzo::NodePacket& packet);
+    void setGeometry(std::shared_ptr<const enzo::NodePacket> packet);
     void clearGeometry();
 private:
     QStackedLayout* mainLayout_;

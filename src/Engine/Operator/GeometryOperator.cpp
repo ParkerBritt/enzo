@@ -84,7 +84,7 @@ void enzo::nt::GeometryOperator::cookOp(op::Context context)
     }
 }
 
-enzo::NodePacket& enzo::nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
+std::shared_ptr<const enzo::NodePacket> enzo::nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
 {
     return opDef_->getOutputPacket(outputIndex);
 }

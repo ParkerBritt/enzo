@@ -2,6 +2,7 @@
 #include <GL/glext.h>
 #include <QOpenGLWidget>
 #include <iostream>
+#include <memory>
 #include <QOpenGLFunctions_3_2_Core>
 #include "Gui/Viewport/GLCamera.h"
 #include "Gui/Viewport/GLMesh.h"
@@ -31,6 +32,6 @@ protected:
     void paintGL() override;
 
 public Q_SLOTS:
-    void geometryChanged(enzo::NodePacket& packet);
+    void geometryChanged(std::shared_ptr<const enzo::NodePacket> packet);
     void clearGeometry();
 };

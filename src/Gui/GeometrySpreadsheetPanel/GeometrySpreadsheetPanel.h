@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QSplitter>
+#include <memory>
 #include <qtreeview.h>
 #include "Engine/Types.h"
 #include "Engine/Operator/NodePacket.h"
@@ -17,7 +18,7 @@ class GeometrySpreadsheetPanel
 public:
     GeometrySpreadsheetPanel(QWidget *parent = nullptr);
 public Q_SLOTS:
-    void packetChanged(enzo::NodePacket& packet);
+    void packetChanged(std::shared_ptr<const enzo::NodePacket> packet);
     void clear();
     void setNode(enzo::nt::OpId opId);
 private:
@@ -28,7 +29,7 @@ private:
 
     AttributeSpreadsheetModel* model_;
     PrimitiveTreeModel* primModel_;
-    enzo::NodePacket* currentPacket_ = nullptr;
+    std::shared_ptr<const enzo::NodePacket> currentPacket_;
 
     QSplitter* contentSplitter_;
 

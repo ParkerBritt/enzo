@@ -43,8 +43,8 @@ public:
 
     HeMesh computeHalfEdgeMesh();
 
-    std::set<ga::Offset>::const_iterator soloPointsBegin();
-    std::set<ga::Offset>::const_iterator soloPointsEnd();
+    std::set<ga::Offset>::const_iterator soloPointsBegin() const;
+    std::set<ga::Offset>::const_iterator soloPointsEnd() const;
 
     void setPointPos(const ga::Offset offset, const bt::Vector3& pos);
     ga::Offset getPrimStartVertex(ga::Offset primOffset) const;

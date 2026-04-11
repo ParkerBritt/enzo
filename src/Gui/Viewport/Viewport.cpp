@@ -29,7 +29,7 @@ Viewport::Viewport(QWidget *parent)
     this->setLayout(mainLayout_);
 }
 
-void Viewport::setGeometry(enzo::NodePacket& packet)
+void Viewport::setGeometry(std::shared_ptr<const enzo::NodePacket> packet)
 {
     openGLWidget_->geometryChanged(packet);
     overlay_->setPacket(packet);

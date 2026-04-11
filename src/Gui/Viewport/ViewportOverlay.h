@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <memory>
 #include <qboxlayout.h>
 #include <qwidget.h>
 #include "ViewportCamerasModel.h"
@@ -11,10 +12,10 @@ class ViewportOverlay
 {
     public:
         ViewportOverlay();
-        void setPacket(enzo::NodePacket& packet);
+        void setPacket(std::shared_ptr<const enzo::NodePacket> packet);
     private:
         QVBoxLayout* mainLayout_;
         QHBoxLayout* topButtonsLayout_;
-        enzo::NodePacket packet_;
+        std::shared_ptr<const enzo::NodePacket> packet_;
         ViewportCamerasModel* cameraDropdownModel_;
 };

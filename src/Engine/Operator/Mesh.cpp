@@ -207,12 +207,12 @@ ga::Offset geo::Mesh::getNumSoloPoints() const
     return soloPoints_.size();
 }
 
-std::set<ga::Offset>::const_iterator geo::Mesh::soloPointsBegin()
+std::set<ga::Offset>::const_iterator geo::Mesh::soloPointsBegin() const
 {
     return soloPoints_.begin();
 }
 
-std::set<ga::Offset>::const_iterator geo::Mesh::soloPointsEnd()
+std::set<ga::Offset>::const_iterator geo::Mesh::soloPointsEnd() const
 {
     return soloPoints_.end();
 }

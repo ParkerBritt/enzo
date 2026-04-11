@@ -19,7 +19,7 @@ public:
                         int role = Qt::DisplayRole) const override;
     int indexFromSection(unsigned int section) const;
 
-    void primitiveChanged(std::shared_ptr<enzo::geo::Primitive> primitive);
+    void primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive);
     void setOwner(const enzo::ga::AttributeOwner owner);
     void initBuffers();
 
@@ -27,7 +27,7 @@ public:
 
 private:
     enzo::nt::OpId opId_;
-    std::shared_ptr<enzo::geo::Primitive> primitive_;
+    std::shared_ptr<const enzo::geo::Primitive> primitive_;
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;
     const int attributeColumnPadding_ = 1;

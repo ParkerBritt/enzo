@@ -26,7 +26,7 @@ enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
     const nt::OpId opId = inputConnection->getInputOpId();
     const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
     networkManager_.cookOp(opId);
-    return geoOp.getOutputPacket(inputConnection->getInputIndex()).deepCopy();
+    return geoOp.getOutputPacket(inputConnection->getInputIndex())->deepCopy();
 }
 
 bool enzo::op::Context::hasInput(unsigned int inputIndex)

@@ -56,7 +56,7 @@ void GLMesh::initBuffers()
 
 }
 
-void GLMesh::setPosBuffer(enzo::NodePacket& packet)
+void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
 {
     bind();
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -67,7 +67,7 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
     {
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
-        totalVerts += std::static_pointer_cast<enzo::geo::Mesh>(prim)->getNumVerts();
+        totalVerts += std::static_pointer_cast<const enzo::geo::Mesh>(prim)->getNumVerts();
     }
 
     vertices.resize(totalVerts);
@@ -77,7 +77,7 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
     {
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
-        auto geometry = std::static_pointer_cast<enzo::geo::Mesh>(prim);
+        auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
         const size_t numPrims = geometry->getNumPrims();
         geometry->computePrimStartVertices();
 
@@ -134,7 +134,7 @@ void GLMesh::setPosBuffer(enzo::NodePacket& packet)
     unbind();
 }
 
-void GLMesh::setIndexBuffer(enzo::NodePacket& packet)
+void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
 {
     bind();
     faceIndexData.clear();
@@ -145,7 +145,7 @@ void GLMesh::setIndexBuffer(enzo::NodePacket& packet)
     {
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
-        auto geometry = std::static_pointer_cast<enzo::geo::Mesh>(prim);
+        auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
 
         // create triangle fan from potentially ngon inputs
         for(enzo::ga::Offset primOffset=0; primOffset<geometry->getNumPrims(); ++primOffset)

@@ -88,7 +88,7 @@ void EnzoUI::connectSignals() {
             enzo::nt::OpId selectedId = selectedNodeIds.back();
             parametersPanel_->selectionChanged(selectedId);
             geometrySpreadsheetPanel_->setNode(selectedId);
-            auto &packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
+            auto packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
             geometrySpreadsheetPanel_->packetChanged(packet);
         });
 
@@ -104,9 +104,9 @@ void EnzoUI::connectSignals() {
 
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect(
-        [this](enzo::NodePacket &packet) { viewport_->setGeometry(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); });
     enzo::nt::nm().selectedGeoChanged.connect(
-        [this](enzo::NodePacket &packet) { geometrySpreadsheetPanel_->packetChanged(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) { geometrySpreadsheetPanel_->packetChanged(packet); });
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this]() {

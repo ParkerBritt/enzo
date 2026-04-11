@@ -171,8 +171,7 @@ void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
 void enzo::nt::NetworkManager::clearDisplayFlag()
 {
     displayOp_.reset();
-    enzo::NodePacket emptyPacket;
-    displayGeoChanged(emptyPacket);
+    displayGeoChanged(std::make_shared<const enzo::NodePacket>());
     displayNodeChanged(std::nullopt);
 }
 

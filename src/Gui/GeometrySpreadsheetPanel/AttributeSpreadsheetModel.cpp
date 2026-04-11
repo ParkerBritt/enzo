@@ -17,10 +17,10 @@ AttributeSpreadsheetModel::AttributeSpreadsheetModel(QObject *parent)
 
 }
 
-void AttributeSpreadsheetModel::primitiveChanged(std::shared_ptr<enzo::geo::Primitive> primitive)
+void AttributeSpreadsheetModel::primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive)
 {
     beginResetModel();
-    primitive_ = primitive;
+    primitive_ = std::move(primitive);
     initBuffers();
 
     endResetModel();

@@ -29,8 +29,8 @@ public:
 
     void init();
     void initBuffers();
-    void setPosBuffer(enzo::NodePacket& packet);
-    void setIndexBuffer(enzo::NodePacket& packet);
+    void setPosBuffer(const enzo::NodePacket& packet);
+    void setIndexBuffer(const enzo::NodePacket& packet);
     void bind();
     void unbind();
     void draw();

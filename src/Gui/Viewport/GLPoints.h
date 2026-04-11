@@ -35,7 +35,7 @@ public:
     void init();
     void initBuffers();
     void initShaderProgram();
-    void setPoints(enzo::NodePacket& packet, GLCamera& camera);
+    void setPoints(const enzo::NodePacket& packet, GLCamera& camera);
     void updatePointSize(GLCamera& camera);
     void useProgram();
     void bind();

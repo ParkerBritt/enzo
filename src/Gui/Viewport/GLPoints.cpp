@@ -56,7 +56,7 @@ void GLPoints::initBuffers()
 }
 
 
-void GLPoints::setPoints(enzo::NodePacket& packet, GLCamera& camera)
+void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
 {
     const glm::vec3 camPosGlm = camera.getPos();
     const enzo::bt::Vector3 camPos(camPosGlm.x, camPosGlm.y, camPosGlm.z);
@@ -67,7 +67,7 @@ void GLPoints::setPoints(enzo::NodePacket& packet, GLCamera& camera)
     {
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
-        auto geometry = std::static_pointer_cast<enzo::geo::Mesh>(prim);
+        auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
         const enzo::ga::Offset numPoints = geometry->getNumSoloPoints();
         const size_t baseIndex = points_.size();
         points_.resize(baseIndex + numPoints);
