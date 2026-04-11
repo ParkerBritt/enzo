@@ -2,6 +2,7 @@
 #include "Engine/Operator/Camera.h"
 #include "Engine/Types.h"
 #include <glm/ext/vector_float3.hpp>
+#include <glm/mat4x4.hpp>
 #include <iostream>
 
 // Unit rectangle wireframe vertices (GL_LINES): 4 edges of a 1x0.75 rect centered at origin
@@ -42,15 +43,17 @@ void GLCameraPrim::initBuffers() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Instance buffer for camera positions
+    // Instance buffer for model matrices (mat4 = 4 vec4 attribute slots)
     glGenBuffers(1, &instanceVbo_);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVbo_);
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
-    // location 1: instance offset (per-instance)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribDivisor(1, 1);
+    for (int i = 0; i < 4; ++i) {
+        glVertexAttribPointer(1 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                              (void*)(i * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(1 + i);
+        glVertexAttribDivisor(1 + i, 1);
+    }
 }
 
 void GLCameraPrim::initShaderProgram() {
@@ -59,11 +62,10 @@ void GLCameraPrim::initShaderProgram() {
         uniform mat4 uView;
         uniform mat4 uProj;
         layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec3 aInstanceOffset;
+        layout (location = 1) in mat4 aModel;
         void main()
         {
-            vec3 worldPos = aPos + aInstanceOffset;
-            gl_Position = uProj * uView * vec4(worldPos, 1.0);
+            gl_Position = uProj * uView * aModel * vec4(aPos, 1.0);
         }
     )";
 
@@ -110,22 +112,29 @@ void GLCameraPrim::initShaderProgram() {
 }
 
 void GLCameraPrim::setCameras(enzo::NodePacket& packet) {
-    std::vector<glm::vec3> positions;
+    std::vector<glm::mat4> models;
 
     for (size_t i = 0; i < packet.size(); ++i) {
         auto prim = packet.getPrimitive(i);
         if (prim->getType() != enzo::geo::PrimType::CAMERA) continue;
 
         auto cam = std::static_pointer_cast<enzo::geo::Camera>(prim);
-        auto p = cam->getPosition();
-        positions.push_back(glm::vec3(p.x(), p.y(), p.z()));
+        auto eigenMat = cam->getTransform();
+
+        // Eigen is column-major, glm is column-major — copy directly
+        glm::mat4 model;
+        for (int col = 0; col < 4; ++col)
+            for (int row = 0; row < 4; ++row)
+                model[col][row] = static_cast<float>(eigenMat(row, col));
+
+        models.push_back(model);
     }
 
-    instanceCount_ = positions.size();
+    instanceCount_ = models.size();
 
     glBindBuffer(GL_ARRAY_BUFFER, instanceVbo_);
-    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3),
-                 positions.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, models.size() * sizeof(glm::mat4),
+                 models.data(), GL_DYNAMIC_DRAW);
 }
 
 void GLCameraPrim::bind() { glBindVertexArray(vao); }

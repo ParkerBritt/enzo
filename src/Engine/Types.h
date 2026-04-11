@@ -36,6 +36,7 @@ namespace enzo
             listT,
             vectorT,
             boolT,
+            matrixT,
         };
         using AttrType = AttributeType;
         using AttrOwner = AttributeOwner;
@@ -66,6 +67,7 @@ namespace enzo
         using Vector2f = Eigen::Vector2f;
         using Vector3 = Eigen::Vector3d;
         using Vector4 = Eigen::Vector4d;
+        using Matrix4 = Eigen::Matrix4d;
         using String = std::string;
     }
     namespace prm

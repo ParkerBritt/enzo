@@ -3,15 +3,15 @@
 using namespace enzo;
 
 geo::Camera::Camera()
-    : posHandle_{addVector3Attribute(ga::AttributeOwner::PRIMITIVE, "P", true)}
+    : transformHandle_{addMatrix4Attribute(ga::AttributeOwner::PRIMITIVE, "transform", true)}
 {
-    posHandle_.addValue(bt::Vector3(0.0, 0.0, 0.0));
+    transformHandle_.addValue(bt::Matrix4::Identity());
     path_ = "/camera";
 }
 
 geo::Camera::Camera(const Camera& other)
     : Primitive(other),
-      posHandle_{ga::AttributeHandle<bt::Vector3>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "P", true))}
+      transformHandle_{ga::AttributeHandle<bt::Matrix4>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "transform", true))}
 {
 }
 
@@ -19,16 +19,16 @@ geo::Camera& geo::Camera::operator=(const Camera& rhs)
 {
     if (this == &rhs) return *this;
     Primitive::operator=(rhs);
-    posHandle_ = ga::AttributeHandle<bt::Vector3>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "P", true));
+    transformHandle_ = ga::AttributeHandle<bt::Matrix4>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "transform", true));
     return *this;
 }
 
-bt::Vector3 geo::Camera::getPosition() const
+bt::Matrix4 geo::Camera::getTransform() const
 {
-    return posHandle_.getValue(0);
+    return transformHandle_.getValue(0);
 }
 
-void geo::Camera::setPosition(const bt::Vector3& pos)
+void geo::Camera::setTransform(const bt::Matrix4& xform)
 {
-    posHandle_.setValue(0, pos);
+    transformHandle_.setValue(0, xform);
 }

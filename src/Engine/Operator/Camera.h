@@ -9,7 +9,7 @@ namespace enzo::geo
 * @brief Camera primitive with only primitive-level attributes.
 *
 * Unlike Mesh, Camera has no points, vertices, or faces.
-* It stores a position as a primitive attribute.
+* It stores a 4x4 transform matrix as a primitive attribute.
 */
 class Camera : public Primitive
 {
@@ -22,10 +22,10 @@ public:
     PrimType getType() const override { return PrimType::CAMERA; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Camera>(*this); }
 
-    bt::Vector3 getPosition() const;
-    void setPosition(const bt::Vector3& pos);
+    bt::Matrix4 getTransform() const;
+    void setTransform(const bt::Matrix4& xform);
 
 private:
-    ga::AttributeHandle<bt::Vector3> posHandle_;
+    ga::AttributeHandle<bt::Matrix4> transformHandle_;
 };
 }

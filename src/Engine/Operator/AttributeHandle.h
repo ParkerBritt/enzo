@@ -80,6 +80,10 @@ public:
         {
             data_=attribute->boolStore_;
         }
+        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
+        {
+            data_=attribute->matrix4Store_;
+        }
         else
         {
                 throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in AttributeHandle constructor");
@@ -211,6 +215,7 @@ using AttributeHandleInt = AttributeHandle<bt::intT>;
 using AttributeHandleFloat = AttributeHandle<bt::floatT>;
 using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
 using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
 
 template <typename T>
 /**
@@ -251,6 +256,10 @@ public:
         else if constexpr (std::is_same<enzo::bt::boolT, T>::value)
         {
             data_=attribute->boolStore_;
+        }
+        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
+        {
+            data_=attribute->matrix4Store_;
         }
         else
         {
@@ -311,6 +320,7 @@ using AttributeHandleInt = AttributeHandle<bt::intT>;
 using AttributeHandleFloat = AttributeHandle<bt::floatT>;
 using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
 using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
 
 
 }

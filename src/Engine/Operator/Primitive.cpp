@@ -65,6 +65,13 @@ ga::AttributeHandle<bt::Vector3> geo::Primitive::addVector3Attribute(ga::Attribu
     return ga::AttributeHandle<bt::Vector3>(newAttribute);
 }
 
+ga::AttributeHandle<bt::Matrix4> geo::Primitive::addMatrix4Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic)
+{
+    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::matrixT, intrinsic);
+    getAttributeStore(owner).push_back(newAttribute);
+    return ga::AttributeHandle<bt::Matrix4>(newAttribute);
+}
+
 geo::Primitive::attribVector& geo::Primitive::getAttributeStore(const ga::AttributeOwner& owner)
 {
     switch(owner)

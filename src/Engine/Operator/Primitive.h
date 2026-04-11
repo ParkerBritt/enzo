@@ -41,6 +41,7 @@ public:
     ga::AttributeHandle<bt::intT> addIntAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
     ga::AttributeHandleBool addBoolAttribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
     ga::AttributeHandle<bt::Vector3> addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
+    ga::AttributeHandle<bt::Matrix4> addMatrix4Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic=false);
 
     std::shared_ptr<ga::Attribute> getAttribByName(ga::AttributeOwner owner, std::string name, bool includeIntrinsics=false);
     const size_t getNumAttributes(const ga::AttributeOwner owner) const;

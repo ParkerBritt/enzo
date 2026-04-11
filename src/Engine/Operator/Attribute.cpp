@@ -29,6 +29,10 @@ ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsi
             boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>();
             typeSize_=1;
             break;
+        case(AttrType::matrixT):
+            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>();
+            typeSize_=16;
+            break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute constructor");
 
@@ -58,6 +62,9 @@ void ga::Attribute::resize(size_t size)
             break;
         case AttributeType::vectorT:
             vector3Store_->resize(size);
+            break;
+        case AttributeType::matrixT:
+            matrix4Store_->resize(size);
             break;
         default:
             throw std::runtime_error("type not accounted for");
@@ -96,6 +103,9 @@ ga::Attribute::Attribute(const Attribute& other)
             break;
         case(AttrType::boolT):
             boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>(*other.boolStore_);
+            break;
+        case(AttrType::matrixT):
+            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>(*other.matrix4Store_);
             break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute copy constructor");

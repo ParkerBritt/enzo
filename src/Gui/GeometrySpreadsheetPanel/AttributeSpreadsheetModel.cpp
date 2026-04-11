@@ -183,6 +183,12 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
                     const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Vector3>(attrib);
                     return attribHandle.getValue(index.row())[valueIndex];
                 }
+                case(AttributeType::matrixT):
+                {
+                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Matrix4>(attrib);
+                    const auto& mat = attribHandle.getValue(index.row());
+                    return mat(valueIndex / 4, valueIndex % 4);
+                }
                 default:
                 {
                     return "Failed";

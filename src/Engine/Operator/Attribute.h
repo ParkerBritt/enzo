@@ -100,6 +100,7 @@ namespace enzo{
             std::shared_ptr<StoreContainer<bt::floatT>> floatStore_;
             std::shared_ptr<StoreContainer<enzo::bt::Vector3>> vector3Store_;
             std::shared_ptr<StoreContainer<enzo::bt::boolT>> boolStore_;
+            std::shared_ptr<StoreContainer<enzo::bt::Matrix4>> matrix4Store_;
         };
 
 

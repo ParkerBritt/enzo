@@ -80,20 +80,20 @@ void GopGrid::cookOp(enzo::op::Context context)
 
 enzo::prm::Template GopGrid::parameterList[] =
 {
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, enzo::prm::RangeFlag::UNLOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)),
+    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, 100)),
     enzo::prm::Template(
         enzo::prm::Type::INT,
         enzo::prm::Name("rows", "Rows"),
         enzo::prm::Default(10),
         1,
-        enzo::prm::Range(1, enzo::prm::RangeFlag::LOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)
+        enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
     ),
     enzo::prm::Template(
         enzo::prm::Type::INT,
         enzo::prm::Name("columns", "Columns"),
         enzo::prm::Default(10),
         1,
-        enzo::prm::Range(1, enzo::prm::RangeFlag::LOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)
+        enzo::prm::Range(1, 100,  enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
     ),
     enzo::prm::Terminator
 };
