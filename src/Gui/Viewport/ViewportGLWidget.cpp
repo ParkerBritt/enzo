@@ -220,3 +220,29 @@ void ViewportGLWidget::geometryChanged(std::shared_ptr<const enzo::NodePacket> p
     points_->setPoints(*packet, curCamera);
     cameraPrims_->setCameras(*packet);
 }
+
+void ViewportGLWidget::setCamera(std::shared_ptr<const enzo::geo::Camera> camera)
+{
+    if (!camera) return;
+
+    auto m = camera->getTransform();
+
+    glm::vec3 pos{
+        static_cast<float>(m(0, 3)),
+        static_cast<float>(m(1, 3)),
+        static_cast<float>(m(2, 3))
+    };
+    glm::vec3 forward{
+        -static_cast<float>(m(0, 2)),
+        -static_cast<float>(m(1, 2)),
+        -static_cast<float>(m(2, 2))
+    };
+    glm::vec3 up{
+        static_cast<float>(m(0, 1)),
+        static_cast<float>(m(1, 1)),
+        static_cast<float>(m(2, 1))
+    };
+
+    curCamera.setView(pos, pos + forward, up);
+    update();
+}

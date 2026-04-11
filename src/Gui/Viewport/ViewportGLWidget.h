@@ -11,6 +11,7 @@
 #include "Gui/Viewport/GLCameraPrim.h"
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/NodePacket.h"
+#include "Engine/Operator/Camera.h"
 
 class ViewportGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_2_Core
 {
@@ -34,4 +35,5 @@ protected:
 public Q_SLOTS:
     void geometryChanged(std::shared_ptr<const enzo::NodePacket> packet);
     void clearGeometry();
+    void setCamera(std::shared_ptr<const enzo::geo::Camera> camera);
 };

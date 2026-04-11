@@ -21,6 +21,11 @@ Viewport::Viewport(QWidget *parent)
     openGLWidget_ = new ViewportGLWidget(this);
     overlay_ = new ViewportOverlay();
 
+    connect(overlay_, &ViewportOverlay::cameraSelected,
+        this, [this](std::shared_ptr<const enzo::geo::Camera> cam) {
+            openGLWidget_->setCamera(cam);
+        });
+
     mainLayout_= new QStackedLayout();
     mainLayout_->setStackingMode(QStackedLayout::StackAll);
     mainLayout_->addWidget(overlay_);
@@ -68,8 +73,9 @@ void Viewport::handleCamera(QEvent *event)
         {
             QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
             float delta = wheelEvent->angleDelta().y();
-            constexpr float mouseSpeed = 0.7; 
+            constexpr float mouseSpeed = 0.7;
             openGLWidget_->curCamera.changeRadius(-glm::sign(delta)*mouseSpeed);
+            overlay_->setFreeCam();
             break;
         }
         case QEvent::MouseMove:
@@ -89,6 +95,7 @@ void Viewport::handleCamera(QEvent *event)
                 camera.rotateAroundCenter(delta.y(),
                     camera.getRight() * glm::vec3(1.0f,0.0f,1.0f));
                 leftStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             if(middleMouseDown_)
             {
@@ -100,6 +107,7 @@ void Viewport::handleCamera(QEvent *event)
                 camera.changeCenter(up.x+right.x, up.y+right.y, up.z+right.z);
                 camera.movePos(up.x+right.x, up.y+right.y, up.z+right.z);
                 middleStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             if(rightMouseDown_)
             {
@@ -107,6 +115,7 @@ void Viewport::handleCamera(QEvent *event)
                 delta*=zoomSpeed;
                 camera.changeRadius(-delta.x()+delta.y());
                 rightStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             break;
         }

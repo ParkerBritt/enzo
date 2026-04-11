@@ -1,5 +1,10 @@
 #include "ViewportOverlay.h"
+#include "Engine/Types.h"
 #include "Gui/Viewport/ViewportCamerasModel.h"
+#include "Engine/Operator/Camera.h"
+#include "Engine/Operator/Primitive.h"
+#include "Engine/Operator/Primitive.h"
+#include <memory>
 #include <qboxlayout.h>
 #include <QComboBox>
 
@@ -8,12 +13,28 @@ ViewportOverlay::ViewportOverlay()
 {
     cameraDropdownModel_ = new ViewportCamerasModel();
 
-    QComboBox* button = new QComboBox();
-    button->setModel(cameraDropdownModel_);
+    cameraDropdown_ = new QComboBox();
+    cameraDropdown_->setModel(cameraDropdownModel_);
+
+    connect(cameraDropdown_, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, [this](int index) {
+            // Index 0 is free camera, leaves the viewport camera alone.
+            if (index <= 0) {
+                selectedCameraPath_.clear();
+                return;
+            }
+            if (!packet_) return;
+            auto cams = packet_->getPrimitives(enzo::geo::PrimType::CAMERA);
+            const int camIdx = index - 1;
+            if (camIdx < 0 || camIdx >= static_cast<int>(cams.size())) return;
+            selectedCameraPath_ = cams[camIdx]->getPath();
+            Q_EMIT cameraSelected(
+                std::static_pointer_cast<const enzo::geo::Camera>(cams[camIdx]));
+        });
 
     topButtonsLayout_ = new QHBoxLayout();
     topButtonsLayout_->addStretch();
-    topButtonsLayout_->addWidget(button);
+    topButtonsLayout_->addWidget(cameraDropdown_);
 
     mainLayout_ = new QVBoxLayout(this);
     mainLayout_->addLayout(topButtonsLayout_);
@@ -30,7 +51,29 @@ ViewportOverlay::ViewportOverlay()
 
 void ViewportOverlay::setPacket(std::shared_ptr<const enzo::NodePacket> packet)
 {
+    // The model reset below resets the dropdown to index 0 (Free Cam) and fires
+    // currentIndexChanged(0), which clears selectedCameraPath_. Save it first so
+    // we can restore the user's selection against the new packet.
+    const std::string savedPath = selectedCameraPath_;
+
     packet_ = packet;
     cameraDropdownModel_->setPacket(packet_);
+
+    if (savedPath.empty() || !packet_) return;
+
+    auto cams = packet_->getPrimitives(enzo::geo::PrimType::CAMERA);
+    for (int i = 0; i < static_cast<int>(cams.size()); ++i) {
+        if (cams[i]->getPath() == savedPath) {
+            // Triggers the lambda above, which re-emits cameraSelected with the
+            // (potentially updated) transform from the new packet.
+            cameraDropdown_->setCurrentIndex(i + 1);
+            return;
+        }
+    }
+}
+
+void ViewportOverlay::setFreeCam()
+{
+    cameraDropdown_->setCurrentIndex(0);
 }
 

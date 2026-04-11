@@ -77,6 +77,19 @@ glm::mat4 GLCamera::getViewMatrix()
     return viewMatrix_;
 }
 
+void GLCamera::setView(glm::vec3 pos, glm::vec3 center, glm::vec3 up)
+{
+    camPos_ = pos;
+    camCenter_ = center;
+    camUp_ = up;
+
+    viewMatrix_ = glm::lookAt(
+        camPos_,
+        camCenter_,
+        camUp_
+    );
+}
+
 void GLCamera::setPos(float x, float y, float z)
 {
     camPos_.x = x;

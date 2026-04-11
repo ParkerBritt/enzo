@@ -1,4 +1,5 @@
 #include "Engine/Operator/NodePacket.h"
+#include <cstddef>
 #include <stdexcept>
 
 void enzo::NodePacket::addPrimitive(std::shared_ptr<enzo::geo::Primitive> primitive)
@@ -51,3 +52,16 @@ enzo::NodePacket enzo::NodePacket::deepCopy() const
     }
     return copy;
 }
+
+std::shared_ptr<const enzo::geo::Primitive> enzo::NodePacket::getPrimAtPath(std::string &path) const
+{
+    for(auto prim : getPrimitives())
+    {
+        if(prim->getPath() == path)
+        {
+            return prim;
+        }
+    }
+    return nullptr;
+}
+
