@@ -1,5 +1,6 @@
 #include "Gui/Viewport/Viewport.h"
 #include "Gui/Viewport/GLCamera.h"
+#include "Gui/Viewport/ViewportOverlay.h"
 #include <glm/common.hpp>
 #include <qboxlayout.h>
 #include <qevent.h>
@@ -10,14 +11,19 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QEvent>
+#include <qstackedlayout.h>
 
 Viewport::Viewport(QWidget *parent)
 : Panel(parent)
 {
     setBorderColor(QColor("#3c3c3c"));
 
-    mainLayout_=new QVBoxLayout();
     openGLWidget_ = new ViewportGLWidget(this);
+    overlay_ = new ViewportOverlay();
+
+    mainLayout_= new QStackedLayout();
+    mainLayout_->setStackingMode(QStackedLayout::StackAll);
+    mainLayout_->addWidget(overlay_);
     mainLayout_->addWidget(openGLWidget_);
 
     this->setLayout(mainLayout_);
@@ -26,6 +32,7 @@ Viewport::Viewport(QWidget *parent)
 void Viewport::setGeometry(enzo::NodePacket& packet)
 {
     openGLWidget_->geometryChanged(packet);
+    overlay_->setPacket(packet);
 }
 
 void Viewport::clearGeometry()

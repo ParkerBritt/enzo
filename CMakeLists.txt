@@ -54,6 +54,7 @@ set(GUI_SOURCES
     src/Gui/Viewport/GLGrid.cpp
     src/Gui/Viewport/GLPoints.cpp
     src/Gui/Viewport/GLCameraPrim.cpp
+    src/Gui/Viewport/ViewportOverlay.cpp
     src/Gui/Network/NetworkGraphicsView.cpp
     src/Gui/Network/NetworkGraphicsScene.cpp
     src/Gui/Network/NetworkPanel.cpp

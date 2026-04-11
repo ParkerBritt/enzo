@@ -24,6 +24,19 @@ std::shared_ptr<const enzo::geo::Primitive> enzo::NodePacket::getPrimitive(unsig
     return primitives_.at(index);
 }
 
+std::vector<std::shared_ptr<enzo::geo::Primitive>> enzo::NodePacket::getPrimitives(enzo::geo::PrimType type) const
+{
+    std::vector<std::shared_ptr<enzo::geo::Primitive>> out;
+    for(const auto& prim : primitives_)
+    {
+        if(prim->getType() == type)
+        {
+            out.push_back(prim);
+        }
+    }
+    return out;
+}
+
 size_t enzo::NodePacket::size() const
 {
     return primitives_.size();

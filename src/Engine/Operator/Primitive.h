@@ -8,8 +8,6 @@
 namespace enzo::geo
 {
 
-using attributeIterator = std::vector<std::shared_ptr<ga::Attribute>>::iterator;
-
 /**
 * @class enzo::geo::Primitive
 * @brief Base class for all primitive types in the engine.
