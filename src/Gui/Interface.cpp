@@ -27,7 +27,7 @@ EnzoUI::EnzoUI() {
     setStyleSheet(R"(
     QWidget
     {
-        background-color:#1a1a1a; 
+        background-color: #1a1a1a; 
         color: rgba(255,255,255,0.8);
     }
     QSplitter::handle

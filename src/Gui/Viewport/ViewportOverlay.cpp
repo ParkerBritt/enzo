@@ -4,17 +4,58 @@
 #include "Engine/Operator/Camera.h"
 #include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/Primitive.h"
+#include <QAbstractItemView>
 #include <memory>
 #include <qboxlayout.h>
 #include <QComboBox>
+#include <QStyledItemDelegate>
 
 ViewportOverlay::ViewportOverlay()
 : QWidget()
 {
     cameraDropdownModel_ = new ViewportCamerasModel();
 
-    cameraDropdown_ = new QComboBox();
+    cameraDropdown_ = new QComboBox(this);
+    cameraDropdown_->setStyleSheet(R"(
+    QComboBox
+    {
+        background: rgba(0,0,0,0.2);
+        border: 1px solid #303030;
+        border-radius: 10px;
+        padding: 3px 15px;;
+    }
+
+    QComboBox::drop-down {
+        background: transparent;
+        width: 0px;
+    }
+
+    QComboBox QAbstractItemView
+    {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 8px;
+        border: none;
+        outline: none;
+    }
+
+    QComboBox QAbstractItemView::item
+    {
+        background: transparent;
+        border: none;
+        margin: 0px 5px;
+        padding: 4px 5px;
+        border-radius: 6px;
+    }
+    QComboBox QAbstractItemView::item:selected
+    {
+        margin: 5px;
+        background: #282828;
+        border: none;
+    }
+
+    )");
     cameraDropdown_->setModel(cameraDropdownModel_);
+    cameraDropdown_->setItemDelegate(new QStyledItemDelegate(cameraDropdown_));
 
     connect(cameraDropdown_, QOverload<int>::of(&QComboBox::currentIndexChanged),
         this, [this](int index) {
