@@ -100,18 +100,30 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5bb1bc0084b8dd130811ab06599a0e0e" id="r_a5bb1bc0084b8dd130811ab06599a0e0e"><td class="memItemLeft" align="right" valign="top"><a id="a5bb1bc0084b8dd130811ab06599a0e0e" name="a5bb1bc0084b8dd130811ab06599a0e0e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addPrimitive</b> (<a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> primitive)</td></tr>
-<tr class="separator:a5bb1bc0084b8dd130811ab06599a0e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4283b4b13705d38784006d8ea71ef34" id="r_ac4283b4b13705d38784006d8ea71ef34"><td class="memItemLeft" align="right" valign="top"><a id="ac4283b4b13705d38784006d8ea71ef34" name="ac4283b4b13705d38784006d8ea71ef34"></a>
-<a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index)</td></tr>
-<tr class="separator:ac4283b4b13705d38784006d8ea71ef34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0d3923b2e03be22324da28ada66b90d" id="r_ae0d3923b2e03be22324da28ada66b90d"><td class="memItemLeft" align="right" valign="top"><a id="ae0d3923b2e03be22324da28ada66b90d" name="ae0d3923b2e03be22324da28ada66b90d"></a>
-const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index) const</td></tr>
-<tr class="separator:ae0d3923b2e03be22324da28ada66b90d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a139acf317326ce1f7c4e615e51b1b12e" id="r_a139acf317326ce1f7c4e615e51b1b12e"><td class="memItemLeft" align="right" valign="top"><a id="a139acf317326ce1f7c4e615e51b1b12e" name="a139acf317326ce1f7c4e615e51b1b12e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addPrimitive</b> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; primitive)</td></tr>
+<tr class="separator:a139acf317326ce1f7c4e615e51b1b12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace5b910b3050e4ac90b21d89ed803eba" id="r_ace5b910b3050e4ac90b21d89ed803eba"><td class="memItemLeft" align="right" valign="top"><a id="ace5b910b3050e4ac90b21d89ed803eba" name="ace5b910b3050e4ac90b21d89ed803eba"></a>
+std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index)</td></tr>
+<tr class="separator:ace5b910b3050e4ac90b21d89ed803eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc6794f9c748f619f8fd9eafa311b0d1" id="r_acc6794f9c748f619f8fd9eafa311b0d1"><td class="memItemLeft" align="right" valign="top"><a id="acc6794f9c748f619f8fd9eafa311b0d1" name="acc6794f9c748f619f8fd9eafa311b0d1"></a>
+std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index) const</td></tr>
+<tr class="separator:acc6794f9c748f619f8fd9eafa311b0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f450626db01f5ae93fd6717fc5e2ca4" id="r_a6f450626db01f5ae93fd6717fc5e2ca4"><td class="memItemLeft" align="right" valign="top"><a id="a6f450626db01f5ae93fd6717fc5e2ca4" name="a6f450626db01f5ae93fd6717fc5e2ca4"></a>
+std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath</b> (std::string &amp;path) const</td></tr>
+<tr class="separator:a6f450626db01f5ae93fd6717fc5e2ca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace4a25a0a4901723006ee240dce29247" id="r_ace4a25a0a4901723006ee240dce29247"><td class="memItemLeft" align="right" valign="top"><a id="ace4a25a0a4901723006ee240dce29247" name="ace4a25a0a4901723006ee240dce29247"></a>
+const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> () const</td></tr>
+<tr class="separator:ace4a25a0a4901723006ee240dce29247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37c6153504a9891e3eb3d28675e56987" id="r_a37c6153504a9891e3eb3d28675e56987"><td class="memItemLeft" align="right" valign="top"><a id="a37c6153504a9891e3eb3d28675e56987" name="a37c6153504a9891e3eb3d28675e56987"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (enzo::geo::PrimType type) const</td></tr>
+<tr class="separator:a37c6153504a9891e3eb3d28675e56987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ddcc7f3e8c08271970b50e950df441" id="r_ac4ddcc7f3e8c08271970b50e950df441"><td class="memItemLeft" align="right" valign="top"><a id="ac4ddcc7f3e8c08271970b50e950df441" name="ac4ddcc7f3e8c08271970b50e950df441"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
 <tr class="separator:ac4ddcc7f3e8c08271970b50e950df441"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a775f3de7bedc99568d0b4ca7e8c257c2" id="r_a775f3de7bedc99568d0b4ca7e8c257c2"><td class="memItemLeft" align="right" valign="top"><a id="a775f3de7bedc99568d0b4ca7e8c257c2" name="a775f3de7bedc99568d0b4ca7e8c257c2"></a>
+<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a>&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopy</b> () const</td></tr>
+<tr class="separator:a775f3de7bedc99568d0b4ca7e8c257c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="NodePacket_8h_source.html">NodePacket.h</a></li>

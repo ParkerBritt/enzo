@@ -133,6 +133,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::Vector3</b
 <tr class="memitem:ae7eaffcb768e836797f7429d2542d7d1" id="r_ae7eaffcb768e836797f7429d2542d7d1"><td class="memItemLeft" align="right" valign="top"><a id="ae7eaffcb768e836797f7429d2542d7d1" name="ae7eaffcb768e836797f7429d2542d7d1"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::Vector4</b> = Eigen::Vector4d</td></tr>
 <tr class="separator:ae7eaffcb768e836797f7429d2542d7d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5539766fc4df25bd6e3b00601ff1e6c8" id="r_a5539766fc4df25bd6e3b00601ff1e6c8"><td class="memItemLeft" align="right" valign="top"><a id="a5539766fc4df25bd6e3b00601ff1e6c8" name="a5539766fc4df25bd6e3b00601ff1e6c8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::Matrix4</b> = Eigen::Matrix4d</td></tr>
+<tr class="separator:a5539766fc4df25bd6e3b00601ff1e6c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77edec8a3c9f2e710aa28c7795ffaa52" id="r_a77edec8a3c9f2e710aa28c7795ffaa52"><td class="memItemLeft" align="right" valign="top"><a id="a77edec8a3c9f2e710aa28c7795ffaa52" name="a77edec8a3c9f2e710aa28c7795ffaa52"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::String</b> = std::string</td></tr>
 <tr class="separator:a77edec8a3c9f2e710aa28c7795ffaa52"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,8 +148,8 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::nt::OpId</b> =
 Enumerations</h2></td></tr>
 <tr class="memitem:a284ac41ae9685e6eff96cdddd2a4c110" id="r_a284ac41ae9685e6eff96cdddd2a4c110"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a284ac41ae9685e6eff96cdddd2a4c110">enzo::ga::AttributeOwner</a> { <b>POINT</b>
 , <b>VERTEX</b>
+, <b>FACE</b>
 , <b>PRIMITIVE</b>
-, <b>GLOBAL</b>
  }</td></tr>
 <tr class="memdesc:a284ac41ae9685e6eff96cdddd2a4c110"><td class="mdescLeft">&#160;</td><td class="mdescRight">The segment of geometry that owns a particular attribute.  <a href="#a284ac41ae9685e6eff96cdddd2a4c110">More...</a><br /></td></tr>
 <tr class="separator:a284ac41ae9685e6eff96cdddd2a4c110"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,10 +160,15 @@ Enumerations</h2></td></tr>
 , <b>vectorT</b>
 , <br />
 &#160;&#160;<b>boolT</b>
+, <b>matrixT</b>
 <br />
  }</td></tr>
 <tr class="memdesc:a6ab89474f03231b839b5d10df296e156"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data types available to store attribute values in. <br /></td></tr>
 <tr class="separator:a6ab89474f03231b839b5d10df296e156"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40e344ca7c1a6f1ebf0056847fb79253" id="r_a40e344ca7c1a6f1ebf0056847fb79253"><td class="memItemLeft" align="right" valign="top"><a id="a40e344ca7c1a6f1ebf0056847fb79253" name="a40e344ca7c1a6f1ebf0056847fb79253"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>PrimType</b> { <b>MESH</b>
+, <b>CAMERA</b>
+ }</td></tr>
+<tr class="separator:a40e344ca7c1a6f1ebf0056847fb79253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e4b347c669dc02aa6a8f35c01e2f59a" id="r_a6e4b347c669dc02aa6a8f35c01e2f59a"><td class="memItemLeft" align="right" valign="top"><a id="a6e4b347c669dc02aa6a8f35c01e2f59a" name="a6e4b347c669dc02aa6a8f35c01e2f59a"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>Type</b> { <br />
 &#160;&#160;<b>LIST_TERMINATOR</b>
 , <b>STRING</b>
@@ -223,8 +231,8 @@ Enumerations</h2></td></tr>
 <ul>
 <li>POINT attributes are stored per point, these attributes have an value for each point.</li>
 <li>VERTEX attributes are stored per vertex, these attributes have an value for each vertex.</li>
-<li>PRIMITIVE attributes are stored per primitive, these attributes have an value for each primitive.</li>
-<li>GLOBAL attributes are stored globaly, these attributes only have one value. </li>
+<li>FACE attributes are stored per face, these attributes have an value for each face.</li>
+<li>PRIMITIVE attributes are stored per primitive object, these attributes only have one value. </li>
 </ul>
 
 </div>

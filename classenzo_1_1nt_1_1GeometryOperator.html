@@ -121,9 +121,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>cookOp</b> (<a class="el" href="classenzo_1_1op_1_1Context.html">op::Context</a> context)</td></tr>
 <tr class="memdesc:a766da344f8ca9a5639d89077465d961a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the output geometry based on the <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#af8a286880d4169cfbf348d5b9965fe3c">cookOp</a> definition in <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html" title="Abstract class used to create new operators.">nt::GeometryOpDef</a>. This is set by the <code>opInfo</code> constructor parameter. <br /></td></tr>
 <tr class="separator:a766da344f8ca9a5639d89077465d961a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30e756195da66dd45d6492c4ffb3d3e0" id="r_a30e756195da66dd45d6492c4ffb3d3e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30e756195da66dd45d6492c4ffb3d3e0">getOutputPacket</a> (unsigned int outputIndex) const</td></tr>
-<tr class="memdesc:a30e756195da66dd45d6492c4ffb3d3e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
-<tr class="separator:a30e756195da66dd45d6492c4ffb3d3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a3f0fd6676f0894040ad4064f3d30e9" id="r_a1a3f0fd6676f0894040ad4064f3d30e9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a3f0fd6676f0894040ad4064f3d30e9">getOutputPacket</a> (unsigned int outputIndex) const</td></tr>
+<tr class="memdesc:a1a3f0fd6676f0894040ad4064f3d30e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
+<tr class="separator:a1a3f0fd6676f0894040ad4064f3d30e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04d1a12d3e47565b1592538a28833df5" id="r_a04d1a12d3e47565b1592538a28833df5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04d1a12d3e47565b1592538a28833df5">addInputConnection</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; connection)</td></tr>
 <tr class="memdesc:a04d1a12d3e47565b1592538a28833df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> to one of the inputs. Replacing old connections if needed.  <br /></td></tr>
 <tr class="separator:a04d1a12d3e47565b1592538a28833df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -374,14 +374,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a30e756195da66dd45d6492c4ffb3d3e0" name="a30e756195da66dd45d6492c4ffb3d3e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30e756195da66dd45d6492c4ffb3d3e0">&#9670;&#160;</a></span>getOutputPacket()</h2>
+<a id="a1a3f0fd6676f0894040ad4064f3d30e9" name="a1a3f0fd6676f0894040ad4064f3d30e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a3f0fd6676f0894040ad4064f3d30e9">&#9670;&#160;</a></span>getOutputPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp; enzo::nt::GeometryOperator::getOutputPacket </td>
+          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt; enzo::nt::GeometryOperator::getOutputPacket </td>
           <td>(</td>
           <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span></td><td>)</td>
           <td> const</td>
