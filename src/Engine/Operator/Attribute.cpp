@@ -114,6 +114,29 @@ ga::Attribute::Attribute(const Attribute& other)
 }
 
 
+bt::Vector3 ga::Attribute::getVector3(ga::Offset offset) const
+{
+    return (*vector3Store_)[offset];
+}
+
+bt::Matrix4 ga::Attribute::getMatrix4(ga::Offset offset) const
+{
+    return (*matrix4Store_)[offset];
+}
+
+size_t ga::Attribute::getSize() const
+{
+    switch(type_)
+    {
+        case AttrType::intT:    return intStore_->size();
+        case AttrType::floatT:  return floatStore_->size();
+        case AttrType::vectorT: return vector3Store_->size();
+        case AttrType::boolT:   return boolStore_->size();
+        case AttrType::matrixT: return matrix4Store_->size();
+        default: return 0;
+    }
+}
+
 ga::AttributeType ga::Attribute::getType() const
 {
     return type_;

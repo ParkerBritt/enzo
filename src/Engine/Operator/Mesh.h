@@ -34,6 +34,10 @@ public:
 
     PrimType getType() const override { return PrimType::MESH; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Mesh>(*this); }
+    TransformClass transformType() const override { return TransformClass::POINT | TransformClass::PRIMITIVE; }
+    void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) override;
+    bool canMerge() const override { return true; }
+    void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }
 
     void addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
@@ -63,8 +67,8 @@ public:
     void computePrimStartVertices() const;
 
 protected:
-    attribVector& getAttributeStore(const ga::AttributeOwner& owner) override;
-    const attribVector& getAttributeStore(const ga::AttributeOwner& owner) const override;
+    ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) override;
+    const ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const override;
 
 private:
     void mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src);
@@ -87,8 +91,8 @@ private:
         }
     };
 
-    attribVector vertexAttributes_;
-    attribVector faceAttributes_;
+    ga::attribVector vertexAttributes_;
+    ga::attribVector faceAttributes_;
 
     std::set<ga::Offset> soloPoints_;
 

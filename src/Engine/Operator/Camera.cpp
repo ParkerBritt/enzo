@@ -32,3 +32,8 @@ void geo::Camera::setTransform(const bt::Matrix4& xform)
 {
     transformHandle_.setValue(0, xform);
 }
+
+void geo::Camera::applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) {
+    if ((transformClass & TransformClass::PRIMITIVE) == TransformClass::NONE) return;
+    setTransform(mat * getTransform());
+}
