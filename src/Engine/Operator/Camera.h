@@ -21,6 +21,8 @@ public:
 
     PrimType getType() const override { return PrimType::CAMERA; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Camera>(*this); }
+    TransformClass transformType() const override { return TransformClass::PRIMITIVE; }
+    void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) override;
 
     bt::Matrix4 getTransform() const;
     void setTransform(const bt::Matrix4& xform);

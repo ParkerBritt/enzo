@@ -34,6 +34,7 @@ add_library(${libName} SHARED
     GopSineWave.cpp
     GopOceanSurface.cpp
     GopMerge.cpp
+    GopCopyToPoints.cpp
     GopPath.cpp
     GopCamera.cpp
 )

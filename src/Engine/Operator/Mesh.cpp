@@ -3,6 +3,8 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Types.h"
 #include <memory>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/task_group.h>
 #include <stdexcept>
@@ -96,6 +98,29 @@ void geo::Mesh::mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<
             throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
 
     }
+}
+
+void geo::Mesh::applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) {
+    if ((transformClass & TransformClass::POINT) != TransformClass::NONE) {
+        const ga::Offset numPoints = getNumPoints();
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, numPoints),
+            [&](const tbb::blocked_range<size_t> &range) {
+                for (size_t i = range.begin(); i < range.end(); ++i) {
+                    const bt::Vector3 pos = posHandlePoint_.getValue(i);
+                    // w=1.0 extends to homogeneous coords so the 4x4 matrix
+                    // applies translation, rotation, and scale in one multiply
+                    const bt::Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
+                    const bt::Vector3 transformed = (mat * pos4).head<3>();
+                    posHandlePoint_.setValue(i, transformed);
+                }
+            });
+    }
+}
+
+void geo::Mesh::merge(std::shared_ptr<Primitive> other) {
+    auto otherMesh = std::dynamic_pointer_cast<Mesh>(other);
+    if (!otherMesh) throw std::runtime_error("Mesh::merge: type mismatch");
+    merge(*otherMesh);
 }
 
 void geo::Mesh::merge(Mesh& other)
@@ -366,7 +391,7 @@ bt::boolT geo::Mesh::isClosed(ga::Offset primOffset) const
     return closedHandlePrim_.getValue(primOffset);
 }
 
-geo::Mesh::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner)
+ga::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner)
 {
     switch(owner)
     {
@@ -379,7 +404,7 @@ geo::Mesh::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& 
     }
 }
 
-const geo::Mesh::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner) const
+const ga::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner) const
 {
     switch(owner)
     {
