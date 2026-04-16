@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include <optional>
 #include "Engine/Operator/Context.h"
 #include "Engine/Parameter/Parameter.h"
@@ -15,6 +16,7 @@ using namespace enzo;
 std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex)
 {
     auto& nm = nt::nm();
+    auto updateLock = nm.lockUpdates();
 
     auto& inputOp = nm.getGeoOperator(inputOpId);
     auto& outputOp = nm.getGeoOperator(outputOpId);
@@ -25,7 +27,15 @@ std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId 
     inputOp.addOutputConnection(newConnection);
 
     // set input on the lower operator
+    IC();
     outputOp.addInputConnection(newConnection);
+
+    nm.connectionCreated(newConnection);
+
+    auto cmd = std::make_unique<ChangeConnectionCommand>(
+        inputOpId, inputIndex, outputOpId, outputIndex,
+        ChangeConnectionCommand::Action::Connect);
+    nm.undoStack().push(std::move(cmd));
 
     return newConnection;
 }
@@ -42,7 +52,7 @@ void nt::GeometryOperator::initParameters()
     for(const prm::Template* t = opInfo_.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
     {
         // create parameter
-        auto parameter = std::make_shared<prm::Parameter>(*t);
+        auto parameter = std::make_shared<prm::Parameter>(*t, opId_);
         parameter->valueChanged.connect([this](){dirtyNode();});
         IC(parameter);
 
@@ -67,17 +77,21 @@ bool enzo::nt::GeometryOperator::isDirty()
 void enzo::nt::GeometryOperator::cookOp(op::Context context)
 {
     std::cout << "Cooking op: " << opId_ << "\n";
-    opDef_->cookOp(context);
-    dirty_=false;
+    if(dirty_)
+    {
+        opDef_->cookOp(context);
+        dirty_=false;
+    }
 }
 
-geo::Geometry& enzo::nt::GeometryOperator::getOutputGeo(unsigned outputIndex) const
+std::shared_ptr<const enzo::NodePacket> enzo::nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
 {
-    return opDef_->getOutputGeo(outputIndex);
+    return opDef_->getOutputPacket(outputIndex);
 }
 
 void nt::GeometryOperator::addInputConnection(std::shared_ptr<nt::GeometryConnection> newConnection)
 {
+    IC();
     // delete previous input
     std::shared_ptr<nt::GeometryConnection> previousConection = nullptr;
     IC();
@@ -112,7 +126,7 @@ void nt::GeometryOperator::removeInputConnection(unsigned int inputIndex)
 {
     for(auto it=inputConnections_.begin(); it!=inputConnections_.end(); ++it)
     {
-        if((*it)->getInputIndex() == inputIndex)
+        if((*it)->getOutputIndex() == inputIndex)
         {
             inputConnections_.erase(it);
             dirtyNode();
@@ -126,18 +140,22 @@ void nt::GeometryOperator::removeInputConnection(unsigned int inputIndex)
 
 void nt::GeometryOperator::removeOutputConnection(const nt::GeometryConnection* connectionPtr)
 {
+    IC();
+    IC(outputConnections_.size());
     for(auto it=outputConnections_.begin(); it!=outputConnections_.end(); ++it)
     {
         const nt::GeometryConnection* otherConnectionPtr = (*it).get();
-        if(connectionPtr == otherConnectionPtr)
+        IC(*connectionPtr);
+        if(*connectionPtr == *otherConnectionPtr)
         {
             outputConnections_.erase(it);
             dirtyNode();
             std::cout << "removing output connection\n";
+            IC(outputConnections_.size());
             return;
         }
     }
-    std::cerr << "Couldn't remove output connection\n";
+    std::cerr << "-------\nERROR: Couldn't remove output connection\nFailed to find: " << *connectionPtr << " in outputConnections size: " << outputConnections_.size() << "\n-------\n";
 
 }
 
@@ -155,7 +173,7 @@ std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string par
 
 }
 
-std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const
+std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const
 {
     return {inputConnections_.begin(), inputConnections_.end()};
 }
@@ -166,31 +184,31 @@ std::vector<std::weak_ptr<prm::Parameter>> nt::GeometryOperator::getParameters()
 
 std::string nt::GeometryOperator::getLabel()
 {
-    return getTypeName();
+    return opInfo_.displayName; 
 }
 
 
-std::vector<std::weak_ptr<const nt::GeometryConnection>> nt::GeometryOperator::getOutputConnections() const
+std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getOutputConnections() const
 {
     return {outputConnections_.begin(), outputConnections_.end()};
 }
 
 std::string nt::GeometryOperator::getTypeName()
 {
-    return opInfo_.displayName; 
+    return opInfo_.internalName;
 }
 
 
-std::optional<std::reference_wrapper<const nt::GeometryConnection>> nt::GeometryOperator::getInputConnection(size_t index) const
+std::weak_ptr<nt::GeometryConnection> nt::GeometryOperator::getInputConnection(size_t index) const
 {
-    for(auto it=inputConnections_.begin(); it!=inputConnections_.end();)
+    for(auto it=inputConnections_.begin(); it!=inputConnections_.end(); ++it)
     {
         if((*it)->getOutputIndex()==index)
         {
-            return std::cref(**it);
+            return *it;
         }
     }
-    return std::nullopt;
+    return {};
 }
 
 

@@ -1,18 +1,24 @@
 #pragma once
+#include <memory>
 #include <qboxlayout.h>
 #include <qwidget.h>
 #include "Gui/Viewport/ViewportGLWidget.h"
+#include "Gui/Panels/Panel.h"
+#include "Engine/Operator/NodePacket.h"
+#include "Gui/Viewport/ViewportOverlay.h"
+#include <QStackedLayout>
 
 class Viewport
-: public QWidget
+: public Panel
 {
 public:
-    Viewport(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    void setGeometry(enzo::geo::Geometry& geometry);
+    Viewport(QWidget *parent = nullptr);
+    void setGeometry(std::shared_ptr<const enzo::NodePacket> packet);
+    void clearGeometry();
 private:
-    QVBoxLayout* mainLayout_;
+    QStackedLayout* mainLayout_;
     ViewportGLWidget* openGLWidget_;
-    void resizeEvent(QResizeEvent *event) override;
+    ViewportOverlay* overlay_;
     bool event(QEvent *event) override;
     Qt::Key cameraMod_ = Qt::Key_Space;
     void handleCamera(QEvent *event);

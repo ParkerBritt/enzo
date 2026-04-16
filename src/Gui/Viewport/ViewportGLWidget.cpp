@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <qtimer.h>
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Mesh.h"
 
 void ViewportGLWidget::initializeGL()
 {
@@ -21,10 +21,11 @@ void ViewportGLWidget::initializeGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_MULTISAMPLE);
 
-    enzo::geo::Geometry geo = enzo::geo::Geometry();
+    enzo::geo::Mesh geo = enzo::geo::Mesh();
     triangleMesh_ = std::make_unique<GLMesh>();
     gridMesh_ = std::make_unique<GLGrid>();
     points_ = std::make_unique<GLPoints>();
+    cameraPrims_ = std::make_unique<GLCameraPrim>();
 
     QSurfaceFormat fmt = context()->format();
     std::cout << "format: " << (fmt.renderableType() == QSurfaceFormat::OpenGLES ? "GLES" : "Desktop") << "\n";
@@ -156,13 +157,6 @@ void ViewportGLWidget::paintGL()
     );
 
 
-    gridMesh_->useProgram();
-    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
-    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
-
-
-    gridMesh_->draw();
-
     glUseProgram(shaderProgram);
     GLint projMLoc = glGetUniformLocation(shaderProgram, "uProj");
     glUniformMatrix4fv(projMLoc, 1, GL_FALSE, glm::value_ptr(projMatrix));
@@ -177,10 +171,20 @@ void ViewportGLWidget::paintGL()
     points_->updatePointSize(curCamera);
     glUniformMatrix4fv(glGetUniformLocation(points_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
     curCamera.setUniform(glGetUniformLocation(points_->shaderProgram, "uView"));
-    
+
     glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraRight"), 1, glm::value_ptr(curCamera.getRight()));
     glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraUp"), 1, glm::value_ptr(curCamera.getUp()));
     points_->draw();
+
+    cameraPrims_->useProgram();
+    glUniformMatrix4fv(glGetUniformLocation(cameraPrims_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    curCamera.setUniform(glGetUniformLocation(cameraPrims_->shaderProgram, "uView"));
+    cameraPrims_->draw();
+
+    gridMesh_->useProgram();
+    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
+    gridMesh_->draw();
 
 
 }
@@ -203,14 +207,42 @@ void ViewportGLWidget::paintGL()
 //     return mesh; 
 // }
 
-void ViewportGLWidget::geometryChanged(enzo::geo::Geometry& geometry)
+void ViewportGLWidget::clearGeometry()
 {
-    using namespace enzo;
-    std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P");
-    ga::AttributeHandleVector3 PAttrHandle = ga::AttributeHandleVector3(PAttr);
+    geometryChanged(std::make_shared<const enzo::NodePacket>());
+}
 
-    triangleMesh_->setPosBuffer(geometry);
-    triangleMesh_->setIndexBuffer(geometry);
+void ViewportGLWidget::geometryChanged(std::shared_ptr<const enzo::NodePacket> packet)
+{
+    triangleMesh_->setPosBuffer(*packet);
+    triangleMesh_->setIndexBuffer(*packet);
 
-    points_->setPoints(geometry, curCamera);
+    points_->setPoints(*packet, curCamera);
+    cameraPrims_->setCameras(*packet);
+}
+
+void ViewportGLWidget::setCamera(std::shared_ptr<const enzo::geo::Camera> camera)
+{
+    if (!camera) return;
+
+    auto m = camera->getTransform();
+
+    glm::vec3 pos{
+        static_cast<float>(m(0, 3)),
+        static_cast<float>(m(1, 3)),
+        static_cast<float>(m(2, 3))
+    };
+    glm::vec3 forward{
+        -static_cast<float>(m(0, 2)),
+        -static_cast<float>(m(1, 2)),
+        -static_cast<float>(m(2, 2))
+    };
+    glm::vec3 up{
+        static_cast<float>(m(0, 1)),
+        static_cast<float>(m(1, 1)),
+        static_cast<float>(m(2, 1))
+    };
+
+    curCamera.setView(pos, pos + forward, up);
+    update();
 }

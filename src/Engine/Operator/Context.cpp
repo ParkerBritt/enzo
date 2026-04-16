@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -14,26 +15,24 @@ enzo::op::Context::Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networ
 
 }
 
-enzo::geo::Geometry enzo::op::Context::cloneInputGeo(unsigned int inputIndex)
+enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
 {
-    // TODO: implement
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::vector<std::weak_ptr<const nt::GeometryConnection>> inputConnections = selfOp.getInputConnections();
-    if(inputConnections.size()==0)
+    auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
+    if(!inputConnection)
     {
-        std::cout << "no input\n";
-        return enzo::geo::Geometry();
+        return enzo::NodePacket();
     }
-    auto inputConnection = inputConnections.at(inputIndex);
-    if(auto inputConnectionSP = inputConnection.lock())
-    {
-        const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(inputConnectionSP->getInputOpId());
-        return geoOp.getOutputGeo(inputConnectionSP->getInputIndex());
-    }
-    else
-    {
-        throw std::runtime_error("Connection weak ptr doesn't exist");
-    }
+    const nt::OpId opId = inputConnection->getInputOpId();
+    const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
+    networkManager_.cookOp(opId);
+    return geoOp.getOutputPacket(inputConnection->getInputIndex())->deepCopy();
+}
+
+bool enzo::op::Context::hasInput(unsigned int inputIndex)
+{
+    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    return !selfOp.getInputConnection(inputIndex).expired();
 }
 
 // TODO: cache value

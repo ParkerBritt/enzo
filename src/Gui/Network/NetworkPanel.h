@@ -13,6 +13,7 @@
 #include "Gui/Network/NodeGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
 #include "Gui/Network/FloatingEdgeGraphic.h"
+#include "Gui/Panels/Panel.h"
 #include <iostream>
 #include <QPointer>
 #include <unordered_map>
@@ -20,7 +21,7 @@
 #include "Gui/Network/TabMenu.h"
 
 class NetworkPanel
-: public QWidget
+: public Panel
 {
 public:
     NetworkPanel(QWidget* parent = nullptr);
@@ -31,9 +32,13 @@ public:
     enum class State
     {
         DEFAULT,
+        MOUSE_DOWN_NODE,
         MOVING_NODE
     };
-    NodeGraphic* createNode(enzo::op::OpInfo opInfo);
+    void createNode(enzo::op::OpInfo opInfo);
+    void onOperatorCreated(enzo::nt::OpId opId);
+    void onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection);
+    void clearNetwork();
 
 private:
     QLayout* mainLayout_;
@@ -153,7 +158,6 @@ private:
 
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     bool focusNextPrevChild(bool) override;

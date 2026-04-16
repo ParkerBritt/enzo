@@ -1,4 +1,6 @@
 #include "Gui/Parameters/BoolSwitchParm.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <qnamespace.h>
 #include <qpushbutton.h>
 #include <QPainter>
@@ -10,6 +12,7 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> par
     setFixedWidth(40);
     parameter_ = parameter;
     setCheckable(true);
+    setFocusPolicy(Qt::NoFocus);
 
     setProperty("class", "BoolSwitchParm");
     setStyleSheet(R"(
@@ -27,15 +30,34 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> par
         switchXEnd_=width() - 20 - 4;
         switchColor_= toggled ? switchColorOn_ : switchColorOff_;
         switchX_= toggled ? switchXEnd_ : 0;
+
+        valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
+            syncFromParameter();
+        });
     }
     connect(this, &QPushButton::toggled, this, &BoolSwitchParm::onToggle);
 
 }
 
-void enzo::ui::BoolSwitchParm::onToggle(bool checked)
-{
-    animateSwitch(checked);
-    setValue(checked);
+void enzo::ui::BoolSwitchParm::syncFromParameter() {
+    if (auto parameterShared = parameter_.lock()) {
+        bool toggled = parameterShared->evalInt();
+        blockSignals(true);
+        setChecked(toggled);
+        blockSignals(false);
+        animateSwitch(toggled);
+    }
+}
+
+void enzo::ui::BoolSwitchParm::onToggle(bool checked) {
+    if (auto parameterShared = parameter_.lock()) {
+        auto before = parameterShared->getValues();
+        parameterShared->setInt(checked);
+        auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
+            parameterShared->getOpId(), parameterShared->getName(), before,
+            parameterShared->getValues());
+        enzo::nt::nm().undoStack().push(std::move(cmd));
+    }
 }
 
 
@@ -52,12 +74,6 @@ void enzo::ui::BoolSwitchParm::paintEvent(QPaintEvent* event)
     constexpr int borderRadius = 7;
     constexpr int margin = 2;
     painter.drawRoundedRect(QRectF(bgRect.left()+margin+switchX_, bgRect.top()+margin, 20, bgRect.height()-margin*2), borderRadius, borderRadius);
-}
-
-void enzo::ui::BoolSwitchParm::setValue(bt::intT value)
-{
-    setChecked(value);
-    valueChanged(value);
 }
 
 void enzo::ui::BoolSwitchParm::animateSwitch(bool checked)

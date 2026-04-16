@@ -44,7 +44,7 @@ namespace enzo{
             * @param type Attribute data type that values will be stored in.
             *
             */
-            Attribute(std::string name, ga::AttributeType type);
+            Attribute(std::string name, ga::AttributeType type, bool intrinsic=false);
             Attribute(const Attribute& other);
             /**
             * @brief Returns the attribute type this attribute stores.
@@ -60,6 +60,13 @@ namespace enzo{
             unsigned int getTypeSize() const;
 
             /**
+            * @brief Returns whether the attribute is intrinsic
+            *
+            * An intrinsic attribute is an inherent property of the geometry created with the geometry automatically and cannot be deleted.
+            */
+            bool isIntrinsic() const;
+
+            /**
             *  @brief Changes the number of elements stored
             */
             void resize(size_t size);
@@ -73,12 +80,13 @@ namespace enzo{
         private:
             // private attributes are attributes that are hidden from the user
             // for internal use
-            bool private_=false;
+            // bool private_=false;
             // hidden attributes are user accessible attributes that the user may
             // or may want to use
-            bool hidden_=false;
+            // bool hidden_=false;
             // allows the user to read the attribute but not modify it
-            bool readOnly_=false;
+            // bool readOnly_=false;
+            bool intrinsic_=false;
 
             ga::AttributeType type_;
             unsigned int typeSize_=1;
@@ -92,6 +100,7 @@ namespace enzo{
             std::shared_ptr<StoreContainer<bt::floatT>> floatStore_;
             std::shared_ptr<StoreContainer<enzo::bt::Vector3>> vector3Store_;
             std::shared_ptr<StoreContainer<enzo::bt::boolT>> boolStore_;
+            std::shared_ptr<StoreContainer<enzo::bt::Matrix4>> matrix4Store_;
         };
 
 

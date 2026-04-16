@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Types.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/NodePacket.h"
 
 namespace enzo::nt
 {
@@ -20,7 +20,8 @@ class Context
 {
 public:
     Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
-    enzo::geo::Geometry cloneInputGeo(unsigned int inputIndex);
+    enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
+    bool hasInput(unsigned int inputIndex);
     bt::floatT evalFloatParm(const char* parmName, const unsigned int index=0) const;
     bt::intT evalIntParm(const char* parmName, const unsigned int index=0) const;
     bt::boolT evalBoolParm(const char* parmName, const unsigned int index=0) const;

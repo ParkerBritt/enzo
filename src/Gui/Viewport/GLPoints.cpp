@@ -62,25 +62,35 @@ void GLPoints::initBuffers()
 }
 
 
-void GLPoints::setPoints(enzo::geo::Geometry& geometry, GLCamera& camera)
+void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
 {
-    const enzo::ga::Offset numPoints =  geometry.getNumSoloPoints();
     const glm::vec3 camPosGlm = camera.getPos();
     const enzo::bt::Vector3 camPos(camPosGlm.x, camPosGlm.y, camPosGlm.z);
 
-    points_ = std::vector<Point>(numPoints);
+    points_.clear();
 
-    std::vector<enzo::ga::Offset> soloPoints = {geometry.soloPointsBegin(), geometry.soloPointsEnd()};
-
-    tbb::parallel_for(tbb::blocked_range<enzo::ga::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::ga::Offset> range)
+    for(size_t pi = 0; pi < packet.size(); ++pi)
     {
-        for(enzo::ga::Offset i=range.begin(); i<range.end(); ++i)
+        auto prim = packet.getPrimitive(pi);
+        if(prim->getType() != enzo::geo::PrimType::MESH) continue;
+        auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
+        const enzo::ga::Offset numPoints = geometry->getNumSoloPoints();
+        const size_t baseIndex = points_.size();
+        points_.resize(baseIndex + numPoints);
+
+        std::vector<enzo::ga::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
+
+        tbb::parallel_for(tbb::blocked_range<enzo::ga::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::ga::Offset> range)
         {
-            const enzo::ga::Offset ptOffset = soloPoints[i];
-            const enzo::bt::Vector3 pos = geometry.getPointPos(ptOffset);
-            points_[i] = {glm::vec3(pos.x(), pos.y(), pos.z()), static_cast<float>((pos-camPos).norm())*0.005f};
-        }
-    });
+            for(enzo::ga::Offset i=range.begin(); i<range.end(); ++i)
+            {
+                const enzo::ga::Offset ptOffset = soloPoints[i];
+                const enzo::bt::Vector3 pos = geometry->getPointPos(ptOffset);
+                points_[baseIndex + i] = {glm::vec3(pos.x(), pos.y(), pos.z()), static_cast<float>((pos-camPos).norm())*0.005f};
+            }
+        });
+    }
+
     pointCount = points_.size();
 
     glBindBuffer(GL_ARRAY_BUFFER, pointDataBuffer_);

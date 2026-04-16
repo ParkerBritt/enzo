@@ -37,6 +37,17 @@ public:
     * @param outputOpIndex The input socket number of @p outputOpId in which data flows to.
     */
     GeometryConnection(enzo::nt::OpId inputOpId, unsigned int inputOpIndex, enzo::nt::OpId outputOpId, unsigned int outputOpIndex);
+
+    bool operator==(const enzo::nt::GeometryConnection& other) const
+    {
+        return (
+            getInputOpId()==other.getInputOpId() &&
+            getOutputOpId()==other.getOutputOpId() &&
+            getInputIndex()==other.getInputIndex() &&
+            getOutputIndex()==other.getOutputIndex()
+        );
+    }
+
     
     /// @brief Returns the [Operator ID](@ref OpId) of the connection input (where data flows from).
     enzo::nt::OpId getInputOpId() const;

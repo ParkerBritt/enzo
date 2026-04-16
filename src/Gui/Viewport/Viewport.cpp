@@ -1,5 +1,6 @@
 #include "Gui/Viewport/Viewport.h"
 #include "Gui/Viewport/GLCamera.h"
+#include "Gui/Viewport/ViewportOverlay.h"
 #include <glm/common.hpp>
 #include <qboxlayout.h>
 #include <qevent.h>
@@ -7,31 +8,41 @@
 #include <qpushbutton.h>
 #include <iostream>
 #include <QTimer>
+#include <QPainter>
 #include <QPainterPath>
 #include <QEvent>
+#include <qstackedlayout.h>
 
-Viewport::Viewport(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
+Viewport::Viewport(QWidget *parent)
+: Panel(parent)
 {
-    mainLayout_=new QVBoxLayout();
+    setBorderColor(QColor("#3c3c3c"));
+
     openGLWidget_ = new ViewportGLWidget(this);
+    overlay_ = new ViewportOverlay();
+
+    connect(overlay_, &ViewportOverlay::cameraSelected,
+        this, [this](std::shared_ptr<const enzo::geo::Camera> cam) {
+            openGLWidget_->setCamera(cam);
+        });
+
+    mainLayout_= new QStackedLayout();
+    mainLayout_->setStackingMode(QStackedLayout::StackAll);
+    mainLayout_->addWidget(overlay_);
     mainLayout_->addWidget(openGLWidget_);
 
     this->setLayout(mainLayout_);
 }
 
-void Viewport::setGeometry(enzo::geo::Geometry& geometry)
+void Viewport::setGeometry(std::shared_ptr<const enzo::NodePacket> packet)
 {
-    openGLWidget_->geometryChanged(geometry);
+    openGLWidget_->geometryChanged(packet);
+    overlay_->setPacket(packet);
 }
 
-void Viewport::resizeEvent(QResizeEvent *event)
+void Viewport::clearGeometry()
 {
-    QPainterPath path;
-    constexpr float radius = 10;
-    path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
-    QRegion region = QRegion(path.toFillPolygon().toPolygon());
-    this->setMask(region);
+    openGLWidget_->clearGeometry();
 }
 
 bool Viewport::event(QEvent *event)
@@ -62,8 +73,9 @@ void Viewport::handleCamera(QEvent *event)
         {
             QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
             float delta = wheelEvent->angleDelta().y();
-            constexpr float mouseSpeed = 0.7; 
+            constexpr float mouseSpeed = 0.7;
             openGLWidget_->curCamera.changeRadius(-glm::sign(delta)*mouseSpeed);
+            overlay_->setFreeCam();
             break;
         }
         case QEvent::MouseMove:
@@ -83,6 +95,7 @@ void Viewport::handleCamera(QEvent *event)
                 camera.rotateAroundCenter(delta.y(),
                     camera.getRight() * glm::vec3(1.0f,0.0f,1.0f));
                 leftStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             if(middleMouseDown_)
             {
@@ -94,6 +107,7 @@ void Viewport::handleCamera(QEvent *event)
                 camera.changeCenter(up.x+right.x, up.y+right.y, up.z+right.z);
                 camera.movePos(up.x+right.x, up.y+right.y, up.z+right.z);
                 middleStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             if(rightMouseDown_)
             {
@@ -101,6 +115,7 @@ void Viewport::handleCamera(QEvent *event)
                 delta*=zoomSpeed;
                 camera.changeRadius(-delta.x()+delta.y());
                 rightStartPos_=mousePos;
+                overlay_->setFreeCam();
             }
             break;
         }

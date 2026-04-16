@@ -1,9 +1,13 @@
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Network/UpdateLock.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/OpInfo.h"
+#include "Engine/UndoRedo/MoveNodeCommand.h"
+#include "Engine/UndoRedo/DeleteNodeCommand.h"
+#include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/Types.h"
 #include <iostream>
 #include <memory>
@@ -13,39 +17,119 @@
 #include <string>
 #include "icecream.hpp"
 
-enzo::nt::OpId enzo::nt::NetworkManager::addOperator(op::OpInfo opInfo)
+enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::Vector2f position)
 {
 
-    maxOpId_++;
+    OpId opId = ++maxOpId_;
+    std::string typeName = opInfo.internalName;
+
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
+    newOp->setPosition(position);
     newOp->nodeDirtied.connect(
         [this](nt::OpId opId, bool dirtyDependents)
         {
-            if(dirtyDependents)
-            {
-                std::vector<OpId> dependentIds = getDependentsGraph(opId);
-                for(OpId dependentId : dependentIds)
-                {
-                    // dirty node
-                    enzo::nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
-                    std::cout << "Manager dirtying id: " << dependentId << "\n";
-                    dependentOp.dirtyNode(false);
-
-                    // cook display op
-                    if(getDisplayOp().has_value() && getDisplayOp().value()==dependentId)
-                    {
-                        cookOp(dependentId);
-                        displayGeoChanged(dependentOp.getOutputGeo(0));
-                    }
-                }
-            }
+            onNodeDirtied(opId, dirtyDependents);
 
         });
-    gopStore_.emplace(maxOpId_, std::move(newOp));
+    gopStore_.emplace(opId, std::move(newOp));
 
-    return maxOpId_;
+    operatorCreated(opId);
+
+    auto cmd = std::make_unique<CreateNodeCommand>(opId);
+    undoStack_.push(std::move(cmd));
+
+    return opId;
 }
 
+
+void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos, bool skipUndo)
+{
+    bt::Vector2f oldPos = getGeoOperator(opId).getPosition();
+    getGeoOperator(opId).setPosition(newPos);
+
+    if(!skipUndo)
+    {
+        auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
+        undoStack_.push(std::move(cmd));
+    }
+
+    nodePositionChanged(opId, newPos);
+}
+
+void enzo::nt::NetworkManager::deleteNode(OpId opId)
+{
+    if(!isValidOp(opId)) return;
+
+    auto cmd = std::make_unique<DeleteNodeCommand>(opId);
+    undoStack_.push(std::move(cmd));
+
+    removeOperator(opId);
+}
+
+void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
+{
+    std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
+    newOp->nodeDirtied.connect(
+        [this](nt::OpId opId, bool dirtyDependents)
+        {
+            onNodeDirtied(opId, dirtyDependents);
+        });
+    gopStore_.emplace(opId, std::move(newOp));
+
+    if(opId > maxOpId_) maxOpId_ = opId;
+
+    operatorCreated(opId);
+}
+
+void enzo::nt::NetworkManager::removeOperator(OpId opId)
+{
+    if(!isValidOp(opId)) return;
+
+    auto updateLock = lockUpdates();
+
+    GeometryOperator& op = getGeoOperator(opId);
+
+    // Remove all connections (collect first to avoid modifying vectors while iterating)
+    {
+        auto inputConns = op.getInputConnections();
+        for(auto& weakConn : inputConns)
+        {
+            if(auto conn = weakConn.lock())
+            {
+                // Use const_cast because remove() is non-const but we only have const weak_ptrs
+                const_cast<GeometryConnection&>(*conn).remove();
+            }
+        }
+
+        auto outputConns = op.getOutputConnections();
+        for(auto& weakConn : outputConns)
+        {
+            if(auto conn = weakConn.lock())
+            {
+                const_cast<GeometryConnection&>(*conn).remove();
+            }
+        }
+    }
+
+    // Clear display if this was the display node
+    if(displayOp_.has_value() && displayOp_.value() == opId)
+    {
+        displayOp_.reset();
+    }
+
+    // Remove from selection
+    auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
+    if(selIt != selectedNodes_.end())
+    {
+        selectedNodes_.erase(selIt);
+        selectedNodesChanged(selectedNodes_);
+    }
+
+    // Signal before erasing so listeners can still query the operator
+    operatorRemoved(opId);
+
+    gopStore_.erase(opId);
+}
 
 enzo::nt::NetworkManager& enzo::nt::NetworkManager::getInstance()
 {
@@ -76,12 +160,19 @@ bool enzo::nt::NetworkManager::isValidOp(nt::OpId opId)
 void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
 {
     displayOp_=opId;
-    
+
     cookOp(opId);
 
     enzo::nt::GeometryOperator& displayOp = getGeoOperator(opId);
-    displayGeoChanged(displayOp.getOutputGeo(0));
+    displayGeoChanged(displayOp.getOutputPacket(0));
     displayNodeChanged(opId);
+}
+
+void enzo::nt::NetworkManager::clearDisplayFlag()
+{
+    displayOp_.reset();
+    displayGeoChanged(std::make_shared<const enzo::NodePacket>());
+    displayNodeChanged(std::nullopt);
 }
 
 void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
@@ -120,9 +211,62 @@ void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool ad
 
 }
 
+enzo::nt::UpdateLock enzo::nt::NetworkManager::lockUpdates()
+{
+    return UpdateLock();
+}
+
+void enzo::nt::NetworkManager::update()
+{
+    // cook display op
+    if(getDisplayOp().has_value())
+    {
+
+        const OpId displayOpId = getDisplayOp().value();
+        cookOp(displayOpId);
+
+        auto& displayOp = getGeoOperator(displayOpId);
+        displayGeoChanged(displayOp.getOutputPacket(0));
+    }
+
+    // cook selected nodes and notify spreadsheet
+    for(OpId selectedId : selectedNodes_)
+    {
+        cookOp(selectedId);
+        auto& selectedOp = getGeoOperator(selectedId);
+        selectedGeoChanged(selectedOp.getOutputPacket(0));
+    }
+}
+
+
 const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
 {
     return selectedNodes_;
+}
+
+void enzo::nt::NetworkManager::setSelectedNodes(std::vector<enzo::nt::OpId> opIds)
+{
+    selectedNodes_.clear();
+    for(OpId opId : opIds)
+    {
+        if(isValidOp(opId))
+        {
+            selectedNodes_.push_back(opId);
+            cookOp(opId);
+        }
+    }
+    selectedNodesChanged(selectedNodes_);
+}
+
+void enzo::nt::NetworkManager::clear()
+{
+    gopStore_.clear();
+    selectedNodes_.clear();
+    maxOpId_ = 0;
+    displayOp_.reset();
+    undoStack_.clear();
+    selectedNodesChanged(selectedNodes_);
+    networkCleared();
 }
 
 void enzo::nt::NetworkManager::cookOp(enzo::nt::OpId opId)
@@ -197,6 +341,28 @@ std::optional<enzo::nt::OpId> enzo::nt::NetworkManager::getDisplayOp()
 {
     return displayOp_;
 }
+
+void enzo::nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
+{
+    if(dirtyDependents)
+    {
+        std::vector<OpId> dependentIds = getDependentsGraph(opId);
+        for(OpId dependentId : dependentIds)
+        {
+            // dirty node
+            enzo::nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
+            std::cout << "Manager dirtying id: " << dependentId << "\n";
+            dependentOp.dirtyNode(false);
+
+        }
+
+        if(nt::UpdateLock::isUnlocked())
+        {
+            update();
+        }
+    }
+}
+
 
 #ifdef UNIT_TEST
 void enzo::nt::NetworkManager::_reset()

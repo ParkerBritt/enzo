@@ -52,7 +52,9 @@ public:
     */
     AttributeHandle(std::shared_ptr<Attribute> attribute)
     {
+        if(attribute == nullptr) throw std::runtime_error("Cannot pass empty pointer to AttributeHandle constructor");
         type_ = attribute->getType();
+        name_ = attribute->getName();
         // get attribute data pointer
         // TODO: check types match
         // TODO: add the other types
@@ -78,6 +80,10 @@ public:
         {
             data_=attribute->boolStore_;
         }
+        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
+        {
+            data_=attribute->matrix4Store_;
+        }
         else
         {
                 throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in AttributeHandle constructor");
@@ -97,18 +103,41 @@ public:
     }
 
 
+    // /**
+    // * @brief Reserves more space in the attribute to add new elements
+    // *
+    // * This is important when adding many elements to the attribute as automatic resizing is expensive.
+    // *
+    // * @param newCap The new maximum number of elements the attribute can hold before needing to automatically allocate more.
+    // *
+    // */
+    // void reserve(std::size_t newCap)
+    // {
+    //     data_->reserve(newCap);
+    // }
+
     /**
-    * @brief Reserves more space in the attribute to add new elements
+    * @brief Resizes more space in the attribute to add new elements
     *
-    * This is important when adding many elements to the attribute as automatic resizing is expensive.
+    * Resizes the container to contain count elements, does nothing if count == size().
+    * 
+    * If the current size is greater than count, the container is reduced to its first count elements.
+    * 
+    * If the current size is less than count, then:
+    * 
+    * 1) Additional default-inserted elements are appended.
+    * 2) Additional copies of value are appended.
+    * 
+    * @important This is important when adding many elements to the attribute as automatic resizing is expensive.
     *
     * @param newCap The new maximum number of elements the attribute can hold before needing to automatically allocate more.
     *
     */
-    void reserve(std::size_t newCap)
+    void resize(std::size_t newSize)
     {
-        data_->reserve(newCap);
+        data_->resize(newSize);
     }
+
 
     // TODO: replace with iterator
     /**
@@ -140,6 +169,7 @@ public:
     */
     T getValue(size_t offset) const
     {
+        if(offset >= data_->size()) throw std::out_of_range("Cannot get offset: " + std::to_string(offset) + " from size: " + std::to_string(data_->size()) + " for attribute: " + name_);
         return (*data_)[offset];
     }
 
@@ -173,7 +203,7 @@ private:
     // allows the user to read the attributeHandle but not modify it
     bool readOnly_=false;
 
-    std::string name_="";
+    std::string name_;
 
     std::shared_ptr<StoreContainer<T>> data_;
 
@@ -185,6 +215,7 @@ using AttributeHandleInt = AttributeHandle<bt::intT>;
 using AttributeHandleFloat = AttributeHandle<bt::floatT>;
 using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
 using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
 
 template <typename T>
 /**
@@ -200,6 +231,7 @@ public:
     AttributeHandleRO(std::shared_ptr<const Attribute> attribute)
     {
         type_ = attribute->getType();
+        name_ = attribute->getName();
         // get attribute data pointer
         // TODO: check types match
         // TODO: add the other types
@@ -225,6 +257,10 @@ public:
         {
             data_=attribute->boolStore_;
         }
+        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
+        {
+            data_=attribute->matrix4Store_;
+        }
         else
         {
                 throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in AttributeHandle constructor");
@@ -245,11 +281,13 @@ public:
     }
 
     /// @copydoc AttributeHandle::getValue
-    T getValue(size_t pos) const
+    T getValue(size_t offset) const
     {
         // TODO:protect against invalid positions
         // TODO: cast types
-        return (*data_)[pos];
+        // TODO: consider removing range check for faster reads
+        if(offset >= data_->size()) throw std::out_of_range("Cannot get offset: " + std::to_string(offset) + " from size: " + std::to_string(data_->size()) + " for attribute: " + name_);
+        return (*data_)[offset];
     }
 
     /// @copydoc AttributeHandle::getName
@@ -270,7 +308,7 @@ private:
     // allows the user to read the attributeHandle but not modify it
     bool readOnly_=false;
 
-    std::string name_="";
+    std::string name_;
 
     std::shared_ptr<StoreContainer<T>> data_;
 
@@ -282,6 +320,7 @@ using AttributeHandleInt = AttributeHandle<bt::intT>;
 using AttributeHandleFloat = AttributeHandle<bt::floatT>;
 using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
 using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
 
 
 }

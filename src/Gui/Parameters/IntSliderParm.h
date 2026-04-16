@@ -1,48 +1,26 @@
 #pragma once
 #include "Engine/Types.h"
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLabel>
+#include "Gui/Parameters/SliderParmBase.h"
 #include <QPen>
-#include "Engine/Parameter/Parameter.h"
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class IntSliderParm
-: public QWidget
-{
+class IntSliderParm : public SliderParmBase {
     Q_OBJECT
-public:
-    IntSliderParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    void setValue(bt::intT value);
+  public:
+    IntSliderParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr,
+                  Qt::WindowFlags f = Qt::WindowFlags());
 
-Q_SIGNALS:
-    void valueChanged(bt::intT value); 
+  protected:
+    void paintEvent(QPaintEvent *event) override;
+    void syncFromParameter() override;
+    void applyValue(float normalizedValue) override;
 
-private:
-
-    QVBoxLayout* mainLayout_;
-    QLabel* valueLabel_;
+  private:
     bt::intT value_;
-    bool clampMin_;
-    bool clampMax_;
-    bt::intT minValue_;
-    bt::intT maxValue_;
-
-    std::weak_ptr<prm::Parameter> parameter_;
-
     QPen notchPen_;
     static constexpr int notchWidth = 2;
-
     void setValueImpl(bt::intT value);
-
-protected:
-void paintEvent(QPaintEvent *event) override;
-void mouseMoveEvent(QMouseEvent *event) override;
-void mousePressEvent(QMouseEvent *event) override;
-
 };
 
-}
-
+} // namespace enzo::ui

@@ -1,4 +1,5 @@
 #include "OpDefs/GopGrid.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
 #include <cmath>
@@ -20,7 +21,8 @@ void GopGrid::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Geometry geo;
+        NodePacket packet;
+        auto geo = std::make_shared<geo::Mesh>();
         bt::floatT width = context.evalFloatParm("size", 0);
         bt::floatT height = context.evalFloatParm("size", 1);
 
@@ -28,7 +30,8 @@ void GopGrid::cookOp(enzo::op::Context context)
         const bt::intT rows = context.evalIntParm("rows");
         if(columns<=0 || rows<=0)
         {
-            setOutputGeometry(0, geo);
+            packet.addPrimitive(std::move(geo));
+            setOutputPacket(0, packet);
             return;
         }
         
@@ -44,7 +47,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 const bt::floatT x = i/columnDivisor*width-centerOffsetX;
                 const bt::floatT z = j/rowDivisor*height-centerOffsetY;
-                geo.addPoint(bt::Vector3(x, 0, z));
+                geo->addPoint(bt::Vector3(x, 0, z));
             }
         }
 
@@ -55,7 +58,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 const int endOffset = (i+1)%rows==0;
                 const ga::Offset startPt = i+endOffset; 
-                geo.addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
+                geo->addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
             }
         }
         else
@@ -65,31 +68,32 @@ void GopGrid::cookOp(enzo::op::Context context)
             for(int i=0;i<iterationLimit;i++)
             {
                 const ga::Offset startPt = i; 
-                geo.addFace({startPt,startPt+1}, false);
+                geo->addFace({startPt,startPt+1}, false);
             }
         }
 
-        setOutputGeometry(0, geo);
+        packet.addPrimitive(std::move(geo));
+        setOutputPacket(0, packet);
     }
 
 }
 
 enzo::prm::Template GopGrid::parameterList[] =
 {
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, enzo::prm::RangeFlag::UNLOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)),
+    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, 100)),
     enzo::prm::Template(
         enzo::prm::Type::INT,
         enzo::prm::Name("rows", "Rows"),
         enzo::prm::Default(10),
         1,
-        enzo::prm::Range(1, enzo::prm::RangeFlag::LOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)
+        enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
     ),
     enzo::prm::Template(
         enzo::prm::Type::INT,
         enzo::prm::Name("columns", "Columns"),
         enzo::prm::Default(10),
         1,
-        enzo::prm::Range(1, enzo::prm::RangeFlag::LOCKED, 100, enzo::prm::RangeFlag::UNLOCKED)
+        enzo::prm::Range(1, 100,  enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
     ),
     enzo::prm::Terminator
 };

@@ -1,7 +1,7 @@
-#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
+#include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Types.h"
 #include <icecream.hpp>
 #include <memory>
@@ -11,33 +11,39 @@
 #include <QBrush>
 
 
-GeometrySpreadsheetModel::GeometrySpreadsheetModel(QObject *parent)
+AttributeSpreadsheetModel::AttributeSpreadsheetModel(QObject *parent)
 : QAbstractListModel(parent)
 {
 
 }
 
-void GeometrySpreadsheetModel::geometryChanged(enzo::geo::Geometry& geometry)
+void AttributeSpreadsheetModel::primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive)
 {
     beginResetModel();
-    geometry_ = geometry;
+    primitive_ = std::move(primitive);
     initBuffers();
 
     endResetModel();
 }
 
-void GeometrySpreadsheetModel::initBuffers()
+void AttributeSpreadsheetModel::clear()
 {
-    // get sizes
-    const auto attribCount = geometry_.getNumAttributes(attributeOwner_);
+    primitiveChanged(nullptr);
+}
 
+void AttributeSpreadsheetModel::initBuffers()
+{
     attribSizes_.clear();
     sectionAttribMap_.clear();
+
+    if(!primitive_) return;
+
+    const auto attribCount = primitive_->getNumAttributes(attributeOwner_);
     attribSizes_.reserve(attribCount);
 
     for(size_t i=0; i<attribCount; ++i)
     {
-        if(auto attrib = geometry_.getAttributeByIndex(attributeOwner_, i).lock())
+        if(auto attrib = primitive_->getAttributeByIndex(attributeOwner_, i).lock())
         {
             const auto size = attrib->getTypeSize();
             attribSizes_.push_back(size);
@@ -53,7 +59,7 @@ void GeometrySpreadsheetModel::initBuffers()
 }
 
 
-void GeometrySpreadsheetModel::setOwner(const enzo::ga::AttributeOwner owner)
+void AttributeSpreadsheetModel::setOwner(const enzo::ga::AttributeOwner owner)
 {
     beginResetModel();
     attributeOwner_ = owner;
@@ -61,32 +67,39 @@ void GeometrySpreadsheetModel::setOwner(const enzo::ga::AttributeOwner owner)
     endResetModel();
 }
 
-int GeometrySpreadsheetModel::rowCount(const QModelIndex &parent) const
+int AttributeSpreadsheetModel::rowCount(const QModelIndex &parent) const
 {
+    if(!primitive_) return 0;
+
     switch(attributeOwner_)
     {
         case enzo::ga::AttributeOwner::POINT:
         {
-            return geometry_.getNumPoints();
+            if(primitive_->hasPoints()) return primitive_->getNumPoints();
+            return 0;
         }
         case enzo::ga::AttributeOwner::VERTEX:
+        case enzo::ga::AttributeOwner::FACE:
         {
-            return geometry_.getNumVerts();
+            if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
+            {
+                if(attributeOwner_ == enzo::ga::AttributeOwner::VERTEX)
+                    return mesh->getNumVerts();
+                else
+                    return mesh->getNumPrims();
+            }
+            return 0;
         }
         case enzo::ga::AttributeOwner::PRIMITIVE:
-        {
-            return geometry_.getNumPrims();
-        }
-        case enzo::ga::AttributeOwner::GLOBAL:
         {
             return 1;
         }
 
     }
-    return 1;
+    return 0;
 }
 
-int GeometrySpreadsheetModel::columnCount(const QModelIndex &parent) const
+int AttributeSpreadsheetModel::columnCount(const QModelIndex &parent) const
 {
 
     int columnCount = attributeColumnPadding_; // first column is for indices
@@ -100,18 +113,12 @@ int GeometrySpreadsheetModel::columnCount(const QModelIndex &parent) const
 
 
 
-QVariant GeometrySpreadsheetModel::data(const QModelIndex &index, int role) const
+QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || !primitive_)
     {
         return QVariant();
     }
-
-    // TODO: reimplement check
-    // if (index.row() >= geometry_.getNumPoints())
-    // {
-    //     return QVariant();
-    // }
 
     if(role == Qt::BackgroundRole && index.column()==0)
     {
@@ -126,27 +133,30 @@ QVariant GeometrySpreadsheetModel::data(const QModelIndex &index, int role) cons
             switch(attributeOwner_)
             {
                 case enzo::ga::AttributeOwner::POINT:
-                case enzo::ga::AttributeOwner::PRIMITIVE:
+                case enzo::ga::AttributeOwner::FACE:
                 {
                     return index.row();
                 }
                 case enzo::ga::AttributeOwner::VERTEX:
                 {
-                    const enzo::ga::Offset primOffset = geometry_.getVertexPrim(index.row());
-                    const enzo::ga::Offset startVert = geometry_.getPrimStartVertex(primOffset);
-                    const enzo::ga::Offset vertexNumber = index.row()-startVert;
-                    return QString::fromStdString(std::to_string(primOffset)+":"+std::to_string(vertexNumber));
-
+                    if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
+                    {
+                        const enzo::ga::Offset primOffset = mesh->getVertexPrim(index.row());
+                        const enzo::ga::Offset startVert = mesh->getPrimStartVertex(primOffset);
+                        const enzo::ga::Offset vertexNumber = index.row()-startVert;
+                        return QString::fromStdString(std::to_string(primOffset)+":"+std::to_string(vertexNumber));
+                    }
+                    return index.row();
                 }
-                case enzo::ga::AttributeOwner::GLOBAL:
+                case enzo::ga::AttributeOwner::PRIMITIVE:
                 {
-                    return "global";
+                    return "primitive";
                 }
 
             }
         }
         int attributeIndex = indexFromSection(index.column()-attributeColumnPadding_);
-        if(std::shared_ptr<const enzo::ga::Attribute> attrib = geometry_.getAttributeByIndex(attributeOwner_, attributeIndex).lock())
+        if(std::shared_ptr<const enzo::ga::Attribute> attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
         {
             const unsigned int valueIndex = index.column()-attributeIndex-attributeColumnPadding_;
             using namespace enzo::ga;
@@ -173,6 +183,12 @@ QVariant GeometrySpreadsheetModel::data(const QModelIndex &index, int role) cons
                     const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Vector3>(attrib);
                     return attribHandle.getValue(index.row())[valueIndex];
                 }
+                case(AttributeType::matrixT):
+                {
+                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Matrix4>(attrib);
+                    const auto& mat = attribHandle.getValue(index.row());
+                    return mat(valueIndex / 4, valueIndex % 4);
+                }
                 default:
                 {
                     return "Failed";
@@ -185,7 +201,6 @@ QVariant GeometrySpreadsheetModel::data(const QModelIndex &index, int role) cons
         {
             throw std::runtime_error("Couldn't lock attribute");
         }
-        // return geometry_.getPointPos(index.row()).x();
     }
     else
     {
@@ -193,7 +208,7 @@ QVariant GeometrySpreadsheetModel::data(const QModelIndex &index, int role) cons
     }
 }
 
-int GeometrySpreadsheetModel::indexFromSection(unsigned int section) const
+int AttributeSpreadsheetModel::indexFromSection(unsigned int section) const
 {
     if(section>=sectionAttribMap_.size())
     {
@@ -203,7 +218,7 @@ int GeometrySpreadsheetModel::indexFromSection(unsigned int section) const
 }
 
 
-QVariant GeometrySpreadsheetModel::headerData(int section, Qt::Orientation orientation,
+QVariant AttributeSpreadsheetModel::headerData(int section, Qt::Orientation orientation,
                                      int role) const
 {
     if (role != Qt::DisplayRole)
@@ -212,8 +227,9 @@ QVariant GeometrySpreadsheetModel::headerData(int section, Qt::Orientation orien
     if (orientation == Qt::Horizontal)
     {
         if(section==0) return "Index";
+        if(!primitive_) return QVariant();
         auto attributeIndex = indexFromSection(section-attributeColumnPadding_);
-        if(auto attrib = geometry_.getAttributeByIndex(attributeOwner_, attributeIndex).lock())
+        if(auto attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
         {
             if(attribSizes_[attributeIndex]>1)
             {

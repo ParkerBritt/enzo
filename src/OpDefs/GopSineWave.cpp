@@ -1,4 +1,5 @@
 #include "OpDefs/GopSineWave.h"
+#include "Engine/Operator/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
 #include <cmath>
@@ -21,36 +22,44 @@ void GopSineWave::cookOp(enzo::op::Context context)
 
     if(outputRequested(0))
     {
-        geo::Geometry geo = context.cloneInputGeo(0);
-        
-        const ga::Offset pointCount = geo.getNumPoints();
+        NodePacket packet = context.cloneInputPacket(0);
+
         const bt::floatT frequency = context.evalFloatParm("frequency");
         const bool radial = context.evalBoolParm("radial");
-        if(radial)
+
+        for(size_t p = 0; p < packet.size(); ++p)
         {
-            const bt::Vector3 center(context.evalFloatParm("center", 0), context.evalFloatParm("center", 1), context.evalFloatParm("center", 2));
-            tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency, center](tbb::blocked_range<ga::Offset> range){
-                for(ga::Offset i=range.begin(); i!=range.end(); ++i)
-                {
-                    bt::Vector3 pos = geo.getPointPos(i);
-                    pos += bt::Vector3(0, sin((pos-center).norm()*frequency), 0);
-                    geo.setPointPos(i, pos);
-                }
-            });
-        }
-        else
-        {
-            tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency] (tbb::blocked_range<ga::Offset> range){
-                for(ga::Offset i=range.begin(); i!=range.end(); ++i)
-                {
-                    bt::Vector3 pos = geo.getPointPos(i);
-                    pos += bt::Vector3(0, sin(pos.x()*frequency), 0);
-                    geo.setPointPos(i, pos);
-                }
-            });
+            auto prim = packet.getPrimitive(p);
+            if(prim->getType() != geo::PrimType::MESH) continue;
+            auto geo = std::static_pointer_cast<geo::Mesh>(prim);
+            const ga::Offset pointCount = geo->getNumPoints();
+
+            if(radial)
+            {
+                const bt::Vector3 center(context.evalFloatParm("center", 0), context.evalFloatParm("center", 1), context.evalFloatParm("center", 2));
+                tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency, center](tbb::blocked_range<ga::Offset> range){
+                    for(ga::Offset i=range.begin(); i!=range.end(); ++i)
+                    {
+                        bt::Vector3 pos = geo->getPointPos(i);
+                        pos += bt::Vector3(0, sin((pos-center).norm()*frequency), 0);
+                        geo->setPointPos(i, pos);
+                    }
+                });
+            }
+            else
+            {
+                tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency](tbb::blocked_range<ga::Offset> range){
+                    for(ga::Offset i=range.begin(); i!=range.end(); ++i)
+                    {
+                        bt::Vector3 pos = geo->getPointPos(i);
+                        pos += bt::Vector3(0, sin(pos.x()*frequency), 0);
+                        geo->setPointPos(i, pos);
+                    }
+                });
+            }
         }
 
-        setOutputGeometry(0, geo);
+        setOutputPacket(0, packet);
     }
 
 }

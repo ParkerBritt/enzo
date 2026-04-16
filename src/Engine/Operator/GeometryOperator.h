@@ -2,6 +2,7 @@
 #include "Engine/Operator/GeometryConnection.h"
 #include "Engine/Operator/OpInfo.h"
 #include "Engine/Operator/GeometryOpDef.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Types.h"
 #include <functional>
@@ -45,7 +46,7 @@ public:
      *
      * @todo Add option to force cook or cook if dirty.
      */
-    geo::Geometry& getOutputGeo(unsigned int outputIndex) const;
+    std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
 
     /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
     *
@@ -91,7 +92,7 @@ public:
     * Connections returned by this function are weak pointers to indicate
     * ownership belongs to the node/network and can be modified or deleted at any time.
     */
-    std::vector<std::weak_ptr<const GeometryConnection>> getInputConnections() const;
+    std::vector<std::weak_ptr<GeometryConnection>> getInputConnections() const;
 
     /**
     * @brief Returns a vector containing weak pointers for all output connections.
@@ -99,14 +100,14 @@ public:
     * Connections returned by this function are weak pointers to indicate
     * ownership belongs to the node/network and can be modified or deleted at any time.
     */
-    std::vector<std::weak_ptr<const GeometryConnection>> getOutputConnections() const;
+    std::vector<std::weak_ptr<GeometryConnection>> getOutputConnections() const;
 
     /**
     * @brief Returns an optional connection from a specific input index.
     *
     * @returns Nullopt if the connection doesn't exist.
     */
-    std::optional<std::reference_wrapper<const GeometryConnection>> getInputConnection(size_t index) const;
+    std::weak_ptr<GeometryConnection> getInputConnection(size_t index) const;
 
     /// @brief Returns all parameters belonging to this node.
     std::vector<std::weak_ptr<prm::Parameter>> getParameters();
@@ -151,6 +152,11 @@ public:
     /// @brief Returns the number of available outputs the node provides.
     unsigned int getMaxOutputs() const;
 
+    /// @brief Returns the node's position in the network graph.
+    bt::Vector2f getPosition() const { return position_; }
+    /// @brief Sets the node's position in the network graph.
+    void setPosition(bt::Vector2f pos) { position_ = pos; }
+
     /// @brief A signal emitted when the node is dirtied. This will usually notify the NetworkManager
     boost::signals2::signal<void (nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
 
@@ -164,6 +170,7 @@ private:
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;
+    bt::Vector2f position_{0.f, 0.f};
     bool dirty_ = true;
 };
 }

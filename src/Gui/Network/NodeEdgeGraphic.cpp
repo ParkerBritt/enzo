@@ -157,21 +157,37 @@ void NodeEdgeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 void NodeEdgeGraphic::remove(bool full)
 {
+    if(removed_)
+    {
+        std::cerr << "WARNING: avoiding double edge graphic deletion\n";
+    }
+    removed_ = true;
+    IC();
     // TODO: possible memory leak
     // these probably aren't necessary but i'm trying to fix a bug
 
+    IC();
     if(connection_.expired())
     {
         return;
     }
+    IC();
 
-    prepareGeometryChange();
-    update();
-    scene()->update();
+    IC();
+    // prepareGeometryChange();
+    IC();
+    // update();
+    IC();
+    // scene()->update();
+    IC();
 
+    IC();
     scene()->removeItem(this);
+    IC();
     socket1_->removeEdge(this);
+    IC();
     socket2_->removeEdge(this);
+    IC();
 
     if(full)
     {
@@ -182,4 +198,5 @@ void NodeEdgeGraphic::remove(bool full)
             connectionShared->remove();
         }
     }
+    IC();
 }

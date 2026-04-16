@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <qpushbutton.h>
 #include <QPropertyAnimation>
-#include <icecream.hpp>
+#include <boost/signals2/connection.hpp>
 
 namespace enzo::ui
 {
@@ -26,8 +26,9 @@ private:
     QColor switchColorOn_=QColor("#B3B3B3");
     QColor switchColor_;
 
-    void setValue(bt::intT);
     void onToggle(bool checked);
+    void syncFromParameter();
+    boost::signals2::scoped_connection valueChangedConnection_;
 
     qreal switchX() const { return switchX_; }
     void setSwitchX(qreal x) { switchX_ = x; update(); }
@@ -39,7 +40,5 @@ protected:
 
 private Q_SLOTS:
     void animateSwitch(bool checked);
-Q_SIGNALS:
-    void valueChanged(bt::intT value); 
 };
 }

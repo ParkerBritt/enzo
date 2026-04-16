@@ -16,7 +16,11 @@ set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(ENGINE_SOURCES
     src/Engine/Operator/Attribute.cpp
-    src/Engine/Operator/Geometry.cpp
+    src/Engine/Operator/Primitive.cpp
+    src/Engine/Operator/Mesh.cpp
+    src/Engine/Operator/Camera.cpp
+    src/Engine/Operator/PrimPath.cpp
+    src/Engine/Operator/NodePacket.cpp
     src/Engine/Operator/GeometryOperator.cpp
     src/Engine/Operator/GeometryConnection.cpp
     src/Engine/Operator/GeometryOpDef.cpp
@@ -28,6 +32,9 @@ set(ENGINE_SOURCES
     src/Engine/Parameter/Range.cpp
     src/Engine/Parameter/PrmName.cpp
     src/Engine/Network/NetworkManager.cpp
+    src/Engine/Network/UpdateLock.cpp
+    src/Engine/UndoRedo/UndoStack.cpp
+    src/Engine/Serializer/Serializer.cpp
 )
 
 set(GUI_SOURCES
@@ -37,13 +44,17 @@ set(GUI_SOURCES
     src/Gui/UtilWidgets/Splitter.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
-    src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.cpp
+    src/Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
+    src/Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.cpp
+    src/Gui/GeometrySpreadsheetPanel/PrimitiveTreeItem.cpp
     src/Gui/Viewport/Viewport.cpp
     src/Gui/Viewport/ViewportGLWidget.cpp
     src/Gui/Viewport/GLCamera.cpp
     src/Gui/Viewport/GLMesh.cpp
     src/Gui/Viewport/GLGrid.cpp
     src/Gui/Viewport/GLPoints.cpp
+    src/Gui/Viewport/GLCameraPrim.cpp
+    src/Gui/Viewport/ViewportOverlay.cpp
     src/Gui/Network/NetworkGraphicsView.cpp
     src/Gui/Network/NetworkGraphicsScene.cpp
     src/Gui/Network/NetworkPanel.cpp
@@ -55,15 +66,20 @@ set(GUI_SOURCES
     src/Gui/Network/NodeIconGraphic.cpp
     src/Gui/Network/TabMenu.cpp
     src/Gui/ParametersPanel/ParametersPanel.cpp
+    src/Gui/Parameters/SliderParmBase.cpp
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
     src/Gui/Parameters/FormParm.cpp
     src/Gui/Parameters/StringParm.cpp
+    src/Gui/HeaderBar/HeaderBar.cpp
+    src/Gui/Panels/Panel.cpp
+    src/Gui/Panels/CornerOverlay.cpp
 )
 set(ENGINE_INCLUDE_DIRECTORIES
     src
     extern/icecream-cpp/include
+    extern/cereal/include
 )
 
 
@@ -101,8 +117,8 @@ set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake
 
 set(CPACK_GENERATOR "RPM;TGZ")
 
-set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin)
-set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib)
+set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
+set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
 
 
 set_target_properties(${AppExec} PROPERTIES
@@ -119,6 +135,18 @@ install(TARGETS ${AppExec}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
     # COMPONENT "runtimes"
+)
+
+# desktop integration (Flatpak / Linux desktop)
+install(FILES flatpak/org.enzosoftware.Enzo.desktop
+    DESTINATION share/applications
+)
+install(FILES flatpak/org.enzosoftware.Enzo.metainfo.xml
+    DESTINATION share/metainfo
+)
+install(FILES static/icons/icon-main-white-square.svg
+    DESTINATION share/icons/hicolor/scalable/apps
+    RENAME org.enzosoftware.Enzo.svg
 )
 
 # install(TARGETS ${AppExec}
@@ -180,40 +208,43 @@ target_include_directories(${AppExec} PUBLIC
 add_subdirectory(src/OpDefs)
 
 # tests
-Include(FetchContent)
+option(ENZO_BUILD_TESTS "Build tests and benchmarks" ON)
+if(ENZO_BUILD_TESTS)
+    Include(FetchContent)
 
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.8.1 # or a later release
-)
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG        v3.8.1 # or a later release
+    )
 
-FetchContent_MakeAvailable(Catch2)
+    FetchContent_MakeAvailable(Catch2)
 
-add_executable(${TestExec}
-    ${ENGINE_SOURCES}
-    tests/main-tests.cpp
-    tests/OperatorTests.cpp
-    tests/NetworkTests.cpp
-)
-target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
-target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
-target_include_directories(${TestExec} PUBLIC
-    ${ENGINE_INCLUDE_DIRECTORIES}
-    ${BOOST_INCLUDE_DIRS}
-)
-target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+    add_executable(${TestExec}
+        ${ENGINE_SOURCES}
+        tests/main-tests.cpp
+        tests/OperatorTests.cpp
+        tests/NetworkTests.cpp
+    )
+    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
+    target_include_directories(${TestExec} PUBLIC
+        ${ENGINE_INCLUDE_DIRECTORIES}
+        ${BOOST_INCLUDE_DIRS}
+    )
+    target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 
-# benchmarks
-add_executable(${BenchExec}
-    ${ENGINE_SOURCES}
+    # benchmarks
+    add_executable(${BenchExec}
+        ${ENGINE_SOURCES}
 
-    tests/Benchmarks.cpp
-)
-target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
-target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
-target_include_directories(${BenchExec} PUBLIC 
-    ${ENGINE_INCLUDE_DIRECTORIES}
-)
-target_compile_definitions(${BenchExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+        tests/Benchmarks.cpp
+    )
+    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
+    target_include_directories(${BenchExec} PUBLIC
+        ${ENGINE_INCLUDE_DIRECTORIES}
+    )
+    target_compile_definitions(${BenchExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+endif()
 

@@ -1,8 +1,10 @@
 #pragma once
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/NodePacket.h"
 #include "Engine/Operator/Context.h"
 #include "Engine/Types.h"
 #include <boost/config.hpp>
+#include <memory>
+#include <vector>
 #include "Engine/Operator/OpInfo.h"
 
 
@@ -47,14 +49,14 @@ public:
     virtual void cookOp(op::Context context) = 0;
 
     /**
-     * @brief Returns the current output geometry.
+     * @brief Returns the current output geometry as a shared pointer.
      *
      * For use by the runtime Node
      * Does not force a cook.
      *
      * @todo move to friend class Node
      */
-    geo::Geometry& getOutputGeo(unsigned outputIndex);
+    std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned outputIndex);
 
     /**
     * @brief Stops the cook and displays an error. Use inside the #cookOp function.
@@ -69,15 +71,14 @@ public:
     /// @brief Returns the number of available outputs the node provides. Set by op::OpInfo when registering the operator.
     unsigned int getMaxOutputs() const;
 private:
-    std::vector<enzo::geo::Geometry> outputGeometry_;
+    std::vector<std::shared_ptr<const enzo::NodePacket>> outputPackets_;
 
 protected:
     const op::OpInfo opInfo_;
     nt::NetworkManager* network_;
     bool outputRequested(unsigned int outputIndex);
-
     // TODO: std::move geometry instead of copying
-    void setOutputGeometry(unsigned int outputIndex, enzo::geo::Geometry geometry);
+    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
 };
 
 using opConstructor = GeometryOpDef* (*)(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);

@@ -34,7 +34,7 @@ TEST_CASE_METHOD(NMReset, "network fixture separation start")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::OpId newOpId = nm.addOperator(testOpInfo);
+    nt::OpId newOpId = nm.createOperator(testOpInfo);
     REQUIRE(newOpId==1);
     REQUIRE(nm.isValidOp(1));
     
@@ -54,8 +54,8 @@ TEST_CASE_METHOD(NMReset, "network")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::OpId newOpId = nm.addOperator(testOpInfo);
-    nt::OpId newOpId2 = nm.addOperator(testOpInfo);
+    nt::OpId newOpId = nm.createOperator(testOpInfo);
+    nt::OpId newOpId2 = nm.createOperator(testOpInfo);
 
     REQUIRE(nm.isValidOp(newOpId));
     if(nm.isValidOp(newOpId))
@@ -79,13 +79,13 @@ TEST_CASE_METHOD(NMReset, "reset")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::OpId newOpId = nm.addOperator(testOpInfo);
+    nt::OpId newOpId = nm.createOperator(testOpInfo);
 
     nm._reset();
 
     REQUIRE_FALSE(nm.isValidOp(newOpId));
 
-    nt::OpId newOpId2 = nm.addOperator(testOpInfo);
+    nt::OpId newOpId2 = nm.createOperator(testOpInfo);
     REQUIRE(nm.isValidOp(newOpId2));
 
 

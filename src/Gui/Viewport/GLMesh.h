@@ -9,7 +9,8 @@
 
 #include <QOpenGLFunctions_3_2_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Mesh.h"
+#include "Engine/Operator/NodePacket.h"
 
 struct Vertex
 {
@@ -34,8 +35,8 @@ public:
 
     void init();
     void initBuffers();
-    void setPosBuffer(enzo::geo::Geometry& geometry);
-    void setIndexBuffer(enzo::geo::Geometry& geometry);
+    void setPosBuffer(const enzo::NodePacket& packet);
+    void setIndexBuffer(const enzo::NodePacket& packet);
     void bind();
     void unbind();
     void draw();

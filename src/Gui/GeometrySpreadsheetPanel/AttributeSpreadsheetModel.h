@@ -2,15 +2,16 @@
 
 #include <QAbstractListModel>
 #include "Engine/Types.h"
-#include "Engine/Operator/Geometry.h"
+#include "Engine/Operator/Mesh.h"
 
-class GeometrySpreadsheetModel : public QAbstractListModel
+class AttributeSpreadsheetModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    GeometrySpreadsheetModel(QObject *parent = nullptr);
+    AttributeSpreadsheetModel(QObject *parent = nullptr);
 
+    void clear();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -18,7 +19,7 @@ public:
                         int role = Qt::DisplayRole) const override;
     int indexFromSection(unsigned int section) const;
 
-    void geometryChanged(enzo::geo::Geometry& geometry);
+    void primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive);
     void setOwner(const enzo::ga::AttributeOwner owner);
     void initBuffers();
 
@@ -26,7 +27,7 @@ public:
 
 private:
     enzo::nt::OpId opId_;
-    enzo::geo::Geometry geometry_;
+    std::shared_ptr<const enzo::geo::Primitive> primitive_;
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;
     const int attributeColumnPadding_ = 1;

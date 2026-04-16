@@ -7,8 +7,8 @@
 using namespace enzo;
 
 
-ga::Attribute::Attribute(std::string name, ga::AttributeType type)
-: name_{name}, type_{type}
+ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic)
+: name_{name}, type_{type}, intrinsic_{intrinsic}
 {
     // init store
     switch(type_)
@@ -28,6 +28,10 @@ ga::Attribute::Attribute(std::string name, ga::AttributeType type)
         case(AttrType::boolT):
             boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>();
             typeSize_=1;
+            break;
+        case(AttrType::matrixT):
+            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>();
+            typeSize_=16;
             break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute constructor");
@@ -59,6 +63,9 @@ void ga::Attribute::resize(size_t size)
         case AttributeType::vectorT:
             vector3Store_->resize(size);
             break;
+        case AttributeType::matrixT:
+            matrix4Store_->resize(size);
+            break;
         default:
             throw std::runtime_error("type not accounted for");
 
@@ -66,13 +73,20 @@ void ga::Attribute::resize(size_t size)
     
 }
 
+bool ga::Attribute::isIntrinsic() const
+{
+    return intrinsic_;
+}
+
+
 
 ga::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
-    private_= other.private_;
-    hidden_ = other.hidden_;
-    readOnly_ = other.readOnly_;
+    // private_= other.private_;
+    // hidden_ = other.hidden_;
+    // readOnly_ = other.readOnly_;
+    intrinsic_ = other.intrinsic_;
     name_ = other.name_;
     typeSize_ = other.typeSize_;
 
@@ -89,6 +103,9 @@ ga::Attribute::Attribute(const Attribute& other)
             break;
         case(AttrType::boolT):
             boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>(*other.boolStore_);
+            break;
+        case(AttrType::matrixT):
+            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>(*other.matrix4Store_);
             break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute copy constructor");

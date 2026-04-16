@@ -14,9 +14,13 @@ add_library(${libName} SHARED
     ../Engine/Operator/GeometryOperator.cpp
     ../Engine/Operator/GeometryConnection.cpp
     ../Engine/Operator/Context.cpp
-    ../Engine/Operator/Geometry.cpp
+    ../Engine/Operator/Primitive.cpp
+    ../Engine/Operator/Mesh.cpp
+    ../Engine/Operator/Camera.cpp
+    ../Engine/Operator/NodePacket.cpp
     ../Engine/Operator/Attribute.cpp
     ../Engine/Network/NetworkManager.cpp
+    ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
     ../Engine/Parameter/Parameter.cpp
     ../Engine/Parameter/Default.cpp
@@ -29,6 +33,9 @@ add_library(${libName} SHARED
     GopGrid.cpp
     GopSineWave.cpp
     GopOceanSurface.cpp
+    GopMerge.cpp
+    GopPath.cpp
+    GopCamera.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb)
 

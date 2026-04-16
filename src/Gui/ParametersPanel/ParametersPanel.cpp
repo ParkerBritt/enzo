@@ -12,8 +12,8 @@
 #include <QLineEdit>
 #include <stdexcept>
 
-ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
+ParametersPanel::ParametersPanel(QWidget *parent)
+: Panel(parent)
 {
     mainLayout_ = new QVBoxLayout();
     parametersLayout_ = new QVBoxLayout();
@@ -23,16 +23,23 @@ ParametersPanel::ParametersPanel(QWidget *parent, Qt::WindowFlags f)
 
     bgWidget_->setObjectName("ParametersPanelBg");
     bgWidget_->setStyleSheet(R"(
-           QWidget#ParametersPanelBg {
-                background-color: #282828;
-               border-radius: 10px;
-           }
-    )"
-      );
+        #ParametersPanelBg {
+            background-color: #282828;
+        }
+    )");
 
     mainLayout_->addWidget(bgWidget_);
 
     setLayout(mainLayout_);
+}
+
+void ParametersPanel::clearParameters()
+{
+    QLayoutItem *child;
+    while ((child = parametersLayout_->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
 }
 
 void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
@@ -41,12 +48,7 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     enzo::nt::NetworkManager& nm = enzo::nt::nm();
     const enzo::nt::OpId displayOpId = opId;
 
-    // clear layout safely
-    QLayoutItem *child;
-    while ((child = parametersLayout_->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
-    }
+    clearParameters();
 
     enzo::nt::GeometryOperator& displayOp = nm.getGeoOperator(displayOpId);
     auto parameters = displayOp.getParameters();

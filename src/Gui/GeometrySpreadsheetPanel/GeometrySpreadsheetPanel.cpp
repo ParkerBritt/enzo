@@ -1,27 +1,24 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
-#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
-#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetModel.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
+#include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
+#include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
+#include <QLabel>
+#include <QPainterPath>
 #include <QTableWidget>
 #include <QTreeWidget>
-#include <QLabel>
 #include <qframe.h>
 #include <qpushbutton.h>
 #include <qtablewidget.h>
-#include <QPainterPath>
 
-GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent, Qt::WindowFlags f)
-: QWidget(parent, f)
-{
-    mainLayout_ = new QVBoxLayout();
-    mainLayout_->setSpacing(0);
+GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(parent) {
+    primView_ = new QTreeView(parent);
+    attributeView_ = new QTreeView(parent);
 
-
-    view_ = new QTreeView(parent);
-    view_->setRootIsDecorated(false);
-    view_->setAlternatingRowColors(true);
-    view_->setUniformRowHeights(true); // improves performance
-    view_->setStyleSheet(R"(
+    attributeView_->setRootIsDecorated(false);
+    attributeView_->setAlternatingRowColors(true);
+    attributeView_->setUniformRowHeights(true); // improves performance
+    attributeView_->setStyleSheet(R"(
         QTreeView {
             background-color: #282828;
             alternate-background-color: #242424;
@@ -49,47 +46,116 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent, Qt::WindowFl
 
         QHeaderView::section {
             background-color: #1B1B1B;
+            border: none;
+            border-bottom: 1px solid #303030;
         }
     )");
-    view_->setFrameStyle(QFrame::NoFrame);
-    
-    model_ = new GeometrySpreadsheetModel();
-    view_->setModel(model_);
+    attributeView_->setFrameStyle(QFrame::NoFrame);
+
+    model_ = new AttributeSpreadsheetModel();
+    attributeView_->setModel(model_);
+
+    primModel_ = new PrimitiveTreeModel(this);
+    primView_->setModel(primModel_);
+    primView_->setStyleSheet(R"(
+        QTreeView QScrollBar {
+            background: #1B1B1B;
+            width: 15px;
+        }
+        QTreeView QScrollBar::handle:vertical {
+            background: #282828;
+            min-height: 50px;
+            border-radius: 5px;
+            border-width: 1px;
+            border-color: #2D2D2D;
+            border-style: solid;
+            margin:2px;
+        }
+
+        QTreeView QScrollBar::add-page:vertical,
+        QTreeView QScrollBar::sub-page:vertical,
+        QTreeView QScrollBar::add-line:vertical,
+        QTreeView QScrollBar::sub-line:vertical
+        { height: 0px; }
+
+        QTreeView::item:selected
+        {
+            background-color: #414141;
+        }
+        QHeaderView::section {
+            background-color: #1B1B1B;
+            border: none;
+            border-bottom: 1px solid #303030;
+        }
+    )");
+
+    connect(primView_->selectionModel(), &QItemSelectionModel::currentChanged, this,
+            &GeometrySpreadsheetPanel::onPrimitiveSelected);
 
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
-    connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::POINT);});
-    connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::VERTEX);});
-    connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::PRIMITIVE);});
-    connect(menuBar_->modeSelection->globalButton, &QPushButton::clicked, this, [this](){model_->setOwner(enzo::ga::AttributeOwner::GLOBAL);});
+    connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this,
+            [this]() { model_->setOwner(enzo::ga::AttributeOwner::POINT); });
+    connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this,
+            [this]() { model_->setOwner(enzo::ga::AttributeOwner::VERTEX); });
+    connect(menuBar_->modeSelection->faceButton, &QPushButton::clicked, this,
+            [this]() { model_->setOwner(enzo::ga::AttributeOwner::FACE); });
+    connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this,
+            [this]() { model_->setOwner(enzo::ga::AttributeOwner::PRIMITIVE); });
     // set default
     menuBar_->modeSelection->pointButton->click();
 
+    contentSplitter_ = new QSplitter(Qt::Horizontal);
+    contentSplitter_->addWidget(primView_);
+    contentSplitter_->addWidget(attributeView_);
+    contentSplitter_->setStretchFactor(0, 3);
+    contentSplitter_->setStretchFactor(1, 7);
 
-    mainLayout_->addWidget(menuBar_);
-    mainLayout_->addWidget(view_);
+    mainLayout_ = new QVBoxLayout();
+    mainLayout_->setSpacing(0);
+    mainLayout_->addWidget(menuBar_, 0);
+    mainLayout_->addWidget(contentSplitter_, 1);
 
     setLayout(mainLayout_);
 }
 
-void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId)
-{
-    menuBar_->setNode(opId);
+void GeometrySpreadsheetPanel::clear() {
+    model_->clear();
+    primModel_->clear();
 }
 
+void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId) { menuBar_->setNode(opId); }
 
-void GeometrySpreadsheetPanel::geometryChanged(enzo::geo::Geometry& geometry)
-{
-    model_->geometryChanged(geometry);
-    view_->update();
+void GeometrySpreadsheetPanel::packetChanged(std::shared_ptr<const enzo::NodePacket> packet) {
+    currentPacket_ = std::move(packet);
+    if (currentPacket_ && currentPacket_->size() > 0) {
+        primModel_->setPacket(*currentPacket_);
+        // select first primitive by default
+        primView_->setCurrentIndex(primModel_->index(0, 0));
+    } else {
+        clear();
+    }
 }
 
-void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)
-{
-    QPainterPath path;
-    constexpr float radius = 10;
-    path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
-    QRegion region = QRegion(path.toFillPolygon().toPolygon());
-    this->setMask(region);
+void GeometrySpreadsheetPanel::onPrimitiveSelected(const QModelIndex &current,
+                                                   const QModelIndex &previous) {
+    Q_UNUSED(previous)
+    if (!current.isValid() || !currentPacket_)
+        return;
+
+    int row = current.row();
+    if (row >= 0 && row < static_cast<int>(currentPacket_->size())) {
+        model_->primitiveChanged(currentPacket_->getPrimitive(row));
+        attributeView_->update();
+    }
 }
 
+// void GeometrySpreadsheetPanel::resizeEvent(QResizeEvent *event)
+// {
+//     QPainterPath path;
+//     constexpr float radius = 10;
+//     path.addRoundedRect(mainLayout_->contentsRect(), radius, radius);
+//     QRegion region = QRegion(path.toFillPolygon().toPolygon());
+//     this->setMask(region);
+// }
+//

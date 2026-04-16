@@ -43,6 +43,8 @@ private:
     qreal padding_=40;
     QPointF hoverPos_;
 
+    bool removed_=false;
+
     std::weak_ptr<enzo::nt::GeometryConnection> connection_;
 
     void updatePath();

@@ -3,14 +3,16 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include "Engine/Types.h"
+#include "Gui/Panels/Panel.h"
 
 class ParametersPanel
-: public QWidget
+: public Panel
 {
 public:
-    ParametersPanel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    ParametersPanel(QWidget *parent = nullptr);
 public Q_SLOTS:
     void selectionChanged(enzo::nt::OpId opId);
+    void clearParameters();
 private:
     QVBoxLayout* mainLayout_;
     QVBoxLayout* parametersLayout_;

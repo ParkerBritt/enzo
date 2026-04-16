@@ -8,6 +8,7 @@ public:
     GLCamera();
     GLCamera(float posX, float posY, float posZ);
     glm::mat4 getViewMatrix();
+    void setView(glm::vec3 pos, glm::vec3 center, glm::vec3 up);
     void setPos(float x, float y, float z);
     void movePos(float x, float y, float z);
     void rotateAroundCenter(float angle, glm::vec3 axis);

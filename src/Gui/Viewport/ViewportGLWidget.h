@@ -8,12 +8,16 @@
 #include <GL/glext.h>
 #include <QOpenGLWidget>
 #include <iostream>
+#include <memory>
 #include <QOpenGLFunctions_3_2_Core>
 #include "Gui/Viewport/GLCamera.h"
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLPoints.h"
-#include "Engine/Operator/Geometry.h"
+#include "Gui/Viewport/GLCameraPrim.h"
+#include "Engine/Operator/Mesh.h"
+#include "Engine/Operator/NodePacket.h"
+#include "Engine/Operator/Camera.h"
 
 class ViewportGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_2_Core
 {
@@ -25,6 +29,7 @@ public:
     std::unique_ptr<GLMesh> triangleMesh_ ;
     std::unique_ptr<GLGrid> gridMesh_ ;
     std::unique_ptr<GLPoints> points_ ;
+    std::unique_ptr<GLCameraPrim> cameraPrims_ ;
 
     // std::unique_ptr<GLMesh> meshFromGeo(enzo::geo::Geometry& geometry);
 
@@ -34,5 +39,7 @@ protected:
     void paintGL() override;
 
 public Q_SLOTS:
-    void geometryChanged(enzo::geo::Geometry& geometry);
+    void geometryChanged(std::shared_ptr<const enzo::NodePacket> packet);
+    void clearGeometry();
+    void setCamera(std::shared_ptr<const enzo::geo::Camera> camera);
 };

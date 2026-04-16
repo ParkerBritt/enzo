@@ -1,115 +1,132 @@
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Default.h"
-#include "Engine/Types.h"
-#include <algorithm>
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
-enzo::prm::Parameter::Parameter(Template prmTemplate)
-: template_{prmTemplate}
-{
-    const unsigned int templateSize = prmTemplate.getSize();
+enzo::prm::Parameter::Parameter(Template prmTemplate, enzo::nt::OpId opId)
+    : template_{prmTemplate}, opId_{opId} {
+    const unsigned int size = prmTemplate.getSize();
     const unsigned int numDefaults = prmTemplate.getNumDefaults();
 
-    floatValues_.reserve(templateSize);
-    stringValues_.reserve(templateSize);
-    intValues_.reserve(templateSize);
+    auto getDefault = [&](unsigned int i) -> prm::Default {
+        if (i < numDefaults)
+            return prmTemplate.getDefault(i);
+        if (numDefaults == 1)
+            return prmTemplate.getDefault();
+        return prm::Default();
+    };
 
-
-    if(numDefaults==1)
-    {
-        floatValues_ = std::vector<bt::floatT>(templateSize, prmTemplate.getDefault().getFloat());
-        intValues_ = std::vector<bt::intT>(templateSize, prmTemplate.getDefault().getInt());
-        stringValues_ = std::vector<bt::String>(templateSize, prmTemplate.getDefault().getString());
+    switch (getType()) {
+    case prm::Type::FLOAT:
+    case prm::Type::XYZ: {
+        std::vector<bt::floatT> vals(size);
+        for (unsigned int i = 0; i < size; ++i)
+            vals[i] = getDefault(i).getFloat();
+        values_ = std::move(vals);
+        break;
     }
-
-    for(int i=0; i<templateSize; ++i)
-    {
-        prm::Default prmDefault;
-        if(i<numDefaults)
-        {
-             prmDefault = prmTemplate.getDefault(i);
-        }
-        floatValues_.push_back(prmDefault.getFloat());
-        stringValues_.push_back(prmDefault.getString());
-        intValues_.push_back(prmDefault.getInt());
+    case prm::Type::INT:
+    case prm::Type::BOOL:
+    case prm::Type::TOGGLE: {
+        std::vector<bt::intT> vals(size);
+        for (unsigned int i = 0; i < size; ++i)
+            vals[i] = getDefault(i).getInt();
+        values_ = std::move(vals);
+        break;
     }
-
+    case prm::Type::STRING: {
+        std::vector<bt::String> vals(size);
+        for (unsigned int i = 0; i < size; ++i)
+            vals[i] = getDefault(i).getString();
+        values_ = std::move(vals);
+        break;
+    }
+    default:
+        values_ = std::vector<bt::floatT>(size, 0.0);
+        break;
+    }
 
     std::cout << "created new parameter: " << prmTemplate.getName() << "\n";
 }
 
-std::string enzo::prm::Parameter::getName() const
-{
-    return template_.getName();
+std::string enzo::prm::Parameter::getName() const { return template_.getName(); }
+
+std::string enzo::prm::Parameter::getLabel() const { return template_.getLabel(); }
+
+enzo::bt::floatT enzo::prm::Parameter::evalFloat(unsigned int index) const {
+    auto &vals = std::get<std::vector<bt::floatT>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    return vals[index];
 }
 
-std::string enzo::prm::Parameter::getLabel() const
-{
-    return template_.getLabel();
+enzo::bt::intT enzo::prm::Parameter::evalInt(unsigned int index) const {
+    auto &vals = std::get<std::vector<bt::intT>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    return vals[index];
 }
 
-enzo::bt::floatT enzo::prm::Parameter::evalFloat(unsigned int index) const
-{
-    if(index >= floatValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    return floatValues_[index];
+enzo::bt::String enzo::prm::Parameter::evalString(unsigned int index) const {
+    auto &vals = std::get<std::vector<bt::String>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    return vals[index];
 }
 
-enzo::bt::intT enzo::prm::Parameter::evalInt(unsigned int index) const
-{
-    if(index >= intValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    return intValues_[index];
+unsigned int enzo::prm::Parameter::getVectorSize() const { return template_.getSize(); }
+
+const enzo::prm::Template &enzo::prm::Parameter::getTemplate() { return template_; }
+
+enzo::prm::Type enzo::prm::Parameter::getType() const { return template_.getType(); }
+
+void enzo::prm::Parameter::setInt(bt::intT value, unsigned int index) {
+    auto &vals = std::get<std::vector<bt::intT>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    vals[index] = value;
+    handleValueChange_();
 }
 
-enzo::bt::String enzo::prm::Parameter::evalString(unsigned int index) const
-{
-    if(index >= stringValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    return stringValues_[index];
+void enzo::prm::Parameter::setFloat(bt::floatT value, unsigned int index) {
+    auto &vals = std::get<std::vector<bt::floatT>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    PrmValues before = vals;
+    vals[index] = value;
+
+    addUndo_(before);
+    handleValueChange_();
 }
 
-unsigned int enzo::prm::Parameter::getVectorSize() const
-{
-    return template_.getSize();
+void enzo::prm::Parameter::setString(bt::String value, unsigned int index) {
+    auto &vals = std::get<std::vector<bt::String>>(values_);
+    if (index >= vals.size())
+        throw std::out_of_range("Cannot access index: " + std::to_string(index) +
+                                " for parameter: " + getName());
+    vals[index] = value;
+    handleValueChange_();
 }
 
+enzo::prm::PrmValues enzo::prm::Parameter::getValues() const { return values_; }
 
-const enzo::prm::Template& enzo::prm::Parameter::getTemplate()
-{
-    return template_;
+void enzo::prm::Parameter::setValues(const PrmValues &values) {
+    values_ = values;
+    handleValueChange_();
 }
 
-
-
-enzo::prm::Type enzo::prm::Parameter::getType() const
-{
-    return template_.getType();
+void enzo::prm::Parameter::addUndo_(enzo::prm::PrmValues before) {
+    auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(opId_, getName(), before, values_);
+    enzo::nt::nm().undoStack().push(std::move(cmd));
 }
 
-
-void enzo::prm::Parameter::setInt(bt::intT value, unsigned int index)
-{
-    if(index >= intValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    intValues_[index] = value;
-    valueChanged();
-}
-
-void enzo::prm::Parameter::setFloat(bt::floatT value, unsigned int index)
-{
-    if(index >= floatValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    floatValues_[index] = value;
-    valueChanged();
-}
-
-void enzo::prm::Parameter::setString(bt::String value, unsigned int index)
-{
-    if(index >= stringValues_.size())
-        throw std::out_of_range("Cannot access index: " + std::to_string(index) + " for parameter: " + getName());
-    stringValues_[index] = value;
-    valueChanged();
-}
+void enzo::prm::Parameter::handleValueChange_() { valueChanged(); }
