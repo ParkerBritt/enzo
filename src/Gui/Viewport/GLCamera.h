@@ -15,7 +15,7 @@ public:
     void changeRadius(float delta);
     void changeCenter(float x, float y, float z);
     void setCenter(float x, float y, float z);
-    void setUniform(uint uniformLocation);
+    void setUniform(unsigned int uniformLocation);
 
     glm::vec3 getPos();
     glm::vec3 getForward();

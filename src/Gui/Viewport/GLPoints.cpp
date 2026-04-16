@@ -1,6 +1,12 @@
 
 #include "Gui/Viewport/GLPoints.h"
+#if defined(__linux__) || defined(_WIN32)
 #include <GL/gl.h>
+#endif
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#endif
+
 #include <glm/fwd.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <glm/geometric.hpp>
@@ -139,7 +145,7 @@ void GLPoints::initShaderProgram()
     // compile shader object
     glCompileShader(vertexShader);
 
-    
+
     // log shader error
     int  success;
     char infoLog[512];
@@ -154,8 +160,8 @@ void GLPoints::initShaderProgram()
         std::cout << "success\n";
 
     }
-    
-    
+
+
     // fragment shader
     const std::string fragmentShaderSource = R"(
     #version 330 core
@@ -192,7 +198,7 @@ void GLPoints::initShaderProgram()
     glAttachShader(shaderProgram, fragmentShader);
     // link program
     glLinkProgram(shaderProgram);
-    
+
     // delete shaders now that the program is complete
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);

@@ -37,7 +37,7 @@ add_library(${libName} SHARED
     GopPath.cpp
     GopCamera.cpp
 )
-target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb)
+target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb)
 
 # packaging
 install(TARGETS ${libName}

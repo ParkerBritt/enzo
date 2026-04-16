@@ -151,7 +151,7 @@ glm::vec3 GLCamera::getForward()
     return glm::normalize(camCenter_-camPos_);
 };
 
-void GLCamera::setUniform(uint uniformLocation)
+void GLCamera::setUniform(unsigned int uniformLocation)
 {
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(getViewMatrix()));

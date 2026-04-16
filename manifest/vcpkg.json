@@ -1,0 +1,28 @@
+{
+  "name": "enzo",
+  "version": "0.1.0",
+  "description": "Node-based geometry engine and GUI",
+  "dependencies": [
+    {
+      "name": "qtbase"
+    },
+    {
+      "name": "glm"
+    },
+    {
+      "name": "eigen3"
+    },
+    {
+      "name": "tbb"
+    },
+    {
+      "name": "boost-filesystem"
+    },
+    {
+      "name": "boost-system"
+    },
+    {
+      "name": "cgal"
+    }
+  ]
+}
