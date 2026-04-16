@@ -125,6 +125,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7f75f9299961100348a7f0af7961e2bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac216b94fafd2fae854e56b6131e368fd" id="r_ac216b94fafd2fae854e56b6131e368fd"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac216b94fafd2fae854e56b6131e368fd">clone</a> () const override</td></tr>
 <tr class="separator:ac216b94fafd2fae854e56b6131e368fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b5c45ad0e2133a389d71e592d448a10" id="r_a7b5c45ad0e2133a389d71e592d448a10"><td class="memItemLeft" align="right" valign="top">TransformClass&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b5c45ad0e2133a389d71e592d448a10">transformType</a> () const override</td></tr>
+<tr class="separator:a7b5c45ad0e2133a389d71e592d448a10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31093f22c1048d619dae5dbea754b139" id="r_a31093f22c1048d619dae5dbea754b139"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31093f22c1048d619dae5dbea754b139">applyTransform</a> (const bt::Matrix4 &amp;mat, TransformClass transformClass) override</td></tr>
+<tr class="separator:a31093f22c1048d619dae5dbea754b139"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ae9f9b9ae2f45622ee7a4032ae0a310" id="r_a2ae9f9b9ae2f45622ee7a4032ae0a310"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ae9f9b9ae2f45622ee7a4032ae0a310">canMerge</a> () const override</td></tr>
+<tr class="separator:a2ae9f9b9ae2f45622ee7a4032ae0a310"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ed8062e0fd490529e13b90b4db56c68" id="r_a3ed8062e0fd490529e13b90b4db56c68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ed8062e0fd490529e13b90b4db56c68">merge</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt; other) override</td></tr>
+<tr class="separator:a3ed8062e0fd490529e13b90b4db56c68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c62270e188a10593f436f59dd36286c" id="r_a5c62270e188a10593f436f59dd36286c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c62270e188a10593f436f59dd36286c">hasPoints</a> () const override</td></tr>
 <tr class="separator:a5c62270e188a10593f436f59dd36286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86052eae8cd5eed8bf8ed1983e91bd9c" id="r_a86052eae8cd5eed8bf8ed1983e91bd9c"><td class="memItemLeft" align="right" valign="top"><a id="a86052eae8cd5eed8bf8ed1983e91bd9c" name="a86052eae8cd5eed8bf8ed1983e91bd9c"></a>
@@ -187,6 +195,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>computePrimStartVerti
 <tr class="memitem:a78d4393dcbb917b07e0e624141080d80 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a78d4393dcbb917b07e0e624141080d80"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;rhs)</td></tr>
 <tr class="separator:a78d4393dcbb917b07e0e624141080d80 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ffec56f03caad3ffd988c71dea2c830 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8ffec56f03caad3ffd988c71dea2c830"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>applyTransform</b> (const <a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;transform, TransformClass transformClass)</td></tr>
+<tr class="separator:a8ffec56f03caad3ffd988c71dea2c830 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ee576e068a5f890679ee21a84a59af2 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8ee576e068a5f890679ee21a84a59af2"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>incrementVersion</b> ()</td></tr>
+<tr class="separator:a8ee576e068a5f890679ee21a84a59af2 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_aae52e3f72d9b926c333508597e2a0e94"><td class="memItemLeft" align="right" valign="top">
+virtual <a class="el" href="structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html">PointOffsets</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPoints</b> ()</td></tr>
+<tr class="separator:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a965d845a795f15064d33f88155291ef6 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a965d845a795f15064d33f88155291ef6"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addIntAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
 <tr class="separator:a965d845a795f15064d33f88155291ef6 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -220,36 +237,90 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPath</b> (const bt
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:afd14da52471283922ac391702526363f" id="r_afd14da52471283922ac391702526363f"><td class="memItemLeft" align="right" valign="top">attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd14da52471283922ac391702526363f">getAttributeStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) override</td></tr>
-<tr class="separator:afd14da52471283922ac391702526363f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ab2514d93c9c9da2a88ddaa4009394a" id="r_a7ab2514d93c9c9da2a88ddaa4009394a"><td class="memItemLeft" align="right" valign="top">const attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ab2514d93c9c9da2a88ddaa4009394a">getAttributeStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) const override</td></tr>
-<tr class="separator:a7ab2514d93c9c9da2a88ddaa4009394a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44ade109374f6cc2aed76350c87105b5" id="r_a44ade109374f6cc2aed76350c87105b5"><td class="memItemLeft" align="right" valign="top">ga::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44ade109374f6cc2aed76350c87105b5">getAttributeStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) override</td></tr>
+<tr class="separator:a44ade109374f6cc2aed76350c87105b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8646dc4798ab009bcd616938cb294480" id="r_a8646dc4798ab009bcd616938cb294480"><td class="memItemLeft" align="right" valign="top">const ga::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8646dc4798ab009bcd616938cb294480">getAttributeStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) const override</td></tr>
+<tr class="separator:a8646dc4798ab009bcd616938cb294480"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
-<tr class="memitem:a739df17b1913919eccef7004c1676a69 inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_a739df17b1913919eccef7004c1676a69"><td class="memItemLeft" align="right" valign="top">
-attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopyAttributes</b> (attribVector source)</td></tr>
-<tr class="separator:a739df17b1913919eccef7004c1676a69 inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab96d377bad8b40f963c4e4bbb569d30b inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_ab96d377bad8b40f963c4e4bbb569d30b"><td class="memItemLeft" align="right" valign="top">
+ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopyAttributes</b> (ga::attribVector source)</td></tr>
+<tr class="separator:ab96d377bad8b40f963c4e4bbb569d30b inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_types_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_types_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
-<tr class="memitem:a50a619100dfaabcd95ecd3c43b6d5823 inherit pub_types_classenzo_1_1geo_1_1Primitive" id="r_a50a619100dfaabcd95ecd3c43b6d5823"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>attribVector</b> = std::vector&lt;std::shared_ptr&lt;<a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a>&gt;&gt;</td></tr>
-<tr class="separator:a50a619100dfaabcd95ecd3c43b6d5823 inherit pub_types_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
 <tr class="memitem:a979af67eee86718d6edeaf6d7b0661fa inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_a979af67eee86718d6edeaf6d7b0661fa"><td class="memItemLeft" align="right" valign="top">
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b> = &quot;/prim&quot;</td></tr>
 <tr class="separator:a979af67eee86718d6edeaf6d7b0661fa inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba10e6f025521fe2e92d543886754f97 inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_aba10e6f025521fe2e92d543886754f97"><td class="memItemLeft" align="right" valign="top">
-attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>pointAttributes_</b></td></tr>
-<tr class="separator:aba10e6f025521fe2e92d543886754f97 inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c4e41265856110521eb6d0818e55224 inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_a8c4e41265856110521eb6d0818e55224"><td class="memItemLeft" align="right" valign="top">
-attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttributes_</b></td></tr>
-<tr class="separator:a8c4e41265856110521eb6d0818e55224 inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30da4fde40133a5ab8034869d97c2b78 inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_a30da4fde40133a5ab8034869d97c2b78"><td class="memItemLeft" align="right" valign="top">
+ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>pointAttributes_</b></td></tr>
+<tr class="separator:a30da4fde40133a5ab8034869d97c2b78 inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff7a8b16231e8426e4801c9be98fe47c inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_aff7a8b16231e8426e4801c9be98fe47c"><td class="memItemLeft" align="right" valign="top">
+ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttributes_</b></td></tr>
+<tr class="separator:aff7a8b16231e8426e4801c9be98fe47c inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Polygonal mesh primitive with point, vertex, and face attributes. </p>
 <p>Extends <a class="el" href="classenzo_1_1geo_1_1Primitive.html" title="Base class for all primitive types in the engine.">Primitive</a> with mesh-specific topology: points, vertices, faces, and the intrinsic attributes that describe connectivity (vertexCount, closed, point offset, and position P). </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a31093f22c1048d619dae5dbea754b139" name="a31093f22c1048d619dae5dbea754b139"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31093f22c1048d619dae5dbea754b139">&#9670;&#160;</a></span>applyTransform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Mesh::applyTransform </td>
+          <td>(</td>
+          <td class="paramtype">const bt::Matrix4 &amp;</td>          <td class="paramname"><span class="paramname"><em>mat</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TransformClass</td>          <td class="paramname"><span class="paramname"><em>transformClass</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a2ae9f9b9ae2f45622ee7a4032ae0a310" name="a2ae9f9b9ae2f45622ee7a4032ae0a310"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ae9f9b9ae2f45622ee7a4032ae0a310">&#9670;&#160;</a></span>canMerge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enzo::geo::Mesh::canMerge </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
 <a id="ac216b94fafd2fae854e56b6131e368fd" name="ac216b94fafd2fae854e56b6131e368fd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac216b94fafd2fae854e56b6131e368fd">&#9670;&#160;</a></span>clone()</h2>
 
@@ -277,8 +348,8 @@ attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttr
 
 </div>
 </div>
-<a id="a7ab2514d93c9c9da2a88ddaa4009394a" name="a7ab2514d93c9c9da2a88ddaa4009394a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ab2514d93c9c9da2a88ddaa4009394a">&#9670;&#160;</a></span>getAttributeStore() <span class="overload">[1/2]</span></h2>
+<a id="a8646dc4798ab009bcd616938cb294480" name="a8646dc4798ab009bcd616938cb294480"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8646dc4798ab009bcd616938cb294480">&#9670;&#160;</a></span>getAttributeStore() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,7 +358,7 @@ attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttr
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const geo::Mesh::attribVector &amp; geo::Mesh::getAttributeStore </td>
+          <td class="memname">const ga::attribVector &amp; geo::Mesh::getAttributeStore </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
           <td> const</td>
@@ -304,8 +375,8 @@ attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttr
 
 </div>
 </div>
-<a id="afd14da52471283922ac391702526363f" name="afd14da52471283922ac391702526363f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd14da52471283922ac391702526363f">&#9670;&#160;</a></span>getAttributeStore() <span class="overload">[2/2]</span></h2>
+<a id="a44ade109374f6cc2aed76350c87105b5" name="a44ade109374f6cc2aed76350c87105b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44ade109374f6cc2aed76350c87105b5">&#9670;&#160;</a></span>getAttributeStore() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,7 +385,7 @@ attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttr
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">geo::Mesh::attribVector &amp; geo::Mesh::getAttributeStore </td>
+          <td class="memname">ga::attribVector &amp; geo::Mesh::getAttributeStore </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
           <td></td>
@@ -409,6 +480,60 @@ attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttr
 </div><div class="memdoc">
 
 <p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a3ed8062e0fd490529e13b90b4db56c68" name="a3ed8062e0fd490529e13b90b4db56c68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ed8062e0fd490529e13b90b4db56c68">&#9670;&#160;</a></span>merge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void geo::Mesh::merge </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a7b5c45ad0e2133a389d71e592d448a10" name="a7b5c45ad0e2133a389d71e592d448a10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b5c45ad0e2133a389d71e592d448a10">&#9670;&#160;</a></span>transformType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TransformClass enzo::geo::Mesh::transformType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
 
 </div>
 </div>

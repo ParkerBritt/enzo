@@ -93,7 +93,8 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Types.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -101,6 +102,7 @@ $(function(){ initResizable(false); });
 <p>Basic attribute, parameter, and node types for Enzo.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;Eigen/Dense&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 </div>
 <p><a href="Types_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -169,6 +171,12 @@ Enumerations</h2></td></tr>
 , <b>CAMERA</b>
  }</td></tr>
 <tr class="separator:a40e344ca7c1a6f1ebf0056847fb79253"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f4d324306ee6aa2b26c9a4bf6da4749" id="r_a2f4d324306ee6aa2b26c9a4bf6da4749"><td class="memItemLeft" align="right" valign="top"><a id="a2f4d324306ee6aa2b26c9a4bf6da4749" name="a2f4d324306ee6aa2b26c9a4bf6da4749"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>TransformClass</b> : uint8_t { <b>NONE</b> = 0
+, <b>POINT</b> = 1
+, <b>PRIMITIVE</b> = 2
+, <b>POINT_PRIORITY</b> = 3
+ }</td></tr>
+<tr class="separator:a2f4d324306ee6aa2b26c9a4bf6da4749"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e4b347c669dc02aa6a8f35c01e2f59a" id="r_a6e4b347c669dc02aa6a8f35c01e2f59a"><td class="memItemLeft" align="right" valign="top"><a id="a6e4b347c669dc02aa6a8f35c01e2f59a" name="a6e4b347c669dc02aa6a8f35c01e2f59a"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>Type</b> { <br />
 &#160;&#160;<b>LIST_TERMINATOR</b>
 , <b>STRING</b>
@@ -185,6 +193,18 @@ Enumerations</h2></td></tr>
 , <b>Output</b>
  }</td></tr>
 <tr class="separator:ae85c7a5ac69deccfa3456f2ce7799cc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a352e52d0ef8c329f1af7d2401d033793" id="r_a352e52d0ef8c329f1af7d2401d033793"><td class="memItemLeft" align="right" valign="top"><a id="a352e52d0ef8c329f1af7d2401d033793" name="a352e52d0ef8c329f1af7d2401d033793"></a>
+TransformClass&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::operator|</b> (TransformClass a, TransformClass b)</td></tr>
+<tr class="separator:a352e52d0ef8c329f1af7d2401d033793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed93308a93b9cddfe1d55c9e93dd2bcb" id="r_aed93308a93b9cddfe1d55c9e93dd2bcb"><td class="memItemLeft" align="right" valign="top"><a id="aed93308a93b9cddfe1d55c9e93dd2bcb" name="aed93308a93b9cddfe1d55c9e93dd2bcb"></a>
+TransformClass&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::operator&amp;</b> (TransformClass a, TransformClass b)</td></tr>
+<tr class="separator:aed93308a93b9cddfe1d55c9e93dd2bcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94c2fcec321fede5aa7a6861682d9964" id="r_a94c2fcec321fede5aa7a6861682d9964"><td class="memItemLeft" align="right" valign="top"><a id="a94c2fcec321fede5aa7a6861682d9964" name="a94c2fcec321fede5aa7a6861682d9964"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (TransformClass value, TransformClass flag)</td></tr>
+<tr class="separator:a94c2fcec321fede5aa7a6861682d9964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Basic attribute, parameter, and node types for Enzo. </p>
