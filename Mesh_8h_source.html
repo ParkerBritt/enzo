@@ -99,7 +99,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;CGAL/Surface_mesh/Surface_mesh.h&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;CGAL/Simple_cartesian.h&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;tbb/spin_mutex.h&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;set&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;unordered_set&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>enzo::geo</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
@@ -135,8 +135,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    HeMesh computeHalfEdgeMesh();</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    std::set&lt;ga::Offset&gt;::const_iterator soloPointsBegin() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::set&lt;ga::Offset&gt;::const_iterator soloPointsEnd() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    std::unordered_set&lt;ga::Offset&gt;::const_iterator soloPointsBegin() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::unordered_set&lt;ga::Offset&gt;::const_iterator soloPointsEnd() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> setPointPos(<span class="keyword">const</span> ga::Offset offset, <span class="keyword">const</span> bt::Vector3&amp; pos);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    ga::Offset getPrimStartVertex(ga::Offset primOffset) <span class="keyword">const</span>;</div>
@@ -182,7 +182,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    ga::attribVector vertexAttributes_;</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    ga::attribVector faceAttributes_;</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    std::set&lt;ga::Offset&gt; soloPoints_;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    std::unordered_set&lt;ga::Offset&gt; soloPoints_;</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">mutable</span> std::vector&lt;ga::Offset&gt; primStarts_;</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keyword">mutable</span> std::vector&lt;ga::Offset&gt; vertexPrims_;</div>
