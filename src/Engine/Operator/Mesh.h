@@ -3,7 +3,7 @@
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <tbb/spin_mutex.h>
-#include <set>
+#include <unordered_set>
 
 namespace enzo::geo
 {
@@ -47,8 +47,8 @@ public:
 
     HeMesh computeHalfEdgeMesh();
 
-    std::set<ga::Offset>::const_iterator soloPointsBegin() const;
-    std::set<ga::Offset>::const_iterator soloPointsEnd() const;
+    std::unordered_set<ga::Offset>::const_iterator soloPointsBegin() const;
+    std::unordered_set<ga::Offset>::const_iterator soloPointsEnd() const;
 
     void setPointPos(const ga::Offset offset, const bt::Vector3& pos);
     ga::Offset getPrimStartVertex(ga::Offset primOffset) const;
@@ -94,7 +94,7 @@ private:
     ga::attribVector vertexAttributes_;
     ga::attribVector faceAttributes_;
 
-    std::set<ga::Offset> soloPoints_;
+    std::unordered_set<ga::Offset> soloPoints_;
 
     mutable std::vector<ga::Offset> primStarts_;
     mutable std::vector<ga::Offset> vertexPrims_;
