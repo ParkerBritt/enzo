@@ -21,13 +21,13 @@
 <img src="https://github.com/user-attachments/assets/e919e41b-f41f-41b9-8aec-082d53fed470">
 
   ## About
-  Enzo is inspired by industry standard tools like Houdini. The goal is to utilize the best features from these tools (attributes, parameterized editing, powerful nodes) and change or improve what could be better (expensive licensing, fragmented contexts, quality of life).
+  Enzo is inspired by industry standard tools like Houdini. The goal is to utilize the best features of these tools (attributes, parameterized editing, powerful nodes) and change or improve what could be better (expensive licensing, fragmented contexts, quality of life).
   
   This is a hobby project and and early work in progess. While I hope it's useful to you now or in the future, I develop this in my free time which can be slow.
 
   ## Features
   **Free and Open Source** - 
-  Enzo's open source licensing (GPL) makes it free for commercial or personal projects and allows developers to expand the software and make it their own, for any uses case.
+  Enzo's open source licensing (GPL) makes it free for commercial or personal projects and allows developers to expand the software and make it their own, for any use case.
   
   *No expensive licensing or getting locked out of your own work.*
   
