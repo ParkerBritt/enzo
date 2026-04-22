@@ -1,11 +1,11 @@
 
 
 <!-- <img align="right" src="https://cards.parkerbritt.com/jenkins_badge?job=enzo"> -->
-<a href="https://github.com/ParkerBritt/enzo/releases"><img align="right" src="https://cards.parkerbritt.com/badge?label=0.1.0&color=8023CC"></a>
 <div align="left">
 <img src="https://cards.parkerbritt.com/badge?label=C%2B%2B&icon=cplusplus&color=00599C">
 <img src="https://cards.parkerbritt.com/badge?label=opengl&icon=opengl&color=5586A4">
 <img src="https://cards.parkerbritt.com/badge?label=qt&icon=qt&color=41CD52">
+<img align="right" src="https://cards.parkerbritt.com/badge?label=0.1.0&color=8023CC">
 </div>
 
 <div  align="center">
