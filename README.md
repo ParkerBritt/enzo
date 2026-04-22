@@ -1,7 +1,7 @@
 
 
 <!-- <img align="right" src="https://cards.parkerbritt.com/jenkins_badge?job=enzo"> -->
-<img align="right" src="https://cards.parkerbritt.com/badge?label=0.1.0&color=8023CC">
+<a href="https://github.com/ParkerBritt/enzo/releases"><img align="right" src="https://cards.parkerbritt.com/badge?label=0.1.0&color=8023CC"></a>
 <div align="left">
 <img src="https://cards.parkerbritt.com/badge?label=C%2B%2B&icon=cplusplus&color=00599C">
 <img src="https://cards.parkerbritt.com/badge?label=opengl&icon=opengl&color=5586A4">
@@ -23,7 +23,7 @@
   ## About
   Enzo is inspired by industry standard tools like Houdini. The goal is to utilize the best features from these tools (attributes, parameterized editing, powerful nodes) and change or improve what could be better (expensive licensing, fragmented contexts, quality of life).
   
-  This is a hobby project and and early work in progess. While I hope it's useful to you now or in the future, I develop this in my free time which can take time.
+  This is a hobby project and and early work in progess. While I hope it's useful to you now or in the future, I develop this in my free time which can be slow.
 
   ## Features
   **Free and Open Source** - 
