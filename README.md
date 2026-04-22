@@ -38,7 +38,7 @@
   Thanks to a lack of bloat built up over decades, Enzo is small and lightweight, with the UI able to launch in under one second.<br>
 
   **Unified Context** - Enzo's data system is built around primitives and attributes, it unifies these under a single context.
-  Ever wanted to copy cameras to points, control a lights brightness with attribute noise, or see every voxel's value in a spreadsheet?
+  Ever wanted to copy cameras to points, control a lights brightness with attribute noise, or see and modify every voxel's value in a spreadsheet?
 </div>
 
 ## Dependencies
