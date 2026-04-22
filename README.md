@@ -23,7 +23,7 @@
   ## About
   Enzo is inspired by industry standard tools like Houdini. The goal is to utilize the best features of these tools (attributes, parameterized editing, powerful nodes) and change or improve what could be better (expensive licensing, fragmented contexts, quality of life).
   
-  This is a hobby project and and early work in progess. While I hope it's useful to you now or in the future, I develop this in my free time which can be slow.
+  This is a hobby project and early work in progess. While I hope it's useful to you now or in the future, I develop this in my free time which can be slow.
 
   ## Features
   **Free and Open Source** - 
