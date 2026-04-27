@@ -52,6 +52,11 @@ EnzoUI::EnzoUI() {
     viewportSplitter_ = new Splitter(this);
     networkSplitter_ = new Splitter(this);
     spreadsheetSplitter_ = new Splitter(this);
+
+    viewportSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+    networkSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+    spreadsheetSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+
     networkSplitter_->setOrientation(Qt::Vertical);
     spreadsheetSplitter_->setOrientation(Qt::Vertical);
 
@@ -106,7 +111,9 @@ void EnzoUI::connectSignals() {
     enzo::nt::nm().displayGeoChanged.connect(
         [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); });
     enzo::nt::nm().selectedGeoChanged.connect(
-        [this](std::shared_ptr<const enzo::NodePacket> packet) { geometrySpreadsheetPanel_->packetChanged(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) {
+            geometrySpreadsheetPanel_->packetChanged(packet);
+        });
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this]() {
