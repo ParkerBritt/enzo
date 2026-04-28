@@ -26,6 +26,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/GeometryOpDef.cpp
     src/Engine/Operator/OperatorTable.cpp
     src/Engine/Operator/Context.cpp
+    src/Engine/Operator/Path.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Default.cpp
