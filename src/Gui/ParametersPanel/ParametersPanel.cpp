@@ -17,6 +17,7 @@ ParametersPanel::ParametersPanel(QWidget *parent)
 {
     mainLayout_ = new QVBoxLayout();
     parametersLayout_ = new QVBoxLayout();
+    parametersLayout_->setContentsMargins(15,15,15,15);
     parametersLayout_->setAlignment(Qt::AlignTop);
     bgWidget_ = new QWidget();
     bgWidget_->setLayout(parametersLayout_);
