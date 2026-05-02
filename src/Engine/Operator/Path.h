@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <ostream>
@@ -19,35 +20,41 @@ namespace enzo
             /// @brief Implicity construct an enzo::Path object.
             Path(const char*);
 
+            static std::string Strip(const std::string& str);
+
             /// @brief Checks if the Path has no characters.
-            bool IsEmpty() const;
+            bool isEmpty() const;
 
             /// @brief Returns true if the Path is "/".
-            bool IsRoot() const;
+            bool isRoot() const;
 
             /// @brief Returns true if the Path is an absolute path.
-            bool IsAbsolute() const;
+            bool isAbsolute() const;
 
             /// @brief Returns true if the Path is a relative path.
-            bool IsRelative() const;
+            bool isRelative() const;
 
-            /// @brief Runs multiple validation checks and returns true if the path is fully valid.
-            bool IsValid() const;
+            /** 
+            * @brief Runs multiple validation checks and returns true if the path is fully valid.
+            *
+            * Path class only accepts alphanumeric values and underscores.
+            */
+            virtual bool isValid() const;
 
             /// @brief Returns the name of the Path, ie, the last component of the path.
-            std::string GetName() const;
+            std::string getName() const;
 
             /// @brief Returns the parent path as a Path if it exists.
-            Path GetParentPath() const;
+            Path getParent() const;
 
             /// @brief Returns a vector of Path objects of all the prefixes to the specified path.
-            std::vector<Path> GetPrefixes() const;
+            std::vector<Path> getPrefixes() const;
 
             /// @brief Splits all of the components of a Path and returns them as a vector of strings.
-            std::vector<std::string> SplitPath() const;
+            std::vector<std::string> split() const;
 
             /// @brief Return the path of the Path as an std::string.
-            const std::string& GetString() const;
+            const std::string& getString() const;
 
             /**
             * @brief Checks the path to make sure it fits the alphanumeric guidelines.
@@ -56,7 +63,7 @@ namespace enzo
             *
             * @returns true or false based on whether the path formatting is valid or not.
             */
-            static bool IsValidFormatting(const std::string& path);
+            static bool isValidFormatting(const std::string& pathString);
 
             /**
             * @brief Checks the given name to make sure it fits the alphanumeric guidelines.
@@ -65,7 +72,7 @@ namespace enzo
             *
             * @returns true or false based on whether the name is valid or not.
             */
-            static bool IsValidName(const std::string& name);
+            static bool isValidName(const std::string& name);
 
             /**
             * @brief Appends the name to the end of the path and constructs a new Path based off this.
@@ -74,51 +81,55 @@ namespace enzo
             *
             * @returns A Path object of the path the child has been appended to.
             */
-            Path AppendChild(std::string name) const;
+            Path join(std::string name) const;
 
             /**
             * @brief Appends the path to the end of the path and constructs a new Path based off this.
             *
-            * @param The Path object you want to append to the end of the path.
+            * @param name The Path object you want to append to the end of the path.
             *
             * @returns A Path object of the path the path has been appended to.
             */
-            Path AppendPath(const enzo::Path& path) const;
+            Path joinPath(const enzo::Path& path) const;
 
             /**
-            * @brief Increments the given path by 1.
+            * @brief Increments the given path by an increment value which is defaulted at 1.
+            *
+            * @param increment The value you want to increment the path by. Default is 1.
             *
             * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
             */
-            Path IncrementName() const;
+            Path increment(int increment = 1) const;
 
             /**
-            * @brief Increments the given path by 1.
+            * @brief Converts an absolute path to relative, stripping the root character.
             *
-            * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
+            * @returns A new Path object with the new relative path.
             */
-            Path MakeRelative() const;
+            Path makeRelative() const;
 
             /**
-            * @brief Increments the given path by 1.
+            * @brief Converts a relative path to absolute, adding a root character.
             *
-            * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
+            * @returns A new Path object with the absolute path.
             */
-            Path MakeAbsolute() const;
+            Path makeAbsolute() const;
 
             /**
-            * @brief Increments the given path by 1.
+            * @brief Makes a path relative to a given anchor path.
             *
-            * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
+            * @param anchor Another Path object to act as an anchor, the method will return the original path if the anchor is the same as the path.
+            *
+            * @returns A Path object of the new relative path.
             */
-            Path MakeRelativeTo(const Path& anchor) const;
+            Path makeRelativeTo(const Path& anchor) const;
 
             /**
-            * @brief Increments the given path by 1.
+            * @brief Checks if the Path has any additional prefixes.
             *
-            * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
+            * @returns true or false depending on whether the Path contains any prefixes.
             */
-            bool HasPrefix(const Path& prefix) const;
+            bool hasPrefix(const Path& prefix) const;
 
             bool operator==(const Path& other) const;
             bool operator!=(const Path& other) const;

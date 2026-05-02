@@ -9,66 +9,66 @@ TEST_CASE("pathValidation")
     // alphanumeric validation
     Path validAlphaNumeric = "/a/valid/path";
     Path invalidAlphaNumeric = "/a!invalid@/_(path)";
-    REQUIRE(validAlphaNumeric.GetName() == "path");
-    REQUIRE(validAlphaNumeric.IsValid());
-    REQUIRE(!invalidAlphaNumeric.IsValid());
+    REQUIRE(validAlphaNumeric.getName() == "path");
+    REQUIRE(validAlphaNumeric.isValid());
+    REQUIRE(!invalidAlphaNumeric.isValid());
 
     // double slash validation
     Path doubleSlash = "/a//wrong/path";
-    REQUIRE(!doubleSlash.IsValid());
+    REQUIRE(!doubleSlash.isValid());
 
     // valid names
     std::string validName = "my_path";
     std::string invalidName = "!myPath#34";
-    REQUIRE(Path::IsValidName(validName));
-    REQUIRE(!Path::IsValidName(invalidName));
+    REQUIRE(Path::isValidName(validName));
+    REQUIRE(!Path::isValidName(invalidName));
 
     // root
-    Path root = "/"; // NOTE: Need to handle char conversion
-    REQUIRE(root.IsValid());
+    Path root = "/";
+    REQUIRE(root.isValid());
 
     // trailing slash
     Path trailingSlash = "/path/to/node/";
-    REQUIRE(trailingSlash.IsValid());
-    REQUIRE(trailingSlash.IsAbsolute());
+    REQUIRE(trailingSlash.isValid());
+    REQUIRE(trailingSlash.isAbsolute());
 
     // no root
-    Path noRoot = "path/to/node"; // NOTE: This test passes but it should fail?
-    REQUIRE(noRoot.IsValid());
-    REQUIRE(noRoot.IsRelative());
+    Path noRoot = "path/to/node";
+    REQUIRE(noRoot.isValid());
+    REQUIRE(noRoot.isRelative());
 
     // empty string
     Path empty = Path();
-    REQUIRE(!empty.IsValid());
+    REQUIRE(!empty.isValid());
 }
 
-TEST_CASE("pathGetters")
+TEST_CASE("pathgetters")
 {
     using namespace enzo;
 
     // path components
     Path basicPath = "/abs/path/to/object";
-    std::vector<std::string> basicPathComponents = basicPath.SplitPath();
+    std::vector<std::string> basicPathComponents = basicPath.split();
 
     Path relPath = "rel/path";
-    std::vector<std::string> relPathComponents = relPath.SplitPath();
+    std::vector<std::string> relPathComponents = relPath.split();
 
     REQUIRE(basicPathComponents.size() == 4);
     REQUIRE(relPathComponents.size() == 2);
     REQUIRE(basicPathComponents[0] == "abs");
 
     // path prefixes
-    std::vector<Path> basicPathPrefixes = basicPath.GetPrefixes();
-    std::vector<Path> relPathPrefixes = relPath.GetPrefixes();
+    std::vector<Path> basicPathPrefixes = basicPath.getPrefixes();
+    std::vector<Path> relPathPrefixes = relPath.getPrefixes();
 
     REQUIRE(basicPathPrefixes.size() == 3);
     REQUIRE(relPathPrefixes.size() == 1);
-    REQUIRE(basicPathPrefixes[0].GetString() == "/abs");
-    REQUIRE(relPathPrefixes[0].GetString() == "rel");
+    REQUIRE(basicPathPrefixes[0].getString() == "/abs");
+    REQUIRE(relPathPrefixes[0].getString() == "rel");
 
     //path parents
-    REQUIRE(basicPath.GetParentPath().GetString() == "/abs/path/to");
-    REQUIRE(relPath.GetParentPath().GetString() == "rel");
+    REQUIRE(basicPath.getParentPath().getString() == "/abs/path/to");
+    REQUIRE(relPath.getParentPath().getString() == "rel");
 }
 
 TEST_CASE("pathManipulation")
@@ -78,26 +78,26 @@ TEST_CASE("pathManipulation")
     // appending to path
     Path basicPath = "/abs/path/to/object";
     std::string path = "/subcomponent/leaf";
-    Path appendedPath = basicPath.AppendPath(path);
+    Path appendedPath = basicPath.joinPath(path);
 
-    REQUIRE(appendedPath.GetString() == "/abs/path/to/object/subcomponent/leaf");
-    REQUIRE(basicPath.AppendChild("subcomponent").GetString() == "/abs/path/to/object/subcomponent");
+    REQUIRE(appendedPath.getString() == "/abs/path/to/object/subcomponent/leaf");
+    REQUIRE(basicPath.join("subcomponent").getString() == "/abs/path/to/object/subcomponent");
 
     // incrementing names
     Path mesh = "/geo/mesh";
     Path leaf = "mesh/leaf11";
     
-    REQUIRE(mesh.IncrementName() == "/geo/mesh1");
-    REQUIRE(leaf.IncrementName() == "mesh/leaf12");
+    REQUIRE(mesh.increment() == "/geo/mesh1");
+    REQUIRE(leaf.increment() == "mesh/leaf12");
 
     // abs and rel paths
     Path relativePath = "rel/path";
     Path absPath = "/abs/path/leaf";
     Path anchor = "/abs/path";
 
-    REQUIRE(relativePath.MakeAbsolute() == "/rel/path");
-    REQUIRE(absPath.MakeRelative() == "abs/path/leaf");
-    REQUIRE(absPath.MakeRelativeTo(anchor) == "leaf");
+    REQUIRE(relativePath.makeAbsolute() == "/rel/path");
+    REQUIRE(absPath.makeRelative() == "abs/path/leaf");
+    REQUIRE(absPath.makeRelativeTo(anchor) == "leaf");
 }
 
 TEST_CASE("operators")
