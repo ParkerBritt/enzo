@@ -27,7 +27,7 @@ using F_index  = HeMesh::Face_index;
 class Mesh : public Primitive
 {
 public:
-    Mesh();
+    Mesh(std::string_view path="/mesh");
     Mesh(const Mesh& other);
     Mesh& operator=(const Mesh& rhs);
     ~Mesh() override = default;

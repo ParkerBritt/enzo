@@ -67,7 +67,7 @@ class Primitive {
       private:
         enzo::geo::Primitive &primitive_;
     };
-    Primitive();
+    Primitive(std::string_view path="/prim");
     Primitive(const Primitive &other);
     Primitive &operator=(const Primitive &rhs);
     virtual ~Primitive() = default;
@@ -115,4 +115,6 @@ class Primitive {
     ga::attribVector pointAttributes_;
     ga::attribVector primitiveAttributes_;
 };
+
+using PrimPtr = std::shared_ptr<Primitive>;
 } // namespace enzo::geo

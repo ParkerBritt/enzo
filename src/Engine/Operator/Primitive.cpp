@@ -8,7 +8,7 @@
 
 using namespace enzo;
 
-geo::Primitive::Primitive() {}
+geo::Primitive::Primitive(std::string_view path) : path_(path) {}
 
 geo::Primitive::Primitive(const Primitive &other)
     : pointAttributes_{deepCopyAttributes(other.pointAttributes_)},

@@ -1,6 +1,7 @@
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
 #include <memory>
 #include <tbb/blocked_range.h>
@@ -14,13 +15,13 @@
 
 using namespace enzo;
 
-geo::Mesh::Mesh() :
+geo::Mesh::Mesh(std::string_view path) : 
     vertexCountHandlePrim_{addIntAttribute(ga::AttrOwner::FACE, "vertexCount", true)},
     closedHandlePrim_{addBoolAttribute(ga::AttrOwner::FACE, "closed", true)},
     pointOffsetHandleVert_{addIntAttribute(ga::AttrOwner::VERTEX, "point", true)},
-    posHandlePoint_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)}
+    posHandlePoint_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)},
+    Primitive(path)
 {
-    path_ = "/mesh";
 }
 
 geo::Mesh::Mesh(const Mesh& other):
