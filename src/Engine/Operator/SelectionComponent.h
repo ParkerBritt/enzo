@@ -1,6 +1,7 @@
 #pragma once
-#include <set>
+#include <memory>
 #include <string>
+#include "Engine/Operator/IndexSet.h"
 #include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
 
@@ -8,14 +9,14 @@ namespace enzo {
 class SelectionComponent {
 public:
   static SelectionComponent fromString(std::string_view string);
-  bool containsPrim(const geo::Primitive& prim);
+  bool containsPrim(const geo::Primitive& prim) const;
+  bool containsFace(const geo::Primitive& prim, ga::Index index) const;
+
 private:
-  void parsePath(std::string_view string);
-  void parseIndexBlock(std::string_view string);
   SelectionComponent() = default;
   std::string primPath_;
-  std::set<ga::Index> explicitPoints_;
-  std::set<ga::Index> explicitFaces_;
-  std::set<ga::Index> explicitVertices_;
+  std::shared_ptr<IndexSet> points_;
+  std::shared_ptr<IndexSet> faces_;
+  std::shared_ptr<IndexSet> vertices_;
 };
 } // namespace enzo

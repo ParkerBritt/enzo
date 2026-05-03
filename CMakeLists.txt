@@ -37,6 +37,7 @@ set(ENGINE_SOURCES
     src/Engine/Serializer/Serializer.cpp
     src/Engine/Operator/Selection.cpp
     src/Engine/Operator/SelectionComponent.cpp
+    src/Engine/Operator/IndexSet.cpp
 )
 
 set(GUI_SOURCES

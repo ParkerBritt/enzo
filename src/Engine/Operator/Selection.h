@@ -15,6 +15,8 @@ class Selection {
     void getVertices();
     std::vector<std::shared_ptr<geo::Primitive>> getPrims(const NodePacket &packet);
     bool containsPrim(geo::PrimPtr prim, bool full = false);
+    bool containsFace(geo::PrimPtr prim, ga::Index index);
+    std::vector<ga::Index> getFaces(geo::PrimPtr prim);
 
   private:
     std::vector<enzo::SelectionComponent> components_;

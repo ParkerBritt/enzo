@@ -1,4 +1,5 @@
 #include "Selection.h"
+#include "Mesh.h"
 #include "SelectionComponent.h"
 #include <icecream.hpp>
 #include <sstream>
@@ -31,7 +32,6 @@ enzo::Selection::Selection(std::string expression) {
 std::vector<std::shared_ptr<enzo::geo::Primitive>>
 enzo::Selection::getPrims(const NodePacket &packet) {
     std::vector<std::shared_ptr<enzo::geo::Primitive>> prims;
-    IC();
 
     for (auto prim : packet.getPrimitives()) {
         for (auto component : components_) {
@@ -45,4 +45,33 @@ enzo::Selection::getPrims(const NodePacket &packet) {
     return prims;
 }
 
-bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) { return true; }
+bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
+    for (auto component : components_) {
+        if (component.containsPrim(*prim)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index) {
+    for (auto& component : components_) {
+        if (component.containsFace(*prim, index)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<enzo::ga::Index> enzo::Selection::getFaces(geo::PrimPtr prim) {
+    std::vector<ga::Index> result;
+    auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
+    if (!mesh) return result;
+    ga::Offset count = mesh->getNumPrims();
+    for (ga::Index i = 0; i < count; ++i) {
+        if (containsFace(prim, i)) {
+            result.push_back(i);
+        }
+    }
+    return result;
+}
