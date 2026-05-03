@@ -5,7 +5,11 @@
 #include <sstream>
 
 namespace {
-std::shared_ptr<enzo::IndexSet> parseExplicitIndices(std::string_view content) {
+std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
+    // TODO: trim whitespace before checking for wildcard
+    if (content == "*") {
+        return std::make_shared<enzo::WildcardIndexSet>();
+    }
     std::set<enzo::ga::Index> indices;
     std::stringstream stream{std::string(content)};
     enzo::ga::Index index;
@@ -39,7 +43,7 @@ enzo::SelectionComponent enzo::SelectionComponent::fromString(std::string_view s
         std::string_view content = string.substr(contentStart, i - contentStart);
         if (i < string.size()) ++i;
 
-        auto indexSet = parseExplicitIndices(content);
+        auto indexSet = parseBlockContent(content);
         if (type == 'f') {
             component.faces_ = indexSet;
         } else if (type == 'p') {

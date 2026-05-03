@@ -57,3 +57,29 @@ TEST_CASE("Selection getFaces explicit indices") {
     auto faces = selection.getFaces(mesh);
     REQUIRE(faces == std::vector<ga::Index>{10});
 }
+
+TEST_CASE("Selection containsFace wildcard") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected f{*}");
+    REQUIRE(selection.containsFace(prim, 0));
+    REQUIRE(selection.containsFace(prim, 999));
+}
+
+TEST_CASE("Selection wildcard does not apply to unselected prims") {
+    geo::PrimPtr other = std::make_shared<geo::Mesh>("/other");
+    Selection selection("/selected f{*}");
+    REQUIRE_FALSE(selection.containsFace(other, 0));
+}
+
+TEST_CASE("Selection getFaces wildcard") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    for (int i = 0; i < 5; ++i) {
+        mesh->addFace({p0, p1, p2});
+    }
+    Selection selection("/selected f{*}");
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces == std::vector<ga::Index>{0, 1, 2, 3, 4});
+}
