@@ -19,6 +19,8 @@ add_library(${libName} SHARED
     ../Engine/Operator/Camera.cpp
     ../Engine/Operator/NodePacket.cpp
     ../Engine/Operator/Attribute.cpp
+    ../Engine/Operator/Selection.cpp
+    ../Engine/Operator/SelectionComponent.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
@@ -37,7 +39,7 @@ add_library(${libName} SHARED
     GopCopyToPoints.cpp
     GopPath.cpp
     GopCamera.cpp
-    # GopDelete.cpp
+    GopDelete.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb)
 

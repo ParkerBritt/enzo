@@ -5,10 +5,9 @@
 #include <Engine/Operator/Mesh.h>
 #include <memory>
 
-TEST_CASE("goobus")
+using namespace enzo;
+TEST_CASE("getPrims")
 {
-    using namespace enzo;
-
     // Setup packet
     NodePacket packet;
     geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
@@ -17,7 +16,21 @@ TEST_CASE("goobus")
     packet.addPrimitive(selectedPrim);
 
     Selection selection("/selected");
-    auto primitives = selection.getPrimitives(packet);
+    auto primitives = selection.getPrims(packet);
     REQUIRE(primitives.size() == 1);
     REQUIRE(primitives[0]->getPath() == "/selected");
+}
+
+TEST_CASE("containsPrim")
+{
+    // Setup packet
+    NodePacket packet;
+    geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
+    geo::PrimPtr unselectedPrim = std::make_shared<geo::Mesh>("/unselected");
+    packet.addPrimitive(unselectedPrim);
+    packet.addPrimitive(selectedPrim);
+
+    Selection selection("/selected");
+    REQUIRE(selection.containsPrim(selectedPrim));
+    REQUIRE_FALSE(selection.containsPrim(unselectedPrim));
 }

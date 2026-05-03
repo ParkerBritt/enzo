@@ -6,12 +6,12 @@
 #include "GopTestCube.h"
 #include "OpDefs/GopCamera.h"
 #include "OpDefs/GopCopyToPoints.h"
+#include "OpDefs/GopDelete.h"
 #include "OpDefs/GopGrid.h"
 #include "OpDefs/GopMerge.h"
 #include "OpDefs/GopPath.h"
 #include "OpDefs/GopSineWave.h"
 #include "OpDefs/GopTransform.hpp"
-// #include "OpDefs/GopDelete.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -120,14 +120,14 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator) {
         2,
         1,
     });
-    // addOperator(enzo::op::OpInfo{
-    //     "delete",
-    //     "Delete",
-    //     &GopDelete::ctor,
-    //     GopDelete::parameterList,
-    //     1,
-    //     1,
-    //     1,
-    // });
+    addOperator(enzo::op::OpInfo{
+        "delete",
+        "Delete",
+        &GopDelete::ctor,
+        GopDelete::parameterList,
+        1,
+        1,
+        1,
+    });
 }
 }
