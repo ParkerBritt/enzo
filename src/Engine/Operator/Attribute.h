@@ -4,6 +4,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <variant>
 #include <vector>
 
 namespace enzo {
@@ -107,14 +108,13 @@ class Attribute {
 
     std::string name_;
 
-    // void* data_;
-
-    // data stores
-    std::shared_ptr<StoreContainer<bt::intT>> intStore_;
-    std::shared_ptr<StoreContainer<bt::floatT>> floatStore_;
-    std::shared_ptr<StoreContainer<enzo::bt::Vector3>> vector3Store_;
-    std::shared_ptr<StoreContainer<enzo::bt::boolT>> boolStore_;
-    std::shared_ptr<StoreContainer<enzo::bt::Matrix4>> matrix4Store_;
+    using StoreVariant = std::variant<
+        std::shared_ptr<StoreContainer<bt::intT>>,
+        std::shared_ptr<StoreContainer<bt::floatT>>,
+        std::shared_ptr<StoreContainer<enzo::bt::Vector3>>,
+        std::shared_ptr<StoreContainer<enzo::bt::boolT>>,
+        std::shared_ptr<StoreContainer<enzo::bt::Matrix4>>>;
+    StoreVariant store_;
 };
 
 using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
