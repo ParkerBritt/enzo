@@ -43,6 +43,10 @@ public:
     void addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
 
+    void deleteFaces(const std::vector<ga::Offset>& faceOffsets);
+    bool isValidFace(ga::Offset offset) const;
+    bool isValidVertex(ga::Offset offset) const;
+
     void merge(Mesh& other);
 
     HeMesh computeHalfEdgeMesh();
@@ -103,9 +107,11 @@ private:
     mutable tbb::spin_mutex primStartsMutex_;
 
     // intrinsic handles
-    enzo::ga::AttributeHandleInt vertexCountHandlePrim_;
-    enzo::ga::AttributeHandleBool closedHandlePrim_;
-    enzo::ga::AttributeHandleInt pointOffsetHandleVert_;
-    enzo::ga::AttributeHandleVector3 posHandlePoint_;
+    enzo::ga::AttributeHandleInt vertexCountFaceHandle_;
+    enzo::ga::AttributeHandleBool closedFaceHandle_;
+    enzo::ga::AttributeHandleInt pointOffsetVertexHandle_;
+    enzo::ga::AttributeHandleVector3 posPointHandle_;
+    enzo::ga::AttributeHandleBool validFaceHandle_;
+    enzo::ga::AttributeHandleBool validVertexHandle_;
 };
 }

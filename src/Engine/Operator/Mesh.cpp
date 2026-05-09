@@ -15,11 +15,13 @@
 
 using namespace enzo;
 
-geo::Mesh::Mesh(std::string_view path) : 
-    vertexCountHandlePrim_{addIntAttribute(ga::AttrOwner::FACE, "vertexCount", true)},
-    closedHandlePrim_{addBoolAttribute(ga::AttrOwner::FACE, "closed", true)},
-    pointOffsetHandleVert_{addIntAttribute(ga::AttrOwner::VERTEX, "point", true)},
-    posHandlePoint_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)},
+geo::Mesh::Mesh(std::string_view path) :
+    vertexCountFaceHandle_{addIntAttribute(ga::AttrOwner::FACE, "vertexCount", true)},
+    closedFaceHandle_{addBoolAttribute(ga::AttrOwner::FACE, "closed", true)},
+    pointOffsetVertexHandle_{addIntAttribute(ga::AttrOwner::VERTEX, "point", true)},
+    posPointHandle_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)},
+    validFaceHandle_{addBoolAttribute(ga::AttrOwner::FACE, "__valid", true, true)},
+    validVertexHandle_{addBoolAttribute(ga::AttrOwner::VERTEX, "__valid", true, true)},
     Primitive(path)
 {
 }
@@ -31,10 +33,12 @@ geo::Mesh::Mesh(const Mesh& other):
     faceAttributes_{deepCopyAttributes(other.faceAttributes_)},
 
     // handles
-    vertexCountHandlePrim_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true))},
-    closedHandlePrim_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "closed", true))},
-    pointOffsetHandleVert_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true))},
-    posHandlePoint_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true))},
+    vertexCountFaceHandle_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true))},
+    closedFaceHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "closed", true))},
+    pointOffsetVertexHandle_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true))},
+    posPointHandle_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true))},
+    validFaceHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "__valid", true))},
+    validVertexHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::VERTEX, "__valid", true))},
 
     // other
     soloPoints_{other.soloPoints_},
@@ -54,10 +58,12 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
     faceAttributes_       = deepCopyAttributes(rhs.faceAttributes_);
 
     // handles
-    vertexCountHandlePrim_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true));
-    closedHandlePrim_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "closed", true));
-    pointOffsetHandleVert_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true));
-    posHandlePoint_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true));
+    vertexCountFaceHandle_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true));
+    closedFaceHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "closed", true));
+    pointOffsetVertexHandle_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::VERTEX, "point", true));
+    posPointHandle_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true));
+    validFaceHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "__valid", true));
+    validVertexHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::VERTEX, "__valid", true));
 
     // other
     soloPoints_           = rhs.soloPoints_;
@@ -107,12 +113,12 @@ void geo::Mesh::applyTransform(const bt::Matrix4 &mat, TransformClass transformC
         tbb::parallel_for(tbb::blocked_range<size_t>(0, numPoints),
             [&](const tbb::blocked_range<size_t> &range) {
                 for (size_t i = range.begin(); i < range.end(); ++i) {
-                    const bt::Vector3 pos = posHandlePoint_.getValue(i);
+                    const bt::Vector3 pos = posPointHandle_.getValue(i);
                     // w=1.0 extends to homogeneous coords so the 4x4 matrix
                     // applies translation, rotation, and scale in one multiply
                     const bt::Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
                     const bt::Vector3 transformed = (mat * pos4).head<3>();
-                    posHandlePoint_.setValue(i, transformed);
+                    posPointHandle_.setValue(i, transformed);
                 }
             });
     }
@@ -145,7 +151,7 @@ void geo::Mesh::merge(Mesh& other)
         pointOffsets.reserve(vertexCount);
         for(ga::Offset i=0; i<vertexCount; ++i)
         {
-            const ga::Offset otherPointOffset = other.pointOffsetHandleVert_.getValue(primStartVertex+i);
+            const ga::Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(primStartVertex+i);
             pointOffsets.push_back(pointMapping[otherPointOffset]);
         }
         // TODO: check closed status
@@ -194,15 +200,17 @@ void geo::Mesh::merge(Mesh& other)
 
 void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
 {
-    const ga::Offset primNum = vertexCountHandlePrim_.getSize();
+    const ga::Offset primNum = vertexCountFaceHandle_.getSize();
     for(ga::Offset pointOffset : pointOffsets)
     {
-        pointOffsetHandleVert_.addValue(pointOffset);
+        pointOffsetVertexHandle_.addValue(pointOffset);
+        validVertexHandle_.addValue(true);
         vertexPrims_.push_back(primNum);
         soloPoints_.erase(pointOffset);
     }
-    vertexCountHandlePrim_.addValue(pointOffsets.size());
-    closedHandlePrim_.addValue(closed);
+    vertexCountFaceHandle_.addValue(pointOffsets.size());
+    closedFaceHandle_.addValue(closed);
+    validFaceHandle_.addValue(true);
 
     // resize other attributes
     for(auto faceAttribute : faceAttributes_)
@@ -218,12 +226,37 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
 
 }
 
+void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
+{
+    for (ga::Offset faceOffset : faceOffsets)
+    {
+        validFaceHandle_.setValue(faceOffset, false);
+
+        const ga::Offset start = getPrimStartVertex(faceOffset);
+        const ga::Offset count = getPrimVertCount(faceOffset);
+        for (ga::Offset v = start; v < start + count; ++v)
+        {
+            validVertexHandle_.setValue(v, false);
+        }
+    }
+}
+
+bool geo::Mesh::isValidFace(ga::Offset offset) const
+{
+    return validFaceHandle_.getValue(offset);
+}
+
+bool geo::Mesh::isValidVertex(ga::Offset offset) const
+{
+    return validVertexHandle_.getValue(offset);
+}
+
 ga::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
 {
-    const ga::Offset pointOffset = posHandlePoint_.getSize();
+    const ga::Offset pointOffset = posPointHandle_.getSize();
 
-    posHandlePoint_.addValue(pos);
-    soloPoints_.emplace(posHandlePoint_.getSize()-1);
+    posPointHandle_.addValue(pos);
+    soloPoints_.emplace(posPointHandle_.getSize()-1);
 
     return pointOffset;
 }
@@ -245,13 +278,13 @@ std::unordered_set<ga::Offset>::const_iterator geo::Mesh::soloPointsEnd() const
 
 bt::Vector3 geo::Mesh::getPosFromVert(ga::Offset vertexOffset) const
 {
-    const ga::Offset pointOffset = pointOffsetHandleVert_.getValue(vertexOffset);
-    return posHandlePoint_.getValue(pointOffset);
+    const ga::Offset pointOffset = pointOffsetVertexHandle_.getValue(vertexOffset);
+    return posPointHandle_.getValue(pointOffset);
 }
 
 bt::Vector3 geo::Mesh::getPointPos(ga::Offset pointOffset) const
 {
-    return posHandlePoint_.getValue(pointOffset);
+    return posPointHandle_.getValue(pointOffset);
 }
 
 ga::Offset geo::Mesh::getVertexPrim(ga::Offset vertexOffset) const
@@ -261,27 +294,27 @@ ga::Offset geo::Mesh::getVertexPrim(ga::Offset vertexOffset) const
 
 void geo::Mesh::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
 {
-    posHandlePoint_.setValue(offset, pos);
+    posPointHandle_.setValue(offset, pos);
 }
 
 unsigned int geo::Mesh::getPrimVertCount(ga::Offset primOffset) const
 {
-    return vertexCountHandlePrim_.getValue(primOffset);
+    return vertexCountFaceHandle_.getValue(primOffset);
 }
 
 ga::Offset geo::Mesh::getNumPrims() const
 {
-    return vertexCountHandlePrim_.getSize();
+    return vertexCountFaceHandle_.getSize();
 }
 
 ga::Offset geo::Mesh::getNumVerts() const
 {
-    return pointOffsetHandleVert_.getSize();
+    return pointOffsetVertexHandle_.getSize();
 }
 
 ga::Offset geo::Mesh::getNumPoints() const
 {
-    return posHandlePoint_.getSize();
+    return posPointHandle_.getSize();
 }
 
 enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
@@ -375,21 +408,21 @@ ga::Offset geo::Mesh::getPrimStartVertex(ga::Offset primOffset) const
 
 void geo::Mesh::computePrimStartVertices() const
 {
-    const ga::Offset handleSize = vertexCountHandlePrim_.getSize();
+    const ga::Offset handleSize = vertexCountFaceHandle_.getSize();
     primStarts_.clear();
     primStarts_.reserve(handleSize);
     bt::intT primStart = 0;
     for(size_t i=0; i<handleSize; ++i)
     {
         primStarts_.push_back(primStart);
-        primStart += vertexCountHandlePrim_.getValue(i);
+        primStart += vertexCountFaceHandle_.getValue(i);
     }
     primStartsDirty_.store(false);
 }
 
 bt::boolT geo::Mesh::isClosed(ga::Offset primOffset) const
 {
-    return closedHandlePrim_.getValue(primOffset);
+    return closedFaceHandle_.getValue(primOffset);
 }
 
 ga::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner)

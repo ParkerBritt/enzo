@@ -25,28 +25,29 @@ void GopDelete::cookOp(enzo::op::Context context) {
         enzo::Selection selection(selectionStr);
 
         for (auto prim : selection.getPrims(packet)) {
-            // Check for whole prim deletion
-            if (selection.containsPrim(prim)) {
+            // Whole-prim deletion
+            if (selection.containsPrim(prim, true)) {
                 packet.removePrim(prim->getPath());
                 continue;
             }
 
-            // // Delete points
-            // if prim->hasPoints()
+            // Delete points
+            // if (prim->hasPoints())
             // {
-            //     meshPrim->deletePoints(selection->getPoints(meshPrim))
+            //     prim->deletePoints(selection.getPoints(prim));
             // }
-            //
-            // // Prim specific deletion
-            // switch(prim->getType())
-            // {
-            //     case geo::PrimType::MESH:
-            //         auto meshPrim = dynamic_cast<Mesh>(prim)
-            //         // Delete faces
-            //         meshPrim->deleteFaces(selection->getFaces(meshPrim))
-            //         // Delete verts
-            //         meshPrim->deleteVertices(selection->getVertices(meshPrim))
-            // }
+
+            // Prim specific deletion
+            switch (prim->getType()) {
+            case geo::PrimType::MESH: {
+                auto meshPrim = std::dynamic_pointer_cast<geo::Mesh>(prim);
+                meshPrim->deleteFaces(selection.getFaces(prim));
+                // meshPrim->deleteVertices(selection.getVertices(prim));
+                break;
+            }
+            default:
+                break;
+            }
         }
 
         setOutputPacket(0, packet);

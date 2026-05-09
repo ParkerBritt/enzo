@@ -26,17 +26,27 @@ enzo::geo::Primitive &enzo::geo::Primitive::operator=(const enzo::geo::Primitive
 }
 
 const size_t geo::Primitive::getNumAttributes(const ga::AttributeOwner owner) const {
-    return getAttributeStore(owner).size();
+    size_t count = 0;
+    for (const auto &attribute : getAttributeStore(owner)) {
+        if (attribute && !attribute->isPrivate())
+            ++count;
+    }
+    return count;
 }
 
 std::weak_ptr<const ga::Attribute> geo::Primitive::getAttributeByIndex(ga::AttributeOwner owner,
                                                                        unsigned int index) const {
-    auto attribStore = getAttributeStore(owner);
-    if (index >= attribStore.size()) {
-        throw std::out_of_range("Attribute index out of range: " + std::to_string(index) +
-                                " max size: " + std::to_string(attribStore.size()) + "\n");
+    const auto &attribStore = getAttributeStore(owner);
+    unsigned int visibleIndex = 0;
+    for (const auto &attribute : attribStore) {
+        if (!attribute || attribute->isPrivate())
+            continue;
+        if (visibleIndex == index)
+            return attribute;
+        ++visibleIndex;
     }
-    return getAttributeStore(owner)[index];
+    throw std::out_of_range("Attribute index out of range: " + std::to_string(index) +
+                            " visible size: " + std::to_string(visibleIndex) + "\n");
 }
 
 ga::AttributeHandleInt geo::Primitive::addIntAttribute(ga::AttributeOwner owner, std::string name,
@@ -47,8 +57,9 @@ ga::AttributeHandleInt geo::Primitive::addIntAttribute(ga::AttributeOwner owner,
 }
 
 ga::AttributeHandleBool geo::Primitive::addBoolAttribute(ga::AttributeOwner owner, std::string name,
-                                                         bool intrinsic) {
-    auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::boolT, intrinsic);
+                                                         bool intrinsic, bool isPrivate) {
+    auto newAttribute =
+        std::make_shared<ga::Attribute>(name, ga::AttrType::boolT, intrinsic, isPrivate);
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleBool(newAttribute);
 }

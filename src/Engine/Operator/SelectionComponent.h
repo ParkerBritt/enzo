@@ -11,6 +11,7 @@ public:
   static SelectionComponent fromString(std::string_view string);
   bool containsPrim(const geo::Primitive& prim) const;
   bool containsFace(const geo::Primitive& prim, ga::Index index) const;
+  bool isWholePrim() const;
 
 private:
   SelectionComponent() = default;

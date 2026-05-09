@@ -65,3 +65,7 @@ bool enzo::SelectionComponent::containsFace(const geo::Primitive& prim, ga::Inde
     if (!faces_) return false;
     return faces_->contains(index);
 }
+
+bool enzo::SelectionComponent::isWholePrim() const {
+    return !faces_ && !points_ && !vertices_;
+}

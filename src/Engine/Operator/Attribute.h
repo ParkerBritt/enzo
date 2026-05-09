@@ -41,7 +41,8 @@ class Attribute {
      * @param type Attribute data type that values will be stored in.
      *
      */
-    Attribute(std::string name, ga::AttributeType type, bool intrinsic = false);
+    Attribute(std::string name, ga::AttributeType type, bool intrinsic = false,
+              bool isPrivate = false);
     Attribute(const Attribute &other);
     /**
      * @brief Returns the attribute type this attribute stores.
@@ -69,9 +70,23 @@ class Attribute {
     bool isIntrinsic() const;
 
     /**
+     * @brief Returns whether the attribute is private.
+     *
+     * A private attribute is hidden from the user (e.g. not shown in the
+     * spreadsheet). It is engine-internal state used during cooks.
+     */
+    bool isPrivate() const;
+
+    /**
      *  @brief Changes the number of elements stored
      */
     void resize(size_t size);
+
+    /**
+     * @brief Removes entries marked as deleted, defragmenting the storage
+     * so offsets are contiguous again.
+     */
+    void compact(const std::vector<bool>& keep);
 
     template <typename T> friend class AttributeHandle;
     template <typename T> friend class AttributeHandleRO;
@@ -79,7 +94,7 @@ class Attribute {
   private:
     // private attributes are attributes that are hidden from the user
     // for internal use
-    // bool private_=false;
+    bool private_ = false;
     // hidden attributes are user accessible attributes that the user may
     // or may want to use
     // bool hidden_=false;

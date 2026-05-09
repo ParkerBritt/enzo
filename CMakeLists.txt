@@ -229,6 +229,7 @@ if(ENZO_BUILD_TESTS)
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp
+        tests/MeshTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)

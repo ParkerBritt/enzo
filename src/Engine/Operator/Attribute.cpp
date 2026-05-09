@@ -7,8 +7,8 @@
 using namespace enzo;
 
 
-ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic)
-: name_{name}, type_{type}, intrinsic_{intrinsic}
+ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic, bool isPrivate)
+: name_{name}, type_{type}, intrinsic_{intrinsic}, private_{isPrivate}
 {
     // init store
     switch(type_)
@@ -78,12 +78,17 @@ bool ga::Attribute::isIntrinsic() const
     return intrinsic_;
 }
 
+bool ga::Attribute::isPrivate() const
+{
+    return private_;
+}
+
 
 
 ga::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
-    // private_= other.private_;
+    private_ = other.private_;
     // hidden_ = other.hidden_;
     // readOnly_ = other.readOnly_;
     intrinsic_ = other.intrinsic_;

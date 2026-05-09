@@ -46,10 +46,10 @@ enzo::Selection::getPrims(const NodePacket &packet) {
 }
 
 bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
-    for (auto component : components_) {
-        if (component.containsPrim(*prim)) {
-            return true;
-        }
+    for (auto& component : components_) {
+        if (!component.containsPrim(*prim)) continue;
+        if (full && !component.isWholePrim()) continue;
+        return true;
     }
     return false;
 }
@@ -63,15 +63,18 @@ bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index) {
     return false;
 }
 
-std::vector<enzo::ga::Index> enzo::Selection::getFaces(geo::PrimPtr prim) {
-    std::vector<ga::Index> result;
+std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
+    std::vector<ga::Offset> result;
     auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
     if (!mesh) return result;
-    ga::Offset count = mesh->getNumPrims();
-    for (ga::Index i = 0; i < count; ++i) {
-        if (containsFace(prim, i)) {
-            result.push_back(i);
+    const ga::Offset storageSize = mesh->getNumPrims();
+    ga::Index index = 0;
+    for (ga::Offset offset = 0; offset < storageSize; ++offset) {
+        if (!mesh->isValidFace(offset)) continue;
+        if (containsFace(prim, index)) {
+            result.push_back(offset);
         }
+        ++index;
     }
     return result;
 }
