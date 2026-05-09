@@ -47,6 +47,8 @@ public:
     bool isValidFace(ga::Offset offset) const;
     bool isValidVertex(ga::Offset offset) const;
 
+    void defragment() override;
+
     void merge(Mesh& other);
 
     HeMesh computeHalfEdgeMesh();
@@ -99,6 +101,7 @@ private:
     ga::attribVector faceAttributes_;
 
     std::unordered_set<ga::Offset> soloPoints_;
+    bool needsDefrag_ = false;
 
     mutable std::vector<ga::Offset> primStarts_;
     mutable std::vector<ga::Offset> vertexPrims_;

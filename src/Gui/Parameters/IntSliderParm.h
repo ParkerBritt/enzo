@@ -19,7 +19,7 @@ class IntSliderParm : public SliderParmBase {
   private:
     bt::intT value_;
     QPen notchPen_;
-    static constexpr int notchWidth = 2;
+    static constexpr int notchWidth = 1;
     void setValueImpl(bt::intT value);
 };
 

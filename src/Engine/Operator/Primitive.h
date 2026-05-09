@@ -87,6 +87,12 @@ class Primitive {
     virtual ga::Offset getNumPoints() const { return 0; }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
 
+    /**
+     * @brief Compacts storage, removing entries marked invalid so offsets
+     * are contiguous again.
+     */
+    virtual void defragment() {}
+
     ga::AttributeHandle<bt::intT> addIntAttribute(ga::AttributeOwner owner, std::string name,
                                                   bool intrinsic = false);
     ga::AttributeHandleBool addBoolAttribute(ga::AttributeOwner owner, std::string name,

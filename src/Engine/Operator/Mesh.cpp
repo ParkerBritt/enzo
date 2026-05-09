@@ -42,6 +42,7 @@ geo::Mesh::Mesh(const Mesh& other):
 
     // other
     soloPoints_{other.soloPoints_},
+    needsDefrag_{other.needsDefrag_},
     vertexPrims_{other.vertexPrims_},
     primStarts_{other.primStarts_},
     primStartsDirty_{other.primStartsDirty_.load()}
@@ -67,6 +68,7 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
 
     // other
     soloPoints_           = rhs.soloPoints_;
+    needsDefrag_          = rhs.needsDefrag_;
     vertexPrims_          = rhs.vertexPrims_;
     primStarts_           = rhs.primStarts_;
 
@@ -228,6 +230,8 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
 
 void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
 {
+    if (faceOffsets.empty()) return;
+
     for (ga::Offset faceOffset : faceOffsets)
     {
         validFaceHandle_.setValue(faceOffset, false);
@@ -239,6 +243,7 @@ void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
             validVertexHandle_.setValue(v, false);
         }
     }
+    needsDefrag_ = true;
 }
 
 bool geo::Mesh::isValidFace(ga::Offset offset) const
@@ -249,6 +254,34 @@ bool geo::Mesh::isValidFace(ga::Offset offset) const
 bool geo::Mesh::isValidVertex(ga::Offset offset) const
 {
     return validVertexHandle_.getValue(offset);
+}
+
+void geo::Mesh::defragment()
+{
+    Primitive::defragment();
+
+    if (!needsDefrag_) return;
+
+    // Compact every face attribute by face validity.
+    std::vector<bool> faceKeep = validFaceHandle_.getAllValues();
+    for (auto& attr : faceAttributes_) if (attr) attr->compact(faceKeep);
+
+    // Compact every vertex attribute by vertex validity.
+    std::vector<bool> vertKeep = validVertexHandle_.getAllValues();
+    for (auto& attr : vertexAttributes_) if (attr) attr->compact(vertKeep);
+
+    // Rebuild vertexPrims_ from the compacted face data.
+    vertexPrims_.clear();
+    vertexPrims_.reserve(pointOffsetVertexHandle_.getSize());
+    const ga::Offset faceCount = vertexCountFaceHandle_.getSize();
+    for (ga::Offset f = 0; f < faceCount; ++f)
+    {
+        const ga::Offset count = getPrimVertCount(f);
+        for (ga::Offset v = 0; v < count; ++v) vertexPrims_.push_back(f);
+    }
+
+    primStartsDirty_.store(true);
+    needsDefrag_ = false;
 }
 
 ga::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
