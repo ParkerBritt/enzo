@@ -83,3 +83,43 @@ TEST_CASE("Selection getFaces wildcard") {
     auto faces = selection.getFaces(mesh);
     REQUIRE(faces == std::vector<ga::Index>{0, 1, 2, 3, 4});
 }
+
+TEST_CASE("Selection empty string selects no prims") {
+    NodePacket packet;
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
+    packet.addPrimitive(prim);
+
+    Selection selection("");
+    REQUIRE(selection.getPrims(packet).empty());
+    REQUIRE_FALSE(selection.containsPrim(prim));
+}
+
+TEST_CASE("Selection without path getPrims returns all prims") {
+    NodePacket packet;
+    geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
+    geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
+    packet.addPrimitive(a);
+    packet.addPrimitive(b);
+
+    Selection selection("p{0}");
+    auto prims = selection.getPrims(packet);
+    REQUIRE(prims.size() == 2);
+}
+
+TEST_CASE("Selection without path containsPoint matches on any prim") {
+    geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
+    geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
+
+    Selection selection("p{0}");
+    REQUIRE(selection.containsPoint(a, 0));
+    REQUIRE(selection.containsPoint(b, 0));
+    REQUIRE_FALSE(selection.containsPoint(a, 1));
+}
+
+TEST_CASE("Selection without path containsPrim is partial") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
+
+    Selection selection("p{0}");
+    REQUIRE(selection.containsPrim(prim));
+    REQUIRE_FALSE(selection.containsPrim(prim, true));
+}

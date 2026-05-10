@@ -26,9 +26,16 @@ enzo::SelectionComponent enzo::SelectionComponent::fromString(std::string_view s
     size_t i = 0;
     while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i]))) ++i;
 
-    size_t pathStart = i;
-    while (i < string.size() && !std::isspace(static_cast<unsigned char>(string[i]))) ++i;
-    component.primPath_ = std::string(string.substr(pathStart, i - pathStart));
+    // A leading "<letter>{" is a component selector (e.g. "p{0}"), not a path.
+    bool startsWithSelector =
+        i + 1 < string.size() &&
+        std::isalpha(static_cast<unsigned char>(string[i])) &&
+        string[i + 1] == '{';
+    if (!startsWithSelector) {
+        size_t pathStart = i;
+        while (i < string.size() && !std::isspace(static_cast<unsigned char>(string[i]))) ++i;
+        component.primPath_ = std::string(string.substr(pathStart, i - pathStart));
+    }
 
     while (i < string.size()) {
         while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i]))) ++i;
@@ -57,6 +64,8 @@ enzo::SelectionComponent enzo::SelectionComponent::fromString(std::string_view s
 }
 
 bool enzo::SelectionComponent::containsPrim(const geo::Primitive& prim) const {
+    // A pathless component with at least one selector applies to every prim.
+    if (primPath_.empty()) return points_ || faces_ || vertices_;
     return prim.getPath() == primPath_;
 }
 
