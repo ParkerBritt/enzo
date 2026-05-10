@@ -123,3 +123,65 @@ TEST_CASE("Selection without path containsPrim is partial") {
     REQUIRE(selection.containsPrim(prim));
     REQUIRE_FALSE(selection.containsPrim(prim, true));
 }
+
+TEST_CASE("setInverted toggles the flag") {
+    Selection selection("/a");
+    REQUIRE_FALSE(selection.getInverted());
+    selection.setInverted(true);
+    REQUIRE(selection.getInverted());
+}
+
+TEST_CASE("containsPrim inverted") {
+    geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
+    geo::PrimPtr unselectedPrim = std::make_shared<geo::Mesh>("/unselected");
+
+    // Whole-prim selection: inverted hides the named prim and exposes others
+    Selection whole("/selected");
+    whole.setInverted(true);
+    REQUIRE_FALSE(whole.containsPrim(selectedPrim));
+    REQUIRE(whole.containsPrim(unselectedPrim));
+    REQUIRE(whole.containsPrim(unselectedPrim, true));
+
+    // Partial selection: inverted still touches the named prim, but not as a whole
+    Selection partial("/selected f{0}");
+    partial.setInverted(true);
+    REQUIRE(partial.containsPrim(selectedPrim));
+    REQUIRE_FALSE(partial.containsPrim(selectedPrim, true));
+    REQUIRE(partial.containsPrim(unselectedPrim, true));
+}
+
+TEST_CASE("containsFace inverted") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected f{10}");
+    selection.setInverted(true);
+    REQUIRE_FALSE(selection.containsFace(prim, 10));
+    REQUIRE(selection.containsFace(prim, 11));
+}
+
+TEST_CASE("getPrims inverted includes unmentioned prims") {
+    NodePacket packet;
+    geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
+    geo::PrimPtr unselectedPrim = std::make_shared<geo::Mesh>("/unselected");
+    packet.addPrimitive(selectedPrim);
+    packet.addPrimitive(unselectedPrim);
+
+    Selection selection("/selected");
+    selection.setInverted(true);
+    auto prims = selection.getPrims(packet);
+    REQUIRE(prims.size() == 1);
+    REQUIRE(prims[0]->getPath() == "/unselected");
+}
+
+TEST_CASE("getFaces inverted returns complement") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    for (int i = 0; i < 5; ++i) {
+        mesh->addFace({p0, p1, p2});
+    }
+    Selection selection("/selected f{2}");
+    selection.setInverted(true);
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 3, 4});
+}

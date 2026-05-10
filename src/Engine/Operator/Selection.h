@@ -22,7 +22,11 @@ class Selection {
     std::vector<ga::Offset> getPoints(geo::PrimPtr prim);
     std::vector<ga::Offset> getVertices(geo::PrimPtr prim);
 
+    void setInverted(bool inverted) { inverted_ = inverted; }
+    bool getInverted() const { return inverted_; }
+
   private:
     std::vector<enzo::SelectionComponent> components_;
+    bool inverted_ = false;
 };
 } // namespace enzo

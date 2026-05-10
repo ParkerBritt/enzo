@@ -22,7 +22,9 @@ void GopDelete::cookOp(enzo::op::Context context) {
         NodePacket packet = context.cloneInputPacket(0);
 
         const bt::String selectionStr = context.evalStringParm("selection", 0);
+        const bool invert = context.evalBoolParm("invert");
         enzo::Selection selection(selectionStr);
+        selection.setInverted(invert);
 
         for (auto prim : selection.getPrims(packet)) {
             // Whole-prim deletion
@@ -55,4 +57,5 @@ void GopDelete::cookOp(enzo::op::Context context) {
 
 enzo::prm::Template GopDelete::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
+    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("invert", "Invert Selection")),
     enzo::prm::Terminator};
