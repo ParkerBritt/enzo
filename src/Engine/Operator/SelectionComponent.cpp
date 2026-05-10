@@ -12,9 +12,21 @@ std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
     }
     std::set<enzo::ga::Index> indices;
     std::stringstream stream{std::string(content)};
-    enzo::ga::Index index;
-    while (stream >> index) {
-        indices.insert(index);
+    std::string token;
+    while (stream >> token) {
+        // Range token "low-high" expands inclusively into the index set
+        size_t dash = token.find('-');
+        if (dash != std::string::npos && dash > 0 && dash + 1 < token.size()) {
+            enzo::ga::Index low = std::stoull(token.substr(0, dash));
+            enzo::ga::Index high = std::stoull(token.substr(dash + 1));
+            if (low > high) std::swap(low, high);
+            for (enzo::ga::Index i = low; i <= high; ++i) {
+                indices.insert(i);
+            }
+            continue;
+        }
+        // Plain single index
+        indices.insert(std::stoull(token));
     }
     return std::make_shared<enzo::ExplicitIndexSet>(std::move(indices));
 }
@@ -71,18 +83,22 @@ bool enzo::SelectionComponent::containsPrim(const geo::Primitive& prim) const {
 
 bool enzo::SelectionComponent::containsFace(const geo::Primitive& prim, ga::Index index) const {
     if (!containsPrim(prim)) return false;
+    // Whole-prim selection (no blocks): every face is implicitly included.
+    if (isWholePrim()) return true;
     if (!faces_) return false;
     return faces_->contains(index);
 }
 
 bool enzo::SelectionComponent::containsPoint(const geo::Primitive& prim, ga::Index index) const {
     if (!containsPrim(prim)) return false;
+    if (isWholePrim()) return true;
     if (!points_) return false;
     return points_->contains(index);
 }
 
 bool enzo::SelectionComponent::containsVertex(const geo::Primitive& prim, ga::Index index) const {
     if (!containsPrim(prim)) return false;
+    if (isWholePrim()) return true;
     if (!vertices_) return false;
     return vertices_->contains(index);
 }

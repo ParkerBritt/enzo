@@ -172,6 +172,67 @@ TEST_CASE("getPrims inverted includes unmentioned prims") {
     REQUIRE(prims[0]->getPath() == "/unselected");
 }
 
+TEST_CASE("Selection containsPoint range") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected p{0-8}");
+
+    // Endpoints and interior are included
+    REQUIRE(selection.containsPoint(prim, 0));
+    REQUIRE(selection.containsPoint(prim, 4));
+    REQUIRE(selection.containsPoint(prim, 8));
+
+    // Outside the range is excluded
+    REQUIRE_FALSE(selection.containsPoint(prim, 9));
+}
+
+TEST_CASE("Selection containsFace range") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected f{2-4}");
+    REQUIRE_FALSE(selection.containsFace(prim, 1));
+    REQUIRE(selection.containsFace(prim, 2));
+    REQUIRE(selection.containsFace(prim, 3));
+    REQUIRE(selection.containsFace(prim, 4));
+    REQUIRE_FALSE(selection.containsFace(prim, 5));
+}
+
+TEST_CASE("Selection range mixed with explicit indices") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected p{0-2 5 7-8}");
+
+    // From the range 0-2
+    REQUIRE(selection.containsPoint(prim, 0));
+    REQUIRE(selection.containsPoint(prim, 2));
+    // Gap between range and explicit value
+    REQUIRE_FALSE(selection.containsPoint(prim, 3));
+    REQUIRE_FALSE(selection.containsPoint(prim, 4));
+    // Explicit single index
+    REQUIRE(selection.containsPoint(prim, 5));
+    REQUIRE_FALSE(selection.containsPoint(prim, 6));
+    // From the range 7-8
+    REQUIRE(selection.containsPoint(prim, 7));
+    REQUIRE(selection.containsPoint(prim, 8));
+    REQUIRE_FALSE(selection.containsPoint(prim, 9));
+}
+
+TEST_CASE("Selection range single-element treats endpoints equally") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected p{3-3}");
+    REQUIRE(selection.containsPoint(prim, 3));
+    REQUIRE_FALSE(selection.containsPoint(prim, 2));
+    REQUIRE_FALSE(selection.containsPoint(prim, 4));
+}
+
+TEST_CASE("Selection getPoints range walks valid points") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    // Build 10 points so we can range across them
+    for (int i = 0; i < 10; ++i) {
+        mesh->addPoint(bt::Vector3(i, 0, 0));
+    }
+    Selection selection("/selected p{2-5}");
+    auto points = selection.getPoints(mesh);
+    REQUIRE(points == std::vector<ga::Offset>{2, 3, 4, 5});
+}
+
 TEST_CASE("getFaces inverted returns complement") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
@@ -184,4 +245,92 @@ TEST_CASE("getFaces inverted returns complement") {
     selection.setInverted(true);
     auto faces = selection.getFaces(mesh);
     REQUIRE(faces == std::vector<ga::Offset>{0, 1, 3, 4});
+}
+
+// Whole-prim selection: no blocks present, so every component is implicitly included.
+
+TEST_CASE("containsPoint whole-prim") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected");
+    REQUIRE(selection.containsPoint(prim, 0));
+    REQUIRE(selection.containsPoint(prim, 42));
+}
+
+TEST_CASE("containsFace whole-prim") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected");
+    REQUIRE(selection.containsFace(prim, 0));
+    REQUIRE(selection.containsFace(prim, 42));
+}
+
+TEST_CASE("containsVertex whole-prim") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected");
+    REQUIRE(selection.containsVertex(prim, 0));
+    REQUIRE(selection.containsVertex(prim, 42));
+}
+
+TEST_CASE("getPoints whole-prim") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    for (int i = 0; i < 5; ++i) {
+        mesh->addPoint(bt::Vector3(i, 0, 0));
+    }
+    Selection selection("/selected");
+    auto points = selection.getPoints(mesh);
+    REQUIRE(points == std::vector<ga::Offset>{0, 1, 2, 3, 4});
+}
+
+TEST_CASE("getFaces whole-prim") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    for (int i = 0; i < 3; ++i) {
+        mesh->addFace({p0, p1, p2});
+    }
+    Selection selection("/selected");
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 2});
+}
+
+TEST_CASE("getVertices whole-prim") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({p0, p1, p2});
+    Selection selection("/selected");
+    auto verts = selection.getVertices(mesh);
+    REQUIRE(verts.size() == 3);
+}
+
+// Partial selection: any block present restricts the selection to only those listed blocks.
+
+TEST_CASE("containsFace excluded when only points listed") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected p{0}");
+    REQUIRE_FALSE(selection.containsFace(prim, 0));
+}
+
+TEST_CASE("containsVertex excluded when only points listed") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected p{0}");
+    REQUIRE_FALSE(selection.containsVertex(prim, 0));
+}
+
+TEST_CASE("containsPoint excluded when only faces listed") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
+    Selection selection("/selected f{0}");
+    REQUIRE_FALSE(selection.containsPoint(prim, 0));
+}
+
+TEST_CASE("getFaces empty when only points listed") {
+    auto mesh = std::make_shared<geo::Mesh>("/selected");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({p0, p1, p2});
+    Selection selection("/selected p{0}");
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces.empty());
 }
