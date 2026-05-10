@@ -76,8 +76,9 @@ enzo::SelectionComponent enzo::SelectionComponent::fromString(std::string_view s
 }
 
 bool enzo::SelectionComponent::containsPrim(const geo::Primitive& prim) const {
-    // A pathless component with at least one selector applies to every prim.
-    if (primPath_.empty()) return points_ || faces_ || vertices_;
+    // A pathless component applies to every prim. With no selectors this is the
+    // implicit "everything" component produced by an empty selection string.
+    if (primPath_.empty()) return true;
     return prim.getPath() == primPath_;
 }
 

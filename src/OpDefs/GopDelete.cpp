@@ -23,18 +23,19 @@ void GopDelete::cookOp(enzo::op::Context context) {
 
         const bt::String selectionStr = context.evalStringParm("selection", 0);
         const bool invert = context.evalBoolParm("invert");
+        const bool keepPoints = context.evalBoolParm("keep_points");
         enzo::Selection selection(selectionStr);
         selection.setInverted(invert);
 
         for (auto prim : selection.getPrims(packet)) {
-            // Whole-prim deletion
-            if (selection.containsPrim(prim, true)) {
+            // Whole-prim deletion (skipped when keeping points; falls through to face/vertex deletion)
+            if (!keepPoints && selection.containsPrim(prim, true)) {
                 packet.removePrim(prim->getPath());
                 continue;
             }
 
             // Delete points
-            if (prim->hasPoints()) {
+            if (!keepPoints && prim->hasPoints()) {
                 prim->deletePoints(selection.getPoints(prim));
             }
 
@@ -58,4 +59,5 @@ void GopDelete::cookOp(enzo::op::Context context) {
 enzo::prm::Template GopDelete::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("invert", "Invert Selection")),
+    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("keep_points", "Keep Points")),
     enzo::prm::Terminator};

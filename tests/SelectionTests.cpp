@@ -84,14 +84,72 @@ TEST_CASE("Selection getFaces wildcard") {
     REQUIRE(faces == std::vector<ga::Index>{0, 1, 2, 3, 4});
 }
 
-TEST_CASE("Selection empty string selects no prims") {
+TEST_CASE("Selection empty string selects every prim") {
+    NodePacket packet;
+    geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
+    geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
+    packet.addPrimitive(a);
+    packet.addPrimitive(b);
+
+    Selection selection("");
+    auto prims = selection.getPrims(packet);
+    REQUIRE(prims.size() == 2);
+    // Both prims are matched, and as whole-prim (no blocks present).
+    REQUIRE(selection.containsPrim(a));
+    REQUIRE(selection.containsPrim(a, true));
+    REQUIRE(selection.containsPrim(b, true));
+}
+
+TEST_CASE("Selection empty string contains every component") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
+    Selection selection("");
+
+    // Whole-prim semantics extend to faces, points, and vertices.
+    REQUIRE(selection.containsPoint(prim, 0));
+    REQUIRE(selection.containsPoint(prim, 999));
+    REQUIRE(selection.containsFace(prim, 0));
+    REQUIRE(selection.containsFace(prim, 999));
+    REQUIRE(selection.containsVertex(prim, 0));
+    REQUIRE(selection.containsVertex(prim, 999));
+}
+
+TEST_CASE("Selection empty string getPoints returns all points") {
+    auto mesh = std::make_shared<geo::Mesh>("/foo");
+    for (int i = 0; i < 4; ++i) {
+        mesh->addPoint(bt::Vector3(i, 0, 0));
+    }
+    Selection selection("");
+    auto points = selection.getPoints(mesh);
+    REQUIRE(points == std::vector<ga::Offset>{0, 1, 2, 3});
+}
+
+TEST_CASE("Selection empty string getFaces returns all faces") {
+    auto mesh = std::make_shared<geo::Mesh>("/foo");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    for (int i = 0; i < 3; ++i) {
+        mesh->addFace({p0, p1, p2});
+    }
+    Selection selection("");
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 2});
+}
+
+TEST_CASE("Selection empty string inverted selects nothing") {
     NodePacket packet;
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
     packet.addPrimitive(prim);
 
     Selection selection("");
+    selection.setInverted(true);
+
+    // The complement of "everything" is "nothing".
     REQUIRE(selection.getPrims(packet).empty());
     REQUIRE_FALSE(selection.containsPrim(prim));
+    REQUIRE_FALSE(selection.containsFace(prim, 0));
+    REQUIRE_FALSE(selection.containsPoint(prim, 0));
+    REQUIRE_FALSE(selection.containsVertex(prim, 0));
 }
 
 TEST_CASE("Selection without path getPrims returns all prims") {

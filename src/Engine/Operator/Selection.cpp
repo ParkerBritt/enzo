@@ -14,6 +14,10 @@ enzo::Selection::Selection(std::string expression) {
         SelectionComponent component = SelectionComponent::fromString(stringPart);
         components_.push_back(component);
     }
+    // Empty expression means "everything": one pathless, no-selectors component.
+    if (components_.empty()) {
+        components_.push_back(SelectionComponent::fromString(""));
+    }
     // for(size_t i = 0; i<expression.size(); ++i)
     // {
     //     char character = expression[i];
