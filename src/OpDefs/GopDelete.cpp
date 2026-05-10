@@ -32,10 +32,9 @@ void GopDelete::cookOp(enzo::op::Context context) {
             }
 
             // Delete points
-            // if (prim->hasPoints())
-            // {
-            //     prim->deletePoints(selection.getPoints(prim));
-            // }
+            if (prim->hasPoints()) {
+                prim->deletePoints(selection.getPoints(prim));
+            }
 
             // Prim specific deletion
             switch (prim->getType()) {

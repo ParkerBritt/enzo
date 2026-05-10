@@ -44,8 +44,14 @@ public:
     ga::Offset addPoint(const bt::Vector3& pos);
 
     void deleteFaces(const std::vector<ga::Offset>& faceOffsets);
+    void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
+    {
+        deletePoints(pointOffsets, false);
+    }
+    void deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces);
     bool isValidFace(ga::Offset offset) const;
     bool isValidVertex(ga::Offset offset) const;
+    bool isValidPoint(ga::Offset offset) const override;
 
     void defragment() override;
 
@@ -116,5 +122,6 @@ private:
     enzo::ga::AttributeHandleVector3 posPointHandle_;
     enzo::ga::AttributeHandleBool validFaceHandle_;
     enzo::ga::AttributeHandleBool validVertexHandle_;
+    enzo::ga::AttributeHandleBool validPointHandle_;
 };
 }

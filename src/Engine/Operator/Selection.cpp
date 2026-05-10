@@ -78,3 +78,25 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     }
     return result;
 }
+
+bool enzo::Selection::containsPoint(geo::PrimPtr prim, ga::Index index) {
+    for (auto& component : components_) {
+        if (component.containsPoint(*prim, index)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
+    std::vector<ga::Offset> result;
+    if (!prim) return result;
+    ga::Index index = 0;
+    for (ga::Offset offset : prim->getPoints()) {
+        if (containsPoint(prim, index)) {
+            result.push_back(offset);
+        }
+        ++index;
+    }
+    return result;
+}

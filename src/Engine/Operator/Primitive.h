@@ -24,7 +24,7 @@ namespace enzo::geo {
  */
 class Primitive {
   public:
-    // Transform Iterator
+    // Point Iterator
     struct PointOffsets {
         PointOffsets(Primitive &primitive) : primitive_(primitive) {}
         struct Iterator {
@@ -35,11 +35,14 @@ class Primitive {
             value_type operator*() const { return curOffset_; }
 
             Iterator(Primitive &primitive, ga::Offset current)
-                : primitive_(primitive), curOffset_(current) {}
+                : primitive_(primitive), curOffset_(current) {
+                skipInvalid();
+            }
 
             // Prefix increment
             Iterator &operator++() {
-                curOffset_++;
+                ++curOffset_;
+                skipInvalid();
                 return *this;
             }
 
@@ -60,6 +63,10 @@ class Primitive {
           private:
             enzo::geo::Primitive &primitive_;
             ga::Offset curOffset_ = 0;
+            void skipInvalid() {
+                const ga::Offset end = primitive_.getNumPoints();
+                while (curOffset_ < end && !primitive_.isValidPoint(curOffset_)) ++curOffset_;
+            }
         };
         Iterator begin() { return Iterator(primitive_, 0); }
         Iterator end() { return Iterator(primitive_, primitive_.getNumPoints()); }
@@ -86,6 +93,8 @@ class Primitive {
     virtual bool hasPoints() const { return false; }
     virtual ga::Offset getNumPoints() const { return 0; }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
+    virtual bool isValidPoint(ga::Offset offset) const { return true; }
+    virtual void deletePoints(const std::vector<ga::Offset>& pointOffsets) {}
 
     /**
      * @brief Compacts storage, removing entries marked invalid so offsets

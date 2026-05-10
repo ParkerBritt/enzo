@@ -22,6 +22,7 @@ geo::Mesh::Mesh(std::string_view path) :
     posPointHandle_{addVector3Attribute(ga::AttrOwner::POINT, "P", true)},
     validFaceHandle_{addBoolAttribute(ga::AttrOwner::FACE, "__valid", true, true)},
     validVertexHandle_{addBoolAttribute(ga::AttrOwner::VERTEX, "__valid", true, true)},
+    validPointHandle_{addBoolAttribute(ga::AttrOwner::POINT, "__valid", true, true)},
     Primitive(path)
 {
 }
@@ -39,6 +40,7 @@ geo::Mesh::Mesh(const Mesh& other):
     posPointHandle_{enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true))},
     validFaceHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "__valid", true))},
     validVertexHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::VERTEX, "__valid", true))},
+    validPointHandle_{enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::POINT, "__valid", true))},
 
     // other
     soloPoints_{other.soloPoints_},
@@ -65,6 +67,7 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
     posPointHandle_ = enzo::ga::AttributeHandleVector3(getAttribByName(ga::AttrOwner::POINT, "P", true));
     validFaceHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::FACE, "__valid", true));
     validVertexHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::VERTEX, "__valid", true));
+    validPointHandle_ = enzo::ga::AttributeHandleBool(getAttribByName(ga::AttrOwner::POINT, "__valid", true));
 
     // other
     soloPoints_           = rhs.soloPoints_;
@@ -246,6 +249,44 @@ void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
     needsDefrag_ = true;
 }
 
+void geo::Mesh::deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces)
+{
+    if (pointOffsets.empty()) return;
+
+    std::unordered_set<ga::Offset> deletedPoints(pointOffsets.begin(), pointOffsets.end());
+
+    for (ga::Offset pointOffset : pointOffsets)
+    {
+        validPointHandle_.setValue(pointOffset, false);
+        soloPoints_.erase(pointOffset);
+    }
+
+    // Single O(V) pass: mark every vertex referencing a deleted point as invalid.
+    // If andFaces is set, also collect the owning faces for cascaded deletion.
+    const ga::Offset vertCount = pointOffsetVertexHandle_.getSize();
+    const ga::Offset faceCount = vertexCountFaceHandle_.getSize();
+    std::vector<bool> faceMarked(andFaces ? faceCount : 0, false);
+    for (ga::Offset v = 0; v < vertCount; ++v)
+    {
+        if (!validVertexHandle_.getValue(v)) continue;
+        const ga::Offset pt = pointOffsetVertexHandle_.getValue(v);
+        if (!deletedPoints.count(pt)) continue;
+        validVertexHandle_.setValue(v, false);
+        if (andFaces) faceMarked[getVertexPrim(v)] = true;
+    }
+    if (andFaces)
+    {
+        std::vector<ga::Offset> facesToDelete;
+        for (ga::Offset f = 0; f < faceCount; ++f)
+        {
+            if (faceMarked[f]) facesToDelete.push_back(f);
+        }
+        deleteFaces(facesToDelete);
+    }
+
+    needsDefrag_ = true;
+}
+
 bool geo::Mesh::isValidFace(ga::Offset offset) const
 {
     return validFaceHandle_.getValue(offset);
@@ -256,11 +297,31 @@ bool geo::Mesh::isValidVertex(ga::Offset offset) const
     return validVertexHandle_.getValue(offset);
 }
 
+bool geo::Mesh::isValidPoint(ga::Offset offset) const
+{
+    return validPointHandle_.getValue(offset);
+}
+
 void geo::Mesh::defragment()
 {
     Primitive::defragment();
 
     if (!needsDefrag_) return;
+
+    // Update each face's vertex count in case any vertices were deleted
+    const ga::Offset oldFaceCount = vertexCountFaceHandle_.getSize();
+    for (ga::Offset f = 0; f < oldFaceCount; ++f)
+    {
+        if (!validFaceHandle_.getValue(f)) continue;
+        const ga::Offset start = getPrimStartVertex(f);
+        const ga::Offset oldCount = vertexCountFaceHandle_.getValue(f);
+        ga::Offset validCount = 0;
+        for (ga::Offset v = start; v < start + oldCount; ++v)
+        {
+            if (validVertexHandle_.getValue(v)) ++validCount;
+        }
+        vertexCountFaceHandle_.setValue(f, validCount);
+    }
 
     // Compact every face attribute by face validity.
     std::vector<bool> faceKeep = validFaceHandle_.getAllValues();
@@ -270,9 +331,37 @@ void geo::Mesh::defragment()
     std::vector<bool> vertKeep = validVertexHandle_.getAllValues();
     for (auto& attr : vertexAttributes_) if (attr) attr->compact(vertKeep);
 
+    // Compact every point attribute by point validity, building an old → new
+    // offset map so we can update everything that references point offsets.
+    std::vector<bool> pointKeep = validPointHandle_.getAllValues();
+    std::vector<ga::Offset> pointRemap(pointKeep.size(), 0);
+    ga::Offset newPointOffset = 0;
+    for (size_t i = 0; i < pointKeep.size(); ++i)
+    {
+        if (pointKeep[i]) pointRemap[i] = newPointOffset++;
+    }
+    for (auto& attr : pointAttributes_) if (attr) attr->compact(pointKeep);
+
+    // Remap surviving vertex → point references to the compacted point offsets.
+    const ga::Offset newVertCount = pointOffsetVertexHandle_.getSize();
+    for (ga::Offset v = 0; v < newVertCount; ++v)
+    {
+        const ga::Offset oldPointOffset = pointOffsetVertexHandle_.getValue(v);
+        pointOffsetVertexHandle_.setValue(v, pointRemap[oldPointOffset]);
+    }
+
+    // Filter and remap soloPoints_ to the compacted offsets.
+    std::unordered_set<ga::Offset> remappedSolo;
+    remappedSolo.reserve(soloPoints_.size());
+    for (ga::Offset old : soloPoints_)
+    {
+        if (pointKeep[old]) remappedSolo.insert(pointRemap[old]);
+    }
+    soloPoints_ = std::move(remappedSolo);
+
     // Rebuild vertexPrims_ from the compacted face data.
     vertexPrims_.clear();
-    vertexPrims_.reserve(pointOffsetVertexHandle_.getSize());
+    vertexPrims_.reserve(newVertCount);
     const ga::Offset faceCount = vertexCountFaceHandle_.getSize();
     for (ga::Offset f = 0; f < faceCount; ++f)
     {
@@ -289,6 +378,7 @@ ga::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
     const ga::Offset pointOffset = posPointHandle_.getSize();
 
     posPointHandle_.addValue(pos);
+    validPointHandle_.addValue(true);
     soloPoints_.emplace(posPointHandle_.getSize()-1);
 
     return pointOffset;
