@@ -49,6 +49,7 @@ public:
         deletePoints(pointOffsets, false);
     }
     void deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces);
+    void deleteVertices(const std::vector<ga::Offset>& vertOffsets);
     bool isValidFace(ga::Offset offset) const;
     bool isValidVertex(ga::Offset offset) const;
     bool isValidPoint(ga::Offset offset) const override;
@@ -106,7 +107,9 @@ private:
     ga::attribVector vertexAttributes_;
     ga::attribVector faceAttributes_;
 
-    std::unordered_set<ga::Offset> soloPoints_;
+    mutable std::unordered_set<ga::Offset> soloPoints_;
+    mutable bool soloPointsDirty_ = true;
+    void rebuildSoloPoints() const;
     bool needsDefrag_ = false;
 
     mutable std::vector<ga::Offset> primStarts_;

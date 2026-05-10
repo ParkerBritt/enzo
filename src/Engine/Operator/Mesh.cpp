@@ -44,6 +44,7 @@ geo::Mesh::Mesh(const Mesh& other):
 
     // other
     soloPoints_{other.soloPoints_},
+    soloPointsDirty_{other.soloPointsDirty_},
     needsDefrag_{other.needsDefrag_},
     vertexPrims_{other.vertexPrims_},
     primStarts_{other.primStarts_},
@@ -71,6 +72,7 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
 
     // other
     soloPoints_           = rhs.soloPoints_;
+    soloPointsDirty_      = rhs.soloPointsDirty_;
     needsDefrag_          = rhs.needsDefrag_;
     vertexPrims_          = rhs.vertexPrims_;
     primStarts_           = rhs.primStarts_;
@@ -211,11 +213,11 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
         pointOffsetVertexHandle_.addValue(pointOffset);
         validVertexHandle_.addValue(true);
         vertexPrims_.push_back(primNum);
-        soloPoints_.erase(pointOffset);
     }
     vertexCountFaceHandle_.addValue(pointOffsets.size());
     closedFaceHandle_.addValue(closed);
     validFaceHandle_.addValue(true);
+    soloPointsDirty_ = true;
 
     // resize other attributes
     for(auto faceAttribute : faceAttributes_)
@@ -247,6 +249,7 @@ void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
         }
     }
     needsDefrag_ = true;
+    soloPointsDirty_ = true;
 }
 
 void geo::Mesh::deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces)
@@ -258,7 +261,6 @@ void geo::Mesh::deletePoints(const std::vector<ga::Offset>& pointOffsets, bool a
     for (ga::Offset pointOffset : pointOffsets)
     {
         validPointHandle_.setValue(pointOffset, false);
-        soloPoints_.erase(pointOffset);
     }
 
     // Single O(V) pass: mark every vertex referencing a deleted point as invalid.
@@ -285,6 +287,37 @@ void geo::Mesh::deletePoints(const std::vector<ga::Offset>& pointOffsets, bool a
     }
 
     needsDefrag_ = true;
+    soloPointsDirty_ = true;
+}
+
+void geo::Mesh::deleteVertices(const std::vector<ga::Offset>& vertOffsets)
+{
+    if (vertOffsets.empty()) return;
+
+    // Mark vertices invalid and remember which faces lost vertices
+    std::unordered_set<ga::Offset> affectedFaces;
+    for (ga::Offset v : vertOffsets)
+    {
+        validVertexHandle_.setValue(v, false);
+        affectedFaces.insert(getVertexPrim(v));
+    }
+
+    // Invalidate any face that has no valid vertices left
+    for (ga::Offset f : affectedFaces)
+    {
+        if (!validFaceHandle_.getValue(f)) continue;
+        const ga::Offset start = getPrimStartVertex(f);
+        const ga::Offset count = getPrimVertCount(f);
+        bool anyValid = false;
+        for (ga::Offset v = start; v < start + count; ++v)
+        {
+            if (validVertexHandle_.getValue(v)) { anyValid = true; break; }
+        }
+        if (!anyValid) validFaceHandle_.setValue(f, false);
+    }
+
+    needsDefrag_ = true;
+    soloPointsDirty_ = true;
 }
 
 bool geo::Mesh::isValidFace(ga::Offset offset) const
@@ -350,14 +383,7 @@ void geo::Mesh::defragment()
         pointOffsetVertexHandle_.setValue(v, pointRemap[oldPointOffset]);
     }
 
-    // Filter and remap soloPoints_ to the compacted offsets.
-    std::unordered_set<ga::Offset> remappedSolo;
-    remappedSolo.reserve(soloPoints_.size());
-    for (ga::Offset old : soloPoints_)
-    {
-        if (pointKeep[old]) remappedSolo.insert(pointRemap[old]);
-    }
-    soloPoints_ = std::move(remappedSolo);
+    soloPointsDirty_ = true;
 
     // Rebuild vertexPrims_ from the compacted face data.
     vertexPrims_.clear();
@@ -379,23 +405,48 @@ ga::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
 
     posPointHandle_.addValue(pos);
     validPointHandle_.addValue(true);
-    soloPoints_.emplace(posPointHandle_.getSize()-1);
+    soloPointsDirty_ = true;
 
     return pointOffset;
 }
 
+void geo::Mesh::rebuildSoloPoints() const
+{
+    soloPoints_.clear();
+
+    // Seed with every valid point
+    const ga::Offset pointCount = posPointHandle_.getSize();
+    for (ga::Offset p = 0; p < pointCount; ++p)
+    {
+        if (validPointHandle_.getValue(p)) soloPoints_.insert(p);
+    }
+
+    // Drop any point referenced by a valid vertex
+    const ga::Offset vertCount = pointOffsetVertexHandle_.getSize();
+    for (ga::Offset v = 0; v < vertCount; ++v)
+    {
+        if (!validVertexHandle_.getValue(v)) continue;
+        soloPoints_.erase(pointOffsetVertexHandle_.getValue(v));
+    }
+
+    soloPointsDirty_ = false;
+}
+
 ga::Offset geo::Mesh::getNumSoloPoints() const
 {
+    if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.size();
 }
 
 std::unordered_set<ga::Offset>::const_iterator geo::Mesh::soloPointsBegin() const
 {
+    if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.begin();
 }
 
 std::unordered_set<ga::Offset>::const_iterator geo::Mesh::soloPointsEnd() const
 {
+    if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.end();
 }
 

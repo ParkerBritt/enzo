@@ -12,6 +12,7 @@ public:
   bool containsPrim(const geo::Primitive& prim) const;
   bool containsFace(const geo::Primitive& prim, ga::Index index) const;
   bool containsPoint(const geo::Primitive& prim, ga::Index index) const;
+  bool containsVertex(const geo::Primitive& prim, ga::Index index) const;
   bool isWholePrim() const;
 
 private:
