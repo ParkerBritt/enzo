@@ -135,3 +135,13 @@ enzo::NodePacket enzo::NodePacket::deepCopy() const {
         copy.addPrimitive(prim->clone());
     return copy;
 }
+
+// TODO: remplace with PrimPath
+void enzo::NodePacket::removePrim(std::string path) {
+    for (auto it = primitives_.begin(); it != primitives_.end(); it++) {
+        if ((*it)->getPath() == path) {
+            primitives_.erase(it);
+            return;
+        }
+    }
+}

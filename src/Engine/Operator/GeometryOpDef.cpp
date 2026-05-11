@@ -21,6 +21,13 @@ void enzo::nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, enzo::No
     {
         throw std::runtime_error("Cannot set output packet to index > maxOutputs");
     }
+
+    // Auto-defragment every primitive so downstream consumers see contiguous offsets.
+    for (auto& prim : packet.getPrimitives())
+    {
+        if (prim) prim->defragment();
+    }
+
     outputPackets_[outputIndex] = std::make_shared<const enzo::NodePacket>(std::move(packet));
 }
 

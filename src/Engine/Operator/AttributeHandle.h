@@ -55,39 +55,7 @@ public:
         if(attribute == nullptr) throw std::runtime_error("Cannot pass empty pointer to AttributeHandle constructor");
         type_ = attribute->getType();
         name_ = attribute->getName();
-        // get attribute data pointer
-        // TODO: check types match
-        // TODO: add the other types
-
-        // int
-        if constexpr (std::is_same<bt::intT, T>::value)
-        {
-            data_=attribute->intStore_;
-        }
-
-        // float
-        else if constexpr (std::is_same<bt::floatT, T>::value)
-        {
-            data_=attribute->floatStore_;
-        }
-
-        // vector 3
-        else if constexpr (std::is_same<enzo::bt::Vector3, T>::value)
-        {
-            data_=attribute->vector3Store_;
-        }
-        else if constexpr (std::is_same<enzo::bt::boolT, T>::value)
-        {
-            data_=attribute->boolStore_;
-        }
-        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
-        {
-            data_=attribute->matrix4Store_;
-        }
-        else
-        {
-                throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in AttributeHandle constructor");
-        }
+        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute->store_);
     }
 
     /**
@@ -232,40 +200,7 @@ public:
     {
         type_ = attribute->getType();
         name_ = attribute->getName();
-        // get attribute data pointer
-        // TODO: check types match
-        // TODO: add the other types
-
-        // int
-        if constexpr (std::is_same<bt::intT, T>::value)
-        {
-            data_=attribute->intStore_;
-        }
-
-        // float
-        else if constexpr (std::is_same<bt::floatT, T>::value)
-        {
-            data_=attribute->floatStore_;
-        }
-
-        // vector 3
-        else if constexpr (std::is_same<enzo::bt::Vector3, T>::value)
-        {
-            data_=attribute->vector3Store_;
-        }
-        else if constexpr (std::is_same<enzo::bt::boolT, T>::value)
-        {
-            data_=attribute->boolStore_;
-        }
-        else if constexpr (std::is_same<enzo::bt::Matrix4, T>::value)
-        {
-            data_=attribute->matrix4Store_;
-        }
-        else
-        {
-                throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in AttributeHandle constructor");
-        }
-
+        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute->store_);
     }
 
     /// @copydoc AttributeHandle::getAllValues

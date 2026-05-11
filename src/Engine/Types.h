@@ -33,12 +33,19 @@ enum class AttributeType {
 using AttrType = AttributeType;
 using AttrOwner = AttributeOwner;
 /**
- * @brief ga::Offset is the index of an element in a given AttributeOwner.
+ * @brief ga::Index is the continuous index of an element in a given AttributeOwner.
  *
  * Eg. point index, vertex index, primitive index, or global index.
- * This different but similar in concept to a point number. This
+ * This is usually provided by the user where ga::Offset is used internally.
+ */
+using Index = size_t;
+/**
+ * @brief ga::Offset is the internal discontinuous index of an element in a given AttributeOwner.
+ *
+ * Eg. point offset, vertex offset, primitive offset, or global offset.
+ * This different but similar in concept to the index. This
  * value will stay consistant through geometry modification such
- * as adding and deleting points unlress defragmented.
+ * as adding and deleting points unless defragmented.
  */
 using Offset = size_t;
 } // namespace ga

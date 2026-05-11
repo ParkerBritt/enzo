@@ -36,7 +36,7 @@ bool enzo::op::Context::hasInput(unsigned int inputIndex)
 }
 
 // TODO: cache value
-enzo::bt::floatT enzo::op::Context::evalFloatParm(const char* parmName, const unsigned int index) const
+enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
@@ -52,7 +52,7 @@ enzo::bt::floatT enzo::op::Context::evalFloatParm(const char* parmName, const un
 }
 
 // TODO: cache value
-enzo::bt::intT enzo::op::Context::evalIntParm(const char* parmName, const unsigned int index) const
+enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
@@ -68,7 +68,7 @@ enzo::bt::intT enzo::op::Context::evalIntParm(const char* parmName, const unsign
 }
 
 // TODO: cache value
-enzo::bt::boolT enzo::op::Context::evalBoolParm(const char* parmName, const unsigned int index) const
+enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
@@ -84,7 +84,7 @@ enzo::bt::boolT enzo::op::Context::evalBoolParm(const char* parmName, const unsi
 }
 
 // TODO: cache value
-enzo::bt::String enzo::op::Context::evalStringParm(const char* parmName, const unsigned int index) const
+enzo::bt::String enzo::op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
@@ -95,6 +95,6 @@ enzo::bt::String enzo::op::Context::evalStringParm(const char* parmName, const u
     }
     else
     {
-        throw std::runtime_error("Parameter weak ptr invalid");
+        throw std::runtime_error("Parameter '" + parmName + "' not found in Context::evalStringParm");
     }
 }

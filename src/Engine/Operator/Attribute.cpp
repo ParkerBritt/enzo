@@ -7,37 +7,34 @@
 using namespace enzo;
 
 
-ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic)
-: name_{name}, type_{type}, intrinsic_{intrinsic}
+ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic, bool isPrivate)
+: name_{name}, type_{type}, intrinsic_{intrinsic}, private_{isPrivate}
 {
-    // init store
     switch(type_)
     {
         case(AttrType::intT):
-            intStore_=std::make_shared<std::vector<bt::intT>>();
-            typeSize_=1;
+            store_ = std::make_shared<StoreContainer<bt::intT>>();
+            typeSize_ = 1;
             break;
         case(AttrType::floatT):
-            floatStore_=std::make_shared<std::vector<bt::floatT>>();
-            typeSize_=1;
+            store_ = std::make_shared<StoreContainer<bt::floatT>>();
+            typeSize_ = 1;
             break;
         case(AttrType::vectorT):
-            vector3Store_=std::make_shared<std::vector<enzo::bt::Vector3>>();
-            typeSize_=3;
+            store_ = std::make_shared<StoreContainer<bt::Vector3>>();
+            typeSize_ = 3;
             break;
         case(AttrType::boolT):
-            boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>();
-            typeSize_=1;
+            store_ = std::make_shared<StoreContainer<bt::boolT>>();
+            typeSize_ = 1;
             break;
         case(AttrType::matrixT):
-            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>();
-            typeSize_=16;
+            store_ = std::make_shared<StoreContainer<bt::Matrix4>>();
+            typeSize_ = 16;
             break;
         default:
             throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute constructor");
-
     }
-
 }
 
 unsigned int ga::Attribute::Attribute::getTypeSize() const
@@ -48,29 +45,27 @@ unsigned int ga::Attribute::Attribute::getTypeSize() const
 
 void ga::Attribute::resize(size_t size)
 {
-    using namespace enzo::ga;
-    switch(type_)
-    {
-        case AttributeType::intT:
-            intStore_->resize(size);
-            break;
-        case AttributeType::floatT:
-            floatStore_->resize(size);
-            break;
-        case AttributeType::boolT:
-            boolStore_->resize(size);
-            break;
-        case AttributeType::vectorT:
-            vector3Store_->resize(size);
-            break;
-        case AttributeType::matrixT:
-            matrix4Store_->resize(size);
-            break;
-        default:
-            throw std::runtime_error("type not accounted for");
+    std::visit([&](auto& storePtr) { storePtr->resize(size); }, store_);
+}
 
-    }
-    
+void ga::Attribute::compact(const std::vector<bool>& keep)
+{
+    std::visit([&](auto& storePtr) {
+        auto& store = *storePtr;
+        const size_t n = std::min(store.size(), keep.size());
+
+        // Walk the store and pack kept entries to the left.
+        size_t writeIdx = 0;
+        for (size_t i = 0; i < n; ++i)
+        {
+            if (!keep[i]) continue;
+            if (writeIdx != i) store[writeIdx] = store[i];
+            ++writeIdx;
+        }
+
+        // Drop the trailing entries that were left behind.
+        store.resize(writeIdx);
+    }, store_);
 }
 
 bool ga::Attribute::isIntrinsic() const
@@ -78,63 +73,44 @@ bool ga::Attribute::isIntrinsic() const
     return intrinsic_;
 }
 
+bool ga::Attribute::isPrivate() const
+{
+    return private_;
+}
+
 
 
 ga::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
-    // private_= other.private_;
+    private_ = other.private_;
     // hidden_ = other.hidden_;
     // readOnly_ = other.readOnly_;
     intrinsic_ = other.intrinsic_;
     name_ = other.name_;
     typeSize_ = other.typeSize_;
 
-    switch(type_)
-    {
-        case(AttrType::intT):
-            intStore_=std::make_shared<std::vector<bt::intT>>(*other.intStore_);
-            break;
-        case(AttrType::floatT):
-            floatStore_=std::make_shared<std::vector<bt::floatT>>(*other.floatStore_);
-            break;
-        case(AttrType::vectorT):
-            vector3Store_=std::make_shared<std::vector<enzo::bt::Vector3>>(*other.vector3Store_);
-            break;
-        case(AttrType::boolT):
-            boolStore_=std::make_shared<std::vector<enzo::bt::boolT>>(*other.boolStore_);
-            break;
-        case(AttrType::matrixT):
-            matrix4Store_=std::make_shared<std::vector<enzo::bt::Matrix4>>(*other.matrix4Store_);
-            break;
-        default:
-            throw std::runtime_error("Type " + std::to_string(static_cast<int>(type_)) + " was not properly accounted for in Attribute copy constructor");
-
-    }
+    std::visit([&](const auto& storePtr) {
+        using StorePtr = std::decay_t<decltype(storePtr)>;
+        using Vec = typename StorePtr::element_type;
+        store_ = std::make_shared<Vec>(*storePtr);
+    }, other.store_);
 }
 
 
 bt::Vector3 ga::Attribute::getVector3(ga::Offset offset) const
 {
-    return (*vector3Store_)[offset];
+    return (*std::get<std::shared_ptr<StoreContainer<bt::Vector3>>>(store_))[offset];
 }
 
 bt::Matrix4 ga::Attribute::getMatrix4(ga::Offset offset) const
 {
-    return (*matrix4Store_)[offset];
+    return (*std::get<std::shared_ptr<StoreContainer<bt::Matrix4>>>(store_))[offset];
 }
 
 size_t ga::Attribute::getSize() const
 {
-    switch(type_)
-    {
-        case AttrType::intT:    return intStore_->size();
-        case AttrType::floatT:  return floatStore_->size();
-        case AttrType::vectorT: return vector3Store_->size();
-        case AttrType::boolT:   return boolStore_->size();
-        case AttrType::matrixT: return matrix4Store_->size();
-        default: return 0;
-    }
+    return std::visit([](const auto& storePtr) -> size_t { return storePtr->size(); }, store_);
 }
 
 ga::AttributeType ga::Attribute::getType() const

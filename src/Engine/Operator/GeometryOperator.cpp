@@ -160,7 +160,7 @@ void nt::GeometryOperator::removeOutputConnection(const nt::GeometryConnection* 
 }
 
 
-std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string parameterName)
+std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string_view parameterName)
 {
     for(auto parm : parameters_)
     {

@@ -14,7 +14,7 @@ namespace enzo::geo
 class Camera : public Primitive
 {
 public:
-    Camera();
+    Camera(std::string_view path="/camera");
     Camera(const Camera& other);
     Camera& operator=(const Camera& rhs);
     ~Camera() override = default;

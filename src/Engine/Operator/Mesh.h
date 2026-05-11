@@ -27,7 +27,7 @@ using F_index  = HeMesh::Face_index;
 class Mesh : public Primitive
 {
 public:
-    Mesh();
+    Mesh(std::string_view path="/mesh");
     Mesh(const Mesh& other);
     Mesh& operator=(const Mesh& rhs);
     ~Mesh() override = default;
@@ -42,6 +42,19 @@ public:
 
     void addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
+
+    void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
+    void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
+    {
+        deletePoints(pointOffsets, false);
+    }
+    void deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces);
+    void deleteVertices(const std::vector<ga::Offset>& vertOffsets);
+    bool isValidFace(ga::Offset offset) const;
+    bool isValidVertex(ga::Offset offset) const;
+    bool isValidPoint(ga::Offset offset) const override;
+
+    void defragment() override;
 
     void merge(Mesh& other);
 
@@ -94,7 +107,10 @@ private:
     ga::attribVector vertexAttributes_;
     ga::attribVector faceAttributes_;
 
-    std::unordered_set<ga::Offset> soloPoints_;
+    mutable std::unordered_set<ga::Offset> soloPoints_;
+    mutable bool soloPointsDirty_ = true;
+    void rebuildSoloPoints() const;
+    bool needsDefrag_ = false;
 
     mutable std::vector<ga::Offset> primStarts_;
     mutable std::vector<ga::Offset> vertexPrims_;
@@ -103,9 +119,12 @@ private:
     mutable tbb::spin_mutex primStartsMutex_;
 
     // intrinsic handles
-    enzo::ga::AttributeHandleInt vertexCountHandlePrim_;
-    enzo::ga::AttributeHandleBool closedHandlePrim_;
-    enzo::ga::AttributeHandleInt pointOffsetHandleVert_;
-    enzo::ga::AttributeHandleVector3 posHandlePoint_;
+    enzo::ga::AttributeHandleInt vertexCountFaceHandle_;
+    enzo::ga::AttributeHandleBool closedFaceHandle_;
+    enzo::ga::AttributeHandleInt pointOffsetVertexHandle_;
+    enzo::ga::AttributeHandleVector3 posPointHandle_;
+    enzo::ga::AttributeHandleBool validFaceHandle_;
+    enzo::ga::AttributeHandleBool validVertexHandle_;
+    enzo::ga::AttributeHandleBool validPointHandle_;
 };
 }

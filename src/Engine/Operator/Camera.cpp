@@ -2,11 +2,11 @@
 
 using namespace enzo;
 
-geo::Camera::Camera()
-    : transformHandle_{addMatrix4Attribute(ga::AttributeOwner::PRIMITIVE, "transform", true)}
+geo::Camera::Camera(std::string_view path)
+    : transformHandle_{addMatrix4Attribute(ga::AttributeOwner::PRIMITIVE, "transform", true)},
+    Primitive(path)
 {
     transformHandle_.addValue(bt::Matrix4::Identity());
-    path_ = "/camera";
 }
 
 geo::Camera::Camera(const Camera& other)

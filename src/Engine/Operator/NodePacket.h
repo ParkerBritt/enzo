@@ -15,8 +15,8 @@ class NodePacket {
             using difference_type = std::ptrdiff_t;
             using value_type = Transform;
 
-            Iterator(std::vector<std::shared_ptr<geo::Primitive>> &primitives,
-                     TransformClass transformClass, size_t primIdx);
+            Iterator(std::vector<geo::PrimPtr> &primitives, TransformClass transformClass,
+                     size_t primIdx);
 
             Transform operator*() const;
             Iterator &operator++();
@@ -27,7 +27,7 @@ class NodePacket {
             friend bool operator!=(const Iterator &a, const Iterator &b) { return !(a == b); }
 
           private:
-            std::vector<std::shared_ptr<geo::Primitive>> &primitives_;
+            std::vector<geo::PrimPtr> &primitives_;
             TransformClass transformClass_;
             size_t primIdx_;
             ga::Offset offset_ = 0;
@@ -37,30 +37,30 @@ class NodePacket {
             void advance();
         };
 
-        Transforms(std::vector<std::shared_ptr<geo::Primitive>> &primitives,
-                   TransformClass transformClass)
+        Transforms(std::vector<geo::PrimPtr> &primitives, TransformClass transformClass)
             : primitives_(primitives), transformClass_(transformClass) {}
 
         Iterator begin() { return Iterator(primitives_, transformClass_, 0); }
         Iterator end() { return Iterator(primitives_, transformClass_, primitives_.size()); }
 
       private:
-        std::vector<std::shared_ptr<geo::Primitive>> &primitives_;
+        std::vector<geo::PrimPtr> &primitives_;
         TransformClass transformClass_;
     };
 
     void addPrimitive(std::shared_ptr<enzo::geo::Primitive> primitive);
-    void attemptMerge(std::shared_ptr<geo::Primitive> prim);
+    void attemptMerge(geo::PrimPtr prim);
 
     std::shared_ptr<enzo::geo::Primitive> getPrimitive(unsigned int index);
     std::shared_ptr<const enzo::geo::Primitive> getPrimitive(unsigned int index) const;
-    std::shared_ptr<geo::Primitive> getPrimAtPath(const std::string &path);
+    geo::PrimPtr getPrimAtPath(const std::string &path);
     std::shared_ptr<const geo::Primitive> getPrimAtPath(const std::string &path) const;
 
     const std::vector<std::shared_ptr<enzo::geo::Primitive>> &getPrimitives() const {
         return primitives_;
     }
-    std::vector<std::shared_ptr<enzo::geo::Primitive>> getPrimitives(enzo::geo::PrimType type) const;
+    std::vector<geo::PrimPtr> getPrimitives(enzo::geo::PrimType type) const;
+    void removePrim(std::string path);
 
     Transforms getTransforms(TransformClass transformClass) {
         return Transforms(primitives_, transformClass);
@@ -70,7 +70,7 @@ class NodePacket {
     NodePacket deepCopy() const;
 
   private:
-    std::vector<std::shared_ptr<enzo::geo::Primitive>> primitives_;
+    std::vector<geo::PrimPtr> primitives_;
 };
 
 } // namespace enzo

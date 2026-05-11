@@ -35,6 +35,9 @@ set(ENGINE_SOURCES
     src/Engine/Network/UpdateLock.cpp
     src/Engine/UndoRedo/UndoStack.cpp
     src/Engine/Serializer/Serializer.cpp
+    src/Engine/Operator/Selection.cpp
+    src/Engine/Operator/SelectionComponent.cpp
+    src/Engine/Operator/IndexSet.cpp
 )
 
 set(GUI_SOURCES
@@ -225,6 +228,8 @@ if(ENZO_BUILD_TESTS)
         tests/main-tests.cpp
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
+        tests/SelectionTests.cpp
+        tests/MeshTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)

@@ -114,7 +114,7 @@ public:
 
     /// @brief Returns a parameter with the given name belonging to this node.
     /// @returns Empty default constructed std::weak_ptr<prm::Parameter>() if no parameter of that name exists.
-    std::weak_ptr<prm::Parameter> getParameter(std::string parameterName);
+    std::weak_ptr<prm::Parameter> getParameter(std::string_view parameterName);
 
     /**
     * @brief NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.
