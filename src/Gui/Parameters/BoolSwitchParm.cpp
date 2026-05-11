@@ -9,7 +9,8 @@
 enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent)
 : QPushButton(parent), parameter_{parameter}
 {
-    setFixedWidth(40);
+    setFixedWidth(fullWidth_);
+    setMinimumHeight(19);
     parameter_ = parameter;
     setCheckable(true);
     setFocusPolicy(Qt::NoFocus);
@@ -27,7 +28,7 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> par
     {
         bool toggled = parameterShared->evalInt();
         setChecked(toggled);
-        switchXEnd_=width() - 20 - 4;
+        switchXEnd_=width() - handleWidth_ - 4;
         switchColor_= toggled ? switchColorOn_ : switchColorOff_;
         switchX_= toggled ? switchXEnd_ : 0;
 
@@ -73,7 +74,7 @@ void enzo::ui::BoolSwitchParm::paintEvent(QPaintEvent* event)
     painter.setBrush(switchColor_);
     constexpr int borderRadius = 7;
     constexpr int margin = 2;
-    painter.drawRoundedRect(QRectF(bgRect.left()+margin+switchX_, bgRect.top()+margin, 20, bgRect.height()-margin*2), borderRadius, borderRadius);
+    painter.drawRoundedRect(QRectF(bgRect.left()+margin+switchX_, bgRect.top()+margin, handleWidth_, bgRect.height()-margin*2), borderRadius, borderRadius);
 }
 
 void enzo::ui::BoolSwitchParm::animateSwitch(bool checked)

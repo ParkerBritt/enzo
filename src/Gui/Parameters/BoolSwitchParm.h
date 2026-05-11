@@ -19,6 +19,8 @@ class BoolSwitchParm
 public:
     BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr);
 private:
+    int fullWidth_ = 35;
+    int handleWidth_ = 17;
     std::weak_ptr<enzo::prm::Parameter> parameter_;
     qreal switchX_=0;
     qreal switchXEnd_;
