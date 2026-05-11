@@ -305,6 +305,86 @@ TEST_CASE("getFaces inverted returns complement") {
     REQUIRE(faces == std::vector<ga::Offset>{0, 1, 3, 4});
 }
 
+// Inverting a partial selection only flips membership for the primitive part
+// it actually talks about. A face-only selection inverted is still face-only.
+
+TEST_CASE("Inverted face-only selection leaves points untouched") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
+    Selection selection("/mesh f{0-20}");
+    selection.setInverted(true);
+
+    // Faces flip within the face set
+    REQUIRE_FALSE(selection.containsFace(prim, 0));
+    REQUIRE_FALSE(selection.containsFace(prim, 20));
+    REQUIRE(selection.containsFace(prim, 21));
+
+    // Points and vertices were never part of the selection, so the inversion
+    // shouldn't drag them in either.
+    REQUIRE_FALSE(selection.containsPoint(prim, 0));
+    REQUIRE_FALSE(selection.containsPoint(prim, 99));
+    REQUIRE_FALSE(selection.containsVertex(prim, 0));
+    REQUIRE_FALSE(selection.containsVertex(prim, 99));
+}
+
+TEST_CASE("Inverted face-only getPoints and getVertices are empty") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    for (int i = 0; i < 5; ++i) {
+        mesh->addFace({p0, p1, p2});
+    }
+    Selection selection("/mesh f{0}");
+    selection.setInverted(true);
+
+    REQUIRE(selection.getPoints(mesh).empty());
+    REQUIRE(selection.getVertices(mesh).empty());
+    // The face complement is still there.
+    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{1, 2, 3, 4});
+}
+
+TEST_CASE("Inverted point-only selection leaves faces and vertices untouched") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
+    Selection selection("/mesh p{0-2}");
+    selection.setInverted(true);
+
+    REQUIRE_FALSE(selection.containsPoint(prim, 0));
+    REQUIRE_FALSE(selection.containsPoint(prim, 2));
+    REQUIRE(selection.containsPoint(prim, 3));
+
+    REQUIRE_FALSE(selection.containsFace(prim, 0));
+    REQUIRE_FALSE(selection.containsVertex(prim, 0));
+}
+
+TEST_CASE("Inverted vertex-only selection leaves faces and points untouched") {
+    geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
+    Selection selection("/mesh v{0-2}");
+    selection.setInverted(true);
+
+    REQUIRE_FALSE(selection.containsVertex(prim, 0));
+    REQUIRE_FALSE(selection.containsVertex(prim, 2));
+    REQUIRE(selection.containsVertex(prim, 3));
+
+    REQUIRE_FALSE(selection.containsFace(prim, 0));
+    REQUIRE_FALSE(selection.containsPoint(prim, 0));
+}
+
+TEST_CASE("Inverted pathless face selection inverts faces on every prim") {
+    geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
+    geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
+    Selection selection("f{0-2}");
+    selection.setInverted(true);
+
+    // The face complement applies on each prim, but no points or vertices are pulled in.
+    REQUIRE_FALSE(selection.containsFace(a, 1));
+    REQUIRE(selection.containsFace(a, 3));
+    REQUIRE_FALSE(selection.containsFace(b, 1));
+    REQUIRE(selection.containsFace(b, 3));
+
+    REQUIRE_FALSE(selection.containsPoint(a, 0));
+    REQUIRE_FALSE(selection.containsVertex(b, 0));
+}
+
 // Whole-prim selection: no blocks present, so every component is implicitly included.
 
 TEST_CASE("containsPoint whole-prim") {

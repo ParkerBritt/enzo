@@ -82,26 +82,30 @@ bool enzo::SelectionComponent::containsPrim(const geo::Primitive& prim) const {
     return prim.getPath() == primPath_;
 }
 
-bool enzo::SelectionComponent::containsFace(const geo::Primitive& prim, ga::Index index) const {
+bool enzo::SelectionComponent::containsFace(const geo::Primitive& prim, ga::Index index, bool inverted) const {
     if (!containsPrim(prim)) return false;
     // Whole-prim selection (no blocks): every face is implicitly included.
-    if (isWholePrim()) return true;
+    if (isWholePrim()) return !inverted;
+    // Face-less partial selection: out of face scope, inversion doesn't expand it.
     if (!faces_) return false;
-    return faces_->contains(index);
+    bool in = faces_->contains(index);
+    return inverted ? !in : in;
 }
 
-bool enzo::SelectionComponent::containsPoint(const geo::Primitive& prim, ga::Index index) const {
+bool enzo::SelectionComponent::containsPoint(const geo::Primitive& prim, ga::Index index, bool inverted) const {
     if (!containsPrim(prim)) return false;
-    if (isWholePrim()) return true;
+    if (isWholePrim()) return !inverted;
     if (!points_) return false;
-    return points_->contains(index);
+    bool in = points_->contains(index);
+    return inverted ? !in : in;
 }
 
-bool enzo::SelectionComponent::containsVertex(const geo::Primitive& prim, ga::Index index) const {
+bool enzo::SelectionComponent::containsVertex(const geo::Primitive& prim, ga::Index index, bool inverted) const {
     if (!containsPrim(prim)) return false;
-    if (isWholePrim()) return true;
+    if (isWholePrim()) return !inverted;
     if (!vertices_) return false;
-    return vertices_->contains(index);
+    bool in = vertices_->contains(index);
+    return inverted ? !in : in;
 }
 
 bool enzo::SelectionComponent::isWholePrim() const {
