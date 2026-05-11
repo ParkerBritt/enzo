@@ -10,7 +10,7 @@ enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> paramet
     setStyleSheet(R"(
                   QWidget[type="SliderParm"]
                   {
-                      border-radius: 6px;
+                      border-radius: 9px;
                       border: 1px solid #303030;
                   }
                   )");
@@ -33,7 +33,7 @@ void enzo::ui::FloatSliderParm::paintEvent(QPaintEvent *event) {
 
     QRectF fillRect = {rect().left() + margin, rect().top() + margin, fillWidth,
                        rect().height() - margin * 2};
-    painter.drawRoundedRect(fillRect, 6, 6);
+    painter.drawRoundedRect(fillRect, 8, 8);
 }
 
 void enzo::ui::FloatSliderParm::syncFromParameter() {

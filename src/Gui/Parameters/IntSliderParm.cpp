@@ -11,7 +11,7 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::Parameter> parameter, 
     setStyleSheet(R"(
                   QWidget[type="SliderParm"]
                   {
-                      border-radius: 6px;
+                      border-radius: 9px;
                       border: 1px solid #383838;
                   }
                   )");
@@ -46,7 +46,7 @@ void enzo::ui::IntSliderParm::paintEvent(QPaintEvent *event) {
 
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor("#383838"));
-    painter.drawRoundedRect(fillRect, 6, 6);
+    painter.drawRoundedRect(fillRect, 8, 8);
 }
 
 void enzo::ui::IntSliderParm::syncFromParameter() {

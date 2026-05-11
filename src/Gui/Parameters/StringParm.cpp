@@ -20,7 +20,7 @@ enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidge
     setStyleSheet(R"(
                   QWidget[type="StringParm"]
                   {
-                      border-radius: 6px;
+                      border-radius: 8px;
                       border: 1px solid #383838;
                       padding: 0px 5px 0px 5px;
                   }
