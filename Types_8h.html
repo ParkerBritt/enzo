@@ -114,8 +114,11 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::AttrType</
 <tr class="memitem:a1bdf8ce75d3fe2c571f3bbfa9694c15d" id="r_a1bdf8ce75d3fe2c571f3bbfa9694c15d"><td class="memItemLeft" align="right" valign="top"><a id="a1bdf8ce75d3fe2c571f3bbfa9694c15d" name="a1bdf8ce75d3fe2c571f3bbfa9694c15d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::ga::AttrOwner</b> = <a class="el" href="#a284ac41ae9685e6eff96cdddd2a4c110">AttributeOwner</a></td></tr>
 <tr class="separator:a1bdf8ce75d3fe2c571f3bbfa9694c15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a157b84254b906d4f700e6464155bdeb5" id="r_a157b84254b906d4f700e6464155bdeb5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a157b84254b906d4f700e6464155bdeb5">enzo::ga::Index</a> = size_t</td></tr>
+<tr class="memdesc:a157b84254b906d4f700e6464155bdeb5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a157b84254b906d4f700e6464155bdeb5" title="ga::Index is the continuous index of an element in a given AttributeOwner.">ga::Index</a> is the continuous index of an element in a given AttributeOwner.  <br /></td></tr>
+<tr class="separator:a157b84254b906d4f700e6464155bdeb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13eee29e1dadf2c0ad228646e639ad69" id="r_a13eee29e1dadf2c0ad228646e639ad69"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69">enzo::ga::Offset</a> = size_t</td></tr>
-<tr class="memdesc:a13eee29e1dadf2c0ad228646e639ad69"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69" title="ga::Offset is the index of an element in a given AttributeOwner.">ga::Offset</a> is the index of an element in a given AttributeOwner.  <br /></td></tr>
+<tr class="memdesc:a13eee29e1dadf2c0ad228646e639ad69"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a13eee29e1dadf2c0ad228646e639ad69" title="ga::Offset is the internal discontinuous index of an element in a given AttributeOwner.">ga::Offset</a> is the internal discontinuous index of an element in a given AttributeOwner.  <br /></td></tr>
 <tr class="separator:a13eee29e1dadf2c0ad228646e639ad69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ea4b106db38c2c881414c5daf6936f3" id="r_a8ea4b106db38c2c881414c5daf6936f3"><td class="memItemLeft" align="right" valign="top"><a id="a8ea4b106db38c2c881414c5daf6936f3" name="a8ea4b106db38c2c881414c5daf6936f3"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::bt::floatT</b> = double</td></tr>
@@ -209,6 +212,23 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (Tr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Basic attribute, parameter, and node types for Enzo. </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a157b84254b906d4f700e6464155bdeb5" name="a157b84254b906d4f700e6464155bdeb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a157b84254b906d4f700e6464155bdeb5">&#9670;&#160;</a></span>Index</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a157b84254b906d4f700e6464155bdeb5">enzo::ga::Index</a> = size_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>ga::Index is the continuous index of an element in a given AttributeOwner. </p>
+<p>Eg. point index, vertex index, primitive index, or global index. This is usually provided by the user where ga::Offset is used internally. </p>
+
+</div>
+</div>
 <a id="a13eee29e1dadf2c0ad228646e639ad69" name="a13eee29e1dadf2c0ad228646e639ad69"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a13eee29e1dadf2c0ad228646e639ad69">&#9670;&#160;</a></span>Offset</h2>
 
@@ -221,8 +241,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (Tr
       </table>
 </div><div class="memdoc">
 
-<p>ga::Offset is the index of an element in a given AttributeOwner. </p>
-<p>Eg. point index, vertex index, primitive index, or global index. This different but similar in concept to a point number. This value will stay consistant through geometry modification such as adding and deleting points unlress defragmented. </p>
+<p>ga::Offset is the internal discontinuous index of an element in a given AttributeOwner. </p>
+<p>Eg. point offset, vertex offset, primitive offset, or global offset. This different but similar in concept to the index. This value will stay consistant through geometry modification such as adding and deleting points unless defragmented. </p>
 
 </div>
 </div>

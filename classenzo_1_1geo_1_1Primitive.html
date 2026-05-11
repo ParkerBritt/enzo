@@ -123,6 +123,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5434e8e19fd8ab0070b8fdd0a2355211" id="r_a5434e8e19fd8ab0070b8fdd0a2355211"><td class="memItemLeft" align="right" valign="top"><a id="a5434e8e19fd8ab0070b8fdd0a2355211" name="a5434e8e19fd8ab0070b8fdd0a2355211"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (std::string_view path=&quot;/prim&quot;)</td></tr>
+<tr class="separator:a5434e8e19fd8ab0070b8fdd0a2355211"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8468caa3a58e20e54a9ecdd2e84d81ff" id="r_a8468caa3a58e20e54a9ecdd2e84d81ff"><td class="memItemLeft" align="right" valign="top"><a id="a8468caa3a58e20e54a9ecdd2e84d81ff" name="a8468caa3a58e20e54a9ecdd2e84d81ff"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;other)</td></tr>
 <tr class="separator:a8468caa3a58e20e54a9ecdd2e84d81ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,12 +165,21 @@ virtual <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga:
 <tr class="memitem:aae52e3f72d9b926c333508597e2a0e94" id="r_aae52e3f72d9b926c333508597e2a0e94"><td class="memItemLeft" align="right" valign="top"><a id="aae52e3f72d9b926c333508597e2a0e94" name="aae52e3f72d9b926c333508597e2a0e94"></a>
 virtual <a class="el" href="structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html">PointOffsets</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPoints</b> ()</td></tr>
 <tr class="separator:aae52e3f72d9b926c333508597e2a0e94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfbd3b7c9df658e213461697b8e76442" id="r_acfbd3b7c9df658e213461697b8e76442"><td class="memItemLeft" align="right" valign="top"><a id="acfbd3b7c9df658e213461697b8e76442" name="acfbd3b7c9df658e213461697b8e76442"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isValidPoint</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> offset) const</td></tr>
+<tr class="separator:acfbd3b7c9df658e213461697b8e76442"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44ba5763bc12ba03130f84dc330b2a2f" id="r_a44ba5763bc12ba03130f84dc330b2a2f"><td class="memItemLeft" align="right" valign="top"><a id="a44ba5763bc12ba03130f84dc330b2a2f" name="a44ba5763bc12ba03130f84dc330b2a2f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>deletePoints</b> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;pointOffsets)</td></tr>
+<tr class="separator:a44ba5763bc12ba03130f84dc330b2a2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af26e93804c110b1333b0dfa13a3e1ed2" id="r_af26e93804c110b1333b0dfa13a3e1ed2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af26e93804c110b1333b0dfa13a3e1ed2">defragment</a> ()</td></tr>
+<tr class="memdesc:af26e93804c110b1333b0dfa13a3e1ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compacts storage, removing entries marked invalid so offsets are contiguous again.  <br /></td></tr>
+<tr class="separator:af26e93804c110b1333b0dfa13a3e1ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a965d845a795f15064d33f88155291ef6" id="r_a965d845a795f15064d33f88155291ef6"><td class="memItemLeft" align="right" valign="top"><a id="a965d845a795f15064d33f88155291ef6" name="a965d845a795f15064d33f88155291ef6"></a>
 <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addIntAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
 <tr class="separator:a965d845a795f15064d33f88155291ef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4046e71ef03cc540504e785c72d1b3af" id="r_a4046e71ef03cc540504e785c72d1b3af"><td class="memItemLeft" align="right" valign="top"><a id="a4046e71ef03cc540504e785c72d1b3af" name="a4046e71ef03cc540504e785c72d1b3af"></a>
-<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addBoolAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
-<tr class="separator:a4046e71ef03cc540504e785c72d1b3af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a592005eaf8bb6cfa05352a6aefb9834e" id="r_a592005eaf8bb6cfa05352a6aefb9834e"><td class="memItemLeft" align="right" valign="top"><a id="a592005eaf8bb6cfa05352a6aefb9834e" name="a592005eaf8bb6cfa05352a6aefb9834e"></a>
+<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addBoolAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false, bool isPrivate=false)</td></tr>
+<tr class="separator:a592005eaf8bb6cfa05352a6aefb9834e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74a5dab867614549cf28ad66127bb659" id="r_a74a5dab867614549cf28ad66127bb659"><td class="memItemLeft" align="right" valign="top"><a id="a74a5dab867614549cf28ad66127bb659" name="a74a5dab867614549cf28ad66127bb659"></a>
 <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addVector3Attribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
 <tr class="separator:a74a5dab867614549cf28ad66127bb659"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,7 +234,37 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 <p>A <a class="el" href="classenzo_1_1geo_1_1Primitive.html" title="Base class for all primitive types in the engine.">Primitive</a> is the unit of geometry exchanged between nodes. It holds primitive-level attributes (one value per object) and provides the attribute management API shared by all primitive types.</p>
 <p><a class="el" href="classenzo_1_1Point.html">Point</a> attributes are stored on the base class since many primitive types have points. Use hasPoints() to check before accessing them.</p>
 <p>Subclasses (e.g. <a class="el" href="classenzo_1_1geo_1_1Mesh.html" title="Polygonal mesh primitive with point, vertex, and face attributes.">Mesh</a>) add their own attribute owners and geometry. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="af26e93804c110b1333b0dfa13a3e1ed2" name="af26e93804c110b1333b0dfa13a3e1ed2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af26e93804c110b1333b0dfa13a3e1ed2">&#9670;&#160;</a></span>defragment()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void enzo::geo::Primitive::defragment </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compacts storage, removing entries marked invalid so offsets are contiguous again. </p>
+
+<p>Reimplemented in <a class="el" href="classenzo_1_1geo_1_1Mesh.html#af21a269a99220bae0ebfe183209ae644">enzo::geo::Mesh</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Operator/<a class="el" href="Primitive_8h_source.html">Primitive.h</a></li>
 <li>src/Engine/Operator/<b>Primitive.cpp</b></li>
 </ul>

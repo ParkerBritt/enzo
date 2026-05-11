@@ -109,9 +109,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a139acf317326ce1f7c4e615e51b1b12e" id="r_a139acf317326ce1f7c4e615e51b1b12e"><td class="memItemLeft" align="right" valign="top"><a id="a139acf317326ce1f7c4e615e51b1b12e" name="a139acf317326ce1f7c4e615e51b1b12e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addPrimitive</b> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; primitive)</td></tr>
 <tr class="separator:a139acf317326ce1f7c4e615e51b1b12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39aa07cbc9e148cb8c7697980d620091" id="r_a39aa07cbc9e148cb8c7697980d620091"><td class="memItemLeft" align="right" valign="top"><a id="a39aa07cbc9e148cb8c7697980d620091" name="a39aa07cbc9e148cb8c7697980d620091"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>attemptMerge</b> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt; prim)</td></tr>
-<tr class="separator:a39aa07cbc9e148cb8c7697980d620091"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ecea1c044db9e0684612f977395ac89" id="r_a6ecea1c044db9e0684612f977395ac89"><td class="memItemLeft" align="right" valign="top"><a id="a6ecea1c044db9e0684612f977395ac89" name="a6ecea1c044db9e0684612f977395ac89"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>attemptMerge</b> (geo::PrimPtr prim)</td></tr>
+<tr class="separator:a6ecea1c044db9e0684612f977395ac89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace5b910b3050e4ac90b21d89ed803eba" id="r_ace5b910b3050e4ac90b21d89ed803eba"><td class="memItemLeft" align="right" valign="top"><a id="ace5b910b3050e4ac90b21d89ed803eba" name="ace5b910b3050e4ac90b21d89ed803eba"></a>
 std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index)</td></tr>
 <tr class="separator:ace5b910b3050e4ac90b21d89ed803eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,7 +119,7 @@ std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo
 std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitive</b> (unsigned int index) const</td></tr>
 <tr class="separator:acc6794f9c748f619f8fd9eafa311b0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a81f786be0a77b1a0283784daad48c0" id="r_a5a81f786be0a77b1a0283784daad48c0"><td class="memItemLeft" align="right" valign="top"><a id="a5a81f786be0a77b1a0283784daad48c0" name="a5a81f786be0a77b1a0283784daad48c0"></a>
-std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath</b> (const std::string &amp;path)</td></tr>
+geo::PrimPtr&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath</b> (const std::string &amp;path)</td></tr>
 <tr class="separator:a5a81f786be0a77b1a0283784daad48c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3166ba2fd6b926b7a19b43e0bcc21a7" id="r_af3166ba2fd6b926b7a19b43e0bcc21a7"><td class="memItemLeft" align="right" valign="top"><a id="af3166ba2fd6b926b7a19b43e0bcc21a7" name="af3166ba2fd6b926b7a19b43e0bcc21a7"></a>
 std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath</b> (const std::string &amp;path) const</td></tr>
@@ -128,8 +128,11 @@ std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html
 const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> () const</td></tr>
 <tr class="separator:ace4a25a0a4901723006ee240dce29247"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37c6153504a9891e3eb3d28675e56987" id="r_a37c6153504a9891e3eb3d28675e56987"><td class="memItemLeft" align="right" valign="top"><a id="a37c6153504a9891e3eb3d28675e56987" name="a37c6153504a9891e3eb3d28675e56987"></a>
-std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (enzo::geo::PrimType type) const</td></tr>
+std::vector&lt; geo::PrimPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (enzo::geo::PrimType type) const</td></tr>
 <tr class="separator:a37c6153504a9891e3eb3d28675e56987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af41ade20c48da058f32130c41d2456cb" id="r_af41ade20c48da058f32130c41d2456cb"><td class="memItemLeft" align="right" valign="top"><a id="af41ade20c48da058f32130c41d2456cb" name="af41ade20c48da058f32130c41d2456cb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removePrim</b> (std::string path)</td></tr>
+<tr class="separator:af41ade20c48da058f32130c41d2456cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1165534d6a65f24938de371fb65a1664" id="r_a1165534d6a65f24938de371fb65a1664"><td class="memItemLeft" align="right" valign="top"><a id="a1165534d6a65f24938de371fb65a1664" name="a1165534d6a65f24938de371fb65a1664"></a>
 <a class="el" href="structenzo_1_1NodePacket_1_1Transforms.html">Transforms</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getTransforms</b> (TransformClass transformClass)</td></tr>
 <tr class="separator:a1165534d6a65f24938de371fb65a1664"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -114,6 +114,9 @@ Inheritance diagram for enzo::geo::Camera:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a21a26173e66e0531467eb3fb8aa0a36d" id="r_a21a26173e66e0531467eb3fb8aa0a36d"><td class="memItemLeft" align="right" valign="top"><a id="a21a26173e66e0531467eb3fb8aa0a36d" name="a21a26173e66e0531467eb3fb8aa0a36d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Camera</b> (std::string_view path=&quot;/camera&quot;)</td></tr>
+<tr class="separator:a21a26173e66e0531467eb3fb8aa0a36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a502d5f7718ac8d9c0d489acba1c13ab3" id="r_a502d5f7718ac8d9c0d489acba1c13ab3"><td class="memItemLeft" align="right" valign="top"><a id="a502d5f7718ac8d9c0d489acba1c13ab3" name="a502d5f7718ac8d9c0d489acba1c13ab3"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Camera</b> (const <a class="el" href="classenzo_1_1geo_1_1Camera.html">Camera</a> &amp;other)</td></tr>
 <tr class="separator:a502d5f7718ac8d9c0d489acba1c13ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,6 +138,9 @@ bt::Matrix4&#160;</td><td class="memItemRight" valign="bottom"><b>getTransform</
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTransform</b> (const bt::Matrix4 &amp;xform)</td></tr>
 <tr class="separator:acce9999040a755958d42c31c5f092edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
+<tr class="memitem:a5434e8e19fd8ab0070b8fdd0a2355211 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a5434e8e19fd8ab0070b8fdd0a2355211"><td class="memItemLeft" align="right" valign="top">
+&#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (std::string_view path=&quot;/prim&quot;)</td></tr>
+<tr class="separator:a5434e8e19fd8ab0070b8fdd0a2355211 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8468caa3a58e20e54a9ecdd2e84d81ff inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8468caa3a58e20e54a9ecdd2e84d81ff"><td class="memItemLeft" align="right" valign="top">
 &#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;other)</td></tr>
 <tr class="separator:a8468caa3a58e20e54a9ecdd2e84d81ff inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,12 +168,21 @@ virtual <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga:
 <tr class="memitem:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_aae52e3f72d9b926c333508597e2a0e94"><td class="memItemLeft" align="right" valign="top">
 virtual <a class="el" href="structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html">PointOffsets</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPoints</b> ()</td></tr>
 <tr class="separator:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfbd3b7c9df658e213461697b8e76442 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_acfbd3b7c9df658e213461697b8e76442"><td class="memItemLeft" align="right" valign="top">
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isValidPoint</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> offset) const</td></tr>
+<tr class="separator:acfbd3b7c9df658e213461697b8e76442 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44ba5763bc12ba03130f84dc330b2a2f inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a44ba5763bc12ba03130f84dc330b2a2f"><td class="memItemLeft" align="right" valign="top">
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>deletePoints</b> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;pointOffsets)</td></tr>
+<tr class="separator:a44ba5763bc12ba03130f84dc330b2a2f inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af26e93804c110b1333b0dfa13a3e1ed2 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_af26e93804c110b1333b0dfa13a3e1ed2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#af26e93804c110b1333b0dfa13a3e1ed2">defragment</a> ()</td></tr>
+<tr class="memdesc:af26e93804c110b1333b0dfa13a3e1ed2 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compacts storage, removing entries marked invalid so offsets are contiguous again.  <br /></td></tr>
+<tr class="separator:af26e93804c110b1333b0dfa13a3e1ed2 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a965d845a795f15064d33f88155291ef6 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a965d845a795f15064d33f88155291ef6"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addIntAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
 <tr class="separator:a965d845a795f15064d33f88155291ef6 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4046e71ef03cc540504e785c72d1b3af inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a4046e71ef03cc540504e785c72d1b3af"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addBoolAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
-<tr class="separator:a4046e71ef03cc540504e785c72d1b3af inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a592005eaf8bb6cfa05352a6aefb9834e inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a592005eaf8bb6cfa05352a6aefb9834e"><td class="memItemLeft" align="right" valign="top">
+<a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addBoolAttribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false, bool isPrivate=false)</td></tr>
+<tr class="separator:a592005eaf8bb6cfa05352a6aefb9834e inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74a5dab867614549cf28ad66127bb659 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a74a5dab867614549cf28ad66127bb659"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandle</a>&lt; bt::Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>addVector3Attribute</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool intrinsic=false)</td></tr>
 <tr class="separator:a74a5dab867614549cf28ad66127bb659 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
