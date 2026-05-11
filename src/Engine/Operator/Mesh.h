@@ -43,7 +43,7 @@ public:
     void addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
 
-    void deleteFaces(const std::vector<ga::Offset>& faceOffsets);
+    void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
     void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
     {
         deletePoints(pointOffsets, false);

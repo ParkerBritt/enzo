@@ -233,10 +233,13 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
 
 }
 
-void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
+void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints)
 {
     if (faceOffsets.empty()) return;
 
+    // Invalidate each face and its vertices.
+    // When cascading to points, remember which points those vertices referenced.
+    std::unordered_set<ga::Offset> orphanCandidates;
     for (ga::Offset faceOffset : faceOffsets)
     {
         validFaceHandle_.setValue(faceOffset, false);
@@ -245,9 +248,25 @@ void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets)
         const ga::Offset count = getPrimVertCount(faceOffset);
         for (ga::Offset v = start; v < start + count; ++v)
         {
+            if (andPoints) orphanCandidates.insert(pointOffsetVertexHandle_.getValue(v));
             validVertexHandle_.setValue(v, false);
         }
     }
+
+    if (andPoints)
+    {
+        // Drop candidates still referenced by a surviving vertex.
+        const ga::Offset vertCount = pointOffsetVertexHandle_.getSize();
+        for (ga::Offset v = 0; v < vertCount; ++v)
+        {
+            if (!validVertexHandle_.getValue(v)) continue;
+            orphanCandidates.erase(pointOffsetVertexHandle_.getValue(v));
+        }
+
+        // Invalidate the remaining orphans.
+        for (ga::Offset p : orphanCandidates) validPointHandle_.setValue(p, false);
+    }
+
     needsDefrag_ = true;
     soloPointsDirty_ = true;
 }

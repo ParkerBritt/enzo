@@ -43,7 +43,7 @@ void GopDelete::cookOp(enzo::op::Context context) {
             switch (prim->getType()) {
             case geo::PrimType::MESH: {
                 auto meshPrim = std::dynamic_pointer_cast<geo::Mesh>(prim);
-                meshPrim->deleteFaces(selection.getFaces(prim));
+                meshPrim->deleteFaces(selection.getFaces(prim), !keepPoints);
                 meshPrim->deleteVertices(selection.getVertices(prim));
                 break;
             }
