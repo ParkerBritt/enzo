@@ -30,6 +30,7 @@ public:
     std::unique_ptr<GLGrid> gridMesh_ ;
     std::unique_ptr<GLPoints> points_ ;
     std::unique_ptr<GLCameraPrim> cameraPrims_ ;
+    bool wireframeMode_ = true;
 
     // std::unique_ptr<GLMesh> meshFromGeo(enzo::geo::Geometry& geometry);
 
@@ -42,4 +43,5 @@ public Q_SLOTS:
     void geometryChanged(std::shared_ptr<const enzo::NodePacket> packet);
     void clearGeometry();
     void setCamera(std::shared_ptr<const enzo::geo::Camera> camera);
+    void toggleWireframe();
 };

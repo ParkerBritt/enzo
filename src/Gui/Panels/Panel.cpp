@@ -10,6 +10,13 @@ Panel::Panel(QWidget *parent)
     cornerOverlay_->raise();
 }
 
+void Panel::enterEvent(QEnterEvent *event)
+{
+    // Steal focus on hover
+    setFocus(Qt::MouseFocusReason);
+    QWidget::enterEvent(event);
+}
+
 void Panel::setBorderColor(QColor color)
 {
     cornerOverlay_->setBorderColor(color);

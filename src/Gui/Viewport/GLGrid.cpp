@@ -93,13 +93,14 @@ void GLGrid::initShaderProgram() {
 void GLGrid::initBuffers() {
     constexpr int gridLen = 50;
     constexpr int gridLines = 40;
+    const float yHeight = 0.0f;
     float halfLinesCnt = (gridLines - 1) * 0.5f;
     for (int i = 0; i < gridLines; ++i) {
-        vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, 0, -gridLen));
-        vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, 0, gridLen));
+        vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, yHeight, -gridLen));
+        vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, yHeight, gridLen));
 
-        vertices.push_back(glm::vec3(-gridLen, 0, (i - halfLinesCnt) * 2));
-        vertices.push_back(glm::vec3(gridLen, 0, (i - halfLinesCnt) * 2));
+        vertices.push_back(glm::vec3(-gridLen, yHeight, (i - halfLinesCnt) * 2));
+        vertices.push_back(glm::vec3(gridLen, yHeight, (i - halfLinesCnt) * 2));
     }
 
     // create buffer of vertices
@@ -126,6 +127,11 @@ void GLGrid::draw() {
     bind();
     useProgram();
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+    // render behind everything
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
     glDrawArrays(GL_LINES, 0, vertices.size());
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }

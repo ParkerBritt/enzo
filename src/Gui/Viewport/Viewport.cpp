@@ -54,6 +54,14 @@ bool Viewport::event(QEvent *event) {
         event->ignore();
         return true;
         break;
+    case QEvent::KeyPress: {
+        auto *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_W) {
+            openGLWidget_->toggleWireframe();
+            return true;
+        }
+        return QWidget::event(event);
+    }
     default:
         return QWidget::event(event);
         break;

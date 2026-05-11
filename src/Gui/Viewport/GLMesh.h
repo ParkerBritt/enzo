@@ -27,11 +27,13 @@ public:
     GLuint vertexBuffer;
     GLuint faceIndexBuffer;
     GLuint lineIndexBuffer;
+    GLuint edgeIndexBuffer;
 
     // std::vector<GLfloat> vertexPosData;
     std::vector<Vertex> vertices;
     std::vector<GLint> faceIndexData;
     std::vector<GLint> lineIndexData;
+    std::vector<GLint> edgeIndexData;
 
     void init();
     void initBuffers();
@@ -40,4 +42,5 @@ public:
     void bind();
     void unbind();
     void draw();
+    void drawWireframe();
 };
