@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     app.setWindowIcon(QIcon(":/icons/icon-main-white.png"));
 
     EnzoUI interface;
-    interface.show();
+    interface.showMaximized();
 
     return app.exec();
 }
