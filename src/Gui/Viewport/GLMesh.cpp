@@ -58,6 +58,7 @@ void GLMesh::initBuffers()
 
     glGenBuffers(1, &faceIndexBuffer);
     glGenBuffers(1, &lineIndexBuffer);
+    glGenBuffers(1, &edgeIndexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceIndexBuffer);
 
 }
@@ -145,6 +146,7 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
     bind();
     faceIndexData.clear();
     lineIndexData.clear();
+    edgeIndexData.clear();
 
     size_t vertOffset = 0;
     for(size_t pi = 0; pi < packet.size(); ++pi)
@@ -177,6 +179,13 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
                     faceIndexData.push_back(startVert+i+1);
 
                 }
+
+                // polygon perimeter edges, for wireframe overlay
+                for(size_t i=0; i<primVertexCount; ++i)
+                {
+                    edgeIndexData.push_back(startVert+i);
+                    edgeIndexData.push_back(startVert + (i+1)%primVertexCount);
+                }
             }
 
         }
@@ -189,6 +198,9 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIndexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, lineIndexData.size()*sizeof(GLint), lineIndexData.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeIndexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edgeIndexData.size()*sizeof(GLint), edgeIndexData.data(), GL_STATIC_DRAW);
     unbind();
 }
 
@@ -207,12 +219,17 @@ void GLMesh::draw()
 {
     bind();
 
-    // wireframe
-    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceIndexBuffer);
     glDrawElements(GL_TRIANGLES, faceIndexData.size(), GL_UNSIGNED_INT, 0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIndexBuffer);
     glDrawElements(GL_LINES, lineIndexData.size(), GL_UNSIGNED_INT, 0);
+}
+
+void GLMesh::drawWireframe()
+{
+    bind();
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeIndexBuffer);
+    glDrawElements(GL_LINES, edgeIndexData.size(), GL_UNSIGNED_INT, 0);
 }

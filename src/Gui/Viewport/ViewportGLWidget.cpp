@@ -87,6 +87,8 @@ void ViewportGLWidget::initializeGL()
     #version 330 core
     in vec3 Normal;
 
+    uniform bool uWireframe;
+
     out vec4 FragColor;
 
     float remap(float value, float inMin, float inMax, float outMin, float outMax)
@@ -101,6 +103,12 @@ void ViewportGLWidget::initializeGL()
 
     void main()
     {
+        if(uWireframe)
+        {
+            FragColor = vec4(0.4, 0.4, 0.4, 1.0);
+            return;
+        }
+
         vec3 lightDir = normalize(vec3(1.0,1.0,1.0));
         float brightness = remap(dot(Normal, lightDir), -1, 1, 0.5, 1);
 
@@ -157,6 +165,12 @@ void ViewportGLWidget::paintGL()
     );
 
 
+    // draw grid first so all other geometry overdraws it
+    gridMesh_->useProgram();
+    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
+    gridMesh_->draw();
+
     glUseProgram(shaderProgram);
     GLint projMLoc = glGetUniformLocation(shaderProgram, "uProj");
     glUniformMatrix4fv(projMLoc, 1, GL_FALSE, glm::value_ptr(projMatrix));
@@ -164,7 +178,15 @@ void ViewportGLWidget::paintGL()
     GLint viewMLoc = glGetUniformLocation(shaderProgram, "uView");
     curCamera.setUniform(viewMLoc);
 
+    GLint wireLoc = glGetUniformLocation(shaderProgram, "uWireframe");
+    glUniform1i(wireLoc, 0);
     triangleMesh_->draw();
+
+    if(wireframeMode_)
+    {
+        glUniform1i(wireLoc, 1);
+        triangleMesh_->drawWireframe();
+    }
 
     points_->useProgram();
     points_->bind();
@@ -180,13 +202,6 @@ void ViewportGLWidget::paintGL()
     glUniformMatrix4fv(glGetUniformLocation(cameraPrims_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
     curCamera.setUniform(glGetUniformLocation(cameraPrims_->shaderProgram, "uView"));
     cameraPrims_->draw();
-
-    gridMesh_->useProgram();
-    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
-    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
-    gridMesh_->draw();
-
-
 }
 
 // std::unique_ptr<GLMesh> ViewportGLWidget::meshFromGeo(enzo::geo::Geometry& geometry)
@@ -210,6 +225,12 @@ void ViewportGLWidget::paintGL()
 void ViewportGLWidget::clearGeometry()
 {
     geometryChanged(std::make_shared<const enzo::NodePacket>());
+}
+
+void ViewportGLWidget::toggleWireframe()
+{
+    wireframeMode_ = !wireframeMode_;
+    update();
 }
 
 void ViewportGLWidget::geometryChanged(std::shared_ptr<const enzo::NodePacket> packet)

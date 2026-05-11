@@ -9,6 +9,7 @@ class Panel
 public:
     Panel(QWidget *parent);
     void resizeEvent(QResizeEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;
     void setBorderColor(QColor color);
 private:
     CornerOverlay* cornerOverlay_;
