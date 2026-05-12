@@ -47,7 +47,7 @@ enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, con
     }
     else
     {
-        throw std::runtime_error("Parameter weak ptr invalid");
+        throw std::runtime_error(parmName + " parameter does not exist.");
     }
 }
 
@@ -63,7 +63,7 @@ enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const u
     }
     else
     {
-        throw std::runtime_error("Parameter weak ptr invalid");
+        throw std::runtime_error(parmName + " parameter does not exist.");
     }
 }
 
@@ -79,7 +79,7 @@ enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const
     }
     else
     {
-        throw std::runtime_error("Parameter weak ptr invalid");
+        throw std::runtime_error(parmName + " parameter does not exist.");
     }
 }
 
@@ -95,6 +95,6 @@ enzo::bt::String enzo::op::Context::evalStringParm(std::string_view parmName, co
     }
     else
     {
-        throw std::runtime_error("Parameter '" + parmName + "' not found in Context::evalStringParm");
+        throw std::runtime_error(parmName + " parameter does not exist.");
     }
 }
