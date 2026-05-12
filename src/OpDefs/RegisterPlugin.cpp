@@ -12,6 +12,7 @@
 #include "OpDefs/GopPath.h"
 #include "OpDefs/GopSineWave.h"
 #include "OpDefs/GopTransform.hpp"
+#include "OpDefs/GopExtrude.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -125,6 +126,15 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator) {
         "Delete",
         &GopDelete::ctor,
         GopDelete::parameterList,
+        1,
+        1,
+        1,
+    });
+    addOperator(enzo::op::OpInfo{
+        "extrude",
+        "Extrude",
+        &GopExtrude::ctor,
+        GopExtrude::parameterList,
         1,
         1,
         1,

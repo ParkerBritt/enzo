@@ -3,6 +3,7 @@
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <tbb/spin_mutex.h>
+#include <span>
 #include <unordered_set>
 
 namespace enzo::geo
@@ -69,6 +70,18 @@ public:
     bt::Vector3 getPointPos(ga::Offset pointOffset) const;
     unsigned int getPrimVertCount(ga::Offset primOffset) const;
     ga::Offset getVertexPrim(ga::Offset vertexOffset) const;
+
+    ga::Offset getPointVertex(ga::Offset vertexOffset) const
+    {
+        return pointOffsetVertexHandle_.getValue(vertexOffset);
+    }
+
+    std::span<const bt::intT> getFacePoints(ga::Offset faceOffset) const
+    {
+        const ga::Offset start = getPrimStartVertex(faceOffset);
+        const unsigned int count = getPrimVertCount(faceOffset);
+        return pointOffsetVertexHandle_.getSpan().subspan(start, count);
+    }
 
     ga::Offset getNumPrims() const;
     ga::Offset getNumVerts() const;

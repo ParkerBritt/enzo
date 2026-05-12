@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <optional>
@@ -137,8 +138,15 @@ public:
     */
     T getValue(size_t offset) const
     {
-        if(offset >= data_->size()) throw std::out_of_range("Cannot get offset: " + std::to_string(offset) + " from size: " + std::to_string(data_->size()) + " for attribute: " + name_);
         return (*data_)[offset];
+    }
+
+    /**
+    * @brief Gets a contiguous read-only view over all stored values.
+    */
+    std::span<const T> getSpan() const
+    {
+        return {data_->data(), data_->size()};
     }
 
     /**
