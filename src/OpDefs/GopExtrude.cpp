@@ -11,29 +11,54 @@
 #include <string>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+#include <unordered_set>
 #include <vector>
 #include <icecream.hpp>
 
-void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces)
+void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance=1)
 {
-    std::cout << "here2\n";
     std::shared_ptr<enzo::geo::Mesh> mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
     if(!mesh)
     {
         return;
     }
 
+    std::unordered_set<enzo::ga::Offset> duplicatePoints;
+
+
     for(auto face: faces)
     {
         auto facePoints = mesh->getFacePoints(face);
+
+        std::vector<enzo::ga::Offset> oldPoints;
+        std::vector<enzo::ga::Offset> newPoints;
         
+        // Create points
         for(auto pointOffset : facePoints)
         {
             auto pointPos = mesh->getPointPos(pointOffset);
-            pointPos.y() += 1;
-            mesh->addPoint(pointPos);
+            pointPos.y() += distance;
+            enzo::ga::Offset newPoint = mesh->addPoint(pointPos);
+            oldPoints.push_back(pointOffset);
+            newPoints.push_back(newPoint);
         }
+
+        size_t numFacePoints = oldPoints.size();
+        // Connect faces
+        for(size_t i=0; i<numFacePoints; ++i)
+        {
+            size_t nextIndex = (i+1)%numFacePoints;
+            enzo::ga::Offset p1 = oldPoints[i];
+            enzo::ga::Offset p2 = oldPoints[nextIndex];
+            enzo::ga::Offset p3 = newPoints[nextIndex];
+            enzo::ga::Offset p4 = newPoints[i];
+            mesh->addFace({p1, p2, p3, p4});
+        }
+
+        // Top face
+        mesh->addFace(newPoints);
     }
+
 
 }
 
@@ -46,11 +71,12 @@ void GopExtrude::cookOp(enzo::op::Context context) {
     if (outputRequested(0)) {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const bt::String selectionStr = context.evalStringParm("selection", 0);
+        const bt::String selectionStr = context.evalStringParm("selection");
+        const float distance = context.evalFloatParm("distance");
         enzo::Selection selection(selectionStr);
 
         for (geo::PrimPtr prim : selection.getPrims(packet)) {
-            extrude(prim, selection.getFaces(prim));
+            extrude(prim, selection.getFaces(prim), distance);
         }
 
         setOutputPacket(0, packet);
@@ -59,4 +85,5 @@ void GopExtrude::cookOp(enzo::op::Context context) {
 
 enzo::prm::Template GopExtrude::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("distance", "Distance"), enzo::prm::Default(1), 1, enzo::prm::Range(-10, 10)),
     enzo::prm::Terminator};
