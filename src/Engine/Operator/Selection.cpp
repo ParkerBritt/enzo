@@ -81,7 +81,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     if (!mesh) return result;
 
     // Walk valid faces and collect those in the selection
-    const ga::Offset storageSize = mesh->getNumPrims();
+    const ga::Offset storageSize = mesh->getNumFaces();
     ga::Index index = 0;
     for (ga::Offset offset = 0; offset < storageSize; ++offset) {
         if (!mesh->isValidFace(offset)) continue;

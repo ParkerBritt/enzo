@@ -86,7 +86,7 @@ int AttributeSpreadsheetModel::rowCount(const QModelIndex &parent) const
                 if(attributeOwner_ == enzo::ga::AttributeOwner::VERTEX)
                     return mesh->getNumVerts();
                 else
-                    return mesh->getNumPrims();
+                    return mesh->getNumFaces();
             }
             return 0;
         }
@@ -141,10 +141,10 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
                 {
                     if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
                     {
-                        const enzo::ga::Offset primOffset = mesh->getVertexPrim(index.row());
-                        const enzo::ga::Offset startVert = mesh->getPrimStartVertex(primOffset);
+                        const enzo::ga::Offset faceOffset = mesh->getVertexFace(index.row());
+                        const enzo::ga::Offset startVert = mesh->getFaceStartVertex(faceOffset);
                         const enzo::ga::Offset vertexNumber = index.row()-startVert;
-                        return QString::fromStdString(std::to_string(primOffset)+":"+std::to_string(vertexNumber));
+                        return QString::fromStdString(std::to_string(faceOffset)+":"+std::to_string(vertexNumber));
                     }
                     return index.row();
                 }
