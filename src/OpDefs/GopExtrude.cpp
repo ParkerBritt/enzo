@@ -11,7 +11,6 @@
 #include <string>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
-#include <unordered_set>
 #include <vector>
 #include <icecream.hpp>
 
@@ -23,21 +22,22 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
         return;
     }
 
-    std::unordered_set<enzo::ga::Offset> duplicatePoints;
+    const std::string sideGroupName = "extrudeSide";
+    mesh->createFaceGroup(sideGroupName);
 
-    std::string sideGroupName = "extrudeSide";
-    mesh->createGroup(enzo::ga::AttributeOwner::FACE, sideGroupName);
+    std::vector<enzo::ga::Offset> sidePointOffsetsFlat;
+    std::vector<enzo::ga::Offset> sideVertexCounts;
+    std::vector<enzo::ga::Offset> topPointOffsetsFlat;
+    std::vector<enzo::ga::Offset> topVertexCounts;
 
-    std::vector<std::vector<enzo::ga::Offset>> newFacePoints;
-
-    for(auto face: faces)
+    for(auto face : faces)
     {
         auto originFacePoints = mesh->getFacePoints(face);
 
         std::vector<enzo::ga::Offset> oldPoints;
         std::vector<enzo::ga::Offset> newPoints;
-        
-        // Create points
+
+        // Duplicate each origin point, raised by the extrude distance
         for(auto pointOffset : originFacePoints)
         {
             auto pointPos = mesh->getPointPos(pointOffset);
@@ -47,27 +47,32 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
             newPoints.push_back(newPoint);
         }
 
-        size_t numFacePoints = oldPoints.size();
-        // Connect faces
-        for(size_t i=0; i<numFacePoints; ++i)
+        // Build the side quads connecting the old ring to the new ring
+        const size_t numFacePoints = oldPoints.size();
+        for(size_t cornerIndex=0; cornerIndex<numFacePoints; ++cornerIndex)
         {
-            size_t nextIndex = (i+1)%numFacePoints;
-            enzo::ga::Offset p1 = oldPoints[i];
-            enzo::ga::Offset p2 = oldPoints[nextIndex];
-            enzo::ga::Offset p3 = newPoints[nextIndex];
-            enzo::ga::Offset p4 = newPoints[i];
-            // Side face
-            newFacePoints.push_back(std::vector<enzo::ga::Offset>{p1, p2, p3, p4});
-            // enzo::ga::Offset faceOff = mesh->addFace({p1, p2, p3, p4});
+            const size_t nextIndex = (cornerIndex+1) % numFacePoints;
+            const enzo::ga::Offset bottomStart = oldPoints[cornerIndex];
+            const enzo::ga::Offset bottomEnd = oldPoints[nextIndex];
+            const enzo::ga::Offset topEnd = newPoints[nextIndex];
+            const enzo::ga::Offset topStart = newPoints[cornerIndex];
+
+            sidePointOffsetsFlat.push_back(bottomStart);
+            sidePointOffsetsFlat.push_back(bottomEnd);
+            sidePointOffsetsFlat.push_back(topEnd);
+            sidePointOffsetsFlat.push_back(topStart);
+            sideVertexCounts.push_back(4);
         }
 
-        // Top face
-        newFacePoints.push_back(newPoints);
+        // Top face caps the extrusion
+        for(auto newPoint : newPoints) topPointOffsetsFlat.push_back(newPoint);
+        topVertexCounts.push_back(numFacePoints);
     }
 
-    std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(newFacePoints);
-    mesh->addToGroup(enzo::ga::AttributeOwner::FACE, sideGroupName, sideOffsets);
+    std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
+    mesh->addToFaceGroup(sideGroupName, sideOffsets);
 
+    mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
 }
 
 GopExtrude::GopExtrude(enzo::nt::NetworkManager *network, enzo::op::OpInfo opInfo)

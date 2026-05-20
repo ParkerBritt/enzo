@@ -32,6 +32,9 @@ geo::Mesh::Mesh(const Mesh& other):
     // attributes
     vertexAttributes_{deepCopyAttributes(other.vertexAttributes_)},
     faceAttributes_{deepCopyAttributes(other.faceAttributes_)},
+    // groups
+    vertexGroups_{deepCopyAttributes(other.vertexGroups_)},
+    faceGroups_{deepCopyAttributes(other.faceGroups_)},
 
     // handles
     vertexCountFaceHandle_{enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true))},
@@ -46,9 +49,9 @@ geo::Mesh::Mesh(const Mesh& other):
     soloPoints_{other.soloPoints_},
     soloPointsDirty_{other.soloPointsDirty_},
     needsDefrag_{other.needsDefrag_},
-    vertexPrims_{other.vertexPrims_},
-    primStarts_{other.primStarts_},
-    primStartsDirty_{other.primStartsDirty_.load()}
+    vertexFaces_{other.vertexFaces_},
+    faceStarts_{other.faceStarts_},
+    faceStartsDirty_{other.faceStartsDirty_.load()}
 {
 }
 
@@ -60,6 +63,10 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
     // attributes
     vertexAttributes_     = deepCopyAttributes(rhs.vertexAttributes_);
     faceAttributes_       = deepCopyAttributes(rhs.faceAttributes_);
+
+    // groups
+    vertexGroups_         = deepCopyAttributes(rhs.vertexGroups_);
+    faceGroups_           = deepCopyAttributes(rhs.faceGroups_);
 
     // handles
     vertexCountFaceHandle_ = enzo::ga::AttributeHandleInt(getAttribByName(ga::AttrOwner::FACE, "vertexCount", true));
@@ -74,10 +81,10 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
     soloPoints_           = rhs.soloPoints_;
     soloPointsDirty_      = rhs.soloPointsDirty_;
     needsDefrag_          = rhs.needsDefrag_;
-    vertexPrims_          = rhs.vertexPrims_;
-    primStarts_           = rhs.primStarts_;
+    vertexFaces_          = rhs.vertexFaces_;
+    faceStarts_           = rhs.faceStarts_;
 
-    primStartsDirty_.store(rhs.primStartsDirty_.load());
+    faceStartsDirty_.store(rhs.faceStartsDirty_.load());
 
     return *this;
 }
@@ -147,18 +154,18 @@ void geo::Mesh::merge(Mesh& other)
         pointMapping[pointOffset] = addPoint(other.getPointPos(pointOffset));
     }
 
-    // Create prims using mapped point offsets
-    const ga::Offset srcPrimNum = other.getNumPrims();
-    for(ga::Offset primOffset=0; primOffset<srcPrimNum; ++primOffset)
+    // Create faces using mapped point offsets
+    const ga::Offset srcFaceNum = other.getNumFaces();
+    for(ga::Offset faceOffset=0; faceOffset<srcFaceNum; ++faceOffset)
     {
-        const ga::Offset primStartVertex = other.getPrimStartVertex(primOffset);
-        const ga::Offset vertexCount = other.getPrimVertCount(primOffset);
+        const ga::Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
+        const ga::Offset vertexCount = other.getFaceVertCount(faceOffset);
 
         std::vector<ga::Offset> pointOffsets;
         pointOffsets.reserve(vertexCount);
         for(ga::Offset i=0; i<vertexCount; ++i)
         {
-            const ga::Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(primStartVertex+i);
+            const ga::Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(faceStartVertex+i);
             pointOffsets.push_back(pointMapping[otherPointOffset]);
         }
         // TODO: check closed status
@@ -212,7 +219,7 @@ ga::Offset geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool 
     {
         pointOffsetVertexHandle_.addValue(pointOffset);
         validVertexHandle_.addValue(true);
-        vertexPrims_.push_back(faceNum);
+        vertexFaces_.push_back(faceNum);
     }
     vertexCountFaceHandle_.addValue(pointOffsets.size());
     closedFaceHandle_.addValue(closed);
@@ -232,7 +239,78 @@ ga::Offset geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool 
 
     }
 
+    // resize face and vertex groups so they stay aligned with element counts
+    const ga::Offset newVertCount = pointOffsetVertexHandle_.getSize();
+    for (auto& faceGroup : faceGroups_)
+    {
+        if (faceGroup) faceGroup->resize(faceNum + 1);
+    }
+    for (auto& vertexGroup : vertexGroups_)
+    {
+        if (vertexGroup) vertexGroup->resize(newVertCount);
+    }
+
     return faceNum;
+}
+
+std::vector<ga::Offset> geo::Mesh::addFaces(std::span<const ga::Offset> pointOffsetsFlat,
+                                            std::span<const ga::Offset> vertexCounts,
+                                            bool closed)
+{
+    const ga::Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
+    const ga::Offset firstVertOffset = pointOffsetVertexHandle_.getSize();
+    const size_t numFacesToAdd = vertexCounts.size();
+    const size_t numVertsToAdd = pointOffsetsFlat.size();
+    const ga::Offset newFaceCount = firstFaceOffset + numFacesToAdd;
+    const ga::Offset newVertCount = firstVertOffset + numVertsToAdd;
+
+    // Grow every face side and vertex side store in one shot
+    for (auto& attribute : faceAttributes_)
+    {
+        if (attribute) attribute->resize(newFaceCount);
+    }
+    for (auto& group : faceGroups_)
+    {
+        if (group) group->resize(newFaceCount);
+    }
+    for (auto& attribute : vertexAttributes_)
+    {
+        if (attribute) attribute->resize(newVertCount);
+    }
+    for (auto& group : vertexGroups_)
+    {
+        if (group) group->resize(newVertCount);
+    }
+    vertexFaces_.reserve(newVertCount);
+
+    std::vector<ga::Offset> newFaceOffsets;
+    newFaceOffsets.reserve(numFacesToAdd);
+
+    ga::Offset vertCursor = firstVertOffset;
+    for (size_t faceIndex = 0; faceIndex < numFacesToAdd; ++faceIndex)
+    {
+        const ga::Offset vertexCount = vertexCounts[faceIndex];
+        const ga::Offset faceOffset = firstFaceOffset + faceIndex;
+        newFaceOffsets.push_back(faceOffset);
+
+        for (ga::Offset vertIndex = 0; vertIndex < vertexCount; ++vertIndex)
+        {
+            const ga::Offset pointOffset = pointOffsetsFlat[vertCursor - firstVertOffset];
+            pointOffsetVertexHandle_.setValue(vertCursor, pointOffset);
+            validVertexHandle_.setValue(vertCursor, true);
+            vertexFaces_.push_back(faceOffset);
+            ++vertCursor;
+        }
+
+        vertexCountFaceHandle_.setValue(faceOffset, vertexCount);
+        closedFaceHandle_.setValue(faceOffset, closed);
+        validFaceHandle_.setValue(faceOffset, true);
+    }
+
+    soloPointsDirty_ = true;
+    faceStartsDirty_.store(true);
+
+    return newFaceOffsets;
 }
 
 void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints)
@@ -246,8 +324,8 @@ void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool and
     {
         validFaceHandle_.setValue(faceOffset, false);
 
-        const ga::Offset start = getPrimStartVertex(faceOffset);
-        const ga::Offset count = getPrimVertCount(faceOffset);
+        const ga::Offset start = getFaceStartVertex(faceOffset);
+        const ga::Offset count = getFaceVertCount(faceOffset);
         for (ga::Offset v = start; v < start + count; ++v)
         {
             if (andPoints) orphanCandidates.insert(pointOffsetVertexHandle_.getValue(v));
@@ -295,7 +373,7 @@ void geo::Mesh::deletePoints(const std::vector<ga::Offset>& pointOffsets, bool a
         const ga::Offset pt = pointOffsetVertexHandle_.getValue(v);
         if (!deletedPoints.count(pt)) continue;
         validVertexHandle_.setValue(v, false);
-        if (andFaces) faceMarked[getVertexPrim(v)] = true;
+        if (andFaces) faceMarked[getVertexFace(v)] = true;
     }
     if (andFaces)
     {
@@ -320,15 +398,15 @@ void geo::Mesh::deleteVertices(const std::vector<ga::Offset>& vertOffsets)
     for (ga::Offset v : vertOffsets)
     {
         validVertexHandle_.setValue(v, false);
-        affectedFaces.insert(getVertexPrim(v));
+        affectedFaces.insert(getVertexFace(v));
     }
 
     // Invalidate any face that has no valid vertices left
     for (ga::Offset f : affectedFaces)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const ga::Offset start = getPrimStartVertex(f);
-        const ga::Offset count = getPrimVertCount(f);
+        const ga::Offset start = getFaceStartVertex(f);
+        const ga::Offset count = getFaceVertCount(f);
         bool anyValid = false;
         for (ga::Offset v = start; v < start + count; ++v)
         {
@@ -367,7 +445,7 @@ void geo::Mesh::defragment()
     for (ga::Offset f = 0; f < oldFaceCount; ++f)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const ga::Offset start = getPrimStartVertex(f);
+        const ga::Offset start = getFaceStartVertex(f);
         const ga::Offset oldCount = vertexCountFaceHandle_.getValue(f);
         ga::Offset validCount = 0;
         for (ga::Offset v = start; v < start + oldCount; ++v)
@@ -377,13 +455,15 @@ void geo::Mesh::defragment()
         vertexCountFaceHandle_.setValue(f, validCount);
     }
 
-    // Compact every face attribute by face validity.
+    // Compact every face attribute and group by face validity.
     std::vector<bool> faceKeep = validFaceHandle_.getAllValues();
     for (auto& attr : faceAttributes_) if (attr) attr->compact(faceKeep);
+    for (auto& group : faceGroups_) if (group) group->compact(faceKeep);
 
-    // Compact every vertex attribute by vertex validity.
+    // Compact every vertex attribute and group by vertex validity.
     std::vector<bool> vertKeep = validVertexHandle_.getAllValues();
     for (auto& attr : vertexAttributes_) if (attr) attr->compact(vertKeep);
+    for (auto& group : vertexGroups_) if (group) group->compact(vertKeep);
 
     // Compact every point attribute by point validity, building an old → new
     // offset map so we can update everything that references point offsets.
@@ -395,6 +475,7 @@ void geo::Mesh::defragment()
         if (pointKeep[i]) pointRemap[i] = newPointOffset++;
     }
     for (auto& attr : pointAttributes_) if (attr) attr->compact(pointKeep);
+    for (auto& group : pointGroups_) if (group) group->compact(pointKeep);
 
     // Remap surviving vertex → point references to the compacted point offsets.
     const ga::Offset newVertCount = pointOffsetVertexHandle_.getSize();
@@ -406,17 +487,17 @@ void geo::Mesh::defragment()
 
     soloPointsDirty_ = true;
 
-    // Rebuild vertexPrims_ from the compacted face data.
-    vertexPrims_.clear();
-    vertexPrims_.reserve(newVertCount);
+    // Rebuild vertexFaces_ from the compacted face data.
+    vertexFaces_.clear();
+    vertexFaces_.reserve(newVertCount);
     const ga::Offset faceCount = vertexCountFaceHandle_.getSize();
     for (ga::Offset f = 0; f < faceCount; ++f)
     {
-        const ga::Offset count = getPrimVertCount(f);
-        for (ga::Offset v = 0; v < count; ++v) vertexPrims_.push_back(f);
+        const ga::Offset count = getFaceVertCount(f);
+        for (ga::Offset v = 0; v < count; ++v) vertexFaces_.push_back(f);
     }
 
-    primStartsDirty_.store(true);
+    faceStartsDirty_.store(true);
     needsDefrag_ = false;
 }
 
@@ -482,9 +563,9 @@ bt::Vector3 geo::Mesh::getPointPos(ga::Offset pointOffset) const
     return posPointHandle_.getValue(pointOffset);
 }
 
-ga::Offset geo::Mesh::getVertexPrim(ga::Offset vertexOffset) const
+ga::Offset geo::Mesh::getVertexFace(ga::Offset vertexOffset) const
 {
-    return vertexPrims_[vertexOffset];
+    return vertexFaces_[vertexOffset];
 }
 
 void geo::Mesh::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
@@ -492,24 +573,9 @@ void geo::Mesh::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
     posPointHandle_.setValue(offset, pos);
 }
 
-unsigned int geo::Mesh::getPrimVertCount(ga::Offset primOffset) const
+unsigned int geo::Mesh::getFaceVertCount(ga::Offset faceOffset) const
 {
-    return vertexCountFaceHandle_.getValue(primOffset);
-}
-
-ga::Offset geo::Mesh::getNumPrims() const
-{
-    return vertexCountFaceHandle_.getSize();
-}
-
-ga::Offset geo::Mesh::getNumVerts() const
-{
-    return pointOffsetVertexHandle_.getSize();
-}
-
-ga::Offset geo::Mesh::getNumPoints() const
-{
-    return posPointHandle_.getSize();
+    return vertexCountFaceHandle_.getValue(faceOffset);
 }
 
 enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
@@ -542,15 +608,15 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 
     CGAL::Polygon_mesh_processing::orient(heMesh);
 
-    // iterate through each prim
-    for(int primIndx=0; primIndx<vertexCounts.size(); ++primIndx)
+    // iterate through each face
+    for(int faceIndx=0; faceIndx<vertexCounts.size(); ++faceIndx)
     {
         facePoints.clear();
 
-        // represents how many vertices are in a primitive
-        auto vertexCount = vertexCounts[primIndx];
+        // represents how many vertices are in a face
+        auto vertexCount = vertexCounts[faceIndx];
 
-        // create primtive vertices
+        // create face vertices
         for(int i=0; i<vertexCount; ++i)
         {
             auto pointIndex = vertexPointIndices.at(vertexIndex);
@@ -559,7 +625,7 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
         }
 
         // debug
-        std::cout << "Primitive " << primIndx << " has " << vertexCount << " vertices: ";
+        std::cout << "Primitive " << faceIndx << " has " << vertexCount << " vertices: ";
         for (auto& v : facePoints)
         {
             auto pt = heMesh.point(v);
@@ -577,9 +643,9 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 
         auto face = heMesh.add_face(facePoints);
         if (face != HeMesh::null_face()) {
-            // validFaceIndices.push_back(enzo::geo::F_index(primIndx));
+            // validFaceIndices.push_back(enzo::geo::F_index(faceIndx));
         } else {
-            // throw std::runtime_error("Warning: Face creation failed at primitive " + std::to_string(primIndx));
+            // throw std::runtime_error("Warning: Face creation failed at primitive " + std::to_string(faceIndx));
         }
     }
 
@@ -587,37 +653,37 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
     return heMesh;
 }
 
-ga::Offset geo::Mesh::getPrimStartVertex(ga::Offset primOffset) const
+ga::Offset geo::Mesh::getFaceStartVertex(ga::Offset faceOffset) const
 {
 
-    if(primStartsDirty_.load())
+    if(faceStartsDirty_.load())
     {
-        tbb::spin_mutex::scoped_lock lock(primStartsMutex_); //lock
-        if(primStartsDirty_.load()) // double check
+        tbb::spin_mutex::scoped_lock lock(faceStartsMutex_); //lock
+        if(faceStartsDirty_.load()) // double check
         {
-            computePrimStartVertices();
+            computeFaceStartVertices();
         }
     }
-    return primStarts_[primOffset];
+    return faceStarts_[faceOffset];
 }
 
-void geo::Mesh::computePrimStartVertices() const
+void geo::Mesh::computeFaceStartVertices() const
 {
     const ga::Offset handleSize = vertexCountFaceHandle_.getSize();
-    primStarts_.clear();
-    primStarts_.reserve(handleSize);
-    bt::intT primStart = 0;
+    faceStarts_.clear();
+    faceStarts_.reserve(handleSize);
+    bt::intT faceStart = 0;
     for(size_t i=0; i<handleSize; ++i)
     {
-        primStarts_.push_back(primStart);
-        primStart += vertexCountFaceHandle_.getValue(i);
+        faceStarts_.push_back(faceStart);
+        faceStart += vertexCountFaceHandle_.getValue(i);
     }
-    primStartsDirty_.store(false);
+    faceStartsDirty_.store(false);
 }
 
-bt::boolT geo::Mesh::isClosed(ga::Offset primOffset) const
+bt::boolT geo::Mesh::isClosed(ga::Offset faceOffset) const
 {
-    return closedFaceHandle_.getValue(primOffset);
+    return closedFaceHandle_.getValue(faceOffset);
 }
 
 ga::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& owner)
@@ -643,5 +709,31 @@ const ga::attribVector& geo::Mesh::getAttributeStore(const ga::AttributeOwner& o
             return faceAttributes_;
         default:
             return Primitive::getAttributeStore(owner);
+    }
+}
+
+ga::attribVector& geo::Mesh::getGroupStore(const ga::AttributeOwner& owner)
+{
+    switch(owner)
+    {
+        case ga::AttributeOwner::VERTEX:
+            return vertexGroups_;
+        case ga::AttributeOwner::FACE:
+            return faceGroups_;
+        default:
+            return Primitive::getGroupStore(owner);
+    }
+}
+
+const ga::attribVector& geo::Mesh::getGroupStore(const ga::AttributeOwner& owner) const
+{
+    switch(owner)
+    {
+        case ga::AttributeOwner::VERTEX:
+            return vertexGroups_;
+        case ga::AttributeOwner::FACE:
+            return faceGroups_;
+        default:
+            return Primitive::getGroupStore(owner);
     }
 }

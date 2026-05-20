@@ -41,7 +41,22 @@ public:
     void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }
 
+    /**
+     * @brief Adds a single face. Avoid for multiple faces in a loop as a single call to @ref addFaces is much more performant.
+     * @return Offset of the new face.
+     */
+    // TODO: benchmark addFace vs addFaces to quantify the speedup
     ga::Offset addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
+    /**
+     * @brief Adds many faces in a single call.
+     *
+     * @param pointOffsetsFlat All point offsets for every face listed one after another.
+     * @param vertexCounts How many points each face has. Read in the same order as pointOffsetsFlat.
+     * @return Offsets of the newly created faces in the order they were added.
+     */
+    std::vector<ga::Offset> addFaces(std::span<const ga::Offset> pointOffsetsFlat,
+                                     std::span<const ga::Offset> vertexCounts,
+                                     bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
 
     void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
@@ -65,11 +80,11 @@ public:
     std::unordered_set<ga::Offset>::const_iterator soloPointsEnd() const;
 
     void setPointPos(const ga::Offset offset, const bt::Vector3& pos);
-    ga::Offset getPrimStartVertex(ga::Offset primOffset) const;
+    ga::Offset getFaceStartVertex(ga::Offset faceOffset) const;
     bt::Vector3 getPosFromVert(ga::Offset vertexOffset) const;
     bt::Vector3 getPointPos(ga::Offset pointOffset) const;
-    unsigned int getPrimVertCount(ga::Offset primOffset) const;
-    ga::Offset getVertexPrim(ga::Offset vertexOffset) const;
+    unsigned int getFaceVertCount(ga::Offset faceOffset) const;
+    ga::Offset getVertexFace(ga::Offset vertexOffset) const;
 
     ga::Offset getPointVertex(ga::Offset vertexOffset) const
     {
@@ -78,23 +93,43 @@ public:
 
     std::span<const bt::intT> getFacePoints(ga::Offset faceOffset) const
     {
-        const ga::Offset start = getPrimStartVertex(faceOffset);
-        const unsigned int count = getPrimVertCount(faceOffset);
+        const ga::Offset start = getFaceStartVertex(faceOffset);
+        const unsigned int count = getFaceVertCount(faceOffset);
         return pointOffsetVertexHandle_.getSpan().subspan(start, count);
     }
 
-    ga::Offset getNumPrims() const;
-    ga::Offset getNumVerts() const;
-    ga::Offset getNumPoints() const override;
+    ga::Offset getNumFaces() const { return getElementCount(ga::AttributeOwner::FACE); }
+    ga::Offset getNumVerts() const { return getElementCount(ga::AttributeOwner::VERTEX); }
     ga::Offset getNumSoloPoints() const;
 
-    bt::boolT isClosed(ga::Offset primOffset) const;
+    /// @brief Creates a vertex group.
+    /// @return Handle to the new group.
+    ga::AttributeHandleBool createVertexGroup(std::string name) {
+        return createGroup(ga::AttributeOwner::VERTEX, std::move(name));
+    }
+    /// @brief Creates a face group.
+    /// @return Handle to the new group.
+    ga::AttributeHandleBool createFaceGroup(std::string name) {
+        return createGroup(ga::AttributeOwner::FACE, std::move(name));
+    }
+    /// @brief Marks the given offsets as members of the vertex group.
+    void addToVertexGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
+        addToGroup(ga::AttributeOwner::VERTEX, name, offsets);
+    }
+    /// @brief Marks the given offsets as members of the face group.
+    void addToFaceGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
+        addToGroup(ga::AttributeOwner::FACE, name, offsets);
+    }
 
-    void computePrimStartVertices() const;
+    bt::boolT isClosed(ga::Offset faceOffset) const;
+
+    void computeFaceStartVertices() const;
 
 protected:
     ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) override;
     const ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const override;
+    ga::attribVector& getGroupStore(const ga::AttributeOwner& owner) override;
+    const ga::attribVector& getGroupStore(const ga::AttributeOwner& owner) const override;
 
 private:
     void mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src);
@@ -119,17 +154,19 @@ private:
 
     ga::attribVector vertexAttributes_;
     ga::attribVector faceAttributes_;
+    ga::attribVector vertexGroups_;
+    ga::attribVector faceGroups_;
 
     mutable std::unordered_set<ga::Offset> soloPoints_;
     mutable bool soloPointsDirty_ = true;
     void rebuildSoloPoints() const;
     bool needsDefrag_ = false;
 
-    mutable std::vector<ga::Offset> primStarts_;
-    mutable std::vector<ga::Offset> vertexPrims_;
+    mutable std::vector<ga::Offset> faceStarts_;
+    mutable std::vector<ga::Offset> vertexFaces_;
 
-    mutable std::atomic<bool> primStartsDirty_{true};
-    mutable tbb::spin_mutex primStartsMutex_;
+    mutable std::atomic<bool> faceStartsDirty_{true};
+    mutable tbb::spin_mutex faceStartsMutex_;
 
     // intrinsic handles
     enzo::ga::AttributeHandleInt vertexCountFaceHandle_;

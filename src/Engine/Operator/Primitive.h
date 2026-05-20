@@ -91,7 +91,7 @@ class Primitive {
     void incrementVersion();
 
     virtual bool hasPoints() const { return false; }
-    virtual ga::Offset getNumPoints() const { return 0; }
+    ga::Offset getNumPoints() const { return getElementCount(ga::AttributeOwner::POINT); }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
     virtual bool isValidPoint(ga::Offset offset) const { return true; }
     virtual void deletePoints(const std::vector<ga::Offset>& pointOffsets) {}
@@ -118,17 +118,67 @@ class Primitive {
                                                            unsigned int index) const;
     bool attributeExists(ga::AttributeOwner owner, std::string name);
 
+    /**
+     * @brief Creates a group on the given owner.
+     *
+     * Groups are boolean flags that mark elements as members. A group
+     * and a regular attribute can share a name without colliding.
+     *
+     * @return Handle to the new group.
+     */
+    ga::AttributeHandleBool createGroup(ga::AttributeOwner owner, std::string name);
+    /**
+     * @brief Marks the given offsets as members of the group.
+     */
+    void addToGroup(ga::AttributeOwner owner, const std::string& name,
+                    const std::vector<ga::Offset>& offsets);
+    /**
+     * @brief Looks up a group by name.
+     * @return The matching group, or nullptr if no such group exists.
+     */
+    std::shared_ptr<ga::Attribute> getGroupByName(ga::AttributeOwner owner,
+                                                  const std::string& name);
+
+    /// @brief Creates a point group.
+    /// @return Handle to the new group.
+    ga::AttributeHandleBool createPointGroup(std::string name) {
+        return createGroup(ga::AttributeOwner::POINT, std::move(name));
+    }
+    /// @brief Creates a primitive group.
+    /// @return Handle to the new group.
+    ga::AttributeHandleBool createPrimitiveGroup(std::string name) {
+        return createGroup(ga::AttributeOwner::PRIMITIVE, std::move(name));
+    }
+    /// @brief Marks the given offsets as members of the point group.
+    void addToPointGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
+        addToGroup(ga::AttributeOwner::POINT, name, offsets);
+    }
+    /// @brief Marks the given offsets as members of the primitive group.
+    void addToPrimitiveGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
+        addToGroup(ga::AttributeOwner::PRIMITIVE, name, offsets);
+    }
+
     bt::String getPath() const { return path_; };
     void setPath(const bt::String &path) { path_ = path; };
 
   protected:
     virtual ga::attribVector &getAttributeStore(const ga::AttributeOwner &owner);
     virtual const ga::attribVector &getAttributeStore(const ga::AttributeOwner &owner) const;
+    virtual ga::attribVector &getGroupStore(const ga::AttributeOwner &owner);
+    virtual const ga::attribVector &getGroupStore(const ga::AttributeOwner &owner) const;
     ga::attribVector deepCopyAttributes(ga::attribVector source);
+
+    /**
+     * @brief Returns the number of elements in the given owner's store.
+     * @return The element count.
+     */
+    size_t getElementCount(const ga::AttributeOwner &owner) const;
 
     std::string path_ = "/prim";
     ga::attribVector pointAttributes_;
     ga::attribVector primitiveAttributes_;
+    ga::attribVector pointGroups_;
+    ga::attribVector primitiveGroups_;
 };
 
 using PrimPtr = std::shared_ptr<Primitive>;

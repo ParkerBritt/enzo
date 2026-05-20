@@ -12,7 +12,10 @@ geo::Primitive::Primitive(std::string_view path) : path_(path) {}
 
 geo::Primitive::Primitive(const Primitive &other)
     : pointAttributes_{deepCopyAttributes(other.pointAttributes_)},
-      primitiveAttributes_{deepCopyAttributes(other.primitiveAttributes_)}, path_{other.path_} {}
+      primitiveAttributes_{deepCopyAttributes(other.primitiveAttributes_)},
+      pointGroups_{deepCopyAttributes(other.pointGroups_)},
+      primitiveGroups_{deepCopyAttributes(other.primitiveGroups_)},
+      path_{other.path_} {}
 
 enzo::geo::Primitive &enzo::geo::Primitive::operator=(const enzo::geo::Primitive &rhs) {
     if (this == &rhs)
@@ -20,6 +23,8 @@ enzo::geo::Primitive &enzo::geo::Primitive::operator=(const enzo::geo::Primitive
 
     pointAttributes_ = deepCopyAttributes(rhs.pointAttributes_);
     primitiveAttributes_ = deepCopyAttributes(rhs.primitiveAttributes_);
+    pointGroups_ = deepCopyAttributes(rhs.pointGroups_);
+    primitiveGroups_ = deepCopyAttributes(rhs.primitiveGroups_);
     path_ = rhs.path_;
 
     return *this;
@@ -99,6 +104,66 @@ geo::Primitive::getAttributeStore(const ga::AttributeOwner &owner) const {
     default:
         throw std::runtime_error("AttributeOwner not supported by this primitive type");
     }
+}
+
+ga::attribVector &geo::Primitive::getGroupStore(const ga::AttributeOwner &owner) {
+    switch (owner) {
+    case ga::AttributeOwner::POINT:
+        return pointGroups_;
+    case ga::AttributeOwner::PRIMITIVE:
+        return primitiveGroups_;
+    default:
+        throw std::runtime_error("AttributeOwner not supported by this primitive type");
+    }
+}
+
+const ga::attribVector &
+geo::Primitive::getGroupStore(const ga::AttributeOwner &owner) const {
+    switch (owner) {
+    case ga::AttributeOwner::POINT:
+        return pointGroups_;
+    case ga::AttributeOwner::PRIMITIVE:
+        return primitiveGroups_;
+    default:
+        throw std::runtime_error("AttributeOwner not supported by this primitive type");
+    }
+}
+
+size_t geo::Primitive::getElementCount(const ga::AttributeOwner &owner) const {
+    // Primitive owners carry exactly one entry per primitive instance.
+    if (owner == ga::AttributeOwner::PRIMITIVE) return 1;
+
+    // For the other owners every attribute in the store shares a length,
+    // so the first attribute's size is the canonical element count.
+    const auto &store = getAttributeStore(owner);
+    if (store.empty()) return 0;
+    return store.front()->getSize();
+}
+
+ga::AttributeHandleBool geo::Primitive::createGroup(ga::AttributeOwner owner, std::string name) {
+    auto newGroup = std::make_shared<ga::Attribute>(name, ga::AttrType::boolT);
+    // Match the owner's current element count so existing elements start as non-members.
+    newGroup->resize(getElementCount(owner));
+    getGroupStore(owner).push_back(newGroup);
+    return ga::AttributeHandleBool(newGroup);
+}
+
+void geo::Primitive::addToGroup(ga::AttributeOwner owner, const std::string &name,
+                                const std::vector<ga::Offset> &offsets) {
+    auto group = getGroupByName(owner, name);
+    if (!group) throw std::runtime_error("addToGroup: no group named '" + name + "'");
+    ga::AttributeHandleBool handle(group);
+    for (ga::Offset offset : offsets) {
+        handle.setValue(offset, true);
+    }
+}
+
+std::shared_ptr<ga::Attribute> geo::Primitive::getGroupByName(ga::AttributeOwner owner,
+                                                              const std::string &name) {
+    for (auto &group : getGroupStore(owner)) {
+        if (group && group->getName() == name) return group;
+    }
+    return nullptr;
 }
 
 bool geo::Primitive::attributeExists(ga::AttributeOwner owner, std::string name) {

@@ -1,17 +1,18 @@
+#include <Engine/Operator/AttributeHandle.h>
 #include <Engine/Operator/Mesh.h>
 #include <Engine/Types.h>
 #include <catch2/catch_test_macros.hpp>
 
 using namespace enzo;
 
-TEST_CASE("deleteFaces") {
+TEST_CASE("Delete faces") {
     geo::Mesh mesh;
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    mesh.addFace({p0, p1, p2});
-    mesh.addFace({p0, p1, p2});
-    mesh.addFace({p0, p1, p2});
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     mesh.deleteFaces({1});
 
@@ -26,21 +27,21 @@ TEST_CASE("deleteFaces") {
     REQUIRE(mesh.isValidVertex(6));
 }
 
-TEST_CASE("deletePoints") {
+TEST_CASE("Delete points") {
     geo::Mesh mesh;
 
     // Create points
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto p3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
 
     // Create faces
-    mesh.addFace({p0, p1, p2});
-    mesh.addFace({p1, p2, p3});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset1, pointOffset2, pointOffset3});
 
     // Delete point 0
-    mesh.deletePoints({p0});
+    mesh.deletePoints({pointOffset0});
 
     // Test point 0 is invalid, others still valid
     REQUIRE_FALSE(mesh.isValidPoint(0));
@@ -52,7 +53,7 @@ TEST_CASE("deletePoints") {
     REQUIRE(mesh.isValidFace(0));
     REQUIRE(mesh.isValidFace(1));
 
-    // Test only the vertex that referenced p0 went invalid
+    // Test only the vertex that referenced point 0 went invalid
     REQUIRE_FALSE(mesh.isValidVertex(0));
     REQUIRE(mesh.isValidVertex(1));
     REQUIRE(mesh.isValidVertex(2));
@@ -61,16 +62,16 @@ TEST_CASE("deletePoints") {
     REQUIRE(mesh.isValidVertex(5));
 }
 
-TEST_CASE("deleteVertices") {
+TEST_CASE("Delete vertices") {
     geo::Mesh mesh;
 
     // Create points
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
 
     // Create face
-    mesh.addFace({p0, p1, p2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Delete one vertex from the face
     mesh.deleteVertices({1});
@@ -89,16 +90,16 @@ TEST_CASE("deleteVertices") {
     REQUIRE(mesh.isValidPoint(2));
 }
 
-TEST_CASE("deleteFaceAddsPointsToSolo") {
+TEST_CASE("Delete face adds points to solo") {
     geo::Mesh mesh;
 
     // Create points
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
 
     // Create face using all three points
-    mesh.addFace({p0, p1, p2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Test no points are solo (the face references all of them)
     REQUIRE(mesh.getNumSoloPoints() == 0);
@@ -110,16 +111,16 @@ TEST_CASE("deleteFaceAddsPointsToSolo") {
     REQUIRE(mesh.getNumSoloPoints() == 3);
 }
 
-TEST_CASE("deleteAllVerticesOnFace") {
+TEST_CASE("Delete all vertices on face") {
     geo::Mesh mesh;
 
     // Create points
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
 
     // Create face
-    mesh.addFace({p0, p1, p2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Delete every vertex on the face
     mesh.deleteVertices({0, 1, 2});
@@ -138,21 +139,21 @@ TEST_CASE("deleteAllVerticesOnFace") {
     REQUIRE(mesh.isValidPoint(2));
 }
 
-TEST_CASE("deletePointsAndFaces") {
+TEST_CASE("Delete points and faces") {
     geo::Mesh mesh;
 
     // Create points
-    auto p0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto p1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto p2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto p3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
 
     // Create faces
-    mesh.addFace({p0, p1, p2});
-    mesh.addFace({p1, p2, p3});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset1, pointOffset2, pointOffset3});
 
     // Delete point 0 and any face that uses it
-    mesh.deletePoints({p0}, true);
+    mesh.deletePoints({pointOffset0}, true);
 
     // Test point 0 is invalid, others still valid
     REQUIRE_FALSE(mesh.isValidPoint(0));
@@ -171,4 +172,205 @@ TEST_CASE("deletePointsAndFaces") {
     REQUIRE(mesh.isValidVertex(3));
     REQUIRE(mesh.isValidVertex(4));
     REQUIRE(mesh.isValidVertex(5));
+}
+
+TEST_CASE("Create face group") {
+    geo::Mesh mesh;
+
+    // Build a mesh with two faces
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.createGroup(ga::AttrOwner::FACE, "myGroup");
+
+    // The group lookup should find it, and the attribute lookup should not
+    auto group = mesh.getGroupByName(ga::AttrOwner::FACE, "myGroup");
+    REQUIRE(group != nullptr);
+    REQUIRE(mesh.getAttribByName(ga::AttrOwner::FACE, "myGroup") == nullptr);
+
+    // Every existing face starts outside the group
+    ga::AttributeHandleBool handle(group);
+    REQUIRE(handle.getSize() == 2);
+    REQUIRE(handle.getValue(0) == false);
+    REQUIRE(handle.getValue(1) == false);
+}
+
+TEST_CASE("Add to face group") {
+    geo::Mesh mesh;
+
+    // Build a mesh with three faces
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.createGroup(ga::AttrOwner::FACE, "g");
+    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 2});
+
+    // Faces 0 and 2 should be members, face 1 should not
+    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    REQUIRE(handle.getValue(0) == true);
+    REQUIRE(handle.getValue(1) == false);
+    REQUIRE(handle.getValue(2) == true);
+}
+
+TEST_CASE("Create primitive group") {
+    geo::Mesh mesh;
+
+    // Primitive groups have exactly one slot per primitive
+    mesh.createGroup(ga::AttrOwner::PRIMITIVE, "selected");
+
+    auto group = mesh.getGroupByName(ga::AttrOwner::PRIMITIVE, "selected");
+    REQUIRE(group != nullptr);
+    ga::AttributeHandleBool handle(group);
+    REQUIRE(handle.getSize() == 1);
+    REQUIRE(handle.getValue(0) == false);
+
+    // Toggle this primitive into the group
+    mesh.addToGroup(ga::AttrOwner::PRIMITIVE, "selected", {0});
+    REQUIRE(handle.getValue(0) == true);
+}
+
+TEST_CASE("Group name can match attribute name") {
+    geo::Mesh mesh;
+
+    // Build a mesh with one face
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    // Same name on both stores must not collide
+    mesh.addBoolAttribute(ga::AttrOwner::FACE, "selected");
+    mesh.createGroup(ga::AttrOwner::FACE, "selected");
+
+    auto attribute = mesh.getAttribByName(ga::AttrOwner::FACE, "selected");
+    auto group = mesh.getGroupByName(ga::AttrOwner::FACE, "selected");
+
+    REQUIRE(attribute != nullptr);
+    REQUIRE(group != nullptr);
+    REQUIRE(attribute != group);
+}
+
+TEST_CASE("Group survives defragment") {
+    geo::Mesh mesh;
+
+    // Build a mesh with three faces, put faces 0 and 2 in a group
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.createGroup(ga::AttrOwner::FACE, "g");
+    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 2});
+
+    // Drop the middle face and compact
+    mesh.deleteFaces({1});
+    mesh.defragment();
+
+    // After defrag old face 0 stays at offset 0 and old face 2 shifts to offset 1.
+    // Both should still report as members of the group.
+    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    REQUIRE(handle.getSize() == 2);
+    REQUIRE(handle.getValue(0) == true);
+    REQUIRE(handle.getValue(1) == true);
+}
+
+TEST_CASE("Add faces") {
+    geo::Mesh mesh;
+
+    // Build the source points
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+
+    // Two triangles in a single batch call
+    std::vector<ga::Offset> pointOffsetsFlat{
+        pointOffset0, pointOffset1, pointOffset2,
+        pointOffset1, pointOffset2, pointOffset3};
+    std::vector<ga::Offset> vertexCounts{3, 3};
+    auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
+
+    // Returned offsets should be the new face indices
+    REQUIRE(faceOffsets.size() == 2);
+    REQUIRE(faceOffsets[0] == 0);
+    REQUIRE(faceOffsets[1] == 1);
+    REQUIRE(mesh.getNumFaces() == 2);
+
+    // Each face should report the right point references
+    auto face0Points = mesh.getFacePoints(faceOffsets[0]);
+    REQUIRE(face0Points.size() == 3);
+    REQUIRE(face0Points[0] == static_cast<bt::intT>(pointOffset0));
+    REQUIRE(face0Points[1] == static_cast<bt::intT>(pointOffset1));
+    REQUIRE(face0Points[2] == static_cast<bt::intT>(pointOffset2));
+
+    auto face1Points = mesh.getFacePoints(faceOffsets[1]);
+    REQUIRE(face1Points.size() == 3);
+    REQUIRE(face1Points[0] == static_cast<bt::intT>(pointOffset1));
+    REQUIRE(face1Points[1] == static_cast<bt::intT>(pointOffset2));
+    REQUIRE(face1Points[2] == static_cast<bt::intT>(pointOffset3));
+}
+
+TEST_CASE("Add faces mixed sizes") {
+    geo::Mesh mesh;
+
+    // Build the source points
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset4 = mesh.addPoint(bt::Vector3(2, 0, 0));
+
+    // One quad, one tri
+    std::vector<ga::Offset> pointOffsetsFlat{
+        pointOffset0, pointOffset1, pointOffset2, pointOffset3,
+        pointOffset0, pointOffset1, pointOffset4};
+    std::vector<ga::Offset> vertexCounts{4, 3};
+    auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
+
+    // The quad keeps its four points in order
+    auto quadPoints = mesh.getFacePoints(faceOffsets[0]);
+    REQUIRE(quadPoints.size() == 4);
+    REQUIRE(quadPoints[3] == static_cast<bt::intT>(pointOffset3));
+
+    // The tri starts at its own primStart, not appended to the quad
+    auto triPoints = mesh.getFacePoints(faceOffsets[1]);
+    REQUIRE(triPoints.size() == 3);
+    REQUIRE(triPoints[0] == static_cast<bt::intT>(pointOffset0));
+    REQUIRE(triPoints[2] == static_cast<bt::intT>(pointOffset4));
+}
+
+TEST_CASE("Add faces resizes group") {
+    geo::Mesh mesh;
+
+    // Build a mesh with two faces, both in a group
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.createGroup(ga::AttrOwner::FACE, "g");
+    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 1});
+
+    // Add one more face via the batch path
+    std::vector<ga::Offset> pointOffsetsFlat{pointOffset0, pointOffset1, pointOffset2};
+    std::vector<ga::Offset> vertexCounts{3};
+    mesh.addFaces(pointOffsetsFlat, vertexCounts);
+
+    // The group must have grown to cover the new face, and that face
+    // should default to non-member.
+    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    REQUIRE(handle.getSize() == 3);
+    REQUIRE(handle.getValue(0) == true);
+    REQUIRE(handle.getValue(1) == true);
+    REQUIRE(handle.getValue(2) == false);
 }
