@@ -472,3 +472,88 @@ TEST_CASE("getFaces empty when only points listed") {
     auto faces = selection.getFaces(mesh);
     REQUIRE(faces.empty());
 }
+
+// Group selections: a name without a leading slash names a group rather than a path.
+
+TEST_CASE("Selection by group name returns faces in the group") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+
+    // Build three faces, mark 0 and 2 as members of the group
+    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->createFaceGroup("highlighted");
+    mesh->addToFaceGroup("highlighted", {0, 2});
+
+    Selection selection("highlighted");
+    auto faces = selection.getFaces(mesh);
+    REQUIRE(faces == std::vector<ga::Offset>{0, 2});
+}
+
+TEST_CASE("Selection by group name on a prim without the group returns empty") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+
+    // Build a face so the mesh isn't empty
+    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({point0, point1, point2});
+
+    Selection selection("missingGroup");
+    REQUIRE(selection.getFaces(mesh).empty());
+    REQUIRE_FALSE(selection.containsPrim(mesh));
+}
+
+TEST_CASE("Selection by group name getPrims only includes prims with the group") {
+    NodePacket packet;
+    auto withGroup = std::make_shared<geo::Mesh>("/with");
+    auto withoutGroup = std::make_shared<geo::Mesh>("/without");
+    withGroup->createFaceGroup("g");
+    packet.addPrimitive(withGroup);
+    packet.addPrimitive(withoutGroup);
+
+    Selection selection("g");
+    auto prims = selection.getPrims(packet);
+    REQUIRE(prims.size() == 1);
+    REQUIRE(prims[0]->getPath() == "/with");
+}
+
+TEST_CASE("Selection by primitive group includes prims where the flag is set") {
+    NodePacket packet;
+    auto active = std::make_shared<geo::Mesh>("/active");
+    auto inactive = std::make_shared<geo::Mesh>("/inactive");
+
+    // Both prims have the group, but only one has the flag set
+    active->createPrimitiveGroup("active");
+    active->addToPrimitiveGroup("active", {0});
+    inactive->createPrimitiveGroup("active");
+
+    packet.addPrimitive(active);
+    packet.addPrimitive(inactive);
+
+    Selection selection("active");
+    auto prims = selection.getPrims(packet);
+    REQUIRE(prims.size() == 1);
+    REQUIRE(prims[0]->getPath() == "/active");
+}
+
+TEST_CASE("Selection by primitive group treats the prim as whole-prim selection") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({point0, point1, point2});
+    mesh->createPrimitiveGroup("active");
+    mesh->addToPrimitiveGroup("active", {0});
+
+    Selection selection("active");
+
+    // Whole prim is in, so every element type is too
+    REQUIRE(selection.containsPrim(mesh, true));
+    REQUIRE(selection.containsFace(mesh, 0));
+    REQUIRE(selection.containsPoint(mesh, 0));
+    REQUIRE(selection.containsVertex(mesh, 0));
+}

@@ -26,7 +26,7 @@ class Selection {
     bool getInverted() const { return inverted_; }
 
   private:
-    std::vector<enzo::SelectionComponent> components_;
+    std::vector<std::unique_ptr<enzo::SelectionComponent>> components_;
     bool inverted_ = false;
 };
 } // namespace enzo

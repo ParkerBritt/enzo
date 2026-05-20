@@ -159,8 +159,8 @@ void geo::Primitive::addToGroup(ga::AttributeOwner owner, const std::string &nam
 }
 
 std::shared_ptr<ga::Attribute> geo::Primitive::getGroupByName(ga::AttributeOwner owner,
-                                                              const std::string &name) {
-    for (auto &group : getGroupStore(owner)) {
+                                                              const std::string &name) const {
+    for (const auto &group : getGroupStore(owner)) {
         if (group && group->getName() == name) return group;
     }
     return nullptr;

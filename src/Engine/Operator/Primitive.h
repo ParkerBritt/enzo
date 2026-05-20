@@ -137,7 +137,7 @@ class Primitive {
      * @return The matching group, or nullptr if no such group exists.
      */
     std::shared_ptr<ga::Attribute> getGroupByName(ga::AttributeOwner owner,
-                                                  const std::string& name);
+                                                  const std::string& name) const;
     /**
      * @brief Returns how many groups live on the given owner.
      */

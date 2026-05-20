@@ -5,14 +5,12 @@
 #include <sstream>
 
 enzo::Selection::Selection(std::string expression) {
-    // SelectionComponent component = SelectionComponent::fromGroup();
     char delimeter = ',';
     std::stringstream expressionString(expression);
     std::string stringPart;
     while (getline(expressionString, stringPart, delimeter)) {
         IC(stringPart);
-        SelectionComponent component = SelectionComponent::fromString(stringPart);
-        components_.push_back(component);
+        components_.push_back(SelectionComponent::fromString(stringPart));
     }
     // Empty expression means "everything": one pathless, no-selectors component.
     if (components_.empty()) {
@@ -51,14 +49,14 @@ bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
         // Inverted: a prim is fully contained only if no component mentions it;
         // partially contained if no component selects it as a whole prim.
         for (auto& component : components_) {
-            if (!component.containsPrim(*prim)) continue;
-            if (full || component.isWholePrim()) return false;
+            if (!component->containsPrim(*prim)) continue;
+            if (full || component->isWholePrim(*prim)) return false;
         }
         return true;
     }
     for (auto& component : components_) {
-        if (!component.containsPrim(*prim)) continue;
-        if (full && !component.isWholePrim()) continue;
+        if (!component->containsPrim(*prim)) continue;
+        if (full && !component->isWholePrim(*prim)) continue;
         return true;
     }
     return false;
@@ -68,7 +66,7 @@ bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index) {
     // If the whole prim is in the selection, every face on it is in too.
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component.containsFace(*prim, index, inverted_)) return true;
+        if (component->containsFace(*prim, index, inverted_)) return true;
     }
     return false;
 }
@@ -96,7 +94,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
 bool enzo::Selection::containsPoint(geo::PrimPtr prim, ga::Index index) {
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component.containsPoint(*prim, index, inverted_)) return true;
+        if (component->containsPoint(*prim, index, inverted_)) return true;
     }
     return false;
 }
@@ -119,7 +117,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
 bool enzo::Selection::containsVertex(geo::PrimPtr prim, ga::Index index) {
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component.containsVertex(*prim, index, inverted_)) return true;
+        if (component->containsVertex(*prim, index, inverted_)) return true;
     }
     return false;
 }
