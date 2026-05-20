@@ -1,4 +1,6 @@
 #include "SelectionComponent.h"
+#include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Utils/StringUtils.h"
 #include "IndexSet.h"
 #include <cctype>
 #include <set>
@@ -6,8 +8,7 @@
 
 namespace {
 std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
-    // TODO: trim whitespace before checking for wildcard
-    if (content == "*") {
+    if (enzo::utils::trim(content) == "*") {
         return std::make_shared<enzo::WildcardIndexSet>();
     }
     std::set<enzo::ga::Index> indices;
@@ -19,7 +20,8 @@ std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
         if (dash != std::string::npos && dash > 0 && dash + 1 < token.size()) {
             enzo::ga::Index low = std::stoull(token.substr(0, dash));
             enzo::ga::Index high = std::stoull(token.substr(dash + 1));
-            if (low > high) std::swap(low, high);
+            if (low > high)
+                std::swap(low, high);
             for (enzo::ga::Index i = low; i <= high; ++i) {
                 indices.insert(i);
             }
@@ -32,82 +34,202 @@ std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
 }
 } // namespace
 
-enzo::SelectionComponent enzo::SelectionComponent::fromString(std::string_view string) {
-    enzo::SelectionComponent component;
+namespace enzo {
+
+std::unique_ptr<SelectionComponent> SelectionComponent::fromString(std::string_view string) {
+    std::string_view trimmed = utils::trim(string);
+    if (trimmed.empty()) {
+        return PathSelectionComponent::parse(trimmed);
+    }
+
+    // A leading "<letter>{" is a component selector (e.g. "p{0}")
+    bool startsWithSelector = trimmed.size() >= 2 &&
+                              std::isalpha(static_cast<unsigned char>(trimmed[0])) &&
+                              trimmed[1] == '{';
+    bool startsWithPath = trimmed[0] == '/';
+
+    if (!startsWithSelector && !startsWithPath) {
+        return fromGroup(trimmed);
+    }
+    return PathSelectionComponent::parse(trimmed);
+}
+
+std::unique_ptr<SelectionComponent> SelectionComponent::fromGroup(std::string_view name) {
+    return GroupSelectionComponent::create(name);
+}
+
+// ---
+// PathSelectionComponent
+// ---
+
+std::unique_ptr<PathSelectionComponent> PathSelectionComponent::parse(std::string_view string) {
+    auto component = std::unique_ptr<PathSelectionComponent>(new PathSelectionComponent());
 
     size_t i = 0;
-    while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i]))) ++i;
+    while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i])))
+        ++i;
 
-    // A leading "<letter>{" is a component selector (e.g. "p{0}"), not a path.
-    bool startsWithSelector =
-        i + 1 < string.size() &&
-        std::isalpha(static_cast<unsigned char>(string[i])) &&
-        string[i + 1] == '{';
+    // A leading "<letter>{" is a component selector, so there is no path
+    bool startsWithSelector = i + 1 < string.size() &&
+                              std::isalpha(static_cast<unsigned char>(string[i])) &&
+                              string[i + 1] == '{';
     if (!startsWithSelector) {
         size_t pathStart = i;
-        while (i < string.size() && !std::isspace(static_cast<unsigned char>(string[i]))) ++i;
-        component.primPath_ = std::string(string.substr(pathStart, i - pathStart));
+        while (i < string.size() && !std::isspace(static_cast<unsigned char>(string[i])))
+            ++i;
+        component->primPath_ = std::string(string.substr(pathStart, i - pathStart));
     }
 
     while (i < string.size()) {
-        while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i]))) ++i;
-        if (i >= string.size()) break;
+        while (i < string.size() && std::isspace(static_cast<unsigned char>(string[i])))
+            ++i;
+        if (i >= string.size())
+            break;
 
         char type = string[i++];
-        if (i >= string.size() || string[i] != '{') break;
+        if (i >= string.size() || string[i] != '{')
+            break;
         ++i;
 
         size_t contentStart = i;
-        while (i < string.size() && string[i] != '}') ++i;
+        while (i < string.size() && string[i] != '}')
+            ++i;
         std::string_view content = string.substr(contentStart, i - contentStart);
-        if (i < string.size()) ++i;
+        if (i < string.size())
+            ++i;
 
         auto indexSet = parseBlockContent(content);
         if (type == 'f') {
-            component.faces_ = indexSet;
+            component->faces_ = indexSet;
         } else if (type == 'p') {
-            component.points_ = indexSet;
+            component->points_ = indexSet;
         } else if (type == 'v') {
-            component.vertices_ = indexSet;
+            component->vertices_ = indexSet;
         }
     }
 
     return component;
 }
 
-bool enzo::SelectionComponent::containsPrim(const geo::Primitive& prim) const {
-    // A pathless component applies to every prim. With no selectors this is the
-    // implicit "everything" component produced by an empty selection string.
-    if (primPath_.empty()) return true;
+bool PathSelectionComponent::containsPrim(const geo::Primitive &prim) const {
+    // A pathless component applies to every prim
+    if (primPath_.empty())
+        return true;
     return prim.getPath() == primPath_;
 }
 
-bool enzo::SelectionComponent::containsFace(const geo::Primitive& prim, ga::Index index, bool inverted) const {
-    if (!containsPrim(prim)) return false;
-    // Whole-prim selection (no blocks): every face is implicitly included.
-    if (isWholePrim()) return !inverted;
-    // Face-less partial selection: out of face scope, inversion doesn't expand it.
-    if (!faces_) return false;
+bool PathSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index index,
+                                          bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    if (!faces_)
+        return false;
     bool in = faces_->contains(index);
     return inverted ? !in : in;
 }
 
-bool enzo::SelectionComponent::containsPoint(const geo::Primitive& prim, ga::Index index, bool inverted) const {
-    if (!containsPrim(prim)) return false;
-    if (isWholePrim()) return !inverted;
-    if (!points_) return false;
+bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index index,
+                                           bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    if (!points_)
+        return false;
     bool in = points_->contains(index);
     return inverted ? !in : in;
 }
 
-bool enzo::SelectionComponent::containsVertex(const geo::Primitive& prim, ga::Index index, bool inverted) const {
-    if (!containsPrim(prim)) return false;
-    if (isWholePrim()) return !inverted;
-    if (!vertices_) return false;
+bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index index,
+                                            bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    if (!vertices_)
+        return false;
     bool in = vertices_->contains(index);
     return inverted ? !in : in;
 }
 
-bool enzo::SelectionComponent::isWholePrim() const {
+bool PathSelectionComponent::isWholePrim(const geo::Primitive &) const {
     return !faces_ && !points_ && !vertices_;
 }
+
+// ---
+// GroupSelectionComponent
+// ---
+
+namespace {
+// Reads a group's bool at the given offset, false if the group is missing
+bool isGroupMember(const geo::Primitive &prim, ga::AttrOwner owner, const std::string &name,
+                   ga::Offset offset) {
+    auto group = prim.getGroupByName(owner, name);
+    if (!group)
+        return false;
+    ga::AttributeHandleRO<bt::boolT> handle(group);
+    return handle.getValue(offset);
+}
+} // namespace
+
+std::unique_ptr<GroupSelectionComponent> GroupSelectionComponent::create(std::string_view name) {
+    auto component = std::unique_ptr<GroupSelectionComponent>(new GroupSelectionComponent());
+    component->groupName_ = std::string(utils::trim(name));
+    return component;
+}
+
+bool GroupSelectionComponent::containsPrim(const geo::Primitive &prim) const {
+    // A primitive group with the flag set selects the whole prim
+    if (auto primGroup = prim.getGroupByName(ga::AttrOwner::PRIMITIVE, groupName_)) {
+        ga::AttributeHandleRO<bt::boolT> handle(primGroup);
+        return handle.getValue(0);
+    }
+    // Otherwise the prim is in scope if any other store has the group
+    for (auto owner : {ga::AttrOwner::FACE, ga::AttrOwner::POINT, ga::AttrOwner::VERTEX}) {
+        if (prim.getGroupByName(owner, groupName_))
+            return true;
+    }
+    return false;
+}
+
+bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index index,
+                                           bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    bool in = isGroupMember(prim, ga::AttrOwner::FACE, groupName_, index);
+    return inverted ? !in : in;
+}
+
+bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index index,
+                                            bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    bool in = isGroupMember(prim, ga::AttrOwner::POINT, groupName_, index);
+    return inverted ? !in : in;
+}
+
+bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index index,
+                                             bool inverted) const {
+    if (!containsPrim(prim))
+        return false;
+    if (isWholePrim(prim))
+        return !inverted;
+    bool in = isGroupMember(prim, ga::AttrOwner::VERTEX, groupName_, index);
+    return inverted ? !in : in;
+}
+
+bool GroupSelectionComponent::isWholePrim(const geo::Primitive &prim) const {
+    auto primGroup = prim.getGroupByName(ga::AttrOwner::PRIMITIVE, groupName_);
+    if (!primGroup)
+        return false;
+    ga::AttributeHandleRO<bt::boolT> handle(primGroup);
+    return handle.getValue(0);
+}
+
+} // namespace enzo
