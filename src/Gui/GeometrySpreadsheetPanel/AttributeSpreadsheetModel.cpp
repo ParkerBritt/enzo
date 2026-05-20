@@ -101,14 +101,9 @@ int AttributeSpreadsheetModel::rowCount(const QModelIndex &parent) const
 
 int AttributeSpreadsheetModel::columnCount(const QModelIndex &parent) const
 {
-
-    int columnCount = attributeColumnPadding_; // first column is for indices
-    for(auto size : attribSizes_)
-    {
-        columnCount += size;
-    }
-
-    return columnCount;
+    if(!primitive_) return attributeColumnPadding_;
+    // padding column for indices, then attribute columns, then group columns
+    return attributeColumnPadding_ + sectionAttribMap_.size() + primitive_->getNumGroups(attributeOwner_);
 }
 
 
@@ -155,7 +150,20 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
 
             }
         }
-        int attributeIndex = indexFromSection(index.column()-attributeColumnPadding_);
+        const int section = index.column() - attributeColumnPadding_;
+        if(section >= static_cast<int>(sectionAttribMap_.size()))
+        {
+            // Group columns sit after all attribute columns
+            const unsigned int groupIndex = section - sectionAttribMap_.size();
+            if(auto group = primitive_->getGroupByIndex(attributeOwner_, groupIndex).lock())
+            {
+                const auto groupHandle = enzo::ga::AttributeHandleRO<enzo::bt::boolT>(group);
+                return groupHandle.getValue(index.row()) ? "true" : "false";
+            }
+            throw std::runtime_error("Couldn't lock group");
+        }
+
+        int attributeIndex = indexFromSection(section);
         if(std::shared_ptr<const enzo::ga::Attribute> attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
         {
             const unsigned int valueIndex = index.column()-attributeIndex-attributeColumnPadding_;
@@ -228,7 +236,19 @@ QVariant AttributeSpreadsheetModel::headerData(int section, Qt::Orientation orie
     {
         if(section==0) return "Index";
         if(!primitive_) return QVariant();
-        auto attributeIndex = indexFromSection(section-attributeColumnPadding_);
+
+        const int sectionIndex = section - attributeColumnPadding_;
+        if(sectionIndex >= static_cast<int>(sectionAttribMap_.size()))
+        {
+            const unsigned int groupIndex = sectionIndex - sectionAttribMap_.size();
+            if(auto group = primitive_->getGroupByIndex(attributeOwner_, groupIndex).lock())
+            {
+                return QString::fromStdString("group: " + group->getName());
+            }
+            throw std::runtime_error("failed to lock group index");
+        }
+
+        auto attributeIndex = indexFromSection(sectionIndex);
         if(auto attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
         {
             if(attribSizes_[attributeIndex]>1)
