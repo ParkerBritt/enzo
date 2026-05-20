@@ -205,14 +205,14 @@ void geo::Mesh::merge(Mesh& other)
 
 }
 
-void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
+ga::Offset geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed)
 {
-    const ga::Offset primNum = vertexCountFaceHandle_.getSize();
+    const ga::Offset faceNum = vertexCountFaceHandle_.getSize();
     for(ga::Offset pointOffset : pointOffsets)
     {
         pointOffsetVertexHandle_.addValue(pointOffset);
         validVertexHandle_.addValue(true);
-        vertexPrims_.push_back(primNum);
+        vertexPrims_.push_back(faceNum);
     }
     vertexCountFaceHandle_.addValue(pointOffsets.size());
     closedFaceHandle_.addValue(closed);
@@ -220,6 +220,7 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
     soloPointsDirty_ = true;
 
     // resize other attributes
+    // TODO: this seems terribly inefficient
     for(auto faceAttribute : faceAttributes_)
     {
         if(faceAttribute->isIntrinsic())
@@ -227,10 +228,11 @@ void geo::Mesh::addFace(const std::vector<ga::Offset>& pointOffsets, bool closed
             continue;
         }
 
-        faceAttribute->resize(primNum+1);
+        faceAttribute->resize(faceNum+1);
 
     }
 
+    return faceNum;
 }
 
 void geo::Mesh::deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints)

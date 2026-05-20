@@ -41,7 +41,7 @@ public:
     void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }
 
-    void addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
+    ga::Offset addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
 
     void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
