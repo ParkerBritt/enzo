@@ -25,16 +25,20 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
 
     std::unordered_set<enzo::ga::Offset> duplicatePoints;
 
+    std::string sideGroupName = "extrudeSide";
+    mesh->createGroup(enzo::ga::AttributeOwner::FACE, sideGroupName);
+
+    std::vector<std::vector<enzo::ga::Offset>> newFacePoints;
 
     for(auto face: faces)
     {
-        auto facePoints = mesh->getFacePoints(face);
+        auto originFacePoints = mesh->getFacePoints(face);
 
         std::vector<enzo::ga::Offset> oldPoints;
         std::vector<enzo::ga::Offset> newPoints;
         
         // Create points
-        for(auto pointOffset : facePoints)
+        for(auto pointOffset : originFacePoints)
         {
             auto pointPos = mesh->getPointPos(pointOffset);
             pointPos.y() += distance;
@@ -52,13 +56,17 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
             enzo::ga::Offset p2 = oldPoints[nextIndex];
             enzo::ga::Offset p3 = newPoints[nextIndex];
             enzo::ga::Offset p4 = newPoints[i];
-            mesh->addFace({p1, p2, p3, p4});
+            // Side face
+            newFacePoints.push_back(std::vector<enzo::ga::Offset>{p1, p2, p3, p4});
+            // enzo::ga::Offset faceOff = mesh->addFace({p1, p2, p3, p4});
         }
 
         // Top face
-        mesh->addFace(newPoints);
+        newFacePoints.push_back(newPoints);
     }
 
+    std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(newFacePoints);
+    mesh->addToGroup(enzo::ga::AttributeOwner::FACE, sideGroupName, sideOffsets);
 
 }
 
