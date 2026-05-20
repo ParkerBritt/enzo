@@ -166,6 +166,20 @@ std::shared_ptr<ga::Attribute> geo::Primitive::getGroupByName(ga::AttributeOwner
     return nullptr;
 }
 
+size_t geo::Primitive::getNumGroups(ga::AttributeOwner owner) const {
+    return getGroupStore(owner).size();
+}
+
+std::weak_ptr<const ga::Attribute>
+geo::Primitive::getGroupByIndex(ga::AttributeOwner owner, unsigned int index) const {
+    const auto &store = getGroupStore(owner);
+    if (index >= store.size()) {
+        throw std::out_of_range("Group index out of range: " + std::to_string(index) +
+                                " size: " + std::to_string(store.size()));
+    }
+    return store[index];
+}
+
 bool geo::Primitive::attributeExists(ga::AttributeOwner owner, std::string name) {
     return static_cast<bool>(getAttribByName(owner, name));
 }

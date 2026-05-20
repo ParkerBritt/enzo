@@ -138,6 +138,15 @@ class Primitive {
      */
     std::shared_ptr<ga::Attribute> getGroupByName(ga::AttributeOwner owner,
                                                   const std::string& name);
+    /**
+     * @brief Returns how many groups live on the given owner.
+     */
+    size_t getNumGroups(ga::AttributeOwner owner) const;
+    /**
+     * @brief Returns the group at the given index in the owner's group store.
+     */
+    std::weak_ptr<const ga::Attribute> getGroupByIndex(ga::AttributeOwner owner,
+                                                       unsigned int index) const;
 
     /// @brief Creates a point group.
     /// @return Handle to the new group.
