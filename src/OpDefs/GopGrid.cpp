@@ -58,7 +58,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 const int endOffset = (i+1)%rows==0;
                 const ga::Offset startPt = i+endOffset; 
-                geo->addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
+                geo->addFace({startPt,startPt+1,startPt+rows+1,startPt+rows});
             }
         }
         else

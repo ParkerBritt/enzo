@@ -2,6 +2,7 @@
 #include <Engine/Operator/Mesh.h>
 #include <Engine/Types.h>
 #include <catch2/catch_test_macros.hpp>
+#include <cmath>
 
 using namespace enzo;
 
@@ -373,4 +374,112 @@ TEST_CASE("Add faces resizes group") {
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == true);
     REQUIRE(handle.getValue(2) == false);
+}
+
+TEST_CASE("Face normal of axis aligned quad") {
+    geo::Mesh mesh;
+
+    // CCW from +Y so the right hand rule normal is +Y
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    auto faceNormals = mesh.getFaceNormal();
+    REQUIRE(faceNormals[0] == bt::Vector3(0, 1, 0));
+}
+
+TEST_CASE("Face normal of tilted triangle uses Newell's method") {
+    geo::Mesh mesh;
+
+    // Triangle in the plane y = -z (normal direction (0, -1, 1)/sqrt(2))
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 1));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    auto faceNormals = mesh.getFaceNormal();
+    const bt::Vector3 normal = faceNormals[0];
+    const double oneOverRoot2 = 1.0 / std::sqrt(2.0);
+    const double eps = 1e-9;
+    REQUIRE(std::abs(normal.x()) < eps);
+    REQUIRE(std::abs(normal.y() + oneOverRoot2) < eps);
+    REQUIRE(std::abs(normal.z() - oneOverRoot2) < eps);
+}
+
+TEST_CASE("Face normal prefers Normal attribute over Newell") {
+    geo::Mesh mesh;
+
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    // Newell would give (0, 1, 0) for this face. Override with a different
+    // direction so we can tell which path was used.
+    auto normalAttr = mesh.addVector3Attribute(ga::AttrOwner::FACE, "Normal");
+    normalAttr.setValue(0, bt::Vector3(1, 0, 0));
+
+    auto faceNormals = mesh.getFaceNormal();
+    REQUIRE(faceNormals[0] == bt::Vector3(1, 0, 0));
+}
+
+TEST_CASE("Face normal precompute path matches on the fly") {
+    geo::Mesh mesh;
+
+    // Two faces with different orientations
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset3, pointOffset1});
+
+    auto onTheFly = mesh.getFaceNormal(false);
+    auto precomputed = mesh.getFaceNormal(true);
+
+    REQUIRE(onTheFly[0] == precomputed[0]);
+    REQUIRE(onTheFly[1] == precomputed[1]);
+}
+
+TEST_CASE("Vertex normal falls back to owning face") {
+    geo::Mesh mesh;
+
+    // Axis aligned quad, face normal is +Y
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    auto vertexNormals = mesh.getVertexNormal();
+    REQUIRE(vertexNormals[0] == bt::Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[1] == bt::Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[2] == bt::Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[3] == bt::Vector3(0, 1, 0));
+}
+
+TEST_CASE("Vertex normal prefers Normal attribute over face fallback") {
+    geo::Mesh mesh;
+
+    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    // Override one vertex's normal so we can see the attribute path wins
+    auto normalAttr = mesh.addVector3Attribute(ga::AttrOwner::VERTEX, "Normal");
+    normalAttr.setValue(0, bt::Vector3(1, 0, 0));
+    normalAttr.setValue(1, bt::Vector3(0, 1, 0));
+    normalAttr.setValue(2, bt::Vector3(0, 0, 1));
+    normalAttr.setValue(3, bt::Vector3(-1, 0, 0));
+
+    auto vertexNormals = mesh.getVertexNormal();
+    REQUIRE(vertexNormals[0] == bt::Vector3(1, 0, 0));
+    REQUIRE(vertexNormals[1] == bt::Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[2] == bt::Vector3(0, 0, 1));
+    REQUIRE(vertexNormals[3] == bt::Vector3(-1, 0, 0));
 }

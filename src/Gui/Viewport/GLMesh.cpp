@@ -89,6 +89,7 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         geometry->computeFaceStartVertices();
 
         const size_t localVertOffset = vertOffset;
+        auto faceNormals = geometry->getFaceNormal(true);
         tbb::parallel_for(tbb::blocked_range<size_t>(0, numFaces), [&](tbb::blocked_range<size_t> range)
         {
             for (int faceOffset=range.begin(); faceOffset<range.end(); ++faceOffset)
@@ -96,25 +97,8 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
                 const enzo::ga::Offset faceStartVert = geometry->getFaceStartVertex(faceOffset);
                 const unsigned int faceVertCnt = geometry->getFaceVertCount(faceOffset);
 
-                enzo::bt::Vector3 Normal;
-
-                // compute normal
-                if(faceVertCnt>=3)
-                {
-                    const unsigned v1 = faceStartVert;
-                    const unsigned v2 = faceStartVert + 1;
-                    const unsigned v3 = faceStartVert + 2;
-
-                    const enzo::bt::Vector3 pos1 = geometry->getPosFromVert(v1);
-                    const enzo::bt::Vector3 pos2 = geometry->getPosFromVert(v2);
-                    const enzo::bt::Vector3 pos3 = geometry->getPosFromVert(v3);
-
-                    enzo::bt::Vector3 tang1 = (pos2-pos1);
-                    enzo::bt::Vector3 tang2 = (pos3-pos1);
-
-                    Normal = tang1.cross(tang2);
-                    Normal.normalize();
-                }
+                enzo::bt::Vector3 Normal(0, 0, 0);
+                if(faceVertCnt>=3) Normal = faceNormals[faceOffset];
 
                 for(int i=0; i< faceVertCnt; ++i)
                 {

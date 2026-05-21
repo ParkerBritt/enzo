@@ -17,6 +17,10 @@ using faceDescriptor = HeMesh::Face_index;
 using V_index  = HeMesh::Vertex_index;
 using F_index  = HeMesh::Face_index;
 
+class Mesh;
+class FaceNormalHandle;
+class VertexNormalHandle;
+
 /**
 * @class enzo::geo::Mesh
 * @brief Polygonal mesh primitive with point, vertex, and face attributes.
@@ -125,6 +129,37 @@ public:
 
     void computeFaceStartVertices() const;
 
+    /**
+     * @brief Returns a handle for reading per-face normals.
+     *
+     * Normals follow the right hand rule on CCW winding viewed from outside
+     * the surface. When the mesh has a face attribute named Normal the handle
+     * reads it directly. Otherwise normals are computed via Newell's method.
+     *
+     * @param precompute When true and no Normal face attribute is present,
+     *                   every face normal is computed up front so subsequent
+     *                   reads are O(1). Pay this cost when the caller plans
+     *                   to read most faces; skip it for sparse access.
+     * @return Handle whose operator[] returns the normal for a face offset.
+     */
+    FaceNormalHandle getFaceNormal(bool precompute = false) const;
+
+    /**
+     * @brief Returns a handle for reading per-vertex normals.
+     *
+     * When the mesh has a vertex attribute named Normal the handle reads it
+     * directly. Otherwise the handle returns the owning face's normal.
+     *
+     * @param precompute Forwarded to the internal FaceNormalHandle when the
+     *                   vertex attribute is absent. Useful when many vertices
+     *                   on a small number of faces are read.
+     * @return Handle whose operator[] returns the normal for a vertex offset.
+     */
+    VertexNormalHandle getVertexNormal(bool precompute = false) const;
+
+    friend class FaceNormalHandle;
+    friend class VertexNormalHandle;
+
 protected:
     ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) override;
     const ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const override;
@@ -176,5 +211,47 @@ private:
     enzo::ga::AttributeHandleBool validFaceHandle_;
     enzo::ga::AttributeHandleBool validVertexHandle_;
     enzo::ga::AttributeHandleBool validPointHandle_;
+};
+
+/**
+ * @class enzo::geo::FaceNormalHandle
+ * @brief Read accessor for per-face normals.
+ *
+ * Built by @ref Mesh::getFaceNormal. The constructor resolves the Normal
+ * face attribute once. If present, operator[] reads it. If absent and
+ * precompute was true, operator[] reads a buffer filled at construction.
+ * If absent and precompute was false, operator[] runs Newell's method
+ * on the requested face's points.
+ */
+class FaceNormalHandle
+{
+public:
+    bt::Vector3 operator[](ga::Offset faceOffset) const;
+private:
+    friend class Mesh;
+    FaceNormalHandle(const Mesh& mesh, bool precompute);
+    const Mesh& mesh_;
+    std::optional<ga::AttributeHandleRO<bt::Vector3>> cached_;
+    std::vector<bt::Vector3> precomputed_;
+};
+
+/**
+ * @class enzo::geo::VertexNormalHandle
+ * @brief Read accessor for per-vertex normals.
+ *
+ * Built by @ref Mesh::getVertexNormal. The constructor resolves the Normal
+ * vertex attribute once. If present, operator[] reads it. If absent, the
+ * handle returns the owning face's normal via an internal FaceNormalHandle.
+ */
+class VertexNormalHandle
+{
+public:
+    bt::Vector3 operator[](ga::Offset vertexOffset) const;
+private:
+    friend class Mesh;
+    VertexNormalHandle(const Mesh& mesh, bool precompute);
+    const Mesh& mesh_;
+    std::optional<ga::AttributeHandleRO<bt::Vector3>> cached_;
+    FaceNormalHandle faceNormals_;
 };
 }

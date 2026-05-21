@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <optional>
+#include <type_traits>
 #include <vector>
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Types.h"
@@ -131,8 +132,8 @@ public:
     }
 
     /**
-    * @brief Gets the value at a given offset
-    * @returns The value stored at a given offset
+    * @brief Gets the value at a given offset.
+    * @return The value stored at the offset.
     * @todo protect against invalid positions
     * @todo Add implicit casting between types (eg. if T is int but the parameter's #ga::AttributeType is floatT 5.3 return 5)
     */
@@ -142,7 +143,19 @@ public:
     }
 
     /**
-    * @brief Gets a contiguous read-only view over all stored values.
+    * @brief Zero copy element access. Prefer in hot loops over getValue.
+    * @return Reference to the value at the offset. Invalid after a mutation that grows storage.
+    *
+    * Not available for bool handles since std::vector<bool> is bit packed and has no real reference.
+    */
+    const T& operator[](size_t offset) const requires (!std::is_same_v<T, bt::boolT>)
+    {
+        return (*data_)[offset];
+    }
+
+    /**
+    * @brief Contiguous read only view over all stored values.
+    * @return Span over the storage. Invalid after a mutation that grows storage.
     */
     std::span<const T> getSpan() const
     {
@@ -230,6 +243,12 @@ public:
         // TODO: cast types
         // TODO: consider removing range check for faster reads
         if(offset >= data_->size()) throw std::out_of_range("Cannot get offset: " + std::to_string(offset) + " from size: " + std::to_string(data_->size()) + " for attribute: " + name_);
+        return (*data_)[offset];
+    }
+
+    /// @copydoc AttributeHandle::operator[]
+    const T& operator[](size_t offset) const requires (!std::is_same_v<T, bt::boolT>)
+    {
         return (*data_)[offset];
     }
 
