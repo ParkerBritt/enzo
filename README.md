@@ -18,7 +18,7 @@
   Enzo is an open source 3D software for **procedural modeling** in VFX or animation.<br><br>
   </div>
 
-<img src="https://github.com/user-attachments/assets/e919e41b-f41f-41b9-8aec-082d53fed470">
+<img src="https://github.com/user-attachments/assets/2f887ad2-2573-4ea6-9b7d-a8f7d53fbaf4">
 
   ## About
   Enzo is inspired by industry standard tools like Houdini. The goal is to utilize the best features of these tools (attributes, parameterized editing, powerful nodes) and change or improve what could be better (expensive licensing, fragmented contexts, quality of life).
