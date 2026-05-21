@@ -3,6 +3,7 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/Primitive.h"
 #include "Engine/Types.h"
+#include "Engine/Utils/MeshUtils.h"
 #include <memory>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
@@ -127,7 +128,7 @@ void geo::Mesh::applyTransform(const bt::Matrix4 &mat, TransformClass transformC
         tbb::parallel_for(tbb::blocked_range<size_t>(0, numPoints),
             [&](const tbb::blocked_range<size_t> &range) {
                 for (size_t i = range.begin(); i < range.end(); ++i) {
-                    const bt::Vector3 pos = posPointHandle_.getValue(i);
+                    const bt::Vector3& pos = posPointHandle_[i];
                     // w=1.0 extends to homogeneous coords so the 4x4 matrix
                     // applies translation, rotation, and scale in one multiply
                     const bt::Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
@@ -736,4 +737,61 @@ const ga::attribVector& geo::Mesh::getGroupStore(const ga::AttributeOwner& owner
         default:
             return Primitive::getGroupStore(owner);
     }
+}
+
+geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute)
+    : mesh_(mesh)
+{
+    std::shared_ptr<const ga::Attribute> normalAttr =
+        mesh.getAttribByName(ga::AttrOwner::FACE, "Normal");
+    if(normalAttr)
+    {
+        cached_.emplace(normalAttr);
+        return;
+    }
+
+    if(precompute)
+    {
+        const std::span<const bt::Vector3> positions = mesh.posPointHandle_.getSpan();
+        const ga::Offset numFaces = mesh.getNumFaces();
+        precomputed_.reserve(numFaces);
+        for(ga::Offset faceOffset=0; faceOffset<numFaces; ++faceOffset)
+        {
+            precomputed_.push_back(utils::polygonNormal(positions, mesh.getFacePoints(faceOffset)));
+        }
+    }
+}
+
+bt::Vector3 geo::FaceNormalHandle::operator[](ga::Offset faceOffset) const
+{
+    if(cached_) return cached_->getValue(faceOffset);
+    if(!precomputed_.empty()) return precomputed_[faceOffset];
+    // Re-resolve the position span on each call so addPoint between reads
+    // can't dangle the data pointer through a std::vector reallocation.
+    return utils::polygonNormal(mesh_.posPointHandle_.getSpan(), mesh_.getFacePoints(faceOffset));
+}
+
+geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, bool precompute)
+    : mesh_(mesh),
+      faceNormals_(mesh.getFaceNormal(precompute))
+{
+    std::shared_ptr<const ga::Attribute> normalAttr =
+        mesh.getAttribByName(ga::AttrOwner::VERTEX, "Normal");
+    if(normalAttr) cached_.emplace(normalAttr);
+}
+
+bt::Vector3 geo::VertexNormalHandle::operator[](ga::Offset vertexOffset) const
+{
+    if(cached_) return cached_->getValue(vertexOffset);
+    return faceNormals_[mesh_.getVertexFace(vertexOffset)];
+}
+
+geo::FaceNormalHandle geo::Mesh::getFaceNormal(bool precompute) const
+{
+    return FaceNormalHandle(*this, precompute);
+}
+
+geo::VertexNormalHandle geo::Mesh::getVertexNormal(bool precompute) const
+{
+    return VertexNormalHandle(*this, precompute);
 }

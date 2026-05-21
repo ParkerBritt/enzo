@@ -57,6 +57,7 @@ std::weak_ptr<const ga::Attribute> geo::Primitive::getAttributeByIndex(ga::Attri
 ga::AttributeHandleInt geo::Primitive::addIntAttribute(ga::AttributeOwner owner, std::string name,
                                                        bool intrinsic) {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::intT, intrinsic);
+    newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleInt(newAttribute);
 }
@@ -65,6 +66,7 @@ ga::AttributeHandleBool geo::Primitive::addBoolAttribute(ga::AttributeOwner owne
                                                          bool intrinsic, bool isPrivate) {
     auto newAttribute =
         std::make_shared<ga::Attribute>(name, ga::AttrType::boolT, intrinsic, isPrivate);
+    newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandleBool(newAttribute);
 }
@@ -72,6 +74,7 @@ ga::AttributeHandleBool geo::Primitive::addBoolAttribute(ga::AttributeOwner owne
 ga::AttributeHandle<bt::Vector3>
 geo::Primitive::addVector3Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic) {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::vectorT, intrinsic);
+    newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandle<bt::Vector3>(newAttribute);
 }
@@ -79,6 +82,7 @@ geo::Primitive::addVector3Attribute(ga::AttributeOwner owner, std::string name, 
 ga::AttributeHandle<bt::Matrix4>
 geo::Primitive::addMatrix4Attribute(ga::AttributeOwner owner, std::string name, bool intrinsic) {
     auto newAttribute = std::make_shared<ga::Attribute>(name, ga::AttrType::matrixT, intrinsic);
+    newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return ga::AttributeHandle<bt::Matrix4>(newAttribute);
 }
@@ -190,6 +194,20 @@ std::shared_ptr<ga::Attribute> geo::Primitive::getAttribByName(ga::AttributeOwne
     auto &vector = getAttributeStore(owner);
     for (auto it = vector.begin(); it != vector.end(); ++it) {
         std::shared_ptr<ga::Attribute> attribute = (*it);
+        if (attribute->getName() == name) {
+            if (!includeIntrinsics && attribute->isIntrinsic())
+                continue;
+            return attribute;
+        }
+    }
+    return nullptr;
+}
+
+std::shared_ptr<const ga::Attribute> geo::Primitive::getAttribByName(ga::AttributeOwner owner,
+                                                                     std::string name,
+                                                                     bool includeIntrinsics) const {
+    const auto &vector = getAttributeStore(owner);
+    for (const std::shared_ptr<ga::Attribute>& attribute : vector) {
         if (attribute->getName() == name) {
             if (!includeIntrinsics && attribute->isIntrinsic())
                 continue;

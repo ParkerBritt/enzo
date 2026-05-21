@@ -38,6 +38,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/Selection.cpp
     src/Engine/Operator/SelectionComponent.cpp
     src/Engine/Operator/IndexSet.cpp
+    src/Engine/Utils/MeshUtils.cpp
 )
 
 set(GUI_SOURCES

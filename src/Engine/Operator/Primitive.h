@@ -113,6 +113,15 @@ class Primitive {
 
     std::shared_ptr<ga::Attribute> getAttribByName(ga::AttributeOwner owner, std::string name,
                                                    bool includeIntrinsics = false);
+    /**
+     * @brief Const counterpart of @ref getAttribByName.
+     *
+     * Returns a read only shared pointer so the caller cannot mutate the
+     * attribute through a const Primitive.
+     */
+    std::shared_ptr<const ga::Attribute> getAttribByName(ga::AttributeOwner owner,
+                                                         std::string name,
+                                                         bool includeIntrinsics = false) const;
     const size_t getNumAttributes(const ga::AttributeOwner owner) const;
     std::weak_ptr<const ga::Attribute> getAttributeByIndex(ga::AttributeOwner owner,
                                                            unsigned int index) const;

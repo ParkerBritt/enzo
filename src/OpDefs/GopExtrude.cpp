@@ -30,18 +30,21 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
     std::vector<enzo::ga::Offset> topPointOffsetsFlat;
     std::vector<enzo::ga::Offset> topVertexCounts;
 
+    auto faceNormals = mesh->getFaceNormal();
+
     for(auto face : faces)
     {
         auto originFacePoints = mesh->getFacePoints(face);
+        const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
 
         std::vector<enzo::ga::Offset> oldPoints;
         std::vector<enzo::ga::Offset> newPoints;
 
-        // Duplicate each origin point, raised by the extrude distance
+        // Duplicate each origin point along the face normal
         for(auto pointOffset : originFacePoints)
         {
             auto pointPos = mesh->getPointPos(pointOffset);
-            pointPos.y() += distance;
+            pointPos += displacement;
             enzo::ga::Offset newPoint = mesh->addPoint(pointPos);
             oldPoints.push_back(pointOffset);
             newPoints.push_back(newPoint);

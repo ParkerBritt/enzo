@@ -46,8 +46,7 @@ void GopTransform::cookOp(enzo::op::Context context)
             {
                 for(size_t i=range.begin(); i<range.end(); ++i)
                 {
-                    enzo::bt::Vector3 pointPos = PAttrHandle.getValue(i);
-                    pointPos = (R * pointPos) + t;
+                    const enzo::bt::Vector3 pointPos = (R * PAttrHandle[i]) + t;
                     PAttrHandle.setValue(i, pointPos);
                 }
             });
