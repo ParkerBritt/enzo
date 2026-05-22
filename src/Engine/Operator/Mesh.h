@@ -62,6 +62,21 @@ public:
                                      std::span<const ga::Offset> vertexCounts,
                                      bool closed=true);
     ga::Offset addPoint(const bt::Vector3& pos);
+    /**
+     * @brief Adds many points in a single call.
+     *
+     * @param positions Position for each new point, read in order.
+     * @return Offsets of the newly created points in the order they were added.
+     */
+    std::vector<ga::Offset> addPoints(std::span<const bt::Vector3> positions);
+    /**
+     * @brief Duplicates existing points into new points carrying the same positions.
+     *
+     * @param srcPointOffsets Offsets of the points to duplicate, read in order.
+     * @param copyAttributes When true, copy every point attribute from each source point. When false, only positions are copied.
+     * @return Offsets of the newly created points in the same order as srcPointOffsets.
+     */
+    std::vector<ga::Offset> duplicatePoints(std::span<const ga::Offset> srcPointOffsets, bool copyAttributes = true);
 
     void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
     void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
@@ -88,6 +103,7 @@ public:
     bt::Vector3 getPosFromVert(ga::Offset vertexOffset) const;
     bt::Vector3 getPointPos(ga::Offset pointOffset) const;
     unsigned int getFaceVertCount(ga::Offset faceOffset) const;
+    unsigned int getFacePointCount(ga::Offset faceOffset) const;
     ga::Offset getVertexFace(ga::Offset vertexOffset) const;
 
     ga::Offset getPointVertex(ga::Offset vertexOffset) const

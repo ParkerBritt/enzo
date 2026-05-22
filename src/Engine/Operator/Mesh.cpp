@@ -513,6 +513,56 @@ ga::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
     return pointOffset;
 }
 
+std::vector<ga::Offset> geo::Mesh::addPoints(std::span<const bt::Vector3> positions)
+{
+    const ga::Offset firstPointOffset = posPointHandle_.getSize();
+    const size_t numPointsToAdd = positions.size();
+    const ga::Offset newPointCount = firstPointOffset + numPointsToAdd;
+
+    // Grow every point side store in one shot
+    for (auto& attribute : pointAttributes_)
+    {
+        if (attribute) attribute->resize(newPointCount);
+    }
+    for (auto& group : pointGroups_)
+    {
+        if (group) group->resize(newPointCount);
+    }
+
+    std::vector<ga::Offset> newPointOffsets;
+    newPointOffsets.reserve(numPointsToAdd);
+    for (size_t pointIndex = 0; pointIndex < numPointsToAdd; ++pointIndex)
+    {
+        const ga::Offset pointOffset = firstPointOffset + pointIndex;
+        posPointHandle_.setValue(pointOffset, positions[pointIndex]);
+        validPointHandle_.setValue(pointOffset, true);
+        newPointOffsets.push_back(pointOffset);
+    }
+
+    soloPointsDirty_ = true;
+
+    return newPointOffsets;
+}
+
+std::vector<ga::Offset> geo::Mesh::duplicatePoints(std::span<const ga::Offset> srcPointOffsets, bool copyAttributes)
+{
+    // Gather the source positions, then let addPoints grow the stores in one shot
+    std::vector<bt::Vector3> positions;
+    positions.reserve(srcPointOffsets.size());
+    for (ga::Offset srcPointOffset : srcPointOffsets)
+    {
+        positions.push_back(posPointHandle_.getValue(srcPointOffset));
+    }
+
+    std::vector<ga::Offset> newPointOffsets = addPoints(positions);
+
+    // TODO: when copyAttributes is set, copy every point attribute value from each
+    // source point to its duplicate. Only positions are carried over for now.
+    (void)copyAttributes;
+
+    return newPointOffsets;
+}
+
 void geo::Mesh::rebuildSoloPoints() const
 {
     soloPoints_.clear();
@@ -577,6 +627,11 @@ void geo::Mesh::setPointPos(const ga::Offset offset, const bt::Vector3& pos)
 unsigned int geo::Mesh::getFaceVertCount(ga::Offset faceOffset) const
 {
     return vertexCountFaceHandle_.getValue(faceOffset);
+}
+
+unsigned int geo::Mesh::getFacePointCount(ga::Offset faceOffset) const
+{
+    return getFaceVertCount(faceOffset);
 }
 
 enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
