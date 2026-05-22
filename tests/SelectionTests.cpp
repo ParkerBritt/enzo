@@ -493,6 +493,46 @@ TEST_CASE("Selection by group name returns faces in the group") {
     REQUIRE(faces == std::vector<ga::Offset>{0, 2});
 }
 
+TEST_CASE("Two group components combine into the union of their faces") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->createFaceGroup("groupA");
+    mesh->createFaceGroup("groupB");
+    mesh->addToFaceGroup("groupA", {0});
+    mesh->addToFaceGroup("groupB", {2});
+
+    // Two comma separated group components should select the union.
+    Selection selection("groupA,groupB");
+    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{0, 2});
+}
+
+TEST_CASE("Inverting two group components selects the complement of their union") {
+    auto mesh = std::make_shared<geo::Mesh>("/mesh");
+    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->addFace({point0, point1, point2});
+    mesh->createFaceGroup("groupA");
+    mesh->createFaceGroup("groupB");
+    mesh->addToFaceGroup("groupA", {0});
+    mesh->addToFaceGroup("groupB", {2});
+
+    // Inverting must exclude every face in either group, not everything but
+    // their intersection. Faces 1 and 3 are in neither group.
+    Selection selection("groupA,groupB");
+    selection.setInverted(true);
+    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{1, 3});
+}
+
 TEST_CASE("Selection by group name uses offsets not compacted indices") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 

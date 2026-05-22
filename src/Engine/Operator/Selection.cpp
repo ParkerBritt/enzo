@@ -63,12 +63,21 @@ bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
 }
 
 bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
-    // If the whole prim is in the selection, every face on it is in too.
-    if (containsPrim(prim, true)) return true;
+    bool addressed = false;
+    bool member = false;
     for (auto& component : components_) {
-        if (component->containsFace(*prim, index, offset, inverted_)) return true;
+        // A component "addresses" faces when it speaks about them at all: either
+        // it selects this face directly, or inverted it selects the complement.
+        if (component->containsFace(*prim, index, offset, false)) {
+            member = true;
+            addressed = true;
+        } else if (component->containsFace(*prim, index, offset, true)) {
+            addressed = true;
+        }
     }
-    return false;
+    // Plain selection is the union of members. Inverting takes the complement of
+    // that union, but only across element types some component actually addresses.
+    return inverted_ ? (addressed && !member) : member;
 }
 
 std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
@@ -92,11 +101,17 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
 }
 
 bool enzo::Selection::containsPoint(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
-    if (containsPrim(prim, true)) return true;
+    bool addressed = false;
+    bool member = false;
     for (auto& component : components_) {
-        if (component->containsPoint(*prim, index, offset, inverted_)) return true;
+        if (component->containsPoint(*prim, index, offset, false)) {
+            member = true;
+            addressed = true;
+        } else if (component->containsPoint(*prim, index, offset, true)) {
+            addressed = true;
+        }
     }
-    return false;
+    return inverted_ ? (addressed && !member) : member;
 }
 
 std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
@@ -115,11 +130,17 @@ std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
 }
 
 bool enzo::Selection::containsVertex(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
-    if (containsPrim(prim, true)) return true;
+    bool addressed = false;
+    bool member = false;
     for (auto& component : components_) {
-        if (component->containsVertex(*prim, index, offset, inverted_)) return true;
+        if (component->containsVertex(*prim, index, offset, false)) {
+            member = true;
+            addressed = true;
+        } else if (component->containsVertex(*prim, index, offset, true)) {
+            addressed = true;
+        }
     }
-    return false;
+    return inverted_ ? (addressed && !member) : member;
 }
 
 std::vector<enzo::ga::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
