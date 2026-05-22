@@ -15,9 +15,9 @@ class Selection {
     void getVertices();
     std::vector<std::shared_ptr<geo::Primitive>> getPrims(const NodePacket &packet);
     bool containsPrim(geo::PrimPtr prim, bool full = false);
-    bool containsFace(geo::PrimPtr prim, ga::Index index);
-    bool containsPoint(geo::PrimPtr prim, ga::Index index);
-    bool containsVertex(geo::PrimPtr prim, ga::Index index);
+    bool containsFace(geo::PrimPtr prim, ga::Index index, ga::Offset offset);
+    bool containsPoint(geo::PrimPtr prim, ga::Index index, ga::Offset offset);
+    bool containsVertex(geo::PrimPtr prim, ga::Index index, ga::Offset offset);
     std::vector<ga::Offset> getFaces(geo::PrimPtr prim);
     std::vector<ga::Offset> getPoints(geo::PrimPtr prim);
     std::vector<ga::Offset> getVertices(geo::PrimPtr prim);

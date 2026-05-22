@@ -119,7 +119,7 @@ bool PathSelectionComponent::containsPrim(const geo::Primitive &prim) const {
 }
 
 bool PathSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index index,
-                                          bool inverted) const {
+                                          ga::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -131,7 +131,7 @@ bool PathSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index 
 }
 
 bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index index,
-                                           bool inverted) const {
+                                           ga::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -143,7 +143,7 @@ bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index
 }
 
 bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index index,
-                                            bool inverted) const {
+                                            ga::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -194,33 +194,41 @@ bool GroupSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     return false;
 }
 
-bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index index,
-                                           bool inverted) const {
+bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index /*index*/,
+                                           ga::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
-    bool in = isGroupMember(prim, ga::AttrOwner::FACE, groupName_, index);
+    // The group must exist on this element type. Otherwise it says nothing about
+    // faces and selects none, even when inverted.
+    if (!prim.getGroupByName(ga::AttrOwner::FACE, groupName_))
+        return false;
+    bool in = isGroupMember(prim, ga::AttrOwner::FACE, groupName_, offset);
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index index,
-                                            bool inverted) const {
+bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index /*index*/,
+                                            ga::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
-    bool in = isGroupMember(prim, ga::AttrOwner::POINT, groupName_, index);
+    if (!prim.getGroupByName(ga::AttrOwner::POINT, groupName_))
+        return false;
+    bool in = isGroupMember(prim, ga::AttrOwner::POINT, groupName_, offset);
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index index,
-                                             bool inverted) const {
+bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index /*index*/,
+                                             ga::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
-    bool in = isGroupMember(prim, ga::AttrOwner::VERTEX, groupName_, index);
+    if (!prim.getGroupByName(ga::AttrOwner::VERTEX, groupName_))
+        return false;
+    bool in = isGroupMember(prim, ga::AttrOwner::VERTEX, groupName_, offset);
     return inverted ? !in : in;
 }
 
