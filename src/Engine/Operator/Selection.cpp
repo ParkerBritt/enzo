@@ -62,11 +62,11 @@ bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
     return false;
 }
 
-bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index) {
+bool enzo::Selection::containsFace(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
     // If the whole prim is in the selection, every face on it is in too.
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component->containsFace(*prim, index, inverted_)) return true;
+        if (component->containsFace(*prim, index, offset, inverted_)) return true;
     }
     return false;
 }
@@ -83,7 +83,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     ga::Index index = 0;
     for (ga::Offset offset = 0; offset < storageSize; ++offset) {
         if (!mesh->isValidFace(offset)) continue;
-        if (containsFace(prim, index)) {
+        if (containsFace(prim, index, offset)) {
             result.push_back(offset);
         }
         ++index;
@@ -91,10 +91,10 @@ std::vector<enzo::ga::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsPoint(geo::PrimPtr prim, ga::Index index) {
+bool enzo::Selection::containsPoint(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component->containsPoint(*prim, index, inverted_)) return true;
+        if (component->containsPoint(*prim, index, offset, inverted_)) return true;
     }
     return false;
 }
@@ -106,7 +106,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
     // Walk valid points and collect those in the selection
     ga::Index index = 0;
     for (ga::Offset offset : prim->getPoints()) {
-        if (containsPoint(prim, index)) {
+        if (containsPoint(prim, index, offset)) {
             result.push_back(offset);
         }
         ++index;
@@ -114,10 +114,10 @@ std::vector<enzo::ga::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsVertex(geo::PrimPtr prim, ga::Index index) {
+bool enzo::Selection::containsVertex(geo::PrimPtr prim, ga::Index index, ga::Offset offset) {
     if (containsPrim(prim, true)) return true;
     for (auto& component : components_) {
-        if (component->containsVertex(*prim, index, inverted_)) return true;
+        if (component->containsVertex(*prim, index, offset, inverted_)) return true;
     }
     return false;
 }
@@ -134,7 +134,7 @@ std::vector<enzo::ga::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
     ga::Index index = 0;
     for (ga::Offset offset = 0; offset < storageSize; ++offset) {
         if (!mesh->isValidVertex(offset)) continue;
-        if (containsVertex(prim, index)) {
+        if (containsVertex(prim, index, offset)) {
             result.push_back(offset);
         }
         ++index;
