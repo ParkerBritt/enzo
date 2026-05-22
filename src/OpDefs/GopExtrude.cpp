@@ -23,7 +23,11 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
     }
 
     const std::string sideGroupName = "extrudeSide";
+    const std::string topGroupName = "extrudeTop";
+    const std::string bottomGroupName = "extrudeBottom";
     mesh->createFaceGroup(sideGroupName);
+    mesh->createFaceGroup(topGroupName);
+    mesh->createFaceGroup(bottomGroupName);
 
     std::vector<enzo::ga::Offset> sidePointOffsetsFlat;
     std::vector<enzo::ga::Offset> sideVertexCounts;
@@ -75,7 +79,10 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
     std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
     mesh->addToFaceGroup(sideGroupName, sideOffsets);
 
-    mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
+    std::vector<enzo::ga::Offset> topOffsets = mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
+    mesh->addToFaceGroup(topGroupName, topOffsets);
+
+    mesh->addToFaceGroup(bottomGroupName, faces);
 }
 
 GopExtrude::GopExtrude(enzo::nt::NetworkManager *network, enzo::op::OpInfo opInfo)
