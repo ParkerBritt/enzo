@@ -54,11 +54,13 @@ void GopGrid::cookOp(enzo::op::Context context)
         if(columns > 1 && rows > 1)
         {
             // add faces
-            for(int i=0;i<std::floor((columns-1)*(rows)-1);i++)
+            for(int col=0; col<columns-1; ++col)
             {
-                const int endOffset = (i+1)%rows==0;
-                const ga::Offset startPt = i+endOffset; 
-                geo->addFace({startPt,startPt+1,startPt+rows+1,startPt+rows});
+                for(int row=0; row<rows-1; ++row)
+                {
+                    const ga::Offset startPt = col*rows + row;
+                    geo->addFace({startPt, startPt+1, startPt+rows+1, startPt+rows});
+                }
             }
         }
         else
