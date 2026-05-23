@@ -23,6 +23,7 @@ add_library(${libName} SHARED
     ../Engine/Operator/SelectionComponent.cpp
     ../Engine/Operator/IndexSet.cpp
     ../Engine/Utils/MeshUtils.cpp
+    ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp

@@ -39,6 +39,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/SelectionComponent.cpp
     src/Engine/Operator/IndexSet.cpp
     src/Engine/Utils/MeshUtils.cpp
+    src/Engine/Util/UnionFind.cpp
 )
 
 set(GUI_SOURCES
