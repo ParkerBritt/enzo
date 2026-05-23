@@ -21,9 +21,32 @@ struct EdgeHash
     }
 };
 
-enzo::bt::Vector3 lerp(const enzo::bt::Vector3& from, const enzo::bt::Vector3& to, float t)
+/**
+ * @brief Inward bisector offset at a polygon corner.
+ *
+ * Slides the corner along the bisector of its two incident edges so each
+ * edge moves inward by @p distance. The two edges can come from different
+ * faces (a connected boundary corner where two selected faces meet), so
+ * each edge brings its own face normal to define what inward means.
+ *
+ * @return The offset to add to the corner, or zero if the two edges are
+ * antiparallel and the bisector is undefined.
+ */
+enzo::bt::Vector3 cornerInsetOffset(const enzo::bt::Vector3& prevPos,
+                                    const enzo::bt::Vector3& cornerPos,
+                                    const enzo::bt::Vector3& nextPos,
+                                    const enzo::bt::Vector3& inEdgeFaceNormal,
+                                    const enzo::bt::Vector3& outEdgeFaceNormal,
+                                    float distance)
 {
-    return from + (to - from) * t;
+    const enzo::bt::Vector3 inDir = (cornerPos - prevPos).normalized();
+    const enzo::bt::Vector3 outDir = (nextPos - cornerPos).normalized();
+    const enzo::bt::Vector3 inNormal = inEdgeFaceNormal.cross(inDir).normalized();
+    const enzo::bt::Vector3 outNormal = outEdgeFaceNormal.cross(outDir).normalized();
+    const double denom = 1.0 + inNormal.dot(outNormal);
+    if (std::abs(denom) < 1e-6) return enzo::bt::Vector3::Zero();
+    const enzo::bt::Vector3 bisector = (inNormal + outNormal) / denom;
+    return bisector * static_cast<double>(distance);
 }
 }
 
@@ -37,12 +60,10 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 {
     auto faceNormals = mesh->getFaceNormal();
 
-    // Record directed edges, accumulate displacement per shared point, and
-    // collect every selected face incident to each point.
+    // Record directed edges and accumulate extrude displacement per shared point.
     std::unordered_map<Edge, size_t, EdgeHash> edgeToFaceIdx;
     std::unordered_map<enzo::ga::Offset, enzo::bt::Vector3> displacementSum;
     std::unordered_map<enzo::ga::Offset, unsigned int> displacementCount;
-    std::unordered_map<enzo::ga::Offset, std::vector<size_t>> pointToFaces;
 
     for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx)
     {
@@ -60,11 +81,24 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
             auto [it, inserted] = displacementSum.try_emplace(pointOffset, displacement);
             if (!inserted) it->second += displacement;
             displacementCount[pointOffset] += 1;
-            pointToFaces[pointOffset].push_back(faceIdx);
         }
     }
 
-    // Duplicate each unique ring point along its averaged displacement
+    // Outer boundary half-edges per point: those whose reverse is not in the
+    // selection. Each entry records the neighbouring point along the outer
+    // boundary and the face that owns the directed edge.
+    struct OuterHalfEdge { enzo::ga::Offset neighbour; size_t faceIdx; };
+    std::unordered_map<enzo::ga::Offset, OuterHalfEdge> outgoingOuter;
+    std::unordered_map<enzo::ga::Offset, OuterHalfEdge> incomingOuter;
+    for (const auto& [edge, faceIdx] : edgeToFaceIdx)
+    {
+        if (edgeToFaceIdx.count({edge.second, edge.first})) continue;
+        outgoingOuter[edge.first] = {edge.second, faceIdx};
+        incomingOuter[edge.second] = {edge.first, faceIdx};
+    }
+
+    // Duplicate each unique ring point along its averaged displacement,
+    // applying an inward-bisector inset on outer boundary points only.
     std::vector<enzo::ga::Offset> uniqueOldPoints;
     std::vector<enzo::bt::Vector3> newPointPositions;
     uniqueOldPoints.reserve(displacementSum.size());
@@ -74,38 +108,25 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     {
         const float averageDivisor = static_cast<float>(displacementCount[oldOffset]);
         const enzo::bt::Vector3 averagedDisplacement = dispSum / averageDivisor;
+        enzo::bt::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
+
+        if (inset != 0.0f)
+        {
+            auto inIt = incomingOuter.find(oldOffset);
+            auto outIt = outgoingOuter.find(oldOffset);
+            if (inIt != incomingOuter.end() && outIt != outgoingOuter.end())
+            {
+                const enzo::bt::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
+                const enzo::bt::Vector3 cornerPos = mesh->getPointPos(oldOffset);
+                const enzo::bt::Vector3 nextPos = mesh->getPointPos(outIt->second.neighbour);
+                const enzo::bt::Vector3 inFaceNormal = faceNormals[faces[inIt->second.faceIdx]];
+                const enzo::bt::Vector3 outFaceNormal = faceNormals[faces[outIt->second.faceIdx]];
+                newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, inFaceNormal, outFaceNormal, inset);
+            }
+        }
+
         uniqueOldPoints.push_back(oldOffset);
-        newPointPositions.push_back(mesh->getPointPos(oldOffset) + averagedDisplacement);
-    }
-
-    // Pull each face's corners towards the centroid.
-    if (inset != 0.0f)
-    {
-        std::vector<enzo::bt::Vector3> faceCentroid(faces.size(), enzo::bt::Vector3{0, 0, 0});
-        for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx)
-        {
-            auto facePoints = mesh->getFacePoints(faces[faceIdx]);
-            const unsigned int facePointCount = mesh->getFacePointCount(faces[faceIdx]);
-            for (size_t i = 0; i < facePointCount; ++i)
-            {
-                faceCentroid[faceIdx] += mesh->getPointPos(facePoints[i]);
-            }
-            faceCentroid[faceIdx] = faceCentroid[faceIdx] / static_cast<float>(facePointCount);
-        }
-
-        for (size_t i = 0; i < uniqueOldPoints.size(); ++i)
-        {
-            const enzo::bt::Vector3 oldPos = mesh->getPointPos(uniqueOldPoints[i]);
-            enzo::bt::Vector3 offsetSum{0, 0, 0};
-            unsigned int contribCount = 0;
-            for (size_t faceIdx : pointToFaces[uniqueOldPoints[i]])
-            {
-                offsetSum += faceCentroid[faceIdx] - oldPos;
-                ++contribCount;
-            }
-            const enzo::bt::Vector3 avgOffset = offsetSum / static_cast<float>(contribCount);
-            newPointPositions[i] += avgOffset * inset;
-        }
+        newPointPositions.push_back(newPos);
     }
 
     // Create new points and map old ring to new ring
@@ -180,23 +201,26 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     {
         auto facePoints = mesh->getFacePoints(face);
         const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
+        const enzo::bt::Vector3 faceNormal = faceNormals[face];
         const unsigned int facePointCount = mesh->getFacePointCount(face);
 
-        // Duplicate every ring point fresh for this face
+        // Duplicate every ring point fresh for this face, applying an
+        // inward-bisector inset on each corner.
         std::vector<enzo::bt::Vector3> newPositionsLocal;
         newPositionsLocal.reserve(facePointCount);
         for (size_t i = 0; i < facePointCount; ++i)
         {
-            newPositionsLocal.push_back(mesh->getPointPos(facePoints[i]) + displacement);
-        }
-
-        // Shrink this face's top ring toward its own centroid
-        if (inset != 0.0f)
-        {
-            enzo::bt::Vector3 centroid{0, 0, 0};
-            for (const auto& pos : newPositionsLocal) centroid += pos;
-            centroid = centroid / static_cast<float>(facePointCount);
-            for (auto& pos : newPositionsLocal) pos = lerp(pos, centroid, inset);
+            enzo::bt::Vector3 newPos = mesh->getPointPos(facePoints[i]) + displacement;
+            if (inset != 0.0f)
+            {
+                const enzo::ga::Offset prevOffset = facePoints[(i + facePointCount - 1) % facePointCount];
+                const enzo::ga::Offset nextOffset = facePoints[(i + 1) % facePointCount];
+                const enzo::bt::Vector3 prevPos = mesh->getPointPos(prevOffset);
+                const enzo::bt::Vector3 cornerPos = mesh->getPointPos(facePoints[i]);
+                const enzo::bt::Vector3 nextPos = mesh->getPointPos(nextOffset);
+                newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, faceNormal, faceNormal, inset);
+            }
+            newPositionsLocal.push_back(newPos);
         }
 
         std::vector<enzo::ga::Offset> faceNewPoints = mesh->addPoints(newPositionsLocal);
@@ -287,5 +311,5 @@ enzo::prm::Template GopExtrude::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("connected", "Connected"), enzo::prm::Default(true)),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("distance", "Distance"), enzo::prm::Default(1), 1, enzo::prm::Range(-10, 10)),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("inset", "Inset"), enzo::prm::Default(0), 1, enzo::prm::Range(0, 1)),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("inset", "Inset"), enzo::prm::Default(0), 1, enzo::prm::Range(-10, 10)),
     enzo::prm::Terminator};
