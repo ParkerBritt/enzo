@@ -6,7 +6,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 namespace
@@ -21,25 +20,33 @@ struct EdgeHash
         return a ^ (b + 0x9e3779b97f4a7c15ULL + (a << 6) + (a >> 2));
     }
 };
+
+enzo::bt::Vector3 lerp(const enzo::bt::Vector3& from, const enzo::bt::Vector3& to, float t)
+{
+    return from + (to - from) * t;
+}
 }
 
-// Adjacent selected faces share their top ring. Internal edges between them
-// disappear and corner points move by the average of the incident face normals.
+/// @brief Extrudes faces as a connected island, sharing corners between adjacent selected faces.
 static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
                              const std::vector<enzo::ga::Offset>& faces,
                              float distance,
+                             float inset,
                              const std::string& sideGroupName,
                              const std::string& topGroupName)
 {
     auto faceNormals = mesh->getFaceNormal();
 
-    // Record every directed edge and accumulate displacement per shared point
-    std::unordered_set<Edge, EdgeHash> directedEdges;
+    // Record directed edges, accumulate displacement per shared point, and
+    // collect every selected face incident to each point.
+    std::unordered_map<Edge, size_t, EdgeHash> edgeToFaceIdx;
     std::unordered_map<enzo::ga::Offset, enzo::bt::Vector3> displacementSum;
     std::unordered_map<enzo::ga::Offset, unsigned int> displacementCount;
+    std::unordered_map<enzo::ga::Offset, std::vector<size_t>> pointToFaces;
 
-    for (auto face : faces)
+    for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx)
     {
+        const enzo::ga::Offset face = faces[faceIdx];
         auto facePoints = mesh->getFacePoints(face);
         const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
         const unsigned int facePointCount = mesh->getFacePointCount(face);
@@ -48,11 +55,12 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         {
             const enzo::ga::Offset pointOffset = facePoints[i];
             const enzo::ga::Offset nextPointOffset = facePoints[(i + 1) % facePointCount];
-            directedEdges.insert({pointOffset, nextPointOffset});
+            edgeToFaceIdx[{pointOffset, nextPointOffset}] = faceIdx;
 
             auto [it, inserted] = displacementSum.try_emplace(pointOffset, displacement);
             if (!inserted) it->second += displacement;
             displacementCount[pointOffset] += 1;
+            pointToFaces[pointOffset].push_back(faceIdx);
         }
     }
 
@@ -68,6 +76,36 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         const enzo::bt::Vector3 averagedDisplacement = dispSum / averageDivisor;
         uniqueOldPoints.push_back(oldOffset);
         newPointPositions.push_back(mesh->getPointPos(oldOffset) + averagedDisplacement);
+    }
+
+    // Pull each face's corners towards the centroid.
+    if (inset != 0.0f)
+    {
+        std::vector<enzo::bt::Vector3> faceCentroid(faces.size(), enzo::bt::Vector3{0, 0, 0});
+        for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx)
+        {
+            auto facePoints = mesh->getFacePoints(faces[faceIdx]);
+            const unsigned int facePointCount = mesh->getFacePointCount(faces[faceIdx]);
+            for (size_t i = 0; i < facePointCount; ++i)
+            {
+                faceCentroid[faceIdx] += mesh->getPointPos(facePoints[i]);
+            }
+            faceCentroid[faceIdx] = faceCentroid[faceIdx] / static_cast<float>(facePointCount);
+        }
+
+        for (size_t i = 0; i < uniqueOldPoints.size(); ++i)
+        {
+            const enzo::bt::Vector3 oldPos = mesh->getPointPos(uniqueOldPoints[i]);
+            enzo::bt::Vector3 offsetSum{0, 0, 0};
+            unsigned int contribCount = 0;
+            for (size_t faceIdx : pointToFaces[uniqueOldPoints[i]])
+            {
+                offsetSum += faceCentroid[faceIdx] - oldPos;
+                ++contribCount;
+            }
+            const enzo::bt::Vector3 avgOffset = offsetSum / static_cast<float>(contribCount);
+            newPointPositions[i] += avgOffset * inset;
+        }
     }
 
     // Create new points and map old ring to new ring
@@ -97,13 +135,13 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         }
         topVertexCounts.push_back(facePointCount);
 
-        // Skip internal edges (their reverse appears in another selected face)
+        // Skip internal edges whose reverse appears in another selected face
         for (size_t i = 0; i < facePointCount; ++i)
         {
             const enzo::ga::Offset bottomStart = facePoints[i];
             const enzo::ga::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
 
-            if (directedEdges.count({bottomEnd, bottomStart})) continue;
+            if (edgeToFaceIdx.count({bottomEnd, bottomStart})) continue;
 
             const enzo::ga::Offset topStart = oldToNew[bottomStart];
             const enzo::ga::Offset topEnd = oldToNew[bottomEnd];
@@ -123,11 +161,11 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     mesh->addToFaceGroup(topGroupName, topOffsets);
 }
 
-// Every selected face is lifted in isolation. Adjacent faces no longer share
-// corner points so internal edges remain as side walls between them.
+/// @brief Extrudes each selected face in isolation.
 static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
                                 const std::vector<enzo::ga::Offset>& faces,
                                 float distance,
+                                float inset,
                                 const std::string& sideGroupName,
                                 const std::string& topGroupName)
 {
@@ -151,6 +189,16 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         {
             newPositionsLocal.push_back(mesh->getPointPos(facePoints[i]) + displacement);
         }
+
+        // Shrink this face's top ring toward its own centroid
+        if (inset != 0.0f)
+        {
+            enzo::bt::Vector3 centroid{0, 0, 0};
+            for (const auto& pos : newPositionsLocal) centroid += pos;
+            centroid = centroid / static_cast<float>(facePointCount);
+            for (auto& pos : newPositionsLocal) pos = lerp(pos, centroid, inset);
+        }
+
         std::vector<enzo::ga::Offset> faceNewPoints = mesh->addPoints(newPositionsLocal);
 
         // Top cap mirrors the original winding on the new ring
@@ -183,7 +231,7 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     mesh->addToFaceGroup(topGroupName, topOffsets);
 }
 
-void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance = 1, bool connected = true)
+void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance = 1, float inset = 0, bool connected = true)
 {
     std::shared_ptr<enzo::geo::Mesh> mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
     if (!mesh)
@@ -204,11 +252,11 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
 
     if (connected)
     {
-        extrudeConnected(mesh, faces, distance, sideGroupName, topGroupName);
+        extrudeConnected(mesh, faces, distance, inset, sideGroupName, topGroupName);
     }
     else
     {
-        extrudeDisconnected(mesh, faces, distance, sideGroupName, topGroupName);
+        extrudeDisconnected(mesh, faces, distance, inset, sideGroupName, topGroupName);
     }
 }
 
@@ -223,11 +271,12 @@ void GopExtrude::cookOp(enzo::op::Context context) {
 
         const bt::String selectionStr = context.evalStringParm("selection");
         const float distance = context.evalFloatParm("distance");
+        const float inset = context.evalFloatParm("inset");
         const bool connected = context.evalBoolParm("connected");
         enzo::Selection selection(selectionStr);
 
         for (geo::PrimPtr prim : selection.getPrims(packet)) {
-            extrude(prim, selection.getFaces(prim), distance, connected);
+            extrude(prim, selection.getFaces(prim), distance, inset, connected);
         }
 
         setOutputPacket(0, packet);
@@ -238,4 +287,5 @@ enzo::prm::Template GopExtrude::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("connected", "Connected"), enzo::prm::Default(true)),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("distance", "Distance"), enzo::prm::Default(1), 1, enzo::prm::Range(-10, 10)),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("inset", "Inset"), enzo::prm::Default(0), 1, enzo::prm::Range(0, 1)),
     enzo::prm::Terminator};
