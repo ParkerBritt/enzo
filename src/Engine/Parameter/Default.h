@@ -6,10 +6,14 @@ namespace enzo::prm
     class Default
     {
     public:
-        Default(bt::floatT floatDefault=0, const char *stringDefault = ""
+        Default();
+        Default(bt::floatT floatDefault
         // TODO: add string meaning eg.
         // ,  CH_StringMeaning string_meaning = CH_STRING_LITERAL
         );
+        Default(const char *stringDefault);
+        Default(int intDefault);
+        Default(bool boolDefault);
 
         bt::floatT getFloat() const	{ return floatDefault_; }
         bt::intT getInt() const { return (bt::intT)floatDefault_; }

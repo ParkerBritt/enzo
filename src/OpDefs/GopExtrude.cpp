@@ -56,7 +56,7 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
                              float distance,
                              float inset,
                              const std::string& sideGroupName,
-                             const std::string& topGroupName)
+                             const std::string& frontGroupName)
 {
     auto faceNormals = mesh->getFaceNormal();
 
@@ -178,8 +178,8 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     // Add the new faces and tag them
     std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
     std::vector<enzo::ga::Offset> topOffsets = mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
-    mesh->addToFaceGroup(sideGroupName, sideOffsets);
-    mesh->addToFaceGroup(topGroupName, topOffsets);
+    if (!sideGroupName.empty()) mesh->addToFaceGroup(sideGroupName, sideOffsets);
+    if (!frontGroupName.empty()) mesh->addToFaceGroup(frontGroupName, topOffsets);
 }
 
 /// @brief Extrudes each selected face in isolation.
@@ -188,7 +188,7 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
                                 float distance,
                                 float inset,
                                 const std::string& sideGroupName,
-                                const std::string& topGroupName)
+                                const std::string& frontGroupName)
 {
     auto faceNormals = mesh->getFaceNormal();
 
@@ -251,11 +251,18 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     // Add the new faces and tag them
     std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
     std::vector<enzo::ga::Offset> topOffsets = mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
-    mesh->addToFaceGroup(sideGroupName, sideOffsets);
-    mesh->addToFaceGroup(topGroupName, topOffsets);
+    if (!sideGroupName.empty()) mesh->addToFaceGroup(sideGroupName, sideOffsets);
+    if (!frontGroupName.empty()) mesh->addToFaceGroup(frontGroupName, topOffsets);
 }
 
-void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance = 1, float inset = 0, bool connected = true)
+struct GroupNames
+{
+    std::string side;
+    std::string front;
+    std::string back;
+};
+
+void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance, float inset, bool connected, const GroupNames& groupNames)
 {
     std::shared_ptr<enzo::geo::Mesh> mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
     if (!mesh)
@@ -263,24 +270,22 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
         return;
     }
 
-    // Group names for the three regions the extrude produces
-    const std::string sideGroupName = "extrudeSide";
-    const std::string topGroupName = "extrudeTop";
-    const std::string bottomGroupName = "extrudeBottom";
-    mesh->createFaceGroup(sideGroupName);
-    mesh->createFaceGroup(topGroupName);
-    mesh->createFaceGroup(bottomGroupName);
-
-    // Originals stay as the bottom regardless of mode
-    mesh->addToFaceGroup(bottomGroupName, faces);
+    // Helpers ignore empty names, so disabled groups stay out of the mesh.
+    if (!groupNames.side.empty()) mesh->createFaceGroup(groupNames.side);
+    if (!groupNames.front.empty()) mesh->createFaceGroup(groupNames.front);
+    if (!groupNames.back.empty())
+    {
+        mesh->createFaceGroup(groupNames.back);
+        mesh->addToFaceGroup(groupNames.back, faces);
+    }
 
     if (connected)
     {
-        extrudeConnected(mesh, faces, distance, inset, sideGroupName, topGroupName);
+        extrudeConnected(mesh, faces, distance, inset, groupNames.side, groupNames.front);
     }
     else
     {
-        extrudeDisconnected(mesh, faces, distance, inset, sideGroupName, topGroupName);
+        extrudeDisconnected(mesh, faces, distance, inset, groupNames.side, groupNames.front);
     }
 }
 
@@ -297,10 +302,17 @@ void GopExtrude::cookOp(enzo::op::Context context) {
         const float distance = context.evalFloatParm("distance");
         const float inset = context.evalFloatParm("inset");
         const bool connected = context.evalBoolParm("connected");
+
+        // An empty group name disables the group, so callers see no stray group.
+        GroupNames groupNames;
+        if (context.evalBoolParm("frontGroupEnabled")) groupNames.front = context.evalStringParm("frontGroupName");
+        if (context.evalBoolParm("sideGroupEnabled")) groupNames.side = context.evalStringParm("sideGroupName");
+        if (context.evalBoolParm("backGroupEnabled")) groupNames.back = context.evalStringParm("backGroupName");
+
         enzo::Selection selection(selectionStr);
 
         for (geo::PrimPtr prim : selection.getPrims(packet)) {
-            extrude(prim, selection.getFaces(prim), distance, inset, connected);
+            extrude(prim, selection.getFaces(prim), distance, inset, connected, groupNames);
         }
 
         setOutputPacket(0, packet);
@@ -312,4 +324,10 @@ enzo::prm::Template GopExtrude::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("connected", "Connected"), enzo::prm::Default(true)),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("distance", "Distance"), enzo::prm::Default(1), 1, enzo::prm::Range(-10, 10)),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("inset", "Inset"), enzo::prm::Default(0), 1, enzo::prm::Range(-10, 10)),
+    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("frontGroupEnabled", "Front Group")),
+    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("frontGroupName", "Front Group Name"), enzo::prm::Default("extrudeFront")),
+    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("sideGroupEnabled", "Side Group")),
+    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("sideGroupName", "Side Group Name"), enzo::prm::Default("extrudeSide")),
+    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("backGroupEnabled", "Back Group")),
+    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("backGroupName", "Back Group Name"), enzo::prm::Default("extrudeBack")),
     enzo::prm::Terminator};
