@@ -80,10 +80,10 @@ void GopGrid::cookOp(enzo::op::Context context)
 
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopGrid::parameterList[] =
+std::vector<enzo::prm::Template> GopGrid::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, 100)),
+    return {
+        enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, 100)),
     enzo::prm::Template(
         enzo::prm::Type::INT,
         enzo::prm::Name("rows", "Rows"),
@@ -97,7 +97,6 @@ enzo::prm::Template GopGrid::parameterList[] =
         enzo::prm::Default(10),
         1,
         enzo::prm::Range(1, 100,  enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
-    ),
-    enzo::prm::Terminator
-};
-#endif
+    )
+    };
+}

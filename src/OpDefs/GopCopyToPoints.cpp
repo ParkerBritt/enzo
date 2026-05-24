@@ -46,6 +46,9 @@ void GopCopyToPoints::cookOp(enzo::op::Context context) {
     }
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopCopyToPoints::parameterList[] = {enzo::prm::Terminator};
-#endif
+std::vector<enzo::prm::Template> GopCopyToPoints::parameterList()
+{
+    return {
+        
+    };
+}

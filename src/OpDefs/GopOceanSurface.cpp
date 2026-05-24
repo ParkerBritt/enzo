@@ -137,9 +137,9 @@ enzo::bt::Vector3 GopOceanSurface::getSurfacePos(const enzo::bt::Vector3 pos)
 }
 
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopOceanSurface::parameterList[] =
+std::vector<enzo::prm::Template> GopOceanSurface::parameterList()
 {
-    enzo::prm::Terminator
-};
-#endif
+    return {
+        
+    };
+}

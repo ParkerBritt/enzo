@@ -13,6 +13,6 @@ public:
         return new GopTestGeoCube(network, opInfo);
     }
 
-    static BOOST_SYMBOL_EXPORT enzo::prm::Template parameterList[];
+    static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 
 };
