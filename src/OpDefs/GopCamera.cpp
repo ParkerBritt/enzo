@@ -53,9 +53,11 @@ void GopCamera::cookOp(enzo::op::Context context)
     }
 }
 
+#if 0  // parameterList awaiting migration to std::vector form
 enzo::prm::Template GopCamera::parameterList[] =
 {
     enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("transform", "Transform"), enzo::prm::Default(0), 3),
     enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("rotate", "Rotate"), enzo::prm::Default(0), 3, enzo::prm::Range(0, 360)),
     enzo::prm::Terminator
 };
+#endif

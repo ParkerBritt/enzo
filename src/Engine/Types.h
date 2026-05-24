@@ -85,7 +85,8 @@ using Matrix4 = Eigen::Matrix4d;
 using String = std::string;
 } // namespace bt
 namespace prm {
-enum class Type { LIST_TERMINATOR, STRING, FLOAT, BOOL, XYZ, INT, TOGGLE };
+enum class Type { STRING, FLOAT, BOOL, XYZ, INT, TOGGLE, GROUP };
+enum class Direction { HORIZONTAL, VERTICAL };
 }
 namespace nt {
 /**

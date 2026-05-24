@@ -56,8 +56,10 @@ void GopDelete::cookOp(enzo::op::Context context) {
     }
 }
 
+#if 0  // parameterList awaiting migration to std::vector form
 enzo::prm::Template GopDelete::parameterList[] = {
     enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("invert", "Invert Selection")),
     enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("keep_points", "Keep Points")),
     enzo::prm::Terminator};
+#endif

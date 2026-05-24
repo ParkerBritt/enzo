@@ -49,16 +49,22 @@ nt::GeometryOperator::GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo)
 
 void nt::GeometryOperator::initParameters()
 {
-    for(const prm::Template* t = opInfo_.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
+    // Extract parameters from groups
+    std::function<void(const prm::Template&)> visit = [&](const prm::Template& templateEntry)
     {
-        // create parameter
-        auto parameter = std::make_shared<prm::Parameter>(*t, opId_);
+        if (templateEntry.getType() == prm::Type::GROUP)
+        {
+            for (const prm::Template& child : templateEntry.getChildren()) visit(child);
+            return;
+        }
+
+        auto parameter = std::make_shared<prm::Parameter>(templateEntry, opId_);
         parameter->valueChanged.connect([this](){dirtyNode();});
         IC(parameter);
-
         parameters_.push_back(parameter);
-    }
+    };
 
+    for (const prm::Template& templateEntry : opInfo_.templates) visit(templateEntry);
 }
 
 void enzo::nt::GeometryOperator::dirtyNode(bool dirtyDescendents)
@@ -180,6 +186,11 @@ std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInpu
 std::vector<std::weak_ptr<prm::Parameter>> nt::GeometryOperator::getParameters()
 {
     return {parameters_.begin(), parameters_.end()};
+}
+
+const std::vector<enzo::prm::Template>& nt::GeometryOperator::getTemplates() const
+{
+    return opInfo_.templates;
 }
 
 std::string nt::GeometryOperator::getLabel()

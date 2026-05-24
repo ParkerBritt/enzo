@@ -116,6 +116,10 @@ public:
     /// @returns Empty default constructed std::weak_ptr<prm::Parameter>() if no parameter of that name exists.
     std::weak_ptr<prm::Parameter> getParameter(std::string_view parameterName);
 
+    /// @brief Returns the template tree declared by this node's type.
+    /// @returns Top level templates. Group templates contain child templates recursively.
+    const std::vector<prm::Template>& getTemplates() const;
+
     /**
     * @brief NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.
     * @todo implement

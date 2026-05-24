@@ -16,14 +16,17 @@ enzo::ui::FormParm::FormParm(std::weak_ptr<prm::Parameter> parameter)
 {
     if(auto sharedParameter=parameter.lock())
     {
-        std::string name = sharedParameter->getLabel();
-        label_ = new QLabel(QString::fromStdString(name+":"));
-        label_->setStyleSheet("QLabel{background: none}");
-        label_->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
-
         mainLayout_ = new QHBoxLayout();
-        mainLayout_->addWidget(label_);
         mainLayout_->setContentsMargins(0,0,0,0);
+
+        if (!sharedParameter->getTemplate().isLabelHidden())
+        {
+            std::string name = sharedParameter->getLabel();
+            label_ = new QLabel(QString::fromStdString(name+":"));
+            label_->setStyleSheet("QLabel{background: none}");
+            label_->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+            mainLayout_->addWidget(label_);
+        }
 
         switch(sharedParameter->getType())
         {
@@ -41,6 +44,7 @@ enzo::ui::FormParm::FormParm(std::weak_ptr<prm::Parameter> parameter)
             {
                 mainLayout_->addWidget(new BoolSwitchParm(parameter));
                 mainLayout_->addStretch();
+                setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
                 break;
             }
             case prm::Type::XYZ:
@@ -75,12 +79,13 @@ enzo::ui::FormParm::FormParm(std::weak_ptr<prm::Parameter> parameter)
 
 int enzo::ui::FormParm::getLeftPadding()
 {
-
+    if (!label_) return 0;
     return label_->minimumSizeHint().width();
 }
 
 void enzo::ui::FormParm::setLeftPadding(int padding)
 {
+    if (!label_) return;
     label_->setFixedWidth(padding);
 }
 

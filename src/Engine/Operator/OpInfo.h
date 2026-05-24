@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "Engine/Parameter/Template.h"
 
 // forward declaration
@@ -21,10 +22,9 @@ struct OpInfo
     std::string internalName;
     std::string displayName;
     enzo::nt::opConstructor ctorFunc;
-    enzo::prm::Template* templates;
+    std::vector<enzo::prm::Template> templates;
     unsigned int minInputs=0;
     unsigned int maxInputs=1;
     unsigned int maxOutputs=1;
 };
 }
-
