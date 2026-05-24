@@ -3,7 +3,7 @@
 #include "Engine/Operator/OpInfo.h"
 #include "Engine/Operator/GeometryOpDef.h"
 #include "Engine/Operator/NodePacket.h"
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Types.h"
 #include <functional>
 #include <optional>
@@ -110,11 +110,11 @@ public:
     std::weak_ptr<GeometryConnection> getInputConnection(size_t index) const;
 
     /// @brief Returns all parameters belonging to this node.
-    std::vector<std::weak_ptr<prm::Parameter>> getParameters();
+    std::vector<std::weak_ptr<prm::NodeParameter>> getParameters();
 
     /// @brief Returns a parameter with the given name belonging to this node.
     /// @returns Empty default constructed std::weak_ptr<prm::Parameter>() if no parameter of that name exists.
-    std::weak_ptr<prm::Parameter> getParameter(std::string_view parameterName);
+    std::weak_ptr<prm::NodeParameter> getParameter(std::string_view parameterName);
 
     /// @brief Returns the template tree declared by this node's type.
     /// @returns Top level templates. Group templates contain child templates recursively.
@@ -170,7 +170,7 @@ private:
     // TODO: avoid duplicate connections
     std::vector<std::shared_ptr<nt::GeometryConnection>> inputConnections_;
     std::vector<std::shared_ptr<nt::GeometryConnection>> outputConnections_;
-    std::vector<std::shared_ptr<prm::Parameter>> parameters_;
+    std::vector<std::shared_ptr<prm::NodeParameter>> parameters_;
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;

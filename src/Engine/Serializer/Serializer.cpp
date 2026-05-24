@@ -2,7 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/OperatorTable.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "NetworkSerializable.h"
 #include "cereal/details/helpers.hpp"
 #include <iostream>

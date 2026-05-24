@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/UtilWidgets/BoolSwitch.h"
 #include <boost/signals2/connection.hpp>
@@ -14,13 +14,13 @@ class BoolSwitchParm
 {
     Q_OBJECT
 public:
-    BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget* parent = nullptr);
+    BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget* parent = nullptr);
 
 private:
     void onToggle(bool checked);
     void syncFromParameter();
 
-    std::weak_ptr<prm::Parameter> parameter_;
+    std::weak_ptr<prm::NodeParameter> parameter_;
     BoolSwitch* boolSwitch_ = nullptr;
     boost::signals2::scoped_connection valueChangedConnection_;
 };

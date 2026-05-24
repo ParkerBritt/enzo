@@ -11,10 +11,11 @@ using PrmValues =
 
 class Parameter {
   public:
-    Parameter(Template prmTemplate, enzo::nt::OpId opId);
+    Parameter(Template prmTemplate);
+    virtual ~Parameter() = default;
+
     std::string getName() const;
     std::string getLabel() const;
-    enzo::nt::OpId getOpId() const { return opId_; }
     enzo::prm::Type getType() const;
     unsigned int getVectorSize() const;
 
@@ -33,12 +34,11 @@ class Parameter {
 
     boost::signals2::signal<void()> valueChanged;
 
-  private:
-    void addUndo_(enzo::prm::PrmValues before);
+  protected:
+    virtual void onFloatSet_(const PrmValues &before) {}
     void handleValueChange_();
 
     Template template_;
     PrmValues values_;
-    enzo::nt::OpId opId_;
 };
 } // namespace enzo::prm

@@ -5,7 +5,7 @@
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include <optional>
 #include "Engine/Operator/Context.h"
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
 #include <iostream>
 #include <stdexcept>
@@ -58,7 +58,7 @@ void nt::GeometryOperator::initParameters()
             return;
         }
 
-        auto parameter = std::make_shared<prm::Parameter>(templateEntry, opId_);
+        auto parameter = std::make_shared<prm::NodeParameter>(templateEntry, opId_);
         parameter->valueChanged.connect([this](){dirtyNode();});
         IC(parameter);
         parameters_.push_back(parameter);
@@ -166,7 +166,7 @@ void nt::GeometryOperator::removeOutputConnection(const nt::GeometryConnection* 
 }
 
 
-std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string_view parameterName)
+std::weak_ptr<prm::NodeParameter> nt::GeometryOperator::getParameter(std::string_view parameterName)
 {
     for(auto parm : parameters_)
     {
@@ -175,7 +175,7 @@ std::weak_ptr<prm::Parameter> nt::GeometryOperator::getParameter(std::string_vie
             return parm;
         }
     }
-    return std::weak_ptr<prm::Parameter>();
+    return std::weak_ptr<prm::NodeParameter>();
 
 }
 
@@ -183,7 +183,7 @@ std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInpu
 {
     return {inputConnections_.begin(), inputConnections_.end()};
 }
-std::vector<std::weak_ptr<prm::Parameter>> nt::GeometryOperator::getParameters()
+std::vector<std::weak_ptr<prm::NodeParameter>> nt::GeometryOperator::getParameters()
 {
     return {parameters_.begin(), parameters_.end()};
 }

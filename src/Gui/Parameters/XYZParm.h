@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/UtilWidgets/Slider.h"
@@ -13,7 +13,7 @@ namespace enzo::ui {
 class XYZParm : public Parameter {
     Q_OBJECT
   public:
-    XYZParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent = nullptr);
+    XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent = nullptr);
 
   private:
     void onPressed(unsigned int vectorIndex);
@@ -21,7 +21,7 @@ class XYZParm : public Parameter {
     void onReleased();
     void syncFromParameter();
 
-    std::weak_ptr<prm::Parameter> parameter_;
+    std::weak_ptr<prm::NodeParameter> parameter_;
     std::vector<Slider*> sliders_;
     boost::signals2::scoped_connection valueChangedConnection_;
     std::optional<UndoDisabler> undoDisabler_;

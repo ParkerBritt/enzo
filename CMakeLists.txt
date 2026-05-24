@@ -28,6 +28,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/Context.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
+    src/Engine/Parameter/NodeParameter.cpp
     src/Engine/Parameter/Default.cpp
     src/Engine/Parameter/Range.cpp
     src/Engine/Parameter/PrmName.cpp

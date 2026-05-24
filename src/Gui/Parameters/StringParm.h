@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
 #include "Gui/Parameters/Parameter.h"
 #include <QLineEdit>
@@ -12,14 +12,14 @@ namespace enzo::ui {
 class StringParm : public Parameter {
     Q_OBJECT
   public:
-    StringParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent = nullptr);
+    StringParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent = nullptr);
 
   private:
     void setValueQString(QString value);
     void onEditingFinished();
     void syncFromParameter();
 
-    std::weak_ptr<prm::Parameter> parameter_;
+    std::weak_ptr<prm::NodeParameter> parameter_;
     QLineEdit* lineEdit_ = nullptr;
     boost::signals2::scoped_connection valueChangedConnection_;
     std::optional<UndoDisabler> undoDisabler_;
