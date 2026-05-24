@@ -6,5 +6,6 @@ var searchData=
   ['deletenodecommand_3',['DeleteNodeCommand',['../classenzo_1_1nt_1_1DeleteNodeCommand.html',1,'enzo::nt']]],
   ['dependencies_4',['Dependencies',['../index.html#autotoc_md2',1,'']]],
   ['dirtynode_5',['dirtyNode',['../classenzo_1_1nt_1_1GeometryOperator.html#a892fe23575ba1bf13956f3cb414d0922',1,'enzo::nt::GeometryOperator']]],
-  ['documentation_6',['Documentation',['../index.html#autotoc_md3',1,'']]]
+  ['documentation_6',['Documentation',['../index.html#autotoc_md3',1,'']]],
+  ['duplicatepoints_7',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#abecc829e50cb14c47b0e9b8c568825c0',1,'enzo::geo::Mesh']]]
 ];

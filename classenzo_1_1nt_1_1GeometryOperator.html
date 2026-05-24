@@ -152,6 +152,9 @@ std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parame
 <tr class="memitem:a15b79728534b01491f93b46228dc7095" id="r_a15b79728534b01491f93b46228dc7095"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15b79728534b01491f93b46228dc7095">getParameter</a> (std::string_view parameterName)</td></tr>
 <tr class="memdesc:a15b79728534b01491f93b46228dc7095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a parameter with the given name belonging to this node.  <br /></td></tr>
 <tr class="separator:a15b79728534b01491f93b46228dc7095"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8b7ec2d9a63801621f441292b157b24" id="r_aa8b7ec2d9a63801621f441292b157b24"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8b7ec2d9a63801621f441292b157b24">getTemplates</a> () const</td></tr>
+<tr class="memdesc:aa8b7ec2d9a63801621f441292b157b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
+<tr class="separator:aa8b7ec2d9a63801621f441292b157b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a091c279297bc26c4abc38ebd4eebde4f" id="r_a091c279297bc26c4abc38ebd4eebde4f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a091c279297bc26c4abc38ebd4eebde4f">getLabel</a> ()</td></tr>
 <tr class="memdesc:a091c279297bc26c4abc38ebd4eebde4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.  <br /></td></tr>
 <tr class="separator:a091c279297bc26c4abc38ebd4eebde4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -412,6 +415,26 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Returns a parameter with the given name belonging to this node. </p>
 <dl class="section return"><dt>Returns</dt><dd>Empty default constructed std::weak_ptr&lt;prm::Parameter&gt;() if no parameter of that name exists. </dd></dl>
+
+</div>
+</div>
+<a id="aa8b7ec2d9a63801621f441292b157b24" name="aa8b7ec2d9a63801621f441292b157b24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8b7ec2d9a63801621f441292b157b24">&#9670;&#160;</a></span>getTemplates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">enzo::prm::Template</a> &gt; &amp; nt::GeometryOperator::getTemplates </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the template tree declared by this node's type. </p>
+<dl class="section return"><dt>Returns</dt><dd>Top level templates. Group templates contain child templates recursively. </dd></dl>
 
 </div>
 </div>

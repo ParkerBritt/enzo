@@ -154,19 +154,20 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">using </span>String = std::string;</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>} <span class="comment">// namespace bt</span></div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">namespace </span>prm {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">enum class</span> Type { LIST_TERMINATOR, STRING, FLOAT, BOOL, XYZ, INT, TOGGLE };</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">namespace </span>nt {</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">   94</a></span><span class="keyword">using </span><a class="code hl_typedef" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> = uint64_t;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">enum class</span> SocketIOType { Input, Output };</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>} <span class="comment">// namespace nt</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>} <span class="comment">// namespace enzo</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">enum class</span> Type { STRING, FLOAT, BOOL, XYZ, INT, TOGGLE, GROUP };</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">enum class</span> Direction { HORIZONTAL, VERTICAL };</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="keyword">namespace </span>nt {</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">   95</a></span><span class="keyword">using </span><a class="code hl_typedef" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> = uint64_t;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">enum class</span> SocketIOType { Input, Output };</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>} <span class="comment">// namespace nt</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>} <span class="comment">// namespace enzo</span></div>
 <div class="ttc" id="aTypes_8h_html_a13eee29e1dadf2c0ad228646e639ad69"><div class="ttname"><a href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">enzo::ga::Offset</a></div><div class="ttdeci">size_t Offset</div><div class="ttdoc">ga::Offset is the internal discontinuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:50</div></div>
 <div class="ttc" id="aTypes_8h_html_a157b84254b906d4f700e6464155bdeb5"><div class="ttname"><a href="Types_8h.html#a157b84254b906d4f700e6464155bdeb5">enzo::ga::Index</a></div><div class="ttdeci">size_t Index</div><div class="ttdoc">ga::Index is the continuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:41</div></div>
 <div class="ttc" id="aTypes_8h_html_a284ac41ae9685e6eff96cdddd2a4c110"><div class="ttname"><a href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">enzo::ga::AttributeOwner</a></div><div class="ttdeci">AttributeOwner</div><div class="ttdoc">The segment of geometry that owns a particular attribute.</div><div class="ttdef"><b>Definition</b> Types.h:21</div></div>
 <div class="ttc" id="aTypes_8h_html_a6ab89474f03231b839b5d10df296e156"><div class="ttname"><a href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">enzo::ga::AttributeType</a></div><div class="ttdeci">AttributeType</div><div class="ttdoc">Data types available to store attribute values in.</div><div class="ttdef"><b>Definition</b> Types.h:25</div></div>
-<div class="ttc" id="aTypes_8h_html_ad40cef50cc1dc0d03924b9d9346e0288"><div class="ttname"><a href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></div><div class="ttdeci">uint64_t OpId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:94</div></div>
+<div class="ttc" id="aTypes_8h_html_ad40cef50cc1dc0d03924b9d9346e0288"><div class="ttname"><a href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></div><div class="ttdeci">uint64_t OpId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:95</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

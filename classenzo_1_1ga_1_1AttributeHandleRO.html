@@ -118,6 +118,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8bed9c8d5b420bad70baa06115beb332" id="r_a8bed9c8d5b420bad70baa06115beb332"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bed9c8d5b420bad70baa06115beb332">getValue</a> (size_t offset) const</td></tr>
 <tr class="memdesc:a8bed9c8d5b420bad70baa06115beb332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value at a given offset.     <br /></td></tr>
 <tr class="separator:a8bed9c8d5b420bad70baa06115beb332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d8462fbc8299cd2807ffa5c85beb71c" id="r_a7d8462fbc8299cd2807ffa5c85beb71c"><td class="memItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d8462fbc8299cd2807ffa5c85beb71c">operator[]</a> (size_t offset) const</td></tr>
+<tr class="memdesc:a7d8462fbc8299cd2807ffa5c85beb71c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero copy element access. Prefer in hot loops over getValue.     <br /></td></tr>
+<tr class="separator:a7d8462fbc8299cd2807ffa5c85beb71c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68ba2150581e8c751c0e5632a50f1c49" id="r_a68ba2150581e8c751c0e5632a50f1c49"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68ba2150581e8c751c0e5632a50f1c49">getName</a> () const</td></tr>
 <tr class="memdesc:a68ba2150581e8c751c0e5632a50f1c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returs the attribute name as a string.     <br /></td></tr>
 <tr class="separator:a68ba2150581e8c751c0e5632a50f1c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -292,10 +295,41 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Gets the value at a given offset.    </p>
-<dl class="section return"><dt>Returns</dt><dd>The value stored at a given offset </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The value stored at the offset. </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd><p class="startdd">protect against invalid positions </p>
 <p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5) </p>
 </dd></dl>
+
+</div>
+</div>
+<a id="a7d8462fbc8299cd2807ffa5c85beb71c" name="a7d8462fbc8299cd2807ffa5c85beb71c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d8462fbc8299cd2807ffa5c85beb71c">&#9670;&#160;</a></span>operator[]()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const T &amp; <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Zero copy element access. Prefer in hot loops over getValue.    </p>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the value at the offset. Invalid after a mutation that grows storage.</dd></dl>
+<p>Not available for bool handles since std::vector&lt;bool&gt; is bit packed and has no real reference.    </p>
 
 </div>
 </div>

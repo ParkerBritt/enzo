@@ -94,6 +94,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classenzo_1_1geo_1_1Mesh-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">enzo::geo::Mesh Class Reference</div></div>
 </div><!--header-->
@@ -138,12 +139,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3ed8062e0fd490529e13b90b4db56c68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c62270e188a10593f436f59dd36286c" id="r_a5c62270e188a10593f436f59dd36286c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c62270e188a10593f436f59dd36286c">hasPoints</a> () const override</td></tr>
 <tr class="separator:a5c62270e188a10593f436f59dd36286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86052eae8cd5eed8bf8ed1983e91bd9c" id="r_a86052eae8cd5eed8bf8ed1983e91bd9c"><td class="memItemLeft" align="right" valign="top"><a id="a86052eae8cd5eed8bf8ed1983e91bd9c" name="a86052eae8cd5eed8bf8ed1983e91bd9c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addFace</b> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;pointOffsets, bool closed=true)</td></tr>
-<tr class="separator:a86052eae8cd5eed8bf8ed1983e91bd9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a173d41c24c42f9aa85391c03fa44db1d" id="r_a173d41c24c42f9aa85391c03fa44db1d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a173d41c24c42f9aa85391c03fa44db1d">addFace</a> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;pointOffsets, bool closed=true)</td></tr>
+<tr class="memdesc:a173d41c24c42f9aa85391c03fa44db1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a single face. Avoid for multiple faces in a loop as a single call to <a class="el" href="#a3d8b9066e4b5bfb85705cdf8e10359ba">addFaces</a> is much more performant.  <br /></td></tr>
+<tr class="separator:a173d41c24c42f9aa85391c03fa44db1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d8b9066e4b5bfb85705cdf8e10359ba" id="r_a3d8b9066e4b5bfb85705cdf8e10359ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d8b9066e4b5bfb85705cdf8e10359ba">addFaces</a> (std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; pointOffsetsFlat, std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; vertexCounts, bool closed=true)</td></tr>
+<tr class="memdesc:a3d8b9066e4b5bfb85705cdf8e10359ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds many faces in a single call.  <br /></td></tr>
+<tr class="separator:a3d8b9066e4b5bfb85705cdf8e10359ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf322399789b1ac5f97b54dbc0367f66" id="r_aaf322399789b1ac5f97b54dbc0367f66"><td class="memItemLeft" align="right" valign="top"><a id="aaf322399789b1ac5f97b54dbc0367f66" name="aaf322399789b1ac5f97b54dbc0367f66"></a>
 <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addPoint</b> (const bt::Vector3 &amp;pos)</td></tr>
 <tr class="separator:aaf322399789b1ac5f97b54dbc0367f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f721ff3146fc24f1f266916294ab5c7" id="r_a1f721ff3146fc24f1f266916294ab5c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f721ff3146fc24f1f266916294ab5c7">addPoints</a> (std::span&lt; const bt::Vector3 &gt; positions)</td></tr>
+<tr class="memdesc:a1f721ff3146fc24f1f266916294ab5c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds many points in a single call.  <br /></td></tr>
+<tr class="separator:a1f721ff3146fc24f1f266916294ab5c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abecc829e50cb14c47b0e9b8c568825c0" id="r_abecc829e50cb14c47b0e9b8c568825c0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abecc829e50cb14c47b0e9b8c568825c0">duplicatePoints</a> (std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; srcPointOffsets, bool copyAttributes=true)</td></tr>
+<tr class="memdesc:abecc829e50cb14c47b0e9b8c568825c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duplicates existing points into new points carrying the same positions.  <br /></td></tr>
+<tr class="separator:abecc829e50cb14c47b0e9b8c568825c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d01862b95d10890b4ada83cf9748270" id="r_a5d01862b95d10890b4ada83cf9748270"><td class="memItemLeft" align="right" valign="top"><a id="a5d01862b95d10890b4ada83cf9748270" name="a5d01862b95d10890b4ada83cf9748270"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>deleteFaces</b> (const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;faceOffsets, bool andPoints=false)</td></tr>
 <tr class="separator:a5d01862b95d10890b4ada83cf9748270"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -181,38 +191,65 @@ std::unordered_set&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad2286
 <tr class="memitem:a04291b899f1b4bfb7ad7fced81a11bc5" id="r_a04291b899f1b4bfb7ad7fced81a11bc5"><td class="memItemLeft" align="right" valign="top"><a id="a04291b899f1b4bfb7ad7fced81a11bc5" name="a04291b899f1b4bfb7ad7fced81a11bc5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setPointPos</b> (const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> offset, const bt::Vector3 &amp;pos)</td></tr>
 <tr class="separator:a04291b899f1b4bfb7ad7fced81a11bc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b08a2e5341efca0d8c1298bb629f23f" id="r_a6b08a2e5341efca0d8c1298bb629f23f"><td class="memItemLeft" align="right" valign="top"><a id="a6b08a2e5341efca0d8c1298bb629f23f" name="a6b08a2e5341efca0d8c1298bb629f23f"></a>
-<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimStartVertex</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
-<tr class="separator:a6b08a2e5341efca0d8c1298bb629f23f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b8c663ec6d920406f2a61ebbbcf5654" id="r_a6b8c663ec6d920406f2a61ebbbcf5654"><td class="memItemLeft" align="right" valign="top"><a id="a6b8c663ec6d920406f2a61ebbbcf5654" name="a6b8c663ec6d920406f2a61ebbbcf5654"></a>
+<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getFaceStartVertex</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> faceOffset) const</td></tr>
+<tr class="separator:a6b8c663ec6d920406f2a61ebbbcf5654"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a181fee0c6be0dfdd42624afe8667d9c8" id="r_a181fee0c6be0dfdd42624afe8667d9c8"><td class="memItemLeft" align="right" valign="top"><a id="a181fee0c6be0dfdd42624afe8667d9c8" name="a181fee0c6be0dfdd42624afe8667d9c8"></a>
 bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>getPosFromVert</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
 <tr class="separator:a181fee0c6be0dfdd42624afe8667d9c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75d318ae2e50eb2d3975608fcb004553" id="r_a75d318ae2e50eb2d3975608fcb004553"><td class="memItemLeft" align="right" valign="top"><a id="a75d318ae2e50eb2d3975608fcb004553" name="a75d318ae2e50eb2d3975608fcb004553"></a>
 bt::Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>getPointPos</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> pointOffset) const</td></tr>
 <tr class="separator:a75d318ae2e50eb2d3975608fcb004553"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73becc9ff7c40affc93982a38ce38ecb" id="r_a73becc9ff7c40affc93982a38ce38ecb"><td class="memItemLeft" align="right" valign="top"><a id="a73becc9ff7c40affc93982a38ce38ecb" name="a73becc9ff7c40affc93982a38ce38ecb"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimVertCount</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
-<tr class="separator:a73becc9ff7c40affc93982a38ce38ecb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a771d661b9c268617b21d7dafff62d186" id="r_a771d661b9c268617b21d7dafff62d186"><td class="memItemLeft" align="right" valign="top"><a id="a771d661b9c268617b21d7dafff62d186" name="a771d661b9c268617b21d7dafff62d186"></a>
-<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getVertexPrim</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
-<tr class="separator:a771d661b9c268617b21d7dafff62d186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f7c5101ded965fab3f19e9ff79ddbe1" id="r_a6f7c5101ded965fab3f19e9ff79ddbe1"><td class="memItemLeft" align="right" valign="top"><a id="a6f7c5101ded965fab3f19e9ff79ddbe1" name="a6f7c5101ded965fab3f19e9ff79ddbe1"></a>
-<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumPrims</b> () const</td></tr>
-<tr class="separator:a6f7c5101ded965fab3f19e9ff79ddbe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cd762be52909525d436e9315bf373be" id="r_a9cd762be52909525d436e9315bf373be"><td class="memItemLeft" align="right" valign="top"><a id="a9cd762be52909525d436e9315bf373be" name="a9cd762be52909525d436e9315bf373be"></a>
+<tr class="memitem:a258e8b7c5bb7b3b5ab19d601cefa4b84" id="r_a258e8b7c5bb7b3b5ab19d601cefa4b84"><td class="memItemLeft" align="right" valign="top"><a id="a258e8b7c5bb7b3b5ab19d601cefa4b84" name="a258e8b7c5bb7b3b5ab19d601cefa4b84"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getFaceVertCount</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> faceOffset) const</td></tr>
+<tr class="separator:a258e8b7c5bb7b3b5ab19d601cefa4b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2ebb81521e6f9c4634ea2ef1bfa5fb5" id="r_aa2ebb81521e6f9c4634ea2ef1bfa5fb5"><td class="memItemLeft" align="right" valign="top"><a id="aa2ebb81521e6f9c4634ea2ef1bfa5fb5" name="aa2ebb81521e6f9c4634ea2ef1bfa5fb5"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getFacePointCount</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> faceOffset) const</td></tr>
+<tr class="separator:aa2ebb81521e6f9c4634ea2ef1bfa5fb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7103084234ecbcfbf73e43e9b735c767" id="r_a7103084234ecbcfbf73e43e9b735c767"><td class="memItemLeft" align="right" valign="top"><a id="a7103084234ecbcfbf73e43e9b735c767" name="a7103084234ecbcfbf73e43e9b735c767"></a>
+<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getVertexFace</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
+<tr class="separator:a7103084234ecbcfbf73e43e9b735c767"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d25e8cb188c2c91c2e24ec513fee49a" id="r_a4d25e8cb188c2c91c2e24ec513fee49a"><td class="memItemLeft" align="right" valign="top"><a id="a4d25e8cb188c2c91c2e24ec513fee49a" name="a4d25e8cb188c2c91c2e24ec513fee49a"></a>
+<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPointVertex</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> vertexOffset) const</td></tr>
+<tr class="separator:a4d25e8cb188c2c91c2e24ec513fee49a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5dbd9a767fedce49a6a6b8fff78db93" id="r_ad5dbd9a767fedce49a6a6b8fff78db93"><td class="memItemLeft" align="right" valign="top"><a id="ad5dbd9a767fedce49a6a6b8fff78db93" name="ad5dbd9a767fedce49a6a6b8fff78db93"></a>
+std::span&lt; const bt::intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getFacePoints</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> faceOffset) const</td></tr>
+<tr class="separator:ad5dbd9a767fedce49a6a6b8fff78db93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaef4ca9870a7e9af1b519fe880d25443" id="r_aaef4ca9870a7e9af1b519fe880d25443"><td class="memItemLeft" align="right" valign="top"><a id="aaef4ca9870a7e9af1b519fe880d25443" name="aaef4ca9870a7e9af1b519fe880d25443"></a>
+<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumFaces</b> () const</td></tr>
+<tr class="separator:aaef4ca9870a7e9af1b519fe880d25443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a828c20d92f86103ea24decc76f01d4e0" id="r_a828c20d92f86103ea24decc76f01d4e0"><td class="memItemLeft" align="right" valign="top"><a id="a828c20d92f86103ea24decc76f01d4e0" name="a828c20d92f86103ea24decc76f01d4e0"></a>
 <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumVerts</b> () const</td></tr>
-<tr class="separator:a9cd762be52909525d436e9315bf373be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef4d38629625a081f7dc9c84877c016d" id="r_aef4d38629625a081f7dc9c84877c016d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef4d38629625a081f7dc9c84877c016d">getNumPoints</a> () const override</td></tr>
-<tr class="separator:aef4d38629625a081f7dc9c84877c016d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a828c20d92f86103ea24decc76f01d4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d0ed878c9107d43cc76551043d9de8d" id="r_a2d0ed878c9107d43cc76551043d9de8d"><td class="memItemLeft" align="right" valign="top"><a id="a2d0ed878c9107d43cc76551043d9de8d" name="a2d0ed878c9107d43cc76551043d9de8d"></a>
 <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumSoloPoints</b> () const</td></tr>
 <tr class="separator:a2d0ed878c9107d43cc76551043d9de8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af19ad8968b480d8a8c5f02cccb12ed9c" id="r_af19ad8968b480d8a8c5f02cccb12ed9c"><td class="memItemLeft" align="right" valign="top"><a id="af19ad8968b480d8a8c5f02cccb12ed9c" name="af19ad8968b480d8a8c5f02cccb12ed9c"></a>
-bt::boolT&#160;</td><td class="memItemRight" valign="bottom"><b>isClosed</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> primOffset) const</td></tr>
-<tr class="separator:af19ad8968b480d8a8c5f02cccb12ed9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2baca4670edce83c84eb4f5413751857" id="r_a2baca4670edce83c84eb4f5413751857"><td class="memItemLeft" align="right" valign="top"><a id="a2baca4670edce83c84eb4f5413751857" name="a2baca4670edce83c84eb4f5413751857"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>computePrimStartVertices</b> () const</td></tr>
-<tr class="separator:a2baca4670edce83c84eb4f5413751857"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa759be98cf2ea2e1e296ad42b6066797" id="r_aa759be98cf2ea2e1e296ad42b6066797"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa759be98cf2ea2e1e296ad42b6066797">createVertexGroup</a> (std::string name)</td></tr>
+<tr class="memdesc:aa759be98cf2ea2e1e296ad42b6066797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a vertex group.  <br /></td></tr>
+<tr class="separator:aa759be98cf2ea2e1e296ad42b6066797"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d6955be0fcc4623f4481c39276f27f4" id="r_a0d6955be0fcc4623f4481c39276f27f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d6955be0fcc4623f4481c39276f27f4">createFaceGroup</a> (std::string name)</td></tr>
+<tr class="memdesc:a0d6955be0fcc4623f4481c39276f27f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a face group.  <br /></td></tr>
+<tr class="separator:a0d6955be0fcc4623f4481c39276f27f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa475fb8c22a58e25876b8c11c2de5010" id="r_aa475fb8c22a58e25876b8c11c2de5010"><td class="memItemLeft" align="right" valign="top"><a id="aa475fb8c22a58e25876b8c11c2de5010" name="aa475fb8c22a58e25876b8c11c2de5010"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addToVertexGroup</b> (const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;offsets)</td></tr>
+<tr class="memdesc:aa475fb8c22a58e25876b8c11c2de5010"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the vertex group. <br /></td></tr>
+<tr class="separator:aa475fb8c22a58e25876b8c11c2de5010"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07d652b7e81d9656bc224cfa6e1f7cda" id="r_a07d652b7e81d9656bc224cfa6e1f7cda"><td class="memItemLeft" align="right" valign="top"><a id="a07d652b7e81d9656bc224cfa6e1f7cda" name="a07d652b7e81d9656bc224cfa6e1f7cda"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addToFaceGroup</b> (const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;offsets)</td></tr>
+<tr class="memdesc:a07d652b7e81d9656bc224cfa6e1f7cda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the face group. <br /></td></tr>
+<tr class="separator:a07d652b7e81d9656bc224cfa6e1f7cda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a3de5804b8e6f8d71cf5dede2442244" id="r_a4a3de5804b8e6f8d71cf5dede2442244"><td class="memItemLeft" align="right" valign="top"><a id="a4a3de5804b8e6f8d71cf5dede2442244" name="a4a3de5804b8e6f8d71cf5dede2442244"></a>
+bt::boolT&#160;</td><td class="memItemRight" valign="bottom"><b>isClosed</b> (<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> faceOffset) const</td></tr>
+<tr class="separator:a4a3de5804b8e6f8d71cf5dede2442244"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada07ab37695ec984ce6d47caac9a5fd4" id="r_ada07ab37695ec984ce6d47caac9a5fd4"><td class="memItemLeft" align="right" valign="top"><a id="ada07ab37695ec984ce6d47caac9a5fd4" name="ada07ab37695ec984ce6d47caac9a5fd4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>computeFaceStartVertices</b> () const</td></tr>
+<tr class="separator:ada07ab37695ec984ce6d47caac9a5fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f9d3c5862d86874ffe311ffd4606ade" id="r_a9f9d3c5862d86874ffe311ffd4606ade"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1geo_1_1FaceNormalHandle.html">FaceNormalHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f9d3c5862d86874ffe311ffd4606ade">getFaceNormal</a> (bool precompute=false) const</td></tr>
+<tr class="memdesc:a9f9d3c5862d86874ffe311ffd4606ade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle for reading per-face normals.  <br /></td></tr>
+<tr class="separator:a9f9d3c5862d86874ffe311ffd4606ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bc683b800a72916c977cfce07c2c6b4" id="r_a9bc683b800a72916c977cfce07c2c6b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1geo_1_1VertexNormalHandle.html">VertexNormalHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bc683b800a72916c977cfce07c2c6b4">getVertexNormal</a> (bool precompute=false) const</td></tr>
+<tr class="memdesc:a9bc683b800a72916c977cfce07c2c6b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle for reading per-vertex normals.  <br /></td></tr>
+<tr class="separator:a9bc683b800a72916c977cfce07c2c6b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
 <tr class="memitem:a5434e8e19fd8ab0070b8fdd0a2355211 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a5434e8e19fd8ab0070b8fdd0a2355211"><td class="memItemLeft" align="right" valign="top">
 &#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (std::string_view path=&quot;/prim&quot;)</td></tr>
@@ -229,6 +266,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>applyTransform</b> (c
 <tr class="memitem:a8ee576e068a5f890679ee21a84a59af2 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8ee576e068a5f890679ee21a84a59af2"><td class="memItemLeft" align="right" valign="top">
 void&#160;</td><td class="memItemRight" valign="bottom"><b>incrementVersion</b> ()</td></tr>
 <tr class="separator:a8ee576e068a5f890679ee21a84a59af2 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0caba8dec79a1a5ad95e2c37ba962e4e inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a0caba8dec79a1a5ad95e2c37ba962e4e"><td class="memItemLeft" align="right" valign="top">
+<a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumPoints</b> () const</td></tr>
+<tr class="separator:a0caba8dec79a1a5ad95e2c37ba962e4e inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_aae52e3f72d9b926c333508597e2a0e94"><td class="memItemLeft" align="right" valign="top">
 virtual <a class="el" href="structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html">PointOffsets</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPoints</b> ()</td></tr>
 <tr class="separator:aae52e3f72d9b926c333508597e2a0e94 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -247,6 +287,9 @@ virtual <a class="el" href="structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html"
 <tr class="memitem:a42ff7c645a4d6fb0e28f9f1bfe82d3d1 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a42ff7c645a4d6fb0e28f9f1bfe82d3d1"><td class="memItemLeft" align="right" valign="top">
 std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool includeIntrinsics=false)</td></tr>
 <tr class="separator:a42ff7c645a4d6fb0e28f9f1bfe82d3d1 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa411c8c0ef50af5f60d7a55f4bb7696 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_afa411c8c0ef50af5f60d7a55f4bb7696"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#afa411c8c0ef50af5f60d7a55f4bb7696">getAttribByName</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name, bool includeIntrinsics=false) const</td></tr>
+<tr class="memdesc:afa411c8c0ef50af5f60d7a55f4bb7696 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const counterpart of getAttribByName.  <br /></td></tr>
+<tr class="separator:afa411c8c0ef50af5f60d7a55f4bb7696 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a972b54ae5e8a88128d018f6954ad4f9c inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a972b54ae5e8a88128d018f6954ad4f9c"><td class="memItemLeft" align="right" valign="top">
 const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumAttributes</b> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner) const</td></tr>
 <tr class="separator:a972b54ae5e8a88128d018f6954ad4f9c inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,6 +299,38 @@ std::weak_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">g
 <tr class="memitem:a52b77e84f67b3c1f3eb514133a6c7ea6 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a52b77e84f67b3c1f3eb514133a6c7ea6"><td class="memItemLeft" align="right" valign="top">
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
 <tr class="separator:a52b77e84f67b3c1f3eb514133a6c7ea6 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03d22d339b012e0c5b5985e6df64927b inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a03d22d339b012e0c5b5985e6df64927b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a03d22d339b012e0c5b5985e6df64927b">createGroup</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, std::string name)</td></tr>
+<tr class="memdesc:a03d22d339b012e0c5b5985e6df64927b inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a group on the given owner.  <br /></td></tr>
+<tr class="separator:a03d22d339b012e0c5b5985e6df64927b inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe00bdc2084fd6bc61db6091eda282d3 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_afe00bdc2084fd6bc61db6091eda282d3"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addToGroup</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;offsets)</td></tr>
+<tr class="memdesc:afe00bdc2084fd6bc61db6091eda282d3 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the group. <br /></td></tr>
+<tr class="separator:afe00bdc2084fd6bc61db6091eda282d3 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fce5d9d99abb893b19c9d2304381f37 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a6fce5d9d99abb893b19c9d2304381f37"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a6fce5d9d99abb893b19c9d2304381f37">getGroupByName</a> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, const std::string &amp;name) const</td></tr>
+<tr class="memdesc:a6fce5d9d99abb893b19c9d2304381f37 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Looks up a group by name.  <br /></td></tr>
+<tr class="separator:a6fce5d9d99abb893b19c9d2304381f37 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bc756d5dda4d4ce23f90d096ba3f187 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a3bc756d5dda4d4ce23f90d096ba3f187"><td class="memItemLeft" align="right" valign="top">
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumGroups</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner) const</td></tr>
+<tr class="memdesc:a3bc756d5dda4d4ce23f90d096ba3f187 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many groups live on the given owner. <br /></td></tr>
+<tr class="separator:a3bc756d5dda4d4ce23f90d096ba3f187 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8979fbbb92d80dd258144a995c0d7b97 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8979fbbb92d80dd258144a995c0d7b97"><td class="memItemLeft" align="right" valign="top">
+std::weak_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">ga::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getGroupByIndex</b> (<a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> owner, unsigned int index) const</td></tr>
+<tr class="memdesc:a8979fbbb92d80dd258144a995c0d7b97 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the group at the given index in the owner's group store. <br /></td></tr>
+<tr class="separator:a8979fbbb92d80dd258144a995c0d7b97 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b19fe56da11f2cc9375bc66a046c02 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a04b19fe56da11f2cc9375bc66a046c02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a04b19fe56da11f2cc9375bc66a046c02">createPointGroup</a> (std::string name)</td></tr>
+<tr class="memdesc:a04b19fe56da11f2cc9375bc66a046c02 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a point group.  <br /></td></tr>
+<tr class="separator:a04b19fe56da11f2cc9375bc66a046c02 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a8c7f306890a533d63d291471855534 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a6a8c7f306890a533d63d291471855534"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a6a8c7f306890a533d63d291471855534">createPrimitiveGroup</a> (std::string name)</td></tr>
+<tr class="memdesc:a6a8c7f306890a533d63d291471855534 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a primitive group.  <br /></td></tr>
+<tr class="separator:a6a8c7f306890a533d63d291471855534 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d713f92ffee5d8efddea550e10bee04 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a4d713f92ffee5d8efddea550e10bee04"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addToPointGroup</b> (const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;offsets)</td></tr>
+<tr class="memdesc:a4d713f92ffee5d8efddea550e10bee04 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the point group. <br /></td></tr>
+<tr class="separator:a4d713f92ffee5d8efddea550e10bee04 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56cf53309681988eec2454740e03392f inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a56cf53309681988eec2454740e03392f"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addToPrimitiveGroup</b> (const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;offsets)</td></tr>
+<tr class="memdesc:a56cf53309681988eec2454740e03392f inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the primitive group. <br /></td></tr>
+<tr class="separator:a56cf53309681988eec2454740e03392f inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b31045b7ef442946535e79f3b4c5d39 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a4b31045b7ef442946535e79f3b4c5d39"><td class="memItemLeft" align="right" valign="top">
 bt::String&#160;</td><td class="memItemRight" valign="bottom"><b>getPath</b> () const</td></tr>
 <tr class="separator:a4b31045b7ef442946535e79f3b4c5d39 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -269,10 +344,26 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a44ade109374f6cc2aed76350c87105b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8646dc4798ab009bcd616938cb294480" id="r_a8646dc4798ab009bcd616938cb294480"><td class="memItemLeft" align="right" valign="top">const ga::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8646dc4798ab009bcd616938cb294480">getAttributeStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) const override</td></tr>
 <tr class="separator:a8646dc4798ab009bcd616938cb294480"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39acabb2ee19cc2f11e72232792dceff" id="r_a39acabb2ee19cc2f11e72232792dceff"><td class="memItemLeft" align="right" valign="top">ga::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39acabb2ee19cc2f11e72232792dceff">getGroupStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) override</td></tr>
+<tr class="separator:a39acabb2ee19cc2f11e72232792dceff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5291f2d038fdb7a99f6672bd6b8816d" id="r_af5291f2d038fdb7a99f6672bd6b8816d"><td class="memItemLeft" align="right" valign="top">const ga::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5291f2d038fdb7a99f6672bd6b8816d">getGroupStore</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) const override</td></tr>
+<tr class="separator:af5291f2d038fdb7a99f6672bd6b8816d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classenzo_1_1geo_1_1Primitive"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classenzo_1_1geo_1_1Primitive')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a></td></tr>
 <tr class="memitem:ab96d377bad8b40f963c4e4bbb569d30b inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_ab96d377bad8b40f963c4e4bbb569d30b"><td class="memItemLeft" align="right" valign="top">
 ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopyAttributes</b> (ga::attribVector source)</td></tr>
 <tr class="separator:ab96d377bad8b40f963c4e4bbb569d30b inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8baa89198989a6cdfd81896de3af0ff4 inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_a8baa89198989a6cdfd81896de3af0ff4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a8baa89198989a6cdfd81896de3af0ff4">getElementCount</a> (const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;owner) const</td></tr>
+<tr class="memdesc:a8baa89198989a6cdfd81896de3af0ff4 inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the given owner's store.  <br /></td></tr>
+<tr class="separator:a8baa89198989a6cdfd81896de3af0ff4 inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a2e71329b88290e2faf4cf2649b7dee0b" id="r_a2e71329b88290e2faf4cf2649b7dee0b"><td class="memItemLeft" align="right" valign="top"><a id="a2e71329b88290e2faf4cf2649b7dee0b" name="a2e71329b88290e2faf4cf2649b7dee0b"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>FaceNormalHandle</b></td></tr>
+<tr class="separator:a2e71329b88290e2faf4cf2649b7dee0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5856484484c77598f3de41f63bdaa9b7" id="r_a5856484484c77598f3de41f63bdaa9b7"><td class="memItemLeft" align="right" valign="top"><a id="a5856484484c77598f3de41f63bdaa9b7" name="a5856484484c77598f3de41f63bdaa9b7"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>VertexNormalHandle</b></td></tr>
+<tr class="separator:a5856484484c77598f3de41f63bdaa9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -286,11 +377,103 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>pointAttr
 <tr class="memitem:aff7a8b16231e8426e4801c9be98fe47c inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_aff7a8b16231e8426e4801c9be98fe47c"><td class="memItemLeft" align="right" valign="top">
 ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveAttributes_</b></td></tr>
 <tr class="separator:aff7a8b16231e8426e4801c9be98fe47c inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b8ac58328f7565913371cc1b41d27d inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_aa7b8ac58328f7565913371cc1b41d27d"><td class="memItemLeft" align="right" valign="top">
+ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>pointGroups_</b></td></tr>
+<tr class="separator:aa7b8ac58328f7565913371cc1b41d27d inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c1e6deefbfd166644cc3e417f02617c inherit pro_attribs_classenzo_1_1geo_1_1Primitive" id="r_a2c1e6deefbfd166644cc3e417f02617c"><td class="memItemLeft" align="right" valign="top">
+ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitiveGroups_</b></td></tr>
+<tr class="separator:a2c1e6deefbfd166644cc3e417f02617c inherit pro_attribs_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Polygonal mesh primitive with point, vertex, and face attributes. </p>
 <p>Extends <a class="el" href="classenzo_1_1geo_1_1Primitive.html" title="Base class for all primitive types in the engine.">Primitive</a> with mesh-specific topology: points, vertices, faces, and the intrinsic attributes that describe connectivity (vertexCount, closed, point offset, and position P). </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a173d41c24c42f9aa85391c03fa44db1d" name="a173d41c24c42f9aa85391c03fa44db1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a173d41c24c42f9aa85391c03fa44db1d">&#9670;&#160;</a></span>addFace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Mesh::addFace </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>pointOffsets</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>closed</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a single face. Avoid for multiple faces in a loop as a single call to <a class="el" href="#a3d8b9066e4b5bfb85705cdf8e10359ba">addFaces</a> is much more performant. </p>
+<dl class="section return"><dt>Returns</dt><dd>Offset of the new face. </dd></dl>
+
+</div>
+</div>
+<a id="a3d8b9066e4b5bfb85705cdf8e10359ba" name="a3d8b9066e4b5bfb85705cdf8e10359ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d8b9066e4b5bfb85705cdf8e10359ba">&#9670;&#160;</a></span>addFaces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; geo::Mesh::addFaces </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>pointOffsetsFlat</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>vertexCounts</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>closed</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds many faces in a single call. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointOffsetsFlat</td><td>All point offsets for every face listed one after another. </td></tr>
+    <tr><td class="paramname">vertexCounts</td><td>How many points each face has. Read in the same order as pointOffsetsFlat. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Offsets of the newly created faces in the order they were added. </dd></dl>
+
+</div>
+</div>
+<a id="a1f721ff3146fc24f1f266916294ab5c7" name="a1f721ff3146fc24f1f266916294ab5c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f721ff3146fc24f1f266916294ab5c7">&#9670;&#160;</a></span>addPoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; geo::Mesh::addPoints </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; const bt::Vector3 &gt;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds many points in a single call. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">positions</td><td>Position for each new point, read in order. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Offsets of the newly created points in the order they were added. </dd></dl>
+
+</div>
+</div>
 <a id="a31093f22c1048d619dae5dbea754b139" name="a31093f22c1048d619dae5dbea754b139"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a31093f22c1048d619dae5dbea754b139">&#9670;&#160;</a></span>applyTransform()</h2>
 
@@ -376,6 +559,62 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 
 </div>
 </div>
+<a id="a0d6955be0fcc4623f4481c39276f27f4" name="a0d6955be0fcc4623f4481c39276f27f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d6955be0fcc4623f4481c39276f27f4">&#9670;&#160;</a></span>createFaceGroup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a> enzo::geo::Mesh::createFaceGroup </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a face group. </p>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the new group. </dd></dl>
+
+</div>
+</div>
+<a id="aa759be98cf2ea2e1e296ad42b6066797" name="aa759be98cf2ea2e1e296ad42b6066797"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa759be98cf2ea2e1e296ad42b6066797">&#9670;&#160;</a></span>createVertexGroup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a> enzo::geo::Mesh::createVertexGroup </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a vertex group. </p>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the new group. </dd></dl>
+
+</div>
+</div>
 <a id="af21a269a99220bae0ebfe183209ae644" name="af21a269a99220bae0ebfe183209ae644"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af21a269a99220bae0ebfe183209ae644">&#9670;&#160;</a></span>defragment()</h2>
 
@@ -429,6 +668,37 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 </div><div class="memdoc">
 
 <p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="abecc829e50cb14c47b0e9b8c568825c0" name="abecc829e50cb14c47b0e9b8c568825c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abecc829e50cb14c47b0e9b8c568825c0">&#9670;&#160;</a></span>duplicatePoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt; geo::Mesh::duplicatePoints </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; const <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>srcPointOffsets</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>copyAttributes</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Duplicates existing points into new points carrying the same positions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">srcPointOffsets</td><td>Offsets of the points to duplicate, read in order. </td></tr>
+    <tr><td class="paramname">copyAttributes</td><td>When true, copy every point attribute from each source point. When false, only positions are copied. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Offsets of the newly created points in the same order as srcPointOffsets. </dd></dl>
 
 </div>
 </div>
@@ -486,8 +756,35 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 
 </div>
 </div>
-<a id="aef4d38629625a081f7dc9c84877c016d" name="aef4d38629625a081f7dc9c84877c016d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef4d38629625a081f7dc9c84877c016d">&#9670;&#160;</a></span>getNumPoints()</h2>
+<a id="a9f9d3c5862d86874ffe311ffd4606ade" name="a9f9d3c5862d86874ffe311ffd4606ade"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f9d3c5862d86874ffe311ffd4606ade">&#9670;&#160;</a></span>getFaceNormal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1geo_1_1FaceNormalHandle.html">geo::FaceNormalHandle</a> geo::Mesh::getFaceNormal </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>precompute</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a handle for reading per-face normals. </p>
+<p>Normals follow the right hand rule on CCW winding viewed from outside the surface. When the mesh has a face attribute named Normal the handle reads it directly. Otherwise normals are computed via Newell's method.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">precompute</td><td>When true and no Normal face attribute is present, every face normal is computed up front so subsequent reads are O(1). Pay this cost when the caller plans to read most faces; skip it for sparse access. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle whose operator[] returns the normal for a face offset. </dd></dl>
+
+</div>
+</div>
+<a id="af5291f2d038fdb7a99f6672bd6b8816d" name="af5291f2d038fdb7a99f6672bd6b8816d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5291f2d038fdb7a99f6672bd6b8816d">&#9670;&#160;</a></span>getGroupStore() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -496,15 +793,42 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> geo::Mesh::getNumPoints </td>
+          <td class="memname">const ga::attribVector &amp; geo::Mesh::getGroupStore </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a39acabb2ee19cc2f11e72232792dceff" name="a39acabb2ee19cc2f11e72232792dceff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39acabb2ee19cc2f11e72232792dceff">&#9670;&#160;</a></span>getGroupStore() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ga::attribVector &amp; geo::Mesh::getGroupStore </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110">ga::AttributeOwner</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -537,6 +861,33 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a9bc683b800a72916c977cfce07c2c6b4" name="a9bc683b800a72916c977cfce07c2c6b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bc683b800a72916c977cfce07c2c6b4">&#9670;&#160;</a></span>getVertexNormal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1geo_1_1VertexNormalHandle.html">geo::VertexNormalHandle</a> geo::Mesh::getVertexNormal </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>precompute</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a handle for reading per-vertex normals. </p>
+<p>When the mesh has a vertex attribute named Normal the handle reads it directly. Otherwise the handle returns the owning face's normal.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">precompute</td><td>Forwarded to the internal <a class="el" href="classenzo_1_1geo_1_1FaceNormalHandle.html" title="Read accessor for per-face normals.">FaceNormalHandle</a> when the vertex attribute is absent. Useful when many vertices on a small number of faces are read. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle whose operator[] returns the normal for a vertex offset. </dd></dl>
 
 </div>
 </div>
