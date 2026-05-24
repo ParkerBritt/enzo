@@ -2,8 +2,8 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget* parent)
-: Parameter(std::shared_ptr<prm::Parameter>(parameter)->getTemplate(), parent),
+enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget* parent)
+: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
   parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();

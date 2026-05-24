@@ -2,7 +2,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <icecream.hpp>
 
 enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent)
 : QWidget(parent)

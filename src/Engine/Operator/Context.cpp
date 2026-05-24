@@ -1,6 +1,6 @@
 #include "Engine/Operator/Context.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Types.h"
 #include <exception>
 #include <iostream>
@@ -39,7 +39,7 @@ bool enzo::op::Context::hasInput(unsigned int inputIndex)
 enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
     {
@@ -55,7 +55,7 @@ enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, con
 enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
     {
@@ -71,7 +71,7 @@ enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const u
 enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
     {
@@ -87,7 +87,7 @@ enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const
 enzo::bt::String enzo::op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::Parameter> parameter = selfOp.getParameter(parmName);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
     {

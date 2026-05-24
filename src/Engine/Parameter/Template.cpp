@@ -151,6 +151,11 @@ bool prm::Template::isBackgroundEnabled() const
     return backgroundEnabled_;
 }
 
+const std::any& prm::Template::getStyle() const
+{
+    return style_;
+}
+
 const bool prm::Template::isContainer() const
 {
     return containerTypes_.contains(getType());

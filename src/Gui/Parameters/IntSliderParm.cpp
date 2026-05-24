@@ -3,8 +3,8 @@
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <cmath>
 
-enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent)
-: Parameter(std::shared_ptr<prm::Parameter>(parameter)->getTemplate(), parent),
+enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent)
+: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
   parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();

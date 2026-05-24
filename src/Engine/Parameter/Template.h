@@ -3,7 +3,10 @@
 #include "Engine/Parameter/PrmName.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
+#include <any>
+#include <memory>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace enzo::prm
@@ -63,6 +66,18 @@ public:
     Template& setLabelHidden(bool hidden);
     Template& setBackgroundEnabled(bool enabled);
 
+    // Style structs may hold parameters with change signals, which cannot
+    // be copied. Wrapping in a shared pointer lets the style live inside
+    // the std::any without ever being copied.
+    template <typename T>
+    Template& setStyle(T style)
+    {
+        style_ = std::make_shared<T>(std::move(style));
+        return *this;
+    }
+
+    const std::any& getStyle() const;
+
 private:
     enzo::prm::Type type_;
     std::vector<prm::Default> defaults_;
@@ -78,6 +93,7 @@ private:
 
     Direction direction_ = Direction::HORIZONTAL;
     std::vector<Template> children_;
+    std::any style_;
     inline const static std::unordered_set<prm::Type> containerTypes_ = {prm::Type::GROUP};
     inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ = {prm::Type::GROUP};
 };

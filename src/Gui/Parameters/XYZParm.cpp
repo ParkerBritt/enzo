@@ -2,8 +2,8 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent)
-: Parameter(std::shared_ptr<prm::Parameter>(parameter)->getTemplate(), parent),
+enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent)
+: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
   parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();

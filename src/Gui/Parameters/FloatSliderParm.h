@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/UtilWidgets/Slider.h"
@@ -12,7 +12,7 @@ namespace enzo::ui {
 class FloatSliderParm : public Parameter {
     Q_OBJECT
   public:
-    FloatSliderParm(std::weak_ptr<prm::Parameter> parameter, unsigned int vectorIndex = 0,
+    FloatSliderParm(std::weak_ptr<prm::NodeParameter> parameter, unsigned int vectorIndex = 0,
                     QWidget *parent = nullptr);
 
   private:
@@ -21,7 +21,7 @@ class FloatSliderParm : public Parameter {
     void onReleased();
     void syncFromParameter();
 
-    std::weak_ptr<prm::Parameter> parameter_;
+    std::weak_ptr<prm::NodeParameter> parameter_;
     unsigned int vectorIndex_;
     Slider* slider_ = nullptr;
     boost::signals2::scoped_connection valueChangedConnection_;

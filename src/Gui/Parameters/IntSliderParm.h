@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/UtilWidgets/Slider.h"
@@ -12,7 +12,7 @@ namespace enzo::ui {
 class IntSliderParm : public Parameter {
     Q_OBJECT
   public:
-    IntSliderParm(std::weak_ptr<enzo::prm::Parameter> parameter, QWidget *parent = nullptr);
+    IntSliderParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget *parent = nullptr);
 
   private:
     void onPressed();
@@ -20,7 +20,7 @@ class IntSliderParm : public Parameter {
     void onReleased();
     void syncFromParameter();
 
-    std::weak_ptr<prm::Parameter> parameter_;
+    std::weak_ptr<prm::NodeParameter> parameter_;
     Slider* slider_ = nullptr;
     boost::signals2::scoped_connection valueChangedConnection_;
     std::optional<UndoDisabler> undoDisabler_;
