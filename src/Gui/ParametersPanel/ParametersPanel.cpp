@@ -1,12 +1,19 @@
 #include "Gui/ParametersPanel/ParametersPanel.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Types.h"
-#include "Gui/Parameters/FormParm.h"
-#include "Engine/Network/NetworkManager.h"
+#include "Gui/Parameters/BoolSwitchParm.h"
+#include "Gui/Parameters/FloatSliderParm.h"
+#include "Gui/Parameters/GroupParm.h"
+#include "Gui/Parameters/IntSliderParm.h"
+#include "Gui/Parameters/Parameter.h"
+#include "Gui/Parameters/StringParm.h"
+#include "Gui/Parameters/XYZParm.h"
 #include <qboxlayout.h>
 #include <qnamespace.h>
 #include <qwidget.h>
+#include <stdexcept>
 
 ParametersPanel::ParametersPanel(QWidget *parent)
 : Panel(parent)
@@ -39,39 +46,44 @@ void ParametersPanel::clearParameters()
     }
 }
 
-QWidget* ParametersPanel::buildTemplateWidget(const enzo::prm::Template& templateEntry,
-                                              enzo::nt::GeometryOperator& displayOp,
-                                              std::vector<enzo::ui::FormParm*>& leafWidgets,
-                                              int& maxLeftPadding)
+enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Template& templateEntry,
+                                                          enzo::nt::GeometryOperator& displayOp,
+                                                          std::vector<enzo::ui::Parameter*>& leafWidgets,
+                                                          int& maxLeftPadding)
 {
     using namespace enzo;
 
-    // Group recurses into a nested horizontal or vertical layout
     if (templateEntry.getType() == prm::Type::GROUP)
     {
-        QWidget* groupWidget = new QWidget();
-        groupWidget->setAttribute(Qt::WA_TranslucentBackground);
-        QBoxLayout* groupLayout = templateEntry.getDirection() == prm::Direction::HORIZONTAL
-            ? static_cast<QBoxLayout*>(new QHBoxLayout())
-            : static_cast<QBoxLayout*>(new QVBoxLayout());
-        groupLayout->setContentsMargins(0, 0, 0, 0);
+        ui::GroupParm* groupWidget = new ui::GroupParm(templateEntry);
         for (const prm::Template& child : templateEntry.getChildren())
         {
-            QWidget* childWidget = buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
-            if (childWidget) groupLayout->addWidget(childWidget);
+            ui::Parameter* childWidget = buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
+            if (childWidget) groupWidget->addChild(childWidget);
         }
-        groupWidget->setLayout(groupLayout);
         return groupWidget;
     }
 
-    // Leaf creates a FormParm wired to the live Parameter
     auto parameter = displayOp.getParameter(templateEntry.getName());
     if (parameter.expired()) return nullptr;
-    enzo::ui::FormParm* parameterWidget = new enzo::ui::FormParm(parameter);
-    leafWidgets.push_back(parameterWidget);
-    const int leftPadding = parameterWidget->getLeftPadding();
+
+    ui::Parameter* leafWidget = nullptr;
+    switch (templateEntry.getType())
+    {
+        case prm::Type::FLOAT: leafWidget = new ui::FloatSliderParm(parameter); break;
+        case prm::Type::INT:   leafWidget = new ui::IntSliderParm(parameter); break;
+        case prm::Type::BOOL:  leafWidget = new ui::BoolSwitchParm(parameter); break;
+        case prm::Type::XYZ:   leafWidget = new ui::XYZParm(parameter); break;
+        case prm::Type::STRING: leafWidget = new ui::StringParm(parameter); break;
+        default:
+            throw std::runtime_error("ParametersPanel: parameter type not accounted for "
+                + std::to_string(static_cast<int>(templateEntry.getType())));
+    }
+
+    leafWidgets.push_back(leafWidget);
+    const int leftPadding = leafWidget->getLeftPadding();
     if (leftPadding > maxLeftPadding) maxLeftPadding = leftPadding;
-    return parameterWidget;
+    return leafWidget;
 }
 
 void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
@@ -84,21 +96,19 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     enzo::nt::GeometryOperator& displayOp = nm.getGeoOperator(opId);
     const std::vector<prm::Template>& templates = displayOp.getTemplates();
 
-    std::vector<enzo::ui::FormParm*> leafWidgets;
+    std::vector<enzo::ui::Parameter*> leafWidgets;
     int maxLeftPadding = 0;
 
-    // Build all top level widgets
-    std::vector<QWidget*> topWidgets;
+    std::vector<enzo::ui::Parameter*> topWidgets;
     topWidgets.reserve(templates.size());
     for (const prm::Template& templateEntry : templates)
     {
-        QWidget* widget = buildTemplateWidget(templateEntry, displayOp, leafWidgets, maxLeftPadding);
+        enzo::ui::Parameter* widget = buildTemplateWidget(templateEntry, displayOp, leafWidgets, maxLeftPadding);
         if (widget) topWidgets.push_back(widget);
     }
 
-    // Align leaf labels across the panel
     const int leftPadding = maxLeftPadding + 5;
-    for (enzo::ui::FormParm* leaf : leafWidgets) leaf->setLeftPadding(leftPadding);
+    for (enzo::ui::Parameter* leaf : leafWidgets) leaf->setLeftPadding(leftPadding);
 
-    for (QWidget* widget : topWidgets) parametersLayout_->addWidget(widget);
+    for (enzo::ui::Parameter* widget : topWidgets) parametersLayout_->addWidget(widget);
 }

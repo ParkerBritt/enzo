@@ -3,6 +3,7 @@
 #include "Engine/Parameter/PrmName.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
+#include <unordered_set>
 #include <vector>
 
 namespace enzo::prm
@@ -44,13 +45,14 @@ public:
     const unsigned int getSize() const;
     const unsigned int getNumDefaults() const;
 
-    // Group-only accessors
     Direction getDirection() const;
     const std::vector<Template>& getChildren() const;
+    const bool isContainer() const;
 
     enzo::bt::String getTooltip() const;
     enzo::bt::String getDocumentation() const;
     bool isLabelHidden() const;
+    bool isBackgroundEnabled() const;
 
     // Chainable setters. Mutate in place and return *this so a Template can
     // be configured inline at construction.
@@ -59,6 +61,7 @@ public:
     Template& setDirection(Direction direction);
     Template& addParm(Template child);
     Template& setLabelHidden(bool hidden);
+    Template& setBackgroundEnabled(bool enabled);
 
 private:
     enzo::prm::Type type_;
@@ -71,10 +74,12 @@ private:
     bt::String documentation_;
 
     bool labelHidden_ = false;
+    bool backgroundEnabled_ = true;
 
-    // Group-only state
     Direction direction_ = Direction::HORIZONTAL;
     std::vector<Template> children_;
+    inline const static std::unordered_set<prm::Type> containerTypes_ = {prm::Type::GROUP};
+    inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ = {prm::Type::GROUP};
 };
 
 }

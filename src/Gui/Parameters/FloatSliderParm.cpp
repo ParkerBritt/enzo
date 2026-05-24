@@ -1,64 +1,67 @@
 #include "Gui/Parameters/FloatSliderParm.h"
-#include <QPaintEvent>
-#include <QPainter>
-#include <algorithm>
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
 
 enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::Parameter> parameter,
-                                           unsigned int vectorIndex, QWidget *parent,
-                                           Qt::WindowFlags f)
-    : SliderParmBase(parameter, vectorIndex, parent, f) {
-    setStyleSheet(R"(
-                  QWidget[type="SliderParm"]
-                  {
-                      border-radius: 9px;
-                      border: 1px solid #303030;
-                  }
-                  )");
-    syncFromParameter();
+                                           unsigned int vectorIndex, QWidget *parent)
+: Parameter(std::shared_ptr<prm::Parameter>(parameter)->getTemplate(), parent),
+  parameter_(parameter),
+  vectorIndex_(vectorIndex)
+{
+    auto parameterShared = parameter_.lock();
+
+    const auto range = parameterShared->getTemplate().getRange(vectorIndex_);
+    slider_ = new Slider(
+        range.getMin(),
+        range.getMax(),
+        range.getMinFlag() == prm::RangeFlag::LOCKED,
+        range.getMaxFlag() == prm::RangeFlag::LOCKED,
+        0.0);
+    slider_->setValue(parameterShared->evalFloat(vectorIndex_));
+    contentLayout_->addWidget(slider_);
+
+    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
+        syncFromParameter();
+    });
+
+    connect(slider_, &Slider::sliderPressed, this, &FloatSliderParm::onPressed);
+    connect(slider_, &Slider::sliderMoved, this, &FloatSliderParm::onMoved);
+    connect(slider_, &Slider::sliderReleased, this, &FloatSliderParm::onReleased);
 }
 
-void enzo::ui::FloatSliderParm::paintEvent(QPaintEvent *event) {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor("#383838"));
-
-    const int valueRange = maxValue_ - minValue_;
-    float fillPercent =
-        std::clamp<float>(static_cast<float>(value_ - minValue_) / valueRange, 0, 1);
-
-    constexpr float margin = 3;
-    float fillWidth = rect().width() - margin * 2;
-    fillWidth *= fillPercent;
-
-    QRectF fillRect = {rect().left() + margin, rect().top() + margin, fillWidth,
-                       rect().height() - margin * 2};
-    painter.drawRoundedRect(fillRect, 8, 8);
-}
-
-void enzo::ui::FloatSliderParm::syncFromParameter() {
-    if (auto parameterShared = parameter_.lock()) {
-        setValueImpl(parameterShared->evalFloat(vectorIndex_));
+void enzo::ui::FloatSliderParm::syncFromParameter()
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        slider_->setValue(parameterShared->evalFloat(vectorIndex_));
     }
 }
 
-void enzo::ui::FloatSliderParm::applyValue(float normalizedValue) {
-    float value = minValue_ + (maxValue_ - minValue_) * normalizedValue;
-    if (auto parameterShared = parameter_.lock()) {
-        parameterShared->setFloat(value, vectorIndex_);
+void enzo::ui::FloatSliderParm::onPressed()
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        valueBeforeDrag_ = parameterShared->getValues();
+        undoDisabler_.emplace(UndoCommandType::ChangeParameter);
     }
 }
 
-void enzo::ui::FloatSliderParm::setValueImpl(bt::floatT value) {
-    if (clampMin_ && value < minValue_) {
-        value = minValue_;
+void enzo::ui::FloatSliderParm::onMoved(double value)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        parameterShared->setFloat(static_cast<bt::floatT>(value), vectorIndex_);
     }
-    if (clampMax_ && value > maxValue_) {
-        value = maxValue_;
-    }
+}
 
-    value_ = value;
-    QString valStr = QString::number(value_);
-    valStr.truncate(4);
-    valueLabel_->setText(valStr);
+void enzo::ui::FloatSliderParm::onReleased()
+{
+    undoDisabler_.reset();
+    if (auto parameterShared = parameter_.lock())
+    {
+        auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
+            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
+            parameterShared->getValues());
+        enzo::nt::nm().undoStack().push(std::move(cmd));
+    }
 }

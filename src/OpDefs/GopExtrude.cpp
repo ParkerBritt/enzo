@@ -330,17 +330,20 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList()
 
         Template(Type::GROUP, Name("frontGroup", "Front Group"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group")))
-            .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true)),
+            .setBackgroundEnabled(true)
+            .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group")).setLabelHidden(true))
+            .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true).setBackgroundEnabled(false)),
 
         Template(Type::GROUP, Name("sideGroup", "Side Group"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group")))
-            .addParm(Template(Type::STRING, Name("sideGroupName", "Name"), Default("extrudeSide")).setLabelHidden(true)),
+            .setBackgroundEnabled(true)
+            .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group")).setLabelHidden(true))
+            .addParm(Template(Type::STRING, Name("sideGroupName", "Name"), Default("extrudeSide")).setLabelHidden(true).setBackgroundEnabled(false)),
 
         Template(Type::GROUP, Name("backGroup", "Back Group"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group")))
-            .addParm(Template(Type::STRING, Name("backGroupName", "Name"), Default("extrudeBack")).setLabelHidden(true)),
+            .setBackgroundEnabled(true)
+            .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group")).setLabelHidden(true))
+            .addParm(Template(Type::STRING, Name("backGroupName", "Name"), Default("extrudeBack")).setLabelHidden(true).setBackgroundEnabled(false)),
     };
 }
