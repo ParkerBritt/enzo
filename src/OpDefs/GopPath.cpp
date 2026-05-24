@@ -25,10 +25,9 @@ void GopPath::cookOp(enzo::op::Context context)
     }
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopPath::parameterList[] =
+std::vector<enzo::prm::Template> GopPath::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("path", "Path")),
-    enzo::prm::Terminator
-};
-#endif
+    return {
+        enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("path", "Path"))
+    };
+}

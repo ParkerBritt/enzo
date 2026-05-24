@@ -61,13 +61,14 @@ void GopSineWave::cookOp(enzo::op::Context context) {
     }
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopSineWave::parameterList[] = {
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("radial", "Radial Mode")),
+std::vector<enzo::prm::Template> GopSineWave::parameterList()
+{
+    return {
+        enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("radial", "Radial Mode")),
     enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("center", "Center"), 3),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("frequency", "Frequency"),
                         enzo::prm::Default(1)),
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("offset", "Offset"),
-                        enzo::prm::Default(0)),
-    enzo::prm::Terminator};
-#endif
+                        enzo::prm::Default(0))
+    };
+}

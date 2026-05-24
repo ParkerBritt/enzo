@@ -11,5 +11,5 @@ class GopCopyToPoints : public enzo::nt::GeometryOpDef {
         return new GopCopyToPoints(network, opInfo);
     }
 
-    static BOOST_SYMBOL_EXPORT enzo::prm::Template parameterList[];
+    static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 };

@@ -51,9 +51,9 @@ void GopMerge::cookOp(enzo::op::Context context)
 
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopMerge::parameterList[] =
+std::vector<enzo::prm::Template> GopMerge::parameterList()
 {
-    enzo::prm::Terminator
-};
-#endif
+    return {
+        
+    };
+}

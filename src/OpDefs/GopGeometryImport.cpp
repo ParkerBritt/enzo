@@ -108,11 +108,10 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
 
 }
 
-#if 0  // parameterList awaiting migration to std::vector form
-enzo::prm::Template GopGeometryImport::parameterList[] =
+std::vector<enzo::prm::Template> GopGeometryImport::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("filePath", "File Path")),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), enzo::prm::Default(1)),
-    enzo::prm::Terminator
-};
-#endif
+    return {
+        enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("filePath", "File Path")),
+    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), enzo::prm::Default(1))
+    };
+}
