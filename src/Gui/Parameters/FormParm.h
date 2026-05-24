@@ -19,7 +19,7 @@ public:
 
 private:
     QHBoxLayout* mainLayout_;
-    QLabel* label_;
+    QLabel* label_ = nullptr;
 
 };
 

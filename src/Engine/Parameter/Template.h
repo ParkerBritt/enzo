@@ -3,6 +3,7 @@
 #include "Engine/Parameter/PrmName.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Types.h"
+#include <vector>
 
 namespace enzo::prm
 {
@@ -33,7 +34,6 @@ public:
         unsigned int vectorSize = 1,
         Range range=Range()
     );
-    Template();
     // get name and get token are identical
     enzo::bt::String getName() const;
     enzo::bt::String getToken() const;
@@ -43,18 +43,38 @@ public:
     const prm::Type getType() const;
     const unsigned int getSize() const;
     const unsigned int getNumDefaults() const;
-    // bool isValid() const;
+
+    // Group-only accessors
+    Direction getDirection() const;
+    const std::vector<Template>& getChildren() const;
+
+    enzo::bt::String getTooltip() const;
+    enzo::bt::String getDocumentation() const;
+    bool isLabelHidden() const;
+
+    // Chainable setters. Mutate in place and return *this so a Template can
+    // be configured inline at construction.
+    Template& setTooltip(bt::String tooltip);
+    Template& setDocumentation(bt::String documentation);
+    Template& setDirection(Direction direction);
+    Template& addParm(Template child);
+    Template& setLabelHidden(bool hidden);
+
 private:
     enzo::prm::Type type_;
     std::vector<prm::Default> defaults_;
     std::vector<prm::Range> ranges_;
-    // TODO: make a class that holds token and name
     prm::Name name_;
     unsigned int vectorSize_;
 
+    bt::String tooltip_;
+    bt::String documentation_;
+
+    bool labelHidden_ = false;
+
+    // Group-only state
+    Direction direction_ = Direction::HORIZONTAL;
+    std::vector<Template> children_;
 };
 
-inline enzo::prm::Template Terminator = enzo::prm::Template();
-
 }
-

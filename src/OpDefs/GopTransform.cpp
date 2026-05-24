@@ -57,10 +57,12 @@ void GopTransform::cookOp(enzo::op::Context context)
 
 }
 
+#if 0  // parameterList awaiting migration to std::vector form
 enzo::prm::Template GopTransform::parameterList[] = 
 {
     enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("translate", "Translate"), 3),
     enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("rotate", "Rotate"), 3),
     enzo::prm::Terminator
 };
+#endif
 

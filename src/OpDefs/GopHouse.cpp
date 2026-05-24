@@ -68,8 +68,10 @@ void GOP_house::cookOp(enzo::op::Context context)
 
 }
 
+#if 0  // parameterList awaiting migration to std::vector form
 enzo::prm::Template GOP_house::parameterList[] =
 {
     enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1),
     enzo::prm::Terminator
 };
+#endif

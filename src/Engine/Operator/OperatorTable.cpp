@@ -15,11 +15,10 @@ void enzo::op::OperatorTable::addOperator(enzo::op::OpInfo info)
     std::cout << "OPERATOR TABLE ADDED\n";
     std::cout << "adding operator: " << info.displayName << "\n";
 
-    for(const prm::Template* t = info.templates; t->getType()!=prm::Type::LIST_TERMINATOR; ++t)
+    for(const prm::Template& templateEntry : info.templates)
     {
-        std::cout << "name: " << t->getName() << "\n";
+        std::cout << "name: " << templateEntry.getName() << "\n";
     }
-
 
     opInfoStore_.push_back(info);
 }

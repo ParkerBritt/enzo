@@ -319,15 +319,28 @@ void GopExtrude::cookOp(enzo::op::Context context) {
     }
 }
 
-enzo::prm::Template GopExtrude::parameterList[] = {
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("selection", "Selection")),
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("connected", "Connected"), enzo::prm::Default(true)),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("distance", "Distance"), enzo::prm::Default(1), 1, enzo::prm::Range(-10, 10)),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("inset", "Inset"), enzo::prm::Default(0), 1, enzo::prm::Range(-10, 10)),
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("frontGroupEnabled", "Front Group")),
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("frontGroupName", "Front Group Name"), enzo::prm::Default("extrudeFront")),
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("sideGroupEnabled", "Side Group")),
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("sideGroupName", "Side Group Name"), enzo::prm::Default("extrudeSide")),
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("backGroupEnabled", "Back Group")),
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("backGroupName", "Back Group Name"), enzo::prm::Default("extrudeBack")),
-    enzo::prm::Terminator};
+std::vector<enzo::prm::Template> GopExtrude::parameterList()
+{
+    using namespace enzo::prm;
+    return {
+        Template(Type::STRING, Name("selection", "Selection")),
+        Template(Type::BOOL, Name("connected", "Connected"), Default(true)),
+        Template(Type::FLOAT, Name("distance", "Distance"), Default(1), 1, Range(-10, 10)),
+        Template(Type::FLOAT, Name("inset", "Inset"), Default(0), 1, Range(-10, 10)),
+
+        Template(Type::GROUP, Name("frontGroup", "Front Group"))
+            .setDirection(Direction::HORIZONTAL)
+            .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group")))
+            .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true)),
+
+        Template(Type::GROUP, Name("sideGroup", "Side Group"))
+            .setDirection(Direction::HORIZONTAL)
+            .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group")))
+            .addParm(Template(Type::STRING, Name("sideGroupName", "Name"), Default("extrudeSide")).setLabelHidden(true)),
+
+        Template(Type::GROUP, Name("backGroup", "Back Group"))
+            .setDirection(Direction::HORIZONTAL)
+            .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group")))
+            .addParm(Template(Type::STRING, Name("backGroupName", "Name"), Default("extrudeBack")).setLabelHidden(true)),
+    };
+}
