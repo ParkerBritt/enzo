@@ -34,6 +34,7 @@ prm::Template::Template(prm::Type type, prm::Name name, std::vector<prm::Default
         }
     }
     ranges_ = ranges;
+    backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
 }
 
 prm::Template::Template(prm::Type type, prm::Name name, prm::Default theDefault, unsigned int vectorSize, Range range)
@@ -41,6 +42,7 @@ prm::Template::Template(prm::Type type, prm::Name name, prm::Default theDefault,
 {
     defaults_.resize(vectorSize_, theDefault);
     ranges_.resize(vectorSize_, range);
+    backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
 }
 
 const prm::Type prm::Template::getType() const
@@ -136,6 +138,23 @@ prm::Template& prm::Template::setLabelHidden(bool hidden)
 {
     labelHidden_ = hidden;
     return *this;
+}
+
+prm::Template& prm::Template::setBackgroundEnabled(bool enabled)
+{
+    backgroundEnabled_ = enabled;
+    return *this;
+}
+
+bool prm::Template::isBackgroundEnabled() const
+{
+    return backgroundEnabled_;
+}
+
+const bool prm::Template::isContainer() const
+{
+    return containerTypes_.contains(getType());
+
 }
 
 }

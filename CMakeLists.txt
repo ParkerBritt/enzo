@@ -47,6 +47,8 @@ set(GUI_SOURCES
     src/Gui/main.cpp
     src/Gui/Interface.cpp
     src/Gui/UtilWidgets/Splitter.cpp
+    src/Gui/UtilWidgets/BoolSwitch.cpp
+    src/Gui/UtilWidgets/Slider.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
     src/Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
@@ -71,12 +73,13 @@ set(GUI_SOURCES
     src/Gui/Network/NodeIconGraphic.cpp
     src/Gui/Network/TabMenu.cpp
     src/Gui/ParametersPanel/ParametersPanel.cpp
-    src/Gui/Parameters/SliderParmBase.cpp
+    src/Gui/Parameters/Parameter.cpp
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
-    src/Gui/Parameters/FormParm.cpp
+    src/Gui/Parameters/XYZParm.cpp
     src/Gui/Parameters/StringParm.cpp
+    src/Gui/Parameters/GroupParm.cpp
     src/Gui/HeaderBar/HeaderBar.cpp
     src/Gui/Panels/Panel.cpp
     src/Gui/Panels/CornerOverlay.cpp

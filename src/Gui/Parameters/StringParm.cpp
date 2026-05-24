@@ -3,31 +3,23 @@
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
 enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent)
-    : QLineEdit(parent), parameter_(parameter) {
-    setAttribute(Qt::WA_StyledBackground, true);
-    setFixedHeight(24);
+: Parameter(std::shared_ptr<prm::Parameter>(parameter)->getTemplate(), parent),
+  parameter_(parameter)
+{
+    auto parameterShared = parameter_.lock();
 
-    if (auto parameterShared = parameter_.lock()) {
-        setText(QString::fromStdString(parameterShared->evalString()));
-        valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-            syncFromParameter();
-        });
-    } else {
-        throw std::bad_weak_ptr();
-    }
+    lineEdit_ = new QLineEdit();
+    lineEdit_->setFixedHeight(24);
+    lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
+    lineEdit_->setStyleSheet("QLineEdit { background: transparent; border: none; padding: 0 5px; }");
+    contentLayout_->addWidget(lineEdit_);
 
-    setProperty("type", "StringParm");
-    setStyleSheet(R"(
-                  QWidget[type="StringParm"]
-                  {
-                      border-radius: 8px;
-                      border: 1px solid #383838;
-                      padding: 0px 5px 0px 5px;
-                  }
-                  )");
+    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
+        syncFromParameter();
+    });
 
-    connect(this, &QLineEdit::textEdited, this, &StringParm::setValueQString);
-    connect(this, &QLineEdit::editingFinished, this, &StringParm::onEditingFinished);
+    connect(lineEdit_, &QLineEdit::textEdited, this, &StringParm::setValueQString);
+    connect(lineEdit_, &QLineEdit::editingFinished, this, &StringParm::onEditingFinished);
 }
 
 void enzo::ui::StringParm::setValueQString(QString value) {
@@ -42,8 +34,8 @@ void enzo::ui::StringParm::setValueQString(QString value) {
 
 void enzo::ui::StringParm::syncFromParameter() {
     if (auto parameterShared = parameter_.lock()) {
-        if (!hasFocus()) {
-            setText(QString::fromStdString(parameterShared->evalString()));
+        if (!lineEdit_->hasFocus()) {
+            lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
         }
     }
 }
