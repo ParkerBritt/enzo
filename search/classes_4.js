@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['facenormalhandle_0',['FaceNormalHandle',['../classenzo_1_1geo_1_1FaceNormalHandle.html',1,'enzo::geo']]]
+  ['explicitindexset_0',['ExplicitIndexSet',['../classenzo_1_1ExplicitIndexSet.html',1,'enzo']]]
 ];

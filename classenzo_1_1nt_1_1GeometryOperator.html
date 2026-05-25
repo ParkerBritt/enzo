@@ -145,13 +145,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>cookOp</b> (<a class=
 <tr class="memitem:af037101dd08afab4d11865d61740e8bd" id="r_af037101dd08afab4d11865d61740e8bd"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af037101dd08afab4d11865d61740e8bd">getInputConnection</a> (size_t index) const</td></tr>
 <tr class="memdesc:af037101dd08afab4d11865d61740e8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an optional connection from a specific input index.  <br /></td></tr>
 <tr class="separator:af037101dd08afab4d11865d61740e8bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcb85d7bd36fa607b42eaabdae18206f" id="r_afcb85d7bd36fa607b42eaabdae18206f"><td class="memItemLeft" align="right" valign="top"><a id="afcb85d7bd36fa607b42eaabdae18206f" name="afcb85d7bd36fa607b42eaabdae18206f"></a>
-std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getParameters</b> ()</td></tr>
-<tr class="memdesc:afcb85d7bd36fa607b42eaabdae18206f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all parameters belonging to this node. <br /></td></tr>
-<tr class="separator:afcb85d7bd36fa607b42eaabdae18206f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15b79728534b01491f93b46228dc7095" id="r_a15b79728534b01491f93b46228dc7095"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15b79728534b01491f93b46228dc7095">getParameter</a> (std::string_view parameterName)</td></tr>
-<tr class="memdesc:a15b79728534b01491f93b46228dc7095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a parameter with the given name belonging to this node.  <br /></td></tr>
-<tr class="separator:a15b79728534b01491f93b46228dc7095"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c20833cda2407f34e0ba9bb8aedc85f" id="r_a0c20833cda2407f34e0ba9bb8aedc85f"><td class="memItemLeft" align="right" valign="top"><a id="a0c20833cda2407f34e0ba9bb8aedc85f" name="a0c20833cda2407f34e0ba9bb8aedc85f"></a>
+std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getParameters</b> ()</td></tr>
+<tr class="memdesc:a0c20833cda2407f34e0ba9bb8aedc85f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all parameters belonging to this node. <br /></td></tr>
+<tr class="separator:a0c20833cda2407f34e0ba9bb8aedc85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab18b829c63bf86e28311b674c3407414" id="r_ab18b829c63bf86e28311b674c3407414"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab18b829c63bf86e28311b674c3407414">getParameter</a> (std::string_view parameterName)</td></tr>
+<tr class="memdesc:ab18b829c63bf86e28311b674c3407414"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a parameter with the given name belonging to this node.  <br /></td></tr>
+<tr class="separator:ab18b829c63bf86e28311b674c3407414"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8b7ec2d9a63801621f441292b157b24" id="r_aa8b7ec2d9a63801621f441292b157b24"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8b7ec2d9a63801621f441292b157b24">getTemplates</a> () const</td></tr>
 <tr class="memdesc:aa8b7ec2d9a63801621f441292b157b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
 <tr class="separator:aa8b7ec2d9a63801621f441292b157b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -398,14 +398,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a15b79728534b01491f93b46228dc7095" name="a15b79728534b01491f93b46228dc7095"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15b79728534b01491f93b46228dc7095">&#9670;&#160;</a></span>getParameter()</h2>
+<a id="ab18b829c63bf86e28311b674c3407414" name="ab18b829c63bf86e28311b674c3407414"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab18b829c63bf86e28311b674c3407414">&#9670;&#160;</a></span>getParameter()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt; nt::GeometryOperator::getParameter </td>
+          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; nt::GeometryOperator::getParameter </td>
           <td>(</td>
           <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>parameterName</em></span></td><td>)</td>
           <td></td>
