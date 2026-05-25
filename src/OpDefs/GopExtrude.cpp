@@ -334,9 +334,9 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList()
             .setBackgroundEnabled(true)
             .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group"))
                 .setLabelHidden(true)
-                .setStyle(style::BoolCrossButton{}
-                    .setIcon(":/icons/attributePoint.svg")
-                    .setScale(0.5f)))
+                .setStyle(style::BoolIconSlash{}
+                    .setIcon("eye")
+                    ))
             .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true).setBackgroundEnabled(false)),
 
         Template(Type::GROUP, Name("sideGroup", "Side Group"))

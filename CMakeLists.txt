@@ -47,6 +47,8 @@ set(GUI_SOURCES
     static/resources.qrc
     src/Gui/main.cpp
     src/Gui/Interface.cpp
+    src/Gui/IconRegistry.cpp
+    src/Gui/Icons/Builtin.cpp
     src/Gui/UtilWidgets/Splitter.cpp
     src/Gui/UtilWidgets/BoolSwitch.cpp
     src/Gui/UtilWidgets/Slider.cpp
@@ -78,7 +80,8 @@ set(GUI_SOURCES
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
-    src/Gui/Parameters/BoolCrossButtonParm.cpp
+    src/Gui/Parameters/BoolIconParm.cpp
+    src/Gui/Parameters/BoolIconSlashParm.cpp
     src/Gui/Parameters/BoolParm.cpp
     src/Gui/Parameters/XYZParm.cpp
     src/Gui/Parameters/StringParm.cpp
@@ -121,6 +124,7 @@ qt_add_executable(${AppExec}
 )
 
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
 
 
 # --- packaging ---
@@ -158,6 +162,11 @@ install(FILES flatpak/org.enzosoftware.Enzo.metainfo.xml
 install(FILES static/icons/icon-main-white-square.svg
     DESTINATION share/icons/hicolor/scalable/apps
     RENAME org.enzosoftware.Enzo.svg
+)
+
+install(DIRECTORY static/icons/
+    DESTINATION ${CMAKE_PROJECT_NAME}/share/icons
+    FILES_MATCHING PATTERN "*.svg"
 )
 
 # install(TARGETS ${AppExec}

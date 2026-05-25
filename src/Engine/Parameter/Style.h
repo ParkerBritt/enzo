@@ -17,21 +17,45 @@ struct BoolSwitch
 {
 };
 
-struct BoolCrossButton
+struct BoolIcon
 {
     enum Setting { ICON, SCALE };
 
     std::vector<std::shared_ptr<prm::Parameter>> settings = {
-        std::make_shared<prm::Parameter>(Template(Type::STRING, Name("iconPath", "Icon Path"), Default("x.svg"))),
-        std::make_shared<prm::Parameter>(Template(Type::FLOAT,  Name("scale",    "Scale"),    Default(1.0f))),
+        std::make_shared<prm::Parameter>(Template(Type::STRING, Name("iconName", "Icon Name"), Default("eye"))),
+        std::make_shared<prm::Parameter>(Template(Type::FLOAT,  Name("scale",    "Scale"),    Default(0.95f))),
     };
 
-    BoolCrossButton& setIcon(std::string iconPath)
+    BoolIcon& setIcon(std::string iconPath)
     {
         settings[ICON]->setString(std::move(iconPath));
         return *this;
     }
-    BoolCrossButton& setScale(bt::floatT scale)
+    BoolIcon& setScale(bt::floatT scale)
+    {
+        settings[SCALE]->setFloat(scale);
+        return *this;
+    }
+
+    bt::String  icon()  const { return settings[ICON]->evalString(); }
+    bt::floatT  scale() const { return settings[SCALE]->evalFloat(); }
+};
+
+struct BoolIconSlash
+{
+    enum Setting { ICON, SCALE };
+
+    std::vector<std::shared_ptr<prm::Parameter>> settings = {
+        std::make_shared<prm::Parameter>(Template(Type::STRING, Name("iconName", "Icon Name"), Default("eye"))),
+        std::make_shared<prm::Parameter>(Template(Type::FLOAT,  Name("scale",    "Scale"),    Default(0.95f))),
+    };
+
+    BoolIconSlash& setIcon(std::string iconPath)
+    {
+        settings[ICON]->setString(std::move(iconPath));
+        return *this;
+    }
+    BoolIconSlash& setScale(bt::floatT scale)
     {
         settings[SCALE]->setFloat(scale);
         return *this;

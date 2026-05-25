@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QSurfaceFormat>
 
+#include "Gui/Icons/Builtin.h"
 #include "Interface.h"
 
 int main(int argc, char **argv) {
@@ -30,6 +31,8 @@ int main(int argc, char **argv) {
     app.setFont(appFont);
 
     app.setWindowIcon(QIcon(":/icons/icon-main-white.png"));
+
+    enzo::ui::icons::registerBuiltins();
 
     EnzoUI interface;
     interface.showMaximized();
