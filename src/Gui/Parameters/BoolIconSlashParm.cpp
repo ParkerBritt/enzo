@@ -17,9 +17,9 @@ namespace
 constexpr int   ANIMATION_DURATION_MS = 160;
 constexpr int   TILT_DURATION_MS      = 260;
 constexpr float TILT_PEAK_DEGREES     = -14.0f;
-constexpr float SLASH_WIDTH_FRACTION  = 0.1f;
-constexpr float SLASH_MASK_FRACTION   = 0.2f;
-constexpr float SLASH_PADDING         = 0.2f;
+constexpr float SLASH_WIDTH_FRACTION  = 0.13f;
+constexpr float SLASH_MASK_FRACTION   = 0.28f;
+constexpr float SLASH_PADDING         = 0.12f;
 
 QLineF slashLine(const QRectF& iconRect, float progress)
 {
@@ -108,7 +108,7 @@ void SlashIconButton::paintEvent(QPaintEvent*)
         const QLineF line = slashLine(iconRect, slashProgress_);
         const float slashWidth = iconRect.width() * SLASH_WIDTH_FRACTION;
 
-        QColor slashColor(255, 255, 255);
+        QColor slashColor("#ff4d50");
         slashColor.setAlphaF(0.8);
         QPen slashPen(slashColor, slashWidth);
         slashPen.setCapStyle(Qt::RoundCap);

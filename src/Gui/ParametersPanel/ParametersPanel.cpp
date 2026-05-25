@@ -61,6 +61,10 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Templ
             ui::Parameter* childWidget = buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
             if (childWidget) groupWidget->addChild(childWidget);
         }
+        // Groups participate in left-padding alignment so their labels line up with leaf labels.
+        leafWidgets.push_back(groupWidget);
+        const int groupLeftPadding = groupWidget->getLeftPadding();
+        if (groupLeftPadding > maxLeftPadding) maxLeftPadding = groupLeftPadding;
         return groupWidget;
     }
 
