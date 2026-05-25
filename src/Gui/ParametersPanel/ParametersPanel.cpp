@@ -3,7 +3,7 @@
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Types.h"
-#include "Gui/Parameters/BoolSwitchParm.h"
+#include "Gui/Parameters/BoolParm.h"
 #include "Gui/Parameters/FloatSliderParm.h"
 #include "Gui/Parameters/GroupParm.h"
 #include "Gui/Parameters/IntSliderParm.h"
@@ -72,7 +72,7 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Templ
     {
         case prm::Type::FLOAT: leafWidget = new ui::FloatSliderParm(parameter); break;
         case prm::Type::INT:   leafWidget = new ui::IntSliderParm(parameter); break;
-        case prm::Type::BOOL:  leafWidget = new ui::BoolSwitchParm(parameter); break;
+        case prm::Type::BOOL:  leafWidget = ui::BoolParm::create(parameter); break;
         case prm::Type::XYZ:   leafWidget = new ui::XYZParm(parameter); break;
         case prm::Type::STRING: leafWidget = new ui::StringParm(parameter); break;
         default:

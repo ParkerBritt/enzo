@@ -78,6 +78,8 @@ set(GUI_SOURCES
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
+    src/Gui/Parameters/BoolCrossButtonParm.cpp
+    src/Gui/Parameters/BoolParm.cpp
     src/Gui/Parameters/XYZParm.cpp
     src/Gui/Parameters/StringParm.cpp
     src/Gui/Parameters/GroupParm.cpp
