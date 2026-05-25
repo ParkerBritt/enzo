@@ -13,6 +13,9 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter>
     contentLayout_->addStretch();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
+    // Switch widgets never want the standard parameter background frame.
+    contentWidget_->setStyleSheet(".ParameterBg { background: transparent; border: none; }");
+
     valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
         syncFromParameter();
     });
