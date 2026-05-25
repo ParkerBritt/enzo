@@ -3,6 +3,7 @@
 #include "Engine/Operator/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/HeaderBar/HeaderBar.h"
+#include "Gui/IconRegistry.h"
 #include "Gui/Network/NetworkPanel.h"
 #include "Gui/Viewport/Viewport.h"
 #include <Gui/UtilWidgets/Splitter.h>
