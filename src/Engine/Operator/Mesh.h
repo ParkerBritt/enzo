@@ -78,7 +78,7 @@ public:
      */
     std::vector<ga::Offset> duplicatePoints(std::span<const ga::Offset> srcPointOffsets, bool copyAttributes = true);
 
-    void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = false);
+    void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = true);
     void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
     {
         deletePoints(pointOffsets, false);

@@ -109,14 +109,19 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 
     for (const auto& [oldOffset, dispSum] : displacementSum)
     {
+        auto inIt = incomingOuter.find(oldOffset);
+        auto outIt = outgoingOuter.find(oldOffset);
+        const bool onOuterBoundary = inIt != incomingOuter.end() || outIt != outgoingOuter.end();
+
+        // Without a top cap, interior ring points are unreferenced and would orphan in the mesh.
+        if (!emitFront && !onOuterBoundary) continue;
+
         const float averageDivisor = static_cast<float>(displacementCount[oldOffset]);
         const enzo::bt::Vector3 averagedDisplacement = dispSum / averageDivisor;
         enzo::bt::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
 
         if (inset != 0.0f)
         {
-            auto inIt = incomingOuter.find(oldOffset);
-            auto outIt = outgoingOuter.find(oldOffset);
             if (inIt != incomingOuter.end() && outIt != outgoingOuter.end())
             {
                 const enzo::bt::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
