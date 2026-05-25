@@ -10,6 +10,14 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     mainLayout_->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout_);
 
+    std::string tooltipFull = parmTemplate.getLabel();
+    const std::string tooltip = parmTemplate.getTooltip();
+    if (!tooltip.empty())
+    {
+        tooltipFull += "\n" + tooltip;
+    }
+    setToolTip(QString::fromStdString(tooltipFull));
+
     if (!parmTemplate.isLabelHidden())
     {
         const std::string name = parmTemplate.getLabel();
