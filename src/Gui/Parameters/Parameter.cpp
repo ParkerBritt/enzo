@@ -2,6 +2,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <string>
 
 enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent)
 : QWidget(parent)
@@ -10,12 +11,18 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     mainLayout_->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout_);
 
-    std::string tooltipFull = "<span style=\"font-weight:600;\">" + parmTemplate.getLabel() + "</span>";
-    const std::string tooltip = parmTemplate.getTooltip();
-    if (!tooltip.empty())
+    const std::string tooltipDescription = parmTemplate.getTooltip();
+    int tooltipMinWidth = parmTemplate.getLabel().size()*8;
+    int tooltipMaxWidth = 400;
+    int tooltipWidth = std::clamp<int>(tooltipDescription.size()*6, std::min(tooltipMinWidth, tooltipMaxWidth), tooltipMaxWidth);
+    // Had to use this weird table workaround to set the width
+    std::string tooltipFull = "<html><table><tr><td width=\""+std::to_string(tooltipWidth)+"\">";
+    tooltipFull += "<span style=\"font-weight:600;\">" + parmTemplate.getLabel() + "</span>";
+    if (!tooltipDescription.empty())
     {
-        tooltipFull += "\n" + tooltip;
+        tooltipFull += "<br><span style=\"font-size:small;\">" + tooltipDescription + "</span>";
     }
+    tooltipFull += "</div></html>";
     setToolTip(QString::fromStdString(tooltipFull));
 
     if (!parmTemplate.isLabelHidden())
