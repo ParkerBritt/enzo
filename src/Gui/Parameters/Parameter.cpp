@@ -10,7 +10,7 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     mainLayout_->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout_);
 
-    std::string tooltipFull = parmTemplate.getLabel();
+    std::string tooltipFull = "<span style=\"font-weight:600;\">" + parmTemplate.getLabel() + "</span>";
     const std::string tooltip = parmTemplate.getTooltip();
     if (!tooltip.empty())
     {
