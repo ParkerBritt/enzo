@@ -361,57 +361,105 @@ void GopExtrude::cookOp(enzo::op::Context context) {
 std::vector<enzo::prm::Template> GopExtrude::parameterList() {
     using namespace enzo::prm;
     return {
-        Template(Type::STRING, Name("selection", "Selection")),
-        Template(Type::BOOL, Name("connected", "Connected"), Default(true)),
-        Template(Type::FLOAT, Name("distance", "Distance"), Default(1), 1, Range(-10, 10)),
-        Template(Type::FLOAT, Name("inset", "Inset"), Default(0), 1, Range(-10, 10)),
+        Template(Type::STRING, Name("selection", "Selection"))
+            .setTooltip("The faces to extrude. Accepts a face selection or a group name."),
+        Template(Type::BOOL, Name("connected", "Connected"), Default(true))
+            .setTooltip("Treat adjacent selected faces as a single piece with no interior edges. "
+                        "Turn this off to extrude each face in isolation."),
+        Template(Type::FLOAT, Name("distance", "Distance"), Default(1), 1, Range(-10, 10))
+            .setTooltip("How far to pull out the extrusion. You can use a negative number to push "
+                        "the extrusion in the opposite direction of the normals."),
+        Template(Type::FLOAT, Name("inset", "Inset"), Default(0), 1, Range(-10, 10))
+            .setTooltip("Expands or dilates the extrusion front. This has no effect when "
+                        "extruding edges."),
 
         Template(Type::GROUP, Name("frontRow", "Front"))
             .setDirection(Direction::HORIZONTAL)
+            .setTooltip("Controls for the front output and group.")
             .addParm(Template(Type::BOOL, Name("frontOutput", "Front Output"), Default(true))
                          .setLabelHidden(true)
-                         .setTooltip("Generate output for the extrusion front."))
+                         .setTooltip("Generate polygons for the extrusion front. Turn this off if "
+                                     "you only want the sides."))
             .addParm(Template(Type::GROUP, Name("frontGroup", "Front Group"))
                          .setDirection(Direction::HORIZONTAL)
                          .setBackgroundEnabled(true)
                          .setLabelHidden(true)
+                         .setTooltip("Enter the name to put the polygons of the extrusion front in "
+                                     "this group. You can use this group name in later nodes to "
+                                     "easily target just the front polygons.")
                          .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group"))
+                                      .setTooltip(
+                                          "Create a face group with the polygons of the extrusion"
+                                          "front in this group. You can use this group in "
+                                          "later nodes to easily target just the front polygons.")
                                       .setLabelHidden(true)
                                       .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
                          .addParm(Template(Type::STRING, Name("frontGroupName", "Name"),
                                            Default("extrudeFront"))
+                                      .setTooltip(
+                                          "Enter the name to put the polygons of the extrusion "
+                                          "front in this group. You can use this group name in "
+                                          "later nodes to easily target just the front polygons.")
                                       .setLabelHidden(true)
                                       .setBackgroundEnabled(false))),
 
         Template(Type::GROUP, Name("sideRow", "Side"))
             .setDirection(Direction::HORIZONTAL)
+            .setTooltip("Controls for the side output and group.")
             .addParm(Template(Type::BOOL, Name("sideOutput", "Side Output"), Default(true))
-                         .setLabelHidden(true))
+                         .setLabelHidden(true)
+                         .setTooltip("Generate polygons for the sides of the extrusion. If you "
+                                     "turn this off, the node is essentially a copy and translate "
+                                     "of the selected edges/faces."))
             .addParm(Template(Type::GROUP, Name("sideGroup", "Side Group"))
                          .setDirection(Direction::HORIZONTAL)
                          .setBackgroundEnabled(true)
                          .setLabelHidden(true)
+                         .setTooltip("Enter the name to put the polygons of the extrusion sides "
+                                     "in this group. You can use this group name in later nodes "
+                                     "to easily target just the side polygons.")
                          .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group"))
+                                      .setTooltip(
+                                          "Create a face group with the polygons of the extrusion "
+                                          "sides in this group. You can use this group in later "
+                                          "nodes to easily target just the side polygons.")
                                       .setLabelHidden(true)
                                       .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
                          .addParm(Template(Type::STRING, Name("sideGroupName", "Name"),
                                            Default("extrudeSide"))
+                                      .setTooltip(
+                                          "Enter the name to put the polygons of the extrusion "
+                                          "sides in this group. You can use this group name in "
+                                          "later nodes to easily target just the side polygons.")
                                       .setLabelHidden(true)
                                       .setBackgroundEnabled(false))),
 
         Template(Type::GROUP, Name("backRow", "Back"))
             .setDirection(Direction::HORIZONTAL)
+            .setTooltip("Controls for the back output and group.")
             .addParm(Template(Type::BOOL, Name("backOutput", "Back Output"), Default(true))
-                         .setLabelHidden(true))
+                         .setLabelHidden(true)
+                         .setTooltip("Turn this off to delete the original extruded polygons."))
             .addParm(Template(Type::GROUP, Name("backGroup", "Back Group"))
                          .setDirection(Direction::HORIZONTAL)
                          .setBackgroundEnabled(true)
                          .setLabelHidden(true)
+                         .setTooltip("Enter the name to put the original extruded polygons in "
+                                     "this group. You can use this group name in later nodes to "
+                                     "easily target just the back polygons.")
                          .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group"))
+                                      .setTooltip(
+                                          "Create a face group with the original extruded "
+                                          "polygons in this group. You can use this group in "
+                                          "later nodes to easily target just the back polygons.")
                                       .setLabelHidden(true)
                                       .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
                          .addParm(Template(Type::STRING, Name("backGroupName", "Name"),
                                            Default("extrudeBack"))
+                                      .setTooltip(
+                                          "Enter the name to put the original extruded polygons "
+                                          "in this group. You can use this group name in later "
+                                          "nodes to easily target just the back polygons.")
                                       .setLabelHidden(true)
                                       .setBackgroundEnabled(false))),
     };
