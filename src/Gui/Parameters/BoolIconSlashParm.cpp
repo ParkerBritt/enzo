@@ -15,6 +15,8 @@ namespace
 {
 
 constexpr int   ANIMATION_DURATION_MS = 160;
+constexpr int   TILT_DURATION_MS      = 260;
+constexpr float TILT_PEAK_DEGREES     = -14.0f;
 constexpr float SLASH_WIDTH_FRACTION  = 0.1f;
 constexpr float SLASH_MASK_FRACTION   = 0.2f;
 constexpr float SLASH_PADDING         = 0.2f;
@@ -43,6 +45,13 @@ void SlashIconButton::setSlashProgress(float progress)
 {
     if (qFuzzyCompare(slashProgress_, progress)) return;
     slashProgress_ = progress;
+    update();
+}
+
+void SlashIconButton::setTiltAngle(float degrees)
+{
+    if (qFuzzyCompare(tiltAngle_, degrees)) return;
+    tiltAngle_ = degrees;
     update();
 }
 
@@ -82,6 +91,16 @@ void SlashIconButton::paintEvent(QPaintEvent*)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    if (!qFuzzyIsNull(tiltAngle_))
+    {
+        const QPointF pivot = iconRect.center();
+        painter.translate(pivot);
+        painter.rotate(tiltAngle_);
+        painter.translate(-pivot);
+    }
+
     painter.drawPixmap(0, 0, composed);
 
     if (slashProgress_ > 0.0f)
@@ -127,6 +146,16 @@ BoolIconSlashParm::BoolIconSlashParm(
         button_->setSlashProgress(value.toFloat());
     });
 
+    tiltAnimation_ = new QVariantAnimation(this);
+    tiltAnimation_->setDuration(TILT_DURATION_MS);
+    tiltAnimation_->setEasingCurve(QEasingCurve::InOutCubic);
+    tiltAnimation_->setStartValue(0.0f);
+    tiltAnimation_->setKeyValueAt(0.45, TILT_PEAK_DEGREES);
+    tiltAnimation_->setEndValue(0.0f);
+    connect(tiltAnimation_, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
+        button_->setTiltAngle(value.toFloat());
+    });
+
     contentLayout_->addWidget(button_);
     contentLayout_->addStretch();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -160,6 +189,11 @@ void BoolIconSlashParm::onToggle(bool checked)
             parameterShared->getValues());
         enzo::nt::nm().undoStack().push(std::move(cmd));
         animateTo(checked);
+        if (!checked)
+        {
+            tiltAnimation_->stop();
+            tiltAnimation_->start();
+        }
     }
 }
 
