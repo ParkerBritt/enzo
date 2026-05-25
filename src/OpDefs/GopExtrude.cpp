@@ -2,6 +2,7 @@
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Operator/Selection.h"
 #include "Engine/Parameter/Range.h"
+#include "Engine/Parameter/Style.h"
 #include "Engine/Types.h"
 #include <memory>
 #include <string>
@@ -331,7 +332,11 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList()
         Template(Type::GROUP, Name("frontGroup", "Front Group"))
             .setDirection(Direction::HORIZONTAL)
             .setBackgroundEnabled(true)
-            .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group")).setLabelHidden(true))
+            .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group"))
+                .setLabelHidden(true)
+                .setStyle(style::BoolCrossButton{}
+                    .setIcon(":/icons/attributePoint.svg")
+                    .setScale(0.5f)))
             .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true).setBackgroundEnabled(false)),
 
         Template(Type::GROUP, Name("sideGroup", "Side Group"))
