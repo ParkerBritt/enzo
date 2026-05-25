@@ -22,6 +22,8 @@ public:
     void setSlashProgress(float progress);
     float slashProgress() const { return slashProgress_; }
 
+    void setTiltAngle(float degrees);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
     QSize sizeHint() const override;
@@ -30,6 +32,7 @@ private:
     QPixmap icon_;
     int iconPx_;
     float slashProgress_ = 0.0f;
+    float tiltAngle_    = 0.0f;
 };
 
 class BoolIconSlashParm
@@ -50,6 +53,7 @@ private:
     std::shared_ptr<prm::style::BoolIconSlash> style_;
     SlashIconButton* button_ = nullptr;
     QVariantAnimation* animation_ = nullptr;
+    QVariantAnimation* tiltAnimation_ = nullptr;
     boost::signals2::scoped_connection valueChangedConnection_;
 };
 
