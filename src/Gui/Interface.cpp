@@ -7,6 +7,7 @@
 #include "Gui/Network/NetworkPanel.h"
 #include "Gui/Viewport/Viewport.h"
 #include <Gui/UtilWidgets/Splitter.h>
+#include <QApplication>
 #include <QTimer>
 #include <icecream.hpp>
 #include <qnamespace.h>
@@ -28,12 +29,23 @@ EnzoUI::EnzoUI() {
     setStyleSheet(R"(
     QWidget
     {
-        background-color: #1a1a1a; 
+        background-color: #1a1a1a;
         color: rgba(255,255,255,0.8);
     }
     QSplitter::handle
     {
         image: none;
+    }
+    )");
+
+    qApp->setStyleSheet(R"(
+    QToolTip
+    {
+        background-color: #1a1a1a;
+        color: rgba(255,255,255,0.8);
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 2px 4px;
     }
     )");
 

@@ -9,13 +9,10 @@
 #include <unordered_map>
 #include <vector>
 
-namespace
-{
+namespace {
 using Edge = std::pair<enzo::ga::Offset, enzo::ga::Offset>;
-struct EdgeHash
-{
-    size_t operator()(const Edge& edge) const noexcept
-    {
+struct EdgeHash {
+    size_t operator()(const Edge &edge) const noexcept {
         const size_t a = std::hash<enzo::ga::Offset>{}(edge.first);
         const size_t b = std::hash<enzo::ga::Offset>{}(edge.second);
         return a ^ (b + 0x9e3779b97f4a7c15ULL + (a << 6) + (a >> 2));
@@ -33,34 +30,28 @@ struct EdgeHash
  * @return The offset to add to the corner, or zero if the two edges are
  * antiparallel and the bisector is undefined.
  */
-enzo::bt::Vector3 cornerInsetOffset(const enzo::bt::Vector3& prevPos,
-                                    const enzo::bt::Vector3& cornerPos,
-                                    const enzo::bt::Vector3& nextPos,
-                                    const enzo::bt::Vector3& inEdgeFaceNormal,
-                                    const enzo::bt::Vector3& outEdgeFaceNormal,
-                                    float distance)
-{
+enzo::bt::Vector3 cornerInsetOffset(const enzo::bt::Vector3 &prevPos,
+                                    const enzo::bt::Vector3 &cornerPos,
+                                    const enzo::bt::Vector3 &nextPos,
+                                    const enzo::bt::Vector3 &inEdgeFaceNormal,
+                                    const enzo::bt::Vector3 &outEdgeFaceNormal, float distance) {
     const enzo::bt::Vector3 inDir = (cornerPos - prevPos).normalized();
     const enzo::bt::Vector3 outDir = (nextPos - cornerPos).normalized();
     const enzo::bt::Vector3 inNormal = inEdgeFaceNormal.cross(inDir).normalized();
     const enzo::bt::Vector3 outNormal = outEdgeFaceNormal.cross(outDir).normalized();
     const double denom = 1.0 + inNormal.dot(outNormal);
-    if (std::abs(denom) < 1e-6) return enzo::bt::Vector3::Zero();
+    if (std::abs(denom) < 1e-6)
+        return enzo::bt::Vector3::Zero();
     const enzo::bt::Vector3 bisector = (inNormal + outNormal) / denom;
     return bisector * static_cast<double>(distance);
 }
-}
+} // namespace
 
 /// @brief Extrudes faces as a connected island, sharing corners between adjacent selected faces.
 static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
-                             const std::vector<enzo::ga::Offset>& faces,
-                             float distance,
-                             float inset,
-                             const std::string& sideGroupName,
-                             const std::string& frontGroupName,
-                             bool emitFront,
-                             bool emitSide)
-{
+                             const std::vector<enzo::ga::Offset> &faces, float distance,
+                             float inset, const std::string &sideGroupName,
+                             const std::string &frontGroupName, bool emitFront, bool emitSide) {
     auto faceNormals = mesh->getFaceNormal();
 
     // Record directed edges and accumulate extrude displacement per shared point.
@@ -68,21 +59,20 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     std::unordered_map<enzo::ga::Offset, enzo::bt::Vector3> displacementSum;
     std::unordered_map<enzo::ga::Offset, unsigned int> displacementCount;
 
-    for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx)
-    {
+    for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx) {
         const enzo::ga::Offset face = faces[faceIdx];
         auto facePoints = mesh->getFacePoints(face);
         const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
         const unsigned int facePointCount = mesh->getFacePointCount(face);
 
-        for (size_t i = 0; i < facePointCount; ++i)
-        {
+        for (size_t i = 0; i < facePointCount; ++i) {
             const enzo::ga::Offset pointOffset = facePoints[i];
             const enzo::ga::Offset nextPointOffset = facePoints[(i + 1) % facePointCount];
             edgeToFaceIdx[{pointOffset, nextPointOffset}] = faceIdx;
 
             auto [it, inserted] = displacementSum.try_emplace(pointOffset, displacement);
-            if (!inserted) it->second += displacement;
+            if (!inserted)
+                it->second += displacement;
             displacementCount[pointOffset] += 1;
         }
     }
@@ -90,12 +80,15 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     // Outer boundary half-edges per point: those whose reverse is not in the
     // selection. Each entry records the neighbouring point along the outer
     // boundary and the face that owns the directed edge.
-    struct OuterHalfEdge { enzo::ga::Offset neighbour; size_t faceIdx; };
+    struct OuterHalfEdge {
+        enzo::ga::Offset neighbour;
+        size_t faceIdx;
+    };
     std::unordered_map<enzo::ga::Offset, OuterHalfEdge> outgoingOuter;
     std::unordered_map<enzo::ga::Offset, OuterHalfEdge> incomingOuter;
-    for (const auto& [edge, faceIdx] : edgeToFaceIdx)
-    {
-        if (edgeToFaceIdx.count({edge.second, edge.first})) continue;
+    for (const auto &[edge, faceIdx] : edgeToFaceIdx) {
+        if (edgeToFaceIdx.count({edge.second, edge.first}))
+            continue;
         outgoingOuter[edge.first] = {edge.second, faceIdx};
         incomingOuter[edge.second] = {edge.first, faceIdx};
     }
@@ -107,29 +100,28 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     uniqueOldPoints.reserve(displacementSum.size());
     newPointPositions.reserve(displacementSum.size());
 
-    for (const auto& [oldOffset, dispSum] : displacementSum)
-    {
+    for (const auto &[oldOffset, dispSum] : displacementSum) {
         auto inIt = incomingOuter.find(oldOffset);
         auto outIt = outgoingOuter.find(oldOffset);
         const bool onOuterBoundary = inIt != incomingOuter.end() || outIt != outgoingOuter.end();
 
         // Without a top cap, interior ring points are unreferenced and would orphan in the mesh.
-        if (!emitFront && !onOuterBoundary) continue;
+        if (!emitFront && !onOuterBoundary)
+            continue;
 
         const float averageDivisor = static_cast<float>(displacementCount[oldOffset]);
         const enzo::bt::Vector3 averagedDisplacement = dispSum / averageDivisor;
         enzo::bt::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
 
-        if (inset != 0.0f)
-        {
-            if (inIt != incomingOuter.end() && outIt != outgoingOuter.end())
-            {
+        if (inset != 0.0f) {
+            if (inIt != incomingOuter.end() && outIt != outgoingOuter.end()) {
                 const enzo::bt::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
                 const enzo::bt::Vector3 cornerPos = mesh->getPointPos(oldOffset);
                 const enzo::bt::Vector3 nextPos = mesh->getPointPos(outIt->second.neighbour);
                 const enzo::bt::Vector3 inFaceNormal = faceNormals[faces[inIt->second.faceIdx]];
                 const enzo::bt::Vector3 outFaceNormal = faceNormals[faces[outIt->second.faceIdx]];
-                newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, inFaceNormal, outFaceNormal, inset);
+                newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, inFaceNormal,
+                                            outFaceNormal, inset);
             }
         }
 
@@ -141,8 +133,7 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     std::vector<enzo::ga::Offset> newPoints = mesh->addPoints(newPointPositions);
     std::unordered_map<enzo::ga::Offset, enzo::ga::Offset> oldToNew;
     oldToNew.reserve(uniqueOldPoints.size());
-    for (size_t i = 0; i < uniqueOldPoints.size(); ++i)
-    {
+    for (size_t i = 0; i < uniqueOldPoints.size(); ++i) {
         oldToNew[uniqueOldPoints[i]] = newPoints[i];
     }
 
@@ -152,30 +143,26 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     std::vector<enzo::ga::Offset> topPointOffsetsFlat;
     std::vector<enzo::ga::Offset> topVertexCounts;
 
-    for (auto face : faces)
-    {
+    for (auto face : faces) {
         auto facePoints = mesh->getFacePoints(face);
         const unsigned int facePointCount = mesh->getFacePointCount(face);
 
-        if (emitFront)
-        {
+        if (emitFront) {
             // Top cap mirrors the original winding on the new ring
-            for (size_t i = 0; i < facePointCount; ++i)
-            {
+            for (size_t i = 0; i < facePointCount; ++i) {
                 topPointOffsetsFlat.push_back(oldToNew[facePoints[i]]);
             }
             topVertexCounts.push_back(facePointCount);
         }
 
-        if (emitSide)
-        {
+        if (emitSide) {
             // Skip internal edges whose reverse appears in another selected face
-            for (size_t i = 0; i < facePointCount; ++i)
-            {
+            for (size_t i = 0; i < facePointCount; ++i) {
                 const enzo::ga::Offset bottomStart = facePoints[i];
                 const enzo::ga::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
 
-                if (edgeToFaceIdx.count({bottomEnd, bottomStart})) continue;
+                if (edgeToFaceIdx.count({bottomEnd, bottomStart}))
+                    continue;
 
                 const enzo::ga::Offset topStart = oldToNew[bottomStart];
                 const enzo::ga::Offset topEnd = oldToNew[bottomEnd];
@@ -190,28 +177,25 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     }
 
     // Add the new faces and tag them
-    if (emitSide)
-    {
-        std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
-        if (!sideGroupName.empty()) mesh->addToFaceGroup(sideGroupName, sideOffsets);
+    if (emitSide) {
+        std::vector<enzo::ga::Offset> sideOffsets =
+            mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
+        if (!sideGroupName.empty())
+            mesh->addToFaceGroup(sideGroupName, sideOffsets);
     }
-    if (emitFront)
-    {
-        std::vector<enzo::ga::Offset> topOffsets = mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
-        if (!frontGroupName.empty()) mesh->addToFaceGroup(frontGroupName, topOffsets);
+    if (emitFront) {
+        std::vector<enzo::ga::Offset> topOffsets =
+            mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
+        if (!frontGroupName.empty())
+            mesh->addToFaceGroup(frontGroupName, topOffsets);
     }
 }
 
 /// @brief Extrudes each selected face in isolation.
 static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
-                                const std::vector<enzo::ga::Offset>& faces,
-                                float distance,
-                                float inset,
-                                const std::string& sideGroupName,
-                                const std::string& frontGroupName,
-                                bool emitFront,
-                                bool emitSide)
-{
+                                const std::vector<enzo::ga::Offset> &faces, float distance,
+                                float inset, const std::string &sideGroupName,
+                                const std::string &frontGroupName, bool emitFront, bool emitSide) {
     auto faceNormals = mesh->getFaceNormal();
 
     std::vector<enzo::ga::Offset> sidePointOffsetsFlat;
@@ -219,8 +203,7 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     std::vector<enzo::ga::Offset> topPointOffsetsFlat;
     std::vector<enzo::ga::Offset> topVertexCounts;
 
-    for (auto face : faces)
-    {
+    for (auto face : faces) {
         auto facePoints = mesh->getFacePoints(face);
         const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
         const enzo::bt::Vector3 faceNormal = faceNormals[face];
@@ -230,38 +213,34 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         // inward-bisector inset on each corner.
         std::vector<enzo::bt::Vector3> newPositionsLocal;
         newPositionsLocal.reserve(facePointCount);
-        for (size_t i = 0; i < facePointCount; ++i)
-        {
+        for (size_t i = 0; i < facePointCount; ++i) {
             enzo::bt::Vector3 newPos = mesh->getPointPos(facePoints[i]) + displacement;
-            if (inset != 0.0f)
-            {
-                const enzo::ga::Offset prevOffset = facePoints[(i + facePointCount - 1) % facePointCount];
+            if (inset != 0.0f) {
+                const enzo::ga::Offset prevOffset =
+                    facePoints[(i + facePointCount - 1) % facePointCount];
                 const enzo::ga::Offset nextOffset = facePoints[(i + 1) % facePointCount];
                 const enzo::bt::Vector3 prevPos = mesh->getPointPos(prevOffset);
                 const enzo::bt::Vector3 cornerPos = mesh->getPointPos(facePoints[i]);
                 const enzo::bt::Vector3 nextPos = mesh->getPointPos(nextOffset);
-                newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, faceNormal, faceNormal, inset);
+                newPos +=
+                    cornerInsetOffset(prevPos, cornerPos, nextPos, faceNormal, faceNormal, inset);
             }
             newPositionsLocal.push_back(newPos);
         }
 
         std::vector<enzo::ga::Offset> faceNewPoints = mesh->addPoints(newPositionsLocal);
 
-        if (emitFront)
-        {
+        if (emitFront) {
             // Top cap mirrors the original winding on the new ring
-            for (size_t i = 0; i < facePointCount; ++i)
-            {
+            for (size_t i = 0; i < facePointCount; ++i) {
                 topPointOffsetsFlat.push_back(faceNewPoints[i]);
             }
             topVertexCounts.push_back(facePointCount);
         }
 
-        if (emitSide)
-        {
+        if (emitSide) {
             // Every edge gets its own side quad
-            for (size_t i = 0; i < facePointCount; ++i)
-            {
+            for (size_t i = 0; i < facePointCount; ++i) {
                 const enzo::ga::Offset bottomStart = facePoints[i];
                 const enzo::ga::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
                 const enzo::ga::Offset topStart = faceNewPoints[i];
@@ -277,37 +256,37 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     }
 
     // Add the new faces and tag them
-    if (emitSide)
-    {
-        std::vector<enzo::ga::Offset> sideOffsets = mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
-        if (!sideGroupName.empty()) mesh->addToFaceGroup(sideGroupName, sideOffsets);
+    if (emitSide) {
+        std::vector<enzo::ga::Offset> sideOffsets =
+            mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
+        if (!sideGroupName.empty())
+            mesh->addToFaceGroup(sideGroupName, sideOffsets);
     }
-    if (emitFront)
-    {
-        std::vector<enzo::ga::Offset> topOffsets = mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
-        if (!frontGroupName.empty()) mesh->addToFaceGroup(frontGroupName, topOffsets);
+    if (emitFront) {
+        std::vector<enzo::ga::Offset> topOffsets =
+            mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
+        if (!frontGroupName.empty())
+            mesh->addToFaceGroup(frontGroupName, topOffsets);
     }
 }
 
-struct GroupNames
-{
+struct GroupNames {
     std::string side;
     std::string front;
     std::string back;
 };
 
-struct OutputFlags
-{
+struct OutputFlags {
     bool front;
     bool side;
     bool back;
 };
 
-void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance, float inset, bool connected, const GroupNames& groupNames, const OutputFlags& outputs)
-{
+void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float distance,
+             float inset, bool connected, const GroupNames &groupNames,
+             const OutputFlags &outputs) {
     std::shared_ptr<enzo::geo::Mesh> mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
-    if (!mesh)
-    {
+    if (!mesh) {
         return;
     }
 
@@ -315,29 +294,27 @@ void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::ga::Offset> faces, float
     const std::string sideGroup = outputs.side ? groupNames.side : std::string();
     const std::string frontGroup = outputs.front ? groupNames.front : std::string();
 
-    if (outputs.side && !groupNames.side.empty()) mesh->createFaceGroup(groupNames.side);
-    if (outputs.front && !groupNames.front.empty()) mesh->createFaceGroup(groupNames.front);
-    if (outputs.back && !groupNames.back.empty())
-    {
+    if (outputs.side && !groupNames.side.empty())
+        mesh->createFaceGroup(groupNames.side);
+    if (outputs.front && !groupNames.front.empty())
+        mesh->createFaceGroup(groupNames.front);
+    if (outputs.back && !groupNames.back.empty()) {
         mesh->createFaceGroup(groupNames.back);
         mesh->addToFaceGroup(groupNames.back, faces);
     }
 
-    if (outputs.front || outputs.side)
-    {
-        if (connected)
-        {
-            extrudeConnected(mesh, faces, distance, inset, sideGroup, frontGroup, outputs.front, outputs.side);
-        }
-        else
-        {
-            extrudeDisconnected(mesh, faces, distance, inset, sideGroup, frontGroup, outputs.front, outputs.side);
+    if (outputs.front || outputs.side) {
+        if (connected) {
+            extrudeConnected(mesh, faces, distance, inset, sideGroup, frontGroup, outputs.front,
+                             outputs.side);
+        } else {
+            extrudeDisconnected(mesh, faces, distance, inset, sideGroup, frontGroup, outputs.front,
+                                outputs.side);
         }
     }
 
     // Back output off removes the original selected faces, hollowing the extrude.
-    if (!outputs.back)
-    {
+    if (!outputs.back) {
         mesh->deleteFaces(faces);
     }
 }
@@ -358,9 +335,12 @@ void GopExtrude::cookOp(enzo::op::Context context) {
 
         // An empty group name disables the group, so callers see no stray group.
         GroupNames groupNames;
-        if (context.evalBoolParm("frontGroupEnabled")) groupNames.front = context.evalStringParm("frontGroupName");
-        if (context.evalBoolParm("sideGroupEnabled")) groupNames.side = context.evalStringParm("sideGroupName");
-        if (context.evalBoolParm("backGroupEnabled")) groupNames.back = context.evalStringParm("backGroupName");
+        if (context.evalBoolParm("frontGroupEnabled"))
+            groupNames.front = context.evalStringParm("frontGroupName");
+        if (context.evalBoolParm("sideGroupEnabled"))
+            groupNames.side = context.evalStringParm("sideGroupName");
+        if (context.evalBoolParm("backGroupEnabled"))
+            groupNames.back = context.evalStringParm("backGroupName");
 
         OutputFlags outputs;
         outputs.front = context.evalBoolParm("frontOutput");
@@ -370,15 +350,15 @@ void GopExtrude::cookOp(enzo::op::Context context) {
         enzo::Selection selection(selectionStr);
 
         for (geo::PrimPtr prim : selection.getPrims(packet)) {
-            extrude(prim, selection.getFaces(prim), distance, inset, connected, groupNames, outputs);
+            extrude(prim, selection.getFaces(prim), distance, inset, connected, groupNames,
+                    outputs);
         }
 
         setOutputPacket(0, packet);
     }
 }
 
-std::vector<enzo::prm::Template> GopExtrude::parameterList()
-{
+std::vector<enzo::prm::Template> GopExtrude::parameterList() {
     using namespace enzo::prm;
     return {
         Template(Type::STRING, Name("selection", "Selection")),
@@ -388,38 +368,51 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList()
 
         Template(Type::GROUP, Name("frontRow", "Front"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("frontOutput", "Front Output"), Default(true)).setLabelHidden(true))
+            .addParm(Template(Type::BOOL, Name("frontOutput", "Front Output"), Default(true))
+                         .setLabelHidden(true)
+                         .setTooltip("Generate output for the extrusion front."))
             .addParm(Template(Type::GROUP, Name("frontGroup", "Front Group"))
-                .setDirection(Direction::HORIZONTAL)
-                .setBackgroundEnabled(true)
-                .setLabelHidden(true)
-                .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group"))
-                    .setLabelHidden(true)
-                    .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
-                .addParm(Template(Type::STRING, Name("frontGroupName", "Name"), Default("extrudeFront")).setLabelHidden(true).setBackgroundEnabled(false))),
+                         .setDirection(Direction::HORIZONTAL)
+                         .setBackgroundEnabled(true)
+                         .setLabelHidden(true)
+                         .addParm(Template(Type::BOOL, Name("frontGroupEnabled", "Front Group"))
+                                      .setLabelHidden(true)
+                                      .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
+                         .addParm(Template(Type::STRING, Name("frontGroupName", "Name"),
+                                           Default("extrudeFront"))
+                                      .setLabelHidden(true)
+                                      .setBackgroundEnabled(false))),
 
         Template(Type::GROUP, Name("sideRow", "Side"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("sideOutput", "Side Output"), Default(true)).setLabelHidden(true))
+            .addParm(Template(Type::BOOL, Name("sideOutput", "Side Output"), Default(true))
+                         .setLabelHidden(true))
             .addParm(Template(Type::GROUP, Name("sideGroup", "Side Group"))
-                .setDirection(Direction::HORIZONTAL)
-                .setBackgroundEnabled(true)
-                .setLabelHidden(true)
-                .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group"))
-                    .setLabelHidden(true)
-                    .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
-                .addParm(Template(Type::STRING, Name("sideGroupName", "Name"), Default("extrudeSide")).setLabelHidden(true).setBackgroundEnabled(false))),
+                         .setDirection(Direction::HORIZONTAL)
+                         .setBackgroundEnabled(true)
+                         .setLabelHidden(true)
+                         .addParm(Template(Type::BOOL, Name("sideGroupEnabled", "Side Group"))
+                                      .setLabelHidden(true)
+                                      .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
+                         .addParm(Template(Type::STRING, Name("sideGroupName", "Name"),
+                                           Default("extrudeSide"))
+                                      .setLabelHidden(true)
+                                      .setBackgroundEnabled(false))),
 
         Template(Type::GROUP, Name("backRow", "Back"))
             .setDirection(Direction::HORIZONTAL)
-            .addParm(Template(Type::BOOL, Name("backOutput", "Back Output"), Default(true)).setLabelHidden(true))
+            .addParm(Template(Type::BOOL, Name("backOutput", "Back Output"), Default(true))
+                         .setLabelHidden(true))
             .addParm(Template(Type::GROUP, Name("backGroup", "Back Group"))
-                .setDirection(Direction::HORIZONTAL)
-                .setBackgroundEnabled(true)
-                .setLabelHidden(true)
-                .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group"))
-                    .setLabelHidden(true)
-                    .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
-                .addParm(Template(Type::STRING, Name("backGroupName", "Name"), Default("extrudeBack")).setLabelHidden(true).setBackgroundEnabled(false))),
+                         .setDirection(Direction::HORIZONTAL)
+                         .setBackgroundEnabled(true)
+                         .setLabelHidden(true)
+                         .addParm(Template(Type::BOOL, Name("backGroupEnabled", "Back Group"))
+                                      .setLabelHidden(true)
+                                      .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
+                         .addParm(Template(Type::STRING, Name("backGroupName", "Name"),
+                                           Default("extrudeBack"))
+                                      .setLabelHidden(true)
+                                      .setBackgroundEnabled(false))),
     };
 }
