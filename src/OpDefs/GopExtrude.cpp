@@ -369,7 +369,7 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList() {
         Template(Type::FLOAT, Name("distance", "Distance"), Default(1), 1, Range(-10, 10))
             .setTooltip("How far to pull out the extrusion. You can use a negative number to push "
                         "the extrusion in the opposite direction of the normals."),
-        Template(Type::FLOAT, Name("inset", "Inset"), Default(0), 1, Range(-10, 10))
+        Template(Type::FLOAT, Name("inset", "Inset"), Default(0), 1, Range(-5, 5))
             .setTooltip("Expands or dilates the extrusion front. This has no effect when "
                         "extruding edges."),
 
@@ -438,7 +438,7 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList() {
             .setDirection(Direction::HORIZONTAL)
             .setTooltip("Controls for the back output and group.")
             .addParm(Template(Type::BOOL, Name("backOutput", "Back Output"), Default(true))
-                         .setLabelHidden(true)
+                         .setLabelHidden(false)
                          .setTooltip("Turn this off to delete the original extruded polygons."))
             .addParm(Template(Type::GROUP, Name("backGroup", "Back Group"))
                          .setDirection(Direction::HORIZONTAL)
