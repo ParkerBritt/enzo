@@ -438,7 +438,7 @@ std::vector<enzo::prm::Template> GopExtrude::parameterList() {
             .setDirection(Direction::HORIZONTAL)
             .setTooltip("Controls for the back output and group.")
             .addParm(Template(Type::BOOL, Name("backOutput", "Back Output"), Default(true))
-                         .setLabelHidden(false)
+                         .setLabelHidden(true)
                          .setTooltip("Turn this off to delete the original extruded polygons."))
             .addParm(Template(Type::GROUP, Name("backGroup", "Back Group"))
                          .setDirection(Direction::HORIZONTAL)
