@@ -1,8 +1,28 @@
 #pragma once
 #include "Engine/Types.h"
+#include <memory>
 #include <span>
+#include <vector>
+
+namespace enzo::geo { class Mesh; }
 
 namespace enzo::utils {
+
+/**
+ * @brief A triangulated mesh paired with a mapping from each output triangle to its source face.
+ */
+struct TriangulatedMesh
+{
+    std::shared_ptr<geo::Mesh> mesh;
+    std::vector<ga::Offset> faceToOriginal;
+};
+
+/**
+ * @brief Triangulates every face of @p src using fan triangulation from the first corner.
+ * @return The triangulated mesh and a mapping from each output triangle back to its source face.
+ */
+TriangulatedMesh triangulateMesh(const geo::Mesh& src);
+
 
 /**
  * @brief Computes the normal of an arbitrary polygon.

@@ -12,7 +12,9 @@
 #include "OpDefs/GopPath.h"
 #include "OpDefs/GopSineWave.h"
 #include "OpDefs/GopTransform.hpp"
+#include "OpDefs/GopCube.h"
 #include "OpDefs/GopExtrude.h"
+#include "OpDefs/GopBoolean.h"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
 
@@ -109,12 +111,30 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator) {
         1,
     });
     addOperator(enzo::op::OpInfo{
+        "cube",
+        "Cube",
+        &GopCube::ctor,
+        GopCube::parameterList(),
+        0,
+        0,
+        1,
+    });
+    addOperator(enzo::op::OpInfo{
         "extrude",
         "Extrude",
         &GopExtrude::ctor,
         GopExtrude::parameterList(),
         1,
         1,
+        1,
+    });
+    addOperator(enzo::op::OpInfo{
+        "boolean",
+        "Boolean",
+        &GopBoolean::ctor,
+        GopBoolean::parameterList(),
+        2,
+        2,
         1,
     });
 }

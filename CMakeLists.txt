@@ -40,6 +40,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/SelectionComponent.cpp
     src/Engine/Operator/IndexSet.cpp
     src/Engine/Utils/MeshUtils.cpp
+    src/Engine/Utils/BooleanUtils.cpp
     src/Engine/Util/UnionFind.cpp
 )
 
@@ -115,6 +116,9 @@ find_package(Boost REQUIRED COMPONENTS filesystem system)
 
 # cgal
 find_package(CGAL REQUIRED COMPONENTS Core)
+
+# manifold (boolean ops)
+find_package(manifold CONFIG REQUIRED)
 
 
 
@@ -219,7 +223,7 @@ install(DIRECTORY static/icons/
 # --- end packaging
 
 
-target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
 target_include_directories(${AppExec} PUBLIC
     ${ENGINE_INCLUDE_DIRECTORIES}
 )
@@ -248,7 +252,7 @@ if(ENZO_BUILD_TESTS)
         tests/SelectionTests.cpp
         tests/MeshTests.cpp
     )
-    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
     target_include_directories(${TestExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}
@@ -262,7 +266,7 @@ if(ENZO_BUILD_TESTS)
 
         tests/Benchmarks.cpp
     )
-    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
     target_include_directories(${BenchExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}
