@@ -1,0 +1,64 @@
+#include "OpDefs/GopBoolean.h"
+#include "Engine/Operator/Mesh.h"
+#include "Engine/Operator/NodePacket.h"
+#include "Engine/Utils/BooleanUtils.h"
+
+GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+: GeometryOpDef(network, opInfo) {}
+
+void GopBoolean::cookOp(enzo::op::Context context)
+{
+    using namespace enzo;
+
+    if (!outputRequested(0)) return;
+
+    NodePacket packetA = context.cloneInputPacket(0);
+    NodePacket packetB = context.cloneInputPacket(1);
+
+    // Pick the first mesh primitive from each input.
+    std::shared_ptr<geo::Mesh> meshA;
+    std::shared_ptr<geo::Mesh> meshB;
+    for (auto prim : packetA.getPrimitives())
+    {
+        if (prim->getType() == geo::PrimType::MESH)
+        {
+            meshA = std::static_pointer_cast<geo::Mesh>(prim);
+            break;
+        }
+    }
+    for (auto prim : packetB.getPrimitives())
+    {
+        if (prim->getType() == geo::PrimType::MESH)
+        {
+            meshB = std::static_pointer_cast<geo::Mesh>(prim);
+            break;
+        }
+    }
+
+    NodePacket output;
+    if (meshA && meshB)
+    {
+        const std::string opStr = context.evalStringParm("operation");
+        utils::BooleanOp op = utils::BooleanOp::UNION;
+        if (opStr == "intersect") op = utils::BooleanOp::INTERSECT;
+        else if (opStr == "subtract") op = utils::BooleanOp::SUBTRACT;
+
+        std::shared_ptr<geo::Mesh> result = utils::booleanMesh(*meshA, *meshB, op);
+        output.addPrimitive(result);
+    }
+    else if (meshA)
+    {
+        // When only one input has a mesh, pass it through unchanged.
+        output.addPrimitive(meshA);
+    }
+
+    setOutputPacket(0, output);
+}
+
+std::vector<enzo::prm::Template> GopBoolean::parameterList()
+{
+    using namespace enzo::prm;
+    return {
+        Template(Type::STRING, Name("operation", "Operation"), Default("union")),
+    };
+}

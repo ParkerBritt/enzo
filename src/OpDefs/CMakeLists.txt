@@ -5,6 +5,8 @@ project(enzoOps1)
 find_package(Boost REQUIRED)
 # eigen (math)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+# manifold (boolean ops)
+find_package(manifold CONFIG REQUIRED)
 
 set(libName enzoOps1)
 add_library(${libName} SHARED
@@ -23,6 +25,7 @@ add_library(${libName} SHARED
     ../Engine/Operator/SelectionComponent.cpp
     ../Engine/Operator/IndexSet.cpp
     ../Engine/Utils/MeshUtils.cpp
+    ../Engine/Utils/BooleanUtils.cpp
     ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp
@@ -44,8 +47,10 @@ add_library(${libName} SHARED
     GopCamera.cpp
     GopDelete.cpp
     GopExtrude.cpp
+    GopCube.cpp
+    GopBoolean.cpp
 )
-target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb)
+target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold)
 
 # packaging
 install(TARGETS ${libName}
