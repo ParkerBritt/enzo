@@ -40,7 +40,7 @@ public:
     PrimType getType() const override { return PrimType::MESH; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Mesh>(*this); }
     TransformClass transformType() const override { return TransformClass::POINT | TransformClass::PRIMITIVE; }
-    void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) override;
+    void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass = TransformClass::POINT) override;
     bool canMerge() const override { return true; }
     void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }

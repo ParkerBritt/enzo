@@ -105,8 +105,8 @@ TEST_CASE("Delete face adds points to solo") {
     // Test no points are solo (the face references all of them)
     REQUIRE(mesh.getNumSoloPoints() == 0);
 
-    // Delete the face
-    mesh.deleteFaces({0});
+    // Delete the face but keep the points alive
+    mesh.deleteFaces({0}, false);
 
     // Test all three points became solo (no face references them now)
     REQUIRE(mesh.getNumSoloPoints() == 3);
