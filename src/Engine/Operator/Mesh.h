@@ -122,6 +122,42 @@ public:
     ga::Offset getNumVerts() const { return getElementCount(ga::AttributeOwner::VERTEX); }
     ga::Offset getNumSoloPoints() const;
 
+    // Face Iterator
+    struct FaceOffsets {
+        FaceOffsets(const Mesh& mesh) : mesh_(mesh) {}
+        struct Iterator {
+            using iterator_category = std::forward_iterator_tag;
+            using difference_type = std::ptrdiff_t;
+            using value_type = ga::Offset;
+
+            explicit Iterator(ga::Offset current) : curOffset_(current) {}
+            value_type operator*() const { return curOffset_; }
+            Iterator& operator++() { ++curOffset_; return *this; }
+            Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+            friend bool operator==(const Iterator& a, const Iterator& b) { return a.curOffset_ == b.curOffset_; }
+            friend bool operator!=(const Iterator& a, const Iterator& b) { return a.curOffset_ != b.curOffset_; }
+
+          private:
+            ga::Offset curOffset_ = 0;
+        };
+        Iterator begin() const { return Iterator(0); }
+        Iterator end() const { return Iterator(mesh_.getNumFaces()); }
+
+        /// @brief Collects the face offsets into a vector for callers that need one.
+        std::vector<ga::Offset> toVector() const
+        {
+            std::vector<ga::Offset> offsets;
+            offsets.reserve(mesh_.getNumFaces());
+            for(const ga::Offset faceOffset : *this) offsets.push_back(faceOffset);
+            return offsets;
+        }
+
+      private:
+        const Mesh& mesh_;
+    };
+    // TODO walk only valid faces like Primitive::PointOffsets once deletion settles. For now it is dense.
+    FaceOffsets getFaces() const { return FaceOffsets(*this); }
+
     /// @brief Creates a vertex group.
     /// @return Handle to the new group.
     ga::AttributeHandleBool createVertexGroup(std::string name) {

@@ -10,6 +10,7 @@
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Types.h"
+#include "Engine/Utils/MeshUtils.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
@@ -139,7 +140,8 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
 
-        // create triangle fan from potentially ngon inputs
+        // Open faces draw as polylines, closed faces fill and get a wireframe outline.
+        std::vector<enzo::ga::Offset> fillFaceOffsets;
         for(enzo::ga::Offset faceOffset=0; faceOffset<geometry->getNumFaces(); ++faceOffset)
         {
             int faceVertexCount = geometry->getFaceVertCount(faceOffset);
@@ -156,13 +158,7 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
             }
             else if(faceVertexCount>=3)
             {
-                for(size_t i=1; i<faceVertexCount-1; ++i)
-                {
-                    faceIndexData.push_back(startVert);
-                    faceIndexData.push_back(startVert+i);
-                    faceIndexData.push_back(startVert+i+1);
-
-                }
+                fillFaceOffsets.push_back(faceOffset);
 
                 // polygon perimeter edges, for wireframe overlay
                 for(size_t i=0; i<faceVertexCount; ++i)
@@ -172,6 +168,15 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
                 }
             }
 
+        }
+
+        // Ear clip the fillable faces so concave boolean output tessellates right.
+        // The util returns mesh local offsets, so shift them into this prim's block.
+        for(const std::array<enzo::ga::Offset, 3>& tri : enzo::utils::earClipTriangleIndices(*geometry, fillFaceOffsets))
+        {
+            faceIndexData.push_back(vertOffset + tri[0]);
+            faceIndexData.push_back(vertOffset + tri[1]);
+            faceIndexData.push_back(vertOffset + tri[2]);
         }
 
         vertOffset += geometry->getNumVerts();

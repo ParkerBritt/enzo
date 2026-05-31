@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Types.h"
+#include <array>
 #include <memory>
 #include <span>
 #include <vector>
@@ -38,5 +39,30 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src);
  */
 bt::Vector3 polygonNormal(std::span<const bt::Vector3> positions,
                           std::span<const bt::intT> polygonPoints);
+
+
+/**
+ * @brief Ear clip triangulates every face of @p mesh into triangle indices.
+ *
+ * Faces are clipped one at a time so concave faces tessellate correctly. Faces
+ * with fewer than three corners contribute nothing.
+ *
+ * @param mesh Mesh whose faces are triangulated.
+ * @return Triangles as triples of the mesh's vertex offsets, grouped by face.
+ */
+std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh);
+
+/**
+ * @brief Ear clip triangulates the given faces of @p mesh into triangle indices.
+ *
+ * Use this to triangulate a subset of faces. Faces with fewer than three
+ * corners contribute nothing.
+ *
+ * @param mesh Mesh the faces belong to.
+ * @param faceOffsets Offsets of the faces to triangulate.
+ * @return Triangles as triples of the mesh's vertex offsets, grouped by face.
+ */
+std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
+                                                              std::span<const ga::Offset> faceOffsets);
 
 } // namespace enzo::utils
