@@ -57,7 +57,7 @@ std::vector<enzo::prm::Template> GopCube::parameterList()
     return {
         Template(Type::XYZ, Name("size", "Size"), Default(1), 3, Range(0, 100)),
         Template(Type::XYZ, Name("center", "Center"), Default(0), 3),
-        Template(Type::XYZ, Name("rotate", "Rotation"), Default(0), 3),
+        Template(Type::XYZ, Name("rotate", "Rotation"), Default(0), 3, Range(-360, 360)),
         Template(Type::FLOAT, Name("uniformScale", "Uniform Scale"), Default(1), 1, Range(0, 10)),
     };
 }
