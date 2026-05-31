@@ -40,6 +40,7 @@ set(ENGINE_SOURCES
     src/Engine/Operator/SelectionComponent.cpp
     src/Engine/Operator/IndexSet.cpp
     src/Engine/Utils/MeshUtils.cpp
+    src/Engine/Utils/MeshShapes.cpp
     src/Engine/Utils/BooleanUtils.cpp
     src/Engine/Util/UnionFind.cpp
 )
@@ -251,6 +252,7 @@ if(ENZO_BUILD_TESTS)
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp
         tests/MeshTests.cpp
+        tests/BooleanUtilsTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
