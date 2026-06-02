@@ -35,4 +35,4 @@ bool UnionFind::unite(std::size_t a, std::size_t b)
     return true;
 }
 
-} // namespace enzo::util
+} // namespace util

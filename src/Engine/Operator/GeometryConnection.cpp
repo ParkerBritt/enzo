@@ -3,17 +3,19 @@
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include <icecream.hpp>
 
-enzo::nt::GeometryConnection::GeometryConnection(enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex)
+namespace enzo {
+
+nt::GeometryConnection::GeometryConnection(nt::OpId inputOpId, unsigned int inputIndex, nt::OpId outputOpId, unsigned int outputIndex)
 :inputOperatorId_{inputOpId}, inputIndex_{inputIndex}, outputOperatorId_{outputOpId}, outputIndex_{outputIndex}
 {    
 }
 
-enzo::nt::OpId enzo::nt::GeometryConnection::getInputOpId() const {return inputOperatorId_; }
-enzo::nt::OpId enzo::nt::GeometryConnection::getOutputOpId() const {return outputOperatorId_; }
-unsigned int enzo::nt::GeometryConnection::getInputIndex() const {return inputIndex_; }
-unsigned int enzo::nt::GeometryConnection::getOutputIndex() const {return outputIndex_; }
+nt::OpId nt::GeometryConnection::getInputOpId() const {return inputOperatorId_; }
+nt::OpId nt::GeometryConnection::getOutputOpId() const {return outputOperatorId_; }
+unsigned int nt::GeometryConnection::getInputIndex() const {return inputIndex_; }
+unsigned int nt::GeometryConnection::getOutputIndex() const {return outputIndex_; }
 
-void enzo::nt::GeometryConnection::remove()
+void nt::GeometryConnection::remove()
 {
     NetworkManager& nm = nt::nm();
     std::cout << "removing connection " << this;
@@ -31,5 +33,4 @@ void enzo::nt::GeometryConnection::remove()
     IC();
 }
 
-
-
+} // namespace enzo

@@ -204,4 +204,4 @@ std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
     return earClipTriangleIndices(mesh, mesh.getFaces().toVector());
 }
 
-} // namespace enzo::utils
+} // namespace utils

@@ -4,7 +4,8 @@
 #include <stdexcept>
 #include <optional>
 
-using namespace enzo;
+namespace enzo {
+
 
 
 attr::Attribute::Attribute(std::string name, attr::AttributeType type, bool intrinsic, bool isPrivate)
@@ -123,3 +124,4 @@ std::string attr::Attribute::getName() const
     return name_;
 }
 
+} // namespace enzo

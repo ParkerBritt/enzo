@@ -11,9 +11,10 @@
 #include <stdexcept>
 #include "icecream.hpp"
 
-using namespace enzo;
+namespace enzo {
 
-std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex)
+
+std::weak_ptr<nt::GeometryConnection> nt::connectOperators(nt::OpId inputOpId, unsigned int inputIndex, nt::OpId outputOpId, unsigned int outputIndex)
 {
     auto& nm = nt::nm();
     auto updateLock = nm.lockUpdates();
@@ -40,7 +41,7 @@ std::weak_ptr<nt::GeometryConnection> enzo::nt::connectOperators(enzo::nt::OpId 
     return newConnection;
 }
 
-nt::GeometryOperator::GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo)
+nt::GeometryOperator::GeometryOperator(nt::OpId opId, op::OpInfo opInfo)
 : opId_{opId}, opInfo_{opInfo}, opDef_(opInfo.ctorFunc(&nt::nm(), opInfo))
 {
 
@@ -67,20 +68,20 @@ void nt::GeometryOperator::initParameters()
     for (const prm::Template& templateEntry : opInfo_.templates) visit(templateEntry);
 }
 
-void enzo::nt::GeometryOperator::dirtyNode(bool dirtyDescendents)
+void nt::GeometryOperator::dirtyNode(bool dirtyDescendents)
 {
     std::cout << "Dirtying op: " << opId_ << "\n";
     dirty_=true;
     nodeDirtied(opId_, dirtyDescendents);
 }
 
-bool enzo::nt::GeometryOperator::isDirty()
+bool nt::GeometryOperator::isDirty()
 {
     return dirty_;
 }
 
 
-void enzo::nt::GeometryOperator::cookOp(op::Context context)
+void nt::GeometryOperator::cookOp(op::Context context)
 {
     std::cout << "Cooking op: " << opId_ << "\n";
     if(dirty_)
@@ -90,7 +91,7 @@ void enzo::nt::GeometryOperator::cookOp(op::Context context)
     }
 }
 
-std::shared_ptr<const enzo::NodePacket> enzo::nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
+std::shared_ptr<const NodePacket> nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
 {
     return opDef_->getOutputPacket(outputIndex);
 }
@@ -188,7 +189,7 @@ std::vector<std::weak_ptr<prm::NodeParameter>> nt::GeometryOperator::getParamete
     return {parameters_.begin(), parameters_.end()};
 }
 
-const std::vector<enzo::prm::Template>& nt::GeometryOperator::getTemplates() const
+const std::vector<prm::Template>& nt::GeometryOperator::getTemplates() const
 {
     return opInfo_.templates;
 }
@@ -255,3 +256,5 @@ unsigned int nt::GeometryOperator::getMinInputs() const
 {
     return opDef_->getMinInputs();
 }
+
+} // namespace enzo

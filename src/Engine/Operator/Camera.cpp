@@ -1,6 +1,7 @@
 #include "Engine/Operator/Camera.h"
 
-using namespace enzo;
+namespace enzo {
+
 
 geo::Camera::Camera(std::string_view path)
     : transformHandle_{addMatrix4Attribute(attr::AttributeOwner::PRIMITIVE, "transform", true)},
@@ -37,3 +38,5 @@ void geo::Camera::applyTransform(const Matrix4 &mat, TransformClass transformCla
     if ((transformClass & TransformClass::PRIMITIVE) == TransformClass::NONE) return;
     setTransform(mat * getTransform());
 }
+
+} // namespace enzo
