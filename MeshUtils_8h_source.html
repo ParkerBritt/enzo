@@ -96,15 +96,39 @@ $(function(){ initResizable(false); });
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="Types_8h.html">Engine/Types.h</a>&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;span&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span>enzo::utils {</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>bt::Vector3 polygonNormal(std::span&lt;const bt::Vector3&gt; positions,</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>                          std::span&lt;const bt::intT&gt; polygonPoints);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>} <span class="comment">// namespace enzo::utils</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;span&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>enzo::geo { <span class="keyword">class </span>Mesh; }</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>enzo::utils {</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structenzo_1_1utils_1_1TriangulatedMesh.html">   15</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structenzo_1_1utils_1_1TriangulatedMesh.html">TriangulatedMesh</a></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    std::shared_ptr&lt;geo::Mesh&gt; mesh;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    std::vector&lt;ga::Offset&gt; faceToOriginal;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>};</div>
+</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><a class="code hl_struct" href="structenzo_1_1utils_1_1TriangulatedMesh.html">TriangulatedMesh</a> triangulateMesh(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1geo_1_1Mesh.html">geo::Mesh</a>&amp; src);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>bt::Vector3 polygonNormal(std::span&lt;const bt::Vector3&gt; positions,</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                          std::span&lt;const bt::intT&gt; polygonPoints);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>std::vector&lt;std::array&lt;ga::Offset, 3&gt;&gt; earClipTriangleIndices(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1geo_1_1Mesh.html">geo::Mesh</a>&amp; mesh);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>std::vector&lt;std::array&lt;ga::Offset, 3&gt;&gt; earClipTriangleIndices(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1geo_1_1Mesh.html">geo::Mesh</a>&amp; mesh,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                                                              std::span&lt;const ga::Offset&gt; faceOffsets);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>} <span class="comment">// namespace enzo::utils</span></div>
 <div class="ttc" id="aTypes_8h_html"><div class="ttname"><a href="Types_8h.html">Types.h</a></div><div class="ttdoc">Basic attribute, parameter, and node types for Enzo.</div></div>
+<div class="ttc" id="aclassenzo_1_1geo_1_1Mesh_html"><div class="ttname"><a href="classenzo_1_1geo_1_1Mesh.html">enzo::geo::Mesh</a></div><div class="ttdoc">Polygonal mesh primitive with point, vertex, and face attributes.</div></div>
+<div class="ttc" id="astructenzo_1_1utils_1_1TriangulatedMesh_html"><div class="ttname"><a href="structenzo_1_1utils_1_1TriangulatedMesh.html">enzo::utils::TriangulatedMesh</a></div><div class="ttdoc">A triangulated mesh paired with a mapping from each output triangle to its source face.</div><div class="ttdef"><b>Definition</b> MeshUtils.h:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

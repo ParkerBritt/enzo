@@ -92,6 +92,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
@@ -114,6 +115,11 @@ Inheritance diagram for enzo::geo::Mesh:</div>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structenzo_1_1geo_1_1Mesh_1_1FaceOffsets.html">FaceOffsets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae9efc141971f4cc56ea79ebe9c476108" id="r_ae9efc141971f4cc56ea79ebe9c476108"><td class="memItemLeft" align="right" valign="top"><a id="ae9efc141971f4cc56ea79ebe9c476108" name="ae9efc141971f4cc56ea79ebe9c476108"></a>
@@ -131,8 +137,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac216b94fafd2fae854e56b6131e368fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b5c45ad0e2133a389d71e592d448a10" id="r_a7b5c45ad0e2133a389d71e592d448a10"><td class="memItemLeft" align="right" valign="top">TransformClass&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b5c45ad0e2133a389d71e592d448a10">transformType</a> () const override</td></tr>
 <tr class="separator:a7b5c45ad0e2133a389d71e592d448a10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31093f22c1048d619dae5dbea754b139" id="r_a31093f22c1048d619dae5dbea754b139"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31093f22c1048d619dae5dbea754b139">applyTransform</a> (const bt::Matrix4 &amp;mat, TransformClass transformClass) override</td></tr>
-<tr class="separator:a31093f22c1048d619dae5dbea754b139"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2b545c2f49dd2702d1db1242e41e711" id="r_aa2b545c2f49dd2702d1db1242e41e711"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2b545c2f49dd2702d1db1242e41e711">applyTransform</a> (const bt::Matrix4 &amp;mat, TransformClass transformClass=TransformClass::POINT) override</td></tr>
+<tr class="separator:aa2b545c2f49dd2702d1db1242e41e711"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ae9f9b9ae2f45622ee7a4032ae0a310" id="r_a2ae9f9b9ae2f45622ee7a4032ae0a310"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ae9f9b9ae2f45622ee7a4032ae0a310">canMerge</a> () const override</td></tr>
 <tr class="separator:a2ae9f9b9ae2f45622ee7a4032ae0a310"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ed8062e0fd490529e13b90b4db56c68" id="r_a3ed8062e0fd490529e13b90b4db56c68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ed8062e0fd490529e13b90b4db56c68">merge</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt; other) override</td></tr>
@@ -224,6 +230,9 @@ std::span&lt; const bt::intT &gt;&#160;</td><td class="memItemRight" valign="bot
 <tr class="memitem:a2d0ed878c9107d43cc76551043d9de8d" id="r_a2d0ed878c9107d43cc76551043d9de8d"><td class="memItemLeft" align="right" valign="top"><a id="a2d0ed878c9107d43cc76551043d9de8d" name="a2d0ed878c9107d43cc76551043d9de8d"></a>
 <a class="el" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumSoloPoints</b> () const</td></tr>
 <tr class="separator:a2d0ed878c9107d43cc76551043d9de8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a425352ae0c7d097c7fd17aa509c21373" id="r_a425352ae0c7d097c7fd17aa509c21373"><td class="memItemLeft" align="right" valign="top"><a id="a425352ae0c7d097c7fd17aa509c21373" name="a425352ae0c7d097c7fd17aa509c21373"></a>
+<a class="el" href="structenzo_1_1geo_1_1Mesh_1_1FaceOffsets.html">FaceOffsets</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getFaces</b> () const</td></tr>
+<tr class="separator:a425352ae0c7d097c7fd17aa509c21373"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa759be98cf2ea2e1e296ad42b6066797" id="r_aa759be98cf2ea2e1e296ad42b6066797"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1ga_1_1AttributeHandle.html">ga::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa759be98cf2ea2e1e296ad42b6066797">createVertexGroup</a> (std::string name)</td></tr>
 <tr class="memdesc:aa759be98cf2ea2e1e296ad42b6066797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a vertex group.  <br /></td></tr>
 <tr class="separator:aa759be98cf2ea2e1e296ad42b6066797"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -474,8 +483,8 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
 
 </div>
 </div>
-<a id="a31093f22c1048d619dae5dbea754b139" name="a31093f22c1048d619dae5dbea754b139"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31093f22c1048d619dae5dbea754b139">&#9670;&#160;</a></span>applyTransform()</h2>
+<a id="aa2b545c2f49dd2702d1db1242e41e711" name="aa2b545c2f49dd2702d1db1242e41e711"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2b545c2f49dd2702d1db1242e41e711">&#9670;&#160;</a></span>applyTransform()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -491,7 +500,7 @@ ga::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primitive
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TransformClass</td>          <td class="paramname"><span class="paramname"><em>transformClass</em></span>&#160;)</td>
+          <td class="paramtype">TransformClass</td>          <td class="paramname"><span class="paramname"><em>transformClass</em></span><span class="paramdefsep"> = </span><span class="paramdefval">TransformClass::POINT</span>&#160;)</td>
         </tr>
       </table>
   </td>

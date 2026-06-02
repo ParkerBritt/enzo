@@ -120,6 +120,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6c2dcbb16f44219223e0c71761d8b7f3" id="r_a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c2dcbb16f44219223e0c71761d8b7f3">throwError</a> (std::string error)</td></tr>
 <tr class="memdesc:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
 <tr class="separator:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd6d87f16d1dfd29e71940688b551ccb" id="r_abd6d87f16d1dfd29e71940688b551ccb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd6d87f16d1dfd29e71940688b551ccb">throwWarning</a> (std::string warning)</td></tr>
+<tr class="memdesc:abd6d87f16d1dfd29e71940688b551ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
+<tr class="separator:abd6d87f16d1dfd29e71940688b551ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e63dbecac46ec2b2353d981f23babe2" id="r_a0e63dbecac46ec2b2353d981f23babe2"><td class="memItemLeft" align="right" valign="top"><a id="a0e63dbecac46ec2b2353d981f23babe2" name="a0e63dbecac46ec2b2353d981f23babe2"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMinInputs</b> () const</td></tr>
 <tr class="memdesc:a0e63dbecac46ec2b2353d981f23babe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum number of input connections required for the node to function. Set by <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> when registering the operator. <br /></td></tr>
@@ -223,6 +226,26 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 
 <p>Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
+
+</div>
+</div>
+<a id="abd6d87f16d1dfd29e71940688b551ccb" name="abd6d87f16d1dfd29e71940688b551ccb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd6d87f16d1dfd29e71940688b551ccb">&#9670;&#160;</a></span>throwWarning()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::GeometryOpDef::throwWarning </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>warning</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
 
 </div>
 </div>
