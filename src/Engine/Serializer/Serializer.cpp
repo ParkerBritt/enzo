@@ -1,9 +1,9 @@
-#include "Serializer.h"
+#include "Engine/Serializer/Serializer.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/OperatorTable.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
 #include "Engine/Parameter/NodeParameter.h"
-#include "NetworkSerializable.h"
+#include "Engine/Serializer/NetworkSerializable.h"
 #include "cereal/details/helpers.hpp"
 #include <iostream>
 #include <cereal/archives/json.hpp>
