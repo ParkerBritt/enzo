@@ -1,23 +1,27 @@
 #include "Engine/Parameter/PrmName.h"
 
-enzo::prm::Name::Name(String token, String label)
+namespace enzo {
+
+prm::Name::Name(String token, String label)
 : token_{token}, label_{label}
 {
 
 }
 
-enzo::prm::Name::Name()
+prm::Name::Name()
 : token_{""}, label_{""}
 {
 
 }
 
-enzo::String enzo::prm::Name::getToken() const
+String prm::Name::getToken() const
 {
     return token_;
 }
 
-enzo::String enzo::prm::Name::getLabel() const
+String prm::Name::getLabel() const
 {
     return label_;
 }
+
+} // namespace enzo

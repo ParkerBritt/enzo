@@ -2,22 +2,24 @@
 #include <cstddef>
 #include <stdexcept>
 
+namespace enzo {
+
 // ---
 // Transforms::Iterator
 // ---
 
-enzo::NodePacket::Transforms::Iterator::Iterator(
+NodePacket::Transforms::Iterator::Iterator(
     std::vector<std::shared_ptr<geo::Primitive>> &primitives, TransformClass transformClass,
     size_t primIdx)
     : primitives_(primitives), transformClass_(transformClass), primIdx_(primIdx) {
     advance();
 }
 
-enzo::Transform enzo::NodePacket::Transforms::Iterator::operator*() const {
-    return enzo::Transform(*curAttrib_, offset_);
+Transform NodePacket::Transforms::Iterator::operator*() const {
+    return Transform(*curAttrib_, offset_);
 }
 
-enzo::NodePacket::Transforms::Iterator &enzo::NodePacket::Transforms::Iterator::operator++() {
+NodePacket::Transforms::Iterator &NodePacket::Transforms::Iterator::operator++() {
     ++offset_;
     if (offset_ >= curSize_) {
         ++primIdx_;
@@ -27,13 +29,13 @@ enzo::NodePacket::Transforms::Iterator &enzo::NodePacket::Transforms::Iterator::
     return *this;
 }
 
-enzo::NodePacket::Transforms::Iterator enzo::NodePacket::Transforms::Iterator::operator++(int) {
+NodePacket::Transforms::Iterator NodePacket::Transforms::Iterator::operator++(int) {
     Iterator tmp = *this;
     ++(*this);
     return tmp;
 }
 
-void enzo::NodePacket::Transforms::Iterator::advance() {
+void NodePacket::Transforms::Iterator::advance() {
     curAttrib_ = nullptr;
     curSize_ = 0;
     while (primIdx_ < primitives_.size()) {
@@ -70,11 +72,11 @@ void enzo::NodePacket::Transforms::Iterator::advance() {
 // NodePacket
 // ---
 
-void enzo::NodePacket::addPrimitive(std::shared_ptr<enzo::geo::Primitive> primitive) {
+void NodePacket::addPrimitive(std::shared_ptr<geo::Primitive> primitive) {
     primitives_.push_back(std::move(primitive));
 }
 
-void enzo::NodePacket::attemptMerge(std::shared_ptr<geo::Primitive> newPrim) {
+void NodePacket::attemptMerge(std::shared_ptr<geo::Primitive> newPrim) {
     if (newPrim->canMerge()) {
         auto existing = getPrimAtPath(newPrim->getPath());
         if (existing) {
@@ -87,20 +89,20 @@ void enzo::NodePacket::attemptMerge(std::shared_ptr<geo::Primitive> newPrim) {
     addPrimitive(newPrim);
 }
 
-std::shared_ptr<enzo::geo::Primitive> enzo::NodePacket::getPrimitive(unsigned int index) {
+std::shared_ptr<geo::Primitive> NodePacket::getPrimitive(unsigned int index) {
     if (index >= primitives_.size())
         throw std::out_of_range("NodePacket::getPrimitive index out of range");
     return primitives_.at(index);
 }
 
-std::shared_ptr<const enzo::geo::Primitive>
-enzo::NodePacket::getPrimitive(unsigned int index) const {
+std::shared_ptr<const geo::Primitive>
+NodePacket::getPrimitive(unsigned int index) const {
     if (index >= primitives_.size())
         throw std::out_of_range("NodePacket::getPrimitive index out of range");
     return primitives_.at(index);
 }
 
-std::shared_ptr<enzo::geo::Primitive> enzo::NodePacket::getPrimAtPath(const std::string &path) {
+std::shared_ptr<geo::Primitive> NodePacket::getPrimAtPath(const std::string &path) {
     for (auto &prim : primitives_) {
         if (prim->getPath() == path)
             return prim;
@@ -108,8 +110,8 @@ std::shared_ptr<enzo::geo::Primitive> enzo::NodePacket::getPrimAtPath(const std:
     return nullptr;
 }
 
-std::shared_ptr<const enzo::geo::Primitive>
-enzo::NodePacket::getPrimAtPath(const std::string &path) const {
+std::shared_ptr<const geo::Primitive>
+NodePacket::getPrimAtPath(const std::string &path) const {
     for (const auto &prim : primitives_) {
         if (prim->getPath() == path)
             return prim;
@@ -117,9 +119,9 @@ enzo::NodePacket::getPrimAtPath(const std::string &path) const {
     return nullptr;
 }
 
-std::vector<std::shared_ptr<enzo::geo::Primitive>>
-enzo::NodePacket::getPrimitives(enzo::geo::PrimType type) const {
-    std::vector<std::shared_ptr<enzo::geo::Primitive>> out;
+std::vector<std::shared_ptr<geo::Primitive>>
+NodePacket::getPrimitives(geo::PrimType type) const {
+    std::vector<std::shared_ptr<geo::Primitive>> out;
     for (const auto &prim : primitives_) {
         if (prim->getType() == type)
             out.push_back(prim);
@@ -127,9 +129,9 @@ enzo::NodePacket::getPrimitives(enzo::geo::PrimType type) const {
     return out;
 }
 
-size_t enzo::NodePacket::size() const { return primitives_.size(); }
+size_t NodePacket::size() const { return primitives_.size(); }
 
-enzo::NodePacket enzo::NodePacket::deepCopy() const {
+NodePacket NodePacket::deepCopy() const {
     NodePacket copy;
     for (const auto &prim : primitives_)
         copy.addPrimitive(prim->clone());
@@ -137,7 +139,7 @@ enzo::NodePacket enzo::NodePacket::deepCopy() const {
 }
 
 // TODO: remplace with PrimPath
-void enzo::NodePacket::removePrim(std::string path) {
+void NodePacket::removePrim(std::string path) {
     for (auto it = primitives_.begin(); it != primitives_.end(); it++) {
         if ((*it)->getPath() == path) {
             primitives_.erase(it);
@@ -145,3 +147,5 @@ void enzo::NodePacket::removePrim(std::string path) {
         }
     }
 }
+
+} // namespace enzo

@@ -10,7 +10,9 @@
 #include <iostream>
 #include <stdexcept>
 
-void enzo::op::OperatorTable::addOperator(enzo::op::OpInfo info)
+namespace enzo {
+
+void op::OperatorTable::addOperator(op::OpInfo info)
 {
     std::cout << "OPERATOR TABLE ADDED\n";
     std::cout << "adding operator: " << info.displayName << "\n";
@@ -23,7 +25,7 @@ void enzo::op::OperatorTable::addOperator(enzo::op::OpInfo info)
     opInfoStore_.push_back(info);
 }
 
-enzo::nt::opConstructor enzo::op::OperatorTable::getOpConstructor(std::string name)
+nt::opConstructor op::OperatorTable::getOpConstructor(std::string name)
 {
     for(auto it = opInfoStore_.begin(); it!=opInfoStore_.end(); ++it)
     {
@@ -35,7 +37,7 @@ enzo::nt::opConstructor enzo::op::OperatorTable::getOpConstructor(std::string na
     return nullptr;
 }
 
-const std::optional<enzo::op::OpInfo> enzo::op::OperatorTable::getOpInfo(std::string name)
+const std::optional<op::OpInfo> op::OperatorTable::getOpInfo(std::string name)
 {
     for(auto it = opInfoStore_.begin(); it!=opInfoStore_.end(); ++it)
     {
@@ -47,12 +49,12 @@ const std::optional<enzo::op::OpInfo> enzo::op::OperatorTable::getOpInfo(std::st
     return std::nullopt;
 }
 
-std::vector<enzo::op::OpInfo> enzo::op::OperatorTable::getData()
+std::vector<op::OpInfo> op::OperatorTable::getData()
 {
     return opInfoStore_;
 }
 
-boost::filesystem::path enzo::op::OperatorTable::findPlugin(const std::string& undecoratedLibName)
+boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecoratedLibName)
 {
 
     const auto libName = boost::dll::shared_library::decorate(undecoratedLibName);
@@ -95,20 +97,22 @@ boost::filesystem::path enzo::op::OperatorTable::findPlugin(const std::string& u
 }
 
 
-void enzo::op::OperatorTable::initPlugins()
+void op::OperatorTable::initPlugins()
 {
     static bool pluginsLoaded=false;
     if(pluginsLoaded) return;
 
-    using InitPluginFn = void(enzo::op::addOperatorPtr);
+    using InitPluginFn = void(op::addOperatorPtr);
 
     const auto so = findPlugin("enzoOps1");
     static boost::dll::shared_library lib(so, boost::dll::load_mode::default_mode);
 
     auto initPlugin = lib.get<InitPluginFn>("newSopOperator");
-    initPlugin(enzo::op::OperatorTable::addOperator);
+    initPlugin(op::OperatorTable::addOperator);
 
     pluginsLoaded = true;
 }
 
-std::vector<enzo::op::OpInfo> enzo::op::OperatorTable::opInfoStore_;
+std::vector<op::OpInfo> op::OperatorTable::opInfoStore_;
+
+} // namespace enzo

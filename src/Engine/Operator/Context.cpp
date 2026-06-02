@@ -8,20 +8,22 @@
 #include <stdexcept>
 #include <icecream.hpp>
 
+namespace enzo {
 
-enzo::op::Context::Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager)
+
+op::Context::Context(nt::OpId opId, nt::NetworkManager& networkManager)
 : opId_{opId}, networkManager_(networkManager)
 {
 
 }
 
-enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
+NodePacket op::Context::cloneInputPacket(unsigned int inputIndex)
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
     if(!inputConnection)
     {
-        return enzo::NodePacket();
+        return NodePacket();
     }
     const nt::OpId opId = inputConnection->getInputOpId();
     const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
@@ -29,16 +31,16 @@ enzo::NodePacket enzo::op::Context::cloneInputPacket(unsigned int inputIndex)
     return geoOp.getOutputPacket(inputConnection->getInputIndex())->deepCopy();
 }
 
-bool enzo::op::Context::hasInput(unsigned int inputIndex)
+bool op::Context::hasInput(unsigned int inputIndex)
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     return !selfOp.getInputConnection(inputIndex).expired();
 }
 
 // TODO: cache value
-enzo::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
+floatT op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
@@ -52,9 +54,9 @@ enzo::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const u
 }
 
 // TODO: cache value
-enzo::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
+intT op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
@@ -68,9 +70,9 @@ enzo::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsig
 }
 
 // TODO: cache value
-enzo::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
+boolT op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
@@ -84,9 +86,9 @@ enzo::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const uns
 }
 
 // TODO: cache value
-enzo::String enzo::op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
+String op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
 {
-    enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
     if(auto sharedParm = parameter.lock())
@@ -98,3 +100,5 @@ enzo::String enzo::op::Context::evalStringParm(std::string_view parmName, const 
         throw std::runtime_error(parmName + " parameter does not exist.");
     }
 }
+
+} // namespace enzo

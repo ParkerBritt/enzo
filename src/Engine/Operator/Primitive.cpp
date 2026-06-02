@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-using namespace enzo;
+namespace enzo {
+
 
 geo::Primitive::Primitive(std::string_view path) : path_(path) {}
 
@@ -17,7 +18,7 @@ geo::Primitive::Primitive(const Primitive &other)
       primitiveGroups_{deepCopyAttributes(other.primitiveGroups_)},
       path_{other.path_} {}
 
-enzo::geo::Primitive &enzo::geo::Primitive::operator=(const enzo::geo::Primitive &rhs) {
+geo::Primitive &geo::Primitive::operator=(const geo::Primitive &rhs) {
     if (this == &rhs)
         return *this;
 
@@ -238,3 +239,5 @@ attr::attribVector geo::Primitive::deepCopyAttributes(attr::attribVector origina
 
     return copied;
 }
+
+} // namespace enzo

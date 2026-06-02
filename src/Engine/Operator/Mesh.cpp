@@ -14,7 +14,8 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include "icecream.hpp"
 
-using namespace enzo;
+namespace enzo {
+
 
 geo::Mesh::Mesh(std::string_view path) :
     vertexCountFaceHandle_{addIntAttribute(attr::AttrOwner::FACE, "vertexCount", true)},
@@ -38,13 +39,13 @@ geo::Mesh::Mesh(const Mesh& other):
     faceGroups_{deepCopyAttributes(other.faceGroups_)},
 
     // handles
-    vertexCountFaceHandle_{enzo::attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true))},
-    closedFaceHandle_{enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true))},
-    pointOffsetVertexHandle_{enzo::attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true))},
-    posPointHandle_{enzo::attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true))},
-    validFaceHandle_{enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true))},
-    validVertexHandle_{enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true))},
-    validPointHandle_{enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true))},
+    vertexCountFaceHandle_{attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true))},
+    closedFaceHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true))},
+    pointOffsetVertexHandle_{attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true))},
+    posPointHandle_{attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true))},
+    validFaceHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true))},
+    validVertexHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true))},
+    validPointHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true))},
 
     // other
     soloPoints_{other.soloPoints_},
@@ -56,7 +57,7 @@ geo::Mesh::Mesh(const Mesh& other):
 {
 }
 
-enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
+geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs) {
     if (this == &rhs) return *this;
 
     Primitive::operator=(rhs);
@@ -70,13 +71,13 @@ enzo::geo::Mesh& enzo::geo::Mesh::operator=(const enzo::geo::Mesh& rhs) {
     faceGroups_           = deepCopyAttributes(rhs.faceGroups_);
 
     // handles
-    vertexCountFaceHandle_ = enzo::attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true));
-    closedFaceHandle_ = enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true));
-    pointOffsetVertexHandle_ = enzo::attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true));
-    posPointHandle_ = enzo::attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true));
-    validFaceHandle_ = enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true));
-    validVertexHandle_ = enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true));
-    validPointHandle_ = enzo::attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true));
+    vertexCountFaceHandle_ = attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true));
+    closedFaceHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true));
+    pointOffsetVertexHandle_ = attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true));
+    posPointHandle_ = attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true));
+    validFaceHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true));
+    validVertexHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true));
+    validPointHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true));
 
     // other
     soloPoints_           = rhs.soloPoints_;
@@ -634,20 +635,20 @@ unsigned int geo::Mesh::getFacePointCount(Offset faceOffset) const
     return getFaceVertCount(faceOffset);
 }
 
-enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
+geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 {
     HeMesh heMesh;
 
-    std::shared_ptr<enzo::attr::Attribute> PAttr = getAttribByName(enzo::attr::AttrOwner::POINT, "P");
-    enzo::attr::AttributeHandleVector3 PAttrHandle = enzo::attr::AttributeHandleVector3(PAttr);
+    std::shared_ptr<attr::Attribute> PAttr = getAttribByName(attr::AttrOwner::POINT, "P");
+    attr::AttributeHandleVector3 PAttrHandle = attr::AttributeHandleVector3(PAttr);
     auto pointPositions = PAttrHandle.getAllValues();
 
-    std::shared_ptr<enzo::attr::Attribute> pointAttr = getAttribByName(enzo::attr::AttrOwner::VERTEX, "point");
-    enzo::attr::AttributeHandleInt pointAttrHandle = enzo::attr::AttributeHandleInt(pointAttr);
+    std::shared_ptr<attr::Attribute> pointAttr = getAttribByName(attr::AttrOwner::VERTEX, "point");
+    attr::AttributeHandleInt pointAttrHandle = attr::AttributeHandleInt(pointAttr);
     auto vertexPointIndices = pointAttrHandle.getAllValues();
 
-    std::shared_ptr<enzo::attr::Attribute> vertexCountAttr = getAttribByName(enzo::attr::AttrOwner::FACE, "vertexCount");
-    enzo::attr::AttributeHandleInt vertexCountHandle = enzo::attr::AttributeHandleInt(vertexCountAttr);
+    std::shared_ptr<attr::Attribute> vertexCountAttr = getAttribByName(attr::AttrOwner::FACE, "vertexCount");
+    attr::AttributeHandleInt vertexCountHandle = attr::AttributeHandleInt(vertexCountAttr);
     auto vertexCounts = vertexCountHandle.getAllValues();
 
     int vertexIndex = 0;
@@ -658,7 +659,7 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 
     for(auto pointPos : pointPositions)
     {
-        enzo::geo::vertexDescriptor point = heMesh.add_vertex(geo::Point(pointPos.x(), pointPos.y(), pointPos.z()));
+        geo::vertexDescriptor point = heMesh.add_vertex(geo::Point(pointPos.x(), pointPos.y(), pointPos.z()));
         createdPoints.push_back(point);
     }
 
@@ -699,7 +700,7 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 
         auto face = heMesh.add_face(facePoints);
         if (face != HeMesh::null_face()) {
-            // validFaceIndices.push_back(enzo::geo::F_index(faceIndx));
+            // validFaceIndices.push_back(geo::F_index(faceIndx));
         } else {
             // throw std::runtime_error("Warning: Face creation failed at primitive " + std::to_string(faceIndx));
         }
@@ -850,3 +851,5 @@ geo::VertexNormalHandle geo::Mesh::getVertexNormal(bool precompute) const
 {
     return VertexNormalHandle(*this, precompute);
 }
+
+} // namespace enzo

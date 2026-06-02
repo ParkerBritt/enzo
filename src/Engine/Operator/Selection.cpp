@@ -4,7 +4,9 @@
 #include <icecream.hpp>
 #include <sstream>
 
-enzo::Selection::Selection(std::string expression) {
+namespace enzo {
+
+Selection::Selection(std::string expression) {
     char delimeter = ',';
     std::stringstream expressionString(expression);
     std::string stringPart;
@@ -31,9 +33,9 @@ enzo::Selection::Selection(std::string expression) {
     // }
 }
 
-std::vector<std::shared_ptr<enzo::geo::Primitive>>
-enzo::Selection::getPrims(const NodePacket &packet) {
-    std::vector<std::shared_ptr<enzo::geo::Primitive>> prims;
+std::vector<std::shared_ptr<geo::Primitive>>
+Selection::getPrims(const NodePacket &packet) {
+    std::vector<std::shared_ptr<geo::Primitive>> prims;
 
     for (auto prim : packet.getPrimitives()) {
         if (containsPrim(prim)) {
@@ -44,7 +46,7 @@ enzo::Selection::getPrims(const NodePacket &packet) {
     return prims;
 }
 
-bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
+bool Selection::containsPrim(geo::PrimPtr prim, bool full) {
     if (inverted_) {
         // Inverted: a prim is fully contained only if no component mentions it;
         // partially contained if no component selects it as a whole prim.
@@ -62,7 +64,7 @@ bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
     return false;
 }
 
-bool enzo::Selection::containsFace(geo::PrimPtr prim, Index index, Offset offset) {
+bool Selection::containsFace(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -80,7 +82,7 @@ bool enzo::Selection::containsFace(geo::PrimPtr prim, Index index, Offset offset
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
+std::vector<Offset> Selection::getFaces(geo::PrimPtr prim) {
     std::vector<Offset> result;
 
     // Ensure prim is a mesh
@@ -100,7 +102,7 @@ std::vector<enzo::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsPoint(geo::PrimPtr prim, Index index, Offset offset) {
+bool Selection::containsPoint(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -114,7 +116,7 @@ bool enzo::Selection::containsPoint(geo::PrimPtr prim, Index index, Offset offse
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
+std::vector<Offset> Selection::getPoints(geo::PrimPtr prim) {
     std::vector<Offset> result;
     if (!prim) return result;
 
@@ -129,7 +131,7 @@ std::vector<enzo::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsVertex(geo::PrimPtr prim, Index index, Offset offset) {
+bool Selection::containsVertex(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -143,7 +145,7 @@ bool enzo::Selection::containsVertex(geo::PrimPtr prim, Index index, Offset offs
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
+std::vector<Offset> Selection::getVertices(geo::PrimPtr prim) {
     std::vector<Offset> result;
 
     // Ensure prim is a mesh
@@ -162,3 +164,5 @@ std::vector<enzo::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
     }
     return result;
 }
+
+} // namespace enzo

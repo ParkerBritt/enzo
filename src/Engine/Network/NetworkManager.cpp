@@ -17,7 +17,9 @@
 #include <string>
 #include "icecream.hpp"
 
-enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position)
+namespace enzo {
+
+nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position)
 {
 
     OpId opId = ++maxOpId_;
@@ -42,7 +44,7 @@ enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, Vecto
 }
 
 
-void enzo::nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
+void nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
 {
     Vector2f oldPos = getGeoOperator(opId).getPosition();
     getGeoOperator(opId).setPosition(newPos);
@@ -56,7 +58,7 @@ void enzo::nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUnd
     nodePositionChanged(opId, newPos);
 }
 
-void enzo::nt::NetworkManager::deleteNode(OpId opId)
+void nt::NetworkManager::deleteNode(OpId opId)
 {
     if(!isValidOp(opId)) return;
 
@@ -66,7 +68,7 @@ void enzo::nt::NetworkManager::deleteNode(OpId opId)
     removeOperator(opId);
 }
 
-void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
+void nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
 {
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
     newOp->nodeDirtied.connect(
@@ -81,7 +83,7 @@ void enzo::nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
     operatorCreated(opId);
 }
 
-void enzo::nt::NetworkManager::removeOperator(OpId opId)
+void nt::NetworkManager::removeOperator(OpId opId)
 {
     if(!isValidOp(opId)) return;
 
@@ -131,13 +133,13 @@ void enzo::nt::NetworkManager::removeOperator(OpId opId)
     gopStore_.erase(opId);
 }
 
-enzo::nt::NetworkManager& enzo::nt::NetworkManager::getInstance()
+nt::NetworkManager& nt::NetworkManager::getInstance()
 {
-    static enzo::nt::NetworkManager instance;
+    static nt::NetworkManager instance;
     return instance;
 }
 
-enzo::nt::GeometryOperator& enzo::nt::NetworkManager::getGeoOperator(nt::OpId opId)
+nt::GeometryOperator& nt::NetworkManager::getGeoOperator(nt::OpId opId)
 {
     auto it = gopStore_.find(opId);
     if(it == gopStore_.end())
@@ -147,7 +149,7 @@ enzo::nt::GeometryOperator& enzo::nt::NetworkManager::getGeoOperator(nt::OpId op
     return *it->second;
 }
 
-bool enzo::nt::NetworkManager::isValidOp(nt::OpId opId)
+bool nt::NetworkManager::isValidOp(nt::OpId opId)
 {
     auto it = gopStore_.find(opId);
     if( it == gopStore_.end() || it->second==nullptr )
@@ -157,25 +159,25 @@ bool enzo::nt::NetworkManager::isValidOp(nt::OpId opId)
     return true;
 }
 
-void enzo::nt::NetworkManager::setDisplayOp(OpId opId)
+void nt::NetworkManager::setDisplayOp(OpId opId)
 {
     displayOp_=opId;
 
     cookOp(opId);
 
-    enzo::nt::GeometryOperator& displayOp = getGeoOperator(opId);
+    nt::GeometryOperator& displayOp = getGeoOperator(opId);
     displayGeoChanged(displayOp.getOutputPacket(0));
     displayNodeChanged(opId);
 }
 
-void enzo::nt::NetworkManager::clearDisplayFlag()
+void nt::NetworkManager::clearDisplayFlag()
 {
     displayOp_.reset();
-    displayGeoChanged(std::make_shared<const enzo::NodePacket>());
+    displayGeoChanged(std::make_shared<const NodePacket>());
     displayNodeChanged(std::nullopt);
 }
 
-void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
+void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
 {
     if(add)
     {
@@ -211,12 +213,12 @@ void enzo::nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool ad
 
 }
 
-enzo::nt::UpdateLock enzo::nt::NetworkManager::lockUpdates()
+nt::UpdateLock nt::NetworkManager::lockUpdates()
 {
     return UpdateLock();
 }
 
-void enzo::nt::NetworkManager::update()
+void nt::NetworkManager::update()
 {
     // cook display op
     if(getDisplayOp().has_value())
@@ -239,12 +241,12 @@ void enzo::nt::NetworkManager::update()
 }
 
 
-const std::vector<enzo::nt::OpId>& enzo::nt::NetworkManager::getSelectedNodes()
+const std::vector<nt::OpId>& nt::NetworkManager::getSelectedNodes()
 {
     return selectedNodes_;
 }
 
-void enzo::nt::NetworkManager::setSelectedNodes(std::vector<enzo::nt::OpId> opIds)
+void nt::NetworkManager::setSelectedNodes(std::vector<nt::OpId> opIds)
 {
     selectedNodes_.clear();
     for(OpId opId : opIds)
@@ -258,7 +260,7 @@ void enzo::nt::NetworkManager::setSelectedNodes(std::vector<enzo::nt::OpId> opId
     selectedNodesChanged(selectedNodes_);
 }
 
-void enzo::nt::NetworkManager::clear()
+void nt::NetworkManager::clear()
 {
     gopStore_.clear();
     selectedNodes_.clear();
@@ -269,31 +271,31 @@ void enzo::nt::NetworkManager::clear()
     networkCleared();
 }
 
-void enzo::nt::NetworkManager::cookOp(enzo::nt::OpId opId)
+void nt::NetworkManager::cookOp(nt::OpId opId)
 {
-    std::vector<enzo::nt::OpId> dependencyGraph = getDependencyGraph(opId);
+    std::vector<nt::OpId> dependencyGraph = getDependencyGraph(opId);
 
-    for(enzo::nt::OpId dependencyOpId : dependencyGraph)
+    for(nt::OpId dependencyOpId : dependencyGraph)
     {
-        enzo::nt::GeometryOperator& op = getGeoOperator(dependencyOpId);
+        nt::GeometryOperator& op = getGeoOperator(dependencyOpId);
         if(op.isDirty())
         {
-            enzo::op::Context context(dependencyOpId, enzo::nt::nm());
+            op::Context context(dependencyOpId, nt::nm());
             op.cookOp(context);
         }
     }
 }
 
-std::vector<enzo::nt::OpId> enzo::nt::NetworkManager::getDependencyGraph(enzo::nt::OpId opId)
+std::vector<nt::OpId> nt::NetworkManager::getDependencyGraph(nt::OpId opId)
 {
-    std::stack<enzo::nt::OpId> traversalBuffer;
-    std::vector<enzo::nt::OpId> dependencyGraph;
+    std::stack<nt::OpId> traversalBuffer;
+    std::vector<nt::OpId> dependencyGraph;
     traversalBuffer.push(opId);
     dependencyGraph.push_back(opId);
 
     while(traversalBuffer.size()!=0)
     {
-        enzo::nt::OpId currentOp = traversalBuffer.top();
+        nt::OpId currentOp = traversalBuffer.top();
         traversalBuffer.pop();
         auto inputConnections = getGeoOperator(currentOp).getInputConnections();
         for(auto connection : inputConnections)
@@ -311,16 +313,16 @@ std::vector<enzo::nt::OpId> enzo::nt::NetworkManager::getDependencyGraph(enzo::n
     return dependencyGraph;
 }
 
-std::vector<enzo::nt::OpId> enzo::nt::NetworkManager::getDependentsGraph(enzo::nt::OpId opId)
+std::vector<nt::OpId> nt::NetworkManager::getDependentsGraph(nt::OpId opId)
 {
-    std::stack<enzo::nt::OpId> traversalBuffer;
-    std::vector<enzo::nt::OpId> dependencyGraph;
+    std::stack<nt::OpId> traversalBuffer;
+    std::vector<nt::OpId> dependencyGraph;
     traversalBuffer.push(opId);
     dependencyGraph.push_back(opId);
 
     while(traversalBuffer.size()!=0)
     {
-        enzo::nt::OpId currentOp = traversalBuffer.top();
+        nt::OpId currentOp = traversalBuffer.top();
         traversalBuffer.pop();
         auto outputConnections = getGeoOperator(currentOp).getOutputConnections();
         for(auto connection : outputConnections)
@@ -337,12 +339,12 @@ std::vector<enzo::nt::OpId> enzo::nt::NetworkManager::getDependentsGraph(enzo::n
     return dependencyGraph;
 }
 
-std::optional<enzo::nt::OpId> enzo::nt::NetworkManager::getDisplayOp()
+std::optional<nt::OpId> nt::NetworkManager::getDisplayOp()
 {
     return displayOp_;
 }
 
-void enzo::nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
+void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
 {
     if(dirtyDependents)
     {
@@ -350,7 +352,7 @@ void enzo::nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents
         for(OpId dependentId : dependentIds)
         {
             // dirty node
-            enzo::nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
+            nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
             std::cout << "Manager dirtying id: " << dependentId << "\n";
             dependentOp.dirtyNode(false);
 
@@ -365,7 +367,7 @@ void enzo::nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents
 
 
 #ifdef UNIT_TEST
-void enzo::nt::NetworkManager::_reset()
+void nt::NetworkManager::_reset()
 {
     std::cout << "resetting network manager\n";
 
@@ -375,5 +377,6 @@ void enzo::nt::NetworkManager::_reset()
 }
 #endif
 
-// std::unordered_map<enzo::nt::OpId, std::unique_ptr<enzo::nt::GeometryOperator>> enzo::nt::NetworkManager::gopStore_;
+// std::unordered_map<nt::OpId, std::unique_ptr<nt::GeometryOperator>> nt::NetworkManager::gopStore_;
 
+} // namespace enzo

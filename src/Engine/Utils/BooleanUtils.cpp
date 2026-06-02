@@ -950,4 +950,4 @@ std::shared_ptr<geo::Mesh> booleanMesh(const geo::Mesh& meshA,
     return assembleMesh(meshA, meshB, fragments, origins, faces);
 }
 
-} // namespace enzo::utils
+} // namespace utils
