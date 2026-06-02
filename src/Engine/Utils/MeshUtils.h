@@ -15,7 +15,7 @@ namespace enzo::utils {
 struct TriangulatedMesh
 {
     std::shared_ptr<geo::Mesh> mesh;
-    std::vector<ga::Offset> faceToOriginal;
+    std::vector<attr::Offset> faceToOriginal;
 };
 
 /**
@@ -50,7 +50,7 @@ bt::Vector3 polygonNormal(std::span<const bt::Vector3> positions,
  * @param mesh Mesh whose faces are triangulated.
  * @return Triangles as triples of the mesh's vertex offsets, grouped by face.
  */
-std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh);
+std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh);
 
 /**
  * @brief Ear clip triangulates the given faces of @p mesh into triangle indices.
@@ -62,7 +62,7 @@ std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& m
  * @param faceOffsets Offsets of the faces to triangulate.
  * @return Triangles as triples of the mesh's vertex offsets, grouped by face.
  */
-std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
-                                                              std::span<const ga::Offset> faceOffsets);
+std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
+                                                              std::span<const attr::Offset> faceOffsets);
 
 } // namespace enzo::utils

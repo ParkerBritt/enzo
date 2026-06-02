@@ -13,11 +13,11 @@
 #include <iostream>
 
 
-namespace enzo::ga{
+namespace enzo::attr{
 
 /**
-* @class enzo::ga::AttributeHandle
-* @brief Read write accessor for #enzo::ga::Attribute
+* @class enzo::attr::AttributeHandle
+* @brief Read write accessor for #enzo::attr::Attribute
 *
 * @tparam T C++ value type matching the Attribute’s logical type
 *           (e.g., bt::intT, bt::floatT, bt::Vector3, bt::boolT).
@@ -44,7 +44,7 @@ template <typename T>
 class AttributeHandle
 {
 public:
-    ga::AttributeType type_;
+    attr::AttributeType type_;
 
     /**
     * @brief Construct a new typed handle linked to a target attribute
@@ -135,7 +135,7 @@ public:
     * @brief Gets the value at a given offset.
     * @return The value stored at the offset.
     * @todo protect against invalid positions
-    * @todo Add implicit casting between types (eg. if T is int but the parameter's #ga::AttributeType is floatT 5.3 return 5)
+    * @todo Add implicit casting between types (eg. if T is int but the parameter's #attr::AttributeType is floatT 5.3 return 5)
     */
     T getValue(size_t offset) const
     {
@@ -165,7 +165,7 @@ public:
     /**
     * @brief Sets the value at a given offset.
     * @todo protect against invalid positions
-    * @todo Add implicit casting between types (eg. if T is int but the parameter's #ga::AttributeType is floatT 5.3 return 5)
+    * @todo Add implicit casting between types (eg. if T is int but the parameter's #attr::AttributeType is floatT 5.3 return 5)
     */
     void setValue(size_t offset, const T& value)
     {
@@ -208,13 +208,13 @@ using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
 
 template <typename T>
 /**
-* @brief Read only accessor for #enzo::ga::Attribute
+* @brief Read only accessor for #enzo::attr::Attribute
 * @copydetails AttributeHandle
 */
 class AttributeHandleRO
 {
 public:
-    ga::AttributeType type_;
+    attr::AttributeType type_;
 
     /// @copydoc AttributeHandle::AttributeHandle
     AttributeHandleRO(std::shared_ptr<const Attribute> attribute)

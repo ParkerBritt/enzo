@@ -95,13 +95,13 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(pare
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
     connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::POINT); });
+            [this]() { model_->setOwner(enzo::attr::AttributeOwner::POINT); });
     connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::VERTEX); });
+            [this]() { model_->setOwner(enzo::attr::AttributeOwner::VERTEX); });
     connect(menuBar_->modeSelection->faceButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::FACE); });
+            [this]() { model_->setOwner(enzo::attr::AttributeOwner::FACE); });
     connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::PRIMITIVE); });
+            [this]() { model_->setOwner(enzo::attr::AttributeOwner::PRIMITIVE); });
     // set default
     menuBar_->modeSelection->pointButton->click();
 

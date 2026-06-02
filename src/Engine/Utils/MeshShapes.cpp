@@ -26,7 +26,7 @@ std::shared_ptr<geo::Mesh> buildCube(const bt::Vector3& size, const bt::Vector3&
     mesh->addPoints(positions);
 
     // Six quad faces, each wound CCW when viewed from outside the cube.
-    const std::vector<ga::Offset> flatPointOffsets = {
+    const std::vector<attr::Offset> flatPointOffsets = {
         3, 2, 1, 0,   // -Z bottom
         4, 5, 6, 7,   // +Z top
         0, 1, 5, 4,   // -Y front
@@ -34,7 +34,7 @@ std::shared_ptr<geo::Mesh> buildCube(const bt::Vector3& size, const bt::Vector3&
         1, 2, 6, 5,   // +X right
         3, 0, 4, 7,   // -X left
     };
-    const std::vector<ga::Offset> vertexCounts(6, 4);
+    const std::vector<attr::Offset> vertexCounts(6, 4);
     mesh->addFaces(flatPointOffsets, vertexCounts);
 
     return mesh;

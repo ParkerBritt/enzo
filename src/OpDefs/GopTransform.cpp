@@ -38,8 +38,8 @@ void GopTransform::cookOp(enzo::op::Context context)
         for(unsigned int p = 0; p < packet.size(); ++p)
         {
             auto geo = packet.getPrimitive(p);
-            auto PAttr = geo->getAttribByName(ga::AttrOwner::POINT, "P", true);
-            ga::AttributeHandleVector3 PAttrHandle(PAttr);
+            auto PAttr = geo->getAttribByName(attr::AttrOwner::POINT, "P", true);
+            attr::AttributeHandleVector3 PAttrHandle(PAttr);
             const size_t N = PAttrHandle.getSize();
 
             tbb::parallel_for(tbb::blocked_range<size_t>(0, N), [&](tbb::blocked_range<size_t> range)

@@ -25,10 +25,10 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
         NodePacket packet = context.cloneInputPacket(0);
         // geo::Primitive geo = context.cloneInputGeo(0);
         //
-        // const ga::Offset pointCount = geo.getNumPoints();
+        // const attr::Offset pointCount = geo.getNumPoints();
         //
-        // tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [this, &geo](tbb::blocked_range<ga::Offset> range){
-        //     for(ga::Offset i=range.begin(); i!=range.end(); ++i)
+        // tbb::parallel_for(tbb::blocked_range<attr::Offset>(0, pointCount), [this, &geo](tbb::blocked_range<attr::Offset> range){
+        //     for(attr::Offset i=range.begin(); i!=range.end(); ++i)
         //     {
         //         bt::Vector3 pos = geo.getPointPos(i);
         //

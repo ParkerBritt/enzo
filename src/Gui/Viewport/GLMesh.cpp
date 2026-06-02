@@ -95,7 +95,7 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         {
             for (int faceOffset=range.begin(); faceOffset<range.end(); ++faceOffset)
             {
-                const enzo::ga::Offset faceStartVert = geometry->getFaceStartVertex(faceOffset);
+                const enzo::attr::Offset faceStartVert = geometry->getFaceStartVertex(faceOffset);
                 const unsigned int faceVertCnt = geometry->getFaceVertCount(faceOffset);
 
                 enzo::bt::Vector3 Normal(0, 0, 0);
@@ -141,11 +141,11 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
 
         // Open faces draw as polylines, closed faces fill and get a wireframe outline.
-        std::vector<enzo::ga::Offset> fillFaceOffsets;
-        for(enzo::ga::Offset faceOffset=0; faceOffset<geometry->getNumFaces(); ++faceOffset)
+        std::vector<enzo::attr::Offset> fillFaceOffsets;
+        for(enzo::attr::Offset faceOffset=0; faceOffset<geometry->getNumFaces(); ++faceOffset)
         {
             int faceVertexCount = geometry->getFaceVertCount(faceOffset);
-            const enzo::ga::Offset startVert = vertOffset + geometry->getFaceStartVertex(faceOffset);
+            const enzo::attr::Offset startVert = vertOffset + geometry->getFaceStartVertex(faceOffset);
             const enzo::bt::boolT closed = geometry->isClosed(faceOffset);
 
             if(!closed && faceVertexCount>=2)
@@ -172,7 +172,7 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
 
         // Ear clip the fillable faces so concave boolean output tessellates right.
         // The util returns mesh local offsets, so shift them into this prim's block.
-        for(const std::array<enzo::ga::Offset, 3>& tri : enzo::utils::earClipTriangleIndices(*geometry, fillFaceOffsets))
+        for(const std::array<enzo::attr::Offset, 3>& tri : enzo::utils::earClipTriangleIndices(*geometry, fillFaceOffsets))
         {
             faceIndexData.push_back(vertOffset + tri[0]);
             faceIndexData.push_back(vertOffset + tri[1]);

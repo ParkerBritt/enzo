@@ -30,11 +30,11 @@ class Primitive {
         struct Iterator {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
-            using value_type = ga::Offset;
+            using value_type = attr::Offset;
 
             value_type operator*() const { return curOffset_; }
 
-            Iterator(Primitive &primitive, ga::Offset current)
+            Iterator(Primitive &primitive, attr::Offset current)
                 : primitive_(primitive), curOffset_(current) {
                 skipInvalid();
             }
@@ -62,9 +62,9 @@ class Primitive {
 
           private:
             enzo::geo::Primitive &primitive_;
-            ga::Offset curOffset_ = 0;
+            attr::Offset curOffset_ = 0;
             void skipInvalid() {
-                const ga::Offset end = primitive_.getNumPoints();
+                const attr::Offset end = primitive_.getNumPoints();
                 while (curOffset_ < end && !primitive_.isValidPoint(curOffset_)) ++curOffset_;
             }
         };
@@ -91,10 +91,10 @@ class Primitive {
     void incrementVersion();
 
     virtual bool hasPoints() const { return false; }
-    ga::Offset getNumPoints() const { return getElementCount(ga::AttributeOwner::POINT); }
+    attr::Offset getNumPoints() const { return getElementCount(attr::AttributeOwner::POINT); }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
-    virtual bool isValidPoint(ga::Offset offset) const { return true; }
-    virtual void deletePoints(const std::vector<ga::Offset>& pointOffsets) {}
+    virtual bool isValidPoint(attr::Offset offset) const { return true; }
+    virtual void deletePoints(const std::vector<attr::Offset>& pointOffsets) {}
 
     /**
      * @brief Compacts storage, removing entries marked invalid so offsets
@@ -102,16 +102,16 @@ class Primitive {
      */
     virtual void defragment() {}
 
-    ga::AttributeHandle<bt::intT> addIntAttribute(ga::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<bt::intT> addIntAttribute(attr::AttributeOwner owner, std::string name,
                                                   bool intrinsic = false);
-    ga::AttributeHandleBool addBoolAttribute(ga::AttributeOwner owner, std::string name,
+    attr::AttributeHandleBool addBoolAttribute(attr::AttributeOwner owner, std::string name,
                                              bool intrinsic = false, bool isPrivate = false);
-    ga::AttributeHandle<bt::Vector3> addVector3Attribute(ga::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<bt::Vector3> addVector3Attribute(attr::AttributeOwner owner, std::string name,
                                                          bool intrinsic = false);
-    ga::AttributeHandle<bt::Matrix4> addMatrix4Attribute(ga::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<bt::Matrix4> addMatrix4Attribute(attr::AttributeOwner owner, std::string name,
                                                          bool intrinsic = false);
 
-    std::shared_ptr<ga::Attribute> getAttribByName(ga::AttributeOwner owner, std::string name,
+    std::shared_ptr<attr::Attribute> getAttribByName(attr::AttributeOwner owner, std::string name,
                                                    bool includeIntrinsics = false);
     /**
      * @brief Const counterpart of @ref getAttribByName.
@@ -119,13 +119,13 @@ class Primitive {
      * Returns a read only shared pointer so the caller cannot mutate the
      * attribute through a const Primitive.
      */
-    std::shared_ptr<const ga::Attribute> getAttribByName(ga::AttributeOwner owner,
+    std::shared_ptr<const attr::Attribute> getAttribByName(attr::AttributeOwner owner,
                                                          std::string name,
                                                          bool includeIntrinsics = false) const;
-    const size_t getNumAttributes(const ga::AttributeOwner owner) const;
-    std::weak_ptr<const ga::Attribute> getAttributeByIndex(ga::AttributeOwner owner,
+    const size_t getNumAttributes(const attr::AttributeOwner owner) const;
+    std::weak_ptr<const attr::Attribute> getAttributeByIndex(attr::AttributeOwner owner,
                                                            unsigned int index) const;
-    bool attributeExists(ga::AttributeOwner owner, std::string name);
+    bool attributeExists(attr::AttributeOwner owner, std::string name);
 
     /**
      * @brief Creates a group on the given owner.
@@ -135,68 +135,68 @@ class Primitive {
      *
      * @return Handle to the new group.
      */
-    ga::AttributeHandleBool createGroup(ga::AttributeOwner owner, std::string name);
+    attr::AttributeHandleBool createGroup(attr::AttributeOwner owner, std::string name);
     /**
      * @brief Marks the given offsets as members of the group.
      */
-    void addToGroup(ga::AttributeOwner owner, const std::string& name,
-                    const std::vector<ga::Offset>& offsets);
+    void addToGroup(attr::AttributeOwner owner, const std::string& name,
+                    const std::vector<attr::Offset>& offsets);
     /**
      * @brief Looks up a group by name.
      * @return The matching group, or nullptr if no such group exists.
      */
-    std::shared_ptr<ga::Attribute> getGroupByName(ga::AttributeOwner owner,
+    std::shared_ptr<attr::Attribute> getGroupByName(attr::AttributeOwner owner,
                                                   const std::string& name) const;
     /**
      * @brief Returns how many groups live on the given owner.
      */
-    size_t getNumGroups(ga::AttributeOwner owner) const;
+    size_t getNumGroups(attr::AttributeOwner owner) const;
     /**
      * @brief Returns the group at the given index in the owner's group store.
      */
-    std::weak_ptr<const ga::Attribute> getGroupByIndex(ga::AttributeOwner owner,
+    std::weak_ptr<const attr::Attribute> getGroupByIndex(attr::AttributeOwner owner,
                                                        unsigned int index) const;
 
     /// @brief Creates a point group.
     /// @return Handle to the new group.
-    ga::AttributeHandleBool createPointGroup(std::string name) {
-        return createGroup(ga::AttributeOwner::POINT, std::move(name));
+    attr::AttributeHandleBool createPointGroup(std::string name) {
+        return createGroup(attr::AttributeOwner::POINT, std::move(name));
     }
     /// @brief Creates a primitive group.
     /// @return Handle to the new group.
-    ga::AttributeHandleBool createPrimitiveGroup(std::string name) {
-        return createGroup(ga::AttributeOwner::PRIMITIVE, std::move(name));
+    attr::AttributeHandleBool createPrimitiveGroup(std::string name) {
+        return createGroup(attr::AttributeOwner::PRIMITIVE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the point group.
-    void addToPointGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
-        addToGroup(ga::AttributeOwner::POINT, name, offsets);
+    void addToPointGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+        addToGroup(attr::AttributeOwner::POINT, name, offsets);
     }
     /// @brief Marks the given offsets as members of the primitive group.
-    void addToPrimitiveGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
-        addToGroup(ga::AttributeOwner::PRIMITIVE, name, offsets);
+    void addToPrimitiveGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+        addToGroup(attr::AttributeOwner::PRIMITIVE, name, offsets);
     }
 
     bt::String getPath() const { return path_; };
     void setPath(const bt::String &path) { path_ = path; };
 
   protected:
-    virtual ga::attribVector &getAttributeStore(const ga::AttributeOwner &owner);
-    virtual const ga::attribVector &getAttributeStore(const ga::AttributeOwner &owner) const;
-    virtual ga::attribVector &getGroupStore(const ga::AttributeOwner &owner);
-    virtual const ga::attribVector &getGroupStore(const ga::AttributeOwner &owner) const;
-    ga::attribVector deepCopyAttributes(ga::attribVector source);
+    virtual attr::attribVector &getAttributeStore(const attr::AttributeOwner &owner);
+    virtual const attr::attribVector &getAttributeStore(const attr::AttributeOwner &owner) const;
+    virtual attr::attribVector &getGroupStore(const attr::AttributeOwner &owner);
+    virtual const attr::attribVector &getGroupStore(const attr::AttributeOwner &owner) const;
+    attr::attribVector deepCopyAttributes(attr::attribVector source);
 
     /**
      * @brief Returns the number of elements in the given owner's store.
      * @return The element count.
      */
-    size_t getElementCount(const ga::AttributeOwner &owner) const;
+    size_t getElementCount(const attr::AttributeOwner &owner) const;
 
     std::string path_ = "/prim";
-    ga::attribVector pointAttributes_;
-    ga::attribVector primitiveAttributes_;
-    ga::attribVector pointGroups_;
-    ga::attribVector primitiveGroups_;
+    attr::attribVector pointAttributes_;
+    attr::attribVector primitiveAttributes_;
+    attr::attribVector pointGroups_;
+    attr::attribVector primitiveGroups_;
 };
 
 using PrimPtr = std::shared_ptr<Primitive>;

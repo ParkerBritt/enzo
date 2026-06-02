@@ -58,7 +58,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             {
                 for(int row=0; row<rows-1; ++row)
                 {
-                    const ga::Offset startPt = col*rows + row;
+                    const attr::Offset startPt = col*rows + row;
                     geo->addFace({startPt, startPt+1, startPt+rows+1, startPt+rows});
                 }
             }
@@ -69,7 +69,7 @@ void GopGrid::cookOp(enzo::op::Context context)
             const size_t iterationLimit = std::max(columns, rows)-1; 
             for(int i=0;i<iterationLimit;i++)
             {
-                const ga::Offset startPt = i; 
+                const attr::Offset startPt = i; 
                 geo->addFace({startPt,startPt+1}, false);
             }
         }

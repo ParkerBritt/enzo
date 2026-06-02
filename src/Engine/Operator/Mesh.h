@@ -50,7 +50,7 @@ public:
      * @return Offset of the new face.
      */
     // TODO: benchmark addFace vs addFaces to quantify the speedup
-    ga::Offset addFace(const std::vector<ga::Offset>& pointOffsets, bool closed=true);
+    attr::Offset addFace(const std::vector<attr::Offset>& pointOffsets, bool closed=true);
     /**
      * @brief Adds many faces in a single call.
      *
@@ -58,17 +58,17 @@ public:
      * @param vertexCounts How many points each face has. Read in the same order as pointOffsetsFlat.
      * @return Offsets of the newly created faces in the order they were added.
      */
-    std::vector<ga::Offset> addFaces(std::span<const ga::Offset> pointOffsetsFlat,
-                                     std::span<const ga::Offset> vertexCounts,
+    std::vector<attr::Offset> addFaces(std::span<const attr::Offset> pointOffsetsFlat,
+                                     std::span<const attr::Offset> vertexCounts,
                                      bool closed=true);
-    ga::Offset addPoint(const bt::Vector3& pos);
+    attr::Offset addPoint(const bt::Vector3& pos);
     /**
      * @brief Adds many points in a single call.
      *
      * @param positions Position for each new point, read in order.
      * @return Offsets of the newly created points in the order they were added.
      */
-    std::vector<ga::Offset> addPoints(std::span<const bt::Vector3> positions);
+    std::vector<attr::Offset> addPoints(std::span<const bt::Vector3> positions);
     /**
      * @brief Duplicates existing points into new points carrying the same positions.
      *
@@ -76,18 +76,18 @@ public:
      * @param copyAttributes When true, copy every point attribute from each source point. When false, only positions are copied.
      * @return Offsets of the newly created points in the same order as srcPointOffsets.
      */
-    std::vector<ga::Offset> duplicatePoints(std::span<const ga::Offset> srcPointOffsets, bool copyAttributes = true);
+    std::vector<attr::Offset> duplicatePoints(std::span<const attr::Offset> srcPointOffsets, bool copyAttributes = true);
 
-    void deleteFaces(const std::vector<ga::Offset>& faceOffsets, bool andPoints = true);
-    void deletePoints(const std::vector<ga::Offset>& pointOffsets) override
+    void deleteFaces(const std::vector<attr::Offset>& faceOffsets, bool andPoints = true);
+    void deletePoints(const std::vector<attr::Offset>& pointOffsets) override
     {
         deletePoints(pointOffsets, false);
     }
-    void deletePoints(const std::vector<ga::Offset>& pointOffsets, bool andFaces);
-    void deleteVertices(const std::vector<ga::Offset>& vertOffsets);
-    bool isValidFace(ga::Offset offset) const;
-    bool isValidVertex(ga::Offset offset) const;
-    bool isValidPoint(ga::Offset offset) const override;
+    void deletePoints(const std::vector<attr::Offset>& pointOffsets, bool andFaces);
+    void deleteVertices(const std::vector<attr::Offset>& vertOffsets);
+    bool isValidFace(attr::Offset offset) const;
+    bool isValidVertex(attr::Offset offset) const;
+    bool isValidPoint(attr::Offset offset) const override;
 
     void defragment() override;
 
@@ -95,32 +95,32 @@ public:
 
     HeMesh computeHalfEdgeMesh();
 
-    std::unordered_set<ga::Offset>::const_iterator soloPointsBegin() const;
-    std::unordered_set<ga::Offset>::const_iterator soloPointsEnd() const;
+    std::unordered_set<attr::Offset>::const_iterator soloPointsBegin() const;
+    std::unordered_set<attr::Offset>::const_iterator soloPointsEnd() const;
 
-    void setPointPos(const ga::Offset offset, const bt::Vector3& pos);
-    ga::Offset getFaceStartVertex(ga::Offset faceOffset) const;
-    bt::Vector3 getPosFromVert(ga::Offset vertexOffset) const;
-    bt::Vector3 getPointPos(ga::Offset pointOffset) const;
-    unsigned int getFaceVertCount(ga::Offset faceOffset) const;
-    unsigned int getFacePointCount(ga::Offset faceOffset) const;
-    ga::Offset getVertexFace(ga::Offset vertexOffset) const;
+    void setPointPos(const attr::Offset offset, const bt::Vector3& pos);
+    attr::Offset getFaceStartVertex(attr::Offset faceOffset) const;
+    bt::Vector3 getPosFromVert(attr::Offset vertexOffset) const;
+    bt::Vector3 getPointPos(attr::Offset pointOffset) const;
+    unsigned int getFaceVertCount(attr::Offset faceOffset) const;
+    unsigned int getFacePointCount(attr::Offset faceOffset) const;
+    attr::Offset getVertexFace(attr::Offset vertexOffset) const;
 
-    ga::Offset getPointVertex(ga::Offset vertexOffset) const
+    attr::Offset getPointVertex(attr::Offset vertexOffset) const
     {
         return pointOffsetVertexHandle_.getValue(vertexOffset);
     }
 
-    std::span<const bt::intT> getFacePoints(ga::Offset faceOffset) const
+    std::span<const bt::intT> getFacePoints(attr::Offset faceOffset) const
     {
-        const ga::Offset start = getFaceStartVertex(faceOffset);
+        const attr::Offset start = getFaceStartVertex(faceOffset);
         const unsigned int count = getFaceVertCount(faceOffset);
         return pointOffsetVertexHandle_.getSpan().subspan(start, count);
     }
 
-    ga::Offset getNumFaces() const { return getElementCount(ga::AttributeOwner::FACE); }
-    ga::Offset getNumVerts() const { return getElementCount(ga::AttributeOwner::VERTEX); }
-    ga::Offset getNumSoloPoints() const;
+    attr::Offset getNumFaces() const { return getElementCount(attr::AttributeOwner::FACE); }
+    attr::Offset getNumVerts() const { return getElementCount(attr::AttributeOwner::VERTEX); }
+    attr::Offset getNumSoloPoints() const;
 
     // Face Iterator
     struct FaceOffsets {
@@ -128,9 +128,9 @@ public:
         struct Iterator {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
-            using value_type = ga::Offset;
+            using value_type = attr::Offset;
 
-            explicit Iterator(ga::Offset current) : curOffset_(current) {}
+            explicit Iterator(attr::Offset current) : curOffset_(current) {}
             value_type operator*() const { return curOffset_; }
             Iterator& operator++() { ++curOffset_; return *this; }
             Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
@@ -138,17 +138,17 @@ public:
             friend bool operator!=(const Iterator& a, const Iterator& b) { return a.curOffset_ != b.curOffset_; }
 
           private:
-            ga::Offset curOffset_ = 0;
+            attr::Offset curOffset_ = 0;
         };
         Iterator begin() const { return Iterator(0); }
         Iterator end() const { return Iterator(mesh_.getNumFaces()); }
 
         /// @brief Collects the face offsets into a vector for callers that need one.
-        std::vector<ga::Offset> toVector() const
+        std::vector<attr::Offset> toVector() const
         {
-            std::vector<ga::Offset> offsets;
+            std::vector<attr::Offset> offsets;
             offsets.reserve(mesh_.getNumFaces());
-            for(const ga::Offset faceOffset : *this) offsets.push_back(faceOffset);
+            for(const attr::Offset faceOffset : *this) offsets.push_back(faceOffset);
             return offsets;
         }
 
@@ -160,24 +160,24 @@ public:
 
     /// @brief Creates a vertex group.
     /// @return Handle to the new group.
-    ga::AttributeHandleBool createVertexGroup(std::string name) {
-        return createGroup(ga::AttributeOwner::VERTEX, std::move(name));
+    attr::AttributeHandleBool createVertexGroup(std::string name) {
+        return createGroup(attr::AttributeOwner::VERTEX, std::move(name));
     }
     /// @brief Creates a face group.
     /// @return Handle to the new group.
-    ga::AttributeHandleBool createFaceGroup(std::string name) {
-        return createGroup(ga::AttributeOwner::FACE, std::move(name));
+    attr::AttributeHandleBool createFaceGroup(std::string name) {
+        return createGroup(attr::AttributeOwner::FACE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the vertex group.
-    void addToVertexGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
-        addToGroup(ga::AttributeOwner::VERTEX, name, offsets);
+    void addToVertexGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+        addToGroup(attr::AttributeOwner::VERTEX, name, offsets);
     }
     /// @brief Marks the given offsets as members of the face group.
-    void addToFaceGroup(const std::string& name, const std::vector<ga::Offset>& offsets) {
-        addToGroup(ga::AttributeOwner::FACE, name, offsets);
+    void addToFaceGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+        addToGroup(attr::AttributeOwner::FACE, name, offsets);
     }
 
-    bt::boolT isClosed(ga::Offset faceOffset) const;
+    bt::boolT isClosed(attr::Offset faceOffset) const;
 
     void computeFaceStartVertices() const;
 
@@ -213,56 +213,56 @@ public:
     friend class VertexNormalHandle;
 
 protected:
-    ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) override;
-    const ga::attribVector& getAttributeStore(const ga::AttributeOwner& owner) const override;
-    ga::attribVector& getGroupStore(const ga::AttributeOwner& owner) override;
-    const ga::attribVector& getGroupStore(const ga::AttributeOwner& owner) const override;
+    attr::attribVector& getAttributeStore(const attr::AttributeOwner& owner) override;
+    const attr::attribVector& getAttributeStore(const attr::AttributeOwner& owner) const override;
+    attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) override;
+    const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const override;
 
 private:
-    void mergeAppend(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src);
+    void mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src);
     template <typename T>
-    void mergeAppendImpl(std::shared_ptr<ga::Attribute> dst, std::shared_ptr<ga::Attribute> src)
+    void mergeAppendImpl(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src)
     {
-        auto dstHandle = ga::AttributeHandle<T>(dst);
-        auto srcHandle = ga::AttributeHandle<T>(src);
+        auto dstHandle = attr::AttributeHandle<T>(dst);
+        auto srcHandle = attr::AttributeHandle<T>(src);
 
-        const ga::Offset srcCount = srcHandle.getSize();
-        const ga::Offset dstCount = dstHandle.getSize();
+        const attr::Offset srcCount = srcHandle.getSize();
+        const attr::Offset dstCount = dstHandle.getSize();
 
         dstHandle.resize(dstCount + srcCount);
 
-        for(ga::Offset i = 0; i< srcCount; ++i)
+        for(attr::Offset i = 0; i< srcCount; ++i)
         {
             const T value = srcHandle.getValue(i);
-            const ga::Offset dstOffset = dstCount+i;
+            const attr::Offset dstOffset = dstCount+i;
             dstHandle.setValue(dstOffset, value);
         }
     };
 
-    ga::attribVector vertexAttributes_;
-    ga::attribVector faceAttributes_;
-    ga::attribVector vertexGroups_;
-    ga::attribVector faceGroups_;
+    attr::attribVector vertexAttributes_;
+    attr::attribVector faceAttributes_;
+    attr::attribVector vertexGroups_;
+    attr::attribVector faceGroups_;
 
-    mutable std::unordered_set<ga::Offset> soloPoints_;
+    mutable std::unordered_set<attr::Offset> soloPoints_;
     mutable bool soloPointsDirty_ = true;
     void rebuildSoloPoints() const;
     bool needsDefrag_ = false;
 
-    mutable std::vector<ga::Offset> faceStarts_;
-    mutable std::vector<ga::Offset> vertexFaces_;
+    mutable std::vector<attr::Offset> faceStarts_;
+    mutable std::vector<attr::Offset> vertexFaces_;
 
     mutable std::atomic<bool> faceStartsDirty_{true};
     mutable tbb::spin_mutex faceStartsMutex_;
 
     // intrinsic handles
-    enzo::ga::AttributeHandleInt vertexCountFaceHandle_;
-    enzo::ga::AttributeHandleBool closedFaceHandle_;
-    enzo::ga::AttributeHandleInt pointOffsetVertexHandle_;
-    enzo::ga::AttributeHandleVector3 posPointHandle_;
-    enzo::ga::AttributeHandleBool validFaceHandle_;
-    enzo::ga::AttributeHandleBool validVertexHandle_;
-    enzo::ga::AttributeHandleBool validPointHandle_;
+    enzo::attr::AttributeHandleInt vertexCountFaceHandle_;
+    enzo::attr::AttributeHandleBool closedFaceHandle_;
+    enzo::attr::AttributeHandleInt pointOffsetVertexHandle_;
+    enzo::attr::AttributeHandleVector3 posPointHandle_;
+    enzo::attr::AttributeHandleBool validFaceHandle_;
+    enzo::attr::AttributeHandleBool validVertexHandle_;
+    enzo::attr::AttributeHandleBool validPointHandle_;
 };
 
 /**
@@ -278,12 +278,12 @@ private:
 class FaceNormalHandle
 {
 public:
-    bt::Vector3 operator[](ga::Offset faceOffset) const;
+    bt::Vector3 operator[](attr::Offset faceOffset) const;
 private:
     friend class Mesh;
     FaceNormalHandle(const Mesh& mesh, bool precompute);
     const Mesh& mesh_;
-    std::optional<ga::AttributeHandleRO<bt::Vector3>> cached_;
+    std::optional<attr::AttributeHandleRO<bt::Vector3>> cached_;
     std::vector<bt::Vector3> precomputed_;
 };
 
@@ -298,12 +298,12 @@ private:
 class VertexNormalHandle
 {
 public:
-    bt::Vector3 operator[](ga::Offset vertexOffset) const;
+    bt::Vector3 operator[](attr::Offset vertexOffset) const;
 private:
     friend class Mesh;
     VertexNormalHandle(const Mesh& mesh, bool precompute);
     const Mesh& mesh_;
-    std::optional<ga::AttributeHandleRO<bt::Vector3>> cached_;
+    std::optional<attr::AttributeHandleRO<bt::Vector3>> cached_;
     FaceNormalHandle faceNormals_;
 };
 }

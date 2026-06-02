@@ -25,7 +25,7 @@ struct SourceFace
 {
     enum class Side { A, B, NEW };
     Side side = Side::NEW;
-    ga::Offset faceOffset = 0;
+    attr::Offset faceOffset = 0;
 };
 
 struct BooleanFragments
@@ -42,8 +42,8 @@ struct VertexOrigin
     enum class Side { A, B, NONE };
     Kind kind = Kind::NEW;
     Side side = Side::NONE;
-    ga::Offset endpoint0 = 0;
-    ga::Offset endpoint1 = 0;
+    attr::Offset endpoint0 = 0;
+    attr::Offset endpoint1 = 0;
     double t = 0.0;
 };
 
@@ -61,16 +61,16 @@ struct DetriangulatedFace
 // belonged to. The id offset lets caller A occupy [0, |A|) and caller B
 // occupy [|A|, |A|+|B|).
 manifold::MeshGL64 packMeshGL(const geo::Mesh& triangulated,
-                              const std::vector<ga::Offset>& faceToOriginal,
+                              const std::vector<attr::Offset>& faceToOriginal,
                               uint64_t faceIdOffset)
 {
     manifold::MeshGL64 meshGL;
     meshGL.numProp = 3;
 
     // Copy every triangulated vertex position.
-    const ga::Offset numPoints = triangulated.getNumPoints();
+    const attr::Offset numPoints = triangulated.getNumPoints();
     meshGL.vertProperties.reserve(static_cast<size_t>(numPoints) * 3);
-    for (ga::Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
+    for (attr::Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
     {
         const bt::Vector3 pos = triangulated.getPointPos(pointOffset);
         meshGL.vertProperties.push_back(pos.x());
@@ -79,10 +79,10 @@ manifold::MeshGL64 packMeshGL(const geo::Mesh& triangulated,
     }
 
     // Emit every triangulated face as a tri and tag it with its source face id.
-    const ga::Offset numFaces = triangulated.getNumFaces();
+    const attr::Offset numFaces = triangulated.getNumFaces();
     meshGL.triVerts.reserve(static_cast<size_t>(numFaces) * 3);
     meshGL.faceID.reserve(static_cast<size_t>(numFaces));
-    for (ga::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
+    for (attr::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
     {
         const std::span<const bt::intT> facePoints = triangulated.getFacePoints(faceOffset);
         meshGL.triVerts.push_back(static_cast<uint64_t>(facePoints[0]));
@@ -220,12 +220,12 @@ BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, Boo
             if (faceId < aIdEnd)
             {
                 source.side = SourceFace::Side::A;
-                source.faceOffset = static_cast<ga::Offset>(faceId);
+                source.faceOffset = static_cast<attr::Offset>(faceId);
             }
             else
             {
                 source.side = SourceFace::Side::B;
-                source.faceOffset = static_cast<ga::Offset>(faceId - aIdEnd);
+                source.faceOffset = static_cast<attr::Offset>(faceId - aIdEnd);
             }
         }
         fragments.triSourceFace.push_back(source);
@@ -272,25 +272,25 @@ PositionKey quantizePosition(const bt::Vector3& position)
 // Find every unique undirected edge in a mesh by walking its faces.
 struct EdgePair
 {
-    ga::Offset endpoint0 = 0;
-    ga::Offset endpoint1 = 0;
+    attr::Offset endpoint0 = 0;
+    attr::Offset endpoint1 = 0;
 };
 std::vector<EdgePair> collectEdges(const geo::Mesh& mesh)
 {
     std::unordered_set<uint64_t> seen;
     std::vector<EdgePair> edges;
-    const ga::Offset numFaces = mesh.getNumFaces();
-    for (ga::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
+    const attr::Offset numFaces = mesh.getNumFaces();
+    for (attr::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
     {
         if (!mesh.isValidFace(faceOffset)) continue;
         const std::span<const bt::intT> facePoints = mesh.getFacePoints(faceOffset);
         const size_t cornerCount = facePoints.size();
         for (size_t cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
         {
-            const ga::Offset endpoint0 = facePoints[cornerIndex];
-            const ga::Offset endpoint1 = facePoints[(cornerIndex + 1) % cornerCount];
-            const ga::Offset lo = std::min(endpoint0, endpoint1);
-            const ga::Offset hi = std::max(endpoint0, endpoint1);
+            const attr::Offset endpoint0 = facePoints[cornerIndex];
+            const attr::Offset endpoint1 = facePoints[(cornerIndex + 1) % cornerCount];
+            const attr::Offset lo = std::min(endpoint0, endpoint1);
+            const attr::Offset hi = std::max(endpoint0, endpoint1);
             const uint64_t key = (static_cast<uint64_t>(lo) << 32) | static_cast<uint64_t>(hi);
             if (seen.insert(key).second)
             {
@@ -333,14 +333,14 @@ std::vector<VertexOrigin> resolveOrigins(const BooleanFragments& fragments,
                                          const geo::Mesh& meshB)
 {
     // Build a position hash from A then B input points.
-    std::unordered_map<PositionKey, std::pair<VertexOrigin::Side, ga::Offset>, PositionKeyHash> positionToPoint;
-    for (ga::Offset pointOffset = 0; pointOffset < meshA.getNumPoints(); ++pointOffset)
+    std::unordered_map<PositionKey, std::pair<VertexOrigin::Side, attr::Offset>, PositionKeyHash> positionToPoint;
+    for (attr::Offset pointOffset = 0; pointOffset < meshA.getNumPoints(); ++pointOffset)
     {
         if (!meshA.isValidPoint(pointOffset)) continue;
         positionToPoint.emplace(quantizePosition(meshA.getPointPos(pointOffset)),
                                 std::make_pair(VertexOrigin::Side::A, pointOffset));
     }
-    for (ga::Offset pointOffset = 0; pointOffset < meshB.getNumPoints(); ++pointOffset)
+    for (attr::Offset pointOffset = 0; pointOffset < meshB.getNumPoints(); ++pointOffset)
     {
         if (!meshB.isValidPoint(pointOffset)) continue;
         // Only insert if A didn't already claim the position. This isn't a
@@ -413,7 +413,7 @@ std::vector<VertexOrigin> resolveOrigins(const BooleanFragments& fragments,
 struct SourceFaceKey
 {
     SourceFace::Side side;
-    ga::Offset faceOffset;
+    attr::Offset faceOffset;
     bool operator==(const SourceFaceKey& other) const
     {
         return side == other.side && faceOffset == other.faceOffset;
@@ -423,7 +423,7 @@ struct SourceFaceKeyHash
 {
     size_t operator()(const SourceFaceKey& key) const noexcept
     {
-        return std::hash<ga::Offset>{}(key.faceOffset) ^ (static_cast<size_t>(key.side) * 0x9e3779b9);
+        return std::hash<attr::Offset>{}(key.faceOffset) ^ (static_cast<size_t>(key.side) * 0x9e3779b9);
     }
 };
 
@@ -525,10 +525,10 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
 
 // Generic copy of one row from a source attribute store into a destination
 // attribute store, matching attributes by name and dispatching on type.
-void copyAttributeRow(const ga::attribVector& sourceStore,
-                      ga::attribVector& destStore,
-                      ga::Offset sourceOffset,
-                      ga::Offset destOffset)
+void copyAttributeRow(const attr::attribVector& sourceStore,
+                      attr::attribVector& destStore,
+                      attr::Offset sourceOffset,
+                      attr::Offset destOffset)
 {
     for (const auto& sourceAttribute : sourceStore)
     {
@@ -536,7 +536,7 @@ void copyAttributeRow(const ga::attribVector& sourceStore,
         if (sourceAttribute->isIntrinsic()) continue;
 
         // Find a matching destination attribute by name. Skip if it doesn't exist.
-        std::shared_ptr<ga::Attribute> destAttribute;
+        std::shared_ptr<attr::Attribute> destAttribute;
         for (const auto& candidate : destStore)
         {
             if (candidate && candidate->getName() == sourceAttribute->getName())
@@ -550,38 +550,38 @@ void copyAttributeRow(const ga::attribVector& sourceStore,
 
         switch (sourceAttribute->getType())
         {
-            case ga::AttributeType::intT:
+            case attr::AttributeType::intT:
             {
-                ga::AttributeHandleRO<bt::intT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::intT> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::intT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::intT> destHandle(destAttribute);
                 destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
                 break;
             }
-            case ga::AttributeType::floatT:
+            case attr::AttributeType::floatT:
             {
-                ga::AttributeHandleRO<bt::floatT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::floatT> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::floatT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::floatT> destHandle(destAttribute);
                 destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
                 break;
             }
-            case ga::AttributeType::vectorT:
+            case attr::AttributeType::vectorT:
             {
-                ga::AttributeHandleRO<bt::Vector3> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::Vector3> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::Vector3> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::Vector3> destHandle(destAttribute);
                 destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
                 break;
             }
-            case ga::AttributeType::boolT:
+            case attr::AttributeType::boolT:
             {
-                ga::AttributeHandleRO<bt::boolT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::boolT> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::boolT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::boolT> destHandle(destAttribute);
                 destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
                 break;
             }
-            case ga::AttributeType::matrixT:
+            case attr::AttributeType::matrixT:
             {
-                ga::AttributeHandleRO<bt::Matrix4> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::Matrix4> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::Matrix4> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::Matrix4> destHandle(destAttribute);
                 destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
                 break;
             }
@@ -593,12 +593,12 @@ void copyAttributeRow(const ga::attribVector& sourceStore,
 
 // Same as copyAttributeRow but writes a linear blend of two source rows,
 // useful for cut points sitting on an edge of an input mesh.
-void interpolateAttributeRow(const ga::attribVector& sourceStore,
-                              ga::attribVector& destStore,
-                              ga::Offset endpointOffset0,
-                              ga::Offset endpointOffset1,
+void interpolateAttributeRow(const attr::attribVector& sourceStore,
+                              attr::attribVector& destStore,
+                              attr::Offset endpointOffset0,
+                              attr::Offset endpointOffset1,
                               double parametricT,
-                              ga::Offset destOffset)
+                              attr::Offset destOffset)
 {
     const double weight1 = parametricT;
     const double weight0 = 1.0 - parametricT;
@@ -608,7 +608,7 @@ void interpolateAttributeRow(const ga::attribVector& sourceStore,
         if (!sourceAttribute) continue;
         if (sourceAttribute->isIntrinsic()) continue;
 
-        std::shared_ptr<ga::Attribute> destAttribute;
+        std::shared_ptr<attr::Attribute> destAttribute;
         for (const auto& candidate : destStore)
         {
             if (candidate && candidate->getName() == sourceAttribute->getName())
@@ -622,48 +622,48 @@ void interpolateAttributeRow(const ga::attribVector& sourceStore,
 
         switch (sourceAttribute->getType())
         {
-            case ga::AttributeType::intT:
+            case attr::AttributeType::intT:
             {
-                ga::AttributeHandleRO<bt::intT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::intT> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::intT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::intT> destHandle(destAttribute);
                 const double blended = sourceHandle.getValue(endpointOffset0) * weight0
                                      + sourceHandle.getValue(endpointOffset1) * weight1;
                 destHandle.setValue(destOffset, static_cast<bt::intT>(std::llround(blended)));
                 break;
             }
-            case ga::AttributeType::floatT:
+            case attr::AttributeType::floatT:
             {
-                ga::AttributeHandleRO<bt::floatT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::floatT> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::floatT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::floatT> destHandle(destAttribute);
                 const double blended = sourceHandle.getValue(endpointOffset0) * weight0
                                      + sourceHandle.getValue(endpointOffset1) * weight1;
                 destHandle.setValue(destOffset, blended);
                 break;
             }
-            case ga::AttributeType::vectorT:
+            case attr::AttributeType::vectorT:
             {
-                ga::AttributeHandleRO<bt::Vector3> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::Vector3> destHandle(destAttribute);
+                attr::AttributeHandleRO<bt::Vector3> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::Vector3> destHandle(destAttribute);
                 const bt::Vector3 blended = sourceHandle.getValue(endpointOffset0) * weight0
                                            + sourceHandle.getValue(endpointOffset1) * weight1;
                 destHandle.setValue(destOffset, blended);
                 break;
             }
-            case ga::AttributeType::boolT:
+            case attr::AttributeType::boolT:
             {
                 // Booleans don't blend so fall back to the nearest endpoint.
-                ga::AttributeHandleRO<bt::boolT> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::boolT> destHandle(destAttribute);
-                const ga::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
+                attr::AttributeHandleRO<bt::boolT> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::boolT> destHandle(destAttribute);
+                const attr::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
                 destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
                 break;
             }
-            case ga::AttributeType::matrixT:
+            case attr::AttributeType::matrixT:
             {
                 // Matrices don't blend componentwise meaningfully so pick an endpoint.
-                ga::AttributeHandleRO<bt::Matrix4> sourceHandle(sourceAttribute);
-                ga::AttributeHandle<bt::Matrix4> destHandle(destAttribute);
-                const ga::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
+                attr::AttributeHandleRO<bt::Matrix4> sourceHandle(sourceAttribute);
+                attr::AttributeHandle<bt::Matrix4> destHandle(destAttribute);
+                const attr::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
                 destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
                 break;
             }
@@ -676,8 +676,8 @@ void interpolateAttributeRow(const ga::attribVector& sourceStore,
 // Build a new attribute on the destination mesh shaped like a source attribute
 // from A or B. Skips intrinsics and attributes that already exist.
 void ensureAttributeOnDestination(geo::Mesh& destMesh,
-                                  ga::AttributeOwner owner,
-                                  const std::shared_ptr<ga::Attribute>& sourceAttribute)
+                                  attr::AttributeOwner owner,
+                                  const std::shared_ptr<attr::Attribute>& sourceAttribute)
 {
     if (!sourceAttribute) return;
     if (sourceAttribute->isIntrinsic()) return;
@@ -686,11 +686,11 @@ void ensureAttributeOnDestination(geo::Mesh& destMesh,
     const std::string name = sourceAttribute->getName();
     switch (sourceAttribute->getType())
     {
-        case ga::AttributeType::intT:    destMesh.addIntAttribute(owner, name); break;
-        case ga::AttributeType::floatT:  /* no addFloatAttribute helper, fall through */ break;
-        case ga::AttributeType::vectorT: destMesh.addVector3Attribute(owner, name); break;
-        case ga::AttributeType::boolT:   destMesh.addBoolAttribute(owner, name, false, sourceAttribute->isPrivate()); break;
-        case ga::AttributeType::matrixT: destMesh.addMatrix4Attribute(owner, name); break;
+        case attr::AttributeType::intT:    destMesh.addIntAttribute(owner, name); break;
+        case attr::AttributeType::floatT:  /* no addFloatAttribute helper, fall through */ break;
+        case attr::AttributeType::vectorT: destMesh.addVector3Attribute(owner, name); break;
+        case attr::AttributeType::boolT:   destMesh.addBoolAttribute(owner, name, false, sourceAttribute->isPrivate()); break;
+        case attr::AttributeType::matrixT: destMesh.addMatrix4Attribute(owner, name); break;
         default: break;
     }
 }
@@ -738,8 +738,8 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
     std::sort(bOriginalVerts.begin(), bOriginalVerts.end(), byOriginalPointOffset);
 
     // Add points in order and remember each fragment vertex's new offset.
-    std::vector<ga::Offset> fragmentToOutputPoint(fragments.positions.size(),
-                                                   static_cast<ga::Offset>(-1));
+    std::vector<attr::Offset> fragmentToOutputPoint(fragments.positions.size(),
+                                                   static_cast<attr::Offset>(-1));
     std::vector<bt::Vector3> orderedPositions;
     orderedPositions.reserve(aOriginalVerts.size() + bOriginalVerts.size() + otherVerts.size());
     auto appendVertex = [&](int fragmentVertex)
@@ -754,7 +754,7 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
 
     // Mirror every non intrinsic attribute schema from A and B onto the output
     // mesh so the copy step below has a destination column to write into.
-    auto mirrorAttributes = [&](const geo::Mesh& sourceMesh, ga::AttributeOwner owner)
+    auto mirrorAttributes = [&](const geo::Mesh& sourceMesh, attr::AttributeOwner owner)
     {
         const size_t count = sourceMesh.getNumAttributes(owner);
         for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
@@ -763,57 +763,57 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             auto shared = weak.lock();
             if (!shared) continue;
             // weak holds shared_ptr<const Attribute> so cast away const to fit the helper signature.
-            auto mutableShared = std::const_pointer_cast<ga::Attribute>(shared);
+            auto mutableShared = std::const_pointer_cast<attr::Attribute>(shared);
             ensureAttributeOnDestination(*outputMesh, owner, mutableShared);
         }
     };
-    mirrorAttributes(meshA, ga::AttributeOwner::POINT);
-    mirrorAttributes(meshB, ga::AttributeOwner::POINT);
-    mirrorAttributes(meshA, ga::AttributeOwner::VERTEX);
-    mirrorAttributes(meshB, ga::AttributeOwner::VERTEX);
-    mirrorAttributes(meshA, ga::AttributeOwner::FACE);
-    mirrorAttributes(meshB, ga::AttributeOwner::FACE);
+    mirrorAttributes(meshA, attr::AttributeOwner::POINT);
+    mirrorAttributes(meshB, attr::AttributeOwner::POINT);
+    mirrorAttributes(meshA, attr::AttributeOwner::VERTEX);
+    mirrorAttributes(meshB, attr::AttributeOwner::VERTEX);
+    mirrorAttributes(meshA, attr::AttributeOwner::FACE);
+    mirrorAttributes(meshB, attr::AttributeOwner::FACE);
 
     // Copy point attributes over each output point, interpolating cut points.
-    auto copyPointAttrFor = [&](int fragmentVertex, ga::Offset destPointOffset)
+    auto copyPointAttrFor = [&](int fragmentVertex, attr::Offset destPointOffset)
     {
         const VertexOrigin& origin = origins[fragmentVertex];
         if (origin.kind == VertexOrigin::Kind::ORIGINAL)
         {
             const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
             // We can't reach a protected attrib store here, so iterate by name.
-            const size_t count = sourceMesh.getNumAttributes(ga::AttributeOwner::POINT);
+            const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
             for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(ga::AttributeOwner::POINT,
+                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::POINT,
                                                                   static_cast<unsigned int>(attrIndex));
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(ga::AttributeOwner::POINT,
+                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::POINT,
                                                                sourceShared->getName());
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                ga::attribVector singleSource = { std::const_pointer_cast<ga::Attribute>(sourceShared) };
-                ga::attribVector singleDest = { destShared };
+                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
+                attr::attribVector singleDest = { destShared };
                 copyAttributeRow(singleSource, singleDest, origin.endpoint0, destPointOffset);
             }
         }
         else if (origin.kind == VertexOrigin::Kind::ON_EDGE)
         {
             const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
-            const size_t count = sourceMesh.getNumAttributes(ga::AttributeOwner::POINT);
+            const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
             for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(ga::AttributeOwner::POINT,
+                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::POINT,
                                                                   static_cast<unsigned int>(attrIndex));
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(ga::AttributeOwner::POINT,
+                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::POINT,
                                                                sourceShared->getName());
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                ga::attribVector singleSource = { std::const_pointer_cast<ga::Attribute>(sourceShared) };
-                ga::attribVector singleDest = { destShared };
+                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
+                attr::attribVector singleDest = { destShared };
                 interpolateAttributeRow(singleSource, singleDest,
                                          origin.endpoint0, origin.endpoint1, origin.t,
                                          destPointOffset);
@@ -823,8 +823,8 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
     };
     for (size_t fragmentVertex = 0; fragmentVertex < fragments.positions.size(); ++fragmentVertex)
     {
-        const ga::Offset destPointOffset = fragmentToOutputPoint[fragmentVertex];
-        if (destPointOffset == static_cast<ga::Offset>(-1)) continue;
+        const attr::Offset destPointOffset = fragmentToOutputPoint[fragmentVertex];
+        if (destPointOffset == static_cast<attr::Offset>(-1)) continue;
         copyPointAttrFor(static_cast<int>(fragmentVertex), destPointOffset);
     }
 
@@ -840,52 +840,52 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
     });
 
     // Emit faces and remember the order so face attrs line up.
-    std::vector<ga::Offset> flatPointOffsets;
-    std::vector<ga::Offset> vertexCounts;
+    std::vector<attr::Offset> flatPointOffsets;
+    std::vector<attr::Offset> vertexCounts;
     for (size_t orderedIndex : faceOrder)
     {
         const DetriangulatedFace& face = faces[orderedIndex];
         for (int vertIndex : face.loop)
             flatPointOffsets.push_back(fragmentToOutputPoint[vertIndex]);
-        vertexCounts.push_back(static_cast<ga::Offset>(face.loop.size()));
+        vertexCounts.push_back(static_cast<attr::Offset>(face.loop.size()));
     }
     outputMesh->addFaces(flatPointOffsets, vertexCounts);
 
     // Copy face and vertex attributes by walking output faces in the order they were added.
-    ga::Offset cursorFaceOffset = 0;
-    ga::Offset cursorVertexOffset = 0;
+    attr::Offset cursorFaceOffset = 0;
+    attr::Offset cursorVertexOffset = 0;
     for (size_t orderedIndex : faceOrder)
     {
         const DetriangulatedFace& face = faces[orderedIndex];
         const geo::Mesh& sourceMesh = (face.source.side == SourceFace::Side::A) ? meshA : meshB;
 
         // Copy face attrs from source face to the new face.
-        const size_t faceAttrCount = sourceMesh.getNumAttributes(ga::AttributeOwner::FACE);
+        const size_t faceAttrCount = sourceMesh.getNumAttributes(attr::AttributeOwner::FACE);
         for (size_t attrIndex = 0; attrIndex < faceAttrCount; ++attrIndex)
         {
-            auto sourceWeak = sourceMesh.getAttributeByIndex(ga::AttributeOwner::FACE,
+            auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::FACE,
                                                               static_cast<unsigned int>(attrIndex));
             auto sourceShared = sourceWeak.lock();
             if (!sourceShared) continue;
-            auto destShared = outputMesh->getAttribByName(ga::AttributeOwner::FACE,
+            auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::FACE,
                                                            sourceShared->getName());
             if (!destShared) continue;
             if (destShared->getType() != sourceShared->getType()) continue;
-            ga::attribVector singleSource = { std::const_pointer_cast<ga::Attribute>(sourceShared) };
-            ga::attribVector singleDest = { destShared };
+            attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
+            attr::attribVector singleDest = { destShared };
             copyAttributeRow(singleSource, singleDest, face.source.faceOffset, cursorFaceOffset);
         }
 
         // Match each output corner back to a source vertex on the source face
         // by walking the source face's corners and comparing point offsets.
         const std::span<const bt::intT> sourceFacePoints = sourceMesh.getFacePoints(face.source.faceOffset);
-        const ga::Offset sourceFaceStart = sourceMesh.getFaceStartVertex(face.source.faceOffset);
+        const attr::Offset sourceFaceStart = sourceMesh.getFaceStartVertex(face.source.faceOffset);
 
         for (size_t cornerIndex = 0; cornerIndex < face.loop.size(); ++cornerIndex)
         {
             const int fragmentVertex = face.loop[cornerIndex];
             const VertexOrigin& origin = origins[fragmentVertex];
-            const ga::Offset destVertexOffset = cursorVertexOffset + cornerIndex;
+            const attr::Offset destVertexOffset = cursorVertexOffset + cornerIndex;
 
             // Only proceed if this corner came from a point of the same source face.
             if (origin.kind != VertexOrigin::Kind::ORIGINAL) continue;
@@ -894,30 +894,30 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             if (originSide != sourceSideEnum) continue;
 
             // Find the matching source vertex offset by scanning source face corners.
-            ga::Offset matchedSourceVertex = static_cast<ga::Offset>(-1);
+            attr::Offset matchedSourceVertex = static_cast<attr::Offset>(-1);
             for (size_t sourceCorner = 0; sourceCorner < sourceFacePoints.size(); ++sourceCorner)
             {
-                if (static_cast<ga::Offset>(sourceFacePoints[sourceCorner]) == origin.endpoint0)
+                if (static_cast<attr::Offset>(sourceFacePoints[sourceCorner]) == origin.endpoint0)
                 {
                     matchedSourceVertex = sourceFaceStart + sourceCorner;
                     break;
                 }
             }
-            if (matchedSourceVertex == static_cast<ga::Offset>(-1)) continue;
+            if (matchedSourceVertex == static_cast<attr::Offset>(-1)) continue;
 
-            const size_t vertexAttrCount = sourceMesh.getNumAttributes(ga::AttributeOwner::VERTEX);
+            const size_t vertexAttrCount = sourceMesh.getNumAttributes(attr::AttributeOwner::VERTEX);
             for (size_t attrIndex = 0; attrIndex < vertexAttrCount; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(ga::AttributeOwner::VERTEX,
+                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::VERTEX,
                                                                   static_cast<unsigned int>(attrIndex));
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(ga::AttributeOwner::VERTEX,
+                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::VERTEX,
                                                                sourceShared->getName());
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                ga::attribVector singleSource = { std::const_pointer_cast<ga::Attribute>(sourceShared) };
-                ga::attribVector singleDest = { destShared };
+                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
+                attr::attribVector singleDest = { destShared };
                 copyAttributeRow(singleSource, singleDest, matchedSourceVertex, destVertexOffset);
             }
         }

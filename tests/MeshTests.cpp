@@ -185,15 +185,15 @@ TEST_CASE("Create face group") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(ga::AttrOwner::FACE, "myGroup");
+    mesh.createGroup(attr::AttrOwner::FACE, "myGroup");
 
     // The group lookup should find it, and the attribute lookup should not
-    auto group = mesh.getGroupByName(ga::AttrOwner::FACE, "myGroup");
+    auto group = mesh.getGroupByName(attr::AttrOwner::FACE, "myGroup");
     REQUIRE(group != nullptr);
-    REQUIRE(mesh.getAttribByName(ga::AttrOwner::FACE, "myGroup") == nullptr);
+    REQUIRE(mesh.getAttribByName(attr::AttrOwner::FACE, "myGroup") == nullptr);
 
     // Every existing face starts outside the group
-    ga::AttributeHandleBool handle(group);
+    attr::AttributeHandleBool handle(group);
     REQUIRE(handle.getSize() == 2);
     REQUIRE(handle.getValue(0) == false);
     REQUIRE(handle.getValue(1) == false);
@@ -210,11 +210,11 @@ TEST_CASE("Add to face group") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(ga::AttrOwner::FACE, "g");
-    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 2});
+    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 2});
 
     // Faces 0 and 2 should be members, face 1 should not
-    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == false);
     REQUIRE(handle.getValue(2) == true);
@@ -224,16 +224,16 @@ TEST_CASE("Create primitive group") {
     geo::Mesh mesh;
 
     // Primitive groups have exactly one slot per primitive
-    mesh.createGroup(ga::AttrOwner::PRIMITIVE, "selected");
+    mesh.createGroup(attr::AttrOwner::PRIMITIVE, "selected");
 
-    auto group = mesh.getGroupByName(ga::AttrOwner::PRIMITIVE, "selected");
+    auto group = mesh.getGroupByName(attr::AttrOwner::PRIMITIVE, "selected");
     REQUIRE(group != nullptr);
-    ga::AttributeHandleBool handle(group);
+    attr::AttributeHandleBool handle(group);
     REQUIRE(handle.getSize() == 1);
     REQUIRE(handle.getValue(0) == false);
 
     // Toggle this primitive into the group
-    mesh.addToGroup(ga::AttrOwner::PRIMITIVE, "selected", {0});
+    mesh.addToGroup(attr::AttrOwner::PRIMITIVE, "selected", {0});
     REQUIRE(handle.getValue(0) == true);
 }
 
@@ -247,11 +247,11 @@ TEST_CASE("Group name can match attribute name") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Same name on both stores must not collide
-    mesh.addBoolAttribute(ga::AttrOwner::FACE, "selected");
-    mesh.createGroup(ga::AttrOwner::FACE, "selected");
+    mesh.addBoolAttribute(attr::AttrOwner::FACE, "selected");
+    mesh.createGroup(attr::AttrOwner::FACE, "selected");
 
-    auto attribute = mesh.getAttribByName(ga::AttrOwner::FACE, "selected");
-    auto group = mesh.getGroupByName(ga::AttrOwner::FACE, "selected");
+    auto attribute = mesh.getAttribByName(attr::AttrOwner::FACE, "selected");
+    auto group = mesh.getGroupByName(attr::AttrOwner::FACE, "selected");
 
     REQUIRE(attribute != nullptr);
     REQUIRE(group != nullptr);
@@ -269,8 +269,8 @@ TEST_CASE("Group survives defragment") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(ga::AttrOwner::FACE, "g");
-    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 2});
+    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 2});
 
     // Drop the middle face and compact
     mesh.deleteFaces({1});
@@ -278,7 +278,7 @@ TEST_CASE("Group survives defragment") {
 
     // After defrag old face 0 stays at offset 0 and old face 2 shifts to offset 1.
     // Both should still report as members of the group.
-    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getSize() == 2);
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == true);
@@ -294,10 +294,10 @@ TEST_CASE("Add faces") {
     auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
 
     // Two triangles in a single batch call
-    std::vector<ga::Offset> pointOffsetsFlat{
+    std::vector<attr::Offset> pointOffsetsFlat{
         pointOffset0, pointOffset1, pointOffset2,
         pointOffset1, pointOffset2, pointOffset3};
-    std::vector<ga::Offset> vertexCounts{3, 3};
+    std::vector<attr::Offset> vertexCounts{3, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // Returned offsets should be the new face indices
@@ -331,10 +331,10 @@ TEST_CASE("Add faces mixed sizes") {
     auto pointOffset4 = mesh.addPoint(bt::Vector3(2, 0, 0));
 
     // One quad, one tri
-    std::vector<ga::Offset> pointOffsetsFlat{
+    std::vector<attr::Offset> pointOffsetsFlat{
         pointOffset0, pointOffset1, pointOffset2, pointOffset3,
         pointOffset0, pointOffset1, pointOffset4};
-    std::vector<ga::Offset> vertexCounts{4, 3};
+    std::vector<attr::Offset> vertexCounts{4, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // The quad keeps its four points in order
@@ -359,17 +359,17 @@ TEST_CASE("Add faces resizes group") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(ga::AttrOwner::FACE, "g");
-    mesh.addToGroup(ga::AttrOwner::FACE, "g", {0, 1});
+    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 1});
 
     // Add one more face via the batch path
-    std::vector<ga::Offset> pointOffsetsFlat{pointOffset0, pointOffset1, pointOffset2};
-    std::vector<ga::Offset> vertexCounts{3};
+    std::vector<attr::Offset> pointOffsetsFlat{pointOffset0, pointOffset1, pointOffset2};
+    std::vector<attr::Offset> vertexCounts{3};
     mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // The group must have grown to cover the new face, and that face
     // should default to non-member.
-    ga::AttributeHandleBool handle(mesh.getGroupByName(ga::AttrOwner::FACE, "g"));
+    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getSize() == 3);
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == true);
@@ -419,7 +419,7 @@ TEST_CASE("Face normal prefers Normal attribute over Newell") {
 
     // Newell would give (0, 1, 0) for this face. Override with a different
     // direction so we can tell which path was used.
-    auto normalAttr = mesh.addVector3Attribute(ga::AttrOwner::FACE, "Normal");
+    auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::FACE, "Normal");
     normalAttr.setValue(0, bt::Vector3(1, 0, 0));
 
     auto faceNormals = mesh.getFaceNormal();
@@ -471,7 +471,7 @@ TEST_CASE("Vertex normal prefers Normal attribute over face fallback") {
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Override one vertex's normal so we can see the attribute path wins
-    auto normalAttr = mesh.addVector3Attribute(ga::AttrOwner::VERTEX, "Normal");
+    auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::VERTEX, "Normal");
     normalAttr.setValue(0, bt::Vector3(1, 0, 0));
     normalAttr.setValue(1, bt::Vector3(0, 1, 0));
     normalAttr.setValue(2, bt::Vector3(0, 0, 1));

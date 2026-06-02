@@ -43,7 +43,7 @@ void enzo::NodePacket::Transforms::Iterator::advance() {
         // POINT takes priority: use P attribute if both the query and primitive support it
         if (hasFlag(transformClass_, TransformClass::POINT) &&
             hasFlag(primTransformClass, TransformClass::POINT)) {
-            auto attrib = prim->getAttribByName(ga::AttributeOwner::POINT, "P", true);
+            auto attrib = prim->getAttribByName(attr::AttributeOwner::POINT, "P", true);
             if (attrib && attrib->getSize() > 0) {
                 curAttrib_ = attrib;
                 curSize_ = attrib->getSize();
@@ -54,7 +54,7 @@ void enzo::NodePacket::Transforms::Iterator::advance() {
         // Fallback: primitive-level transform attribute
         if (hasFlag(transformClass_, TransformClass::PRIMITIVE) &&
             hasFlag(primTransformClass, TransformClass::PRIMITIVE)) {
-            auto attrib = prim->getAttribByName(ga::AttributeOwner::PRIMITIVE, "transform", true);
+            auto attrib = prim->getAttribByName(attr::AttributeOwner::PRIMITIVE, "transform", true);
             if (attrib && attrib->getSize() > 0) {
                 curAttrib_ = attrib;
                 curSize_ = attrib->getSize();

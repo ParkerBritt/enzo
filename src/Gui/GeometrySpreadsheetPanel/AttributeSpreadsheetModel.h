@@ -20,7 +20,7 @@ public:
     int indexFromSection(unsigned int section) const;
 
     void primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive);
-    void setOwner(const enzo::ga::AttributeOwner owner);
+    void setOwner(const enzo::attr::AttributeOwner owner);
     void initBuffers();
 
 
@@ -31,6 +31,6 @@ private:
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;
     const int attributeColumnPadding_ = 1;
-    enzo::ga::AttributeOwner attributeOwner_=enzo::ga::AttributeOwner::POINT;
+    enzo::attr::AttributeOwner attributeOwner_=enzo::attr::AttributeOwner::POINT;
 
 };

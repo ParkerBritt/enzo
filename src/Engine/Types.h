@@ -9,7 +9,7 @@
 
 namespace enzo {
 
-namespace ga {
+namespace attr {
 /**
  * @brief The segment of geometry that owns a particular attribute
  *
@@ -33,14 +33,14 @@ enum class AttributeType {
 using AttrType = AttributeType;
 using AttrOwner = AttributeOwner;
 /**
- * @brief ga::Index is the continuous index of an element in a given AttributeOwner.
+ * @brief attr::Index is the continuous index of an element in a given AttributeOwner.
  *
  * Eg. point index, vertex index, primitive index, or global index.
- * This is usually provided by the user where ga::Offset is used internally.
+ * This is usually provided by the user where attr::Offset is used internally.
  */
 using Index = size_t;
 /**
- * @brief ga::Offset is the internal discontinuous index of an element in a given AttributeOwner.
+ * @brief attr::Offset is the internal discontinuous index of an element in a given AttributeOwner.
  *
  * Eg. point offset, vertex offset, primitive offset, or global offset.
  * This different but similar in concept to the index. This
@@ -48,7 +48,7 @@ using Index = size_t;
  * as adding and deleting points unless defragmented.
  */
 using Offset = size_t;
-} // namespace ga
+} // namespace attr
 namespace geo {
 enum class PrimType { MESH, CAMERA };
 }

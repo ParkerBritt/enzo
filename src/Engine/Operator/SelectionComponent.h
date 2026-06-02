@@ -36,11 +36,11 @@ class SelectionComponent {
     // `index` is the compacted element number (counting only valid elements)
     // and `offset` is the raw storage offset. Path components match against the
     // compacted index, while group components read group bools keyed by offset.
-    virtual bool containsFace(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    virtual bool containsFace(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                               bool inverted = false) const = 0;
-    virtual bool containsPoint(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    virtual bool containsPoint(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                                bool inverted = false) const = 0;
-    virtual bool containsVertex(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    virtual bool containsVertex(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                                 bool inverted = false) const = 0;
     /**
      * @brief Whether the component selects the prim as a whole.
@@ -64,11 +64,11 @@ class PathSelectionComponent : public SelectionComponent {
     static std::unique_ptr<PathSelectionComponent> parse(std::string_view string);
 
     bool containsPrim(const geo::Primitive &prim) const override;
-    bool containsFace(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsFace(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                       bool inverted = false) const override;
-    bool containsPoint(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsPoint(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                        bool inverted = false) const override;
-    bool containsVertex(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsVertex(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                         bool inverted = false) const override;
     bool isWholePrim(const geo::Primitive &prim) const override;
 
@@ -88,11 +88,11 @@ class GroupSelectionComponent : public SelectionComponent {
     static std::unique_ptr<GroupSelectionComponent> create(std::string_view name);
 
     bool containsPrim(const geo::Primitive &prim) const override;
-    bool containsFace(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsFace(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                       bool inverted = false) const override;
-    bool containsPoint(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsPoint(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                        bool inverted = false) const override;
-    bool containsVertex(const geo::Primitive &prim, ga::Index index, ga::Offset offset,
+    bool containsVertex(const geo::Primitive &prim, attr::Index index, attr::Offset offset,
                         bool inverted = false) const override;
     bool isWholePrim(const geo::Primitive &prim) const override;
 

@@ -80,9 +80,9 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //             continue;
         //         }
         //
-        //         ga::Offset numVerts = result.size()-1;
+        //         attr::Offset numVerts = result.size()-1;
         //
-        //         std::vector<ga::Offset> verts;
+        //         std::vector<attr::Offset> verts;
         //         verts.reserve(numVerts);
         //
         //         for(int i=1; i<numVerts+1; ++i)
@@ -95,8 +95,8 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         // }
         //
         // const float scale = context.evalFloatParm("size");
-        // const ga::Offset numPoints = geo.getNumPoints();
-        // for(ga::Offset i=0; i<numPoints; ++i)
+        // const attr::Offset numPoints = geo.getNumPoints();
+        // for(attr::Offset i=0; i<numPoints; ++i)
         // {
         //     enzo::bt::Vector3 pointPos = geo.getPointPos(i);
         //     pointPos*=scale;

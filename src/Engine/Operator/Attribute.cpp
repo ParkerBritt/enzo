@@ -7,7 +7,7 @@
 using namespace enzo;
 
 
-ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsic, bool isPrivate)
+attr::Attribute::Attribute(std::string name, attr::AttributeType type, bool intrinsic, bool isPrivate)
 : name_{name}, type_{type}, intrinsic_{intrinsic}, private_{isPrivate}
 {
     switch(type_)
@@ -37,18 +37,18 @@ ga::Attribute::Attribute(std::string name, ga::AttributeType type, bool intrinsi
     }
 }
 
-unsigned int ga::Attribute::Attribute::getTypeSize() const
+unsigned int attr::Attribute::Attribute::getTypeSize() const
 {
     return typeSize_;
 }
 
 
-void ga::Attribute::resize(size_t size)
+void attr::Attribute::resize(size_t size)
 {
     std::visit([&](auto& storePtr) { storePtr->resize(size); }, store_);
 }
 
-void ga::Attribute::compact(const std::vector<bool>& keep)
+void attr::Attribute::compact(const std::vector<bool>& keep)
 {
     std::visit([&](auto& storePtr) {
         auto& store = *storePtr;
@@ -68,19 +68,19 @@ void ga::Attribute::compact(const std::vector<bool>& keep)
     }, store_);
 }
 
-bool ga::Attribute::isIntrinsic() const
+bool attr::Attribute::isIntrinsic() const
 {
     return intrinsic_;
 }
 
-bool ga::Attribute::isPrivate() const
+bool attr::Attribute::isPrivate() const
 {
     return private_;
 }
 
 
 
-ga::Attribute::Attribute(const Attribute& other)
+attr::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
     private_ = other.private_;
@@ -98,27 +98,27 @@ ga::Attribute::Attribute(const Attribute& other)
 }
 
 
-bt::Vector3 ga::Attribute::getVector3(ga::Offset offset) const
+bt::Vector3 attr::Attribute::getVector3(attr::Offset offset) const
 {
     return (*std::get<std::shared_ptr<StoreContainer<bt::Vector3>>>(store_))[offset];
 }
 
-bt::Matrix4 ga::Attribute::getMatrix4(ga::Offset offset) const
+bt::Matrix4 attr::Attribute::getMatrix4(attr::Offset offset) const
 {
     return (*std::get<std::shared_ptr<StoreContainer<bt::Matrix4>>>(store_))[offset];
 }
 
-size_t ga::Attribute::getSize() const
+size_t attr::Attribute::getSize() const
 {
     return std::visit([](const auto& storePtr) -> size_t { return storePtr->size(); }, store_);
 }
 
-ga::AttributeType ga::Attribute::getType() const
+attr::AttributeType attr::Attribute::getType() const
 {
     return type_;
 }
 
-std::string ga::Attribute::getName() const
+std::string attr::Attribute::getName() const
 {
     return name_;
 }
