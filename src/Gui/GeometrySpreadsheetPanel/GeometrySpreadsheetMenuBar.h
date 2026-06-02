@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Operator/OpInfo.h"
+#include "Engine/Network/OpInfo.h"
 #include "Engine/Core/Types.h"
 #include <QWidget>
 #include <QHBoxLayout>

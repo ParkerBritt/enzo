@@ -1,6 +1,6 @@
 #include "PrimitiveTreeModel.h"
 #include "PrimitiveTreeItem.h"
-#include "Engine/Operator/PrimPath.h"
+#include "Engine/Selection/PrimPath.h"
 
 PrimitiveTreeModel::PrimitiveTreeModel(QObject *parent)
     : QAbstractItemModel(parent)

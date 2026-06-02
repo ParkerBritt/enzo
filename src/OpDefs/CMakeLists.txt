@@ -11,21 +11,21 @@ find_package(manifold CONFIG REQUIRED)
 set(libName enzoOps1)
 add_library(${libName} SHARED
     RegisterPlugin.cpp
-    ../Engine/Operator/OperatorTable.cpp
-    ../Engine/Operator/GeometryOpDef.cpp
-    ../Engine/Operator/GeometryOperator.cpp
-    ../Engine/Operator/GeometryConnection.cpp
-    ../Engine/Operator/Context.cpp
-    ../Engine/Operator/Primitive.cpp
-    ../Engine/Operator/Mesh.cpp
-    ../Engine/Operator/Camera.cpp
-    ../Engine/Operator/NodePacket.cpp
-    ../Engine/Operator/Attribute.cpp
-    ../Engine/Operator/Selection.cpp
-    ../Engine/Operator/SelectionComponent.cpp
-    ../Engine/Operator/IndexSet.cpp
-    ../Engine/Utils/MeshUtils.cpp
-    ../Engine/Utils/BooleanUtils.cpp
+    ../Engine/Network/OperatorTable.cpp
+    ../Engine/Network/GeometryOpDef.cpp
+    ../Engine/Network/GeometryOperator.cpp
+    ../Engine/Network/GeometryConnection.cpp
+    ../Engine/Network/Context.cpp
+    ../Engine/Primitives/Primitive.cpp
+    ../Engine/Primitives/Mesh.cpp
+    ../Engine/Primitives/Camera.cpp
+    ../Engine/Network/NodePacket.cpp
+    ../Engine/Attribute/Attribute.cpp
+    ../Engine/Selection/Selection.cpp
+    ../Engine/Selection/SelectionComponent.cpp
+    ../Engine/Selection/IndexSet.cpp
+    ../Engine/GeometryAlgorithms/MeshUtils.cpp
+    ../Engine/GeometryAlgorithms/BooleanUtils.cpp
     ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp
@@ -34,7 +34,7 @@ add_library(${libName} SHARED
     ../Engine/Parameter/Default.cpp
     ../Engine/Parameter/Range.cpp
     ../Engine/Parameter/PrmName.cpp
-    ../Engine/Utils/MeshShapes.cpp
+    ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
     GopTestCube.cpp

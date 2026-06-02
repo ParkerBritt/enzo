@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 #include "Gui/Panels/Panel.h"
 #include "Gui/Viewport/ViewportGLWidget.h"
 #include "Gui/Viewport/ViewportOverlay.h"

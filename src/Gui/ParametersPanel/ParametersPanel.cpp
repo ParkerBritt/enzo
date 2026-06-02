@@ -1,6 +1,6 @@
 #include "Gui/ParametersPanel/ParametersPanel.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Core/Types.h"
 #include "Gui/Parameters/BoolParm.h"

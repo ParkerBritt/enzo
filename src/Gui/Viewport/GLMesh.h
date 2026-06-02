@@ -9,8 +9,8 @@
 
 #include <QOpenGLFunctions_3_2_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/Mesh.h"
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Network/NodePacket.h"
 
 struct Vertex
 {

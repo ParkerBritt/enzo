@@ -1,8 +1,8 @@
 #include "OpDefs/GopCube.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Utils/MeshShapes.h"
+#include "Engine/GeometryAlgorithms/MeshShapes.h"
 #include <Eigen/Geometry>
 
 GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)

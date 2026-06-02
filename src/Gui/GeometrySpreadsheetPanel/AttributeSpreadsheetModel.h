@@ -2,7 +2,7 @@
 
 #include <QAbstractListModel>
 #include "Engine/Core/Types.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 
 class AttributeSpreadsheetModel : public QAbstractListModel
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Operator/NodePacket.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Primitive.h"
 #include <QString>
 #include <math.h>
 #include <string.h>

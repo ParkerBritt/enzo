@@ -1,8 +1,8 @@
-#include <Engine/Operator/AttributeHandle.h>
-#include <Engine/Operator/Mesh.h>
+#include <Engine/Attribute/AttributeHandle.h>
+#include <Engine/Primitives/Mesh.h>
 #include <Engine/Core/Types.h>
-#include <Engine/Utils/BooleanUtils.h>
-#include <Engine/Utils/MeshShapes.h>
+#include <Engine/GeometryAlgorithms/BooleanUtils.h>
+#include <Engine/GeometryAlgorithms/MeshShapes.h>
 #include <catch2/catch_test_macros.hpp>
 
 #include <cmath>

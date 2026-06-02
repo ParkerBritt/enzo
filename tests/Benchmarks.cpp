@@ -2,9 +2,9 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <memory>
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Operator/OperatorTable.h"
+#include "Engine/Network/OperatorTable.h"
 #include <iostream>
 
 struct NMReset 

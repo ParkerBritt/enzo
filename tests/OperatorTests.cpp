@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
-#include "Engine/Operator/Attribute.h"
-#include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Attribute/Attribute.h"
+#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 
 
 TEST_CASE("attrHandleInt")

@@ -1,9 +1,9 @@
-#include "Engine/Operator/NodePacket.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Primitive.h"
 #include <catch2/catch_test_macros.hpp>
-#include <Engine/Operator/IndexSet.h>
-#include <Engine/Operator/Selection.h>
-#include <Engine/Operator/Mesh.h>
+#include <Engine/Selection/IndexSet.h>
+#include <Engine/Selection/Selection.h>
+#include <Engine/Primitives/Mesh.h>
 #include <memory>
 
 using namespace enzo;

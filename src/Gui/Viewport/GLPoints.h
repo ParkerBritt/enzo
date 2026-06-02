@@ -10,8 +10,8 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/ext/vector_float3.hpp>
 #include <qopenglversionfunctions.h>
-#include "Engine/Operator/Mesh.h"
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Network/NodePacket.h"
 #include "Gui/Viewport/GLCamera.h"
 
 struct Point

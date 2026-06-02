@@ -1,6 +1,6 @@
 #include "OpDefs/GopCopyToPoints.h"
-#include "Engine/Operator/Primitive.h"
-#include "Engine/Operator/Transform.h"
+#include "Engine/Primitives/Primitive.h"
+#include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
 #include <memory>
 #include <string>

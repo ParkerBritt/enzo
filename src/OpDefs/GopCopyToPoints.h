@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Operator/GeometryOpDef.h"
+#include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
 class GopCopyToPoints : public enzo::nt::GeometryOpDef {

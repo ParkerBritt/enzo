@@ -15,17 +15,17 @@ project(enzo)
 set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(ENGINE_SOURCES
-    src/Engine/Operator/Attribute.cpp
-    src/Engine/Operator/Primitive.cpp
-    src/Engine/Operator/Mesh.cpp
-    src/Engine/Operator/Camera.cpp
-    src/Engine/Operator/PrimPath.cpp
-    src/Engine/Operator/NodePacket.cpp
-    src/Engine/Operator/GeometryOperator.cpp
-    src/Engine/Operator/GeometryConnection.cpp
-    src/Engine/Operator/GeometryOpDef.cpp
-    src/Engine/Operator/OperatorTable.cpp
-    src/Engine/Operator/Context.cpp
+    src/Engine/Attribute/Attribute.cpp
+    src/Engine/Primitives/Primitive.cpp
+    src/Engine/Primitives/Mesh.cpp
+    src/Engine/Primitives/Camera.cpp
+    src/Engine/Selection/PrimPath.cpp
+    src/Engine/Network/NodePacket.cpp
+    src/Engine/Network/GeometryOperator.cpp
+    src/Engine/Network/GeometryConnection.cpp
+    src/Engine/Network/GeometryOpDef.cpp
+    src/Engine/Network/OperatorTable.cpp
+    src/Engine/Network/Context.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/NodeParameter.cpp
@@ -36,12 +36,12 @@ set(ENGINE_SOURCES
     src/Engine/Network/UpdateLock.cpp
     src/Engine/UndoRedo/UndoStack.cpp
     src/Engine/Serializer/Serializer.cpp
-    src/Engine/Operator/Selection.cpp
-    src/Engine/Operator/SelectionComponent.cpp
-    src/Engine/Operator/IndexSet.cpp
-    src/Engine/Utils/MeshUtils.cpp
-    src/Engine/Utils/MeshShapes.cpp
-    src/Engine/Utils/BooleanUtils.cpp
+    src/Engine/Selection/Selection.cpp
+    src/Engine/Selection/SelectionComponent.cpp
+    src/Engine/Selection/IndexSet.cpp
+    src/Engine/GeometryAlgorithms/MeshUtils.cpp
+    src/Engine/GeometryAlgorithms/MeshShapes.cpp
+    src/Engine/GeometryAlgorithms/BooleanUtils.cpp
     src/Engine/Util/UnionFind.cpp
 )
 

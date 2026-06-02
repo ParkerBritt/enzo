@@ -1,7 +1,7 @@
 
 #include "OpDefs/GopDelete.h"
-#include "Engine/Operator/Mesh.h"
-#include "Engine/Operator/Selection.h"
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Selection/Selection.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
 #include <boost/algorithm/string.hpp>

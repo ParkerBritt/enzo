@@ -1,5 +1,5 @@
 #include "OpDefs/GopHouse.h"
-#include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Attribute/AttributeHandle.h"
 #include <tbb/parallel_for.h>
 
 GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)

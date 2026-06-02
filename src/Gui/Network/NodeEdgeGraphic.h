@@ -1,7 +1,7 @@
 #pragma once
 #include <QGraphicsItem>
 #include "Gui/Network/SocketGraphic.h"
-#include "Engine/Operator/GeometryConnection.h"
+#include "Engine/Network/GeometryConnection.h"
 
 #include <QPainter>
 #include <memory>

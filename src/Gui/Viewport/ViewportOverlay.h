@@ -7,8 +7,8 @@
 #include <qboxlayout.h>
 #include <qwidget.h>
 #include "ViewportCamerasModel.h"
-#include <Engine/Operator/NodePacket.h>
-#include <Engine/Operator/Camera.h>
+#include <Engine/Network/NodePacket.h>
+#include <Engine/Primitives/Camera.h>
 
 class ViewportOverlay
 : public QWidget

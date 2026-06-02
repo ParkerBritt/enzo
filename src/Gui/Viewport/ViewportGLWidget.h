@@ -15,9 +15,9 @@
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLPoints.h"
 #include "Gui/Viewport/GLCameraPrim.h"
-#include "Engine/Operator/Mesh.h"
-#include "Engine/Operator/NodePacket.h"
-#include "Engine/Operator/Camera.h"
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Camera.h"
 
 class ViewportGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_2_Core
 {

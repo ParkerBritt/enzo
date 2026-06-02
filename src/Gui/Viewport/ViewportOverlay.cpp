@@ -1,9 +1,9 @@
 #include "ViewportOverlay.h"
 #include "Engine/Core/Types.h"
 #include "Gui/Viewport/ViewportCamerasModel.h"
-#include "Engine/Operator/Camera.h"
-#include "Engine/Operator/Primitive.h"
-#include "Engine/Operator/Primitive.h"
+#include "Engine/Primitives/Camera.h"
+#include "Engine/Primitives/Primitive.h"
+#include "Engine/Primitives/Primitive.h"
 #include <QAbstractItemView>
 #include <memory>
 #include <qboxlayout.h>

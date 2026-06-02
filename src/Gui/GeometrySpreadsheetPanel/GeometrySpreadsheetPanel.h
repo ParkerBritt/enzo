@@ -6,7 +6,7 @@
 #include <memory>
 #include <qtreeview.h>
 #include "Engine/Core/Types.h"
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
 #include "Gui/GeometrySpreadsheetPanel/PrimitiveTreeModel.h"
