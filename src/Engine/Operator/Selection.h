@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Operator/NodePacket.h"
 #include "Engine/Operator/Primitive.h"
-#include "SelectionComponent.h"
+#include "Engine/Operator/SelectionComponent.h"
 #include <memory>
 #include <string>
 

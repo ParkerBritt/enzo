@@ -1,7 +1,7 @@
-#include "SelectionComponent.h"
+#include "Engine/Operator/SelectionComponent.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Utils/StringUtils.h"
-#include "IndexSet.h"
+#include "Engine/Operator/IndexSet.h"
 #include <cctype>
 #include <set>
 #include <sstream>

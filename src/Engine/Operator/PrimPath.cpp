@@ -1,4 +1,4 @@
-#include "PrimPath.h"
+#include "Engine/Operator/PrimPath.h"
 #include <sstream>
 
 namespace enzo {

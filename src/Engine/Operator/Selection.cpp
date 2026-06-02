@@ -1,6 +1,6 @@
-#include "Selection.h"
-#include "Mesh.h"
-#include "SelectionComponent.h"
+#include "Engine/Operator/Selection.h"
+#include "Engine/Operator/Mesh.h"
+#include "Engine/Operator/SelectionComponent.h"
 #include <icecream.hpp>
 #include <sstream>
 
