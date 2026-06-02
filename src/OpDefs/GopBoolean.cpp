@@ -43,7 +43,9 @@ void GopBoolean::cookOp(enzo::op::Context context)
         if (opStr == "intersect") op = utils::BooleanOp::INTERSECT;
         else if (opStr == "subtract") op = utils::BooleanOp::SUBTRACT;
 
-        std::shared_ptr<geo::Mesh> result = utils::booleanMesh(*meshA, *meshB, op);
+        std::string error;
+        std::shared_ptr<geo::Mesh> result = utils::booleanMesh(*meshA, *meshB, op, &error);
+        if (!error.empty()) throwError(error);
         output.addPrimitive(result);
     }
     else if (meshA)
