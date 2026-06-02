@@ -8,9 +8,9 @@ using namespace enzo;
 
 TEST_CASE("Delete faces") {
     geo::Mesh mesh;
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -32,10 +32,10 @@ TEST_CASE("Delete points") {
     geo::Mesh mesh;
 
     // Create points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 1, 0));
 
     // Create faces
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -67,9 +67,9 @@ TEST_CASE("Delete vertices") {
     geo::Mesh mesh;
 
     // Create points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
 
     // Create face
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -95,9 +95,9 @@ TEST_CASE("Delete face adds points to solo") {
     geo::Mesh mesh;
 
     // Create points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
 
     // Create face using all three points
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -116,9 +116,9 @@ TEST_CASE("Delete all vertices on face") {
     geo::Mesh mesh;
 
     // Create points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
 
     // Create face
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -144,10 +144,10 @@ TEST_CASE("Delete points and faces") {
     geo::Mesh mesh;
 
     // Create points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 1, 0));
 
     // Create faces
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -179,9 +179,9 @@ TEST_CASE("Create face group") {
     geo::Mesh mesh;
 
     // Build a mesh with two faces
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
@@ -203,9 +203,9 @@ TEST_CASE("Add to face group") {
     geo::Mesh mesh;
 
     // Build a mesh with three faces
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -241,9 +241,9 @@ TEST_CASE("Group name can match attribute name") {
     geo::Mesh mesh;
 
     // Build a mesh with one face
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Same name on both stores must not collide
@@ -262,9 +262,9 @@ TEST_CASE("Group survives defragment") {
     geo::Mesh mesh;
 
     // Build a mesh with three faces, put faces 0 and 2 in a group
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
@@ -288,16 +288,16 @@ TEST_CASE("Add faces") {
     geo::Mesh mesh;
 
     // Build the source points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 1, 0));
 
     // Two triangles in a single batch call
-    std::vector<attr::Offset> pointOffsetsFlat{
+    std::vector<Offset> pointOffsetsFlat{
         pointOffset0, pointOffset1, pointOffset2,
         pointOffset1, pointOffset2, pointOffset3};
-    std::vector<attr::Offset> vertexCounts{3, 3};
+    std::vector<Offset> vertexCounts{3, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // Returned offsets should be the new face indices
@@ -309,53 +309,53 @@ TEST_CASE("Add faces") {
     // Each face should report the right point references
     auto face0Points = mesh.getFacePoints(faceOffsets[0]);
     REQUIRE(face0Points.size() == 3);
-    REQUIRE(face0Points[0] == static_cast<bt::intT>(pointOffset0));
-    REQUIRE(face0Points[1] == static_cast<bt::intT>(pointOffset1));
-    REQUIRE(face0Points[2] == static_cast<bt::intT>(pointOffset2));
+    REQUIRE(face0Points[0] == static_cast<intT>(pointOffset0));
+    REQUIRE(face0Points[1] == static_cast<intT>(pointOffset1));
+    REQUIRE(face0Points[2] == static_cast<intT>(pointOffset2));
 
     auto face1Points = mesh.getFacePoints(faceOffsets[1]);
     REQUIRE(face1Points.size() == 3);
-    REQUIRE(face1Points[0] == static_cast<bt::intT>(pointOffset1));
-    REQUIRE(face1Points[1] == static_cast<bt::intT>(pointOffset2));
-    REQUIRE(face1Points[2] == static_cast<bt::intT>(pointOffset3));
+    REQUIRE(face1Points[0] == static_cast<intT>(pointOffset1));
+    REQUIRE(face1Points[1] == static_cast<intT>(pointOffset2));
+    REQUIRE(face1Points[2] == static_cast<intT>(pointOffset3));
 }
 
 TEST_CASE("Add faces mixed sizes") {
     geo::Mesh mesh;
 
     // Build the source points
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 1, 0));
-    auto pointOffset4 = mesh.addPoint(bt::Vector3(2, 0, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 1, 0));
+    auto pointOffset4 = mesh.addPoint(Vector3(2, 0, 0));
 
     // One quad, one tri
-    std::vector<attr::Offset> pointOffsetsFlat{
+    std::vector<Offset> pointOffsetsFlat{
         pointOffset0, pointOffset1, pointOffset2, pointOffset3,
         pointOffset0, pointOffset1, pointOffset4};
-    std::vector<attr::Offset> vertexCounts{4, 3};
+    std::vector<Offset> vertexCounts{4, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // The quad keeps its four points in order
     auto quadPoints = mesh.getFacePoints(faceOffsets[0]);
     REQUIRE(quadPoints.size() == 4);
-    REQUIRE(quadPoints[3] == static_cast<bt::intT>(pointOffset3));
+    REQUIRE(quadPoints[3] == static_cast<intT>(pointOffset3));
 
     // The tri starts at its own primStart, not appended to the quad
     auto triPoints = mesh.getFacePoints(faceOffsets[1]);
     REQUIRE(triPoints.size() == 3);
-    REQUIRE(triPoints[0] == static_cast<bt::intT>(pointOffset0));
-    REQUIRE(triPoints[2] == static_cast<bt::intT>(pointOffset4));
+    REQUIRE(triPoints[0] == static_cast<intT>(pointOffset0));
+    REQUIRE(triPoints[2] == static_cast<intT>(pointOffset4));
 }
 
 TEST_CASE("Add faces resizes group") {
     geo::Mesh mesh;
 
     // Build a mesh with two faces, both in a group
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
@@ -363,8 +363,8 @@ TEST_CASE("Add faces resizes group") {
     mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 1});
 
     // Add one more face via the batch path
-    std::vector<attr::Offset> pointOffsetsFlat{pointOffset0, pointOffset1, pointOffset2};
-    std::vector<attr::Offset> vertexCounts{3};
+    std::vector<Offset> pointOffsetsFlat{pointOffset0, pointOffset1, pointOffset2};
+    std::vector<Offset> vertexCounts{3};
     mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
     // The group must have grown to cover the new face, and that face
@@ -380,27 +380,27 @@ TEST_CASE("Face normal of axis aligned quad") {
     geo::Mesh mesh;
 
     // CCW from +Y so the right hand rule normal is +Y
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     auto faceNormals = mesh.getFaceNormal();
-    REQUIRE(faceNormals[0] == bt::Vector3(0, 1, 0));
+    REQUIRE(faceNormals[0] == Vector3(0, 1, 0));
 }
 
 TEST_CASE("Face normal of tilted triangle uses Newell's method") {
     geo::Mesh mesh;
 
     // Triangle in the plane y = -z (normal direction (0, -1, 1)/sqrt(2))
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(1, 0, 0));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(0, 1, 1));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 1));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     auto faceNormals = mesh.getFaceNormal();
-    const bt::Vector3 normal = faceNormals[0];
+    const Vector3 normal = faceNormals[0];
     const double oneOverRoot2 = 1.0 / std::sqrt(2.0);
     const double eps = 1e-9;
     REQUIRE(std::abs(normal.x()) < eps);
@@ -411,29 +411,29 @@ TEST_CASE("Face normal of tilted triangle uses Newell's method") {
 TEST_CASE("Face normal prefers Normal attribute over Newell") {
     geo::Mesh mesh;
 
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Newell would give (0, 1, 0) for this face. Override with a different
     // direction so we can tell which path was used.
     auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::FACE, "Normal");
-    normalAttr.setValue(0, bt::Vector3(1, 0, 0));
+    normalAttr.setValue(0, Vector3(1, 0, 0));
 
     auto faceNormals = mesh.getFaceNormal();
-    REQUIRE(faceNormals[0] == bt::Vector3(1, 0, 0));
+    REQUIRE(faceNormals[0] == Vector3(1, 0, 0));
 }
 
 TEST_CASE("Face normal precompute path matches on the fly") {
     geo::Mesh mesh;
 
     // Two faces with different orientations
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(0, 1, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset3, pointOffset1});
 
@@ -448,38 +448,38 @@ TEST_CASE("Vertex normal falls back to owning face") {
     geo::Mesh mesh;
 
     // Axis aligned quad, face normal is +Y
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     auto vertexNormals = mesh.getVertexNormal();
-    REQUIRE(vertexNormals[0] == bt::Vector3(0, 1, 0));
-    REQUIRE(vertexNormals[1] == bt::Vector3(0, 1, 0));
-    REQUIRE(vertexNormals[2] == bt::Vector3(0, 1, 0));
-    REQUIRE(vertexNormals[3] == bt::Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[0] == Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[1] == Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[2] == Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[3] == Vector3(0, 1, 0));
 }
 
 TEST_CASE("Vertex normal prefers Normal attribute over face fallback") {
     geo::Mesh mesh;
 
-    auto pointOffset0 = mesh.addPoint(bt::Vector3(0, 0, 0));
-    auto pointOffset1 = mesh.addPoint(bt::Vector3(0, 0, 1));
-    auto pointOffset2 = mesh.addPoint(bt::Vector3(1, 0, 1));
-    auto pointOffset3 = mesh.addPoint(bt::Vector3(1, 0, 0));
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Override one vertex's normal so we can see the attribute path wins
     auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::VERTEX, "Normal");
-    normalAttr.setValue(0, bt::Vector3(1, 0, 0));
-    normalAttr.setValue(1, bt::Vector3(0, 1, 0));
-    normalAttr.setValue(2, bt::Vector3(0, 0, 1));
-    normalAttr.setValue(3, bt::Vector3(-1, 0, 0));
+    normalAttr.setValue(0, Vector3(1, 0, 0));
+    normalAttr.setValue(1, Vector3(0, 1, 0));
+    normalAttr.setValue(2, Vector3(0, 0, 1));
+    normalAttr.setValue(3, Vector3(-1, 0, 0));
 
     auto vertexNormals = mesh.getVertexNormal();
-    REQUIRE(vertexNormals[0] == bt::Vector3(1, 0, 0));
-    REQUIRE(vertexNormals[1] == bt::Vector3(0, 1, 0));
-    REQUIRE(vertexNormals[2] == bt::Vector3(0, 0, 1));
-    REQUIRE(vertexNormals[3] == bt::Vector3(-1, 0, 0));
+    REQUIRE(vertexNormals[0] == Vector3(1, 0, 0));
+    REQUIRE(vertexNormals[1] == Vector3(0, 1, 0));
+    REQUIRE(vertexNormals[2] == Vector3(0, 0, 1));
+    REQUIRE(vertexNormals[3] == Vector3(-1, 0, 0));
 }

@@ -30,11 +30,11 @@ class Primitive {
         struct Iterator {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
-            using value_type = attr::Offset;
+            using value_type = Offset;
 
             value_type operator*() const { return curOffset_; }
 
-            Iterator(Primitive &primitive, attr::Offset current)
+            Iterator(Primitive &primitive, Offset current)
                 : primitive_(primitive), curOffset_(current) {
                 skipInvalid();
             }
@@ -62,9 +62,9 @@ class Primitive {
 
           private:
             enzo::geo::Primitive &primitive_;
-            attr::Offset curOffset_ = 0;
+            Offset curOffset_ = 0;
             void skipInvalid() {
-                const attr::Offset end = primitive_.getNumPoints();
+                const Offset end = primitive_.getNumPoints();
                 while (curOffset_ < end && !primitive_.isValidPoint(curOffset_)) ++curOffset_;
             }
         };
@@ -82,7 +82,7 @@ class Primitive {
     virtual PrimType getType() const = 0;
     virtual std::shared_ptr<Primitive> clone() const = 0;
     virtual TransformClass transformType() const = 0;
-    virtual void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) = 0;
+    virtual void applyTransform(const Matrix4 &mat, TransformClass transformClass) = 0;
     void applyTransform(const Transform &transform, TransformClass transformClass) {
         applyTransform(transform.getMatrix(), transformClass);
     }
@@ -91,10 +91,10 @@ class Primitive {
     void incrementVersion();
 
     virtual bool hasPoints() const { return false; }
-    attr::Offset getNumPoints() const { return getElementCount(attr::AttributeOwner::POINT); }
+    Offset getNumPoints() const { return getElementCount(attr::AttributeOwner::POINT); }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
-    virtual bool isValidPoint(attr::Offset offset) const { return true; }
-    virtual void deletePoints(const std::vector<attr::Offset>& pointOffsets) {}
+    virtual bool isValidPoint(Offset offset) const { return true; }
+    virtual void deletePoints(const std::vector<Offset>& pointOffsets) {}
 
     /**
      * @brief Compacts storage, removing entries marked invalid so offsets
@@ -102,13 +102,13 @@ class Primitive {
      */
     virtual void defragment() {}
 
-    attr::AttributeHandle<bt::intT> addIntAttribute(attr::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<intT> addIntAttribute(attr::AttributeOwner owner, std::string name,
                                                   bool intrinsic = false);
     attr::AttributeHandleBool addBoolAttribute(attr::AttributeOwner owner, std::string name,
                                              bool intrinsic = false, bool isPrivate = false);
-    attr::AttributeHandle<bt::Vector3> addVector3Attribute(attr::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<Vector3> addVector3Attribute(attr::AttributeOwner owner, std::string name,
                                                          bool intrinsic = false);
-    attr::AttributeHandle<bt::Matrix4> addMatrix4Attribute(attr::AttributeOwner owner, std::string name,
+    attr::AttributeHandle<Matrix4> addMatrix4Attribute(attr::AttributeOwner owner, std::string name,
                                                          bool intrinsic = false);
 
     std::shared_ptr<attr::Attribute> getAttribByName(attr::AttributeOwner owner, std::string name,
@@ -140,7 +140,7 @@ class Primitive {
      * @brief Marks the given offsets as members of the group.
      */
     void addToGroup(attr::AttributeOwner owner, const std::string& name,
-                    const std::vector<attr::Offset>& offsets);
+                    const std::vector<Offset>& offsets);
     /**
      * @brief Looks up a group by name.
      * @return The matching group, or nullptr if no such group exists.
@@ -168,16 +168,16 @@ class Primitive {
         return createGroup(attr::AttributeOwner::PRIMITIVE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the point group.
-    void addToPointGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+    void addToPointGroup(const std::string& name, const std::vector<Offset>& offsets) {
         addToGroup(attr::AttributeOwner::POINT, name, offsets);
     }
     /// @brief Marks the given offsets as members of the primitive group.
-    void addToPrimitiveGroup(const std::string& name, const std::vector<attr::Offset>& offsets) {
+    void addToPrimitiveGroup(const std::string& name, const std::vector<Offset>& offsets) {
         addToGroup(attr::AttributeOwner::PRIMITIVE, name, offsets);
     }
 
-    bt::String getPath() const { return path_; };
-    void setPath(const bt::String &path) { path_ = path; };
+    String getPath() const { return path_; };
+    void setPath(const String &path) { path_ = path; };
 
   protected:
     virtual attr::attribVector &getAttributeStore(const attr::AttributeOwner &owner);

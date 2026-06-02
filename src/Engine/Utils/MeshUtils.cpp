@@ -10,7 +10,7 @@ namespace {
 
 // Ear clip one simple polygon given its corner positions in winding order.
 // Returns triangles as index triples into corners, keeping the input winding.
-std::vector<std::array<int, 3>> earClipPolygon(std::span<const bt::Vector3> corners)
+std::vector<std::array<int, 3>> earClipPolygon(std::span<const Vector3> corners)
 {
     std::vector<std::array<int, 3>> triangles;
     const int cornerCount = static_cast<int>(corners.size());
@@ -22,9 +22,9 @@ std::vector<std::array<int, 3>> earClipPolygon(std::span<const bt::Vector3> corn
             triangles.push_back({ring[0], ring[static_cast<int>(fanIndex)], ring[static_cast<int>(fanIndex)+1]});
     };
 
-    std::vector<bt::intT> identityPoints(cornerCount);
+    std::vector<intT> identityPoints(cornerCount);
     std::iota(identityPoints.begin(), identityPoints.end(), 0);
-    const bt::Vector3 normal = polygonNormal(corners, identityPoints);
+    const Vector3 normal = polygonNormal(corners, identityPoints);
 
     std::vector<int> ring(cornerCount);
     std::iota(ring.begin(), ring.end(), 0);
@@ -37,9 +37,9 @@ std::vector<std::array<int, 3>> earClipPolygon(std::span<const bt::Vector3> corn
     }
 
     // Two in plane axes to project each corner down to 2D.
-    bt::Vector3 axisU = (std::abs(normal.x()) > 0.9) ? bt::Vector3(0, 1, 0) : bt::Vector3(1, 0, 0);
+    Vector3 axisU = (std::abs(normal.x()) > 0.9) ? Vector3(0, 1, 0) : Vector3(1, 0, 0);
     axisU = (axisU - normal * axisU.dot(normal)).normalized();
-    const bt::Vector3 axisV = normal.cross(axisU);
+    const Vector3 axisV = normal.cross(axisU);
 
     std::vector<double> projX(cornerCount);
     std::vector<double> projY(cornerCount);
@@ -124,22 +124,22 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src)
     result.mesh = std::make_shared<geo::Mesh>(src.getPath());
 
     // Copy every point so output offsets match the source one to one.
-    const attr::Offset numPoints = src.getNumPoints();
-    std::vector<bt::Vector3> positions;
+    const Offset numPoints = src.getNumPoints();
+    std::vector<Vector3> positions;
     positions.reserve(numPoints);
-    for (attr::Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
     {
         positions.push_back(src.getPointPos(pointOffset));
     }
     result.mesh->addPoints(positions);
 
     // Fan triangulate each face from its first corner.
-    std::vector<attr::Offset> triPointsFlat;
-    std::vector<attr::Offset> triVertexCounts;
-    const attr::Offset numFaces = src.getNumFaces();
-    for (attr::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
+    std::vector<Offset> triPointsFlat;
+    std::vector<Offset> triVertexCounts;
+    const Offset numFaces = src.getNumFaces();
+    for (Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
     {
-        const std::span<const bt::intT> facePoints = src.getFacePoints(faceOffset);
+        const std::span<const intT> facePoints = src.getFacePoints(faceOffset);
         const size_t cornerCount = facePoints.size();
         if (cornerCount < 3) continue;
         for (size_t fanIndex = 1; fanIndex + 1 < cornerCount; ++fanIndex)
@@ -157,15 +157,15 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src)
 }
 
 
-bt::Vector3 polygonNormal(std::span<const bt::Vector3> positions,
-                          std::span<const bt::intT> polygonPoints)
+Vector3 polygonNormal(std::span<const Vector3> positions,
+                          std::span<const intT> polygonPoints)
 {
-    bt::Vector3 normal(0, 0, 0);
+    Vector3 normal(0, 0, 0);
     const size_t count = polygonPoints.size();
     for(size_t cornerIndex=0; cornerIndex<count; ++cornerIndex)
     {
-        const bt::Vector3& cur = positions[polygonPoints[cornerIndex]];
-        const bt::Vector3& nxt = positions[polygonPoints[(cornerIndex+1)%count]];
+        const Vector3& cur = positions[polygonPoints[cornerIndex]];
+        const Vector3& nxt = positions[polygonPoints[(cornerIndex+1)%count]];
         normal.x() += (cur.y() - nxt.y()) * (cur.z() + nxt.z());
         normal.y() += (cur.z() - nxt.z()) * (cur.x() + nxt.x());
         normal.z() += (cur.x() - nxt.x()) * (cur.y() + nxt.y());
@@ -175,18 +175,18 @@ bt::Vector3 polygonNormal(std::span<const bt::Vector3> positions,
 }
 
 
-std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
-                                                              std::span<const attr::Offset> faceOffsets)
+std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
+                                                              std::span<const Offset> faceOffsets)
 {
-    std::vector<std::array<attr::Offset, 3>> triangles;
-    std::vector<bt::Vector3> corners;
-    for(const attr::Offset faceOffset : faceOffsets)
+    std::vector<std::array<Offset, 3>> triangles;
+    std::vector<Vector3> corners;
+    for(const Offset faceOffset : faceOffsets)
     {
         const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
         if(cornerCount < 3) continue;
 
         // Each corner's position lives at its vertex offset on the face.
-        const attr::Offset faceStartVertex = mesh.getFaceStartVertex(faceOffset);
+        const Offset faceStartVertex = mesh.getFaceStartVertex(faceOffset);
         corners.resize(cornerCount);
         for(unsigned int cornerIndex=0; cornerIndex<cornerCount; ++cornerIndex)
             corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);
@@ -199,7 +199,7 @@ std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh&
 }
 
 
-std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
+std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
 {
     return earClipTriangleIndices(mesh, mesh.getFaces().toVector());
 }

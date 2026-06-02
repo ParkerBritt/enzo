@@ -6,12 +6,12 @@
 namespace enzo {
 class Transform {
   public:
-    Transform(attr::Attribute &attribute, attr::Offset offset) {
+    Transform(attr::Attribute &attribute, Offset offset) {
         // Compute 4x4 transform matrix from attributes
 
         // Use vector attribute as the position in the matrix
         if (attribute.getType() == attr::AttrType::vectorT) {
-            mat_ = bt::Matrix4::Identity();
+            mat_ = Matrix4::Identity();
             mat_.col(3).head<3>() = attribute.getVector3(offset);
 
             // Use matrix types directly
@@ -20,13 +20,13 @@ class Transform {
 
             // Fallback to identity
         } else {
-            mat_ = bt::Matrix4::Identity();
+            mat_ = Matrix4::Identity();
         }
     }
 
-    const bt::Matrix4 &getMatrix() const { return mat_; }
+    const Matrix4 &getMatrix() const { return mat_; }
 
   private:
-    bt::Matrix4 mat_;
+    Matrix4 mat_;
 };
 } // namespace enzo

@@ -65,7 +65,7 @@ void GLPoints::initBuffers()
 void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
 {
     const glm::vec3 camPosGlm = camera.getPos();
-    const enzo::bt::Vector3 camPos(camPosGlm.x, camPosGlm.y, camPosGlm.z);
+    const enzo::Vector3 camPos(camPosGlm.x, camPosGlm.y, camPosGlm.z);
 
     points_.clear();
 
@@ -74,18 +74,18 @@ void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
-        const enzo::attr::Offset numPoints = geometry->getNumSoloPoints();
+        const enzo::Offset numPoints = geometry->getNumSoloPoints();
         const size_t baseIndex = points_.size();
         points_.resize(baseIndex + numPoints);
 
-        std::vector<enzo::attr::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
+        std::vector<enzo::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
 
-        tbb::parallel_for(tbb::blocked_range<enzo::attr::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::attr::Offset> range)
+        tbb::parallel_for(tbb::blocked_range<enzo::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::Offset> range)
         {
-            for(enzo::attr::Offset i=range.begin(); i<range.end(); ++i)
+            for(enzo::Offset i=range.begin(); i<range.end(); ++i)
             {
-                const enzo::attr::Offset ptOffset = soloPoints[i];
-                const enzo::bt::Vector3 pos = geometry->getPointPos(ptOffset);
+                const enzo::Offset ptOffset = soloPoints[i];
+                const enzo::Vector3 pos = geometry->getPointPos(ptOffset);
                 points_[baseIndex + i] = {glm::vec3(pos.x(), pos.y(), pos.z()), static_cast<float>((pos-camPos).norm())*0.005f};
             }
         });

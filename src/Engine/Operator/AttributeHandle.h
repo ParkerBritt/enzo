@@ -20,7 +20,7 @@ namespace enzo::attr{
 * @brief Read write accessor for #enzo::attr::Attribute
 *
 * @tparam T C++ value type matching the Attribute’s logical type
-*           (e.g., bt::intT, bt::floatT, bt::Vector3, bt::boolT).
+*           (e.g., intT, floatT, Vector3, boolT).
 *
 * An Attribute Handle is a typed view into an attribute’s storage.
 * It binds at construction to a concrete type and exposes operations
@@ -148,7 +148,7 @@ public:
     *
     * Not available for bool handles since std::vector<bool> is bit packed and has no real reference.
     */
-    const T& operator[](size_t offset) const requires (!std::is_same_v<T, bt::boolT>)
+    const T& operator[](size_t offset) const requires (!std::is_same_v<T, boolT>)
     {
         return (*data_)[offset];
     }
@@ -200,11 +200,11 @@ private:
 
 };
 
-using AttributeHandleInt = AttributeHandle<bt::intT>;
-using AttributeHandleFloat = AttributeHandle<bt::floatT>;
-using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
-using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
-using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
+using AttributeHandleInt = AttributeHandle<intT>;
+using AttributeHandleFloat = AttributeHandle<floatT>;
+using AttributeHandleVector3 = AttributeHandle<enzo::Vector3>;
+using AttributeHandleBool = AttributeHandle<enzo::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::Matrix4>;
 
 template <typename T>
 /**
@@ -247,7 +247,7 @@ public:
     }
 
     /// @copydoc AttributeHandle::operator[]
-    const T& operator[](size_t offset) const requires (!std::is_same_v<T, bt::boolT>)
+    const T& operator[](size_t offset) const requires (!std::is_same_v<T, boolT>)
     {
         return (*data_)[offset];
     }
@@ -278,11 +278,11 @@ private:
 
 };
 
-using AttributeHandleInt = AttributeHandle<bt::intT>;
-using AttributeHandleFloat = AttributeHandle<bt::floatT>;
-using AttributeHandleVector3 = AttributeHandle<enzo::bt::Vector3>;
-using AttributeHandleBool = AttributeHandle<enzo::bt::boolT>;
-using AttributeHandleMatrix4 = AttributeHandle<enzo::bt::Matrix4>;
+using AttributeHandleInt = AttributeHandle<intT>;
+using AttributeHandleFloat = AttributeHandle<floatT>;
+using AttributeHandleVector3 = AttributeHandle<enzo::Vector3>;
+using AttributeHandleBool = AttributeHandle<enzo::boolT>;
+using AttributeHandleMatrix4 = AttributeHandle<enzo::Matrix4>;
 
 
 }

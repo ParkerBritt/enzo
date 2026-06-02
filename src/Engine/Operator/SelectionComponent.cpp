@@ -11,18 +11,18 @@ std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
     if (enzo::utils::trim(content) == "*") {
         return std::make_shared<enzo::WildcardIndexSet>();
     }
-    std::set<enzo::attr::Index> indices;
+    std::set<enzo::Index> indices;
     std::stringstream stream{std::string(content)};
     std::string token;
     while (stream >> token) {
         // Range token "low-high" expands inclusively into the index set
         size_t dash = token.find('-');
         if (dash != std::string::npos && dash > 0 && dash + 1 < token.size()) {
-            enzo::attr::Index low = std::stoull(token.substr(0, dash));
-            enzo::attr::Index high = std::stoull(token.substr(dash + 1));
+            enzo::Index low = std::stoull(token.substr(0, dash));
+            enzo::Index high = std::stoull(token.substr(dash + 1));
             if (low > high)
                 std::swap(low, high);
-            for (enzo::attr::Index i = low; i <= high; ++i) {
+            for (enzo::Index i = low; i <= high; ++i) {
                 indices.insert(i);
             }
             continue;
@@ -118,8 +118,8 @@ bool PathSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     return prim.getPath() == primPath_;
 }
 
-bool PathSelectionComponent::containsFace(const geo::Primitive &prim, attr::Index index,
-                                          attr::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsFace(const geo::Primitive &prim, Index index,
+                                          Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -130,8 +130,8 @@ bool PathSelectionComponent::containsFace(const geo::Primitive &prim, attr::Inde
     return inverted ? !in : in;
 }
 
-bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, attr::Index index,
-                                           attr::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, Index index,
+                                           Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -142,8 +142,8 @@ bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, attr::Ind
     return inverted ? !in : in;
 }
 
-bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, attr::Index index,
-                                            attr::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, Index index,
+                                            Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -165,11 +165,11 @@ bool PathSelectionComponent::isWholePrim(const geo::Primitive &) const {
 namespace {
 // Reads a group's bool at the given offset, false if the group is missing
 bool isGroupMember(const geo::Primitive &prim, attr::AttrOwner owner, const std::string &name,
-                   attr::Offset offset) {
+                   Offset offset) {
     auto group = prim.getGroupByName(owner, name);
     if (!group)
         return false;
-    attr::AttributeHandleRO<bt::boolT> handle(group);
+    attr::AttributeHandleRO<boolT> handle(group);
     return handle.getValue(offset);
 }
 } // namespace
@@ -183,7 +183,7 @@ std::unique_ptr<GroupSelectionComponent> GroupSelectionComponent::create(std::st
 bool GroupSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     // A primitive group with the flag set selects the whole prim
     if (auto primGroup = prim.getGroupByName(attr::AttrOwner::PRIMITIVE, groupName_)) {
-        attr::AttributeHandleRO<bt::boolT> handle(primGroup);
+        attr::AttributeHandleRO<boolT> handle(primGroup);
         return handle.getValue(0);
     }
     // Otherwise the prim is in scope if any other store has the group
@@ -194,8 +194,8 @@ bool GroupSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     return false;
 }
 
-bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, attr::Index /*index*/,
-                                           attr::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, Index /*index*/,
+                                           Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -208,8 +208,8 @@ bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, attr::Ind
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, attr::Index /*index*/,
-                                            attr::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, Index /*index*/,
+                                            Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -220,8 +220,8 @@ bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, attr::In
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, attr::Index /*index*/,
-                                             attr::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, Index /*index*/,
+                                             Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -236,7 +236,7 @@ bool GroupSelectionComponent::isWholePrim(const geo::Primitive &prim) const {
     auto primGroup = prim.getGroupByName(attr::AttrOwner::PRIMITIVE, groupName_);
     if (!primGroup)
         return false;
-    attr::AttributeHandleRO<bt::boolT> handle(primGroup);
+    attr::AttributeHandleRO<boolT> handle(primGroup);
     return handle.getValue(0);
 }
 

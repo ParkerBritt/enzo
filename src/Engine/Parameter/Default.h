@@ -7,7 +7,7 @@ namespace enzo::prm
     {
     public:
         Default();
-        Default(bt::floatT floatDefault
+        Default(floatT floatDefault
         // TODO: add string meaning eg.
         // ,  CH_StringMeaning string_meaning = CH_STRING_LITERAL
         );
@@ -15,17 +15,17 @@ namespace enzo::prm
         Default(int intDefault);
         Default(bool boolDefault);
 
-        bt::floatT getFloat() const	{ return floatDefault_; }
-        bt::intT getInt() const { return (bt::intT)floatDefault_; }
+        floatT getFloat() const	{ return floatDefault_; }
+        intT getInt() const { return (intT)floatDefault_; }
         const char *getString() const { return stringDefault_; }
 
-        void set(bt::floatT thefloat, const char *thestring);
-        void setFloat(bt::floatT value)	{ floatDefault_ = value; }
-        void setInt(bt::intT value)	{ floatDefault_ = (bt::intT)value; }
+        void set(floatT thefloat, const char *thestring);
+        void setFloat(floatT value)	{ floatDefault_ = value; }
+        void setInt(intT value)	{ floatDefault_ = (intT)value; }
         void setString(const char *value) { stringDefault_ = value; }
 
     private:
-        bt::floatT floatDefault_;
+        floatT floatDefault_;
         const char* stringDefault_;
     };
 }

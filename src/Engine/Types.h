@@ -32,22 +32,6 @@ enum class AttributeType {
 };
 using AttrType = AttributeType;
 using AttrOwner = AttributeOwner;
-/**
- * @brief attr::Index is the continuous index of an element in a given AttributeOwner.
- *
- * Eg. point index, vertex index, primitive index, or global index.
- * This is usually provided by the user where attr::Offset is used internally.
- */
-using Index = size_t;
-/**
- * @brief attr::Offset is the internal discontinuous index of an element in a given AttributeOwner.
- *
- * Eg. point offset, vertex offset, primitive offset, or global offset.
- * This different but similar in concept to the index. This
- * value will stay consistant through geometry modification such
- * as adding and deleting points unless defragmented.
- */
-using Offset = size_t;
 } // namespace attr
 namespace geo {
 enum class PrimType { MESH, CAMERA };
@@ -74,7 +58,6 @@ inline bool hasFlag(TransformClass value, TransformClass flag) {
 }
 
 // Basic types
-namespace bt {
 using floatT = double;
 using intT = int64_t;
 using boolT = bool;
@@ -83,7 +66,22 @@ using Vector3 = Eigen::Vector3d;
 using Vector4 = Eigen::Vector4d;
 using Matrix4 = Eigen::Matrix4d;
 using String = std::string;
-} // namespace bt
+/**
+ * @brief enzo::Index is the continuous index of an element in a given AttributeOwner.
+ *
+ * Eg. point index, vertex index, primitive index, or global index.
+ * This is usually provided by the user where enzo::Offset is used internally.
+ */
+using Index = size_t;
+/**
+ * @brief enzo::Offset is the internal discontinuous index of an element in a given AttributeOwner.
+ *
+ * Eg. point offset, vertex offset, primitive offset, or global offset.
+ * This different but similar in concept to the index. This
+ * value will stay consistant through geometry modification such
+ * as adding and deleting points unless defragmented.
+ */
+using Offset = size_t;
 namespace prm {
 enum class Type { STRING, FLOAT, BOOL, XYZ, INT, TOGGLE, GROUP };
 enum class Direction { HORIZONTAL, VERTICAL };

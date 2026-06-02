@@ -30,7 +30,7 @@ class NodePacket {
             std::vector<geo::PrimPtr> &primitives_;
             TransformClass transformClass_;
             size_t primIdx_;
-            attr::Offset offset_ = 0;
+            Offset offset_ = 0;
             std::shared_ptr<attr::Attribute> curAttrib_;
             size_t curSize_ = 0;
 

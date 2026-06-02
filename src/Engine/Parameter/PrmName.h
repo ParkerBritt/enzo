@@ -6,14 +6,14 @@ namespace enzo::prm
 class Name
 {
 public:
-    Name(bt::String token, bt::String label);
+    Name(String token, String label);
     Name();
 
-    bt::String getToken() const;
-    bt::String getLabel() const;
+    String getToken() const;
+    String getLabel() const;
 private:
-    bt::String token_;
-    bt::String label_;
+    String token_;
+    String label_;
 };
 
 }

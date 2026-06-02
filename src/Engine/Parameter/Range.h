@@ -13,16 +13,16 @@ namespace enzo::prm
     class Range
     {
     public:
-        Range(bt::floatT minValue=0, bt::floatT maxValue=10, RangeFlag minFlag=RangeFlag::UNLOCKED, RangeFlag maxFlag=RangeFlag::UNLOCKED);
+        Range(floatT minValue=0, floatT maxValue=10, RangeFlag minFlag=RangeFlag::UNLOCKED, RangeFlag maxFlag=RangeFlag::UNLOCKED);
 
-        bt::floatT getMin() const	    { return minValue_; }
-        bt::floatT getMax() const	    { return maxValue_; }
+        floatT getMin() const	    { return minValue_; }
+        floatT getMax() const	    { return maxValue_; }
         RangeFlag getMinFlag() const    { return minFlag_; }
         RangeFlag getMaxFlag() const    { return maxFlag_; }
 
     private:
-        bt::floatT minValue_;
-        bt::floatT maxValue_;
+        floatT minValue_;
+        floatT maxValue_;
         RangeFlag minFlag_;
         RangeFlag maxFlag_;
     };

@@ -23,7 +23,7 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         NodePacket packet;
         // geo::Primitive geo;
         //
-        // bt::String filePath = context.evalStringParm("filePath");
+        // String filePath = context.evalStringParm("filePath");
         // boost::trim(filePath);
         // if(filePath.size()<4)
         // {
@@ -66,7 +66,7 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //         {
         //             continue;
         //         }
-        //         const bt::Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]), std::stod(result[3])};
+        //         const Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]), std::stod(result[3])};
         //         geo.addPoint(pointPos);
         //     }
         //     else if(firstChar=='f' || firstChar=='l')
@@ -80,9 +80,9 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //             continue;
         //         }
         //
-        //         attr::Offset numVerts = result.size()-1;
+        //         Offset numVerts = result.size()-1;
         //
-        //         std::vector<attr::Offset> verts;
+        //         std::vector<Offset> verts;
         //         verts.reserve(numVerts);
         //
         //         for(int i=1; i<numVerts+1; ++i)
@@ -95,10 +95,10 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         // }
         //
         // const float scale = context.evalFloatParm("size");
-        // const attr::Offset numPoints = geo.getNumPoints();
-        // for(attr::Offset i=0; i<numPoints; ++i)
+        // const Offset numPoints = geo.getNumPoints();
+        // for(Offset i=0; i<numPoints; ++i)
         // {
-        //     enzo::bt::Vector3 pointPos = geo.getPointPos(i);
+        //     enzo::Vector3 pointPos = geo.getPointPos(i);
         //     pointPos*=scale;
         //     geo.setPointPos(i, pointPos);
         // }

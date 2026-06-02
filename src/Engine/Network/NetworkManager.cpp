@@ -17,7 +17,7 @@
 #include <string>
 #include "icecream.hpp"
 
-enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::Vector2f position)
+enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position)
 {
 
     OpId opId = ++maxOpId_;
@@ -42,9 +42,9 @@ enzo::nt::OpId enzo::nt::NetworkManager::createOperator(op::OpInfo opInfo, bt::V
 }
 
 
-void enzo::nt::NetworkManager::moveNode(OpId opId, bt::Vector2f newPos, bool skipUndo)
+void enzo::nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
 {
-    bt::Vector2f oldPos = getGeoOperator(opId).getPosition();
+    Vector2f oldPos = getGeoOperator(opId).getPosition();
     getGeoOperator(opId).setPosition(newPos);
 
     if(!skipUndo)

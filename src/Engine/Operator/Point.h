@@ -6,14 +6,14 @@
 namespace enzo {
 class Point {
   public:
-    Point(attr::attribVector &attribute, attr::Offset offset)
+    Point(attr::attribVector &attribute, Offset offset)
         : attributes_(attribute), offset_(offset) {}
 
-    bt::Vector3 getPosition() { return bt::Vector3(0, 0, 0); };
-    bt::Matrix4 getTransform() { return bt::Matrix4(); };
+    Vector3 getPosition() { return Vector3(0, 0, 0); };
+    Matrix4 getTransform() { return Matrix4(); };
 
   private:
     attr::attribVector &attributes_;
-    attr::Offset offset_;
+    Offset offset_;
 };
 } // namespace enzo

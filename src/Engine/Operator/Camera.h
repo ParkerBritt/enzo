@@ -22,12 +22,12 @@ public:
     PrimType getType() const override { return PrimType::CAMERA; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Camera>(*this); }
     TransformClass transformType() const override { return TransformClass::PRIMITIVE; }
-    void applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) override;
+    void applyTransform(const Matrix4 &mat, TransformClass transformClass) override;
 
-    bt::Matrix4 getTransform() const;
-    void setTransform(const bt::Matrix4& xform);
+    Matrix4 getTransform() const;
+    void setTransform(const Matrix4& xform);
 
 private:
-    attr::AttributeHandle<bt::Matrix4> transformHandle_;
+    attr::AttributeHandle<Matrix4> transformHandle_;
 };
 }

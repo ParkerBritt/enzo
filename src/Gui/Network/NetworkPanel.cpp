@@ -44,7 +44,7 @@ NetworkPanel::NetworkPanel(QWidget *parent) : Panel(parent) {
     mainLayout_->addWidget(view_);
 
     // Node position changed
-    enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::OpId opId, enzo::bt::Vector2f pos) {
+    enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::OpId opId, enzo::Vector2f pos) {
         if (auto it = nodeStore_.find(opId); it != nodeStore_.end()) {
             it->second->setPos(pos.x(), pos.y());
         }

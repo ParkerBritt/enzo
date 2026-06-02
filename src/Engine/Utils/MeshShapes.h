@@ -14,6 +14,6 @@ namespace enzo::utils {
  * @param center World position of the cube's center.
  * @return Shared pointer to the new cube mesh.
  */
-std::shared_ptr<geo::Mesh> buildCube(const bt::Vector3& size, const bt::Vector3& center);
+std::shared_ptr<geo::Mesh> buildCube(const Vector3& size, const Vector3& center);
 
 } // namespace enzo::utils

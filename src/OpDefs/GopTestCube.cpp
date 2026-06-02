@@ -21,7 +21,7 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
         // attr::AttributeHandleVector3 PAttrHandle(PAttr);
         // const int startPt = PAttrHandle.getSize();
         //
-        // const std::vector<bt::Vector3> pts = {
+        // const std::vector<Vector3> pts = {
         //     {-1, -1,  1},
         //     { 1, -1,  1},
         //     { 1,  1,  1},
@@ -58,7 +58,7 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
         // const float s = context.evalFloatParm("size");
         // for (int i = 0; i < PAttrHandle.getAllValues().size(); ++i)
         // {
-        //     bt::Vector3 v = PAttrHandle.getValue(i);
+        //     Vector3 v = PAttrHandle.getValue(i);
         //     v *= s;
         //     PAttrHandle.setValue(i, v);
         // }

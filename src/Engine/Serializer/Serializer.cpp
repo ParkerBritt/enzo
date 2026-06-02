@@ -48,9 +48,9 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
                 prmModel.name = prm->getName();
                 std::visit([&prmModel](const auto& v) {
                     using T = typename std::decay_t<decltype(v)>::value_type;
-                    if constexpr (std::is_same_v<T, bt::floatT>)
+                    if constexpr (std::is_same_v<T, floatT>)
                         prmModel.floatValues = v;
-                    else if constexpr (std::is_same_v<T, bt::intT>)
+                    else if constexpr (std::is_same_v<T, intT>)
                         prmModel.intValues = v;
                     else
                         prmModel.stringValues = v;

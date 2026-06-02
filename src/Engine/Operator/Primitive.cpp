@@ -71,20 +71,20 @@ attr::AttributeHandleBool geo::Primitive::addBoolAttribute(attr::AttributeOwner 
     return attr::AttributeHandleBool(newAttribute);
 }
 
-attr::AttributeHandle<bt::Vector3>
+attr::AttributeHandle<Vector3>
 geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic) {
     auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::vectorT, intrinsic);
     newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandle<bt::Vector3>(newAttribute);
+    return attr::AttributeHandle<Vector3>(newAttribute);
 }
 
-attr::AttributeHandle<bt::Matrix4>
+attr::AttributeHandle<Matrix4>
 geo::Primitive::addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic) {
     auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::matrixT, intrinsic);
     newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandle<bt::Matrix4>(newAttribute);
+    return attr::AttributeHandle<Matrix4>(newAttribute);
 }
 
 attr::attribVector &geo::Primitive::getAttributeStore(const attr::AttributeOwner &owner) {
@@ -153,11 +153,11 @@ attr::AttributeHandleBool geo::Primitive::createGroup(attr::AttributeOwner owner
 }
 
 void geo::Primitive::addToGroup(attr::AttributeOwner owner, const std::string &name,
-                                const std::vector<attr::Offset> &offsets) {
+                                const std::vector<Offset> &offsets) {
     auto group = getGroupByName(owner, name);
     if (!group) throw std::runtime_error("addToGroup: no group named '" + name + "'");
     attr::AttributeHandleBool handle(group);
-    for (attr::Offset offset : offsets) {
+    for (Offset offset : offsets) {
         handle.setValue(offset, true);
     }
 }

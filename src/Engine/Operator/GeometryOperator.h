@@ -157,9 +157,9 @@ public:
     unsigned int getMaxOutputs() const;
 
     /// @brief Returns the node's position in the network graph.
-    bt::Vector2f getPosition() const { return position_; }
+    Vector2f getPosition() const { return position_; }
     /// @brief Sets the node's position in the network graph.
-    void setPosition(bt::Vector2f pos) { position_ = pos; }
+    void setPosition(Vector2f pos) { position_ = pos; }
 
     /// @brief A signal emitted when the node is dirtied. This will usually notify the NetworkManager
     boost::signals2::signal<void (nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
@@ -174,7 +174,7 @@ private:
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;
-    bt::Vector2f position_{0.f, 0.f};
+    Vector2f position_{0.f, 0.f};
     bool dirty_ = true;
 };
 }

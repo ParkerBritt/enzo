@@ -15,12 +15,12 @@ class Selection {
     void getVertices();
     std::vector<std::shared_ptr<geo::Primitive>> getPrims(const NodePacket &packet);
     bool containsPrim(geo::PrimPtr prim, bool full = false);
-    bool containsFace(geo::PrimPtr prim, attr::Index index, attr::Offset offset);
-    bool containsPoint(geo::PrimPtr prim, attr::Index index, attr::Offset offset);
-    bool containsVertex(geo::PrimPtr prim, attr::Index index, attr::Offset offset);
-    std::vector<attr::Offset> getFaces(geo::PrimPtr prim);
-    std::vector<attr::Offset> getPoints(geo::PrimPtr prim);
-    std::vector<attr::Offset> getVertices(geo::PrimPtr prim);
+    bool containsFace(geo::PrimPtr prim, Index index, Offset offset);
+    bool containsPoint(geo::PrimPtr prim, Index index, Offset offset);
+    bool containsVertex(geo::PrimPtr prim, Index index, Offset offset);
+    std::vector<Offset> getFaces(geo::PrimPtr prim);
+    std::vector<Offset> getPoints(geo::PrimPtr prim);
+    std::vector<Offset> getVertices(geo::PrimPtr prim);
 
     void setInverted(bool inverted) { inverted_ = inverted; }
     bool getInverted() const { return inverted_; }

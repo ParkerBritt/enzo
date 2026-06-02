@@ -67,7 +67,7 @@ public:
 private:
     OpId opId_;
     std::string typeName_;
-    bt::Vector2f position_;
+    Vector2f position_;
     std::vector<SavedParameter> savedParms_;
 };
 

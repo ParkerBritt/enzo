@@ -36,7 +36,7 @@ public:
     std::vector<GLint> faceIndexData;
     std::vector<Point> points_;
 
-    enzo::attr::Offset pointCount;
+    enzo::Offset pointCount;
 
     void init();
     void initBuffers();

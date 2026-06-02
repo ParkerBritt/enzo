@@ -21,9 +21,9 @@ class Template {
     Template(enzo::prm::Type type, prm::Name name, prm::Default theDefault,
              unsigned int vectorSize = 1, Range range = Range());
     // get name and get token are identical
-    enzo::bt::String getName() const;
-    enzo::bt::String getToken() const;
-    enzo::bt::String getLabel() const;
+    enzo::String getName() const;
+    enzo::String getToken() const;
+    enzo::String getLabel() const;
     const prm::Default getDefault(unsigned int index = 0) const;
     const prm::Range &getRange(unsigned int index = 0) const;
     const prm::Type getType() const;
@@ -34,15 +34,15 @@ class Template {
     const std::vector<Template> &getChildren() const;
     const bool isContainer() const;
 
-    enzo::bt::String getTooltip() const;
-    enzo::bt::String getDocumentation() const;
+    enzo::String getTooltip() const;
+    enzo::String getDocumentation() const;
     bool isLabelHidden() const;
     bool isBackgroundEnabled() const;
 
     // Chainable setters. Mutate in place and return *this so a Template can
     // be configured inline at construction.
-    Template &setTooltip(bt::String tooltip);
-    Template &setDocumentation(bt::String documentation);
+    Template &setTooltip(String tooltip);
+    Template &setDocumentation(String documentation);
     Template &setDirection(Direction direction);
     Template &addParm(Template child);
     Template &setLabelHidden(bool hidden);
@@ -65,8 +65,8 @@ class Template {
     prm::Name name_;
     unsigned int vectorSize_;
 
-    bt::String tooltip_;
-    bt::String documentation_;
+    String tooltip_;
+    String documentation_;
 
     bool labelHidden_ = false;
     bool backgroundEnabled_ = true;
