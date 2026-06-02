@@ -37,6 +37,11 @@ void enzo::nt::GeometryOpDef::throwError(std::string error)
 
 }
 
+void enzo::nt::GeometryOpDef::throwWarning(std::string warning)
+{
+    std::cerr << "NODE WARNING: " << warning << "\n";
+
+}
 
 unsigned int enzo::nt::GeometryOpDef::getMinInputs() const
 {

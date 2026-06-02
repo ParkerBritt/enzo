@@ -10,7 +10,6 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -19,7 +18,7 @@ namespace enzo::utils {
 
 namespace {
 
-// Backend neutral intermediate: a soup of result triangles whose vertices live
+// Backend neutral intermediate. A soup of result triangles whose vertices live
 // in a single shared position list and whose source faces are tagged. Both
 // Manifold and a future CGAL clip backend can produce this shape.
 struct SourceFace
@@ -48,7 +47,7 @@ struct VertexOrigin
     double t = 0.0;
 };
 
-// A reconstructed polygon: an ordered loop of fragment vertex indices and a
+// A reconstructed polygon. An ordered loop of fragment vertex indices plus a
 // pointer back to the source face that produced its triangles.
 struct DetriangulatedFace
 {
@@ -106,10 +105,52 @@ manifold::OpType toManifoldOp(BooleanOp op)
 }
 
 
+// Human readable name for a Manifold status code, used when reporting a
+// boolean failure back to the node.
+const char* manifoldStatusString(manifold::Manifold::Error status)
+{
+    using Error = manifold::Manifold::Error;
+    switch (status)
+    {
+        case Error::NoError:                      return "no error";
+        case Error::NonFiniteVertex:              return "non finite vertex";
+        case Error::NotManifold:                  return "not manifold";
+        case Error::VertexOutOfBounds:            return "vertex index out of bounds";
+        case Error::PropertiesWrongLength:        return "properties wrong length";
+        case Error::MissingPositionProperties:    return "missing position properties";
+        case Error::MergeVectorsDifferentLengths: return "merge vectors different lengths";
+        case Error::MergeIndexOutOfBounds:        return "merge index out of bounds";
+        case Error::TransformWrongLength:         return "transform wrong length";
+        case Error::RunIndexWrongLength:          return "run index wrong length";
+        case Error::FaceIDWrongLength:            return "face id wrong length";
+        case Error::InvalidConstruction:          return "invalid construction";
+        case Error::ResultTooLarge:               return "result too large";
+    }
+    return "unknown error";
+}
+
+// Append one line to the optional error sink. A non-null, non-empty sink at
+// the end of the boolean means the node should report a cook failure.
+void appendError(std::string* error, const std::string& message)
+{
+    if (!error) return;
+    if (!error->empty()) *error += "\n";
+    *error += message;
+}
+
+// Append a labeled Manifold status line to the optional error sink.
+void reportStatus(std::string* error, const char* label, manifold::Manifold::Error status)
+{
+    appendError(error, std::string(label) + ": " + manifoldStatusString(status));
+}
+
+
 // Run Manifold's boolean and convert the MeshGL64 result into our backend
 // neutral intermediate. The merge table is folded in so duplicate vertices
-// along boolean cuts get a single canonical index.
-BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, BooleanOp op)
+// along boolean cuts get a single canonical index. Any Manifold status failure
+// is written to @p error so the calling node can surface it.
+BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, BooleanOp op,
+                             std::string* error)
 {
     // Triangulate each input. faceToOriginal maps each fan triangle back to its source polygon.
     const TriangulatedMesh triA = triangulateMesh(meshA);
@@ -123,13 +164,13 @@ BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, Boo
     manifold::Manifold manA(meshGLA);
     manifold::Manifold manB(meshGLB);
     if (manA.Status() != manifold::Manifold::Error::NoError)
-        std::cerr << "[boolean] input A status code: " << static_cast<int>(manA.Status()) << "\n";
+        reportStatus(error, "input A", manA.Status());
     if (manB.Status() != manifold::Manifold::Error::NoError)
-        std::cerr << "[boolean] input B status code: " << static_cast<int>(manB.Status()) << "\n";
+        reportStatus(error, "input B", manB.Status());
 
     manifold::Manifold resultManifold = manA.Boolean(manB, toManifoldOp(op));
     if (resultManifold.Status() != manifold::Manifold::Error::NoError)
-        std::cerr << "[boolean] result status code: " << static_cast<int>(resultManifold.Status()) << "\n";
+        reportStatus(error, "result", resultManifold.Status());
 
     manifold::MeshGL64 resultGL = resultManifold.GetMeshGL64();
 
@@ -389,8 +430,11 @@ struct SourceFaceKeyHash
 
 // Group triangles by source face, then walk each group's boundary edges into
 // closed loops. Interior fan edges cancel since each appears in both winding
-// directions; only original polygon edges and cut edges remain.
-std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments)
+// directions so only original polygon edges and cut edges remain. A boundary
+// that fails to close into a polygon is reported through @p error rather than
+// dropped, since a dropped face would leave a hole in the result.
+std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
+                                              std::string* error)
 {
     // Bucket triangle indices by source face.
     std::unordered_map<SourceFaceKey, std::vector<size_t>, SourceFaceKeyHash> trisBySource;
@@ -404,7 +448,7 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments)
     for (auto& [key, triIndices] : trisBySource)
     {
         // Build a directed edge multiset across every triangle in this bucket.
-        // Adding (a,b) cancels one prior (b,a); whatever remains is boundary.
+        // Adding (a,b) cancels one prior (b,a). Whatever remains is boundary.
         std::unordered_map<int, std::unordered_multiset<int>> outgoingEdges;
         auto addDirectedEdge = [&](int fromVert, int toVert)
         {
@@ -443,6 +487,7 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments)
             int currentVert = startVert;
             const int safetyLimit = static_cast<int>(triIndices.size()) * 3 + 4;
             int safetyCounter = 0;
+            bool closed = false;
             while (safetyCounter++ < safetyLimit)
             {
                 auto& neighbors = outgoingEdges[currentVert];
@@ -451,17 +496,25 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments)
                 neighbors.erase(neighbors.begin());
                 loop.push_back(currentVert);
                 currentVert = nextVert;
-                if (currentVert == startVert) break;
+                if (currentVert == startVert) { closed = true; break; }
             }
 
-            // A valid polygon needs at least three distinct corners.
-            if (loop.size() >= 3)
+            // A valid polygon is a closed loop with at least three distinct corners.
+            // Anything else means the cut left a boundary we can't rebuild, so
+            // report it instead of emitting a hole.
+            if (closed && loop.size() >= 3)
             {
                 DetriangulatedFace face;
                 face.source.side = key.side;
                 face.source.faceOffset = key.faceOffset;
                 face.loop = std::move(loop);
                 faces.push_back(std::move(face));
+            }
+            else
+            {
+                const char* sideName = key.side == SourceFace::Side::A ? "A" : "B";
+                appendError(error, "detriangulation could not close a boundary on source face "
+                                       + std::to_string(key.faceOffset) + " of input " + sideName);
             }
         }
     }
@@ -482,7 +535,7 @@ void copyAttributeRow(const ga::attribVector& sourceStore,
         if (!sourceAttribute) continue;
         if (sourceAttribute->isIntrinsic()) continue;
 
-        // Find a matching destination attribute by name; skip if it doesn't exist.
+        // Find a matching destination attribute by name. Skip if it doesn't exist.
         std::shared_ptr<ga::Attribute> destAttribute;
         for (const auto& candidate : destStore)
         {
@@ -598,7 +651,7 @@ void interpolateAttributeRow(const ga::attribVector& sourceStore,
             }
             case ga::AttributeType::boolT:
             {
-                // Booleans don't blend; fall back to the nearest endpoint.
+                // Booleans don't blend so fall back to the nearest endpoint.
                 ga::AttributeHandleRO<bt::boolT> sourceHandle(sourceAttribute);
                 ga::AttributeHandle<bt::boolT> destHandle(destAttribute);
                 const ga::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
@@ -607,7 +660,7 @@ void interpolateAttributeRow(const ga::attribVector& sourceStore,
             }
             case ga::AttributeType::matrixT:
             {
-                // Matrices don't blend componentwise meaningfully; pick an endpoint.
+                // Matrices don't blend componentwise meaningfully so pick an endpoint.
                 ga::AttributeHandleRO<bt::Matrix4> sourceHandle(sourceAttribute);
                 ga::AttributeHandle<bt::Matrix4> destHandle(destAttribute);
                 const ga::Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
@@ -661,7 +714,7 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
         for (int vertIndex : face.loop)
             vertexUsed[vertIndex] = true;
 
-    // Sort used vertices into ordered buckets: A originals, B originals, then anything else.
+    // Sort used vertices into ordered buckets. A originals first, then B originals, then anything else.
     std::vector<int> aOriginalVerts;
     std::vector<int> bOriginalVerts;
     std::vector<int> otherVerts;
@@ -709,7 +762,7 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             auto weak = sourceMesh.getAttributeByIndex(owner, static_cast<unsigned int>(attrIndex));
             auto shared = weak.lock();
             if (!shared) continue;
-            // weak holds shared_ptr<const Attribute>; cast away const to fit the helper signature.
+            // weak holds shared_ptr<const Attribute> so cast away const to fit the helper signature.
             auto mutableShared = std::const_pointer_cast<ga::Attribute>(shared);
             ensureAttributeOnDestination(*outputMesh, owner, mutableShared);
         }
@@ -881,16 +934,17 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
 
 std::shared_ptr<geo::Mesh> booleanMesh(const geo::Mesh& meshA,
                                        const geo::Mesh& meshB,
-                                       BooleanOp op)
+                                       BooleanOp op,
+                                       std::string* error)
 {
     // Run Manifold and convert the result into our backend neutral form.
-    const BooleanFragments fragments = runManifold(meshA, meshB, op);
+    const BooleanFragments fragments = runManifold(meshA, meshB, op, error);
 
     // Tag each fragment vertex by where it came from in A or B.
     const std::vector<VertexOrigin> origins = resolveOrigins(fragments, meshA, meshB);
 
     // Walk every source face's triangle bucket back into a polygon.
-    const std::vector<DetriangulatedFace> faces = detriangulate(fragments);
+    const std::vector<DetriangulatedFace> faces = detriangulate(fragments, error);
 
     // Build the output mesh and carry attributes from inputs onto it.
     return assembleMesh(meshA, meshB, fragments, origins, faces);

@@ -64,6 +64,12 @@ public:
     */
     void throwError(std::string error);
 
+    /**
+    * @brief Doesn't interupt the cook but displays a warning on the node. Use inside the #cookOp function.
+    * @todo Add visual error to GUI
+    */
+    void throwWarning(std::string warning);
+
     /// @brief Returns the minimum number of input connections required for the node to function. Set by op::OpInfo when registering the operator.
     unsigned int getMinInputs() const;
     /// @brief Returns the maximum number of input connections accepted by the node. Set by op::OpInfo when registering the operator.
