@@ -1,5 +1,5 @@
 #include "OpDefs/GopGrid.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
 #include <cmath>

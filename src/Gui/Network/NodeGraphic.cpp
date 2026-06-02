@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Core/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/SocketGraphic.h"

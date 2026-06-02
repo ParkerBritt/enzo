@@ -1,6 +1,6 @@
 #include "Gui/Interface.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/HeaderBar/HeaderBar.h"
 #include "Gui/IconRegistry.h"

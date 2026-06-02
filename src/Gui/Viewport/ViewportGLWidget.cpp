@@ -1,5 +1,5 @@
 #include "Gui/Viewport/ViewportGLWidget.h"
-#include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLPoints.h"
@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <qtimer.h>
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 
 void ViewportGLWidget::initializeGL()
 {

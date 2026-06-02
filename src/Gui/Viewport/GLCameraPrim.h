@@ -1,7 +1,7 @@
 #pragma once
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 
 class GLCameraPrim
 : protected QOpenGLFunctions_3_3_Core

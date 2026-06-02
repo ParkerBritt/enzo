@@ -1,5 +1,5 @@
-#include <Engine/Operator/AttributeHandle.h>
-#include <Engine/Operator/Mesh.h>
+#include <Engine/Attribute/AttributeHandle.h>
+#include <Engine/Primitives/Mesh.h>
 #include <Engine/Core/Types.h>
 #include <catch2/catch_test_macros.hpp>
 #include <cmath>

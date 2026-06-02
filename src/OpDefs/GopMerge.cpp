@@ -1,5 +1,5 @@
 #include "OpDefs/GopMerge.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Core/Types.h"
 #include <unordered_map>
 #include <string>

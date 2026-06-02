@@ -7,10 +7,10 @@
 #endif
 
 #include <iostream>
-#include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Utils/MeshUtils.h"
+#include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>

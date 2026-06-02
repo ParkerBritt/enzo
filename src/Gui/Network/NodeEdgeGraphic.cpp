@@ -1,6 +1,6 @@
 #include "Gui/Network/NodeEdgeGraphic.h"
 #include <QTextDocument>
-#include "Engine/Operator/GeometryConnection.h"
+#include "Engine/Network/GeometryConnection.h"
 #include "Gui/Network/SocketGraphic.h"
 #include <iostream>
 #include <qgraphicsitem.h>

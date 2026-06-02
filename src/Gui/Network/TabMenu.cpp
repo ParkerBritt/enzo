@@ -1,5 +1,5 @@
 #include "Gui/Network/TabMenu.h"
-#include "Engine/Operator/OperatorTable.h"
+#include "Engine/Network/OperatorTable.h"
 #include "Gui/Network/NetworkPanel.h"
 #include <QEvent>
 #include <QGraphicsDropShadowEffect>

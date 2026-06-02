@@ -2,7 +2,7 @@
 #include <QAbstractItemModel>
 #include <memory>
 #include <string>
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 
 class PrimitiveTreeItem;
 

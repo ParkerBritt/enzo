@@ -1,7 +1,7 @@
 #include "OpDefs/GopBoolean.h"
-#include "Engine/Operator/Mesh.h"
-#include "Engine/Operator/NodePacket.h"
-#include "Engine/Utils/BooleanUtils.h"
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/GeometryAlgorithms/BooleanUtils.h"
 
 GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 : GeometryOpDef(network, opInfo) {}

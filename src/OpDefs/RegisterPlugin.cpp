@@ -1,5 +1,5 @@
-#include "Engine/Operator/OpInfo.h"
-#include "Engine/Operator/OperatorTable.h"
+#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/OperatorTable.h"
 #include "GopGeometryImport.h"
 #include "GopHouse.h"
 #include "GopOceanSurface.h"

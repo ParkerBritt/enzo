@@ -2,7 +2,7 @@
 
 #include "Engine/UndoRedo/UndoCommand.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Core/Types.h"
 
 namespace enzo::nt {

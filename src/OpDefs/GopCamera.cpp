@@ -1,5 +1,5 @@
 #include "OpDefs/GopCamera.h"
-#include "Engine/Operator/Camera.h"
+#include "Engine/Primitives/Camera.h"
 #include "Engine/Core/Types.h"
 #include <cmath>
 #include "Engine/Parameter/Range.h"

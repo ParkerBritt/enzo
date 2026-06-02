@@ -1,5 +1,5 @@
 #include "OpDefs/GopSineWave.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
 #include <boost/algorithm/string.hpp>

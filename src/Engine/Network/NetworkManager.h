@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Network/UpdateLock.h"
-#include "Engine/Operator/GeometryOperator.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/UndoRedo/UndoStack.h"
 #include "Engine/Core/Types.h"
 #include <memory>
