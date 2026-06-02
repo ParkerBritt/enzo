@@ -6,16 +6,16 @@
 namespace enzo {
 class Transform {
   public:
-    Transform(ga::Attribute &attribute, ga::Offset offset) {
+    Transform(attr::Attribute &attribute, attr::Offset offset) {
         // Compute 4x4 transform matrix from attributes
 
         // Use vector attribute as the position in the matrix
-        if (attribute.getType() == ga::AttrType::vectorT) {
+        if (attribute.getType() == attr::AttrType::vectorT) {
             mat_ = bt::Matrix4::Identity();
             mat_.col(3).head<3>() = attribute.getVector3(offset);
 
             // Use matrix types directly
-        } else if (attribute.getType() == ga::AttrType::matrixT) {
+        } else if (attribute.getType() == attr::AttrType::matrixT) {
             mat_ = attribute.getMatrix4(offset);
 
             // Fallback to identity

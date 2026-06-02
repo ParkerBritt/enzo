@@ -16,8 +16,8 @@ namespace {
 size_t countFacesWithVertexCount(const geo::Mesh& mesh, unsigned int expected)
 {
     size_t hits = 0;
-    const ga::Offset total = mesh.getNumFaces();
-    for (ga::Offset faceOffset = 0; faceOffset < total; ++faceOffset)
+    const attr::Offset total = mesh.getNumFaces();
+    for (attr::Offset faceOffset = 0; faceOffset < total; ++faceOffset)
     {
         if (!mesh.isValidFace(faceOffset)) continue;
         if (mesh.getFaceVertCount(faceOffset) == expected) ++hits;
@@ -65,25 +65,25 @@ TEST_CASE("Face attribute carries from source mesh to result face")
     auto cubeB = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(3, 0, 0));
 
     // Tag every face of cube A with 11 and every face of cube B with 22.
-    auto attrA = cubeA->addIntAttribute(ga::AttrOwner::FACE, "tag");
-    for (ga::Offset faceOffset = 0; faceOffset < cubeA->getNumFaces(); ++faceOffset)
+    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::FACE, "tag");
+    for (attr::Offset faceOffset = 0; faceOffset < cubeA->getNumFaces(); ++faceOffset)
         attrA.setValue(faceOffset, 11);
-    auto attrB = cubeB->addIntAttribute(ga::AttrOwner::FACE, "tag");
-    for (ga::Offset faceOffset = 0; faceOffset < cubeB->getNumFaces(); ++faceOffset)
+    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::FACE, "tag");
+    for (attr::Offset faceOffset = 0; faceOffset < cubeB->getNumFaces(); ++faceOffset)
         attrB.setValue(faceOffset, 22);
 
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
     REQUIRE(result != nullptr);
 
     // Look up the tag attribute on the result.
-    auto tagAttr = result->getAttribByName(ga::AttrOwner::FACE, "tag");
+    auto tagAttr = result->getAttribByName(attr::AttrOwner::FACE, "tag");
     REQUIRE(tagAttr != nullptr);
-    ga::AttributeHandleInt tagHandle(std::const_pointer_cast<ga::Attribute>(tagAttr));
+    attr::AttributeHandleInt tagHandle(std::const_pointer_cast<attr::Attribute>(tagAttr));
 
     // Tally how many result faces carry the A tag and how many carry the B tag.
     size_t fromA = 0;
     size_t fromB = 0;
-    for (ga::Offset faceOffset = 0; faceOffset < result->getNumFaces(); ++faceOffset)
+    for (attr::Offset faceOffset = 0; faceOffset < result->getNumFaces(); ++faceOffset)
     {
         if (!result->isValidFace(faceOffset)) continue;
         const auto value = tagHandle.getValue(faceOffset);
@@ -102,24 +102,24 @@ TEST_CASE("Point attribute survives on un-cut points")
     auto cubeB = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(3, 0, 0));
 
     // Tag every point of A with 1 and every point of B with 2.
-    auto attrA = cubeA->addIntAttribute(ga::AttrOwner::POINT, "src");
-    for (ga::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
+    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "src");
+    for (attr::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
         attrA.setValue(pointOffset, 1);
-    auto attrB = cubeB->addIntAttribute(ga::AttrOwner::POINT, "src");
-    for (ga::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
+    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "src");
+    for (attr::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, 2);
 
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
     REQUIRE(result != nullptr);
 
-    auto srcAttr = result->getAttribByName(ga::AttrOwner::POINT, "src");
+    auto srcAttr = result->getAttribByName(attr::AttrOwner::POINT, "src");
     REQUIRE(srcAttr != nullptr);
-    ga::AttributeHandleInt srcHandle(std::const_pointer_cast<ga::Attribute>(srcAttr));
+    attr::AttributeHandleInt srcHandle(std::const_pointer_cast<attr::Attribute>(srcAttr));
 
     // Tally how many points carry A's tag versus B's tag.
     size_t fromA = 0;
     size_t fromB = 0;
-    for (ga::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
+    for (attr::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
     {
         if (!result->isValidPoint(pointOffset)) continue;
         const auto value = srcHandle.getValue(pointOffset);
@@ -138,28 +138,28 @@ TEST_CASE("Cut point interpolates point attribute from edge endpoints")
     auto cubeB = utils::buildCube(bt::Vector3(2, 3, 3), bt::Vector3(2, 0.5, 0.5));
 
     // Tag each A point with ten times its X coordinate so a cut at x=1 should interpolate to 10.
-    auto attrA = cubeA->addIntAttribute(ga::AttrOwner::POINT, "xCoord");
-    for (ga::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
+    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
+    for (attr::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
     {
         const bt::Vector3 position = cubeA->getPointPos(pointOffset);
         attrA.setValue(pointOffset, static_cast<bt::intT>(std::lround(position.x() * 10)));
     }
     // Mark B points so they are easy to tell apart from interpolated values.
-    auto attrB = cubeB->addIntAttribute(ga::AttrOwner::POINT, "xCoord");
-    for (ga::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
+    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
+    for (attr::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, -1);
 
     // Subtract B from A so the right half of A is cut away.
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::SUBTRACT);
     REQUIRE(result != nullptr);
 
-    auto attr = result->getAttribByName(ga::AttrOwner::POINT, "xCoord");
+    auto attr = result->getAttribByName(attr::AttrOwner::POINT, "xCoord");
     REQUIRE(attr != nullptr);
-    ga::AttributeHandleInt handle(std::const_pointer_cast<ga::Attribute>(attr));
+    attr::AttributeHandleInt handle(std::const_pointer_cast<attr::Attribute>(attr));
 
     // Find points sitting on the x=1 cut plane and check their attribute interpolates to 10.
     size_t cutPointsAtTen = 0;
-    for (ga::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
+    for (attr::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
     {
         if (!result->isValidPoint(pointOffset)) continue;
         const bt::Vector3 position = result->getPointPos(pointOffset);

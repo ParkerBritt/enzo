@@ -210,8 +210,8 @@ void ViewportGLWidget::paintGL()
 
 //     auto mesh = std::make_unique<GLMesh>();
 //         
-//     std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P");
-//     ga::AttributeHandleVector3 PAttrHandle = ga::AttributeHandleVector3(PAttr);
+//     std::shared_ptr<attr::Attribute> PAttr = geometry.getAttribByName(attr::AttrOwner::POINT, "P");
+//     attr::AttributeHandleVector3 PAttrHandle = attr::AttributeHandleVector3(PAttr);
 
 
 //     mesh->setPosBuffer(geometry);

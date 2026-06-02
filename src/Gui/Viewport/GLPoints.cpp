@@ -74,17 +74,17 @@ void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
         auto prim = packet.getPrimitive(pi);
         if(prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
-        const enzo::ga::Offset numPoints = geometry->getNumSoloPoints();
+        const enzo::attr::Offset numPoints = geometry->getNumSoloPoints();
         const size_t baseIndex = points_.size();
         points_.resize(baseIndex + numPoints);
 
-        std::vector<enzo::ga::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
+        std::vector<enzo::attr::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
 
-        tbb::parallel_for(tbb::blocked_range<enzo::ga::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::ga::Offset> range)
+        tbb::parallel_for(tbb::blocked_range<enzo::attr::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::attr::Offset> range)
         {
-            for(enzo::ga::Offset i=range.begin(); i<range.end(); ++i)
+            for(enzo::attr::Offset i=range.begin(); i<range.end(); ++i)
             {
-                const enzo::ga::Offset ptOffset = soloPoints[i];
+                const enzo::attr::Offset ptOffset = soloPoints[i];
                 const enzo::bt::Vector3 pos = geometry->getPointPos(ptOffset);
                 points_[baseIndex + i] = {glm::vec3(pos.x(), pos.y(), pos.z()), static_cast<float>((pos-camPos).norm())*0.005f};
             }

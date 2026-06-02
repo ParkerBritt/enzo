@@ -8,13 +8,13 @@
 #include <vector>
 
 namespace enzo {
-namespace ga {
+namespace attr {
 template <typename T> using StoreContainer = std::vector<T>;
 
 template <typename T> class AttributeHandle;
 
 /**
- * @class enzo::ga::Attribute
+ * @class enzo::attr::Attribute
  * @brief Containers for geometry data.
  *
  * Attributes are the containers for geometry data in the engine.
@@ -27,7 +27,7 @@ template <typename T> class AttributeHandle;
  * (e.g., ints, floats, vectors, bools). This allows a single attribute class
  * to store data regardless of the type without templates.
  * Attributes cannot be read or written from by themselves.
- * For that an attribute handle is required, (see #enzo::ga::AttributeHandle).
+ * For that an attribute handle is required, (see #enzo::attr::AttributeHandle).
  *
  * @note Values are strongly typed; invalid type combinations are guarded both
  *       at compile time (via handles) and at runtime (defensive checks).
@@ -42,7 +42,7 @@ class Attribute {
      * @param type Attribute data type that values will be stored in.
      *
      */
-    Attribute(std::string name, ga::AttributeType type, bool intrinsic = false,
+    Attribute(std::string name, attr::AttributeType type, bool intrinsic = false,
               bool isPrivate = false);
     Attribute(const Attribute &other);
     /**
@@ -103,7 +103,7 @@ class Attribute {
     // bool readOnly_=false;
     bool intrinsic_ = false;
 
-    ga::AttributeType type_;
+    attr::AttributeType type_;
     unsigned int typeSize_ = 1;
 
     std::string name_;
@@ -117,6 +117,6 @@ class Attribute {
     StoreVariant store_;
 };
 
-using attribVector = std::vector<std::shared_ptr<ga::Attribute>>;
-} // namespace ga
+using attribVector = std::vector<std::shared_ptr<attr::Attribute>>;
+} // namespace attr
 } // namespace enzo

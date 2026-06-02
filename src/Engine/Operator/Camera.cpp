@@ -3,7 +3,7 @@
 using namespace enzo;
 
 geo::Camera::Camera(std::string_view path)
-    : transformHandle_{addMatrix4Attribute(ga::AttributeOwner::PRIMITIVE, "transform", true)},
+    : transformHandle_{addMatrix4Attribute(attr::AttributeOwner::PRIMITIVE, "transform", true)},
     Primitive(path)
 {
     transformHandle_.addValue(bt::Matrix4::Identity());
@@ -11,7 +11,7 @@ geo::Camera::Camera(std::string_view path)
 
 geo::Camera::Camera(const Camera& other)
     : Primitive(other),
-      transformHandle_{ga::AttributeHandle<bt::Matrix4>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "transform", true))}
+      transformHandle_{attr::AttributeHandle<bt::Matrix4>(getAttribByName(attr::AttributeOwner::PRIMITIVE, "transform", true))}
 {
 }
 
@@ -19,7 +19,7 @@ geo::Camera& geo::Camera::operator=(const Camera& rhs)
 {
     if (this == &rhs) return *this;
     Primitive::operator=(rhs);
-    transformHandle_ = ga::AttributeHandle<bt::Matrix4>(getAttribByName(ga::AttributeOwner::PRIMITIVE, "transform", true));
+    transformHandle_ = attr::AttributeHandle<bt::Matrix4>(getAttribByName(attr::AttributeOwner::PRIMITIVE, "transform", true));
     return *this;
 }
 

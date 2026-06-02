@@ -47,15 +47,15 @@ TEST_CASE("Selection containsFace for explicit face indices") {
 
 TEST_CASE("Selection getFaces explicit indices") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 11; ++i) {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{10}");
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Index>{10});
+    REQUIRE(faces == std::vector<attr::Index>{10});
 }
 
 TEST_CASE("Selection containsFace wildcard") {
@@ -73,15 +73,15 @@ TEST_CASE("Selection wildcard does not apply to unselected prims") {
 
 TEST_CASE("Selection getFaces wildcard") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 5; ++i) {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{*}");
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Index>{0, 1, 2, 3, 4});
+    REQUIRE(faces == std::vector<attr::Index>{0, 1, 2, 3, 4});
 }
 
 TEST_CASE("Selection empty string selects every prim") {
@@ -120,20 +120,20 @@ TEST_CASE("Selection empty string getPoints returns all points") {
     }
     Selection selection("");
     auto points = selection.getPoints(mesh);
-    REQUIRE(points == std::vector<ga::Offset>{0, 1, 2, 3});
+    REQUIRE(points == std::vector<attr::Offset>{0, 1, 2, 3});
 }
 
 TEST_CASE("Selection empty string getFaces returns all faces") {
     auto mesh = std::make_shared<geo::Mesh>("/foo");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 3; ++i) {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("");
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 2});
+    REQUIRE(faces == std::vector<attr::Offset>{0, 1, 2});
 }
 
 TEST_CASE("Selection empty string inverted selects nothing") {
@@ -288,21 +288,21 @@ TEST_CASE("Selection getPoints range walks valid points") {
     }
     Selection selection("/selected p{2-5}");
     auto points = selection.getPoints(mesh);
-    REQUIRE(points == std::vector<ga::Offset>{2, 3, 4, 5});
+    REQUIRE(points == std::vector<attr::Offset>{2, 3, 4, 5});
 }
 
 TEST_CASE("getFaces inverted returns complement") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 5; ++i) {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{2}");
     selection.setInverted(true);
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 3, 4});
+    REQUIRE(faces == std::vector<attr::Offset>{0, 1, 3, 4});
 }
 
 // Inverting a partial selection only flips membership for the primitive part
@@ -328,9 +328,9 @@ TEST_CASE("Inverted face-only selection leaves points untouched") {
 
 TEST_CASE("Inverted face-only getPoints and getVertices are empty") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 5; ++i) {
         mesh->addFace({p0, p1, p2});
     }
@@ -340,7 +340,7 @@ TEST_CASE("Inverted face-only getPoints and getVertices are empty") {
     REQUIRE(selection.getPoints(mesh).empty());
     REQUIRE(selection.getVertices(mesh).empty());
     // The face complement is still there.
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{1, 2, 3, 4});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{1, 2, 3, 4});
 }
 
 TEST_CASE("Inverted point-only selection leaves faces and vertices untouched") {
@@ -415,27 +415,27 @@ TEST_CASE("getPoints whole-prim") {
     }
     Selection selection("/selected");
     auto points = selection.getPoints(mesh);
-    REQUIRE(points == std::vector<ga::Offset>{0, 1, 2, 3, 4});
+    REQUIRE(points == std::vector<attr::Offset>{0, 1, 2, 3, 4});
 }
 
 TEST_CASE("getFaces whole-prim") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     for (int i = 0; i < 3; ++i) {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected");
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Offset>{0, 1, 2});
+    REQUIRE(faces == std::vector<attr::Offset>{0, 1, 2});
 }
 
 TEST_CASE("getVertices whole-prim") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({p0, p1, p2});
     Selection selection("/selected");
     auto verts = selection.getVertices(mesh);
@@ -464,9 +464,9 @@ TEST_CASE("containsPoint excluded when only faces listed") {
 
 TEST_CASE("getFaces empty when only points listed") {
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    ga::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset p0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset p1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset p2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({p0, p1, p2});
     Selection selection("/selected p{0}");
     auto faces = selection.getFaces(mesh);
@@ -479,9 +479,9 @@ TEST_CASE("Selection by group name returns faces in the group") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Build three faces, mark 0 and 2 as members of the group
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
@@ -490,14 +490,14 @@ TEST_CASE("Selection by group name returns faces in the group") {
 
     Selection selection("highlighted");
     auto faces = selection.getFaces(mesh);
-    REQUIRE(faces == std::vector<ga::Offset>{0, 2});
+    REQUIRE(faces == std::vector<attr::Offset>{0, 2});
 }
 
 TEST_CASE("Two group components combine into the union of their faces") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
@@ -509,14 +509,14 @@ TEST_CASE("Two group components combine into the union of their faces") {
 
     // Two comma separated group components should select the union.
     Selection selection("groupA,groupB");
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{0, 2});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{0, 2});
 }
 
 TEST_CASE("Inverting two group components selects the complement of their union") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
@@ -530,7 +530,7 @@ TEST_CASE("Inverting two group components selects the complement of their union"
     // their intersection. Faces 1 and 3 are in neither group.
     Selection selection("groupA,groupB");
     selection.setInverted(true);
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{1, 3});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{1, 3});
 }
 
 TEST_CASE("Selection by group name uses offsets not compacted indices") {
@@ -538,9 +538,9 @@ TEST_CASE("Selection by group name uses offsets not compacted indices") {
 
     // Four faces, then delete the second so storage offsets and compacted
     // indices no longer line up: valid offsets {0, 2, 3} map to indices {0, 1, 2}.
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
@@ -553,7 +553,7 @@ TEST_CASE("Selection by group name uses offsets not compacted indices") {
 
     // Group membership must be read by offset, so only offset 3 is selected.
     Selection selection("highlighted");
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{3});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{3});
 }
 
 TEST_CASE("Inverted face group selects no points or vertices") {
@@ -561,9 +561,9 @@ TEST_CASE("Inverted face group selects no points or vertices") {
     // The group says nothing about points or vertices, so inverting it must
     // not sweep them all in (which would delete the whole mesh downstream).
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->createFaceGroup("extrudeBottom");
@@ -573,7 +573,7 @@ TEST_CASE("Inverted face group selects no points or vertices") {
     selection.setInverted(true);
 
     // Faces: everything except the group member.
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{1});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{1});
     // Points and vertices: the group does not talk about them, so none.
     REQUIRE(selection.getPoints(mesh).empty());
     REQUIRE(selection.getVertices(mesh).empty());
@@ -583,9 +583,9 @@ TEST_CASE("Inverted group selection excludes only the group members on a fragmen
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Same fragmented layout: valid offsets {0, 2, 3}, with the group at offset 3.
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
@@ -597,16 +597,16 @@ TEST_CASE("Inverted group selection excludes only the group members on a fragmen
     // Inverting selects every valid face except the group member, not everything.
     Selection selection("highlighted");
     selection.setInverted(true);
-    REQUIRE(selection.getFaces(mesh) == std::vector<ga::Offset>{0, 2});
+    REQUIRE(selection.getFaces(mesh) == std::vector<attr::Offset>{0, 2});
 }
 
 TEST_CASE("Selection by group name on a prim without the group returns empty") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Build a face so the mesh isn't empty
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
 
     Selection selection("missingGroup");
@@ -649,9 +649,9 @@ TEST_CASE("Selection by primitive group includes prims where the flag is set") {
 
 TEST_CASE("Selection by primitive group treats the prim as whole-prim selection") {
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
-    ga::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
-    ga::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
-    ga::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
+    attr::Offset point0 = mesh->addPoint(bt::Vector3(0, 0, 0));
+    attr::Offset point1 = mesh->addPoint(bt::Vector3(1, 0, 0));
+    attr::Offset point2 = mesh->addPoint(bt::Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->createPrimitiveGroup("active");
     mesh->addToPrimitiveGroup("active", {0});

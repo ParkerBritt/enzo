@@ -17,8 +17,8 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
         NodePacket packet = context.cloneInputPacket(0);
         // geo::Primitive geo = context.cloneInputGeo(0);
         //
-        // auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P");
-        // ga::AttributeHandleVector3 PAttrHandle(PAttr);
+        // auto PAttr = geo.getAttribByName(attr::AttrOwner::POINT, "P");
+        // attr::AttributeHandleVector3 PAttrHandle(PAttr);
         // const int startPt = PAttrHandle.getSize();
         //
         // const std::vector<bt::Vector3> pts = {
@@ -43,15 +43,15 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
         //     {4, 5, 1, 0}
         // };
         //
-        // auto pointAttr = geo.getAttribByName(ga::AttrOwner::VERTEX, "point");
-        // ga::AttributeHandleInt pointAttrHandle(pointAttr);
+        // auto pointAttr = geo.getAttribByName(attr::AttrOwner::VERTEX, "point");
+        // attr::AttributeHandleInt pointAttrHandle(pointAttr);
         // for (const auto &f : faces)
         //     for (int i : f)
         //         pointAttrHandle.addValue(startPt + i);
         //
-        // auto vertexCountAttr = geo.getAttribByName(ga::AttrOwner::PRIMITIVE,
+        // auto vertexCountAttr = geo.getAttribByName(attr::AttrOwner::PRIMITIVE,
         //                                           "vertexCount");
-        // ga::AttributeHandleInt vertexCountHandle(vertexCountAttr);
+        // attr::AttributeHandleInt vertexCountHandle(vertexCountAttr);
         // for (const auto &f : faces)
         //     vertexCountHandle.addValue(static_cast<int>(f.size()));
         //

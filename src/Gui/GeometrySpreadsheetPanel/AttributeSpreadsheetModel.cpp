@@ -59,7 +59,7 @@ void AttributeSpreadsheetModel::initBuffers()
 }
 
 
-void AttributeSpreadsheetModel::setOwner(const enzo::ga::AttributeOwner owner)
+void AttributeSpreadsheetModel::setOwner(const enzo::attr::AttributeOwner owner)
 {
     beginResetModel();
     attributeOwner_ = owner;
@@ -73,24 +73,24 @@ int AttributeSpreadsheetModel::rowCount(const QModelIndex &parent) const
 
     switch(attributeOwner_)
     {
-        case enzo::ga::AttributeOwner::POINT:
+        case enzo::attr::AttributeOwner::POINT:
         {
             if(primitive_->hasPoints()) return primitive_->getNumPoints();
             return 0;
         }
-        case enzo::ga::AttributeOwner::VERTEX:
-        case enzo::ga::AttributeOwner::FACE:
+        case enzo::attr::AttributeOwner::VERTEX:
+        case enzo::attr::AttributeOwner::FACE:
         {
             if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
             {
-                if(attributeOwner_ == enzo::ga::AttributeOwner::VERTEX)
+                if(attributeOwner_ == enzo::attr::AttributeOwner::VERTEX)
                     return mesh->getNumVerts();
                 else
                     return mesh->getNumFaces();
             }
             return 0;
         }
-        case enzo::ga::AttributeOwner::PRIMITIVE:
+        case enzo::attr::AttributeOwner::PRIMITIVE:
         {
             return 1;
         }
@@ -127,23 +127,23 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
         {
             switch(attributeOwner_)
             {
-                case enzo::ga::AttributeOwner::POINT:
-                case enzo::ga::AttributeOwner::FACE:
+                case enzo::attr::AttributeOwner::POINT:
+                case enzo::attr::AttributeOwner::FACE:
                 {
                     return index.row();
                 }
-                case enzo::ga::AttributeOwner::VERTEX:
+                case enzo::attr::AttributeOwner::VERTEX:
                 {
                     if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
                     {
-                        const enzo::ga::Offset faceOffset = mesh->getVertexFace(index.row());
-                        const enzo::ga::Offset startVert = mesh->getFaceStartVertex(faceOffset);
-                        const enzo::ga::Offset vertexNumber = index.row()-startVert;
+                        const enzo::attr::Offset faceOffset = mesh->getVertexFace(index.row());
+                        const enzo::attr::Offset startVert = mesh->getFaceStartVertex(faceOffset);
+                        const enzo::attr::Offset vertexNumber = index.row()-startVert;
                         return QString::fromStdString(std::to_string(faceOffset)+":"+std::to_string(vertexNumber));
                     }
                     return index.row();
                 }
-                case enzo::ga::AttributeOwner::PRIMITIVE:
+                case enzo::attr::AttributeOwner::PRIMITIVE:
                 {
                     return "primitive";
                 }
@@ -157,43 +157,43 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
             const unsigned int groupIndex = section - sectionAttribMap_.size();
             if(auto group = primitive_->getGroupByIndex(attributeOwner_, groupIndex).lock())
             {
-                const auto groupHandle = enzo::ga::AttributeHandleRO<enzo::bt::boolT>(group);
+                const auto groupHandle = enzo::attr::AttributeHandleRO<enzo::bt::boolT>(group);
                 return groupHandle.getValue(index.row()) ? "true" : "false";
             }
             throw std::runtime_error("Couldn't lock group");
         }
 
         int attributeIndex = indexFromSection(section);
-        if(std::shared_ptr<const enzo::ga::Attribute> attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
+        if(std::shared_ptr<const enzo::attr::Attribute> attrib = primitive_->getAttributeByIndex(attributeOwner_, attributeIndex).lock())
         {
             const unsigned int valueIndex = index.column()-attributeIndex-attributeColumnPadding_;
-            using namespace enzo::ga;
+            using namespace enzo::attr;
 
             switch(attrib->getType())
             {
                 case(AttributeType::intT):
                 {
-                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::intT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::intT>(attrib);
                     return static_cast<float>(attribHandle.getValue(index.row()));
                 }
                 case(AttributeType::floatT):
                 {
-                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::floatT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::floatT>(attrib);
                     return attribHandle.getValue(index.row());
                 }
                 case(AttributeType::boolT):
                 {
-                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::boolT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::boolT>(attrib);
                     return attribHandle.getValue(index.row()) ? "true" : "false";
                 }
                 case(AttributeType::vectorT):
                 {
-                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Vector3>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::Vector3>(attrib);
                     return attribHandle.getValue(index.row())[valueIndex];
                 }
                 case(AttributeType::matrixT):
                 {
-                    const auto attribHandle = enzo::ga::AttributeHandleRO<enzo::bt::Matrix4>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::Matrix4>(attrib);
                     const auto& mat = attribHandle.getValue(index.row());
                     return mat(valueIndex / 4, valueIndex % 4);
                 }
@@ -256,7 +256,7 @@ QVariant AttributeSpreadsheetModel::headerData(int section, Qt::Orientation orie
                 const unsigned int valueIndex = section-attributeIndex-attributeColumnPadding_;
 
                 std::string valueIndexString;
-                if(attrib->getType()==enzo::ga::AttrType::vectorT)
+                if(attrib->getType()==enzo::attr::AttrType::vectorT)
                 {
                     valueIndexString = std::array{".x", ".y", ".z", ".w"}.at(valueIndex);
                 }

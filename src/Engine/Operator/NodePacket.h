@@ -30,8 +30,8 @@ class NodePacket {
             std::vector<geo::PrimPtr> &primitives_;
             TransformClass transformClass_;
             size_t primIdx_;
-            ga::Offset offset_ = 0;
-            std::shared_ptr<ga::Attribute> curAttrib_;
+            attr::Offset offset_ = 0;
+            std::shared_ptr<attr::Attribute> curAttrib_;
             size_t curSize_ = 0;
 
             void advance();

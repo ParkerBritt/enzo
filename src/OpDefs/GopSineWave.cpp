@@ -28,16 +28,16 @@ void GopSineWave::cookOp(enzo::op::Context context) {
             if (prim->getType() != geo::PrimType::MESH)
                 continue;
             auto geo = std::static_pointer_cast<geo::Mesh>(prim);
-            const ga::Offset pointCount = geo->getNumPoints();
+            const attr::Offset pointCount = geo->getNumPoints();
 
             if (radial) {
                 const bt::Vector3 center(context.evalFloatParm("center", 0),
                                          context.evalFloatParm("center", 1),
                                          context.evalFloatParm("center", 2));
                 tbb::parallel_for(
-                    tbb::blocked_range<ga::Offset>(0, pointCount),
-                    [&geo, frequency, center, offset](tbb::blocked_range<ga::Offset> range) {
-                        for (ga::Offset i = range.begin(); i != range.end(); ++i) {
+                    tbb::blocked_range<attr::Offset>(0, pointCount),
+                    [&geo, frequency, center, offset](tbb::blocked_range<attr::Offset> range) {
+                        for (attr::Offset i = range.begin(); i != range.end(); ++i) {
                             bt::Vector3 pos = geo->getPointPos(i);
                             pos +=
                                 bt::Vector3(0, sin((pos - center).norm() * frequency + offset), 0);
@@ -45,9 +45,9 @@ void GopSineWave::cookOp(enzo::op::Context context) {
                         }
                     });
             } else {
-                tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount),
-                                  [&geo, frequency, offset](tbb::blocked_range<ga::Offset> range) {
-                                      for (ga::Offset i = range.begin(); i != range.end(); ++i) {
+                tbb::parallel_for(tbb::blocked_range<attr::Offset>(0, pointCount),
+                                  [&geo, frequency, offset](tbb::blocked_range<attr::Offset> range) {
+                                      for (attr::Offset i = range.begin(); i != range.end(); ++i) {
                                           bt::Vector3 pos = geo->getPointPos(i);
                                           pos +=
                                               bt::Vector3(0, sin(pos.x() * frequency + offset), 0);

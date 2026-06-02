@@ -28,6 +28,6 @@ public:
     void setTransform(const bt::Matrix4& xform);
 
 private:
-    ga::AttributeHandle<bt::Matrix4> transformHandle_;
+    attr::AttributeHandle<bt::Matrix4> transformHandle_;
 };
 }

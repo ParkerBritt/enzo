@@ -124,20 +124,20 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src)
     result.mesh = std::make_shared<geo::Mesh>(src.getPath());
 
     // Copy every point so output offsets match the source one to one.
-    const ga::Offset numPoints = src.getNumPoints();
+    const attr::Offset numPoints = src.getNumPoints();
     std::vector<bt::Vector3> positions;
     positions.reserve(numPoints);
-    for (ga::Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
+    for (attr::Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
     {
         positions.push_back(src.getPointPos(pointOffset));
     }
     result.mesh->addPoints(positions);
 
     // Fan triangulate each face from its first corner.
-    std::vector<ga::Offset> triPointsFlat;
-    std::vector<ga::Offset> triVertexCounts;
-    const ga::Offset numFaces = src.getNumFaces();
-    for (ga::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
+    std::vector<attr::Offset> triPointsFlat;
+    std::vector<attr::Offset> triVertexCounts;
+    const attr::Offset numFaces = src.getNumFaces();
+    for (attr::Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
     {
         const std::span<const bt::intT> facePoints = src.getFacePoints(faceOffset);
         const size_t cornerCount = facePoints.size();
@@ -175,18 +175,18 @@ bt::Vector3 polygonNormal(std::span<const bt::Vector3> positions,
 }
 
 
-std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
-                                                              std::span<const ga::Offset> faceOffsets)
+std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
+                                                              std::span<const attr::Offset> faceOffsets)
 {
-    std::vector<std::array<ga::Offset, 3>> triangles;
+    std::vector<std::array<attr::Offset, 3>> triangles;
     std::vector<bt::Vector3> corners;
-    for(const ga::Offset faceOffset : faceOffsets)
+    for(const attr::Offset faceOffset : faceOffsets)
     {
         const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
         if(cornerCount < 3) continue;
 
         // Each corner's position lives at its vertex offset on the face.
-        const ga::Offset faceStartVertex = mesh.getFaceStartVertex(faceOffset);
+        const attr::Offset faceStartVertex = mesh.getFaceStartVertex(faceOffset);
         corners.resize(cornerCount);
         for(unsigned int cornerIndex=0; cornerIndex<cornerCount; ++cornerIndex)
             corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);
@@ -199,7 +199,7 @@ std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& m
 }
 
 
-std::vector<std::array<ga::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
+std::vector<std::array<attr::Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
 {
     return earClipTriangleIndices(mesh, mesh.getFaces().toVector());
 }

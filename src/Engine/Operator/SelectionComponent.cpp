@@ -11,18 +11,18 @@ std::shared_ptr<enzo::IndexSet> parseBlockContent(std::string_view content) {
     if (enzo::utils::trim(content) == "*") {
         return std::make_shared<enzo::WildcardIndexSet>();
     }
-    std::set<enzo::ga::Index> indices;
+    std::set<enzo::attr::Index> indices;
     std::stringstream stream{std::string(content)};
     std::string token;
     while (stream >> token) {
         // Range token "low-high" expands inclusively into the index set
         size_t dash = token.find('-');
         if (dash != std::string::npos && dash > 0 && dash + 1 < token.size()) {
-            enzo::ga::Index low = std::stoull(token.substr(0, dash));
-            enzo::ga::Index high = std::stoull(token.substr(dash + 1));
+            enzo::attr::Index low = std::stoull(token.substr(0, dash));
+            enzo::attr::Index high = std::stoull(token.substr(dash + 1));
             if (low > high)
                 std::swap(low, high);
-            for (enzo::ga::Index i = low; i <= high; ++i) {
+            for (enzo::attr::Index i = low; i <= high; ++i) {
                 indices.insert(i);
             }
             continue;
@@ -118,8 +118,8 @@ bool PathSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     return prim.getPath() == primPath_;
 }
 
-bool PathSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index index,
-                                          ga::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsFace(const geo::Primitive &prim, attr::Index index,
+                                          attr::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -130,8 +130,8 @@ bool PathSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index 
     return inverted ? !in : in;
 }
 
-bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index index,
-                                           ga::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, attr::Index index,
+                                           attr::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -142,8 +142,8 @@ bool PathSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index
     return inverted ? !in : in;
 }
 
-bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index index,
-                                            ga::Offset /*offset*/, bool inverted) const {
+bool PathSelectionComponent::containsVertex(const geo::Primitive &prim, attr::Index index,
+                                            attr::Offset /*offset*/, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
@@ -164,12 +164,12 @@ bool PathSelectionComponent::isWholePrim(const geo::Primitive &) const {
 
 namespace {
 // Reads a group's bool at the given offset, false if the group is missing
-bool isGroupMember(const geo::Primitive &prim, ga::AttrOwner owner, const std::string &name,
-                   ga::Offset offset) {
+bool isGroupMember(const geo::Primitive &prim, attr::AttrOwner owner, const std::string &name,
+                   attr::Offset offset) {
     auto group = prim.getGroupByName(owner, name);
     if (!group)
         return false;
-    ga::AttributeHandleRO<bt::boolT> handle(group);
+    attr::AttributeHandleRO<bt::boolT> handle(group);
     return handle.getValue(offset);
 }
 } // namespace
@@ -182,61 +182,61 @@ std::unique_ptr<GroupSelectionComponent> GroupSelectionComponent::create(std::st
 
 bool GroupSelectionComponent::containsPrim(const geo::Primitive &prim) const {
     // A primitive group with the flag set selects the whole prim
-    if (auto primGroup = prim.getGroupByName(ga::AttrOwner::PRIMITIVE, groupName_)) {
-        ga::AttributeHandleRO<bt::boolT> handle(primGroup);
+    if (auto primGroup = prim.getGroupByName(attr::AttrOwner::PRIMITIVE, groupName_)) {
+        attr::AttributeHandleRO<bt::boolT> handle(primGroup);
         return handle.getValue(0);
     }
     // Otherwise the prim is in scope if any other store has the group
-    for (auto owner : {ga::AttrOwner::FACE, ga::AttrOwner::POINT, ga::AttrOwner::VERTEX}) {
+    for (auto owner : {attr::AttrOwner::FACE, attr::AttrOwner::POINT, attr::AttrOwner::VERTEX}) {
         if (prim.getGroupByName(owner, groupName_))
             return true;
     }
     return false;
 }
 
-bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, ga::Index /*index*/,
-                                           ga::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsFace(const geo::Primitive &prim, attr::Index /*index*/,
+                                           attr::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
     // The group must exist on this element type. Otherwise it says nothing about
     // faces and selects none, even when inverted.
-    if (!prim.getGroupByName(ga::AttrOwner::FACE, groupName_))
+    if (!prim.getGroupByName(attr::AttrOwner::FACE, groupName_))
         return false;
-    bool in = isGroupMember(prim, ga::AttrOwner::FACE, groupName_, offset);
+    bool in = isGroupMember(prim, attr::AttrOwner::FACE, groupName_, offset);
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, ga::Index /*index*/,
-                                            ga::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsPoint(const geo::Primitive &prim, attr::Index /*index*/,
+                                            attr::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
-    if (!prim.getGroupByName(ga::AttrOwner::POINT, groupName_))
+    if (!prim.getGroupByName(attr::AttrOwner::POINT, groupName_))
         return false;
-    bool in = isGroupMember(prim, ga::AttrOwner::POINT, groupName_, offset);
+    bool in = isGroupMember(prim, attr::AttrOwner::POINT, groupName_, offset);
     return inverted ? !in : in;
 }
 
-bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, ga::Index /*index*/,
-                                             ga::Offset offset, bool inverted) const {
+bool GroupSelectionComponent::containsVertex(const geo::Primitive &prim, attr::Index /*index*/,
+                                             attr::Offset offset, bool inverted) const {
     if (!containsPrim(prim))
         return false;
     if (isWholePrim(prim))
         return !inverted;
-    if (!prim.getGroupByName(ga::AttrOwner::VERTEX, groupName_))
+    if (!prim.getGroupByName(attr::AttrOwner::VERTEX, groupName_))
         return false;
-    bool in = isGroupMember(prim, ga::AttrOwner::VERTEX, groupName_, offset);
+    bool in = isGroupMember(prim, attr::AttrOwner::VERTEX, groupName_, offset);
     return inverted ? !in : in;
 }
 
 bool GroupSelectionComponent::isWholePrim(const geo::Primitive &prim) const {
-    auto primGroup = prim.getGroupByName(ga::AttrOwner::PRIMITIVE, groupName_);
+    auto primGroup = prim.getGroupByName(attr::AttrOwner::PRIMITIVE, groupName_);
     if (!primGroup)
         return false;
-    ga::AttributeHandleRO<bt::boolT> handle(primGroup);
+    attr::AttributeHandleRO<bt::boolT> handle(primGroup);
     return handle.getValue(0);
 }
 
