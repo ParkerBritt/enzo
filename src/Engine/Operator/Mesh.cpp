@@ -103,18 +103,18 @@ void geo::Mesh::mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_pt
     switch(srcType)
     {
         case attr::AttributeType::intT:
-            mergeAppendImpl<bt::intT>(dst, src);
+            mergeAppendImpl<intT>(dst, src);
             break;
         case attr::AttributeType::floatT:
-            mergeAppendImpl<bt::floatT>(dst, src);
+            mergeAppendImpl<floatT>(dst, src);
             break;
         case attr::AttributeType::listT:
             break;
         case attr::AttributeType::vectorT:
-            // mergeAppendImpl<bt::vector3>(dst, src);
+            // mergeAppendImpl<vector3>(dst, src);
             break;
         case attr::AttributeType::boolT:
-            mergeAppendImpl<bt::boolT>(dst, src);
+            mergeAppendImpl<boolT>(dst, src);
             break;
         default:
             throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
@@ -122,17 +122,17 @@ void geo::Mesh::mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_pt
     }
 }
 
-void geo::Mesh::applyTransform(const bt::Matrix4 &mat, TransformClass transformClass) {
+void geo::Mesh::applyTransform(const Matrix4 &mat, TransformClass transformClass) {
     if ((transformClass & TransformClass::POINT) != TransformClass::NONE) {
-        const attr::Offset numPoints = getNumPoints();
+        const Offset numPoints = getNumPoints();
         tbb::parallel_for(tbb::blocked_range<size_t>(0, numPoints),
             [&](const tbb::blocked_range<size_t> &range) {
                 for (size_t i = range.begin(); i < range.end(); ++i) {
-                    const bt::Vector3& pos = posPointHandle_[i];
+                    const Vector3& pos = posPointHandle_[i];
                     // w=1.0 extends to homogeneous coords so the 4x4 matrix
                     // applies translation, rotation, and scale in one multiply
-                    const bt::Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
-                    const bt::Vector3 transformed = (mat * pos4).head<3>();
+                    const Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
+                    const Vector3 transformed = (mat * pos4).head<3>();
                     posPointHandle_.setValue(i, transformed);
                 }
             });
@@ -148,25 +148,25 @@ void geo::Mesh::merge(std::shared_ptr<Primitive> other) {
 void geo::Mesh::merge(Mesh& other)
 {
     // Copy all unique points and build offset mapping
-    const attr::Offset srcPointNum = other.getNumPoints();
-    std::vector<attr::Offset> pointMapping(srcPointNum);
-    for(attr::Offset pointOffset=0; pointOffset<srcPointNum; ++pointOffset)
+    const Offset srcPointNum = other.getNumPoints();
+    std::vector<Offset> pointMapping(srcPointNum);
+    for(Offset pointOffset=0; pointOffset<srcPointNum; ++pointOffset)
     {
         pointMapping[pointOffset] = addPoint(other.getPointPos(pointOffset));
     }
 
     // Create faces using mapped point offsets
-    const attr::Offset srcFaceNum = other.getNumFaces();
-    for(attr::Offset faceOffset=0; faceOffset<srcFaceNum; ++faceOffset)
+    const Offset srcFaceNum = other.getNumFaces();
+    for(Offset faceOffset=0; faceOffset<srcFaceNum; ++faceOffset)
     {
-        const attr::Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
-        const attr::Offset vertexCount = other.getFaceVertCount(faceOffset);
+        const Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
+        const Offset vertexCount = other.getFaceVertCount(faceOffset);
 
-        std::vector<attr::Offset> pointOffsets;
+        std::vector<Offset> pointOffsets;
         pointOffsets.reserve(vertexCount);
-        for(attr::Offset i=0; i<vertexCount; ++i)
+        for(Offset i=0; i<vertexCount; ++i)
         {
-            const attr::Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(faceStartVertex+i);
+            const Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(faceStartVertex+i);
             pointOffsets.push_back(pointMapping[otherPointOffset]);
         }
         // TODO: check closed status
@@ -176,7 +176,7 @@ void geo::Mesh::merge(Mesh& other)
     // Merge vertex attributes
     for(std::shared_ptr<attr::Attribute> otherAttribute : other.vertexAttributes_)
     {
-        bt::String otherAttributeName = otherAttribute->getName();
+        String otherAttributeName = otherAttribute->getName();
         std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::VERTEX, otherAttributeName);
 
         if(attribute)
@@ -187,7 +187,7 @@ void geo::Mesh::merge(Mesh& other)
 
     for(std::shared_ptr<attr::Attribute> otherAttribute : other.pointAttributes_)
     {
-        bt::String otherAttributeName = otherAttribute->getName();
+        String otherAttributeName = otherAttribute->getName();
         std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::POINT, otherAttributeName);
 
         bool alreadyExists = static_cast<bool>(attribute);
@@ -200,7 +200,7 @@ void geo::Mesh::merge(Mesh& other)
 
     for(std::shared_ptr<attr::Attribute> otherAttribute : other.faceAttributes_)
     {
-        bt::String otherAttributeName = otherAttribute->getName();
+        String otherAttributeName = otherAttribute->getName();
         std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::FACE, otherAttributeName);
 
         bool alreadyExists = static_cast<bool>(attribute);
@@ -213,10 +213,10 @@ void geo::Mesh::merge(Mesh& other)
 
 }
 
-attr::Offset geo::Mesh::addFace(const std::vector<attr::Offset>& pointOffsets, bool closed)
+Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)
 {
-    const attr::Offset faceNum = vertexCountFaceHandle_.getSize();
-    for(attr::Offset pointOffset : pointOffsets)
+    const Offset faceNum = vertexCountFaceHandle_.getSize();
+    for(Offset pointOffset : pointOffsets)
     {
         pointOffsetVertexHandle_.addValue(pointOffset);
         validVertexHandle_.addValue(true);
@@ -241,7 +241,7 @@ attr::Offset geo::Mesh::addFace(const std::vector<attr::Offset>& pointOffsets, b
     }
 
     // resize face and vertex groups so they stay aligned with element counts
-    const attr::Offset newVertCount = pointOffsetVertexHandle_.getSize();
+    const Offset newVertCount = pointOffsetVertexHandle_.getSize();
     for (auto& faceGroup : faceGroups_)
     {
         if (faceGroup) faceGroup->resize(faceNum + 1);
@@ -254,16 +254,16 @@ attr::Offset geo::Mesh::addFace(const std::vector<attr::Offset>& pointOffsets, b
     return faceNum;
 }
 
-std::vector<attr::Offset> geo::Mesh::addFaces(std::span<const attr::Offset> pointOffsetsFlat,
-                                            std::span<const attr::Offset> vertexCounts,
+std::vector<Offset> geo::Mesh::addFaces(std::span<const Offset> pointOffsetsFlat,
+                                            std::span<const Offset> vertexCounts,
                                             bool closed)
 {
-    const attr::Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
-    const attr::Offset firstVertOffset = pointOffsetVertexHandle_.getSize();
+    const Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
+    const Offset firstVertOffset = pointOffsetVertexHandle_.getSize();
     const size_t numFacesToAdd = vertexCounts.size();
     const size_t numVertsToAdd = pointOffsetsFlat.size();
-    const attr::Offset newFaceCount = firstFaceOffset + numFacesToAdd;
-    const attr::Offset newVertCount = firstVertOffset + numVertsToAdd;
+    const Offset newFaceCount = firstFaceOffset + numFacesToAdd;
+    const Offset newVertCount = firstVertOffset + numVertsToAdd;
 
     // Grow every face side and vertex side store in one shot
     for (auto& attribute : faceAttributes_)
@@ -284,19 +284,19 @@ std::vector<attr::Offset> geo::Mesh::addFaces(std::span<const attr::Offset> poin
     }
     vertexFaces_.reserve(newVertCount);
 
-    std::vector<attr::Offset> newFaceOffsets;
+    std::vector<Offset> newFaceOffsets;
     newFaceOffsets.reserve(numFacesToAdd);
 
-    attr::Offset vertCursor = firstVertOffset;
+    Offset vertCursor = firstVertOffset;
     for (size_t faceIndex = 0; faceIndex < numFacesToAdd; ++faceIndex)
     {
-        const attr::Offset vertexCount = vertexCounts[faceIndex];
-        const attr::Offset faceOffset = firstFaceOffset + faceIndex;
+        const Offset vertexCount = vertexCounts[faceIndex];
+        const Offset faceOffset = firstFaceOffset + faceIndex;
         newFaceOffsets.push_back(faceOffset);
 
-        for (attr::Offset vertIndex = 0; vertIndex < vertexCount; ++vertIndex)
+        for (Offset vertIndex = 0; vertIndex < vertexCount; ++vertIndex)
         {
-            const attr::Offset pointOffset = pointOffsetsFlat[vertCursor - firstVertOffset];
+            const Offset pointOffset = pointOffsetsFlat[vertCursor - firstVertOffset];
             pointOffsetVertexHandle_.setValue(vertCursor, pointOffset);
             validVertexHandle_.setValue(vertCursor, true);
             vertexFaces_.push_back(faceOffset);
@@ -314,20 +314,20 @@ std::vector<attr::Offset> geo::Mesh::addFaces(std::span<const attr::Offset> poin
     return newFaceOffsets;
 }
 
-void geo::Mesh::deleteFaces(const std::vector<attr::Offset>& faceOffsets, bool andPoints)
+void geo::Mesh::deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoints)
 {
     if (faceOffsets.empty()) return;
 
     // Invalidate each face and its vertices.
     // When cascading to points, remember which points those vertices referenced.
-    std::unordered_set<attr::Offset> orphanCandidates;
-    for (attr::Offset faceOffset : faceOffsets)
+    std::unordered_set<Offset> orphanCandidates;
+    for (Offset faceOffset : faceOffsets)
     {
         validFaceHandle_.setValue(faceOffset, false);
 
-        const attr::Offset start = getFaceStartVertex(faceOffset);
-        const attr::Offset count = getFaceVertCount(faceOffset);
-        for (attr::Offset v = start; v < start + count; ++v)
+        const Offset start = getFaceStartVertex(faceOffset);
+        const Offset count = getFaceVertCount(faceOffset);
+        for (Offset v = start; v < start + count; ++v)
         {
             if (andPoints) orphanCandidates.insert(pointOffsetVertexHandle_.getValue(v));
             validVertexHandle_.setValue(v, false);
@@ -337,49 +337,49 @@ void geo::Mesh::deleteFaces(const std::vector<attr::Offset>& faceOffsets, bool a
     if (andPoints)
     {
         // Drop candidates still referenced by a surviving vertex.
-        const attr::Offset vertCount = pointOffsetVertexHandle_.getSize();
-        for (attr::Offset v = 0; v < vertCount; ++v)
+        const Offset vertCount = pointOffsetVertexHandle_.getSize();
+        for (Offset v = 0; v < vertCount; ++v)
         {
             if (!validVertexHandle_.getValue(v)) continue;
             orphanCandidates.erase(pointOffsetVertexHandle_.getValue(v));
         }
 
         // Invalidate the remaining orphans.
-        for (attr::Offset p : orphanCandidates) validPointHandle_.setValue(p, false);
+        for (Offset p : orphanCandidates) validPointHandle_.setValue(p, false);
     }
 
     needsDefrag_ = true;
     soloPointsDirty_ = true;
 }
 
-void geo::Mesh::deletePoints(const std::vector<attr::Offset>& pointOffsets, bool andFaces)
+void geo::Mesh::deletePoints(const std::vector<Offset>& pointOffsets, bool andFaces)
 {
     if (pointOffsets.empty()) return;
 
-    std::unordered_set<attr::Offset> deletedPoints(pointOffsets.begin(), pointOffsets.end());
+    std::unordered_set<Offset> deletedPoints(pointOffsets.begin(), pointOffsets.end());
 
-    for (attr::Offset pointOffset : pointOffsets)
+    for (Offset pointOffset : pointOffsets)
     {
         validPointHandle_.setValue(pointOffset, false);
     }
 
     // Single O(V) pass: mark every vertex referencing a deleted point as invalid.
     // If andFaces is set, also collect the owning faces for cascaded deletion.
-    const attr::Offset vertCount = pointOffsetVertexHandle_.getSize();
-    const attr::Offset faceCount = vertexCountFaceHandle_.getSize();
+    const Offset vertCount = pointOffsetVertexHandle_.getSize();
+    const Offset faceCount = vertexCountFaceHandle_.getSize();
     std::vector<bool> faceMarked(andFaces ? faceCount : 0, false);
-    for (attr::Offset v = 0; v < vertCount; ++v)
+    for (Offset v = 0; v < vertCount; ++v)
     {
         if (!validVertexHandle_.getValue(v)) continue;
-        const attr::Offset pt = pointOffsetVertexHandle_.getValue(v);
+        const Offset pt = pointOffsetVertexHandle_.getValue(v);
         if (!deletedPoints.count(pt)) continue;
         validVertexHandle_.setValue(v, false);
         if (andFaces) faceMarked[getVertexFace(v)] = true;
     }
     if (andFaces)
     {
-        std::vector<attr::Offset> facesToDelete;
-        for (attr::Offset f = 0; f < faceCount; ++f)
+        std::vector<Offset> facesToDelete;
+        for (Offset f = 0; f < faceCount; ++f)
         {
             if (faceMarked[f]) facesToDelete.push_back(f);
         }
@@ -390,26 +390,26 @@ void geo::Mesh::deletePoints(const std::vector<attr::Offset>& pointOffsets, bool
     soloPointsDirty_ = true;
 }
 
-void geo::Mesh::deleteVertices(const std::vector<attr::Offset>& vertOffsets)
+void geo::Mesh::deleteVertices(const std::vector<Offset>& vertOffsets)
 {
     if (vertOffsets.empty()) return;
 
     // Mark vertices invalid and remember which faces lost vertices
-    std::unordered_set<attr::Offset> affectedFaces;
-    for (attr::Offset v : vertOffsets)
+    std::unordered_set<Offset> affectedFaces;
+    for (Offset v : vertOffsets)
     {
         validVertexHandle_.setValue(v, false);
         affectedFaces.insert(getVertexFace(v));
     }
 
     // Invalidate any face that has no valid vertices left
-    for (attr::Offset f : affectedFaces)
+    for (Offset f : affectedFaces)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const attr::Offset start = getFaceStartVertex(f);
-        const attr::Offset count = getFaceVertCount(f);
+        const Offset start = getFaceStartVertex(f);
+        const Offset count = getFaceVertCount(f);
         bool anyValid = false;
-        for (attr::Offset v = start; v < start + count; ++v)
+        for (Offset v = start; v < start + count; ++v)
         {
             if (validVertexHandle_.getValue(v)) { anyValid = true; break; }
         }
@@ -420,17 +420,17 @@ void geo::Mesh::deleteVertices(const std::vector<attr::Offset>& vertOffsets)
     soloPointsDirty_ = true;
 }
 
-bool geo::Mesh::isValidFace(attr::Offset offset) const
+bool geo::Mesh::isValidFace(Offset offset) const
 {
     return validFaceHandle_.getValue(offset);
 }
 
-bool geo::Mesh::isValidVertex(attr::Offset offset) const
+bool geo::Mesh::isValidVertex(Offset offset) const
 {
     return validVertexHandle_.getValue(offset);
 }
 
-bool geo::Mesh::isValidPoint(attr::Offset offset) const
+bool geo::Mesh::isValidPoint(Offset offset) const
 {
     return validPointHandle_.getValue(offset);
 }
@@ -442,14 +442,14 @@ void geo::Mesh::defragment()
     if (!needsDefrag_) return;
 
     // Update each face's vertex count in case any vertices were deleted
-    const attr::Offset oldFaceCount = vertexCountFaceHandle_.getSize();
-    for (attr::Offset f = 0; f < oldFaceCount; ++f)
+    const Offset oldFaceCount = vertexCountFaceHandle_.getSize();
+    for (Offset f = 0; f < oldFaceCount; ++f)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const attr::Offset start = getFaceStartVertex(f);
-        const attr::Offset oldCount = vertexCountFaceHandle_.getValue(f);
-        attr::Offset validCount = 0;
-        for (attr::Offset v = start; v < start + oldCount; ++v)
+        const Offset start = getFaceStartVertex(f);
+        const Offset oldCount = vertexCountFaceHandle_.getValue(f);
+        Offset validCount = 0;
+        for (Offset v = start; v < start + oldCount; ++v)
         {
             if (validVertexHandle_.getValue(v)) ++validCount;
         }
@@ -469,8 +469,8 @@ void geo::Mesh::defragment()
     // Compact every point attribute by point validity, building an old → new
     // offset map so we can update everything that references point offsets.
     std::vector<bool> pointKeep = validPointHandle_.getAllValues();
-    std::vector<attr::Offset> pointRemap(pointKeep.size(), 0);
-    attr::Offset newPointOffset = 0;
+    std::vector<Offset> pointRemap(pointKeep.size(), 0);
+    Offset newPointOffset = 0;
     for (size_t i = 0; i < pointKeep.size(); ++i)
     {
         if (pointKeep[i]) pointRemap[i] = newPointOffset++;
@@ -479,10 +479,10 @@ void geo::Mesh::defragment()
     for (auto& group : pointGroups_) if (group) group->compact(pointKeep);
 
     // Remap surviving vertex → point references to the compacted point offsets.
-    const attr::Offset newVertCount = pointOffsetVertexHandle_.getSize();
-    for (attr::Offset v = 0; v < newVertCount; ++v)
+    const Offset newVertCount = pointOffsetVertexHandle_.getSize();
+    for (Offset v = 0; v < newVertCount; ++v)
     {
-        const attr::Offset oldPointOffset = pointOffsetVertexHandle_.getValue(v);
+        const Offset oldPointOffset = pointOffsetVertexHandle_.getValue(v);
         pointOffsetVertexHandle_.setValue(v, pointRemap[oldPointOffset]);
     }
 
@@ -491,20 +491,20 @@ void geo::Mesh::defragment()
     // Rebuild vertexFaces_ from the compacted face data.
     vertexFaces_.clear();
     vertexFaces_.reserve(newVertCount);
-    const attr::Offset faceCount = vertexCountFaceHandle_.getSize();
-    for (attr::Offset f = 0; f < faceCount; ++f)
+    const Offset faceCount = vertexCountFaceHandle_.getSize();
+    for (Offset f = 0; f < faceCount; ++f)
     {
-        const attr::Offset count = getFaceVertCount(f);
-        for (attr::Offset v = 0; v < count; ++v) vertexFaces_.push_back(f);
+        const Offset count = getFaceVertCount(f);
+        for (Offset v = 0; v < count; ++v) vertexFaces_.push_back(f);
     }
 
     faceStartsDirty_.store(true);
     needsDefrag_ = false;
 }
 
-attr::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
+Offset  geo::Mesh::addPoint(const Vector3& pos)
 {
-    const attr::Offset pointOffset = posPointHandle_.getSize();
+    const Offset pointOffset = posPointHandle_.getSize();
 
     posPointHandle_.addValue(pos);
     validPointHandle_.addValue(true);
@@ -513,11 +513,11 @@ attr::Offset  geo::Mesh::addPoint(const bt::Vector3& pos)
     return pointOffset;
 }
 
-std::vector<attr::Offset> geo::Mesh::addPoints(std::span<const bt::Vector3> positions)
+std::vector<Offset> geo::Mesh::addPoints(std::span<const Vector3> positions)
 {
-    const attr::Offset firstPointOffset = posPointHandle_.getSize();
+    const Offset firstPointOffset = posPointHandle_.getSize();
     const size_t numPointsToAdd = positions.size();
-    const attr::Offset newPointCount = firstPointOffset + numPointsToAdd;
+    const Offset newPointCount = firstPointOffset + numPointsToAdd;
 
     // Grow every point side store in one shot
     for (auto& attribute : pointAttributes_)
@@ -529,11 +529,11 @@ std::vector<attr::Offset> geo::Mesh::addPoints(std::span<const bt::Vector3> posi
         if (group) group->resize(newPointCount);
     }
 
-    std::vector<attr::Offset> newPointOffsets;
+    std::vector<Offset> newPointOffsets;
     newPointOffsets.reserve(numPointsToAdd);
     for (size_t pointIndex = 0; pointIndex < numPointsToAdd; ++pointIndex)
     {
-        const attr::Offset pointOffset = firstPointOffset + pointIndex;
+        const Offset pointOffset = firstPointOffset + pointIndex;
         posPointHandle_.setValue(pointOffset, positions[pointIndex]);
         validPointHandle_.setValue(pointOffset, true);
         newPointOffsets.push_back(pointOffset);
@@ -544,17 +544,17 @@ std::vector<attr::Offset> geo::Mesh::addPoints(std::span<const bt::Vector3> posi
     return newPointOffsets;
 }
 
-std::vector<attr::Offset> geo::Mesh::duplicatePoints(std::span<const attr::Offset> srcPointOffsets, bool copyAttributes)
+std::vector<Offset> geo::Mesh::duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes)
 {
     // Gather the source positions, then let addPoints grow the stores in one shot
-    std::vector<bt::Vector3> positions;
+    std::vector<Vector3> positions;
     positions.reserve(srcPointOffsets.size());
-    for (attr::Offset srcPointOffset : srcPointOffsets)
+    for (Offset srcPointOffset : srcPointOffsets)
     {
         positions.push_back(posPointHandle_.getValue(srcPointOffset));
     }
 
-    std::vector<attr::Offset> newPointOffsets = addPoints(positions);
+    std::vector<Offset> newPointOffsets = addPoints(positions);
 
     // TODO: when copyAttributes is set, copy every point attribute value from each
     // source point to its duplicate. Only positions are carried over for now.
@@ -568,15 +568,15 @@ void geo::Mesh::rebuildSoloPoints() const
     soloPoints_.clear();
 
     // Seed with every valid point
-    const attr::Offset pointCount = posPointHandle_.getSize();
-    for (attr::Offset p = 0; p < pointCount; ++p)
+    const Offset pointCount = posPointHandle_.getSize();
+    for (Offset p = 0; p < pointCount; ++p)
     {
         if (validPointHandle_.getValue(p)) soloPoints_.insert(p);
     }
 
     // Drop any point referenced by a valid vertex
-    const attr::Offset vertCount = pointOffsetVertexHandle_.getSize();
-    for (attr::Offset v = 0; v < vertCount; ++v)
+    const Offset vertCount = pointOffsetVertexHandle_.getSize();
+    for (Offset v = 0; v < vertCount; ++v)
     {
         if (!validVertexHandle_.getValue(v)) continue;
         soloPoints_.erase(pointOffsetVertexHandle_.getValue(v));
@@ -585,51 +585,51 @@ void geo::Mesh::rebuildSoloPoints() const
     soloPointsDirty_ = false;
 }
 
-attr::Offset geo::Mesh::getNumSoloPoints() const
+Offset geo::Mesh::getNumSoloPoints() const
 {
     if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.size();
 }
 
-std::unordered_set<attr::Offset>::const_iterator geo::Mesh::soloPointsBegin() const
+std::unordered_set<Offset>::const_iterator geo::Mesh::soloPointsBegin() const
 {
     if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.begin();
 }
 
-std::unordered_set<attr::Offset>::const_iterator geo::Mesh::soloPointsEnd() const
+std::unordered_set<Offset>::const_iterator geo::Mesh::soloPointsEnd() const
 {
     if (soloPointsDirty_) rebuildSoloPoints();
     return soloPoints_.end();
 }
 
-bt::Vector3 geo::Mesh::getPosFromVert(attr::Offset vertexOffset) const
+Vector3 geo::Mesh::getPosFromVert(Offset vertexOffset) const
 {
-    const attr::Offset pointOffset = pointOffsetVertexHandle_.getValue(vertexOffset);
+    const Offset pointOffset = pointOffsetVertexHandle_.getValue(vertexOffset);
     return posPointHandle_.getValue(pointOffset);
 }
 
-bt::Vector3 geo::Mesh::getPointPos(attr::Offset pointOffset) const
+Vector3 geo::Mesh::getPointPos(Offset pointOffset) const
 {
     return posPointHandle_.getValue(pointOffset);
 }
 
-attr::Offset geo::Mesh::getVertexFace(attr::Offset vertexOffset) const
+Offset geo::Mesh::getVertexFace(Offset vertexOffset) const
 {
     return vertexFaces_[vertexOffset];
 }
 
-void geo::Mesh::setPointPos(const attr::Offset offset, const bt::Vector3& pos)
+void geo::Mesh::setPointPos(const Offset offset, const Vector3& pos)
 {
     posPointHandle_.setValue(offset, pos);
 }
 
-unsigned int geo::Mesh::getFaceVertCount(attr::Offset faceOffset) const
+unsigned int geo::Mesh::getFaceVertCount(Offset faceOffset) const
 {
     return vertexCountFaceHandle_.getValue(faceOffset);
 }
 
-unsigned int geo::Mesh::getFacePointCount(attr::Offset faceOffset) const
+unsigned int geo::Mesh::getFacePointCount(Offset faceOffset) const
 {
     return getFaceVertCount(faceOffset);
 }
@@ -709,7 +709,7 @@ enzo::geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
     return heMesh;
 }
 
-attr::Offset geo::Mesh::getFaceStartVertex(attr::Offset faceOffset) const
+Offset geo::Mesh::getFaceStartVertex(Offset faceOffset) const
 {
 
     if(faceStartsDirty_.load())
@@ -725,10 +725,10 @@ attr::Offset geo::Mesh::getFaceStartVertex(attr::Offset faceOffset) const
 
 void geo::Mesh::computeFaceStartVertices() const
 {
-    const attr::Offset handleSize = vertexCountFaceHandle_.getSize();
+    const Offset handleSize = vertexCountFaceHandle_.getSize();
     faceStarts_.clear();
     faceStarts_.reserve(handleSize);
-    bt::intT faceStart = 0;
+    intT faceStart = 0;
     for(size_t i=0; i<handleSize; ++i)
     {
         faceStarts_.push_back(faceStart);
@@ -737,7 +737,7 @@ void geo::Mesh::computeFaceStartVertices() const
     faceStartsDirty_.store(false);
 }
 
-bt::boolT geo::Mesh::isClosed(attr::Offset faceOffset) const
+boolT geo::Mesh::isClosed(Offset faceOffset) const
 {
     return closedFaceHandle_.getValue(faceOffset);
 }
@@ -807,17 +807,17 @@ geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute)
 
     if(precompute)
     {
-        const std::span<const bt::Vector3> positions = mesh.posPointHandle_.getSpan();
-        const attr::Offset numFaces = mesh.getNumFaces();
+        const std::span<const Vector3> positions = mesh.posPointHandle_.getSpan();
+        const Offset numFaces = mesh.getNumFaces();
         precomputed_.reserve(numFaces);
-        for(attr::Offset faceOffset=0; faceOffset<numFaces; ++faceOffset)
+        for(Offset faceOffset=0; faceOffset<numFaces; ++faceOffset)
         {
             precomputed_.push_back(utils::polygonNormal(positions, mesh.getFacePoints(faceOffset)));
         }
     }
 }
 
-bt::Vector3 geo::FaceNormalHandle::operator[](attr::Offset faceOffset) const
+Vector3 geo::FaceNormalHandle::operator[](Offset faceOffset) const
 {
     if(cached_) return cached_->getValue(faceOffset);
     if(!precomputed_.empty()) return precomputed_[faceOffset];
@@ -835,7 +835,7 @@ geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, bool precompute)
     if(normalAttr) cached_.emplace(normalAttr);
 }
 
-bt::Vector3 geo::VertexNormalHandle::operator[](attr::Offset vertexOffset) const
+Vector3 geo::VertexNormalHandle::operator[](Offset vertexOffset) const
 {
     if(cached_) return cached_->getValue(vertexOffset);
     return faceNormals_[mesh_.getVertexFace(vertexOffset)];

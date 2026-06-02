@@ -61,7 +61,7 @@ void enzo::ui::XYZParm::onMoved(unsigned int vectorIndex, double value)
 {
     if (auto parameterShared = parameter_.lock())
     {
-        parameterShared->setFloat(static_cast<bt::floatT>(value), vectorIndex);
+        parameterShared->setFloat(static_cast<floatT>(value), vectorIndex);
     }
 }
 

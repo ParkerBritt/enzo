@@ -74,7 +74,7 @@ public:
     *
     * @todo Should probably only have to pass type, now entire opInfo. Fix soon!!!
     */
-    OpId createOperator(op::OpInfo opInfo, bt::Vector2f position = {0.f, 0.f});
+    OpId createOperator(op::OpInfo opInfo, Vector2f position = {0.f, 0.f});
 
     /** @brief Returns the operator ID for the node with its display flag set.
     * There can only be only be one operator displayed at a time.
@@ -140,7 +140,7 @@ public:
      *
      * @todo remove skipUndo argument in favour of a global undo RAII lock
      */
-    void moveNode(OpId opId, bt::Vector2f newPos, bool skipUndo=false);
+    void moveNode(OpId opId, Vector2f newPos, bool skipUndo=false);
 
     /**
      * @brief Deletes a node, pushing an undo command.
@@ -207,7 +207,7 @@ public:
     boost::signals2::signal<void ()> networkCleared;
 
     // @brief A signal emitted when a node's position changes programmatically (e.g. undo/redo)
-    boost::signals2::signal<void (nt::OpId, bt::Vector2f)> nodePositionChanged;
+    boost::signals2::signal<void (nt::OpId, Vector2f)> nodePositionChanged;
     /** @} */
 
     UndoStack& undoStack() { return undoStack_; }

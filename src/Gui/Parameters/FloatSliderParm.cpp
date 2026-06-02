@@ -50,7 +50,7 @@ void enzo::ui::FloatSliderParm::onMoved(double value)
 {
     if (auto parameterShared = parameter_.lock())
     {
-        parameterShared->setFloat(static_cast<bt::floatT>(value), vectorIndex_);
+        parameterShared->setFloat(static_cast<floatT>(value), vectorIndex_);
     }
 }
 

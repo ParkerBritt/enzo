@@ -16,8 +16,8 @@ namespace {
 size_t countFacesWithVertexCount(const geo::Mesh& mesh, unsigned int expected)
 {
     size_t hits = 0;
-    const attr::Offset total = mesh.getNumFaces();
-    for (attr::Offset faceOffset = 0; faceOffset < total; ++faceOffset)
+    const Offset total = mesh.getNumFaces();
+    for (Offset faceOffset = 0; faceOffset < total; ++faceOffset)
     {
         if (!mesh.isValidFace(faceOffset)) continue;
         if (mesh.getFaceVertCount(faceOffset) == expected) ++hits;
@@ -31,8 +31,8 @@ size_t countFacesWithVertexCount(const geo::Mesh& mesh, unsigned int expected)
 TEST_CASE("Union of two disjoint cubes preserves both as quads")
 {
     // Build two cubes that do not touch.
-    auto cubeA = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(0, 0, 0));
-    auto cubeB = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(3, 0, 0));
+    auto cubeA = utils::buildCube(Vector3(1, 1, 1), Vector3(0, 0, 0));
+    auto cubeB = utils::buildCube(Vector3(1, 1, 1), Vector3(3, 0, 0));
 
     // Run union.
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
@@ -47,8 +47,8 @@ TEST_CASE("Union of two disjoint cubes preserves both as quads")
 TEST_CASE("Union of overlapping cubes keeps un-cut quads as quads")
 {
     // Offset along every axis so no pair of input face planes is coplanar.
-    auto cubeA = utils::buildCube(bt::Vector3(2, 2, 2), bt::Vector3(0, 0, 0));
-    auto cubeB = utils::buildCube(bt::Vector3(2, 2, 2), bt::Vector3(1.3, 0.4, 0.7));
+    auto cubeA = utils::buildCube(Vector3(2, 2, 2), Vector3(0, 0, 0));
+    auto cubeB = utils::buildCube(Vector3(2, 2, 2), Vector3(1.3, 0.4, 0.7));
 
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
     REQUIRE(result != nullptr);
@@ -61,15 +61,15 @@ TEST_CASE("Union of overlapping cubes keeps un-cut quads as quads")
 TEST_CASE("Face attribute carries from source mesh to result face")
 {
     // Build two disjoint cubes so every face in the result maps cleanly to one source face.
-    auto cubeA = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(0, 0, 0));
-    auto cubeB = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(3, 0, 0));
+    auto cubeA = utils::buildCube(Vector3(1, 1, 1), Vector3(0, 0, 0));
+    auto cubeB = utils::buildCube(Vector3(1, 1, 1), Vector3(3, 0, 0));
 
     // Tag every face of cube A with 11 and every face of cube B with 22.
     auto attrA = cubeA->addIntAttribute(attr::AttrOwner::FACE, "tag");
-    for (attr::Offset faceOffset = 0; faceOffset < cubeA->getNumFaces(); ++faceOffset)
+    for (Offset faceOffset = 0; faceOffset < cubeA->getNumFaces(); ++faceOffset)
         attrA.setValue(faceOffset, 11);
     auto attrB = cubeB->addIntAttribute(attr::AttrOwner::FACE, "tag");
-    for (attr::Offset faceOffset = 0; faceOffset < cubeB->getNumFaces(); ++faceOffset)
+    for (Offset faceOffset = 0; faceOffset < cubeB->getNumFaces(); ++faceOffset)
         attrB.setValue(faceOffset, 22);
 
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
@@ -83,7 +83,7 @@ TEST_CASE("Face attribute carries from source mesh to result face")
     // Tally how many result faces carry the A tag and how many carry the B tag.
     size_t fromA = 0;
     size_t fromB = 0;
-    for (attr::Offset faceOffset = 0; faceOffset < result->getNumFaces(); ++faceOffset)
+    for (Offset faceOffset = 0; faceOffset < result->getNumFaces(); ++faceOffset)
     {
         if (!result->isValidFace(faceOffset)) continue;
         const auto value = tagHandle.getValue(faceOffset);
@@ -98,15 +98,15 @@ TEST_CASE("Face attribute carries from source mesh to result face")
 TEST_CASE("Point attribute survives on un-cut points")
 {
     // Two disjoint cubes so every point survives.
-    auto cubeA = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(0, 0, 0));
-    auto cubeB = utils::buildCube(bt::Vector3(1, 1, 1), bt::Vector3(3, 0, 0));
+    auto cubeA = utils::buildCube(Vector3(1, 1, 1), Vector3(0, 0, 0));
+    auto cubeB = utils::buildCube(Vector3(1, 1, 1), Vector3(3, 0, 0));
 
     // Tag every point of A with 1 and every point of B with 2.
     auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "src");
-    for (attr::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
         attrA.setValue(pointOffset, 1);
     auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "src");
-    for (attr::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, 2);
 
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
@@ -119,7 +119,7 @@ TEST_CASE("Point attribute survives on un-cut points")
     // Tally how many points carry A's tag versus B's tag.
     size_t fromA = 0;
     size_t fromB = 0;
-    for (attr::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
     {
         if (!result->isValidPoint(pointOffset)) continue;
         const auto value = srcHandle.getValue(pointOffset);
@@ -134,19 +134,19 @@ TEST_CASE("Point attribute survives on un-cut points")
 TEST_CASE("Cut point interpolates point attribute from edge endpoints")
 {
     // Cube A spans x in [0, 2]. Cube B clips the right half away starting at x=1.
-    auto cubeA = utils::buildCube(bt::Vector3(2, 1, 1), bt::Vector3(1, 0.5, 0.5));
-    auto cubeB = utils::buildCube(bt::Vector3(2, 3, 3), bt::Vector3(2, 0.5, 0.5));
+    auto cubeA = utils::buildCube(Vector3(2, 1, 1), Vector3(1, 0.5, 0.5));
+    auto cubeB = utils::buildCube(Vector3(2, 3, 3), Vector3(2, 0.5, 0.5));
 
     // Tag each A point with ten times its X coordinate so a cut at x=1 should interpolate to 10.
     auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
-    for (attr::Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
     {
-        const bt::Vector3 position = cubeA->getPointPos(pointOffset);
-        attrA.setValue(pointOffset, static_cast<bt::intT>(std::lround(position.x() * 10)));
+        const Vector3 position = cubeA->getPointPos(pointOffset);
+        attrA.setValue(pointOffset, static_cast<intT>(std::lround(position.x() * 10)));
     }
     // Mark B points so they are easy to tell apart from interpolated values.
     auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
-    for (attr::Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, -1);
 
     // Subtract B from A so the right half of A is cut away.
@@ -159,10 +159,10 @@ TEST_CASE("Cut point interpolates point attribute from edge endpoints")
 
     // Find points sitting on the x=1 cut plane and check their attribute interpolates to 10.
     size_t cutPointsAtTen = 0;
-    for (attr::Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
     {
         if (!result->isValidPoint(pointOffset)) continue;
-        const bt::Vector3 position = result->getPointPos(pointOffset);
+        const Vector3 position = result->getPointPos(pointOffset);
         if (std::abs(position.x() - 1.0) > 1e-6) continue;
         REQUIRE(handle.getValue(pointOffset) == 10);
         ++cutPointsAtTen;

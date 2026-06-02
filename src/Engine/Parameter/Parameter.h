@@ -7,7 +7,7 @@
 namespace enzo::prm {
 
 using PrmValues =
-    std::variant<std::vector<bt::floatT>, std::vector<bt::intT>, std::vector<bt::String>>;
+    std::variant<std::vector<floatT>, std::vector<intT>, std::vector<String>>;
 
 class Parameter {
   public:
@@ -19,13 +19,13 @@ class Parameter {
     enzo::prm::Type getType() const;
     unsigned int getVectorSize() const;
 
-    bt::floatT evalFloat(unsigned int index = 0) const;
-    bt::String evalString(unsigned int index = 0) const;
-    bt::intT evalInt(unsigned int index = 0) const;
+    floatT evalFloat(unsigned int index = 0) const;
+    String evalString(unsigned int index = 0) const;
+    intT evalInt(unsigned int index = 0) const;
 
-    void setInt(bt::intT value, unsigned int index = 0);
-    void setFloat(bt::floatT value, unsigned int index = 0);
-    void setString(bt::String value, unsigned int index = 0);
+    void setInt(intT value, unsigned int index = 0);
+    void setFloat(floatT value, unsigned int index = 0);
+    void setString(String value, unsigned int index = 0);
 
     PrmValues getValues() const;
     void setValues(const PrmValues &values);

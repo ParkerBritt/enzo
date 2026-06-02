@@ -54,8 +54,8 @@ class Attribute {
      */
     std::string getName() const;
 
-    bt::Vector3 getVector3(Offset offset) const;
-    bt::Matrix4 getMatrix4(Offset offset) const;
+    Vector3 getVector3(Offset offset) const;
+    Matrix4 getMatrix4(Offset offset) const;
     size_t getSize() const;
     /**
      * @brief Returns the number of components in the type (eg. StringT is 1, vectorT is 3).
@@ -109,11 +109,11 @@ class Attribute {
     std::string name_;
 
     using StoreVariant = std::variant<
-        std::shared_ptr<StoreContainer<bt::intT>>,
-        std::shared_ptr<StoreContainer<bt::floatT>>,
-        std::shared_ptr<StoreContainer<enzo::bt::Vector3>>,
-        std::shared_ptr<StoreContainer<enzo::bt::boolT>>,
-        std::shared_ptr<StoreContainer<enzo::bt::Matrix4>>>;
+        std::shared_ptr<StoreContainer<intT>>,
+        std::shared_ptr<StoreContainer<floatT>>,
+        std::shared_ptr<StoreContainer<enzo::Vector3>>,
+        std::shared_ptr<StoreContainer<enzo::boolT>>,
+        std::shared_ptr<StoreContainer<enzo::Matrix4>>>;
     StoreVariant store_;
 };
 

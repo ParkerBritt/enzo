@@ -31,14 +31,14 @@ struct BoolIcon
         settings[ICON]->setString(std::move(iconPath));
         return *this;
     }
-    BoolIcon& setScale(bt::floatT scale)
+    BoolIcon& setScale(floatT scale)
     {
         settings[SCALE]->setFloat(scale);
         return *this;
     }
 
-    bt::String  icon()  const { return settings[ICON]->evalString(); }
-    bt::floatT  scale() const { return settings[SCALE]->evalFloat(); }
+    String  icon()  const { return settings[ICON]->evalString(); }
+    floatT  scale() const { return settings[SCALE]->evalFloat(); }
 };
 
 struct BoolIconSlash
@@ -55,14 +55,14 @@ struct BoolIconSlash
         settings[ICON]->setString(std::move(iconPath));
         return *this;
     }
-    BoolIconSlash& setScale(bt::floatT scale)
+    BoolIconSlash& setScale(floatT scale)
     {
         settings[SCALE]->setFloat(scale);
         return *this;
     }
 
-    bt::String  icon()  const { return settings[ICON]->evalString(); }
-    bt::floatT  scale() const { return settings[SCALE]->evalFloat(); }
+    String  icon()  const { return settings[ICON]->evalString(); }
+    floatT  scale() const { return settings[SCALE]->evalFloat(); }
 };
 
 }

@@ -13,23 +13,23 @@ attr::Attribute::Attribute(std::string name, attr::AttributeType type, bool intr
     switch(type_)
     {
         case(AttrType::intT):
-            store_ = std::make_shared<StoreContainer<bt::intT>>();
+            store_ = std::make_shared<StoreContainer<intT>>();
             typeSize_ = 1;
             break;
         case(AttrType::floatT):
-            store_ = std::make_shared<StoreContainer<bt::floatT>>();
+            store_ = std::make_shared<StoreContainer<floatT>>();
             typeSize_ = 1;
             break;
         case(AttrType::vectorT):
-            store_ = std::make_shared<StoreContainer<bt::Vector3>>();
+            store_ = std::make_shared<StoreContainer<Vector3>>();
             typeSize_ = 3;
             break;
         case(AttrType::boolT):
-            store_ = std::make_shared<StoreContainer<bt::boolT>>();
+            store_ = std::make_shared<StoreContainer<boolT>>();
             typeSize_ = 1;
             break;
         case(AttrType::matrixT):
-            store_ = std::make_shared<StoreContainer<bt::Matrix4>>();
+            store_ = std::make_shared<StoreContainer<Matrix4>>();
             typeSize_ = 16;
             break;
         default:
@@ -98,14 +98,14 @@ attr::Attribute::Attribute(const Attribute& other)
 }
 
 
-bt::Vector3 attr::Attribute::getVector3(attr::Offset offset) const
+Vector3 attr::Attribute::getVector3(Offset offset) const
 {
-    return (*std::get<std::shared_ptr<StoreContainer<bt::Vector3>>>(store_))[offset];
+    return (*std::get<std::shared_ptr<StoreContainer<Vector3>>>(store_))[offset];
 }
 
-bt::Matrix4 attr::Attribute::getMatrix4(attr::Offset offset) const
+Matrix4 attr::Attribute::getMatrix4(Offset offset) const
 {
-    return (*std::get<std::shared_ptr<StoreContainer<bt::Matrix4>>>(store_))[offset];
+    return (*std::get<std::shared_ptr<StoreContainer<Matrix4>>>(store_))[offset];
 }
 
 size_t attr::Attribute::getSize() const

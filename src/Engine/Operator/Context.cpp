@@ -36,7 +36,7 @@ bool enzo::op::Context::hasInput(unsigned int inputIndex)
 }
 
 // TODO: cache value
-enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
+enzo::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -52,7 +52,7 @@ enzo::bt::floatT enzo::op::Context::evalFloatParm(std::string_view parmName, con
 }
 
 // TODO: cache value
-enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
+enzo::intT enzo::op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -68,7 +68,7 @@ enzo::bt::intT enzo::op::Context::evalIntParm(std::string_view parmName, const u
 }
 
 // TODO: cache value
-enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
+enzo::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -84,7 +84,7 @@ enzo::bt::boolT enzo::op::Context::evalBoolParm(std::string_view parmName, const
 }
 
 // TODO: cache value
-enzo::bt::String enzo::op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
+enzo::String enzo::op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
 {
     enzo::nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);

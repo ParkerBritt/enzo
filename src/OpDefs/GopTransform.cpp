@@ -25,15 +25,15 @@ void GopTransform::cookOp(enzo::op::Context context)
 
         Eigen::Affine3d transform = Eigen::Affine3d::Identity();
 
-        const bt::floatT rotateX = context.evalFloatParm("rotate", 0);
-        const bt::floatT rotateY = context.evalFloatParm("rotate", 1);
-        const bt::floatT rotateZ = context.evalFloatParm("rotate", 2);
+        const floatT rotateX = context.evalFloatParm("rotate", 0);
+        const floatT rotateY = context.evalFloatParm("rotate", 1);
+        const floatT rotateZ = context.evalFloatParm("rotate", 2);
         transform.rotate(Eigen::AngleAxisd(rotateX, Eigen::Vector3d(1,0,0)));
         transform.rotate(Eigen::AngleAxisd(rotateY, Eigen::Vector3d(0,1,0)));
         transform.rotate(Eigen::AngleAxisd(rotateZ, Eigen::Vector3d(0,0,1)));
 
         const Eigen::Matrix3d  R = transform.linear();
-        const Eigen::Vector3d  t = bt::Vector3(context.evalFloatParm("translate", 0), context.evalFloatParm("translate", 1), context.evalFloatParm("translate", 2));
+        const Eigen::Vector3d  t = Vector3(context.evalFloatParm("translate", 0), context.evalFloatParm("translate", 1), context.evalFloatParm("translate", 2));
 
         for(unsigned int p = 0; p < packet.size(); ++p)
         {
@@ -46,7 +46,7 @@ void GopTransform::cookOp(enzo::op::Context context)
             {
                 for(size_t i=range.begin(); i<range.end(); ++i)
                 {
-                    const enzo::bt::Vector3 pointPos = (R * PAttrHandle[i]) + t;
+                    const enzo::Vector3 pointPos = (R * PAttrHandle[i]) + t;
                     PAttrHandle.setValue(i, pointPos);
                 }
             });

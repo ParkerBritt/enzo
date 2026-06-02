@@ -25,12 +25,12 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
         NodePacket packet = context.cloneInputPacket(0);
         // geo::Primitive geo = context.cloneInputGeo(0);
         //
-        // const attr::Offset pointCount = geo.getNumPoints();
+        // const Offset pointCount = geo.getNumPoints();
         //
-        // tbb::parallel_for(tbb::blocked_range<attr::Offset>(0, pointCount), [this, &geo](tbb::blocked_range<attr::Offset> range){
-        //     for(attr::Offset i=range.begin(); i!=range.end(); ++i)
+        // tbb::parallel_for(tbb::blocked_range<Offset>(0, pointCount), [this, &geo](tbb::blocked_range<Offset> range){
+        //     for(Offset i=range.begin(); i!=range.end(); ++i)
         //     {
-        //         bt::Vector3 pos = geo.getPointPos(i);
+        //         Vector3 pos = geo.getPointPos(i);
         //
         //         pos = getSurfacePos(pos);
         //
@@ -43,9 +43,9 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
 
 }
 
-enzo::bt::Vector3 GopOceanSurface::getSurfacePos(const enzo::bt::Vector3 pos)
+enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
 {
-    using enzo::bt::Vector3;
+    using enzo::Vector3;
 
     const int waveNum = 30;
     const int waveDirNum = 20;

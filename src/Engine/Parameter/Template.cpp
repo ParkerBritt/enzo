@@ -70,17 +70,17 @@ const unsigned int prm::Template::getNumDefaults() const
     return defaults_.size();
 }
 
-bt::String prm::Template::getName() const
+String prm::Template::getName() const
 {
     return name_.getToken();
 }
 
-bt::String prm::Template::getToken() const
+String prm::Template::getToken() const
 {
     return name_.getToken();
 }
 
-bt::String prm::Template::getLabel() const
+String prm::Template::getLabel() const
 {
     return name_.getLabel();
 }
@@ -95,12 +95,12 @@ const std::vector<prm::Template>& prm::Template::getChildren() const
     return children_;
 }
 
-bt::String prm::Template::getTooltip() const
+String prm::Template::getTooltip() const
 {
     return tooltip_;
 }
 
-bt::String prm::Template::getDocumentation() const
+String prm::Template::getDocumentation() const
 {
     return documentation_;
 }
@@ -110,13 +110,13 @@ bool prm::Template::isLabelHidden() const
     return labelHidden_;
 }
 
-prm::Template& prm::Template::setTooltip(bt::String tooltip)
+prm::Template& prm::Template::setTooltip(String tooltip)
 {
     tooltip_ = std::move(tooltip);
     return *this;
 }
 
-prm::Template& prm::Template::setDocumentation(bt::String documentation)
+prm::Template& prm::Template::setDocumentation(String documentation)
 {
     documentation_ = std::move(documentation);
     return *this;

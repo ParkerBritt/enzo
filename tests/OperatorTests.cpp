@@ -31,7 +31,7 @@ TEST_CASE("geometry")
 
     // check getter
     std::shared_ptr<attr::Attribute> myAttribute = geo.getAttribByName(attr::AttrOwner::POINT, "index");
-    attr::AttributeHandle<bt::intT> myHandle2(myAttribute);
+    attr::AttributeHandle<intT> myHandle2(myAttribute);
     REQUIRE(myHandle2.getValue(0)==5);
     REQUIRE(myHandle2.getValue(1)==6);
 
@@ -59,10 +59,10 @@ TEST_CASE("attrHandleVector3")
 
     std::shared_ptr<attr::Attribute> myAttrib = std::make_shared<attr::Attribute>("test", attr::AttrType::vectorT);
     attr::AttributeHandleVector3 myHandle(myAttrib);
-    myHandle.addValue(bt::Vector3(5,10,15));
-    myHandle.addValue(bt::Vector3(1,2,3));
-    REQUIRE(myHandle.getValue(0)==bt::Vector3(5,10,15));
-    REQUIRE(myHandle.getValue(1)==bt::Vector3(1,2,3));
+    myHandle.addValue(Vector3(5,10,15));
+    myHandle.addValue(Vector3(1,2,3));
+    REQUIRE(myHandle.getValue(0)==Vector3(5,10,15));
+    REQUIRE(myHandle.getValue(1)==Vector3(1,2,3));
 }
 
 TEST_CASE("Attribute Type")
@@ -79,11 +79,11 @@ TEST_CASE("Attribute Type")
 TEST_CASE("Vector3")
 {
     using namespace enzo;
-    bt::Vector3 u(1,2,3);
-    bt::Vector3 v(1,2,3);
+    Vector3 u(1,2,3);
+    Vector3 v(1,2,3);
     REQUIRE(u == v);
-    REQUIRE(u*2 == bt::Vector3(2,4,6));
-    REQUIRE(2*u == bt::Vector3(2,4,6));
+    REQUIRE(u*2 == Vector3(2,4,6));
+    REQUIRE(2*u == Vector3(2,4,6));
     REQUIRE(u.x() == 1);
     REQUIRE(u.y() == 2);
     REQUIRE(u.z() == 3);
@@ -92,7 +92,7 @@ TEST_CASE("Vector3")
 TEST_CASE("Vector4")
 {
     using namespace enzo;
-    bt::Vector4 u(1,2,3,4);
+    Vector4 u(1,2,3,4);
     REQUIRE(u.x() == 1);
     REQUIRE(u.y() == 2);
     REQUIRE(u.z() == 3);

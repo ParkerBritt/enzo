@@ -18,28 +18,28 @@ void GopCamera::cookOp(enzo::op::Context context)
         NodePacket packet;
         auto cam = std::make_shared<geo::Camera>();
 
-        bt::floatT tx = context.evalFloatParm("transform", 0);
-        bt::floatT ty = context.evalFloatParm("transform", 1);
-        bt::floatT tz = context.evalFloatParm("transform", 2);
+        floatT tx = context.evalFloatParm("transform", 0);
+        floatT ty = context.evalFloatParm("transform", 1);
+        floatT tz = context.evalFloatParm("transform", 2);
 
-        bt::floatT rx = context.evalFloatParm("rotate", 0) * M_PI / 180.0;
-        bt::floatT ry = context.evalFloatParm("rotate", 1) * M_PI / 180.0;
-        bt::floatT rz = context.evalFloatParm("rotate", 2) * M_PI / 180.0;
+        floatT rx = context.evalFloatParm("rotate", 0) * M_PI / 180.0;
+        floatT ry = context.evalFloatParm("rotate", 1) * M_PI / 180.0;
+        floatT rz = context.evalFloatParm("rotate", 2) * M_PI / 180.0;
 
         // Rotation matrices (XYZ order)
-        bt::Matrix4 rotX = bt::Matrix4::Identity();
+        Matrix4 rotX = Matrix4::Identity();
         rotX(1,1) =  std::cos(rx); rotX(1,2) = -std::sin(rx);
         rotX(2,1) =  std::sin(rx); rotX(2,2) =  std::cos(rx);
 
-        bt::Matrix4 rotY = bt::Matrix4::Identity();
+        Matrix4 rotY = Matrix4::Identity();
         rotY(0,0) =  std::cos(ry); rotY(0,2) =  std::sin(ry);
         rotY(2,0) = -std::sin(ry); rotY(2,2) =  std::cos(ry);
 
-        bt::Matrix4 rotZ = bt::Matrix4::Identity();
+        Matrix4 rotZ = Matrix4::Identity();
         rotZ(0,0) =  std::cos(rz); rotZ(0,1) = -std::sin(rz);
         rotZ(1,0) =  std::sin(rz); rotZ(1,1) =  std::cos(rz);
 
-        bt::Matrix4 xform = bt::Matrix4::Identity();
+        Matrix4 xform = Matrix4::Identity();
         xform(0, 3) = tx;
         xform(1, 3) = ty;
         xform(2, 3) = tz;

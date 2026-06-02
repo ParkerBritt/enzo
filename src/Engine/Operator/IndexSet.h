@@ -7,21 +7,21 @@ namespace enzo {
 class IndexSet {
   public:
     virtual ~IndexSet() = default;
-    virtual bool contains(attr::Index index) const = 0;
+    virtual bool contains(Index index) const = 0;
 };
 
 class ExplicitIndexSet : public IndexSet {
   public:
-    ExplicitIndexSet(std::set<attr::Index> indices);
-    bool contains(attr::Index index) const override;
+    ExplicitIndexSet(std::set<Index> indices);
+    bool contains(Index index) const override;
 
   private:
-    std::set<attr::Index> indices_;
+    std::set<Index> indices_;
 };
 
 class WildcardIndexSet : public IndexSet {
   public:
-    bool contains(attr::Index index) const override;
+    bool contains(Index index) const override;
 };
 
 } // namespace enzo

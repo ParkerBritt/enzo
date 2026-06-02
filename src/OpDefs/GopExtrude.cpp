@@ -10,11 +10,11 @@
 #include <vector>
 
 namespace {
-using Edge = std::pair<enzo::attr::Offset, enzo::attr::Offset>;
+using Edge = std::pair<enzo::Offset, enzo::Offset>;
 struct EdgeHash {
     size_t operator()(const Edge &edge) const noexcept {
-        const size_t a = std::hash<enzo::attr::Offset>{}(edge.first);
-        const size_t b = std::hash<enzo::attr::Offset>{}(edge.second);
+        const size_t a = std::hash<enzo::Offset>{}(edge.first);
+        const size_t b = std::hash<enzo::Offset>{}(edge.second);
         return a ^ (b + 0x9e3779b97f4a7c15ULL + (a << 6) + (a >> 2));
     }
 };
@@ -30,44 +30,44 @@ struct EdgeHash {
  * @return The offset to add to the corner, or zero if the two edges are
  * antiparallel and the bisector is undefined.
  */
-enzo::bt::Vector3 cornerInsetOffset(const enzo::bt::Vector3 &prevPos,
-                                    const enzo::bt::Vector3 &cornerPos,
-                                    const enzo::bt::Vector3 &nextPos,
-                                    const enzo::bt::Vector3 &inEdgeFaceNormal,
-                                    const enzo::bt::Vector3 &outEdgeFaceNormal, float distance) {
-    const enzo::bt::Vector3 inDir = (cornerPos - prevPos).normalized();
-    const enzo::bt::Vector3 outDir = (nextPos - cornerPos).normalized();
-    const enzo::bt::Vector3 inNormal = inEdgeFaceNormal.cross(inDir).normalized();
-    const enzo::bt::Vector3 outNormal = outEdgeFaceNormal.cross(outDir).normalized();
+enzo::Vector3 cornerInsetOffset(const enzo::Vector3 &prevPos,
+                                    const enzo::Vector3 &cornerPos,
+                                    const enzo::Vector3 &nextPos,
+                                    const enzo::Vector3 &inEdgeFaceNormal,
+                                    const enzo::Vector3 &outEdgeFaceNormal, float distance) {
+    const enzo::Vector3 inDir = (cornerPos - prevPos).normalized();
+    const enzo::Vector3 outDir = (nextPos - cornerPos).normalized();
+    const enzo::Vector3 inNormal = inEdgeFaceNormal.cross(inDir).normalized();
+    const enzo::Vector3 outNormal = outEdgeFaceNormal.cross(outDir).normalized();
     const double denom = 1.0 + inNormal.dot(outNormal);
     if (std::abs(denom) < 1e-6)
-        return enzo::bt::Vector3::Zero();
-    const enzo::bt::Vector3 bisector = (inNormal + outNormal) / denom;
+        return enzo::Vector3::Zero();
+    const enzo::Vector3 bisector = (inNormal + outNormal) / denom;
     return bisector * static_cast<double>(distance);
 }
 } // namespace
 
 /// @brief Extrudes faces as a connected island, sharing corners between adjacent selected faces.
 static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
-                             const std::vector<enzo::attr::Offset> &faces, float distance,
+                             const std::vector<enzo::Offset> &faces, float distance,
                              float inset, const std::string &sideGroupName,
                              const std::string &frontGroupName, bool emitFront, bool emitSide) {
     auto faceNormals = mesh->getFaceNormal();
 
     // Record directed edges and accumulate extrude displacement per shared point.
     std::unordered_map<Edge, size_t, EdgeHash> edgeToFaceIdx;
-    std::unordered_map<enzo::attr::Offset, enzo::bt::Vector3> displacementSum;
-    std::unordered_map<enzo::attr::Offset, unsigned int> displacementCount;
+    std::unordered_map<enzo::Offset, enzo::Vector3> displacementSum;
+    std::unordered_map<enzo::Offset, unsigned int> displacementCount;
 
     for (size_t faceIdx = 0; faceIdx < faces.size(); ++faceIdx) {
-        const enzo::attr::Offset face = faces[faceIdx];
+        const enzo::Offset face = faces[faceIdx];
         auto facePoints = mesh->getFacePoints(face);
-        const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
+        const enzo::Vector3 displacement = faceNormals[face] * distance;
         const unsigned int facePointCount = mesh->getFacePointCount(face);
 
         for (size_t i = 0; i < facePointCount; ++i) {
-            const enzo::attr::Offset pointOffset = facePoints[i];
-            const enzo::attr::Offset nextPointOffset = facePoints[(i + 1) % facePointCount];
+            const enzo::Offset pointOffset = facePoints[i];
+            const enzo::Offset nextPointOffset = facePoints[(i + 1) % facePointCount];
             edgeToFaceIdx[{pointOffset, nextPointOffset}] = faceIdx;
 
             auto [it, inserted] = displacementSum.try_emplace(pointOffset, displacement);
@@ -81,11 +81,11 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     // selection. Each entry records the neighbouring point along the outer
     // boundary and the face that owns the directed edge.
     struct OuterHalfEdge {
-        enzo::attr::Offset neighbour;
+        enzo::Offset neighbour;
         size_t faceIdx;
     };
-    std::unordered_map<enzo::attr::Offset, OuterHalfEdge> outgoingOuter;
-    std::unordered_map<enzo::attr::Offset, OuterHalfEdge> incomingOuter;
+    std::unordered_map<enzo::Offset, OuterHalfEdge> outgoingOuter;
+    std::unordered_map<enzo::Offset, OuterHalfEdge> incomingOuter;
     for (const auto &[edge, faceIdx] : edgeToFaceIdx) {
         if (edgeToFaceIdx.count({edge.second, edge.first}))
             continue;
@@ -95,8 +95,8 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 
     // Duplicate each unique ring point along its averaged displacement,
     // applying an inward-bisector inset on outer boundary points only.
-    std::vector<enzo::attr::Offset> uniqueOldPoints;
-    std::vector<enzo::bt::Vector3> newPointPositions;
+    std::vector<enzo::Offset> uniqueOldPoints;
+    std::vector<enzo::Vector3> newPointPositions;
     uniqueOldPoints.reserve(displacementSum.size());
     newPointPositions.reserve(displacementSum.size());
 
@@ -110,16 +110,16 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
             continue;
 
         const float averageDivisor = static_cast<float>(displacementCount[oldOffset]);
-        const enzo::bt::Vector3 averagedDisplacement = dispSum / averageDivisor;
-        enzo::bt::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
+        const enzo::Vector3 averagedDisplacement = dispSum / averageDivisor;
+        enzo::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
 
         if (inset != 0.0f) {
             if (inIt != incomingOuter.end() && outIt != outgoingOuter.end()) {
-                const enzo::bt::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
-                const enzo::bt::Vector3 cornerPos = mesh->getPointPos(oldOffset);
-                const enzo::bt::Vector3 nextPos = mesh->getPointPos(outIt->second.neighbour);
-                const enzo::bt::Vector3 inFaceNormal = faceNormals[faces[inIt->second.faceIdx]];
-                const enzo::bt::Vector3 outFaceNormal = faceNormals[faces[outIt->second.faceIdx]];
+                const enzo::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
+                const enzo::Vector3 cornerPos = mesh->getPointPos(oldOffset);
+                const enzo::Vector3 nextPos = mesh->getPointPos(outIt->second.neighbour);
+                const enzo::Vector3 inFaceNormal = faceNormals[faces[inIt->second.faceIdx]];
+                const enzo::Vector3 outFaceNormal = faceNormals[faces[outIt->second.faceIdx]];
                 newPos += cornerInsetOffset(prevPos, cornerPos, nextPos, inFaceNormal,
                                             outFaceNormal, inset);
             }
@@ -130,18 +130,18 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
     }
 
     // Create new points and map old ring to new ring
-    std::vector<enzo::attr::Offset> newPoints = mesh->addPoints(newPointPositions);
-    std::unordered_map<enzo::attr::Offset, enzo::attr::Offset> oldToNew;
+    std::vector<enzo::Offset> newPoints = mesh->addPoints(newPointPositions);
+    std::unordered_map<enzo::Offset, enzo::Offset> oldToNew;
     oldToNew.reserve(uniqueOldPoints.size());
     for (size_t i = 0; i < uniqueOldPoints.size(); ++i) {
         oldToNew[uniqueOldPoints[i]] = newPoints[i];
     }
 
     // Build top caps and side quads
-    std::vector<enzo::attr::Offset> sidePointOffsetsFlat;
-    std::vector<enzo::attr::Offset> sideVertexCounts;
-    std::vector<enzo::attr::Offset> topPointOffsetsFlat;
-    std::vector<enzo::attr::Offset> topVertexCounts;
+    std::vector<enzo::Offset> sidePointOffsetsFlat;
+    std::vector<enzo::Offset> sideVertexCounts;
+    std::vector<enzo::Offset> topPointOffsetsFlat;
+    std::vector<enzo::Offset> topVertexCounts;
 
     for (auto face : faces) {
         auto facePoints = mesh->getFacePoints(face);
@@ -158,14 +158,14 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         if (emitSide) {
             // Skip internal edges whose reverse appears in another selected face
             for (size_t i = 0; i < facePointCount; ++i) {
-                const enzo::attr::Offset bottomStart = facePoints[i];
-                const enzo::attr::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
+                const enzo::Offset bottomStart = facePoints[i];
+                const enzo::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
 
                 if (edgeToFaceIdx.count({bottomEnd, bottomStart}))
                     continue;
 
-                const enzo::attr::Offset topStart = oldToNew[bottomStart];
-                const enzo::attr::Offset topEnd = oldToNew[bottomEnd];
+                const enzo::Offset topStart = oldToNew[bottomStart];
+                const enzo::Offset topEnd = oldToNew[bottomEnd];
 
                 sidePointOffsetsFlat.push_back(bottomStart);
                 sidePointOffsetsFlat.push_back(bottomEnd);
@@ -178,13 +178,13 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 
     // Add the new faces and tag them
     if (emitSide) {
-        std::vector<enzo::attr::Offset> sideOffsets =
+        std::vector<enzo::Offset> sideOffsets =
             mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
         if (!sideGroupName.empty())
             mesh->addToFaceGroup(sideGroupName, sideOffsets);
     }
     if (emitFront) {
-        std::vector<enzo::attr::Offset> topOffsets =
+        std::vector<enzo::Offset> topOffsets =
             mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
         if (!frontGroupName.empty())
             mesh->addToFaceGroup(frontGroupName, topOffsets);
@@ -193,42 +193,42 @@ static void extrudeConnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 
 /// @brief Extrudes each selected face in isolation.
 static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
-                                const std::vector<enzo::attr::Offset> &faces, float distance,
+                                const std::vector<enzo::Offset> &faces, float distance,
                                 float inset, const std::string &sideGroupName,
                                 const std::string &frontGroupName, bool emitFront, bool emitSide) {
     auto faceNormals = mesh->getFaceNormal();
 
-    std::vector<enzo::attr::Offset> sidePointOffsetsFlat;
-    std::vector<enzo::attr::Offset> sideVertexCounts;
-    std::vector<enzo::attr::Offset> topPointOffsetsFlat;
-    std::vector<enzo::attr::Offset> topVertexCounts;
+    std::vector<enzo::Offset> sidePointOffsetsFlat;
+    std::vector<enzo::Offset> sideVertexCounts;
+    std::vector<enzo::Offset> topPointOffsetsFlat;
+    std::vector<enzo::Offset> topVertexCounts;
 
     for (auto face : faces) {
         auto facePoints = mesh->getFacePoints(face);
-        const enzo::bt::Vector3 displacement = faceNormals[face] * distance;
-        const enzo::bt::Vector3 faceNormal = faceNormals[face];
+        const enzo::Vector3 displacement = faceNormals[face] * distance;
+        const enzo::Vector3 faceNormal = faceNormals[face];
         const unsigned int facePointCount = mesh->getFacePointCount(face);
 
         // Duplicate every ring point fresh for this face, applying an
         // inward-bisector inset on each corner.
-        std::vector<enzo::bt::Vector3> newPositionsLocal;
+        std::vector<enzo::Vector3> newPositionsLocal;
         newPositionsLocal.reserve(facePointCount);
         for (size_t i = 0; i < facePointCount; ++i) {
-            enzo::bt::Vector3 newPos = mesh->getPointPos(facePoints[i]) + displacement;
+            enzo::Vector3 newPos = mesh->getPointPos(facePoints[i]) + displacement;
             if (inset != 0.0f) {
-                const enzo::attr::Offset prevOffset =
+                const enzo::Offset prevOffset =
                     facePoints[(i + facePointCount - 1) % facePointCount];
-                const enzo::attr::Offset nextOffset = facePoints[(i + 1) % facePointCount];
-                const enzo::bt::Vector3 prevPos = mesh->getPointPos(prevOffset);
-                const enzo::bt::Vector3 cornerPos = mesh->getPointPos(facePoints[i]);
-                const enzo::bt::Vector3 nextPos = mesh->getPointPos(nextOffset);
+                const enzo::Offset nextOffset = facePoints[(i + 1) % facePointCount];
+                const enzo::Vector3 prevPos = mesh->getPointPos(prevOffset);
+                const enzo::Vector3 cornerPos = mesh->getPointPos(facePoints[i]);
+                const enzo::Vector3 nextPos = mesh->getPointPos(nextOffset);
                 newPos +=
                     cornerInsetOffset(prevPos, cornerPos, nextPos, faceNormal, faceNormal, inset);
             }
             newPositionsLocal.push_back(newPos);
         }
 
-        std::vector<enzo::attr::Offset> faceNewPoints = mesh->addPoints(newPositionsLocal);
+        std::vector<enzo::Offset> faceNewPoints = mesh->addPoints(newPositionsLocal);
 
         if (emitFront) {
             // Top cap mirrors the original winding on the new ring
@@ -241,10 +241,10 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
         if (emitSide) {
             // Every edge gets its own side quad
             for (size_t i = 0; i < facePointCount; ++i) {
-                const enzo::attr::Offset bottomStart = facePoints[i];
-                const enzo::attr::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
-                const enzo::attr::Offset topStart = faceNewPoints[i];
-                const enzo::attr::Offset topEnd = faceNewPoints[(i + 1) % facePointCount];
+                const enzo::Offset bottomStart = facePoints[i];
+                const enzo::Offset bottomEnd = facePoints[(i + 1) % facePointCount];
+                const enzo::Offset topStart = faceNewPoints[i];
+                const enzo::Offset topEnd = faceNewPoints[(i + 1) % facePointCount];
 
                 sidePointOffsetsFlat.push_back(bottomStart);
                 sidePointOffsetsFlat.push_back(bottomEnd);
@@ -257,13 +257,13 @@ static void extrudeDisconnected(std::shared_ptr<enzo::geo::Mesh> mesh,
 
     // Add the new faces and tag them
     if (emitSide) {
-        std::vector<enzo::attr::Offset> sideOffsets =
+        std::vector<enzo::Offset> sideOffsets =
             mesh->addFaces(sidePointOffsetsFlat, sideVertexCounts);
         if (!sideGroupName.empty())
             mesh->addToFaceGroup(sideGroupName, sideOffsets);
     }
     if (emitFront) {
-        std::vector<enzo::attr::Offset> topOffsets =
+        std::vector<enzo::Offset> topOffsets =
             mesh->addFaces(topPointOffsetsFlat, topVertexCounts);
         if (!frontGroupName.empty())
             mesh->addToFaceGroup(frontGroupName, topOffsets);
@@ -282,7 +282,7 @@ struct OutputFlags {
     bool back;
 };
 
-void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::attr::Offset> faces, float distance,
+void extrude(enzo::geo::PrimPtr prim, std::vector<enzo::Offset> faces, float distance,
              float inset, bool connected, const GroupNames &groupNames,
              const OutputFlags &outputs) {
     std::shared_ptr<enzo::geo::Mesh> mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
@@ -328,7 +328,7 @@ void GopExtrude::cookOp(enzo::op::Context context) {
     if (outputRequested(0)) {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const bt::String selectionStr = context.evalStringParm("selection");
+        const String selectionStr = context.evalStringParm("selection");
         const float distance = context.evalFloatParm("distance");
         const float inset = context.evalFloatParm("inset");
         const bool connected = context.evalBoolParm("connected");

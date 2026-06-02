@@ -22,7 +22,7 @@ void GOP_house::cookOp(enzo::op::Context context)
         // auto PAttr = geo.getAttribByName(attr::AttrOwner::POINT, "P");
         // attr::AttributeHandleVector3 PAttrHandle(PAttr);
         // int startPt = PAttrHandle.getSize();
-        // std::vector<bt::Vector3> pts = {
+        // std::vector<Vector3> pts = {
         //     {-1,-1,-1},
         //     {1,-1,-1},
         //     {1,-1,1},
@@ -58,7 +58,7 @@ void GOP_house::cookOp(enzo::op::Context context)
         //
         // for(int i=0; i<PAttrHandle.getAllValues().size(); ++i)
         // {
-        //     enzo::bt::Vector3 vector = PAttrHandle.getValue(i);
+        //     enzo::Vector3 vector = PAttrHandle.getValue(i);
         //     vector*=context.evalFloatParm("size");
         //     PAttrHandle.setValue(i, vector);
         // }

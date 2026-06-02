@@ -136,9 +136,9 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
                 {
                     if(auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
                     {
-                        const enzo::attr::Offset faceOffset = mesh->getVertexFace(index.row());
-                        const enzo::attr::Offset startVert = mesh->getFaceStartVertex(faceOffset);
-                        const enzo::attr::Offset vertexNumber = index.row()-startVert;
+                        const enzo::Offset faceOffset = mesh->getVertexFace(index.row());
+                        const enzo::Offset startVert = mesh->getFaceStartVertex(faceOffset);
+                        const enzo::Offset vertexNumber = index.row()-startVert;
                         return QString::fromStdString(std::to_string(faceOffset)+":"+std::to_string(vertexNumber));
                     }
                     return index.row();
@@ -157,7 +157,7 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
             const unsigned int groupIndex = section - sectionAttribMap_.size();
             if(auto group = primitive_->getGroupByIndex(attributeOwner_, groupIndex).lock())
             {
-                const auto groupHandle = enzo::attr::AttributeHandleRO<enzo::bt::boolT>(group);
+                const auto groupHandle = enzo::attr::AttributeHandleRO<enzo::boolT>(group);
                 return groupHandle.getValue(index.row()) ? "true" : "false";
             }
             throw std::runtime_error("Couldn't lock group");
@@ -173,27 +173,27 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex &index, int role) con
             {
                 case(AttributeType::intT):
                 {
-                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::intT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::intT>(attrib);
                     return static_cast<float>(attribHandle.getValue(index.row()));
                 }
                 case(AttributeType::floatT):
                 {
-                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::floatT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::floatT>(attrib);
                     return attribHandle.getValue(index.row());
                 }
                 case(AttributeType::boolT):
                 {
-                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::boolT>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::boolT>(attrib);
                     return attribHandle.getValue(index.row()) ? "true" : "false";
                 }
                 case(AttributeType::vectorT):
                 {
-                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::Vector3>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::Vector3>(attrib);
                     return attribHandle.getValue(index.row())[valueIndex];
                 }
                 case(AttributeType::matrixT):
                 {
-                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::bt::Matrix4>(attrib);
+                    const auto attribHandle = enzo::attr::AttributeHandleRO<enzo::Matrix4>(attrib);
                     const auto& mat = attribHandle.getValue(index.row());
                     return mat(valueIndex / 4, valueIndex % 4);
                 }

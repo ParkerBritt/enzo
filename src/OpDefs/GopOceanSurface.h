@@ -9,7 +9,7 @@ class GopOceanSurface
 public:
     GopOceanSurface(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
-    enzo::bt::Vector3 getSurfacePos(const enzo::bt::Vector3 pos);
+    enzo::Vector3 getSurfacePos(const enzo::Vector3 pos);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
     {
         return new GopOceanSurface(network, opInfo);

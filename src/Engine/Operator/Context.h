@@ -21,10 +21,10 @@ class Context {
     Context(enzo::nt::OpId opId, enzo::nt::NetworkManager &networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
-    bt::floatT evalFloatParm(std::string_view parmName, const unsigned int index = 0) const;
-    bt::intT evalIntParm(std::string_view parmName, const unsigned int index = 0) const;
-    bt::boolT evalBoolParm(std::string_view parmName, const unsigned int index = 0) const;
-    bt::String evalStringParm(std::string_view parmName, const unsigned int index = 0) const;
+    floatT evalFloatParm(std::string_view parmName, const unsigned int index = 0) const;
+    intT evalIntParm(std::string_view parmName, const unsigned int index = 0) const;
+    boolT evalBoolParm(std::string_view parmName, const unsigned int index = 0) const;
+    String evalStringParm(std::string_view parmName, const unsigned int index = 0) const;
 
   private:
     enzo::nt::OpId opId_;

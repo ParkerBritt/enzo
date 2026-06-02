@@ -6,7 +6,7 @@ enzo::prm::Default::Default()
 
 }
 
-enzo::prm::Default::Default(bt::floatT floatDefault)
+enzo::prm::Default::Default(floatT floatDefault)
 : floatDefault_{floatDefault}, stringDefault_{""}
 {
 

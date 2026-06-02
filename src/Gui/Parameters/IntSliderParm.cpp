@@ -49,7 +49,7 @@ void enzo::ui::IntSliderParm::onMoved(double value)
 {
     if (auto parameterShared = parameter_.lock())
     {
-        parameterShared->setInt(static_cast<bt::intT>(std::lround(value)));
+        parameterShared->setInt(static_cast<intT>(std::lround(value)));
     }
 }
 

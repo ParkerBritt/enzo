@@ -62,7 +62,7 @@ bool enzo::Selection::containsPrim(geo::PrimPtr prim, bool full) {
     return false;
 }
 
-bool enzo::Selection::containsFace(geo::PrimPtr prim, attr::Index index, attr::Offset offset) {
+bool enzo::Selection::containsFace(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -80,17 +80,17 @@ bool enzo::Selection::containsFace(geo::PrimPtr prim, attr::Index index, attr::O
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::attr::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
-    std::vector<attr::Offset> result;
+std::vector<enzo::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
+    std::vector<Offset> result;
 
     // Ensure prim is a mesh
     auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
     if (!mesh) return result;
 
     // Walk valid faces and collect those in the selection
-    const attr::Offset storageSize = mesh->getNumFaces();
-    attr::Index index = 0;
-    for (attr::Offset offset = 0; offset < storageSize; ++offset) {
+    const Offset storageSize = mesh->getNumFaces();
+    Index index = 0;
+    for (Offset offset = 0; offset < storageSize; ++offset) {
         if (!mesh->isValidFace(offset)) continue;
         if (containsFace(prim, index, offset)) {
             result.push_back(offset);
@@ -100,7 +100,7 @@ std::vector<enzo::attr::Offset> enzo::Selection::getFaces(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsPoint(geo::PrimPtr prim, attr::Index index, attr::Offset offset) {
+bool enzo::Selection::containsPoint(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -114,13 +114,13 @@ bool enzo::Selection::containsPoint(geo::PrimPtr prim, attr::Index index, attr::
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::attr::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
-    std::vector<attr::Offset> result;
+std::vector<enzo::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
+    std::vector<Offset> result;
     if (!prim) return result;
 
     // Walk valid points and collect those in the selection
-    attr::Index index = 0;
-    for (attr::Offset offset : prim->getPoints()) {
+    Index index = 0;
+    for (Offset offset : prim->getPoints()) {
         if (containsPoint(prim, index, offset)) {
             result.push_back(offset);
         }
@@ -129,7 +129,7 @@ std::vector<enzo::attr::Offset> enzo::Selection::getPoints(geo::PrimPtr prim) {
     return result;
 }
 
-bool enzo::Selection::containsVertex(geo::PrimPtr prim, attr::Index index, attr::Offset offset) {
+bool enzo::Selection::containsVertex(geo::PrimPtr prim, Index index, Offset offset) {
     bool addressed = false;
     bool member = false;
     for (auto& component : components_) {
@@ -143,17 +143,17 @@ bool enzo::Selection::containsVertex(geo::PrimPtr prim, attr::Index index, attr:
     return inverted_ ? (addressed && !member) : member;
 }
 
-std::vector<enzo::attr::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
-    std::vector<attr::Offset> result;
+std::vector<enzo::Offset> enzo::Selection::getVertices(geo::PrimPtr prim) {
+    std::vector<Offset> result;
 
     // Ensure prim is a mesh
     auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
     if (!mesh) return result;
 
     // Walk valid vertices and collect those in the selection
-    const attr::Offset storageSize = mesh->getNumVerts();
-    attr::Index index = 0;
-    for (attr::Offset offset = 0; offset < storageSize; ++offset) {
+    const Offset storageSize = mesh->getNumVerts();
+    Index index = 0;
+    for (Offset offset = 0; offset < storageSize; ++offset) {
         if (!mesh->isValidVertex(offset)) continue;
         if (containsVertex(prim, index, offset)) {
             result.push_back(offset);
