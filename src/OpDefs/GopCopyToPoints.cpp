@@ -1,7 +1,7 @@
 #include "OpDefs/GopCopyToPoints.h"
 #include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/Transform.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <memory>
 #include <string>
 #include <unordered_map>

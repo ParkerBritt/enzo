@@ -3,7 +3,7 @@
 #include "Engine/Operator/GeometryConnection.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Operator/OperatorTable.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
 #include "Gui/Network/DisplayFlagButton.h"

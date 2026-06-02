@@ -3,7 +3,7 @@
 #include <memory>
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Operator/OperatorTable.h"
 #include <iostream>
 

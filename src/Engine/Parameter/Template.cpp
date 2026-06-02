@@ -1,7 +1,7 @@
 #include "Engine/Parameter/Template.h"
 #include "Engine/Parameter/Default.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <utility>
 
 namespace enzo

@@ -3,7 +3,7 @@
 #include "Engine/UndoRedo/UndoCommand.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/OperatorTable.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <vector>
 #include <string>
 

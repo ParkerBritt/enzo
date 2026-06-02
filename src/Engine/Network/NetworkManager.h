@@ -2,7 +2,7 @@
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/UndoRedo/UndoStack.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <memory>
 #include <unordered_map>
 #include <QObject>

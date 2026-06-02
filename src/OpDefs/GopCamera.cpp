@@ -1,6 +1,6 @@
 #include "OpDefs/GopCamera.h"
 #include "Engine/Operator/Camera.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <cmath>
 #include "Engine/Parameter/Range.h"
 

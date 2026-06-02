@@ -1,6 +1,6 @@
 #include "Gui/Viewport/GLCameraPrim.h"
 #include "Engine/Operator/Camera.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <glm/ext/vector_float3.hpp>
 #include <glm/mat4x4.hpp>
 #include <iostream>

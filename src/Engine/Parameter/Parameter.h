@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Parameter/Template.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <boost/signals2.hpp>
 #include <variant>
 

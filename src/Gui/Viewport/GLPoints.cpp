@@ -12,7 +12,7 @@
 #include <glm/geometric.hpp>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "icecream.hpp"
 

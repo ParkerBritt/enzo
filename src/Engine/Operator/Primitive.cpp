@@ -1,7 +1,7 @@
 #include "Engine/Operator/Primitive.h"
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <memory>
 #include <stdexcept>
 #include <string>

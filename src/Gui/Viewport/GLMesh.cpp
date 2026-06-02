@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/Mesh.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Utils/MeshUtils.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <tbb/blocked_range.h>

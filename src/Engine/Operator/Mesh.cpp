@@ -2,7 +2,7 @@
 #include "Engine/Operator/Attribute.h"
 #include "Engine/Operator/AttributeHandle.h"
 #include "Engine/Operator/Primitive.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Utils/MeshUtils.h"
 #include <memory>
 #include <tbb/blocked_range.h>

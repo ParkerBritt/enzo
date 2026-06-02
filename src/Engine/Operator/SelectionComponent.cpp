@@ -1,6 +1,6 @@
 #include "Engine/Operator/SelectionComponent.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Utils/StringUtils.h"
+#include "Engine/Util/StringUtils.h"
 #include "Engine/Operator/IndexSet.h"
 #include <cctype>
 #include <set>

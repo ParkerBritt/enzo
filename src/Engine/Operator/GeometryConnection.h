@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <boost/signals2.hpp>
 
 namespace enzo::nt

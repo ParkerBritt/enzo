@@ -1,7 +1,7 @@
 #include "OpDefs/GopCube.h"
 #include "Engine/Operator/Mesh.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Utils/MeshShapes.h"
 #include <Eigen/Geometry>
 

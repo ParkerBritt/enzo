@@ -1,6 +1,6 @@
 #include "OpDefs/GopGeometryImport.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <cstdio>
 #include <tbb/parallel_for.h>
 #include <fstream>

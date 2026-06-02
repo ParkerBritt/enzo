@@ -1,5 +1,5 @@
 #include "OpDefs/GopPath.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 
 GopPath::GopPath(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 : GeometryOpDef(network, opInfo)
