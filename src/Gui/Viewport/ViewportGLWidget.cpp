@@ -1,6 +1,6 @@
 #include "Gui/Viewport/ViewportGLWidget.h"
 #include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLPoints.h"
 #include <glm/mat4x4.hpp>

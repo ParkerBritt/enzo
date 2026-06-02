@@ -8,7 +8,7 @@
 #include <string>
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/SocketGraphic.h"
 #include <QGraphicsScene>

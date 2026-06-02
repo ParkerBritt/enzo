@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Operator/OpInfo.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <QWidget>
 #include <QHBoxLayout>
 #include <qbuttongroup.h>

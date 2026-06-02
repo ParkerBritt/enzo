@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #if defined(__linux__) || defined(_WIN32)
 #include <GL/gl.h>
 #endif

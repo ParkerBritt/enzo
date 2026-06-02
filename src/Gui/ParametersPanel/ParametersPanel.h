@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Panels/Panel.h"
 #include <QVBoxLayout>
 #include <QWidget>

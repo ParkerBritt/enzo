@@ -3,7 +3,7 @@
 #include "Engine/Operator/Selection.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Parameter/Style.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <memory>
 #include <string>
 #include <unordered_map>

@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Parameter/Parameter.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 
 namespace enzo::prm {
 

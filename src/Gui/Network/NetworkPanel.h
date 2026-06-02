@@ -6,7 +6,7 @@
 #include <qpoint.h>
 #include <typeinfo>
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Network/NetworkGraphicsView.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
 #include "Gui/Network/NetworkGraphicsScene.h"

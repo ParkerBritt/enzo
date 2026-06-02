@@ -2,7 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Operator/GeometryOperator.h"
 #include "Engine/Parameter/Template.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Parameters/BoolParm.h"
 #include "Gui/Parameters/FloatSliderParm.h"
 #include "Gui/Parameters/GroupParm.h"

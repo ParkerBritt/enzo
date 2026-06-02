@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Operator/Attribute.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 
 namespace enzo {
 class Transform {

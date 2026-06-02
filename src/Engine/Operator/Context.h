@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Operator/NodePacket.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 
 namespace enzo::nt {
 class NetworkManager;

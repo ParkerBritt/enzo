@@ -4,7 +4,7 @@
 #include "Engine/Operator/GeometryOpDef.h"
 #include "Engine/Operator/NodePacket.h"
 #include "Engine/Parameter/NodeParameter.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include <functional>
 #include <optional>
 #include <memory>

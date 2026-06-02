@@ -1,7 +1,7 @@
 #pragma once
 #include <QGraphicsItem>
 #include <QPainter>
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/SocketGraphic.h"
 #include "Gui/Network/NodeIconGraphic.h"

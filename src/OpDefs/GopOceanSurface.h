@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Operator/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 
 class GopOceanSurface
 : public enzo::nt::GeometryOpDef

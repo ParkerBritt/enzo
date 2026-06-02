@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <optional>
 

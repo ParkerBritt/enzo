@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Operator/Mesh.h"
 
 class AttributeSpreadsheetModel : public QAbstractListModel

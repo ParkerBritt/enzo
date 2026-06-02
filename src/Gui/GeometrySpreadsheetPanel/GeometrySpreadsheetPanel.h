@@ -5,7 +5,7 @@
 #include <QSplitter>
 #include <memory>
 #include <qtreeview.h>
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Operator/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
