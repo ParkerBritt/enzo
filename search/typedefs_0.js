@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['index_0',['Index',['../Types_8h.html#a157b84254b906d4f700e6464155bdeb5',1,'enzo::ga']]]
+  ['index_0',['Index',['../Types_8h.html#ac5499b0fee1c8686a8a840a4e7209a09',1,'enzo']]]
 ];

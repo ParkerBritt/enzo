@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['attributeowner_0',['AttributeOwner',['../Types_8h.html#a284ac41ae9685e6eff96cdddd2a4c110',1,'enzo::ga']]],
-  ['attributetype_1',['AttributeType',['../Types_8h.html#a6ab89474f03231b839b5d10df296e156',1,'enzo::ga']]]
+  ['attributeowner_0',['AttributeOwner',['../Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303',1,'enzo::attr']]],
+  ['attributetype_1',['AttributeType',['../Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3',1,'enzo::attr']]]
 ];

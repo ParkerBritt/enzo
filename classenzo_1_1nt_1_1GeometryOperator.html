@@ -106,9 +106,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad2b5d76c19f77d10745cbbfb63bac36d" id="r_ad2b5d76c19f77d10745cbbfb63bac36d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2b5d76c19f77d10745cbbfb63bac36d">GeometryOperator</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</td></tr>
-<tr class="memdesc:ad2b5d76c19f77d10745cbbfb63bac36d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new node.  <br /></td></tr>
-<tr class="separator:ad2b5d76c19f77d10745cbbfb63bac36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6a213362bf721ea0439949fa3f374f" id="r_a3b6a213362bf721ea0439949fa3f374f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b6a213362bf721ea0439949fa3f374f">GeometryOperator</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</td></tr>
+<tr class="memdesc:a3b6a213362bf721ea0439949fa3f374f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new node.  <br /></td></tr>
+<tr class="separator:a3b6a213362bf721ea0439949fa3f374f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab53c07317ff2dfeb30fb2ff231c077be" id="r_ab53c07317ff2dfeb30fb2ff231c077be"><td class="memItemLeft" align="right" valign="top"><a id="ab53c07317ff2dfeb30fb2ff231c077be" name="ab53c07317ff2dfeb30fb2ff231c077be"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GeometryOperator</b> (const <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html">GeometryOperator</a> &amp;)=delete</td></tr>
 <tr class="memdesc:ab53c07317ff2dfeb30fb2ff231c077be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy constructor to avoid accidental copies. <br /></td></tr>
@@ -121,46 +121,46 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>cookOp</b> (<a class="el" href="classenzo_1_1op_1_1Context.html">op::Context</a> context)</td></tr>
 <tr class="memdesc:a766da344f8ca9a5639d89077465d961a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the output geometry based on the <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#af8a286880d4169cfbf348d5b9965fe3c">cookOp</a> definition in <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html" title="Abstract class used to create new operators.">nt::GeometryOpDef</a>. This is set by the <code>opInfo</code> constructor parameter. <br /></td></tr>
 <tr class="separator:a766da344f8ca9a5639d89077465d961a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a3f0fd6676f0894040ad4064f3d30e9" id="r_a1a3f0fd6676f0894040ad4064f3d30e9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a3f0fd6676f0894040ad4064f3d30e9">getOutputPacket</a> (unsigned int outputIndex) const</td></tr>
-<tr class="memdesc:a1a3f0fd6676f0894040ad4064f3d30e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
-<tr class="separator:a1a3f0fd6676f0894040ad4064f3d30e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04d1a12d3e47565b1592538a28833df5" id="r_a04d1a12d3e47565b1592538a28833df5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04d1a12d3e47565b1592538a28833df5">addInputConnection</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; connection)</td></tr>
-<tr class="memdesc:a04d1a12d3e47565b1592538a28833df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> to one of the inputs. Replacing old connections if needed.  <br /></td></tr>
-<tr class="separator:a04d1a12d3e47565b1592538a28833df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bb8ab27a33663302e7ef5d3133db857" id="r_a5bb8ab27a33663302e7ef5d3133db857"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bb8ab27a33663302e7ef5d3133db857">addOutputConnection</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; connection)</td></tr>
-<tr class="memdesc:a5bb8ab27a33663302e7ef5d3133db857"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> to one of the outputs. Replacing old connections if needed.  <br /></td></tr>
-<tr class="separator:a5bb8ab27a33663302e7ef5d3133db857"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a735087152d60a92a193a02a7fc827ba4" id="r_a735087152d60a92a193a02a7fc827ba4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a735087152d60a92a193a02a7fc827ba4">removeInputConnection</a> (unsigned int inputIndex)</td></tr>
-<tr class="memdesc:a735087152d60a92a193a02a7fc827ba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an input from the node's container.  <br /></td></tr>
-<tr class="separator:a735087152d60a92a193a02a7fc827ba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74b9bf6af47b93a1a0d98a312cbba47d" id="r_a74b9bf6af47b93a1a0d98a312cbba47d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74b9bf6af47b93a1a0d98a312cbba47d">removeOutputConnection</a> (const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> *connection)</td></tr>
-<tr class="memdesc:a74b9bf6af47b93a1a0d98a312cbba47d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an output from the node's container.  <br /></td></tr>
-<tr class="separator:a74b9bf6af47b93a1a0d98a312cbba47d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e922f1b0092646404b3b601d6fa93b0" id="r_a3e922f1b0092646404b3b601d6fa93b0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e922f1b0092646404b3b601d6fa93b0">getInputConnections</a> () const</td></tr>
-<tr class="memdesc:a3e922f1b0092646404b3b601d6fa93b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector containing weak pointers for all input connections.  <br /></td></tr>
-<tr class="separator:a3e922f1b0092646404b3b601d6fa93b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8c4ba6b278241619ccf78ee71f7aea3" id="r_ac8c4ba6b278241619ccf78ee71f7aea3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8c4ba6b278241619ccf78ee71f7aea3">getOutputConnections</a> () const</td></tr>
-<tr class="memdesc:ac8c4ba6b278241619ccf78ee71f7aea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector containing weak pointers for all output connections.  <br /></td></tr>
-<tr class="separator:ac8c4ba6b278241619ccf78ee71f7aea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af037101dd08afab4d11865d61740e8bd" id="r_af037101dd08afab4d11865d61740e8bd"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af037101dd08afab4d11865d61740e8bd">getInputConnection</a> (size_t index) const</td></tr>
-<tr class="memdesc:af037101dd08afab4d11865d61740e8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an optional connection from a specific input index.  <br /></td></tr>
-<tr class="separator:af037101dd08afab4d11865d61740e8bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c20833cda2407f34e0ba9bb8aedc85f" id="r_a0c20833cda2407f34e0ba9bb8aedc85f"><td class="memItemLeft" align="right" valign="top"><a id="a0c20833cda2407f34e0ba9bb8aedc85f" name="a0c20833cda2407f34e0ba9bb8aedc85f"></a>
+<tr class="memitem:acba3e3963217fffa42da239e08a6d6f7" id="r_acba3e3963217fffa42da239e08a6d6f7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acba3e3963217fffa42da239e08a6d6f7">getOutputPacket</a> (unsigned int outputIndex) const</td></tr>
+<tr class="memdesc:acba3e3963217fffa42da239e08a6d6f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
+<tr class="separator:acba3e3963217fffa42da239e08a6d6f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e1f2b14e7dfbbe1834e3064a78d868" id="r_a05e1f2b14e7dfbbe1834e3064a78d868"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05e1f2b14e7dfbbe1834e3064a78d868">addInputConnection</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; connection)</td></tr>
+<tr class="memdesc:a05e1f2b14e7dfbbe1834e3064a78d868"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> to one of the inputs. Replacing old connections if needed.  <br /></td></tr>
+<tr class="separator:a05e1f2b14e7dfbbe1834e3064a78d868"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8443eb83f8e24e42b8b42b406422bfbc" id="r_a8443eb83f8e24e42b8b42b406422bfbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8443eb83f8e24e42b8b42b406422bfbc">addOutputConnection</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; connection)</td></tr>
+<tr class="memdesc:a8443eb83f8e24e42b8b42b406422bfbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> to one of the outputs. Replacing old connections if needed.  <br /></td></tr>
+<tr class="separator:a8443eb83f8e24e42b8b42b406422bfbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5977683c24063377edfb21e1aa55276" id="r_af5977683c24063377edfb21e1aa55276"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5977683c24063377edfb21e1aa55276">removeInputConnection</a> (unsigned int inputIndex)</td></tr>
+<tr class="memdesc:af5977683c24063377edfb21e1aa55276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an input from the node's container.  <br /></td></tr>
+<tr class="separator:af5977683c24063377edfb21e1aa55276"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2e1cd930530eed3cc5000649ce9157" id="r_a9f2e1cd930530eed3cc5000649ce9157"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f2e1cd930530eed3cc5000649ce9157">removeOutputConnection</a> (const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> *connection)</td></tr>
+<tr class="memdesc:a9f2e1cd930530eed3cc5000649ce9157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an output from the node's container.  <br /></td></tr>
+<tr class="separator:a9f2e1cd930530eed3cc5000649ce9157"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad74198d30940f120f2b7e50e60db34af" id="r_ad74198d30940f120f2b7e50e60db34af"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad74198d30940f120f2b7e50e60db34af">getInputConnections</a> () const</td></tr>
+<tr class="memdesc:ad74198d30940f120f2b7e50e60db34af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector containing weak pointers for all input connections.  <br /></td></tr>
+<tr class="separator:ad74198d30940f120f2b7e50e60db34af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619f2bad542a55444e99aa57169e8e15" id="r_a619f2bad542a55444e99aa57169e8e15"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a619f2bad542a55444e99aa57169e8e15">getOutputConnections</a> () const</td></tr>
+<tr class="memdesc:a619f2bad542a55444e99aa57169e8e15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector containing weak pointers for all output connections.  <br /></td></tr>
+<tr class="separator:a619f2bad542a55444e99aa57169e8e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6cbdda02c603497fd71cc1f09bbcea1" id="r_ad6cbdda02c603497fd71cc1f09bbcea1"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">GeometryConnection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6cbdda02c603497fd71cc1f09bbcea1">getInputConnection</a> (size_t index) const</td></tr>
+<tr class="memdesc:ad6cbdda02c603497fd71cc1f09bbcea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an optional connection from a specific input index.  <br /></td></tr>
+<tr class="separator:ad6cbdda02c603497fd71cc1f09bbcea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a70ebfe7cbf2883cea886e3980ddd6a" id="r_a9a70ebfe7cbf2883cea886e3980ddd6a"><td class="memItemLeft" align="right" valign="top"><a id="a9a70ebfe7cbf2883cea886e3980ddd6a" name="a9a70ebfe7cbf2883cea886e3980ddd6a"></a>
 std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getParameters</b> ()</td></tr>
-<tr class="memdesc:a0c20833cda2407f34e0ba9bb8aedc85f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all parameters belonging to this node. <br /></td></tr>
-<tr class="separator:a0c20833cda2407f34e0ba9bb8aedc85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab18b829c63bf86e28311b674c3407414" id="r_ab18b829c63bf86e28311b674c3407414"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab18b829c63bf86e28311b674c3407414">getParameter</a> (std::string_view parameterName)</td></tr>
-<tr class="memdesc:ab18b829c63bf86e28311b674c3407414"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a parameter with the given name belonging to this node.  <br /></td></tr>
-<tr class="separator:ab18b829c63bf86e28311b674c3407414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8b7ec2d9a63801621f441292b157b24" id="r_aa8b7ec2d9a63801621f441292b157b24"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8b7ec2d9a63801621f441292b157b24">getTemplates</a> () const</td></tr>
-<tr class="memdesc:aa8b7ec2d9a63801621f441292b157b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
-<tr class="separator:aa8b7ec2d9a63801621f441292b157b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a091c279297bc26c4abc38ebd4eebde4f" id="r_a091c279297bc26c4abc38ebd4eebde4f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a091c279297bc26c4abc38ebd4eebde4f">getLabel</a> ()</td></tr>
-<tr class="memdesc:a091c279297bc26c4abc38ebd4eebde4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.  <br /></td></tr>
-<tr class="separator:a091c279297bc26c4abc38ebd4eebde4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f7c316419a931b6071ca306374898d8" id="r_a9f7c316419a931b6071ca306374898d8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f7c316419a931b6071ca306374898d8">getTypeName</a> ()</td></tr>
-<tr class="memdesc:a9f7c316419a931b6071ca306374898d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name belonging to this type of node (eg. grid or transform). Not to be confused with the label.  <br /></td></tr>
-<tr class="separator:a9f7c316419a931b6071ca306374898d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a9a70ebfe7cbf2883cea886e3980ddd6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all parameters belonging to this node. <br /></td></tr>
+<tr class="separator:a9a70ebfe7cbf2883cea886e3980ddd6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef406a591648e6f65c6ef4737c934b03" id="r_aef406a591648e6f65c6ef4737c934b03"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef406a591648e6f65c6ef4737c934b03">getParameter</a> (std::string_view parameterName)</td></tr>
+<tr class="memdesc:aef406a591648e6f65c6ef4737c934b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a parameter with the given name belonging to this node.  <br /></td></tr>
+<tr class="separator:aef406a591648e6f65c6ef4737c934b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa75d71ec8d5ba62ccf2744d2b8206c70" id="r_aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa75d71ec8d5ba62ccf2744d2b8206c70">getTemplates</a> () const</td></tr>
+<tr class="memdesc:aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
+<tr class="separator:aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c727ead5dba7645c6ba33d1849e54e3" id="r_a1c727ead5dba7645c6ba33d1849e54e3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c727ead5dba7645c6ba33d1849e54e3">getLabel</a> ()</td></tr>
+<tr class="memdesc:a1c727ead5dba7645c6ba33d1849e54e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.  <br /></td></tr>
+<tr class="separator:a1c727ead5dba7645c6ba33d1849e54e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45622ff0d66b10ec042448e4e4bba58" id="r_af45622ff0d66b10ec042448e4e4bba58"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af45622ff0d66b10ec042448e4e4bba58">getTypeName</a> ()</td></tr>
+<tr class="memdesc:af45622ff0d66b10ec042448e4e4bba58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name belonging to this type of node (eg. grid or transform). Not to be confused with the label.  <br /></td></tr>
+<tr class="separator:af45622ff0d66b10ec042448e4e4bba58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a892fe23575ba1bf13956f3cb414d0922" id="r_a892fe23575ba1bf13956f3cb414d0922"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a892fe23575ba1bf13956f3cb414d0922">dirtyNode</a> (bool dirtyDescendents=true)</td></tr>
 <tr class="memdesc:a892fe23575ba1bf13956f3cb414d0922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the outputed geometry as outdated and notifies the network.  <br /></td></tr>
 <tr class="separator:a892fe23575ba1bf13956f3cb414d0922"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,26 +168,26 @@ std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodePa
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDirty</b> ()</td></tr>
 <tr class="memdesc:a59ef844fdcfb1da8348fb7d24259da61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the node is dirty and false if the node is clean (does not need cooking). <br /></td></tr>
 <tr class="separator:a59ef844fdcfb1da8348fb7d24259da61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a50779b3bf8c5f626a1ca002890458b" id="r_a4a50779b3bf8c5f626a1ca002890458b"><td class="memItemLeft" align="right" valign="top"><a id="a4a50779b3bf8c5f626a1ca002890458b" name="a4a50779b3bf8c5f626a1ca002890458b"></a>
+<tr class="memitem:a7643be4eadf7a542f5bd6d4668c41aa2" id="r_a7643be4eadf7a542f5bd6d4668c41aa2"><td class="memItemLeft" align="right" valign="top"><a id="a7643be4eadf7a542f5bd6d4668c41aa2" name="a7643be4eadf7a542f5bd6d4668c41aa2"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMinInputs</b> () const</td></tr>
-<tr class="memdesc:a4a50779b3bf8c5f626a1ca002890458b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum number of input connections required for the node to function. These are in order so 3 would mean the first three inputs must have a connection. <br /></td></tr>
-<tr class="separator:a4a50779b3bf8c5f626a1ca002890458b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a349e0498f2c77a5188ed94414f2abc72" id="r_a349e0498f2c77a5188ed94414f2abc72"><td class="memItemLeft" align="right" valign="top"><a id="a349e0498f2c77a5188ed94414f2abc72" name="a349e0498f2c77a5188ed94414f2abc72"></a>
+<tr class="memdesc:a7643be4eadf7a542f5bd6d4668c41aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum number of input connections required for the node to function. These are in order so 3 would mean the first three inputs must have a connection. <br /></td></tr>
+<tr class="separator:a7643be4eadf7a542f5bd6d4668c41aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad51fc061699c2e0e754c045b2cd9587c" id="r_ad51fc061699c2e0e754c045b2cd9587c"><td class="memItemLeft" align="right" valign="top"><a id="ad51fc061699c2e0e754c045b2cd9587c" name="ad51fc061699c2e0e754c045b2cd9587c"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxInputs</b> () const</td></tr>
-<tr class="memdesc:a349e0498f2c77a5188ed94414f2abc72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of input connections accepted by the node. <br /></td></tr>
-<tr class="separator:a349e0498f2c77a5188ed94414f2abc72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49417aeff42d1c377be3a5f8d4b529ea" id="r_a49417aeff42d1c377be3a5f8d4b529ea"><td class="memItemLeft" align="right" valign="top"><a id="a49417aeff42d1c377be3a5f8d4b529ea" name="a49417aeff42d1c377be3a5f8d4b529ea"></a>
+<tr class="memdesc:ad51fc061699c2e0e754c045b2cd9587c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of input connections accepted by the node. <br /></td></tr>
+<tr class="separator:ad51fc061699c2e0e754c045b2cd9587c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3253fd17de91514f050bbdb7f01e736" id="r_ad3253fd17de91514f050bbdb7f01e736"><td class="memItemLeft" align="right" valign="top"><a id="ad3253fd17de91514f050bbdb7f01e736" name="ad3253fd17de91514f050bbdb7f01e736"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxOutputs</b> () const</td></tr>
-<tr class="memdesc:a49417aeff42d1c377be3a5f8d4b529ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of available outputs the node provides. <br /></td></tr>
-<tr class="separator:a49417aeff42d1c377be3a5f8d4b529ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa524882589993243cdcc9f56f0af5a6c" id="r_aa524882589993243cdcc9f56f0af5a6c"><td class="memItemLeft" align="right" valign="top"><a id="aa524882589993243cdcc9f56f0af5a6c" name="aa524882589993243cdcc9f56f0af5a6c"></a>
-bt::Vector2f&#160;</td><td class="memItemRight" valign="bottom"><b>getPosition</b> () const</td></tr>
-<tr class="memdesc:aa524882589993243cdcc9f56f0af5a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's position in the network graph. <br /></td></tr>
-<tr class="separator:aa524882589993243cdcc9f56f0af5a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7eac4d4bc04ef3c073d858dd37f0a6e5" id="r_a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="memItemLeft" align="right" valign="top"><a id="a7eac4d4bc04ef3c073d858dd37f0a6e5" name="a7eac4d4bc04ef3c073d858dd37f0a6e5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setPosition</b> (bt::Vector2f pos)</td></tr>
-<tr class="memdesc:a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the node's position in the network graph. <br /></td></tr>
-<tr class="separator:a7eac4d4bc04ef3c073d858dd37f0a6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ad3253fd17de91514f050bbdb7f01e736"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of available outputs the node provides. <br /></td></tr>
+<tr class="separator:ad3253fd17de91514f050bbdb7f01e736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf24e5c3cdbbf78290f556e6ce3e6b63" id="r_abf24e5c3cdbbf78290f556e6ce3e6b63"><td class="memItemLeft" align="right" valign="top"><a id="abf24e5c3cdbbf78290f556e6ce3e6b63" name="abf24e5c3cdbbf78290f556e6ce3e6b63"></a>
+Vector2f&#160;</td><td class="memItemRight" valign="bottom"><b>getPosition</b> () const</td></tr>
+<tr class="memdesc:abf24e5c3cdbbf78290f556e6ce3e6b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's position in the network graph. <br /></td></tr>
+<tr class="separator:abf24e5c3cdbbf78290f556e6ce3e6b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a882fc1b8768264152b31ce29ead17399" id="r_a882fc1b8768264152b31ce29ead17399"><td class="memItemLeft" align="right" valign="top"><a id="a882fc1b8768264152b31ce29ead17399" name="a882fc1b8768264152b31ce29ead17399"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setPosition</b> (Vector2f pos)</td></tr>
+<tr class="memdesc:a882fc1b8768264152b31ce29ead17399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the node's position in the network graph. <br /></td></tr>
+<tr class="separator:a882fc1b8768264152b31ce29ead17399"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -199,14 +199,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The unique runtime representation of a node. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad2b5d76c19f77d10745cbbfb63bac36d" name="ad2b5d76c19f77d10745cbbfb63bac36d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2b5d76c19f77d10745cbbfb63bac36d">&#9670;&#160;</a></span>GeometryOperator()</h2>
+<a id="a3b6a213362bf721ea0439949fa3f374f" name="a3b6a213362bf721ea0439949fa3f374f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b6a213362bf721ea0439949fa3f374f">&#9670;&#160;</a></span>GeometryOperator()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nt::GeometryOperator::GeometryOperator </td>
+          <td class="memname">enzo::nt::GeometryOperator::GeometryOperator </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></td>          <td class="paramname"><span class="paramname"><em>opId</em></span>, </td>
         </tr>
@@ -230,14 +230,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a04d1a12d3e47565b1592538a28833df5" name="a04d1a12d3e47565b1592538a28833df5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04d1a12d3e47565b1592538a28833df5">&#9670;&#160;</a></span>addInputConnection()</h2>
+<a id="a05e1f2b14e7dfbbe1834e3064a78d868" name="a05e1f2b14e7dfbbe1834e3064a78d868"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05e1f2b14e7dfbbe1834e3064a78d868">&#9670;&#160;</a></span>addInputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void nt::GeometryOperator::addInputConnection </td>
+          <td class="memname">void enzo::nt::GeometryOperator::addInputConnection </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>connection</em></span></td><td>)</td>
           <td></td>
@@ -251,14 +251,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a5bb8ab27a33663302e7ef5d3133db857" name="a5bb8ab27a33663302e7ef5d3133db857"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bb8ab27a33663302e7ef5d3133db857">&#9670;&#160;</a></span>addOutputConnection()</h2>
+<a id="a8443eb83f8e24e42b8b42b406422bfbc" name="a8443eb83f8e24e42b8b42b406422bfbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8443eb83f8e24e42b8b42b406422bfbc">&#9670;&#160;</a></span>addOutputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void nt::GeometryOperator::addOutputConnection </td>
+          <td class="memname">void enzo::nt::GeometryOperator::addOutputConnection </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>connection</em></span></td><td>)</td>
           <td></td>
@@ -297,14 +297,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="af037101dd08afab4d11865d61740e8bd" name="af037101dd08afab4d11865d61740e8bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af037101dd08afab4d11865d61740e8bd">&#9670;&#160;</a></span>getInputConnection()</h2>
+<a id="ad6cbdda02c603497fd71cc1f09bbcea1" name="ad6cbdda02c603497fd71cc1f09bbcea1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6cbdda02c603497fd71cc1f09bbcea1">&#9670;&#160;</a></span>getInputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; nt::GeometryOperator::getInputConnection </td>
+          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; enzo::nt::GeometryOperator::getInputConnection </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
           <td> const</td>
@@ -317,14 +317,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a3e922f1b0092646404b3b601d6fa93b0" name="a3e922f1b0092646404b3b601d6fa93b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e922f1b0092646404b3b601d6fa93b0">&#9670;&#160;</a></span>getInputConnections()</h2>
+<a id="ad74198d30940f120f2b7e50e60db34af" name="ad74198d30940f120f2b7e50e60db34af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad74198d30940f120f2b7e50e60db34af">&#9670;&#160;</a></span>getInputConnections()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; &gt; nt::GeometryOperator::getInputConnections </td>
+          <td class="memname">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; &gt; enzo::nt::GeometryOperator::getInputConnections </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -337,14 +337,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a091c279297bc26c4abc38ebd4eebde4f" name="a091c279297bc26c4abc38ebd4eebde4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a091c279297bc26c4abc38ebd4eebde4f">&#9670;&#160;</a></span>getLabel()</h2>
+<a id="a1c727ead5dba7645c6ba33d1849e54e3" name="a1c727ead5dba7645c6ba33d1849e54e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c727ead5dba7645c6ba33d1849e54e3">&#9670;&#160;</a></span>getLabel()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string nt::GeometryOperator::getLabel </td>
+          <td class="memname">std::string enzo::nt::GeometryOperator::getLabel </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -353,18 +353,18 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 </div><div class="memdoc">
 
 <p>NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo</a></b></dt><dd>implement </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>implement </dd></dl>
 
 </div>
 </div>
-<a id="ac8c4ba6b278241619ccf78ee71f7aea3" name="ac8c4ba6b278241619ccf78ee71f7aea3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8c4ba6b278241619ccf78ee71f7aea3">&#9670;&#160;</a></span>getOutputConnections()</h2>
+<a id="a619f2bad542a55444e99aa57169e8e15" name="a619f2bad542a55444e99aa57169e8e15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a619f2bad542a55444e99aa57169e8e15">&#9670;&#160;</a></span>getOutputConnections()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; &gt; nt::GeometryOperator::getOutputConnections </td>
+          <td class="memname">std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> &gt; &gt; enzo::nt::GeometryOperator::getOutputConnections </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -377,14 +377,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a1a3f0fd6676f0894040ad4064f3d30e9" name="a1a3f0fd6676f0894040ad4064f3d30e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a3f0fd6676f0894040ad4064f3d30e9">&#9670;&#160;</a></span>getOutputPacket()</h2>
+<a id="acba3e3963217fffa42da239e08a6d6f7" name="acba3e3963217fffa42da239e08a6d6f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acba3e3963217fffa42da239e08a6d6f7">&#9670;&#160;</a></span>getOutputPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt; enzo::nt::GeometryOperator::getOutputPacket </td>
+          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &gt; enzo::nt::GeometryOperator::getOutputPacket </td>
           <td>(</td>
           <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span></td><td>)</td>
           <td> const</td>
@@ -394,18 +394,18 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Returns the current output geometry. </p>
 <p>Does not trigger a cook so if the geometry may be outdated if not cooked first.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
 
 </div>
 </div>
-<a id="ab18b829c63bf86e28311b674c3407414" name="ab18b829c63bf86e28311b674c3407414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab18b829c63bf86e28311b674c3407414">&#9670;&#160;</a></span>getParameter()</h2>
+<a id="aef406a591648e6f65c6ef4737c934b03" name="aef406a591648e6f65c6ef4737c934b03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef406a591648e6f65c6ef4737c934b03">&#9670;&#160;</a></span>getParameter()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; nt::GeometryOperator::getParameter </td>
+          <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; enzo::nt::GeometryOperator::getParameter </td>
           <td>(</td>
           <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>parameterName</em></span></td><td>)</td>
           <td></td>
@@ -418,14 +418,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="aa8b7ec2d9a63801621f441292b157b24" name="aa8b7ec2d9a63801621f441292b157b24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8b7ec2d9a63801621f441292b157b24">&#9670;&#160;</a></span>getTemplates()</h2>
+<a id="aa75d71ec8d5ba62ccf2744d2b8206c70" name="aa75d71ec8d5ba62ccf2744d2b8206c70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa75d71ec8d5ba62ccf2744d2b8206c70">&#9670;&#160;</a></span>getTemplates()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">enzo::prm::Template</a> &gt; &amp; nt::GeometryOperator::getTemplates </td>
+          <td class="memname">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp; enzo::nt::GeometryOperator::getTemplates </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -438,14 +438,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a9f7c316419a931b6071ca306374898d8" name="a9f7c316419a931b6071ca306374898d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f7c316419a931b6071ca306374898d8">&#9670;&#160;</a></span>getTypeName()</h2>
+<a id="af45622ff0d66b10ec042448e4e4bba58" name="af45622ff0d66b10ec042448e4e4bba58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af45622ff0d66b10ec042448e4e4bba58">&#9670;&#160;</a></span>getTypeName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string nt::GeometryOperator::getTypeName </td>
+          <td class="memname">std::string enzo::nt::GeometryOperator::getTypeName </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -458,14 +458,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a735087152d60a92a193a02a7fc827ba4" name="a735087152d60a92a193a02a7fc827ba4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a735087152d60a92a193a02a7fc827ba4">&#9670;&#160;</a></span>removeInputConnection()</h2>
+<a id="af5977683c24063377edfb21e1aa55276" name="af5977683c24063377edfb21e1aa55276"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5977683c24063377edfb21e1aa55276">&#9670;&#160;</a></span>removeInputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void nt::GeometryOperator::removeInputConnection </td>
+          <td class="memname">void enzo::nt::GeometryOperator::removeInputConnection </td>
           <td>(</td>
           <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>inputIndex</em></span></td><td>)</td>
           <td></td>
@@ -475,18 +475,18 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Removes an input from the node's container. </p>
 <p>Does not remove the connection from any other node it's connected to, likely causing undefined behavior if called incorrectly.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
 
 </div>
 </div>
-<a id="a74b9bf6af47b93a1a0d98a312cbba47d" name="a74b9bf6af47b93a1a0d98a312cbba47d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74b9bf6af47b93a1a0d98a312cbba47d">&#9670;&#160;</a></span>removeOutputConnection()</h2>
+<a id="a9f2e1cd930530eed3cc5000649ce9157" name="a9f2e1cd930530eed3cc5000649ce9157"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f2e1cd930530eed3cc5000649ce9157">&#9670;&#160;</a></span>removeOutputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void nt::GeometryOperator::removeOutputConnection </td>
+          <td class="memname">void enzo::nt::GeometryOperator::removeOutputConnection </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">nt::GeometryConnection</a> *</td>          <td class="paramname"><span class="paramname"><em>connection</em></span></td><td>)</td>
           <td></td>
@@ -496,13 +496,13 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 <p>Removes an output from the node's container. </p>
 <p>Does not remove the connection from any other node it's connected to, likely causing undefined behavior if called incorrectly.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo</a></b></dt><dd>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes. </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/Engine/Operator/<a class="el" href="GeometryOperator_8h_source.html">GeometryOperator.h</a></li>
-<li>src/Engine/Operator/<b>GeometryOperator.cpp</b></li>
+<li>src/Engine/Network/<a class="el" href="GeometryOperator_8h_source.html">GeometryOperator.h</a></li>
+<li>src/Engine/Network/<b>GeometryOperator.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

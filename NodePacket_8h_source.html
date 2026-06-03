@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: src/Engine/Operator/NodePacket.h Source File</title>
+<title>Enzo: src/Engine/Network/NodePacket.h Source File</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_23705b45c975b87231e758c2f6c34508.html">Operator</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_19238ac25bc96db06f68ab6858ef239f.html">Network</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -95,7 +95,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;Engine/Operator/Primitive.h&quot;</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;Engine/Primitives/Primitive.h&quot;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
@@ -129,8 +129,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>            std::vector&lt;geo::PrimPtr&gt; &amp;primitives_;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            TransformClass transformClass_;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>            <span class="keywordtype">size_t</span> primIdx_;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            <a class="code hl_typedef" href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">ga::Offset</a> offset_ = 0;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            std::shared_ptr&lt;ga::Attribute&gt; curAttrib_;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            <a class="code hl_typedef" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> offset_ = 0;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            std::shared_ptr&lt;attr::Attribute&gt; curAttrib_;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>            <span class="keywordtype">size_t</span> curSize_ = 0;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            <span class="keywordtype">void</span> advance();</div>
@@ -176,7 +176,7 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>} <span class="comment">// namespace enzo</span></div>
-<div class="ttc" id="aTypes_8h_html_a13eee29e1dadf2c0ad228646e639ad69"><div class="ttname"><a href="Types_8h.html#a13eee29e1dadf2c0ad228646e639ad69">enzo::ga::Offset</a></div><div class="ttdeci">size_t Offset</div><div class="ttdoc">ga::Offset is the internal discontinuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:50</div></div>
+<div class="ttc" id="aTypes_8h_html_a2b9e720fc80cc45d06a8a364d4e87eb2"><div class="ttname"><a href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">enzo::Offset</a></div><div class="ttdeci">size_t Offset</div><div class="ttdoc">enzo::Offset is the internal discontinuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:84</div></div>
 <div class="ttc" id="aclassenzo_1_1NodePacket_html"><div class="ttname"><a href="classenzo_1_1NodePacket.html">enzo::NodePacket</a></div><div class="ttdef"><b>Definition</b> NodePacket.h:8</div></div>
 <div class="ttc" id="aclassenzo_1_1Transform_html"><div class="ttname"><a href="classenzo_1_1Transform.html">enzo::Transform</a></div><div class="ttdef"><b>Definition</b> Transform.h:7</div></div>
 <div class="ttc" id="astructenzo_1_1NodePacket_1_1Transforms_1_1Iterator_html"><div class="ttname"><a href="structenzo_1_1NodePacket_1_1Transforms_1_1Iterator.html">enzo::NodePacket::Transforms::Iterator</a></div><div class="ttdef"><b>Definition</b> NodePacket.h:13</div></div>

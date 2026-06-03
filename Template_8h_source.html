@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;Engine/Parameter/Default.h&quot;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Engine/Parameter/PrmName.h&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;Engine/Parameter/Range.h&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Types_8h.html">Engine/Types.h</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Types_8h.html">Engine/Core/Types.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;any&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;unordered_set&gt;</span></div>
@@ -118,9 +118,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a>(enzo::prm::Type type, <a class="code hl_class" href="classenzo_1_1prm_1_1Name.html">prm::Name</a> name, <a class="code hl_class" href="classenzo_1_1prm_1_1Default.html">prm::Default</a> theDefault,</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>             <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> vectorSize = 1, <a class="code hl_class" href="classenzo_1_1prm_1_1Range.html">Range</a> range = <a class="code hl_class" href="classenzo_1_1prm_1_1Range.html">Range</a>());</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="comment">// get name and get token are identical</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    enzo::bt::String getName() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    enzo::bt::String getToken() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    enzo::bt::String getLabel() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    enzo::String getName() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    enzo::String getToken() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    enzo::String getLabel() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1prm_1_1Default.html">prm::Default</a> getDefault(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> index = 0) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1prm_1_1Range.html">prm::Range</a> &amp;getRange(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> index = 0) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">const</span> prm::Type getType() <span class="keyword">const</span>;</div>
@@ -131,15 +131,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">const</span> std::vector&lt;Template&gt; &amp;getChildren() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">const</span> <span class="keywordtype">bool</span> isContainer() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    enzo::bt::String getTooltip() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    enzo::bt::String getDocumentation() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    enzo::String getTooltip() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    enzo::String getDocumentation() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">bool</span> isLabelHidden() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">bool</span> isBackgroundEnabled() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">// Chainable setters. Mutate in place and return *this so a Template can</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="comment">// be configured inline at construction.</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setTooltip(bt::String tooltip);</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setDocumentation(bt::String documentation);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setTooltip(String tooltip);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setDocumentation(String documentation);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setDirection(Direction direction);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;addParm(<a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> child);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;setLabelHidden(<span class="keywordtype">bool</span> hidden);</div>
@@ -162,8 +162,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <a class="code hl_class" href="classenzo_1_1prm_1_1Name.html">prm::Name</a> name_;</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> vectorSize_;</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    bt::String tooltip_;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    bt::String documentation_;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    String tooltip_;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    String documentation_;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">bool</span> labelHidden_ = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">bool</span> backgroundEnabled_ = <span class="keyword">true</span>;</div>

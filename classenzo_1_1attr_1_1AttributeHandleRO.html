@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::ga::AttributeHandleRO&lt; T &gt; Class Template Reference</title>
+<title>Enzo: enzo::attr::AttributeHandleRO&lt; T &gt; Class Template Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>ga</b></li><li class="navelem"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">AttributeHandleRO</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>attr</b></li><li class="navelem"><a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">AttributeHandleRO</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -94,58 +94,58 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="classenzo_1_1ga_1_1AttributeHandleRO-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::ga::AttributeHandleRO&lt; T &gt; Class Template Reference</div></div>
+<a href="classenzo_1_1attr_1_1AttributeHandleRO-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::attr::AttributeHandleRO&lt; T &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Read only accessor for <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">enzo::ga::Attribute</a>.  
+<p>Read only accessor for <a class="el" href="classenzo_1_1attr_1_1Attribute.html" title="Containers for geometry data.">enzo::attr::Attribute</a>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="AttributeHandle_8h_source.html">AttributeHandle.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a36dfe2d9025084c13614e80227d0c21a" id="r_a36dfe2d9025084c13614e80227d0c21a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36dfe2d9025084c13614e80227d0c21a">AttributeHandleRO</a> (std::shared_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &gt; attribute)</td></tr>
-<tr class="memdesc:a36dfe2d9025084c13614e80227d0c21a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new typed handle linked to a target attribute.     <br /></td></tr>
-<tr class="separator:a36dfe2d9025084c13614e80227d0c21a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accb81708e6c9174cb2a8ee6447676e54" id="r_accb81708e6c9174cb2a8ee6447676e54"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accb81708e6c9174cb2a8ee6447676e54">getAllValues</a> () const</td></tr>
-<tr class="memdesc:accb81708e6c9174cb2a8ee6447676e54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a vector containing all the values stored in this attribute.     <br /></td></tr>
-<tr class="separator:accb81708e6c9174cb2a8ee6447676e54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8863541123a8fe8f9d4d2d614457fbcd" id="r_a8863541123a8fe8f9d4d2d614457fbcd"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8863541123a8fe8f9d4d2d614457fbcd">getSize</a> () const</td></tr>
-<tr class="memdesc:a8863541123a8fe8f9d4d2d614457fbcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of element stored in the attribute.     <br /></td></tr>
-<tr class="separator:a8863541123a8fe8f9d4d2d614457fbcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bed9c8d5b420bad70baa06115beb332" id="r_a8bed9c8d5b420bad70baa06115beb332"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bed9c8d5b420bad70baa06115beb332">getValue</a> (size_t offset) const</td></tr>
-<tr class="memdesc:a8bed9c8d5b420bad70baa06115beb332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value at a given offset.     <br /></td></tr>
-<tr class="separator:a8bed9c8d5b420bad70baa06115beb332"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d8462fbc8299cd2807ffa5c85beb71c" id="r_a7d8462fbc8299cd2807ffa5c85beb71c"><td class="memItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d8462fbc8299cd2807ffa5c85beb71c">operator[]</a> (size_t offset) const</td></tr>
-<tr class="memdesc:a7d8462fbc8299cd2807ffa5c85beb71c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero copy element access. Prefer in hot loops over getValue.     <br /></td></tr>
-<tr class="separator:a7d8462fbc8299cd2807ffa5c85beb71c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68ba2150581e8c751c0e5632a50f1c49" id="r_a68ba2150581e8c751c0e5632a50f1c49"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68ba2150581e8c751c0e5632a50f1c49">getName</a> () const</td></tr>
-<tr class="memdesc:a68ba2150581e8c751c0e5632a50f1c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returs the attribute name as a string.     <br /></td></tr>
-<tr class="separator:a68ba2150581e8c751c0e5632a50f1c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c7d6591a3e6099d1019e7cb1d3bca81" id="r_a2c7d6591a3e6099d1019e7cb1d3bca81"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c7d6591a3e6099d1019e7cb1d3bca81">AttributeHandleRO</a> (std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">Attribute</a> &gt; attribute)</td></tr>
+<tr class="memdesc:a2c7d6591a3e6099d1019e7cb1d3bca81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new typed handle linked to a target attribute.     <br /></td></tr>
+<tr class="separator:a2c7d6591a3e6099d1019e7cb1d3bca81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af031f9dd9c0659222f2a25de5ff21c1f" id="r_af031f9dd9c0659222f2a25de5ff21c1f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af031f9dd9c0659222f2a25de5ff21c1f">getAllValues</a> () const</td></tr>
+<tr class="memdesc:af031f9dd9c0659222f2a25de5ff21c1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a vector containing all the values stored in this attribute.     <br /></td></tr>
+<tr class="separator:af031f9dd9c0659222f2a25de5ff21c1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8459a3a8cd80c9342e669fec0a5ad09d" id="r_a8459a3a8cd80c9342e669fec0a5ad09d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8459a3a8cd80c9342e669fec0a5ad09d">getSize</a> () const</td></tr>
+<tr class="memdesc:a8459a3a8cd80c9342e669fec0a5ad09d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of element stored in the attribute.     <br /></td></tr>
+<tr class="separator:a8459a3a8cd80c9342e669fec0a5ad09d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ea3683824a23196064e0427801c0f76" id="r_a4ea3683824a23196064e0427801c0f76"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ea3683824a23196064e0427801c0f76">getValue</a> (size_t offset) const</td></tr>
+<tr class="memdesc:a4ea3683824a23196064e0427801c0f76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value at a given offset.     <br /></td></tr>
+<tr class="separator:a4ea3683824a23196064e0427801c0f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a690f520581dfd095e2c6e486c45adf78" id="r_a690f520581dfd095e2c6e486c45adf78"><td class="memItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a690f520581dfd095e2c6e486c45adf78">operator[]</a> (size_t offset) const</td></tr>
+<tr class="memdesc:a690f520581dfd095e2c6e486c45adf78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero copy element access. Prefer in hot loops over getValue.     <br /></td></tr>
+<tr class="separator:a690f520581dfd095e2c6e486c45adf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e957683864e267d44d5a93ef9d19d05" id="r_a9e957683864e267d44d5a93ef9d19d05"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e957683864e267d44d5a93ef9d19d05">getName</a> () const</td></tr>
+<tr class="memdesc:a9e957683864e267d44d5a93ef9d19d05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returs the attribute name as a string.     <br /></td></tr>
+<tr class="separator:a9e957683864e267d44d5a93ef9d19d05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a2c56eb23aeca85070c12a39bfb530548" id="r_a2c56eb23aeca85070c12a39bfb530548"><td class="memItemLeft" align="right" valign="top"><a id="a2c56eb23aeca85070c12a39bfb530548" name="a2c56eb23aeca85070c12a39bfb530548"></a>
-<a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156">ga::AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type_</b></td></tr>
-<tr class="separator:a2c56eb23aeca85070c12a39bfb530548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad2fe1f43207f5619bd684033ddeb9a4" id="r_aad2fe1f43207f5619bd684033ddeb9a4"><td class="memItemLeft" align="right" valign="top"><a id="aad2fe1f43207f5619bd684033ddeb9a4" name="aad2fe1f43207f5619bd684033ddeb9a4"></a>
+<a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type_</b></td></tr>
+<tr class="separator:aad2fe1f43207f5619bd684033ddeb9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T&gt;<br />
-class enzo::ga::AttributeHandleRO&lt; T &gt;</div><p>Read only accessor for <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">enzo::ga::Attribute</a>. </p>
+class enzo::attr::AttributeHandleRO&lt; T &gt;</div><p>Read only accessor for <a class="el" href="classenzo_1_1attr_1_1Attribute.html" title="Containers for geometry data.">enzo::attr::Attribute</a>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>C++ value type matching the Attribute’s logical type (e.g., bt::intT, bt::floatT, bt::Vector3, bt::boolT).</td></tr>
+    <tr><td class="paramname">T</td><td>C++ value type matching the Attribute’s logical type (e.g., intT, floatT, Vector3, boolT).</td></tr>
   </table>
   </dd>
 </dl>
-<p>An <a class="el" href="classenzo_1_1ga_1_1Attribute.html" title="Containers for geometry data.">Attribute</a> Handle is a typed view into an attribute’s storage. It binds at construction to a concrete type and exposes operations like reserving capacity, appending values, and reading/writing by index. Because the handle uses templating, most misuse is caught at compile time, and runtime guards raise errors if an attribute/handle type combination isn’t accounted for. In the future implicit casting can be added for convenience. Handles don’t own data, they just reference the attribute’s storage.</p>
+<p>An <a class="el" href="classenzo_1_1attr_1_1Attribute.html" title="Containers for geometry data.">Attribute</a> Handle is a typed view into an attribute’s storage. It binds at construction to a concrete type and exposes operations like reserving capacity, appending values, and reading/writing by index. Because the handle uses templating, most misuse is caught at compile time, and runtime guards raise errors if an attribute/handle type combination isn’t accounted for. In the future implicit casting can be added for convenience. Handles don’t own data, they just reference the attribute’s storage.</p>
 <p>There is also a read-only handle variant that provides the same typed accessors without mutation. This is useful when an operator needs to inspect data but must not modify it, when the engine exposes attributes to user code with limited permissions, or when implementing const member functions that require attribute access.</p>
 <p>Together, attributes define the schema and storage, while handles provide the typed access that nodes and tools use to operate on data directly.    </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a36dfe2d9025084c13614e80227d0c21a" name="a36dfe2d9025084c13614e80227d0c21a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36dfe2d9025084c13614e80227d0c21a">&#9670;&#160;</a></span>AttributeHandleRO()</h2>
+<a id="a2c7d6591a3e6099d1019e7cb1d3bca81" name="a2c7d6591a3e6099d1019e7cb1d3bca81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c7d6591a3e6099d1019e7cb1d3bca81">&#9670;&#160;</a></span>AttributeHandleRO()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,9 +156,9 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::AttributeHandleRO </td>
+          <td class="memname"><a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::AttributeHandleRO </td>
           <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1ga_1_1Attribute.html">Attribute</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span></td><td>)</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">Attribute</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -180,8 +180,8 @@ template&lt;typename T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="accb81708e6c9174cb2a8ee6447676e54" name="accb81708e6c9174cb2a8ee6447676e54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#accb81708e6c9174cb2a8ee6447676e54">&#9670;&#160;</a></span>getAllValues()</h2>
+<a id="af031f9dd9c0659222f2a25de5ff21c1f" name="af031f9dd9c0659222f2a25de5ff21c1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af031f9dd9c0659222f2a25de5ff21c1f">&#9670;&#160;</a></span>getAllValues()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,7 +192,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::getAllValues </td>
+          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::getAllValues </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -206,13 +206,13 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Gets a vector containing all the values stored in this attribute.    </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo</a></b></dt><dd>Replace with an iterator for accessing many values.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo</a></b></dt><dd>Replace with an iterator for accessing many values.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing all the values stored in this attribute.    </dd></dl>
 
 </div>
 </div>
-<a id="a68ba2150581e8c751c0e5632a50f1c49" name="a68ba2150581e8c751c0e5632a50f1c49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68ba2150581e8c751c0e5632a50f1c49">&#9670;&#160;</a></span>getName()</h2>
+<a id="a9e957683864e267d44d5a93ef9d19d05" name="a9e957683864e267d44d5a93ef9d19d05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e957683864e267d44d5a93ef9d19d05">&#9670;&#160;</a></span>getName()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -223,7 +223,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::getName </td>
+          <td class="memname">std::string <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::getName </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -240,8 +240,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a8863541123a8fe8f9d4d2d614457fbcd" name="a8863541123a8fe8f9d4d2d614457fbcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8863541123a8fe8f9d4d2d614457fbcd">&#9670;&#160;</a></span>getSize()</h2>
+<a id="a8459a3a8cd80c9342e669fec0a5ad09d" name="a8459a3a8cd80c9342e669fec0a5ad09d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8459a3a8cd80c9342e669fec0a5ad09d">&#9670;&#160;</a></span>getSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +252,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::getSize </td>
+          <td class="memname">size_t <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::getSize </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -269,8 +269,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a8bed9c8d5b420bad70baa06115beb332" name="a8bed9c8d5b420bad70baa06115beb332"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8bed9c8d5b420bad70baa06115beb332">&#9670;&#160;</a></span>getValue()</h2>
+<a id="a4ea3683824a23196064e0427801c0f76" name="a4ea3683824a23196064e0427801c0f76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ea3683824a23196064e0427801c0f76">&#9670;&#160;</a></span>getValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -281,7 +281,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">T <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::getValue </td>
+          <td class="memname">T <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::getValue </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span></td><td>)</td>
           <td> const</td>
@@ -296,14 +296,14 @@ template&lt;typename T &gt; </div>
 
 <p>Gets the value at a given offset.    </p>
 <dl class="section return"><dt>Returns</dt><dd>The value stored at the offset. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd><p class="startdd">protect against invalid positions </p>
-<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a6ab89474f03231b839b5d10df296e156" title="Data types available to store attribute values in.">ga::AttributeType</a> is floatT 5.3 return 5) </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo</a></b></dt><dd><p class="startdd">protect against invalid positions </p>
+<p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3" title="Data types available to store attribute values in.">attr::AttributeType</a> is floatT 5.3 return 5) </p>
 </dd></dl>
 
 </div>
 </div>
-<a id="a7d8462fbc8299cd2807ffa5c85beb71c" name="a7d8462fbc8299cd2807ffa5c85beb71c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d8462fbc8299cd2807ffa5c85beb71c">&#9670;&#160;</a></span>operator[]()</h2>
+<a id="a690f520581dfd095e2c6e486c45adf78" name="a690f520581dfd095e2c6e486c45adf78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a690f520581dfd095e2c6e486c45adf78">&#9670;&#160;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,7 +314,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T &amp; <a class="el" href="classenzo_1_1ga_1_1AttributeHandleRO.html">enzo::ga::AttributeHandleRO</a>&lt; T &gt;::operator[] </td>
+          <td class="memname">const T &amp; <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html">enzo::attr::AttributeHandleRO</a>&lt; T &gt;::operator[] </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span></td><td>)</td>
           <td> const</td>
@@ -334,7 +334,7 @@ template&lt;typename T &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/Operator/<a class="el" href="AttributeHandle_8h_source.html">AttributeHandle.h</a></li>
+<li>src/Engine/Attribute/<a class="el" href="AttributeHandle_8h_source.html">AttributeHandle.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
