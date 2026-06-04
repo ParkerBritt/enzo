@@ -1,3 +1,5 @@
+#include <cereal/cereal.hpp>
+
 struct ConnectionSerializable
 {
     unsigned int inputNodeIndex = 0;
