@@ -1,12 +1,12 @@
 #include "OpDefs/GopCube.h"
-#include "Engine/Primitives/Mesh.h"
-#include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshShapes.h"
+#include "Engine/Parameter/Range.h"
+#include "Engine/Primitives/Mesh.h"
 #include <Eigen/Geometry>
 
 GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
 }
 
@@ -32,9 +32,7 @@ void GopCube::cookOp(enzo::op::Context context)
     const floatT rotateZ = context.evalFloatParm("rotate", 2) * M_PI / 180.0;
 
     // Build an axis aligned cube around the origin so rotation pivots on its center.
-    const Vector3 scaledSize(sizeX * uniformScale,
-                                  sizeY * uniformScale,
-                                  sizeZ * uniformScale);
+    const Vector3 scaledSize(sizeX * uniformScale, sizeY * uniformScale, sizeZ * uniformScale);
     auto mesh = utils::buildCube(scaledSize, Vector3(0, 0, 0));
 
     // Compose rotation then translation into a single homogeneous transform.

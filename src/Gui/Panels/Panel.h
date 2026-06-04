@@ -1,17 +1,17 @@
 #pragma once
 
-#include <QWidget>
 #include "CornerOverlay.h"
+#include <QWidget>
 
-class Panel
-: public QWidget
+class Panel : public QWidget
 {
-public:
-    Panel(QWidget *parent);
-    void resizeEvent(QResizeEvent *event) override;
-    void enterEvent(QEnterEvent *event) override;
+  public:
+    Panel(QWidget* parent);
+    void resizeEvent(QResizeEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
     void setBorderColor(QColor color);
-private:
+
+  private:
     CornerOverlay* cornerOverlay_;
     QColor color;
 };

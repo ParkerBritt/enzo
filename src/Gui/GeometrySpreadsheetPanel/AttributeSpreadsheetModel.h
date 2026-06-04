@@ -1,36 +1,33 @@
 #pragma once
 
-#include <QAbstractListModel>
 #include "Engine/Core/Types.h"
 #include "Engine/Primitives/Mesh.h"
+#include <QAbstractListModel>
 
 class AttributeSpreadsheetModel : public QAbstractListModel
 {
     Q_OBJECT
 
-public:
-    AttributeSpreadsheetModel(QObject *parent = nullptr);
+  public:
+    AttributeSpreadsheetModel(QObject* parent = nullptr);
 
     void clear();
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QVariant
+    headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     int indexFromSection(unsigned int section) const;
 
     void primitiveChanged(std::shared_ptr<const enzo::geo::Primitive> primitive);
     void setOwner(const enzo::attr::AttributeOwner owner);
     void initBuffers();
 
-
-
-private:
+  private:
     enzo::nt::OpId opId_;
     std::shared_ptr<const enzo::geo::Primitive> primitive_;
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;
     const int attributeColumnPadding_ = 1;
-    enzo::attr::AttributeOwner attributeOwner_=enzo::attr::AttributeOwner::POINT;
-
+    enzo::attr::AttributeOwner attributeOwner_ = enzo::attr::AttributeOwner::POINT;
 };

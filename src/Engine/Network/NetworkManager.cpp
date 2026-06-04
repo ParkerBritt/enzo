@@ -1,21 +1,21 @@
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/UpdateLock.h"
-#include "Engine/Primitives/Primitive.h"
-#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Attribute/AttributeHandle.h"
-#include "Engine/Network/OpInfo.h"
-#include "Engine/UndoRedo/MoveNodeCommand.h"
-#include "Engine/UndoRedo/DeleteNodeCommand.h"
-#include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/UpdateLock.h"
+#include "Engine/Primitives/Primitive.h"
+#include "Engine/UndoRedo/CreateNodeCommand.h"
+#include "Engine/UndoRedo/DeleteNodeCommand.h"
+#include "Engine/UndoRedo/MoveNodeCommand.h"
+#include "icecream.hpp"
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <stack>
-#include <algorithm>
 #include <stdexcept>
 #include <string>
-#include "icecream.hpp"
 
 namespace enzo {
 
@@ -27,12 +27,9 @@ nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position
 
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
     newOp->setPosition(position);
-    newOp->nodeDirtied.connect(
-        [this](nt::OpId opId, bool dirtyDependents)
-        {
-            onNodeDirtied(opId, dirtyDependents);
-
-        });
+    newOp->nodeDirtied.connect([this](nt::OpId opId, bool dirtyDependents) {
+        onNodeDirtied(opId, dirtyDependents);
+    });
     gopStore_.emplace(opId, std::move(newOp));
 
     operatorCreated(opId);
@@ -43,13 +40,12 @@ nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position
     return opId;
 }
 
-
 void nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
 {
     Vector2f oldPos = getGeoOperator(opId).getPosition();
     getGeoOperator(opId).setPosition(newPos);
 
-    if(!skipUndo)
+    if (!skipUndo)
     {
         auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
         undoStack_.push(std::move(cmd));
@@ -60,7 +56,7 @@ void nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
 
 void nt::NetworkManager::deleteNode(OpId opId)
 {
-    if(!isValidOp(opId)) return;
+    if (!isValidOp(opId)) return;
 
     auto cmd = std::make_unique<DeleteNodeCommand>(opId);
     undoStack_.push(std::move(cmd));
@@ -71,21 +67,19 @@ void nt::NetworkManager::deleteNode(OpId opId)
 void nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
 {
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
-    newOp->nodeDirtied.connect(
-        [this](nt::OpId opId, bool dirtyDependents)
-        {
-            onNodeDirtied(opId, dirtyDependents);
-        });
+    newOp->nodeDirtied.connect([this](nt::OpId opId, bool dirtyDependents) {
+        onNodeDirtied(opId, dirtyDependents);
+    });
     gopStore_.emplace(opId, std::move(newOp));
 
-    if(opId > maxOpId_) maxOpId_ = opId;
+    if (opId > maxOpId_) maxOpId_ = opId;
 
     operatorCreated(opId);
 }
 
 void nt::NetworkManager::removeOperator(OpId opId)
 {
-    if(!isValidOp(opId)) return;
+    if (!isValidOp(opId)) return;
 
     auto updateLock = lockUpdates();
 
@@ -94,9 +88,9 @@ void nt::NetworkManager::removeOperator(OpId opId)
     // Remove all connections (collect first to avoid modifying vectors while iterating)
     {
         auto inputConns = op.getInputConnections();
-        for(auto& weakConn : inputConns)
+        for (auto& weakConn : inputConns)
         {
-            if(auto conn = weakConn.lock())
+            if (auto conn = weakConn.lock())
             {
                 // Use const_cast because remove() is non-const but we only have const weak_ptrs
                 const_cast<GeometryConnection&>(*conn).remove();
@@ -104,9 +98,9 @@ void nt::NetworkManager::removeOperator(OpId opId)
         }
 
         auto outputConns = op.getOutputConnections();
-        for(auto& weakConn : outputConns)
+        for (auto& weakConn : outputConns)
         {
-            if(auto conn = weakConn.lock())
+            if (auto conn = weakConn.lock())
             {
                 const_cast<GeometryConnection&>(*conn).remove();
             }
@@ -114,14 +108,14 @@ void nt::NetworkManager::removeOperator(OpId opId)
     }
 
     // Clear display if this was the display node
-    if(displayOp_.has_value() && displayOp_.value() == opId)
+    if (displayOp_.has_value() && displayOp_.value() == opId)
     {
         displayOp_.reset();
     }
 
     // Remove from selection
     auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
-    if(selIt != selectedNodes_.end())
+    if (selIt != selectedNodes_.end())
     {
         selectedNodes_.erase(selIt);
         selectedNodesChanged(selectedNodes_);
@@ -142,9 +136,11 @@ nt::NetworkManager& nt::NetworkManager::getInstance()
 nt::GeometryOperator& nt::NetworkManager::getGeoOperator(nt::OpId opId)
 {
     auto it = gopStore_.find(opId);
-    if(it == gopStore_.end())
+    if (it == gopStore_.end())
     {
-        throw std::out_of_range("OpId: " + std::to_string(opId) + " > max opId: " + std::to_string(maxOpId_) + "\n");
+        throw std::out_of_range(
+            "OpId: " + std::to_string(opId) + " > max opId: " + std::to_string(maxOpId_) + "\n"
+        );
     }
     return *it->second;
 }
@@ -152,7 +148,7 @@ nt::GeometryOperator& nt::NetworkManager::getGeoOperator(nt::OpId opId)
 bool nt::NetworkManager::isValidOp(nt::OpId opId)
 {
     auto it = gopStore_.find(opId);
-    if( it == gopStore_.end() || it->second==nullptr )
+    if (it == gopStore_.end() || it->second == nullptr)
     {
         return false;
     }
@@ -161,7 +157,7 @@ bool nt::NetworkManager::isValidOp(nt::OpId opId)
 
 void nt::NetworkManager::setDisplayOp(OpId opId)
 {
-    displayOp_=opId;
+    displayOp_ = opId;
 
     cookOp(opId);
 
@@ -179,26 +175,26 @@ void nt::NetworkManager::clearDisplayFlag()
 
 void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
 {
-    if(add)
+    if (add)
     {
         auto idIter = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
-        if(selected)
+        if (selected)
         {
             // skip if value is already in selected nodes
-            if(idIter!=selectedNodes_.end()) return;
+            if (idIter != selectedNodes_.end()) return;
             selectedNodes_.push_back(opId);
             cookOp(opId);
         }
         else
         {
             // skip if value is not in selected nodes
-            if(idIter==selectedNodes_.end()) return;
+            if (idIter == selectedNodes_.end()) return;
             selectedNodes_.erase(idIter);
         }
     }
     else
     {
-        if(selected)
+        if (selected)
         {
             selectedNodes_.clear();
             selectedNodes_.push_back(opId);
@@ -210,18 +206,14 @@ void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
         }
     }
     selectedNodesChanged(selectedNodes_);
-
 }
 
-nt::UpdateLock nt::NetworkManager::lockUpdates()
-{
-    return UpdateLock();
-}
+nt::UpdateLock nt::NetworkManager::lockUpdates() { return UpdateLock(); }
 
 void nt::NetworkManager::update()
 {
     // cook display op
-    if(getDisplayOp().has_value())
+    if (getDisplayOp().has_value())
     {
 
         const OpId displayOpId = getDisplayOp().value();
@@ -232,7 +224,7 @@ void nt::NetworkManager::update()
     }
 
     // cook selected nodes and notify spreadsheet
-    for(OpId selectedId : selectedNodes_)
+    for (OpId selectedId : selectedNodes_)
     {
         cookOp(selectedId);
         auto& selectedOp = getGeoOperator(selectedId);
@@ -240,18 +232,14 @@ void nt::NetworkManager::update()
     }
 }
 
-
-const std::vector<nt::OpId>& nt::NetworkManager::getSelectedNodes()
-{
-    return selectedNodes_;
-}
+const std::vector<nt::OpId>& nt::NetworkManager::getSelectedNodes() { return selectedNodes_; }
 
 void nt::NetworkManager::setSelectedNodes(std::vector<nt::OpId> opIds)
 {
     selectedNodes_.clear();
-    for(OpId opId : opIds)
+    for (OpId opId : opIds)
     {
-        if(isValidOp(opId))
+        if (isValidOp(opId))
         {
             selectedNodes_.push_back(opId);
             cookOp(opId);
@@ -275,10 +263,10 @@ void nt::NetworkManager::cookOp(nt::OpId opId)
 {
     std::vector<nt::OpId> dependencyGraph = getDependencyGraph(opId);
 
-    for(nt::OpId dependencyOpId : dependencyGraph)
+    for (nt::OpId dependencyOpId : dependencyGraph)
     {
         nt::GeometryOperator& op = getGeoOperator(dependencyOpId);
-        if(op.isDirty())
+        if (op.isDirty())
         {
             op::Context context(dependencyOpId, nt::nm());
             op.cookOp(context);
@@ -293,19 +281,22 @@ std::vector<nt::OpId> nt::NetworkManager::getDependencyGraph(nt::OpId opId)
     traversalBuffer.push(opId);
     dependencyGraph.push_back(opId);
 
-    while(traversalBuffer.size()!=0)
+    while (traversalBuffer.size() != 0)
     {
         nt::OpId currentOp = traversalBuffer.top();
         traversalBuffer.pop();
         auto inputConnections = getGeoOperator(currentOp).getInputConnections();
-        for(auto connection : inputConnections)
+        for (auto connection : inputConnections)
         {
-            if(auto connectionPtr = connection.lock())
+            if (auto connectionPtr = connection.lock())
             {
                 traversalBuffer.push(connectionPtr->getInputOpId());
                 dependencyGraph.push_back(connectionPtr->getInputOpId());
             }
-            else { throw std::runtime_error("Connection weak ptr invalid"); }
+            else
+            {
+                throw std::runtime_error("Connection weak ptr invalid");
+            }
         }
     }
 
@@ -320,51 +311,49 @@ std::vector<nt::OpId> nt::NetworkManager::getDependentsGraph(nt::OpId opId)
     traversalBuffer.push(opId);
     dependencyGraph.push_back(opId);
 
-    while(traversalBuffer.size()!=0)
+    while (traversalBuffer.size() != 0)
     {
         nt::OpId currentOp = traversalBuffer.top();
         traversalBuffer.pop();
         auto outputConnections = getGeoOperator(currentOp).getOutputConnections();
-        for(auto connection : outputConnections)
+        for (auto connection : outputConnections)
         {
-            if(auto connectionPtr = connection.lock())
+            if (auto connectionPtr = connection.lock())
             {
                 traversalBuffer.push(connectionPtr->getOutputOpId());
                 dependencyGraph.push_back(connectionPtr->getOutputOpId());
             }
-            else { throw std::runtime_error("Connection weak ptr invalid"); }
+            else
+            {
+                throw std::runtime_error("Connection weak ptr invalid");
+            }
         }
     }
 
     return dependencyGraph;
 }
 
-std::optional<nt::OpId> nt::NetworkManager::getDisplayOp()
-{
-    return displayOp_;
-}
+std::optional<nt::OpId> nt::NetworkManager::getDisplayOp() { return displayOp_; }
 
 void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
 {
-    if(dirtyDependents)
+    if (dirtyDependents)
     {
         std::vector<OpId> dependentIds = getDependentsGraph(opId);
-        for(OpId dependentId : dependentIds)
+        for (OpId dependentId : dependentIds)
         {
             // dirty node
             nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
             std::cout << "Manager dirtying id: " << dependentId << "\n";
             dependentOp.dirtyNode(false);
-
         }
 
-        if(nt::UpdateLock::isUnlocked())
+        if (nt::UpdateLock::isUnlocked())
         {
             update();
         }
     }
 }
-
 
 #ifdef UNIT_TEST
 void nt::NetworkManager::_reset()
@@ -372,11 +361,12 @@ void nt::NetworkManager::_reset()
     std::cout << "resetting network manager\n";
 
     gopStore_.clear();
-    maxOpId_=0;
+    maxOpId_ = 0;
     displayOp_.reset();
 }
 #endif
 
-// std::unordered_map<nt::OpId, std::unique_ptr<nt::GeometryOperator>> nt::NetworkManager::gopStore_;
+// std::unordered_map<nt::OpId, std::unique_ptr<nt::GeometryOperator>>
+// nt::NetworkManager::gopStore_;
 
 } // namespace enzo

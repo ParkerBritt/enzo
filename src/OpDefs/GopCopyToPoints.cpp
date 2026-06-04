@@ -1,18 +1,22 @@
 #include "OpDefs/GopCopyToPoints.h"
-#include "Engine/Primitives/Primitive.h"
 #include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Primitives/Primitive.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-GopCopyToPoints::GopCopyToPoints(enzo::nt::NetworkManager *network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo) {}
+GopCopyToPoints::GopCopyToPoints(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+    : GeometryOpDef(network, opInfo)
+{
+}
 
-void GopCopyToPoints::cookOp(enzo::op::Context context) {
+void GopCopyToPoints::cookOp(enzo::op::Context context)
+{
     using namespace enzo;
 
-    if (outputRequested(0)) {
+    if (outputRequested(0))
+    {
         // TODO: don't need to clone the input packets, should really just get a const reference to
         // them Actually should implement a copy on write class for them, only copying modified
         // attributes I made an issue for it here https://github.com/ParkerBritt/enzo/issues/42
@@ -24,14 +28,15 @@ void GopCopyToPoints::cookOp(enzo::op::Context context) {
         // POINT_PRIORITY means it will iterate over points, using the P attribute if possible,
         // otherwise it will fall back to using primitive transforms (transform attribute) if the
         // primitive has any
-        for (Transform transform : pointPacket.getTransforms(TransformClass::POINT_PRIORITY)) {
+        for (Transform transform : pointPacket.getTransforms(TransformClass::POINT_PRIORITY))
+        {
 
             // Iterate through every prototype primitive, copying it onto the point
-            for (auto &prim : prototypePacket.getPrimitives()) {
+            for (auto& prim : prototypePacket.getPrimitives())
+            {
 
                 // Skip primitives that cannot be transformed
-                if (prim->transformType() == TransformClass::NONE)
-                    continue;
+                if (prim->transformType() == TransformClass::NONE) continue;
 
                 // Copy and transform primitive
                 std::shared_ptr<geo::Primitive> newPrim = prim->clone();

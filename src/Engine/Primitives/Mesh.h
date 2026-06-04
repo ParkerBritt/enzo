@@ -1,66 +1,75 @@
 #pragma once
 #include "Engine/Primitives/Primitive.h"
-#include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
-#include <tbb/spin_mutex.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <span>
+#include <tbb/spin_mutex.h>
 #include <unordered_set>
 
-namespace enzo::geo
-{
+namespace enzo::geo {
 using Kernel = CGAL::Simple_cartesian<double>;
-using Point  = Kernel::Point_3;
-using Vector   = Kernel::Vector_3;
-using HeMesh      = CGAL::Surface_mesh<Point>;
+using Point = Kernel::Point_3;
+using Vector = Kernel::Vector_3;
+using HeMesh = CGAL::Surface_mesh<Point>;
 using vertexDescriptor = HeMesh::Vertex_index;
 using faceDescriptor = HeMesh::Face_index;
-using V_index  = HeMesh::Vertex_index;
-using F_index  = HeMesh::Face_index;
+using V_index = HeMesh::Vertex_index;
+using F_index = HeMesh::Face_index;
 
 class Mesh;
 class FaceNormalHandle;
 class VertexNormalHandle;
 
 /**
-* @class enzo::geo::Mesh
-* @brief Polygonal mesh primitive with point, vertex, and face attributes.
-*
-* Extends Primitive with mesh-specific topology: points, vertices, faces,
-* and the intrinsic attributes that describe connectivity (vertexCount,
-* closed, point offset, and position P).
-*/
+ * @class enzo::geo::Mesh
+ * @brief Polygonal mesh primitive with point, vertex, and face attributes.
+ *
+ * Extends Primitive with mesh-specific topology: points, vertices, faces,
+ * and the intrinsic attributes that describe connectivity (vertexCount,
+ * closed, point offset, and position P).
+ */
 class Mesh : public Primitive
 {
-public:
-    Mesh(std::string_view path="/mesh");
+  public:
+    Mesh(std::string_view path = "/mesh");
     Mesh(const Mesh& other);
     Mesh& operator=(const Mesh& rhs);
     ~Mesh() override = default;
 
     PrimType getType() const override { return PrimType::MESH; }
     std::shared_ptr<Primitive> clone() const override { return std::make_shared<Mesh>(*this); }
-    TransformClass transformType() const override { return TransformClass::POINT | TransformClass::PRIMITIVE; }
-    void applyTransform(const Matrix4 &mat, TransformClass transformClass = TransformClass::POINT) override;
+    TransformClass transformType() const override
+    {
+        return TransformClass::POINT | TransformClass::PRIMITIVE;
+    }
+    void applyTransform(
+        const Matrix4& mat,
+        TransformClass transformClass = TransformClass::POINT
+    ) override;
     bool canMerge() const override { return true; }
     void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }
 
     /**
-     * @brief Adds a single face. Avoid for multiple faces in a loop as a single call to @ref addFaces is much more performant.
+     * @brief Adds a single face. Avoid for multiple faces in a loop as a single call to @ref
+     * addFaces is much more performant.
      * @return Offset of the new face.
      */
     // TODO: benchmark addFace vs addFaces to quantify the speedup
-    Offset addFace(const std::vector<Offset>& pointOffsets, bool closed=true);
+    Offset addFace(const std::vector<Offset>& pointOffsets, bool closed = true);
     /**
      * @brief Adds many faces in a single call.
      *
      * @param pointOffsetsFlat All point offsets for every face listed one after another.
-     * @param vertexCounts How many points each face has. Read in the same order as pointOffsetsFlat.
+     * @param vertexCounts How many points each face has. Read in the same order as
+     * pointOffsetsFlat.
      * @return Offsets of the newly created faces in the order they were added.
      */
-    std::vector<Offset> addFaces(std::span<const Offset> pointOffsetsFlat,
-                                     std::span<const Offset> vertexCounts,
-                                     bool closed=true);
+    std::vector<Offset> addFaces(
+        std::span<const Offset> pointOffsetsFlat,
+        std::span<const Offset> vertexCounts,
+        bool closed = true
+    );
     Offset addPoint(const Vector3& pos);
     /**
      * @brief Adds many points in a single call.
@@ -73,10 +82,12 @@ public:
      * @brief Duplicates existing points into new points carrying the same positions.
      *
      * @param srcPointOffsets Offsets of the points to duplicate, read in order.
-     * @param copyAttributes When true, copy every point attribute from each source point. When false, only positions are copied.
+     * @param copyAttributes When true, copy every point attribute from each source point. When
+     * false, only positions are copied.
      * @return Offsets of the newly created points in the same order as srcPointOffsets.
      */
-    std::vector<Offset> duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes = true);
+    std::vector<Offset>
+    duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes = true);
 
     void deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoints = true);
     void deletePoints(const std::vector<Offset>& pointOffsets) override
@@ -123,19 +134,36 @@ public:
     Offset getNumSoloPoints() const;
 
     // Face Iterator
-    struct FaceOffsets {
+    struct FaceOffsets
+    {
         FaceOffsets(const Mesh& mesh) : mesh_(mesh) {}
-        struct Iterator {
+        struct Iterator
+        {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
             using value_type = Offset;
 
             explicit Iterator(Offset current) : curOffset_(current) {}
             value_type operator*() const { return curOffset_; }
-            Iterator& operator++() { ++curOffset_; return *this; }
-            Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
-            friend bool operator==(const Iterator& a, const Iterator& b) { return a.curOffset_ == b.curOffset_; }
-            friend bool operator!=(const Iterator& a, const Iterator& b) { return a.curOffset_ != b.curOffset_; }
+            Iterator& operator++()
+            {
+                ++curOffset_;
+                return *this;
+            }
+            Iterator operator++(int)
+            {
+                Iterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+            friend bool operator==(const Iterator& a, const Iterator& b)
+            {
+                return a.curOffset_ == b.curOffset_;
+            }
+            friend bool operator!=(const Iterator& a, const Iterator& b)
+            {
+                return a.curOffset_ != b.curOffset_;
+            }
 
           private:
             Offset curOffset_ = 0;
@@ -148,32 +176,38 @@ public:
         {
             std::vector<Offset> offsets;
             offsets.reserve(mesh_.getNumFaces());
-            for(const Offset faceOffset : *this) offsets.push_back(faceOffset);
+            for (const Offset faceOffset : *this)
+                offsets.push_back(faceOffset);
             return offsets;
         }
 
       private:
         const Mesh& mesh_;
     };
-    // TODO walk only valid faces like Primitive::PointOffsets once deletion settles. For now it is dense.
+    // TODO walk only valid faces like Primitive::PointOffsets once deletion settles. For now it is
+    // dense.
     FaceOffsets getFaces() const { return FaceOffsets(*this); }
 
     /// @brief Creates a vertex group.
     /// @return Handle to the new group.
-    attr::AttributeHandleBool createVertexGroup(std::string name) {
+    attr::AttributeHandleBool createVertexGroup(std::string name)
+    {
         return createGroup(attr::AttributeOwner::VERTEX, std::move(name));
     }
     /// @brief Creates a face group.
     /// @return Handle to the new group.
-    attr::AttributeHandleBool createFaceGroup(std::string name) {
+    attr::AttributeHandleBool createFaceGroup(std::string name)
+    {
         return createGroup(attr::AttributeOwner::FACE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the vertex group.
-    void addToVertexGroup(const std::string& name, const std::vector<Offset>& offsets) {
+    void addToVertexGroup(const std::string& name, const std::vector<Offset>& offsets)
+    {
         addToGroup(attr::AttributeOwner::VERTEX, name, offsets);
     }
     /// @brief Marks the given offsets as members of the face group.
-    void addToFaceGroup(const std::string& name, const std::vector<Offset>& offsets) {
+    void addToFaceGroup(const std::string& name, const std::vector<Offset>& offsets)
+    {
         addToGroup(attr::AttributeOwner::FACE, name, offsets);
     }
 
@@ -212,13 +246,13 @@ public:
     friend class FaceNormalHandle;
     friend class VertexNormalHandle;
 
-protected:
+  protected:
     attr::attribVector& getAttributeStore(const attr::AttributeOwner& owner) override;
     const attr::attribVector& getAttributeStore(const attr::AttributeOwner& owner) const override;
     attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) override;
     const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const override;
 
-private:
+  private:
     void mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src);
     template <typename T>
     void mergeAppendImpl(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src)
@@ -231,10 +265,10 @@ private:
 
         dstHandle.resize(dstCount + srcCount);
 
-        for(Offset i = 0; i< srcCount; ++i)
+        for (Offset i = 0; i < srcCount; ++i)
         {
             const T value = srcHandle.getValue(i);
-            const Offset dstOffset = dstCount+i;
+            const Offset dstOffset = dstCount + i;
             dstHandle.setValue(dstOffset, value);
         }
     };
@@ -277,9 +311,10 @@ private:
  */
 class FaceNormalHandle
 {
-public:
+  public:
     Vector3 operator[](Offset faceOffset) const;
-private:
+
+  private:
     friend class Mesh;
     FaceNormalHandle(const Mesh& mesh, bool precompute);
     const Mesh& mesh_;
@@ -297,13 +332,14 @@ private:
  */
 class VertexNormalHandle
 {
-public:
+  public:
     Vector3 operator[](Offset vertexOffset) const;
-private:
+
+  private:
     friend class Mesh;
     VertexNormalHandle(const Mesh& mesh, bool precompute);
     const Mesh& mesh_;
     std::optional<attr::AttributeHandleRO<Vector3>> cached_;
     FaceNormalHandle faceNormals_;
 };
-}
+} // namespace enzo::geo

@@ -1,8 +1,8 @@
 #include "Engine/GeometryAlgorithms/BooleanUtils.h"
-#include "Engine/GeometryAlgorithms/MeshUtils.h"
-#include "Engine/Primitives/Mesh.h"
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/GeometryAlgorithms/MeshUtils.h"
+#include "Engine/Primitives/Mesh.h"
 
 #include <manifold/manifold.h>
 
@@ -23,7 +23,12 @@ namespace {
 // Manifold and a future CGAL clip backend can produce this shape.
 struct SourceFace
 {
-    enum class Side { A, B, NEW };
+    enum class Side
+    {
+        A,
+        B,
+        NEW
+    };
     Side side = Side::NEW;
     Offset faceOffset = 0;
 };
@@ -38,8 +43,18 @@ struct BooleanFragments
 // Origin tag for a single result vertex.
 struct VertexOrigin
 {
-    enum class Kind { ORIGINAL, ON_EDGE, NEW };
-    enum class Side { A, B, NONE };
+    enum class Kind
+    {
+        ORIGINAL,
+        ON_EDGE,
+        NEW
+    };
+    enum class Side
+    {
+        A,
+        B,
+        NONE
+    };
     Kind kind = Kind::NEW;
     Side side = Side::NONE;
     Offset endpoint0 = 0;
@@ -55,14 +70,15 @@ struct DetriangulatedFace
     std::vector<int> loop;
 };
 
-
 // Pack one triangulated enzo mesh into a Manifold MeshGL64 and tag each tri's
 // faceID so the result still knows which source polygon every triangle
 // belonged to. The id offset lets caller A occupy [0, |A|) and caller B
 // occupy [|A|, |A|+|B|).
-manifold::MeshGL64 packMeshGL(const geo::Mesh& triangulated,
-                              const std::vector<Offset>& faceToOriginal,
-                              uint64_t faceIdOffset)
+manifold::MeshGL64 packMeshGL(
+    const geo::Mesh& triangulated,
+    const std::vector<Offset>& faceToOriginal,
+    uint64_t faceIdOffset
+)
 {
     manifold::MeshGL64 meshGL;
     meshGL.numProp = 3;
@@ -97,13 +113,15 @@ manifold::OpType toManifoldOp(BooleanOp op)
 {
     switch (op)
     {
-        case BooleanOp::INTERSECT: return manifold::OpType::Intersect;
-        case BooleanOp::SUBTRACT:  return manifold::OpType::Subtract;
-        case BooleanOp::UNION:
-        default:                   return manifold::OpType::Add;
+    case BooleanOp::INTERSECT:
+        return manifold::OpType::Intersect;
+    case BooleanOp::SUBTRACT:
+        return manifold::OpType::Subtract;
+    case BooleanOp::UNION:
+    default:
+        return manifold::OpType::Add;
     }
 }
-
 
 // Human readable name for a Manifold status code, used when reporting a
 // boolean failure back to the node.
@@ -112,19 +130,32 @@ const char* manifoldStatusString(manifold::Manifold::Error status)
     using Error = manifold::Manifold::Error;
     switch (status)
     {
-        case Error::NoError:                      return "no error";
-        case Error::NonFiniteVertex:              return "non finite vertex";
-        case Error::NotManifold:                  return "not manifold";
-        case Error::VertexOutOfBounds:            return "vertex index out of bounds";
-        case Error::PropertiesWrongLength:        return "properties wrong length";
-        case Error::MissingPositionProperties:    return "missing position properties";
-        case Error::MergeVectorsDifferentLengths: return "merge vectors different lengths";
-        case Error::MergeIndexOutOfBounds:        return "merge index out of bounds";
-        case Error::TransformWrongLength:         return "transform wrong length";
-        case Error::RunIndexWrongLength:          return "run index wrong length";
-        case Error::FaceIDWrongLength:            return "face id wrong length";
-        case Error::InvalidConstruction:          return "invalid construction";
-        case Error::ResultTooLarge:               return "result too large";
+    case Error::NoError:
+        return "no error";
+    case Error::NonFiniteVertex:
+        return "non finite vertex";
+    case Error::NotManifold:
+        return "not manifold";
+    case Error::VertexOutOfBounds:
+        return "vertex index out of bounds";
+    case Error::PropertiesWrongLength:
+        return "properties wrong length";
+    case Error::MissingPositionProperties:
+        return "missing position properties";
+    case Error::MergeVectorsDifferentLengths:
+        return "merge vectors different lengths";
+    case Error::MergeIndexOutOfBounds:
+        return "merge index out of bounds";
+    case Error::TransformWrongLength:
+        return "transform wrong length";
+    case Error::RunIndexWrongLength:
+        return "run index wrong length";
+    case Error::FaceIDWrongLength:
+        return "face id wrong length";
+    case Error::InvalidConstruction:
+        return "invalid construction";
+    case Error::ResultTooLarge:
+        return "result too large";
     }
     return "unknown error";
 }
@@ -144,13 +175,12 @@ void reportStatus(std::string* error, const char* label, manifold::Manifold::Err
     appendError(error, std::string(label) + ": " + manifoldStatusString(status));
 }
 
-
 // Run Manifold's boolean and convert the MeshGL64 result into our backend
 // neutral intermediate. The merge table is folded in so duplicate vertices
 // along boolean cuts get a single canonical index. Any Manifold status failure
 // is written to @p error so the calling node can surface it.
-BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, BooleanOp op,
-                             std::string* error)
+BooleanFragments
+runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, BooleanOp op, std::string* error)
 {
     // Triangulate each input. faceToOriginal maps each fan triangle back to its source polygon.
     const TriangulatedMesh triA = triangulateMesh(meshA);
@@ -183,9 +213,11 @@ BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, Boo
     for (size_t vertIndex = 0; vertIndex < numVerts; ++vertIndex)
     {
         const size_t baseIndex = vertIndex * numProp;
-        fragments.positions.emplace_back(resultGL.vertProperties[baseIndex + 0],
-                                          resultGL.vertProperties[baseIndex + 1],
-                                          resultGL.vertProperties[baseIndex + 2]);
+        fragments.positions.emplace_back(
+            resultGL.vertProperties[baseIndex + 0],
+            resultGL.vertProperties[baseIndex + 1],
+            resultGL.vertProperties[baseIndex + 2]
+        );
     }
 
     // Apply Manifold's merge so duplicates collapse to a single canonical index.
@@ -234,7 +266,6 @@ BooleanFragments runManifold(const geo::Mesh& meshA, const geo::Mesh& meshB, Boo
     return fragments;
 }
 
-
 // Spatial key for hashing positions to (side, point offset) lookups. Coords
 // are quantized so Manifold-induced micro-drift between identical points still
 // hashes to the same bucket.
@@ -253,8 +284,10 @@ struct PositionKeyHash
     size_t operator()(const PositionKey& key) const noexcept
     {
         size_t combined = std::hash<int64_t>{}(key.x);
-        combined ^= std::hash<int64_t>{}(key.y) + 0x9e3779b97f4a7c15ULL + (combined << 6) + (combined >> 2);
-        combined ^= std::hash<int64_t>{}(key.z) + 0x9e3779b97f4a7c15ULL + (combined << 6) + (combined >> 2);
+        combined ^=
+            std::hash<int64_t>{}(key.y) + 0x9e3779b97f4a7c15ULL + (combined << 6) + (combined >> 2);
+        combined ^=
+            std::hash<int64_t>{}(key.z) + 0x9e3779b97f4a7c15ULL + (combined << 6) + (combined >> 2);
         return combined;
     }
 };
@@ -267,7 +300,6 @@ PositionKey quantizePosition(const Vector3& position)
     key.z = static_cast<int64_t>(std::llround(position.z() * POSITION_HASH_SCALE));
     return key;
 }
-
 
 // Find every unique undirected edge in a mesh by walking its faces.
 struct EdgePair
@@ -301,13 +333,9 @@ std::vector<EdgePair> collectEdges(const geo::Mesh& mesh)
     return edges;
 }
 
-
 // Decide whether a result vertex sits inside the given segment. Returns true
 // with `outT` set in [0, 1] when the perpendicular distance is below eps.
-bool pointOnSegment(const Vector3& point,
-                    const Vector3& start,
-                    const Vector3& end,
-                    double& outT)
+bool pointOnSegment(const Vector3& point, const Vector3& start, const Vector3& end, double& outT)
 {
     const Vector3 direction = end - start;
     const double lengthSquared = direction.squaredNorm();
@@ -325,28 +353,31 @@ bool pointOnSegment(const Vector3& point,
     return true;
 }
 
-
 // For every fragment vertex decide whether it is an original A or B point, a
 // point sitting on an A or B edge (with parameter t), or genuinely new.
-std::vector<VertexOrigin> resolveOrigins(const BooleanFragments& fragments,
-                                         const geo::Mesh& meshA,
-                                         const geo::Mesh& meshB)
+std::vector<VertexOrigin>
+resolveOrigins(const BooleanFragments& fragments, const geo::Mesh& meshA, const geo::Mesh& meshB)
 {
     // Build a position hash from A then B input points.
-    std::unordered_map<PositionKey, std::pair<VertexOrigin::Side, Offset>, PositionKeyHash> positionToPoint;
+    std::unordered_map<PositionKey, std::pair<VertexOrigin::Side, Offset>, PositionKeyHash>
+        positionToPoint;
     for (Offset pointOffset = 0; pointOffset < meshA.getNumPoints(); ++pointOffset)
     {
         if (!meshA.isValidPoint(pointOffset)) continue;
-        positionToPoint.emplace(quantizePosition(meshA.getPointPos(pointOffset)),
-                                std::make_pair(VertexOrigin::Side::A, pointOffset));
+        positionToPoint.emplace(
+            quantizePosition(meshA.getPointPos(pointOffset)),
+            std::make_pair(VertexOrigin::Side::A, pointOffset)
+        );
     }
     for (Offset pointOffset = 0; pointOffset < meshB.getNumPoints(); ++pointOffset)
     {
         if (!meshB.isValidPoint(pointOffset)) continue;
         // Only insert if A didn't already claim the position. This isn't a
         // hard rule, but it gives A points priority on shared coordinates.
-        positionToPoint.emplace(quantizePosition(meshB.getPointPos(pointOffset)),
-                                std::make_pair(VertexOrigin::Side::B, pointOffset));
+        positionToPoint.emplace(
+            quantizePosition(meshB.getPointPos(pointOffset)),
+            std::make_pair(VertexOrigin::Side::B, pointOffset)
+        );
     }
 
     // Collect edges once so unmatched fragment vertices can scan against them.
@@ -374,12 +405,11 @@ std::vector<VertexOrigin> resolveOrigins(const BooleanFragments& fragments,
         auto tryEdges = [&](const std::vector<EdgePair>& edges,
                             const geo::Mesh& sourceMesh,
                             VertexOrigin::Side side,
-                            VertexOrigin& outOrigin) -> bool
-        {
+                            VertexOrigin& outOrigin) -> bool {
             for (const EdgePair& edge : edges)
             {
                 const Vector3 start = sourceMesh.getPointPos(edge.endpoint0);
-                const Vector3 end   = sourceMesh.getPointPos(edge.endpoint1);
+                const Vector3 end = sourceMesh.getPointPos(edge.endpoint1);
                 double parametricT = 0.0;
                 if (pointOnSegment(position, start, end, parametricT))
                 {
@@ -408,7 +438,6 @@ std::vector<VertexOrigin> resolveOrigins(const BooleanFragments& fragments,
     return origins;
 }
 
-
 // Key that packs a SourceFace into one integer so we can bucket by it.
 struct SourceFaceKey
 {
@@ -427,14 +456,12 @@ struct SourceFaceKeyHash
     }
 };
 
-
 // Group triangles by source face, then walk each group's boundary edges into
 // closed loops. Interior fan edges cancel since each appears in both winding
 // directions so only original polygon edges and cut edges remain. A boundary
 // that fails to close into a polygon is reported through @p error rather than
 // dropped, since a dropped face would leave a hole in the result.
-std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
-                                              std::string* error)
+std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments, std::string* error)
 {
     // Bucket triangle indices by source face.
     std::unordered_map<SourceFaceKey, std::vector<size_t>, SourceFaceKeyHash> trisBySource;
@@ -450,8 +477,7 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
         // Build a directed edge multiset across every triangle in this bucket.
         // Adding (a,b) cancels one prior (b,a). Whatever remains is boundary.
         std::unordered_map<int, std::unordered_multiset<int>> outgoingEdges;
-        auto addDirectedEdge = [&](int fromVert, int toVert)
-        {
+        auto addDirectedEdge = [&](int fromVert, int toVert) {
             auto reverseIt = outgoingEdges.find(toVert);
             if (reverseIt != outgoingEdges.end())
             {
@@ -479,7 +505,11 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
             int startVert = -1;
             for (auto& [fromVert, neighbors] : outgoingEdges)
             {
-                if (!neighbors.empty()) { startVert = fromVert; break; }
+                if (!neighbors.empty())
+                {
+                    startVert = fromVert;
+                    break;
+                }
             }
             if (startVert < 0) break;
 
@@ -496,7 +526,11 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
                 neighbors.erase(neighbors.begin());
                 loop.push_back(currentVert);
                 currentVert = nextVert;
-                if (currentVert == startVert) { closed = true; break; }
+                if (currentVert == startVert)
+                {
+                    closed = true;
+                    break;
+                }
             }
 
             // A valid polygon is a closed loop with at least three distinct corners.
@@ -513,8 +547,11 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
             else
             {
                 const char* sideName = key.side == SourceFace::Side::A ? "A" : "B";
-                appendError(error, "detriangulation could not close a boundary on source face "
-                                       + std::to_string(key.faceOffset) + " of input " + sideName);
+                appendError(
+                    error,
+                    "detriangulation could not close a boundary on source face " +
+                        std::to_string(key.faceOffset) + " of input " + sideName
+                );
             }
         }
     }
@@ -522,13 +559,14 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
     return faces;
 }
 
-
 // Generic copy of one row from a source attribute store into a destination
 // attribute store, matching attributes by name and dispatching on type.
-void copyAttributeRow(const attr::attribVector& sourceStore,
-                      attr::attribVector& destStore,
-                      Offset sourceOffset,
-                      Offset destOffset)
+void copyAttributeRow(
+    const attr::attribVector& sourceStore,
+    attr::attribVector& destStore,
+    Offset sourceOffset,
+    Offset destOffset
+)
 {
     for (const auto& sourceAttribute : sourceStore)
     {
@@ -550,55 +588,57 @@ void copyAttributeRow(const attr::attribVector& sourceStore,
 
         switch (sourceAttribute->getType())
         {
-            case attr::AttributeType::intT:
-            {
-                attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<intT> destHandle(destAttribute);
-                destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-                break;
-            }
-            case attr::AttributeType::floatT:
-            {
-                attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<floatT> destHandle(destAttribute);
-                destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-                break;
-            }
-            case attr::AttributeType::vectorT:
-            {
-                attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<Vector3> destHandle(destAttribute);
-                destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-                break;
-            }
-            case attr::AttributeType::boolT:
-            {
-                attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<boolT> destHandle(destAttribute);
-                destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-                break;
-            }
-            case attr::AttributeType::matrixT:
-            {
-                attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<Matrix4> destHandle(destAttribute);
-                destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-                break;
-            }
-            default: break;
+        case attr::AttributeType::intT:
+        {
+            attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<intT> destHandle(destAttribute);
+            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
+            break;
+        }
+        case attr::AttributeType::floatT:
+        {
+            attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<floatT> destHandle(destAttribute);
+            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
+            break;
+        }
+        case attr::AttributeType::vectorT:
+        {
+            attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<Vector3> destHandle(destAttribute);
+            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
+            break;
+        }
+        case attr::AttributeType::boolT:
+        {
+            attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<boolT> destHandle(destAttribute);
+            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
+            break;
+        }
+        case attr::AttributeType::matrixT:
+        {
+            attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<Matrix4> destHandle(destAttribute);
+            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
+            break;
+        }
+        default:
+            break;
         }
     }
 }
 
-
 // Same as copyAttributeRow but writes a linear blend of two source rows,
 // useful for cut points sitting on an edge of an input mesh.
-void interpolateAttributeRow(const attr::attribVector& sourceStore,
-                              attr::attribVector& destStore,
-                              Offset endpointOffset0,
-                              Offset endpointOffset1,
-                              double parametricT,
-                              Offset destOffset)
+void interpolateAttributeRow(
+    const attr::attribVector& sourceStore,
+    attr::attribVector& destStore,
+    Offset endpointOffset0,
+    Offset endpointOffset1,
+    double parametricT,
+    Offset destOffset
+)
 {
     const double weight1 = parametricT;
     const double weight0 = 1.0 - parametricT;
@@ -622,62 +662,64 @@ void interpolateAttributeRow(const attr::attribVector& sourceStore,
 
         switch (sourceAttribute->getType())
         {
-            case attr::AttributeType::intT:
-            {
-                attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<intT> destHandle(destAttribute);
-                const double blended = sourceHandle.getValue(endpointOffset0) * weight0
-                                     + sourceHandle.getValue(endpointOffset1) * weight1;
-                destHandle.setValue(destOffset, static_cast<intT>(std::llround(blended)));
-                break;
-            }
-            case attr::AttributeType::floatT:
-            {
-                attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<floatT> destHandle(destAttribute);
-                const double blended = sourceHandle.getValue(endpointOffset0) * weight0
-                                     + sourceHandle.getValue(endpointOffset1) * weight1;
-                destHandle.setValue(destOffset, blended);
-                break;
-            }
-            case attr::AttributeType::vectorT:
-            {
-                attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<Vector3> destHandle(destAttribute);
-                const Vector3 blended = sourceHandle.getValue(endpointOffset0) * weight0
-                                           + sourceHandle.getValue(endpointOffset1) * weight1;
-                destHandle.setValue(destOffset, blended);
-                break;
-            }
-            case attr::AttributeType::boolT:
-            {
-                // Booleans don't blend so fall back to the nearest endpoint.
-                attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<boolT> destHandle(destAttribute);
-                const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
-                destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
-                break;
-            }
-            case attr::AttributeType::matrixT:
-            {
-                // Matrices don't blend componentwise meaningfully so pick an endpoint.
-                attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
-                attr::AttributeHandle<Matrix4> destHandle(destAttribute);
-                const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
-                destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
-                break;
-            }
-            default: break;
+        case attr::AttributeType::intT:
+        {
+            attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<intT> destHandle(destAttribute);
+            const double blended = sourceHandle.getValue(endpointOffset0) * weight0 +
+                                   sourceHandle.getValue(endpointOffset1) * weight1;
+            destHandle.setValue(destOffset, static_cast<intT>(std::llround(blended)));
+            break;
+        }
+        case attr::AttributeType::floatT:
+        {
+            attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<floatT> destHandle(destAttribute);
+            const double blended = sourceHandle.getValue(endpointOffset0) * weight0 +
+                                   sourceHandle.getValue(endpointOffset1) * weight1;
+            destHandle.setValue(destOffset, blended);
+            break;
+        }
+        case attr::AttributeType::vectorT:
+        {
+            attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<Vector3> destHandle(destAttribute);
+            const Vector3 blended = sourceHandle.getValue(endpointOffset0) * weight0 +
+                                    sourceHandle.getValue(endpointOffset1) * weight1;
+            destHandle.setValue(destOffset, blended);
+            break;
+        }
+        case attr::AttributeType::boolT:
+        {
+            // Booleans don't blend so fall back to the nearest endpoint.
+            attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<boolT> destHandle(destAttribute);
+            const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
+            destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
+            break;
+        }
+        case attr::AttributeType::matrixT:
+        {
+            // Matrices don't blend componentwise meaningfully so pick an endpoint.
+            attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
+            attr::AttributeHandle<Matrix4> destHandle(destAttribute);
+            const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
+            destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
+            break;
+        }
+        default:
+            break;
         }
     }
 }
 
-
 // Build a new attribute on the destination mesh shaped like a source attribute
 // from A or B. Skips intrinsics and attributes that already exist.
-void ensureAttributeOnDestination(geo::Mesh& destMesh,
-                                  attr::AttributeOwner owner,
-                                  const std::shared_ptr<attr::Attribute>& sourceAttribute)
+void ensureAttributeOnDestination(
+    geo::Mesh& destMesh,
+    attr::AttributeOwner owner,
+    const std::shared_ptr<attr::Attribute>& sourceAttribute
+)
 {
     if (!sourceAttribute) return;
     if (sourceAttribute->isIntrinsic()) return;
@@ -686,25 +728,36 @@ void ensureAttributeOnDestination(geo::Mesh& destMesh,
     const std::string name = sourceAttribute->getName();
     switch (sourceAttribute->getType())
     {
-        case attr::AttributeType::intT:    destMesh.addIntAttribute(owner, name); break;
-        case attr::AttributeType::floatT:  /* no addFloatAttribute helper, fall through */ break;
-        case attr::AttributeType::vectorT: destMesh.addVector3Attribute(owner, name); break;
-        case attr::AttributeType::boolT:   destMesh.addBoolAttribute(owner, name, false, sourceAttribute->isPrivate()); break;
-        case attr::AttributeType::matrixT: destMesh.addMatrix4Attribute(owner, name); break;
-        default: break;
+    case attr::AttributeType::intT:
+        destMesh.addIntAttribute(owner, name);
+        break;
+    case attr::AttributeType::floatT: /* no addFloatAttribute helper, fall through */
+        break;
+    case attr::AttributeType::vectorT:
+        destMesh.addVector3Attribute(owner, name);
+        break;
+    case attr::AttributeType::boolT:
+        destMesh.addBoolAttribute(owner, name, false, sourceAttribute->isPrivate());
+        break;
+    case attr::AttributeType::matrixT:
+        destMesh.addMatrix4Attribute(owner, name);
+        break;
+    default:
+        break;
     }
 }
-
 
 // Assemble the output mesh from fragments and detriangulated polygons. Points
 // are laid out as A-survivors first, then B-survivors, then cut points, then
 // any fully new points. The point remap lets us rewrite each loop's corners
 // in terms of the new mesh's point offsets.
-std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
-                                         const geo::Mesh& meshB,
-                                         const BooleanFragments& fragments,
-                                         const std::vector<VertexOrigin>& origins,
-                                         const std::vector<DetriangulatedFace>& faces)
+std::shared_ptr<geo::Mesh> assembleMesh(
+    const geo::Mesh& meshA,
+    const geo::Mesh& meshB,
+    const BooleanFragments& fragments,
+    const std::vector<VertexOrigin>& origins,
+    const std::vector<DetriangulatedFace>& faces
+)
 {
     auto outputMesh = std::make_shared<geo::Mesh>(meshA.getPath());
 
@@ -714,7 +767,8 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
         for (int vertIndex : face.loop)
             vertexUsed[vertIndex] = true;
 
-    // Sort used vertices into ordered buckets. A originals first, then B originals, then anything else.
+    // Sort used vertices into ordered buckets. A originals first, then B originals, then anything
+    // else.
     std::vector<int> aOriginalVerts;
     std::vector<int> bOriginalVerts;
     std::vector<int> otherVerts;
@@ -724,45 +778,46 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
         const VertexOrigin& origin = origins[vertIndex];
         if (origin.kind == VertexOrigin::Kind::ORIGINAL && origin.side == VertexOrigin::Side::A)
             aOriginalVerts.push_back(static_cast<int>(vertIndex));
-        else if (origin.kind == VertexOrigin::Kind::ORIGINAL && origin.side == VertexOrigin::Side::B)
+        else if (origin.kind == VertexOrigin::Kind::ORIGINAL &&
+                 origin.side == VertexOrigin::Side::B)
             bOriginalVerts.push_back(static_cast<int>(vertIndex));
         else
             otherVerts.push_back(static_cast<int>(vertIndex));
     }
     // Keep A originals in source point order, then B originals in source point order.
-    auto byOriginalPointOffset = [&](int leftVert, int rightVert)
-    {
+    auto byOriginalPointOffset = [&](int leftVert, int rightVert) {
         return origins[leftVert].endpoint0 < origins[rightVert].endpoint0;
     };
     std::sort(aOriginalVerts.begin(), aOriginalVerts.end(), byOriginalPointOffset);
     std::sort(bOriginalVerts.begin(), bOriginalVerts.end(), byOriginalPointOffset);
 
     // Add points in order and remember each fragment vertex's new offset.
-    std::vector<Offset> fragmentToOutputPoint(fragments.positions.size(),
-                                                   static_cast<Offset>(-1));
+    std::vector<Offset> fragmentToOutputPoint(fragments.positions.size(), static_cast<Offset>(-1));
     std::vector<Vector3> orderedPositions;
     orderedPositions.reserve(aOriginalVerts.size() + bOriginalVerts.size() + otherVerts.size());
-    auto appendVertex = [&](int fragmentVertex)
-    {
+    auto appendVertex = [&](int fragmentVertex) {
         fragmentToOutputPoint[fragmentVertex] = orderedPositions.size();
         orderedPositions.push_back(fragments.positions[fragmentVertex]);
     };
-    for (int vertIndex : aOriginalVerts) appendVertex(vertIndex);
-    for (int vertIndex : bOriginalVerts) appendVertex(vertIndex);
-    for (int vertIndex : otherVerts)     appendVertex(vertIndex);
+    for (int vertIndex : aOriginalVerts)
+        appendVertex(vertIndex);
+    for (int vertIndex : bOriginalVerts)
+        appendVertex(vertIndex);
+    for (int vertIndex : otherVerts)
+        appendVertex(vertIndex);
     outputMesh->addPoints(orderedPositions);
 
     // Mirror every non intrinsic attribute schema from A and B onto the output
     // mesh so the copy step below has a destination column to write into.
-    auto mirrorAttributes = [&](const geo::Mesh& sourceMesh, attr::AttributeOwner owner)
-    {
+    auto mirrorAttributes = [&](const geo::Mesh& sourceMesh, attr::AttributeOwner owner) {
         const size_t count = sourceMesh.getNumAttributes(owner);
         for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
         {
             auto weak = sourceMesh.getAttributeByIndex(owner, static_cast<unsigned int>(attrIndex));
             auto shared = weak.lock();
             if (!shared) continue;
-            // weak holds shared_ptr<const Attribute> so cast away const to fit the helper signature.
+            // weak holds shared_ptr<const Attribute> so cast away const to fit the helper
+            // signature.
             auto mutableShared = std::const_pointer_cast<attr::Attribute>(shared);
             ensureAttributeOnDestination(*outputMesh, owner, mutableShared);
         }
@@ -775,8 +830,7 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
     mirrorAttributes(meshB, attr::AttributeOwner::FACE);
 
     // Copy point attributes over each output point, interpolating cut points.
-    auto copyPointAttrFor = [&](int fragmentVertex, Offset destPointOffset)
-    {
+    auto copyPointAttrFor = [&](int fragmentVertex, Offset destPointOffset) {
         const VertexOrigin& origin = origins[fragmentVertex];
         if (origin.kind == VertexOrigin::Kind::ORIGINAL)
         {
@@ -785,16 +839,22 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
             for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::POINT,
-                                                                  static_cast<unsigned int>(attrIndex));
+                auto sourceWeak = sourceMesh.getAttributeByIndex(
+                    attr::AttributeOwner::POINT,
+                    static_cast<unsigned int>(attrIndex)
+                );
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::POINT,
-                                                               sourceShared->getName());
+                auto destShared = outputMesh->getAttribByName(
+                    attr::AttributeOwner::POINT,
+                    sourceShared->getName()
+                );
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
-                attr::attribVector singleDest = { destShared };
+                attr::attribVector singleSource = {
+                    std::const_pointer_cast<attr::Attribute>(sourceShared)
+                };
+                attr::attribVector singleDest = {destShared};
                 copyAttributeRow(singleSource, singleDest, origin.endpoint0, destPointOffset);
             }
         }
@@ -804,19 +864,30 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
             for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::POINT,
-                                                                  static_cast<unsigned int>(attrIndex));
+                auto sourceWeak = sourceMesh.getAttributeByIndex(
+                    attr::AttributeOwner::POINT,
+                    static_cast<unsigned int>(attrIndex)
+                );
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::POINT,
-                                                               sourceShared->getName());
+                auto destShared = outputMesh->getAttribByName(
+                    attr::AttributeOwner::POINT,
+                    sourceShared->getName()
+                );
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
-                attr::attribVector singleDest = { destShared };
-                interpolateAttributeRow(singleSource, singleDest,
-                                         origin.endpoint0, origin.endpoint1, origin.t,
-                                         destPointOffset);
+                attr::attribVector singleSource = {
+                    std::const_pointer_cast<attr::Attribute>(sourceShared)
+                };
+                attr::attribVector singleDest = {destShared};
+                interpolateAttributeRow(
+                    singleSource,
+                    singleDest,
+                    origin.endpoint0,
+                    origin.endpoint1,
+                    origin.t,
+                    destPointOffset
+                );
             }
         }
         // NEW points keep their default initialization.
@@ -830,9 +901,9 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
 
     // Sort detriangulated faces so A faces come first in source order, then B.
     std::vector<size_t> faceOrder(faces.size());
-    for (size_t faceIndex = 0; faceIndex < faces.size(); ++faceIndex) faceOrder[faceIndex] = faceIndex;
-    std::sort(faceOrder.begin(), faceOrder.end(), [&](size_t leftIndex, size_t rightIndex)
-    {
+    for (size_t faceIndex = 0; faceIndex < faces.size(); ++faceIndex)
+        faceOrder[faceIndex] = faceIndex;
+    std::sort(faceOrder.begin(), faceOrder.end(), [&](size_t leftIndex, size_t rightIndex) {
         const auto leftSide = static_cast<int>(faces[leftIndex].source.side);
         const auto rightSide = static_cast<int>(faces[rightIndex].source.side);
         if (leftSide != rightSide) return leftSide < rightSide;
@@ -863,22 +934,27 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
         const size_t faceAttrCount = sourceMesh.getNumAttributes(attr::AttributeOwner::FACE);
         for (size_t attrIndex = 0; attrIndex < faceAttrCount; ++attrIndex)
         {
-            auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::FACE,
-                                                              static_cast<unsigned int>(attrIndex));
+            auto sourceWeak = sourceMesh.getAttributeByIndex(
+                attr::AttributeOwner::FACE,
+                static_cast<unsigned int>(attrIndex)
+            );
             auto sourceShared = sourceWeak.lock();
             if (!sourceShared) continue;
-            auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::FACE,
-                                                           sourceShared->getName());
+            auto destShared =
+                outputMesh->getAttribByName(attr::AttributeOwner::FACE, sourceShared->getName());
             if (!destShared) continue;
             if (destShared->getType() != sourceShared->getType()) continue;
-            attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
-            attr::attribVector singleDest = { destShared };
+            attr::attribVector singleSource = {
+                std::const_pointer_cast<attr::Attribute>(sourceShared)
+            };
+            attr::attribVector singleDest = {destShared};
             copyAttributeRow(singleSource, singleDest, face.source.faceOffset, cursorFaceOffset);
         }
 
         // Match each output corner back to a source vertex on the source face
         // by walking the source face's corners and comparing point offsets.
-        const std::span<const intT> sourceFacePoints = sourceMesh.getFacePoints(face.source.faceOffset);
+        const std::span<const intT> sourceFacePoints =
+            sourceMesh.getFacePoints(face.source.faceOffset);
         const Offset sourceFaceStart = sourceMesh.getFaceStartVertex(face.source.faceOffset);
 
         for (size_t cornerIndex = 0; cornerIndex < face.loop.size(); ++cornerIndex)
@@ -890,7 +966,9 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             // Only proceed if this corner came from a point of the same source face.
             if (origin.kind != VertexOrigin::Kind::ORIGINAL) continue;
             const VertexOrigin::Side originSide = origin.side;
-            const auto sourceSideEnum = (face.source.side == SourceFace::Side::A) ? VertexOrigin::Side::A : VertexOrigin::Side::B;
+            const auto sourceSideEnum = (face.source.side == SourceFace::Side::A)
+                                            ? VertexOrigin::Side::A
+                                            : VertexOrigin::Side::B;
             if (originSide != sourceSideEnum) continue;
 
             // Find the matching source vertex offset by scanning source face corners.
@@ -905,19 +983,26 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
             }
             if (matchedSourceVertex == static_cast<Offset>(-1)) continue;
 
-            const size_t vertexAttrCount = sourceMesh.getNumAttributes(attr::AttributeOwner::VERTEX);
+            const size_t vertexAttrCount =
+                sourceMesh.getNumAttributes(attr::AttributeOwner::VERTEX);
             for (size_t attrIndex = 0; attrIndex < vertexAttrCount; ++attrIndex)
             {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(attr::AttributeOwner::VERTEX,
-                                                                  static_cast<unsigned int>(attrIndex));
+                auto sourceWeak = sourceMesh.getAttributeByIndex(
+                    attr::AttributeOwner::VERTEX,
+                    static_cast<unsigned int>(attrIndex)
+                );
                 auto sourceShared = sourceWeak.lock();
                 if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(attr::AttributeOwner::VERTEX,
-                                                               sourceShared->getName());
+                auto destShared = outputMesh->getAttribByName(
+                    attr::AttributeOwner::VERTEX,
+                    sourceShared->getName()
+                );
                 if (!destShared) continue;
                 if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = { std::const_pointer_cast<attr::Attribute>(sourceShared) };
-                attr::attribVector singleDest = { destShared };
+                attr::attribVector singleSource = {
+                    std::const_pointer_cast<attr::Attribute>(sourceShared)
+                };
+                attr::attribVector singleDest = {destShared};
                 copyAttributeRow(singleSource, singleDest, matchedSourceVertex, destVertexOffset);
             }
         }
@@ -931,11 +1016,8 @@ std::shared_ptr<geo::Mesh> assembleMesh(const geo::Mesh& meshA,
 
 } // namespace
 
-
-std::shared_ptr<geo::Mesh> booleanMesh(const geo::Mesh& meshA,
-                                       const geo::Mesh& meshB,
-                                       BooleanOp op,
-                                       std::string* error)
+std::shared_ptr<geo::Mesh>
+booleanMesh(const geo::Mesh& meshA, const geo::Mesh& meshB, BooleanOp op, std::string* error)
 {
     // Run Manifold and convert the result into our backend neutral form.
     const BooleanFragments fragments = runManifold(meshA, meshB, op, error);
@@ -950,4 +1032,4 @@ std::shared_ptr<geo::Mesh> booleanMesh(const geo::Mesh& meshA,
     return assembleMesh(meshA, meshB, fragments, origins, faces);
 }
 
-} // namespace utils
+} // namespace enzo::utils

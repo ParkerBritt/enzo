@@ -5,8 +5,7 @@ namespace enzo::nt {
 
 void UndoStack::push(std::unique_ptr<UndoCommand> command)
 {
-    if (UndoDisabler::isBlocked(command->type()))
-        return;
+    if (UndoDisabler::isBlocked(command->type())) return;
     // Truncate any redo history
     commands_.erase(commands_.begin() + currentIndex_, commands_.end());
     commands_.push_back(std::move(command));
@@ -21,7 +20,7 @@ void UndoStack::push(std::unique_ptr<UndoCommand> command)
 // pattern so users don't get tripped up by the inconsistency.
 void UndoStack::undo()
 {
-    if(!canUndo()) return;
+    if (!canUndo()) return;
     UndoDisabler blockAll;
     currentIndex_--;
     commands_[currentIndex_]->undo();
@@ -29,21 +28,15 @@ void UndoStack::undo()
 
 void UndoStack::redo()
 {
-    if(!canRedo()) return;
+    if (!canRedo()) return;
     UndoDisabler blockAll;
     commands_[currentIndex_]->redo();
     currentIndex_++;
 }
 
-bool UndoStack::canUndo() const
-{
-    return currentIndex_ > 0;
-}
+bool UndoStack::canUndo() const { return currentIndex_ > 0; }
 
-bool UndoStack::canRedo() const
-{
-    return currentIndex_ < static_cast<int>(commands_.size());
-}
+bool UndoStack::canRedo() const { return currentIndex_ < static_cast<int>(commands_.size()); }
 
 void UndoStack::clear()
 {
@@ -51,4 +44,4 @@ void UndoStack::clear()
     currentIndex_ = 0;
 }
 
-}
+} // namespace enzo::nt

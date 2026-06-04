@@ -2,12 +2,14 @@
 #include <glm/ext/vector_float3.hpp>
 #include <iostream>
 
-GLGrid::GLGrid() {
+GLGrid::GLGrid()
+{
     initializeOpenGLFunctions();
     init();
 }
 
-void GLGrid::init() {
+void GLGrid::init()
+{
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -18,7 +20,8 @@ void GLGrid::init() {
     glBindVertexArray(0);
 }
 
-void GLGrid::initShaderProgram() {
+void GLGrid::initShaderProgram()
+{
     // vertex shader
     const std::string vertexShaderSource = "#version 330 core\n"
                                            "uniform mat4 uView;\n"
@@ -33,7 +36,7 @@ void GLGrid::initShaderProgram() {
     // shader type
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     // convert source
-    const GLchar *vertexShaderSourceC = vertexShaderSource.c_str();
+    const GLchar* vertexShaderSourceC = vertexShaderSource.c_str();
     // create shader object
     glShaderSource(vertexShader, 1, &vertexShaderSourceC, NULL);
     // compile shader object
@@ -43,10 +46,13 @@ void GLGrid::initShaderProgram() {
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success)
+    {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "success\n";
     }
 
@@ -67,13 +73,16 @@ void GLGrid::initShaderProgram() {
     )";
 
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar *fragmentShaderSourceC = fragmentShaderSource.c_str();
+    const GLchar* fragmentShaderSourceC = fragmentShaderSource.c_str();
     glShaderSource(fragmentShader, 1, &fragmentShaderSourceC, NULL);
     glCompileShader(fragmentShader);
-    if (!success) {
+    if (!success)
+    {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "success\n";
     }
 
@@ -90,12 +99,14 @@ void GLGrid::initShaderProgram() {
     glDeleteShader(fragmentShader);
 }
 
-void GLGrid::initBuffers() {
+void GLGrid::initBuffers()
+{
     constexpr int gridLen = 50;
     constexpr int gridLines = 40;
     const float yHeight = 0.0f;
     float halfLinesCnt = (gridLines - 1) * 0.5f;
-    for (int i = 0; i < gridLines; ++i) {
+    for (int i = 0; i < gridLines; ++i)
+    {
         vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, yHeight, -gridLen));
         vertices.push_back(glm::vec3((i - halfLinesCnt) * 2, yHeight, gridLen));
 
@@ -108,11 +119,15 @@ void GLGrid::initBuffers() {
     // set purpose
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     // store data in the buffer
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        vertices.size() * sizeof(glm::vec3),
+        vertices.data(),
+        GL_STATIC_DRAW
+    );
 
     // gives the shader a way to read
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
     // disable vertex attrib array
     glEnableVertexAttribArray(0);
 }
@@ -123,7 +138,8 @@ void GLGrid::unbind() { glBindVertexArray(0); }
 
 void GLGrid::useProgram() { glUseProgram(shaderProgram); }
 
-void GLGrid::draw() {
+void GLGrid::draw()
+{
     bind();
     useProgram();
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);

@@ -32,7 +32,8 @@ template <typename T> class AttributeHandle;
  * @note Values are strongly typed; invalid type combinations are guarded both
  *       at compile time (via handles) and at runtime (defensive checks).
  */
-class Attribute {
+class Attribute
+{
   public:
     /**
      * @brief Construct a new attribute and initialize its typed storage.
@@ -42,9 +43,13 @@ class Attribute {
      * @param type Attribute data type that values will be stored in.
      *
      */
-    Attribute(std::string name, attr::AttributeType type, bool intrinsic = false,
-              bool isPrivate = false);
-    Attribute(const Attribute &other);
+    Attribute(
+        std::string name,
+        attr::AttributeType type,
+        bool intrinsic = false,
+        bool isPrivate = false
+    );
+    Attribute(const Attribute& other);
     /**
      * @brief Returns the attribute type this attribute stores.
      */

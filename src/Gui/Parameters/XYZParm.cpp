@@ -2,9 +2,9 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter)
+enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();
 
@@ -18,7 +18,8 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget 
             range.getMax(),
             range.getMinFlag() == prm::RangeFlag::LOCKED,
             range.getMaxFlag() == prm::RangeFlag::LOCKED,
-            0.0);
+            0.0
+        );
         slider->setValue(parameterShared->evalFloat(vectorIndex));
         contentLayout_->addWidget(slider);
         sliders_.push_back(slider);
@@ -32,9 +33,8 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget 
         connect(slider, &Slider::sliderReleased, this, &XYZParm::onReleased);
     }
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
 }
 
 void enzo::ui::XYZParm::syncFromParameter()
@@ -71,8 +71,11 @@ void enzo::ui::XYZParm::onReleased()
     if (auto parameterShared = parameter_.lock())
     {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            valueBeforeDrag_,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

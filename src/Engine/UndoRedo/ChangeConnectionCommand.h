@@ -1,23 +1,32 @@
 #pragma once
 
-#include "Engine/UndoRedo/UndoCommand.h"
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/UndoCommand.h"
 
 namespace enzo::nt {
 
 class ChangeConnectionCommand : public UndoCommand
 {
-public:
-    enum class Action { Connect, Disconnect };
+  public:
+    enum class Action
+    {
+        Connect,
+        Disconnect
+    };
 
-    ChangeConnectionCommand(OpId inputOpId, unsigned int inputIndex,
-                            OpId outputOpId, unsigned int outputIndex,
-                            Action action)
-        : inputOpId_(inputOpId), inputIndex_(inputIndex),
-          outputOpId_(outputOpId), outputIndex_(outputIndex),
-          action_(action) {}
+    ChangeConnectionCommand(
+        OpId inputOpId,
+        unsigned int inputIndex,
+        OpId outputOpId,
+        unsigned int outputIndex,
+        Action action
+    )
+        : inputOpId_(inputOpId), inputIndex_(inputIndex), outputOpId_(outputOpId),
+          outputIndex_(outputIndex), action_(action)
+    {
+    }
 
     void undo() override
     {
@@ -37,11 +46,8 @@ public:
 
     UndoCommandType type() const override { return UndoCommandType::ChangeConnection; }
 
-private:
-    void connect()
-    {
-        connectOperators(inputOpId_, inputIndex_, outputOpId_, outputIndex_);
-    }
+  private:
+    void connect() { connectOperators(inputOpId_, inputIndex_, outputOpId_, outputIndex_); }
 
     void disconnect()
     {
@@ -59,4 +65,4 @@ private:
     Action action_;
 };
 
-}
+} // namespace enzo::nt

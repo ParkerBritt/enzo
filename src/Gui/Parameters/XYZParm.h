@@ -4,16 +4,17 @@
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/UtilWidgets/Slider.h"
 #include <boost/signals2/connection.hpp>
-#include <vector>
 #include <memory>
 #include <optional>
+#include <vector>
 
 namespace enzo::ui {
 
-class XYZParm : public Parameter {
+class XYZParm : public Parameter
+{
     Q_OBJECT
   public:
-    XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent = nullptr);
+    XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent = nullptr);
 
   private:
     void onPressed(unsigned int vectorIndex);

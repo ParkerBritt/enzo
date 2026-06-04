@@ -15,7 +15,8 @@
 #include <qsizepolicy.h>
 #include <qsplitter.h>
 
-EnzoUI::EnzoUI() {
+EnzoUI::EnzoUI()
+{
     // layout
     mainLayout_ = new QVBoxLayout(this);
     setLayout(mainLayout_);
@@ -85,7 +86,7 @@ EnzoUI::EnzoUI() {
     networkSplitter_->addWidget(network_);
     networkSplitter_->setSizes({40, 100});
 
-    HeaderBar *header = new HeaderBar();
+    HeaderBar* header = new HeaderBar();
 
     mainLayout_->addWidget(header);
     mainLayout_->addWidget(viewportSplitter_);
@@ -93,12 +94,14 @@ EnzoUI::EnzoUI() {
     connectSignals();
 }
 
-void EnzoUI::connectSignals() {
+void EnzoUI::connectSignals()
+{
 
     // Selection changed
     enzo::nt::nm().selectedNodesChanged.connect(
         [this](std::vector<enzo::nt::OpId> selectedNodeIds) {
-            if (selectedNodeIds.empty()) {
+            if (selectedNodeIds.empty())
+            {
                 parametersPanel_->clearParameters();
                 geometrySpreadsheetPanel_->clear();
                 return;
@@ -108,25 +111,28 @@ void EnzoUI::connectSignals() {
             geometrySpreadsheetPanel_->setNode(selectedId);
             auto packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
             geometrySpreadsheetPanel_->packetChanged(packet);
-        });
+        }
+    );
 
     // Operator created
-    enzo::nt::nm().operatorCreated.connect(
-        [this](enzo::nt::OpId opId) { network_->onOperatorCreated(opId); });
+    enzo::nt::nm().operatorCreated.connect([this](enzo::nt::OpId opId) {
+        network_->onOperatorCreated(opId);
+    });
 
     // Connection created
-    enzo::nt::nm().connectionCreated.connect(
-        [this](std::weak_ptr<enzo::nt::GeometryConnection> conn) {
-            network_->onConnectionCreated(conn);
-        });
+    enzo::nt::nm().connectionCreated.connect([this](
+                                                 std::weak_ptr<enzo::nt::GeometryConnection> conn
+                                             ) { network_->onConnectionCreated(conn); });
 
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect(
-        [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); }
+    );
     enzo::nt::nm().selectedGeoChanged.connect(
         [this](std::shared_ptr<const enzo::NodePacket> packet) {
             geometrySpreadsheetPanel_->packetChanged(packet);
-        });
+        }
+    );
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this]() {

@@ -1,9 +1,8 @@
 #pragma once
 #include <QSplitter>
 
-class Splitter
-: public QSplitter
+class Splitter : public QSplitter
 {
-public:
-    Splitter(QWidget *parent = nullptr);
+  public:
+    Splitter(QWidget* parent = nullptr);
 };

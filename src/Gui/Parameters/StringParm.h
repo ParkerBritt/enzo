@@ -9,10 +9,11 @@
 
 namespace enzo::ui {
 
-class StringParm : public Parameter {
+class StringParm : public Parameter
+{
     Q_OBJECT
   public:
-    StringParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent = nullptr);
+    StringParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent = nullptr);
 
   private:
     void setValueQString(QString value);

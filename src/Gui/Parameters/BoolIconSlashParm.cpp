@@ -3,40 +3,40 @@
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include "Gui/IconRegistry.h"
 #include <QEasingCurve>
+#include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
-#include <QPaintEvent>
 #include <QSize>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-namespace
-{
+namespace {
 
-constexpr int   ANIMATION_DURATION_MS = 160;
-constexpr int   TILT_DURATION_MS      = 260;
-constexpr float TILT_PEAK_DEGREES     = -14.0f;
-constexpr float SLASH_WIDTH_FRACTION  = 0.13f;
-constexpr float SLASH_MASK_FRACTION   = 0.28f;
-constexpr float SLASH_PADDING         = 0.12f;
+constexpr int ANIMATION_DURATION_MS = 160;
+constexpr int TILT_DURATION_MS = 260;
+constexpr float TILT_PEAK_DEGREES = -14.0f;
+constexpr float SLASH_WIDTH_FRACTION = 0.13f;
+constexpr float SLASH_MASK_FRACTION = 0.28f;
+constexpr float SLASH_PADDING = 0.12f;
 
 QLineF slashLine(const QRectF& iconRect, float progress)
 {
-    const QPointF start(iconRect.left()  + iconRect.width()  * SLASH_PADDING,
-                        iconRect.top()   + iconRect.height() * SLASH_PADDING);
-    const QPointF end  (iconRect.right() - iconRect.width()  * SLASH_PADDING,
-                        iconRect.bottom() - iconRect.height() * SLASH_PADDING);
+    const QPointF start(
+        iconRect.left() + iconRect.width() * SLASH_PADDING,
+        iconRect.top() + iconRect.height() * SLASH_PADDING
+    );
+    const QPointF end(
+        iconRect.right() - iconRect.width() * SLASH_PADDING,
+        iconRect.bottom() - iconRect.height() * SLASH_PADDING
+    );
     const QPointF current = start + (end - start) * progress;
     return QLineF(start, current);
 }
 
-}
+} // namespace
 
 SlashIconButton::SlashIconButton(QPixmap icon, int iconPx, QWidget* parent)
-: QAbstractButton(parent),
-  icon_(std::move(icon)),
-  iconPx_(iconPx)
+    : QAbstractButton(parent), icon_(std::move(icon)), iconPx_(iconPx)
 {
     setCheckable(true);
 }
@@ -55,10 +55,7 @@ void SlashIconButton::setTiltAngle(float degrees)
     update();
 }
 
-QSize SlashIconButton::sizeHint() const
-{
-    return QSize(iconPx_, iconPx_);
-}
+QSize SlashIconButton::sizeHint() const { return QSize(iconPx_, iconPx_); }
 
 void SlashIconButton::paintEvent(QPaintEvent*)
 {
@@ -66,7 +63,9 @@ void SlashIconButton::paintEvent(QPaintEvent*)
     const QRectF iconRect(
         widgetRect.center().x() - iconPx_ / 2.0,
         widgetRect.center().y() - iconPx_ / 2.0,
-        iconPx_, iconPx_);
+        iconPx_,
+        iconPx_
+    );
 
     QPixmap composed(size());
     composed.fill(Qt::transparent);
@@ -120,10 +119,10 @@ void SlashIconButton::paintEvent(QPaintEvent*)
 BoolIconSlashParm::BoolIconSlashParm(
     std::weak_ptr<prm::NodeParameter> parameter,
     std::shared_ptr<prm::style::BoolIconSlash> style,
-    QWidget* parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter),
-  style_(std::move(style))
+    QWidget* parent
+)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter), style_(std::move(style))
 {
     auto parameterShared = parameter_.lock();
 
@@ -160,9 +159,8 @@ BoolIconSlashParm::BoolIconSlashParm(
     contentLayout_->addStretch();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
     connect(button_, &QAbstractButton::toggled, this, &BoolIconSlashParm::onToggle);
 }
 
@@ -185,8 +183,11 @@ void BoolIconSlashParm::onToggle(bool checked)
         auto before = parameterShared->getValues();
         parameterShared->setInt(checked);
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), before,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            before,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
         animateTo(checked);
         if (!checked)
@@ -206,4 +207,4 @@ void BoolIconSlashParm::animateTo(bool toggledOn)
     animation_->start();
 }
 
-}
+} // namespace enzo::ui

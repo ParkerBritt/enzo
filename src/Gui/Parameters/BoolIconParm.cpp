@@ -7,15 +7,15 @@
 enzo::ui::BoolIconParm::BoolIconParm(
     std::weak_ptr<prm::NodeParameter> parameter,
     std::shared_ptr<prm::style::BoolIcon> style,
-    QWidget* parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter),
-  style_(std::move(style))
+    QWidget* parent
+)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter), style_(std::move(style))
 {
     auto parameterShared = parameter_.lock();
 
     const int sizePx = ROW_HEIGHT;
-    const int iconPx = sizePx * style_->scale()-8;
+    const int iconPx = sizePx * style_->scale() - 8;
 
     button_ = new QPushButton();
     button_->setCheckable(true);
@@ -29,9 +29,8 @@ enzo::ui::BoolIconParm::BoolIconParm(
     contentLayout_->addStretch();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
     connect(button_, &QPushButton::toggled, this, &BoolIconParm::onToggle);
 }
 
@@ -53,8 +52,11 @@ void enzo::ui::BoolIconParm::onToggle(bool checked)
         auto before = parameterShared->getValues();
         parameterShared->setInt(checked);
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), before,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            before,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

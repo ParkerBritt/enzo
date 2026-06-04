@@ -2,7 +2,9 @@
 #include <memory>
 #include <string>
 
-namespace enzo::geo { class Mesh; }
+namespace enzo::geo {
+class Mesh;
+}
 
 namespace enzo::utils {
 
@@ -19,9 +21,11 @@ enum class BooleanOp
  *              on return, the boolean hit a geometry error the caller should report.
  * @return A new triangulated mesh holding the result of @p op applied to @p meshA and @p meshB.
  */
-std::shared_ptr<geo::Mesh> booleanMesh(const geo::Mesh& meshA,
-                                       const geo::Mesh& meshB,
-                                       BooleanOp op,
-                                       std::string* error = nullptr);
+std::shared_ptr<geo::Mesh> booleanMesh(
+    const geo::Mesh& meshA,
+    const geo::Mesh& meshB,
+    BooleanOp op,
+    std::string* error = nullptr
+);
 
 } // namespace enzo::utils

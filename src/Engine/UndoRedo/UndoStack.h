@@ -8,7 +8,7 @@ namespace enzo::nt {
 
 class UndoStack
 {
-public:
+  public:
     void push(std::unique_ptr<UndoCommand> command);
     void undo();
     void redo();
@@ -16,9 +16,9 @@ public:
     bool canRedo() const;
     void clear();
 
-private:
+  private:
     std::vector<std::unique_ptr<UndoCommand>> commands_;
     int currentIndex_ = 0;
 };
 
-}
+} // namespace enzo::nt

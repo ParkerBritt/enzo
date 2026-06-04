@@ -7,7 +7,8 @@
 #include "Gui/Icons/Builtin.h"
 #include "Interface.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     // set up rendering
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGL);

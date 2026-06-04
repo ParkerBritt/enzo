@@ -1,15 +1,15 @@
 #pragma once
-#include "Engine/Parameter/Template.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Parameter/Template.h"
 #include <boost/signals2.hpp>
 #include <variant>
 
 namespace enzo::prm {
 
-using PrmValues =
-    std::variant<std::vector<floatT>, std::vector<intT>, std::vector<String>>;
+using PrmValues = std::variant<std::vector<floatT>, std::vector<intT>, std::vector<String>>;
 
-class Parameter {
+class Parameter
+{
   public:
     Parameter(Template prmTemplate);
     virtual ~Parameter() = default;
@@ -28,14 +28,14 @@ class Parameter {
     void setString(String value, unsigned int index = 0);
 
     PrmValues getValues() const;
-    void setValues(const PrmValues &values);
+    void setValues(const PrmValues& values);
 
-    const Template &getTemplate();
+    const Template& getTemplate();
 
     boost::signals2::signal<void()> valueChanged;
 
   protected:
-    virtual void onFloatSet_(const PrmValues &before) {}
+    virtual void onFloatSet_(const PrmValues& before) {}
     void handleValueChange_();
 
     Template template_;

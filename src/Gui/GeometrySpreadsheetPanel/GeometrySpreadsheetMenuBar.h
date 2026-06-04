@@ -1,51 +1,51 @@
 #pragma once
 
-#include "Engine/Network/OpInfo.h"
 #include "Engine/Core/Types.h"
-#include <QWidget>
+#include "Engine/Network/OpInfo.h"
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QWidget>
 #include <qbuttongroup.h>
 #include <qpushbutton.h>
-#include <QLabel>
 
-class GeoSheetModeButton
-: public QPushButton
+class GeoSheetModeButton : public QPushButton
 {
-public:
-    GeoSheetModeButton(QWidget *parent = nullptr);
-private:
+  public:
+    GeoSheetModeButton(QWidget* parent = nullptr);
+
+  private:
     QHBoxLayout* mainLayout_;
-protected:
-    void paintEvent(QPaintEvent *) override;
-    void enterEvent(QEnterEvent *event) override;
-    void leaveEvent(QEvent *event) override;
+
+  protected:
+    void paintEvent(QPaintEvent*) override;
+    void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
     bool hovered_ = false;
 };
 
-class GeoSheetMenuBarModeSelection
-: public QWidget
+class GeoSheetMenuBarModeSelection : public QWidget
 {
-public:
-    GeoSheetMenuBarModeSelection(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+  public:
+    GeoSheetMenuBarModeSelection(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 
     GeoSheetModeButton* pointButton;
     GeoSheetModeButton* vertexButton;
     GeoSheetModeButton* faceButton;
     GeoSheetModeButton* primitiveButton;
-private:
+
+  private:
     QHBoxLayout* mainLayout_;
     QButtonGroup modeButtonGroup_;
 };
 
-class GeometrySpreadsheetMenuBar
-: public QWidget
+class GeometrySpreadsheetMenuBar : public QWidget
 {
-public:
-    GeometrySpreadsheetMenuBar(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+  public:
+    GeometrySpreadsheetMenuBar(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     GeoSheetMenuBarModeSelection* modeSelection;
     void setNode(enzo::nt::OpId opId);
-private:
+
+  private:
     QHBoxLayout* mainLayout_;
     QLabel* nodeLabel_;
 };
-

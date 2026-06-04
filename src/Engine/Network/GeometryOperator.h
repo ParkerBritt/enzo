@@ -1,37 +1,42 @@
 #pragma once
+#include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryConnection.h"
-#include "Engine/Network/OpInfo.h"
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Network/NodePacket.h"
+#include "Engine/Network/OpInfo.h"
 #include "Engine/Parameter/NodeParameter.h"
-#include "Engine/Core/Types.h"
 #include <functional>
-#include <optional>
 #include <memory>
+#include <optional>
 
 namespace enzo::nt {
-std::weak_ptr<GeometryConnection> connectOperators(enzo::nt::OpId inputOpId, unsigned int inputIndex, enzo::nt::OpId outputOpId, unsigned int outputIndex);
+std::weak_ptr<GeometryConnection> connectOperators(
+    enzo::nt::OpId inputOpId,
+    unsigned int inputIndex,
+    enzo::nt::OpId outputOpId,
+    unsigned int outputIndex
+);
 
 /**
-* @class GeometryOperator
-* @brief The unique runtime representation of a node
-*/
+ * @class GeometryOperator
+ * @brief The unique runtime representation of a node
+ */
 class GeometryOperator
 {
-public:
+  public:
     /**
-    * @brief Constructs a new node
-    *
-    * @param opId the operator id assigned to this node. For most situations
-    * this should be set by the nt::NetworkManager
-    * @param opInfo The data class informing the node what its properties
-    * are that set it apart from other nodes. This is what makes a grid
-    * node different to a transform node.
-    */
+     * @brief Constructs a new node
+     *
+     * @param opId the operator id assigned to this node. For most situations
+     * this should be set by the nt::NetworkManager
+     * @param opInfo The data class informing the node what its properties
+     * are that set it apart from other nodes. This is what makes a grid
+     * node different to a transform node.
+     */
     GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo);
-    virtual ~GeometryOperator()=default;
+    virtual ~GeometryOperator() = default;
     /// @brief Deleted copy constructor to avoid accidental copies.
-    GeometryOperator(const GeometryOperator&)            = delete;
+    GeometryOperator(const GeometryOperator&) = delete;
     /// @brief Deleted copy assignment operator to avoid accidental copies.
     GeometryOperator& operator=(const GeometryOperator&) = delete;
 
@@ -49,71 +54,72 @@ public:
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
 
     /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
-    *
-    * Which input is decided and stored on the connection.
-    *
-    * Nodes can only have one connection so it will automatically remove existing connections
-    * with the same index, prioritizing the new one.
-    */
+     *
+     * Which input is decided and stored on the connection.
+     *
+     * Nodes can only have one connection so it will automatically remove existing connections
+     * with the same index, prioritizing the new one.
+     */
     void addInputConnection(std::shared_ptr<nt::GeometryConnection> connection);
 
     /** @brief Adds a GeometryConnection to one of the outputs. Replacing old connections if needed.
-    *
-    * Which output is decided and stored on the connection.
-    *
-    * Nodes can only have one connection so it will automatically remove existing connections
-    * with the same index, prioritizing the new one.
-    */
+     *
+     * Which output is decided and stored on the connection.
+     *
+     * Nodes can only have one connection so it will automatically remove existing connections
+     * with the same index, prioritizing the new one.
+     */
     void addOutputConnection(std::shared_ptr<nt::GeometryConnection> connection);
 
     /** @brief Removes an input from the node's container.
-    *
-    * Does not remove the connection from any other node it's connected
-    * to, likely causing undefined behavior if called incorrectly.
-    *
-    * @todo remove in favor of the rewrite suggested in GeometryConnection
-    * todo in which connections are handled by the network manager rather than individual nodes.
-    */
+     *
+     * Does not remove the connection from any other node it's connected
+     * to, likely causing undefined behavior if called incorrectly.
+     *
+     * @todo remove in favor of the rewrite suggested in GeometryConnection
+     * todo in which connections are handled by the network manager rather than individual nodes.
+     */
     void removeInputConnection(unsigned int inputIndex);
 
     /** @brief Removes an output from the node's container.
-    *
-    * Does not remove the connection from any other node it's connected
-    * to, likely causing undefined behavior if called incorrectly.
-    *
-    * @todo remove in favor of the rewrite suggested in GeometryConnection
-    * todo in which connections are handled by the network manager rather than individual nodes.
-    */
+     *
+     * Does not remove the connection from any other node it's connected
+     * to, likely causing undefined behavior if called incorrectly.
+     *
+     * @todo remove in favor of the rewrite suggested in GeometryConnection
+     * todo in which connections are handled by the network manager rather than individual nodes.
+     */
     void removeOutputConnection(const nt::GeometryConnection* connection);
 
     /**
-    * @brief Returns a vector containing weak pointers for all input connections.
-    *
-    * Connections returned by this function are weak pointers to indicate
-    * ownership belongs to the node/network and can be modified or deleted at any time.
-    */
+     * @brief Returns a vector containing weak pointers for all input connections.
+     *
+     * Connections returned by this function are weak pointers to indicate
+     * ownership belongs to the node/network and can be modified or deleted at any time.
+     */
     std::vector<std::weak_ptr<GeometryConnection>> getInputConnections() const;
 
     /**
-    * @brief Returns a vector containing weak pointers for all output connections.
-    *
-    * Connections returned by this function are weak pointers to indicate
-    * ownership belongs to the node/network and can be modified or deleted at any time.
-    */
+     * @brief Returns a vector containing weak pointers for all output connections.
+     *
+     * Connections returned by this function are weak pointers to indicate
+     * ownership belongs to the node/network and can be modified or deleted at any time.
+     */
     std::vector<std::weak_ptr<GeometryConnection>> getOutputConnections() const;
 
     /**
-    * @brief Returns an optional connection from a specific input index.
-    *
-    * @returns Nullopt if the connection doesn't exist.
-    */
+     * @brief Returns an optional connection from a specific input index.
+     *
+     * @returns Nullopt if the connection doesn't exist.
+     */
     std::weak_ptr<GeometryConnection> getInputConnection(size_t index) const;
 
     /// @brief Returns all parameters belonging to this node.
     std::vector<std::weak_ptr<prm::NodeParameter>> getParameters();
 
     /// @brief Returns a parameter with the given name belonging to this node.
-    /// @returns Empty default constructed std::weak_ptr<prm::Parameter>() if no parameter of that name exists.
+    /// @returns Empty default constructed std::weak_ptr<prm::Parameter>() if no parameter of that
+    /// name exists.
     std::weak_ptr<prm::NodeParameter> getParameter(std::string_view parameterName);
 
     /// @brief Returns the template tree declared by this node's type.
@@ -121,30 +127,34 @@ public:
     const std::vector<prm::Template>& getTemplates() const;
 
     /**
-    * @brief NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.
-    * @todo implement
-    */
+     * @brief NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique
+     * identifier within it's scope.
+     * @todo implement
+     */
     std::string getLabel(); // TODO: implement node labels
 
     /**
-    * @brief Returns the name belonging to this type of node (eg. grid or transform). Not to be confused with the label.
-    *
-    * The type name decided at compile time and is shared across all nodes
-    * of the given type. All grids nodes share the same type name. Labels
-    * on the other hand are unique identifiers for a given runtime node (eg. myGrid1, groundGrid, wall).
-    */
+     * @brief Returns the name belonging to this type of node (eg. grid or transform). Not to be
+     * confused with the label.
+     *
+     * The type name decided at compile time and is shared across all nodes
+     * of the given type. All grids nodes share the same type name. Labels
+     * on the other hand are unique identifiers for a given runtime node (eg. myGrid1, groundGrid,
+     * wall).
+     */
     std::string getTypeName();
 
     /**
-    * @brief Marks the outputed geometry as outdated and notifies the network
-    *
-    * @param dirtyDescendents Sets whether all descendents (nodes connected
-    * directly or indirectly to the output of this node) are also dirtied.
-    * This is usually what you want.
-    */
-    void dirtyNode(bool dirtyDescendents=true);
+     * @brief Marks the outputed geometry as outdated and notifies the network
+     *
+     * @param dirtyDescendents Sets whether all descendents (nodes connected
+     * directly or indirectly to the output of this node) are also dirtied.
+     * This is usually what you want.
+     */
+    void dirtyNode(bool dirtyDescendents = true);
 
-    /// @brief Returns true if the node is dirty and false if the node is clean (does not need cooking).
+    /// @brief Returns true if the node is dirty and false if the node is clean (does not need
+    /// cooking).
     bool isDirty();
 
     /// @brief Returns the minimum number of input connections required
@@ -161,10 +171,11 @@ public:
     /// @brief Sets the node's position in the network graph.
     void setPosition(Vector2f pos) { position_ = pos; }
 
-    /// @brief A signal emitted when the node is dirtied. This will usually notify the NetworkManager
-    boost::signals2::signal<void (nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
+    /// @brief A signal emitted when the node is dirtied. This will usually notify the
+    /// NetworkManager
+    boost::signals2::signal<void(nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
 
-private:
+  private:
     void initParameters();
 
     // TODO: avoid duplicate connections
@@ -177,4 +188,4 @@ private:
     Vector2f position_{0.f, 0.f};
     bool dirty_ = true;
 };
-}
+} // namespace enzo::nt

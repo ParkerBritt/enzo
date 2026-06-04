@@ -3,9 +3,9 @@
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <cmath>
 
-enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget *parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter)
+enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();
 
@@ -15,13 +15,13 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> paramet
         range.getMax(),
         range.getMinFlag() == prm::RangeFlag::LOCKED,
         range.getMaxFlag() == prm::RangeFlag::LOCKED,
-        1.0);
+        1.0
+    );
     slider_->setValue(static_cast<double>(parameterShared->evalInt()));
     contentLayout_->addWidget(slider_);
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
 
     connect(slider_, &Slider::sliderPressed, this, &IntSliderParm::onPressed);
     connect(slider_, &Slider::sliderMoved, this, &IntSliderParm::onMoved);
@@ -59,8 +59,11 @@ void enzo::ui::IntSliderParm::onReleased()
     if (auto parameterShared = parameter_.lock())
     {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            valueBeforeDrag_,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

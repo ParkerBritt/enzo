@@ -4,13 +4,15 @@
 
 namespace enzo {
 
-class IndexSet {
+class IndexSet
+{
   public:
     virtual ~IndexSet() = default;
     virtual bool contains(Index index) const = 0;
 };
 
-class ExplicitIndexSet : public IndexSet {
+class ExplicitIndexSet : public IndexSet
+{
   public:
     ExplicitIndexSet(std::set<Index> indices);
     bool contains(Index index) const override;
@@ -19,7 +21,8 @@ class ExplicitIndexSet : public IndexSet {
     std::set<Index> indices_;
 };
 
-class WildcardIndexSet : public IndexSet {
+class WildcardIndexSet : public IndexSet
+{
   public:
     bool contains(Index index) const override;
 };

@@ -2,10 +2,9 @@
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopGrid
-: public enzo::nt::GeometryOpDef
+class GopGrid : public enzo::nt::GeometryOpDef
 {
-public:
+  public:
     GopGrid(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
@@ -14,5 +13,4 @@ public:
     }
 
     static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
-
 };

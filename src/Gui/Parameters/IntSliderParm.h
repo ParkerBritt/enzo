@@ -9,10 +9,11 @@
 
 namespace enzo::ui {
 
-class IntSliderParm : public Parameter {
+class IntSliderParm : public Parameter
+{
     Q_OBJECT
   public:
-    IntSliderParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget *parent = nullptr);
+    IntSliderParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget* parent = nullptr);
 
   private:
     void onPressed();

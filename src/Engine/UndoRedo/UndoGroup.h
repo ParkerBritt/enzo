@@ -1,25 +1,30 @@
 #pragma once
 
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 
 namespace enzo::nt {
 
-class UndoGroup : public UndoCommand {
+class UndoGroup : public UndoCommand
+{
   public:
     UndoGroup() {}
 
-    void addCommand(nt::UndoCommand &command) { commands_.push_back(command); }
+    void addCommand(nt::UndoCommand& command) { commands_.push_back(command); }
 
-    void undo() override {
-        for (auto it = commands_.end(); it != commands_.begin(); --it) {
+    void undo() override
+    {
+        for (auto it = commands_.end(); it != commands_.begin(); --it)
+        {
             it->undo();
         }
     }
 
-    void redo() override {
-        for (auto it = commands_.begin(); it != commands_.end(); ++it) {
+    void redo() override
+    {
+        for (auto it = commands_.begin(); it != commands_.end(); ++it)
+        {
             it->redo();
         }
     }

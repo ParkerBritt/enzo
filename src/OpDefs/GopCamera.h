@@ -2,10 +2,9 @@
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopCamera
-: public enzo::nt::GeometryOpDef
+class GopCamera : public enzo::nt::GeometryOpDef
 {
-public:
+  public:
     GopCamera(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)

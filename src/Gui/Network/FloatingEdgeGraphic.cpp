@@ -1,12 +1,12 @@
 #include "Gui/Network/FloatingEdgeGraphic.h"
-#include <QTextDocument>
 #include "Gui/Network/SocketGraphic.h"
+#include <QTextDocument>
+#include <algorithm>
 #include <iostream>
 #include <qgraphicsitem.h>
-#include <algorithm>
 
-FloatingEdgeGraphic::FloatingEdgeGraphic(SocketGraphic* socket1, QGraphicsItem *parent)
-: QGraphicsItem(parent), socket1_{socket1}
+FloatingEdgeGraphic::FloatingEdgeGraphic(SocketGraphic* socket1, QGraphicsItem* parent)
+    : QGraphicsItem(parent), socket1_{socket1}
 {
     floatPos_ = socket1_->scenePos();
     setZValue(-1);
@@ -18,7 +18,11 @@ QRectF FloatingEdgeGraphic::boundingRect() const
     return boundRect;
 }
 
-void FloatingEdgeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void FloatingEdgeGraphic::paint(
+    QPainter* painter,
+    const QStyleOptionGraphicsItem* option,
+    QWidget* widget
+)
 {
     // auto pen = QPen("white");
 
@@ -32,22 +36,22 @@ void FloatingEdgeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsIte
     painter->setPen(pen);
     // painter->drawLine(socket1_->scenePos(),floatPos_);
 
-    QPointF pos1 = socket1_->getIO()==enzo::nt::SocketIOType::Input ? socket1_->scenePos() : floatPos_;
-    QPointF pos2 = socket1_->getIO()==enzo::nt::SocketIOType::Input ? floatPos_ : socket1_->scenePos();
-    float dist = std::sqrt(std::pow(pos1.x()-pos2.x(),2)+std::pow(pos1.y()-pos2.y(),2));
-    float cubicStrength = dist*0.5;
+    QPointF pos1 =
+        socket1_->getIO() == enzo::nt::SocketIOType::Input ? socket1_->scenePos() : floatPos_;
+    QPointF pos2 =
+        socket1_->getIO() == enzo::nt::SocketIOType::Input ? floatPos_ : socket1_->scenePos();
+    float dist = std::sqrt(std::pow(pos1.x() - pos2.x(), 2) + std::pow(pos1.y() - pos2.y(), 2));
+    float cubicStrength = dist * 0.5;
     cubicStrength = std::clamp(cubicStrength, 0.0f, 40.0f);
     QPainterPath path;
     path.moveTo(pos1);
-    path.cubicTo(pos1-QPoint(0,cubicStrength), pos2+QPoint(0,cubicStrength), pos2);
+    path.cubicTo(pos1 - QPoint(0, cubicStrength), pos2 + QPoint(0, cubicStrength), pos2);
     painter->drawPath(path);
-
- 
 }
 
-void FloatingEdgeGraphic::setFloatPos(QPointF floatPos) {
+void FloatingEdgeGraphic::setFloatPos(QPointF floatPos)
+{
     prepareGeometryChange();
     floatPos_ = floatPos;
     update();
 }
-

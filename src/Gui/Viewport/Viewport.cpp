@@ -15,21 +15,25 @@
 #include <qpushbutton.h>
 #include <qstackedlayout.h>
 
-Viewport::Viewport(QWidget *parent) : Panel(parent) {
+Viewport::Viewport(QWidget* parent) : Panel(parent)
+{
     setBorderColor(QColor("#3c3c3c"));
 
     openGLWidget_ = new ViewportGLWidget(this);
     overlay_ = new ViewportOverlay();
 
-    QStackedWidget *viewportStack = new QStackedWidget();
-    auto *stackedLayout = qobject_cast<QStackedLayout *>(viewportStack->layout());
+    QStackedWidget* viewportStack = new QStackedWidget();
+    auto* stackedLayout = qobject_cast<QStackedLayout*>(viewportStack->layout());
     stackedLayout->setStackingMode(QStackedLayout::StackAll);
     viewportStack->addWidget(overlay_);
     viewportStack->addWidget(openGLWidget_);
 
     connect(
-        overlay_, &ViewportOverlay::cameraSelected, this,
-        [this](std::shared_ptr<const enzo::geo::Camera> cam) { openGLWidget_->setCamera(cam); });
+        overlay_,
+        &ViewportOverlay::cameraSelected,
+        this,
+        [this](std::shared_ptr<const enzo::geo::Camera> cam) { openGLWidget_->setCamera(cam); }
+    );
 
     mainLayout_ = new QVBoxLayout();
     mainLayout_->addWidget(viewportStack);
@@ -37,15 +41,18 @@ Viewport::Viewport(QWidget *parent) : Panel(parent) {
     this->setLayout(mainLayout_);
 }
 
-void Viewport::setGeometry(std::shared_ptr<const enzo::NodePacket> packet) {
+void Viewport::setGeometry(std::shared_ptr<const enzo::NodePacket> packet)
+{
     openGLWidget_->geometryChanged(packet);
     overlay_->setPacket(packet);
 }
 
 void Viewport::clearGeometry() { openGLWidget_->clearGeometry(); }
 
-bool Viewport::event(QEvent *event) {
-    switch (event->type()) {
+bool Viewport::event(QEvent* event)
+{
+    switch (event->type())
+    {
     case QEvent::Wheel:
     case QEvent::MouseMove:
     case QEvent::MouseButtonPress:
@@ -54,9 +61,11 @@ bool Viewport::event(QEvent *event) {
         event->ignore();
         return true;
         break;
-    case QEvent::KeyPress: {
-        auto *keyEvent = static_cast<QKeyEvent *>(event);
-        if (keyEvent->key() == Qt::Key_W) {
+    case QEvent::KeyPress:
+    {
+        auto* keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_W)
+        {
             openGLWidget_->toggleWireframe();
             return true;
         }
@@ -68,25 +77,30 @@ bool Viewport::event(QEvent *event) {
     }
 }
 
-void Viewport::handleCamera(QEvent *event) {
-    switch (event->type()) {
-    case QEvent::Wheel: {
-        QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
+void Viewport::handleCamera(QEvent* event)
+{
+    switch (event->type())
+    {
+    case QEvent::Wheel:
+    {
+        QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
         float delta = wheelEvent->angleDelta().y();
         constexpr float mouseSpeed = 0.7;
         openGLWidget_->curCamera.changeRadius(-glm::sign(delta) * mouseSpeed);
         overlay_->setFreeCam();
         break;
     }
-    case QEvent::MouseMove: {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    case QEvent::MouseMove:
+    {
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         QPointF mousePos = mouseEvent->position();
-        GLCamera &camera = openGLWidget_->curCamera;
+        GLCamera& camera = openGLWidget_->curCamera;
         constexpr float rotateSpeed = 0.01;
         constexpr float panSpeed = 0.01;
         constexpr float zoomSpeed = 0.01;
 
-        if (leftMouseDown_) {
+        if (leftMouseDown_)
+        {
             QPointF delta = mousePos - leftStartPos_;
             delta *= -rotateSpeed;
             camera.rotateAroundCenter(delta.x(), {0, 1, 0});
@@ -94,7 +108,8 @@ void Viewport::handleCamera(QEvent *event) {
             leftStartPos_ = mousePos;
             overlay_->setFreeCam();
         }
-        if (middleMouseDown_) {
+        if (middleMouseDown_)
+        {
             QPointF delta = mousePos - middleStartPos_;
             delta *= panSpeed;
             glm::vec3 up = camera.getUp() * static_cast<float>(-delta.y());
@@ -105,7 +120,8 @@ void Viewport::handleCamera(QEvent *event) {
             middleStartPos_ = mousePos;
             overlay_->setFreeCam();
         }
-        if (rightMouseDown_) {
+        if (rightMouseDown_)
+        {
             QPointF delta = mousePos - rightStartPos_;
             delta *= zoomSpeed;
             camera.changeRadius(-delta.x() + delta.y());
@@ -115,24 +131,23 @@ void Viewport::handleCamera(QEvent *event) {
         break;
     }
     case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease: {
+    case QEvent::MouseButtonRelease:
+    {
         bool isDown = event->type() == QEvent::MouseButtonPress;
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        switch (mouseEvent->button()) {
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        switch (mouseEvent->button())
+        {
         case Qt::LeftButton:
             leftMouseDown_ = isDown;
-            if (isDown)
-                leftStartPos_ = mouseEvent->position();
+            if (isDown) leftStartPos_ = mouseEvent->position();
             break;
         case Qt::MiddleButton:
             middleMouseDown_ = isDown;
-            if (isDown)
-                middleStartPos_ = mouseEvent->position();
+            if (isDown) middleStartPos_ = mouseEvent->position();
             break;
         case Qt::RightButton:
             rightMouseDown_ = isDown;
-            if (isDown)
-                rightStartPos_ = mouseEvent->position();
+            if (isDown) rightStartPos_ = mouseEvent->position();
             break;
         default:
             break;

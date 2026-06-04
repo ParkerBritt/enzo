@@ -1,134 +1,158 @@
 #include "Engine/Primitives/Mesh.h"
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Attribute/AttributeHandle.h"
-#include "Engine/Primitives/Primitive.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
+#include "Engine/Primitives/Primitive.h"
+#include "icecream.hpp"
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/task_group.h>
-#include <stdexcept>
-#include <string>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
-#include "icecream.hpp"
 
 namespace enzo {
 
-
-geo::Mesh::Mesh(std::string_view path) :
-    vertexCountFaceHandle_{addIntAttribute(attr::AttrOwner::FACE, "vertexCount", true)},
-    closedFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "closed", true)},
-    pointOffsetVertexHandle_{addIntAttribute(attr::AttrOwner::VERTEX, "point", true)},
-    posPointHandle_{addVector3Attribute(attr::AttrOwner::POINT, "P", true)},
-    validFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "__valid", true, true)},
-    validVertexHandle_{addBoolAttribute(attr::AttrOwner::VERTEX, "__valid", true, true)},
-    validPointHandle_{addBoolAttribute(attr::AttrOwner::POINT, "__valid", true, true)},
-    Primitive(path)
+geo::Mesh::Mesh(std::string_view path)
+    : vertexCountFaceHandle_{addIntAttribute(attr::AttrOwner::FACE, "vertexCount", true)},
+      closedFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "closed", true)},
+      pointOffsetVertexHandle_{addIntAttribute(attr::AttrOwner::VERTEX, "point", true)},
+      posPointHandle_{addVector3Attribute(attr::AttrOwner::POINT, "P", true)},
+      validFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "__valid", true, true)},
+      validVertexHandle_{addBoolAttribute(attr::AttrOwner::VERTEX, "__valid", true, true)},
+      validPointHandle_{addBoolAttribute(attr::AttrOwner::POINT, "__valid", true, true)},
+      Primitive(path)
 {
 }
 
-geo::Mesh::Mesh(const Mesh& other):
-    Primitive(other),
-    // attributes
-    vertexAttributes_{deepCopyAttributes(other.vertexAttributes_)},
-    faceAttributes_{deepCopyAttributes(other.faceAttributes_)},
-    // groups
-    vertexGroups_{deepCopyAttributes(other.vertexGroups_)},
-    faceGroups_{deepCopyAttributes(other.faceGroups_)},
+geo::Mesh::Mesh(const Mesh& other)
+    : Primitive(other),
+      // attributes
+      vertexAttributes_{deepCopyAttributes(other.vertexAttributes_)},
+      faceAttributes_{deepCopyAttributes(other.faceAttributes_)},
+      // groups
+      vertexGroups_{deepCopyAttributes(other.vertexGroups_)},
+      faceGroups_{deepCopyAttributes(other.faceGroups_)},
 
-    // handles
-    vertexCountFaceHandle_{attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true))},
-    closedFaceHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true))},
-    pointOffsetVertexHandle_{attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true))},
-    posPointHandle_{attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true))},
-    validFaceHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true))},
-    validVertexHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true))},
-    validPointHandle_{attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true))},
+      // handles
+      vertexCountFaceHandle_{
+          attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true))
+      },
+      closedFaceHandle_{
+          attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true))
+      },
+      pointOffsetVertexHandle_{
+          attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true))
+      },
+      posPointHandle_{
+          attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true))
+      },
+      validFaceHandle_{
+          attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true))
+      },
+      validVertexHandle_{
+          attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true))
+      },
+      validPointHandle_{
+          attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true))
+      },
 
-    // other
-    soloPoints_{other.soloPoints_},
-    soloPointsDirty_{other.soloPointsDirty_},
-    needsDefrag_{other.needsDefrag_},
-    vertexFaces_{other.vertexFaces_},
-    faceStarts_{other.faceStarts_},
-    faceStartsDirty_{other.faceStartsDirty_.load()}
+      // other
+      soloPoints_{other.soloPoints_}, soloPointsDirty_{other.soloPointsDirty_},
+      needsDefrag_{other.needsDefrag_}, vertexFaces_{other.vertexFaces_},
+      faceStarts_{other.faceStarts_}, faceStartsDirty_{other.faceStartsDirty_.load()}
 {
 }
 
-geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs) {
+geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs)
+{
     if (this == &rhs) return *this;
 
     Primitive::operator=(rhs);
 
     // attributes
-    vertexAttributes_     = deepCopyAttributes(rhs.vertexAttributes_);
-    faceAttributes_       = deepCopyAttributes(rhs.faceAttributes_);
+    vertexAttributes_ = deepCopyAttributes(rhs.vertexAttributes_);
+    faceAttributes_ = deepCopyAttributes(rhs.faceAttributes_);
 
     // groups
-    vertexGroups_         = deepCopyAttributes(rhs.vertexGroups_);
-    faceGroups_           = deepCopyAttributes(rhs.faceGroups_);
+    vertexGroups_ = deepCopyAttributes(rhs.vertexGroups_);
+    faceGroups_ = deepCopyAttributes(rhs.faceGroups_);
 
     // handles
-    vertexCountFaceHandle_ = attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true));
-    closedFaceHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true));
-    pointOffsetVertexHandle_ = attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true));
-    posPointHandle_ = attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true));
-    validFaceHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true));
-    validVertexHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true));
-    validPointHandle_ = attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true));
+    vertexCountFaceHandle_ =
+        attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::FACE, "vertexCount", true));
+    closedFaceHandle_ =
+        attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true));
+    pointOffsetVertexHandle_ =
+        attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true));
+    posPointHandle_ =
+        attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true));
+    validFaceHandle_ =
+        attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true));
+    validVertexHandle_ =
+        attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::VERTEX, "__valid", true));
+    validPointHandle_ =
+        attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::POINT, "__valid", true));
 
     // other
-    soloPoints_           = rhs.soloPoints_;
-    soloPointsDirty_      = rhs.soloPointsDirty_;
-    needsDefrag_          = rhs.needsDefrag_;
-    vertexFaces_          = rhs.vertexFaces_;
-    faceStarts_           = rhs.faceStarts_;
+    soloPoints_ = rhs.soloPoints_;
+    soloPointsDirty_ = rhs.soloPointsDirty_;
+    needsDefrag_ = rhs.needsDefrag_;
+    vertexFaces_ = rhs.vertexFaces_;
+    faceStarts_ = rhs.faceStarts_;
 
     faceStartsDirty_.store(rhs.faceStartsDirty_.load());
 
     return *this;
 }
 
-void geo::Mesh::mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src)
+void geo::Mesh::mergeAppend(
+    std::shared_ptr<attr::Attribute> dst,
+    std::shared_ptr<attr::Attribute> src
+)
 {
-    if(!dst) throw std::runtime_error("Dst empty.");
-    if(!src) throw std::runtime_error("Src empty.");
+    if (!dst) throw std::runtime_error("Dst empty.");
+    if (!src) throw std::runtime_error("Src empty.");
 
     auto dstType = dst->getType();
     auto srcType = src->getType();
 
-    if(dstType != srcType) throw std::runtime_error("mergeAppend type missmatch.");
+    if (dstType != srcType) throw std::runtime_error("mergeAppend type missmatch.");
 
-    switch(srcType)
+    switch (srcType)
     {
-        case attr::AttributeType::intT:
-            mergeAppendImpl<intT>(dst, src);
-            break;
-        case attr::AttributeType::floatT:
-            mergeAppendImpl<floatT>(dst, src);
-            break;
-        case attr::AttributeType::listT:
-            break;
-        case attr::AttributeType::vectorT:
-            // mergeAppendImpl<vector3>(dst, src);
-            break;
-        case attr::AttributeType::boolT:
-            mergeAppendImpl<boolT>(dst, src);
-            break;
-        default:
-            throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
-
+    case attr::AttributeType::intT:
+        mergeAppendImpl<intT>(dst, src);
+        break;
+    case attr::AttributeType::floatT:
+        mergeAppendImpl<floatT>(dst, src);
+        break;
+    case attr::AttributeType::listT:
+        break;
+    case attr::AttributeType::vectorT:
+        // mergeAppendImpl<vector3>(dst, src);
+        break;
+    case attr::AttributeType::boolT:
+        mergeAppendImpl<boolT>(dst, src);
+        break;
+    default:
+        throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
     }
 }
 
-void geo::Mesh::applyTransform(const Matrix4 &mat, TransformClass transformClass) {
-    if ((transformClass & TransformClass::POINT) != TransformClass::NONE) {
+void geo::Mesh::applyTransform(const Matrix4& mat, TransformClass transformClass)
+{
+    if ((transformClass & TransformClass::POINT) != TransformClass::NONE)
+    {
         const Offset numPoints = getNumPoints();
-        tbb::parallel_for(tbb::blocked_range<size_t>(0, numPoints),
-            [&](const tbb::blocked_range<size_t> &range) {
-                for (size_t i = range.begin(); i < range.end(); ++i) {
+        tbb::parallel_for(
+            tbb::blocked_range<size_t>(0, numPoints),
+            [&](const tbb::blocked_range<size_t>& range) {
+                for (size_t i = range.begin(); i < range.end(); ++i)
+                {
                     const Vector3& pos = posPointHandle_[i];
                     // w=1.0 extends to homogeneous coords so the 4x4 matrix
                     // applies translation, rotation, and scale in one multiply
@@ -136,11 +160,13 @@ void geo::Mesh::applyTransform(const Matrix4 &mat, TransformClass transformClass
                     const Vector3 transformed = (mat * pos4).head<3>();
                     posPointHandle_.setValue(i, transformed);
                 }
-            });
+            }
+        );
     }
 }
 
-void geo::Mesh::merge(std::shared_ptr<Primitive> other) {
+void geo::Mesh::merge(std::shared_ptr<Primitive> other)
+{
     auto otherMesh = std::dynamic_pointer_cast<Mesh>(other);
     if (!otherMesh) throw std::runtime_error("Mesh::merge: type mismatch");
     merge(*otherMesh);
@@ -151,23 +177,24 @@ void geo::Mesh::merge(Mesh& other)
     // Copy all unique points and build offset mapping
     const Offset srcPointNum = other.getNumPoints();
     std::vector<Offset> pointMapping(srcPointNum);
-    for(Offset pointOffset=0; pointOffset<srcPointNum; ++pointOffset)
+    for (Offset pointOffset = 0; pointOffset < srcPointNum; ++pointOffset)
     {
         pointMapping[pointOffset] = addPoint(other.getPointPos(pointOffset));
     }
 
     // Create faces using mapped point offsets
     const Offset srcFaceNum = other.getNumFaces();
-    for(Offset faceOffset=0; faceOffset<srcFaceNum; ++faceOffset)
+    for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
     {
         const Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
         const Offset vertexCount = other.getFaceVertCount(faceOffset);
 
         std::vector<Offset> pointOffsets;
         pointOffsets.reserve(vertexCount);
-        for(Offset i=0; i<vertexCount; ++i)
+        for (Offset i = 0; i < vertexCount; ++i)
         {
-            const Offset otherPointOffset = other.pointOffsetVertexHandle_.getValue(faceStartVertex+i);
+            const Offset otherPointOffset =
+                other.pointOffsetVertexHandle_.getValue(faceStartVertex + i);
             pointOffsets.push_back(pointMapping[otherPointOffset]);
         }
         // TODO: check closed status
@@ -175,49 +202,51 @@ void geo::Mesh::merge(Mesh& other)
     }
 
     // Merge vertex attributes
-    for(std::shared_ptr<attr::Attribute> otherAttribute : other.vertexAttributes_)
+    for (std::shared_ptr<attr::Attribute> otherAttribute : other.vertexAttributes_)
     {
         String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::VERTEX, otherAttributeName);
+        std::shared_ptr<attr::Attribute> attribute =
+            getAttribByName(attr::AttrOwner::VERTEX, otherAttributeName);
 
-        if(attribute)
+        if (attribute)
         {
             mergeAppend(attribute, otherAttribute);
         }
     }
 
-    for(std::shared_ptr<attr::Attribute> otherAttribute : other.pointAttributes_)
+    for (std::shared_ptr<attr::Attribute> otherAttribute : other.pointAttributes_)
     {
         String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::POINT, otherAttributeName);
+        std::shared_ptr<attr::Attribute> attribute =
+            getAttribByName(attr::AttrOwner::POINT, otherAttributeName);
 
         bool alreadyExists = static_cast<bool>(attribute);
 
-        if(alreadyExists)
+        if (alreadyExists)
         {
             mergeAppend(attribute, otherAttribute);
         }
     }
 
-    for(std::shared_ptr<attr::Attribute> otherAttribute : other.faceAttributes_)
+    for (std::shared_ptr<attr::Attribute> otherAttribute : other.faceAttributes_)
     {
         String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute = getAttribByName(attr::AttrOwner::FACE, otherAttributeName);
+        std::shared_ptr<attr::Attribute> attribute =
+            getAttribByName(attr::AttrOwner::FACE, otherAttributeName);
 
         bool alreadyExists = static_cast<bool>(attribute);
 
-        if(alreadyExists)
+        if (alreadyExists)
         {
             mergeAppend(attribute, otherAttribute);
         }
     }
-
 }
 
 Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)
 {
     const Offset faceNum = vertexCountFaceHandle_.getSize();
-    for(Offset pointOffset : pointOffsets)
+    for (Offset pointOffset : pointOffsets)
     {
         pointOffsetVertexHandle_.addValue(pointOffset);
         validVertexHandle_.addValue(true);
@@ -230,15 +259,14 @@ Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)
 
     // resize other attributes
     // TODO: this seems terribly inefficient
-    for(auto faceAttribute : faceAttributes_)
+    for (auto faceAttribute : faceAttributes_)
     {
-        if(faceAttribute->isIntrinsic())
+        if (faceAttribute->isIntrinsic())
         {
             continue;
         }
 
-        faceAttribute->resize(faceNum+1);
-
+        faceAttribute->resize(faceNum + 1);
     }
 
     // resize face and vertex groups so they stay aligned with element counts
@@ -255,9 +283,11 @@ Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)
     return faceNum;
 }
 
-std::vector<Offset> geo::Mesh::addFaces(std::span<const Offset> pointOffsetsFlat,
-                                            std::span<const Offset> vertexCounts,
-                                            bool closed)
+std::vector<Offset> geo::Mesh::addFaces(
+    std::span<const Offset> pointOffsetsFlat,
+    std::span<const Offset> vertexCounts,
+    bool closed
+)
 {
     const Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
     const Offset firstVertOffset = pointOffsetVertexHandle_.getSize();
@@ -346,7 +376,8 @@ void geo::Mesh::deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoin
         }
 
         // Invalidate the remaining orphans.
-        for (Offset p : orphanCandidates) validPointHandle_.setValue(p, false);
+        for (Offset p : orphanCandidates)
+            validPointHandle_.setValue(p, false);
     }
 
     needsDefrag_ = true;
@@ -412,7 +443,11 @@ void geo::Mesh::deleteVertices(const std::vector<Offset>& vertOffsets)
         bool anyValid = false;
         for (Offset v = start; v < start + count; ++v)
         {
-            if (validVertexHandle_.getValue(v)) { anyValid = true; break; }
+            if (validVertexHandle_.getValue(v))
+            {
+                anyValid = true;
+                break;
+            }
         }
         if (!anyValid) validFaceHandle_.setValue(f, false);
     }
@@ -421,20 +456,11 @@ void geo::Mesh::deleteVertices(const std::vector<Offset>& vertOffsets)
     soloPointsDirty_ = true;
 }
 
-bool geo::Mesh::isValidFace(Offset offset) const
-{
-    return validFaceHandle_.getValue(offset);
-}
+bool geo::Mesh::isValidFace(Offset offset) const { return validFaceHandle_.getValue(offset); }
 
-bool geo::Mesh::isValidVertex(Offset offset) const
-{
-    return validVertexHandle_.getValue(offset);
-}
+bool geo::Mesh::isValidVertex(Offset offset) const { return validVertexHandle_.getValue(offset); }
 
-bool geo::Mesh::isValidPoint(Offset offset) const
-{
-    return validPointHandle_.getValue(offset);
-}
+bool geo::Mesh::isValidPoint(Offset offset) const { return validPointHandle_.getValue(offset); }
 
 void geo::Mesh::defragment()
 {
@@ -459,13 +485,17 @@ void geo::Mesh::defragment()
 
     // Compact every face attribute and group by face validity.
     std::vector<bool> faceKeep = validFaceHandle_.getAllValues();
-    for (auto& attr : faceAttributes_) if (attr) attr->compact(faceKeep);
-    for (auto& group : faceGroups_) if (group) group->compact(faceKeep);
+    for (auto& attr : faceAttributes_)
+        if (attr) attr->compact(faceKeep);
+    for (auto& group : faceGroups_)
+        if (group) group->compact(faceKeep);
 
     // Compact every vertex attribute and group by vertex validity.
     std::vector<bool> vertKeep = validVertexHandle_.getAllValues();
-    for (auto& attr : vertexAttributes_) if (attr) attr->compact(vertKeep);
-    for (auto& group : vertexGroups_) if (group) group->compact(vertKeep);
+    for (auto& attr : vertexAttributes_)
+        if (attr) attr->compact(vertKeep);
+    for (auto& group : vertexGroups_)
+        if (group) group->compact(vertKeep);
 
     // Compact every point attribute by point validity, building an old → new
     // offset map so we can update everything that references point offsets.
@@ -476,8 +506,10 @@ void geo::Mesh::defragment()
     {
         if (pointKeep[i]) pointRemap[i] = newPointOffset++;
     }
-    for (auto& attr : pointAttributes_) if (attr) attr->compact(pointKeep);
-    for (auto& group : pointGroups_) if (group) group->compact(pointKeep);
+    for (auto& attr : pointAttributes_)
+        if (attr) attr->compact(pointKeep);
+    for (auto& group : pointGroups_)
+        if (group) group->compact(pointKeep);
 
     // Remap surviving vertex → point references to the compacted point offsets.
     const Offset newVertCount = pointOffsetVertexHandle_.getSize();
@@ -496,14 +528,15 @@ void geo::Mesh::defragment()
     for (Offset f = 0; f < faceCount; ++f)
     {
         const Offset count = getFaceVertCount(f);
-        for (Offset v = 0; v < count; ++v) vertexFaces_.push_back(f);
+        for (Offset v = 0; v < count; ++v)
+            vertexFaces_.push_back(f);
     }
 
     faceStartsDirty_.store(true);
     needsDefrag_ = false;
 }
 
-Offset  geo::Mesh::addPoint(const Vector3& pos)
+Offset geo::Mesh::addPoint(const Vector3& pos)
 {
     const Offset pointOffset = posPointHandle_.getSize();
 
@@ -545,7 +578,8 @@ std::vector<Offset> geo::Mesh::addPoints(std::span<const Vector3> positions)
     return newPointOffsets;
 }
 
-std::vector<Offset> geo::Mesh::duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes)
+std::vector<Offset>
+geo::Mesh::duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes)
 {
     // Gather the source positions, then let addPoints grow the stores in one shot
     std::vector<Vector3> positions;
@@ -615,10 +649,7 @@ Vector3 geo::Mesh::getPointPos(Offset pointOffset) const
     return posPointHandle_.getValue(pointOffset);
 }
 
-Offset geo::Mesh::getVertexFace(Offset vertexOffset) const
-{
-    return vertexFaces_[vertexOffset];
-}
+Offset geo::Mesh::getVertexFace(Offset vertexOffset) const { return vertexFaces_[vertexOffset]; }
 
 void geo::Mesh::setPointPos(const Offset offset, const Vector3& pos)
 {
@@ -647,7 +678,8 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
     attr::AttributeHandleInt pointAttrHandle = attr::AttributeHandleInt(pointAttr);
     auto vertexPointIndices = pointAttrHandle.getAllValues();
 
-    std::shared_ptr<attr::Attribute> vertexCountAttr = getAttribByName(attr::AttrOwner::FACE, "vertexCount");
+    std::shared_ptr<attr::Attribute> vertexCountAttr =
+        getAttribByName(attr::AttrOwner::FACE, "vertexCount");
     attr::AttributeHandleInt vertexCountHandle = attr::AttributeHandleInt(vertexCountAttr);
     auto vertexCounts = vertexCountHandle.getAllValues();
 
@@ -657,16 +689,17 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
     std::vector<geo::vertexDescriptor> facePoints;
     facePoints.reserve(16);
 
-    for(auto pointPos : pointPositions)
+    for (auto pointPos : pointPositions)
     {
-        geo::vertexDescriptor point = heMesh.add_vertex(geo::Point(pointPos.x(), pointPos.y(), pointPos.z()));
+        geo::vertexDescriptor point =
+            heMesh.add_vertex(geo::Point(pointPos.x(), pointPos.y(), pointPos.z()));
         createdPoints.push_back(point);
     }
 
     CGAL::Polygon_mesh_processing::orient(heMesh);
 
     // iterate through each face
-    for(int faceIndx=0; faceIndx<vertexCounts.size(); ++faceIndx)
+    for (int faceIndx = 0; faceIndx < vertexCounts.size(); ++faceIndx)
     {
         facePoints.clear();
 
@@ -674,7 +707,7 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
         auto vertexCount = vertexCounts[faceIndx];
 
         // create face vertices
-        for(int i=0; i<vertexCount; ++i)
+        for (int i = 0; i < vertexCount; ++i)
         {
             auto pointIndex = vertexPointIndices.at(vertexIndex);
             facePoints.push_back(createdPoints[pointIndex]);
@@ -691,7 +724,8 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
         std::cout << std::endl;
 
         std::cout << "Point indices: ";
-        for (int i = 0; i < vertexCount; ++i) {
+        for (int i = 0; i < vertexCount; ++i)
+        {
             int pointIndex = vertexPointIndices.at(vertexIndex - vertexCount + i);
             std::cout << pointIndex << " ";
         }
@@ -699,13 +733,16 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
         // debug
 
         auto face = heMesh.add_face(facePoints);
-        if (face != HeMesh::null_face()) {
+        if (face != HeMesh::null_face())
+        {
             // validFaceIndices.push_back(geo::F_index(faceIndx));
-        } else {
-            // throw std::runtime_error("Warning: Face creation failed at primitive " + std::to_string(faceIndx));
+        }
+        else
+        {
+            // throw std::runtime_error("Warning: Face creation failed at primitive " +
+            // std::to_string(faceIndx));
         }
     }
-
 
     return heMesh;
 }
@@ -713,10 +750,10 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
 Offset geo::Mesh::getFaceStartVertex(Offset faceOffset) const
 {
 
-    if(faceStartsDirty_.load())
+    if (faceStartsDirty_.load())
     {
-        tbb::spin_mutex::scoped_lock lock(faceStartsMutex_); //lock
-        if(faceStartsDirty_.load()) // double check
+        tbb::spin_mutex::scoped_lock lock(faceStartsMutex_); // lock
+        if (faceStartsDirty_.load())                         // double check
         {
             computeFaceStartVertices();
         }
@@ -730,7 +767,7 @@ void geo::Mesh::computeFaceStartVertices() const
     faceStarts_.clear();
     faceStarts_.reserve(handleSize);
     intT faceStart = 0;
-    for(size_t i=0; i<handleSize; ++i)
+    for (size_t i = 0; i < handleSize; ++i)
     {
         faceStarts_.push_back(faceStart);
         faceStart += vertexCountFaceHandle_.getValue(i);
@@ -745,73 +782,72 @@ boolT geo::Mesh::isClosed(Offset faceOffset) const
 
 attr::attribVector& geo::Mesh::getAttributeStore(const attr::AttributeOwner& owner)
 {
-    switch(owner)
+    switch (owner)
     {
-        case attr::AttributeOwner::VERTEX:
-            return vertexAttributes_;
-        case attr::AttributeOwner::FACE:
-            return faceAttributes_;
-        default:
-            return Primitive::getAttributeStore(owner);
+    case attr::AttributeOwner::VERTEX:
+        return vertexAttributes_;
+    case attr::AttributeOwner::FACE:
+        return faceAttributes_;
+    default:
+        return Primitive::getAttributeStore(owner);
     }
 }
 
 const attr::attribVector& geo::Mesh::getAttributeStore(const attr::AttributeOwner& owner) const
 {
-    switch(owner)
+    switch (owner)
     {
-        case attr::AttributeOwner::VERTEX:
-            return vertexAttributes_;
-        case attr::AttributeOwner::FACE:
-            return faceAttributes_;
-        default:
-            return Primitive::getAttributeStore(owner);
+    case attr::AttributeOwner::VERTEX:
+        return vertexAttributes_;
+    case attr::AttributeOwner::FACE:
+        return faceAttributes_;
+    default:
+        return Primitive::getAttributeStore(owner);
     }
 }
 
 attr::attribVector& geo::Mesh::getGroupStore(const attr::AttributeOwner& owner)
 {
-    switch(owner)
+    switch (owner)
     {
-        case attr::AttributeOwner::VERTEX:
-            return vertexGroups_;
-        case attr::AttributeOwner::FACE:
-            return faceGroups_;
-        default:
-            return Primitive::getGroupStore(owner);
+    case attr::AttributeOwner::VERTEX:
+        return vertexGroups_;
+    case attr::AttributeOwner::FACE:
+        return faceGroups_;
+    default:
+        return Primitive::getGroupStore(owner);
     }
 }
 
 const attr::attribVector& geo::Mesh::getGroupStore(const attr::AttributeOwner& owner) const
 {
-    switch(owner)
+    switch (owner)
     {
-        case attr::AttributeOwner::VERTEX:
-            return vertexGroups_;
-        case attr::AttributeOwner::FACE:
-            return faceGroups_;
-        default:
-            return Primitive::getGroupStore(owner);
+    case attr::AttributeOwner::VERTEX:
+        return vertexGroups_;
+    case attr::AttributeOwner::FACE:
+        return faceGroups_;
+    default:
+        return Primitive::getGroupStore(owner);
     }
 }
 
-geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute)
-    : mesh_(mesh)
+geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute) : mesh_(mesh)
 {
     std::shared_ptr<const attr::Attribute> normalAttr =
         mesh.getAttribByName(attr::AttrOwner::FACE, "Normal");
-    if(normalAttr)
+    if (normalAttr)
     {
         cached_.emplace(normalAttr);
         return;
     }
 
-    if(precompute)
+    if (precompute)
     {
         const std::span<const Vector3> positions = mesh.posPointHandle_.getSpan();
         const Offset numFaces = mesh.getNumFaces();
         precomputed_.reserve(numFaces);
-        for(Offset faceOffset=0; faceOffset<numFaces; ++faceOffset)
+        for (Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
         {
             precomputed_.push_back(utils::polygonNormal(positions, mesh.getFacePoints(faceOffset)));
         }
@@ -820,25 +856,24 @@ geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute)
 
 Vector3 geo::FaceNormalHandle::operator[](Offset faceOffset) const
 {
-    if(cached_) return cached_->getValue(faceOffset);
-    if(!precomputed_.empty()) return precomputed_[faceOffset];
+    if (cached_) return cached_->getValue(faceOffset);
+    if (!precomputed_.empty()) return precomputed_[faceOffset];
     // Re-resolve the position span on each call so addPoint between reads
     // can't dangle the data pointer through a std::vector reallocation.
     return utils::polygonNormal(mesh_.posPointHandle_.getSpan(), mesh_.getFacePoints(faceOffset));
 }
 
 geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, bool precompute)
-    : mesh_(mesh),
-      faceNormals_(mesh.getFaceNormal(precompute))
+    : mesh_(mesh), faceNormals_(mesh.getFaceNormal(precompute))
 {
     std::shared_ptr<const attr::Attribute> normalAttr =
         mesh.getAttribByName(attr::AttrOwner::VERTEX, "Normal");
-    if(normalAttr) cached_.emplace(normalAttr);
+    if (normalAttr) cached_.emplace(normalAttr);
 }
 
 Vector3 geo::VertexNormalHandle::operator[](Offset vertexOffset) const
 {
-    if(cached_) return cached_->getValue(vertexOffset);
+    if (cached_) return cached_->getValue(vertexOffset);
     return faceNormals_[mesh_.getVertexFace(vertexOffset)];
 }
 

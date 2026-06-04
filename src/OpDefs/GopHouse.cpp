@@ -3,9 +3,8 @@
 #include <tbb/parallel_for.h>
 
 GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GOP_house::cookOp(enzo::op::Context context)
@@ -13,7 +12,7 @@ void GOP_house::cookOp(enzo::op::Context context)
     using namespace enzo;
     // std::cout << "COOKING\n";
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         // TODO: convert to NodePacket
         NodePacket packet;
@@ -65,12 +64,9 @@ void GOP_house::cookOp(enzo::op::Context context)
 
         setOutputPacket(0, packet);
     }
-
 }
 
 std::vector<enzo::prm::Template> GOP_house::parameterList()
 {
-    return {
-        enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1)
-    };
+    return {enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1)};
 }

@@ -8,19 +8,20 @@
 #include <qboxlayout.h>
 #include <qwidget.h>
 
-class Viewport : public Panel {
+class Viewport : public Panel
+{
   public:
-    Viewport(QWidget *parent = nullptr);
+    Viewport(QWidget* parent = nullptr);
     void setGeometry(std::shared_ptr<const enzo::NodePacket> packet);
     void clearGeometry();
 
   private:
-    QBoxLayout *mainLayout_;
-    ViewportGLWidget *openGLWidget_;
-    ViewportOverlay *overlay_;
-    bool event(QEvent *event) override;
+    QBoxLayout* mainLayout_;
+    ViewportGLWidget* openGLWidget_;
+    ViewportOverlay* overlay_;
+    bool event(QEvent* event) override;
     Qt::Key cameraMod_ = Qt::Key_Space;
-    void handleCamera(QEvent *event);
+    void handleCamera(QEvent* event);
 
     // TODO: maybe simplify positions to mouseDownPos
     bool middleMouseDown_ = false;

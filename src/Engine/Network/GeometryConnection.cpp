@@ -5,15 +5,21 @@
 
 namespace enzo {
 
-nt::GeometryConnection::GeometryConnection(nt::OpId inputOpId, unsigned int inputIndex, nt::OpId outputOpId, unsigned int outputIndex)
-:inputOperatorId_{inputOpId}, inputIndex_{inputIndex}, outputOperatorId_{outputOpId}, outputIndex_{outputIndex}
-{    
+nt::GeometryConnection::GeometryConnection(
+    nt::OpId inputOpId,
+    unsigned int inputIndex,
+    nt::OpId outputOpId,
+    unsigned int outputIndex
+)
+    : inputOperatorId_{inputOpId}, inputIndex_{inputIndex}, outputOperatorId_{outputOpId},
+      outputIndex_{outputIndex}
+{
 }
 
-nt::OpId nt::GeometryConnection::getInputOpId() const {return inputOperatorId_; }
-nt::OpId nt::GeometryConnection::getOutputOpId() const {return outputOperatorId_; }
-unsigned int nt::GeometryConnection::getInputIndex() const {return inputIndex_; }
-unsigned int nt::GeometryConnection::getOutputIndex() const {return outputIndex_; }
+nt::OpId nt::GeometryConnection::getInputOpId() const { return inputOperatorId_; }
+nt::OpId nt::GeometryConnection::getOutputOpId() const { return outputOperatorId_; }
+unsigned int nt::GeometryConnection::getInputIndex() const { return inputIndex_; }
+unsigned int nt::GeometryConnection::getOutputIndex() const { return outputIndex_; }
 
 void nt::GeometryConnection::remove()
 {
@@ -21,8 +27,12 @@ void nt::GeometryConnection::remove()
     std::cout << "removing connection " << this;
 
     auto cmd = std::make_unique<ChangeConnectionCommand>(
-        inputOperatorId_, inputIndex_, outputOperatorId_, outputIndex_,
-        ChangeConnectionCommand::Action::Disconnect);
+        inputOperatorId_,
+        inputIndex_,
+        outputOperatorId_,
+        outputIndex_,
+        ChangeConnectionCommand::Action::Disconnect
+    );
     nm.undoStack().push(std::move(cmd));
 
     nm.getGeoOperator(inputOperatorId_).removeOutputConnection(this);

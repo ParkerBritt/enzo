@@ -1,12 +1,11 @@
 #pragma once
+#include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
-#include "Engine/Core/Types.h"
 
-class GopOceanSurface
-: public enzo::nt::GeometryOpDef
+class GopOceanSurface : public enzo::nt::GeometryOpDef
 {
-public:
+  public:
     GopOceanSurface(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
     enzo::Vector3 getSurfacePos(const enzo::Vector3 pos);
@@ -16,5 +15,4 @@ public:
     }
 
     static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
-
 };

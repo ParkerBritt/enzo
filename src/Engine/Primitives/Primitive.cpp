@@ -8,19 +8,19 @@
 
 namespace enzo {
 
-
 geo::Primitive::Primitive(std::string_view path) : path_(path) {}
 
-geo::Primitive::Primitive(const Primitive &other)
+geo::Primitive::Primitive(const Primitive& other)
     : pointAttributes_{deepCopyAttributes(other.pointAttributes_)},
       primitiveAttributes_{deepCopyAttributes(other.primitiveAttributes_)},
       pointGroups_{deepCopyAttributes(other.pointGroups_)},
-      primitiveGroups_{deepCopyAttributes(other.primitiveGroups_)},
-      path_{other.path_} {}
+      primitiveGroups_{deepCopyAttributes(other.primitiveGroups_)}, path_{other.path_}
+{
+}
 
-geo::Primitive &geo::Primitive::operator=(const geo::Primitive &rhs) {
-    if (this == &rhs)
-        return *this;
+geo::Primitive& geo::Primitive::operator=(const geo::Primitive& rhs)
+{
+    if (this == &rhs) return *this;
 
     pointAttributes_ = deepCopyAttributes(rhs.pointAttributes_);
     primitiveAttributes_ = deepCopyAttributes(rhs.primitiveAttributes_);
@@ -31,40 +31,49 @@ geo::Primitive &geo::Primitive::operator=(const geo::Primitive &rhs) {
     return *this;
 }
 
-const size_t geo::Primitive::getNumAttributes(const attr::AttributeOwner owner) const {
+const size_t geo::Primitive::getNumAttributes(const attr::AttributeOwner owner) const
+{
     size_t count = 0;
-    for (const auto &attribute : getAttributeStore(owner)) {
-        if (attribute && !attribute->isPrivate())
-            ++count;
+    for (const auto& attribute : getAttributeStore(owner))
+    {
+        if (attribute && !attribute->isPrivate()) ++count;
     }
     return count;
 }
 
-std::weak_ptr<const attr::Attribute> geo::Primitive::getAttributeByIndex(attr::AttributeOwner owner,
-                                                                       unsigned int index) const {
-    const auto &attribStore = getAttributeStore(owner);
+std::weak_ptr<const attr::Attribute>
+geo::Primitive::getAttributeByIndex(attr::AttributeOwner owner, unsigned int index) const
+{
+    const auto& attribStore = getAttributeStore(owner);
     unsigned int visibleIndex = 0;
-    for (const auto &attribute : attribStore) {
-        if (!attribute || attribute->isPrivate())
-            continue;
-        if (visibleIndex == index)
-            return attribute;
+    for (const auto& attribute : attribStore)
+    {
+        if (!attribute || attribute->isPrivate()) continue;
+        if (visibleIndex == index) return attribute;
         ++visibleIndex;
     }
-    throw std::out_of_range("Attribute index out of range: " + std::to_string(index) +
-                            " visible size: " + std::to_string(visibleIndex) + "\n");
+    throw std::out_of_range(
+        "Attribute index out of range: " + std::to_string(index) +
+        " visible size: " + std::to_string(visibleIndex) + "\n"
+    );
 }
 
-attr::AttributeHandleInt geo::Primitive::addIntAttribute(attr::AttributeOwner owner, std::string name,
-                                                       bool intrinsic) {
+attr::AttributeHandleInt
+geo::Primitive::addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
+{
     auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::intT, intrinsic);
     newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return attr::AttributeHandleInt(newAttribute);
 }
 
-attr::AttributeHandleBool geo::Primitive::addBoolAttribute(attr::AttributeOwner owner, std::string name,
-                                                         bool intrinsic, bool isPrivate) {
+attr::AttributeHandleBool geo::Primitive::addBoolAttribute(
+    attr::AttributeOwner owner,
+    std::string name,
+    bool intrinsic,
+    bool isPrivate
+)
+{
     auto newAttribute =
         std::make_shared<attr::Attribute>(name, attr::AttrType::boolT, intrinsic, isPrivate);
     newAttribute->resize(getElementCount(owner));
@@ -73,7 +82,8 @@ attr::AttributeHandleBool geo::Primitive::addBoolAttribute(attr::AttributeOwner 
 }
 
 attr::AttributeHandle<Vector3>
-geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic) {
+geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
+{
     auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::vectorT, intrinsic);
     newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
@@ -81,15 +91,18 @@ geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name
 }
 
 attr::AttributeHandle<Matrix4>
-geo::Primitive::addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic) {
+geo::Primitive::addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
+{
     auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::matrixT, intrinsic);
     newAttribute->resize(getElementCount(owner));
     getAttributeStore(owner).push_back(newAttribute);
     return attr::AttributeHandle<Matrix4>(newAttribute);
 }
 
-attr::attribVector &geo::Primitive::getAttributeStore(const attr::AttributeOwner &owner) {
-    switch (owner) {
+attr::attribVector& geo::Primitive::getAttributeStore(const attr::AttributeOwner& owner)
+{
+    switch (owner)
+    {
     case attr::AttributeOwner::POINT:
         return pointAttributes_;
     case attr::AttributeOwner::PRIMITIVE:
@@ -99,9 +112,10 @@ attr::attribVector &geo::Primitive::getAttributeStore(const attr::AttributeOwner
     }
 }
 
-const attr::attribVector &
-geo::Primitive::getAttributeStore(const attr::AttributeOwner &owner) const {
-    switch (owner) {
+const attr::attribVector& geo::Primitive::getAttributeStore(const attr::AttributeOwner& owner) const
+{
+    switch (owner)
+    {
     case attr::AttributeOwner::POINT:
         return pointAttributes_;
     case attr::AttributeOwner::PRIMITIVE:
@@ -111,8 +125,10 @@ geo::Primitive::getAttributeStore(const attr::AttributeOwner &owner) const {
     }
 }
 
-attr::attribVector &geo::Primitive::getGroupStore(const attr::AttributeOwner &owner) {
-    switch (owner) {
+attr::attribVector& geo::Primitive::getGroupStore(const attr::AttributeOwner& owner)
+{
+    switch (owner)
+    {
     case attr::AttributeOwner::POINT:
         return pointGroups_;
     case attr::AttributeOwner::PRIMITIVE:
@@ -122,9 +138,10 @@ attr::attribVector &geo::Primitive::getGroupStore(const attr::AttributeOwner &ow
     }
 }
 
-const attr::attribVector &
-geo::Primitive::getGroupStore(const attr::AttributeOwner &owner) const {
-    switch (owner) {
+const attr::attribVector& geo::Primitive::getGroupStore(const attr::AttributeOwner& owner) const
+{
+    switch (owner)
+    {
     case attr::AttributeOwner::POINT:
         return pointGroups_;
     case attr::AttributeOwner::PRIMITIVE:
@@ -134,18 +151,20 @@ geo::Primitive::getGroupStore(const attr::AttributeOwner &owner) const {
     }
 }
 
-size_t geo::Primitive::getElementCount(const attr::AttributeOwner &owner) const {
+size_t geo::Primitive::getElementCount(const attr::AttributeOwner& owner) const
+{
     // Primitive owners carry exactly one entry per primitive instance.
     if (owner == attr::AttributeOwner::PRIMITIVE) return 1;
 
     // For the other owners every attribute in the store shares a length,
     // so the first attribute's size is the canonical element count.
-    const auto &store = getAttributeStore(owner);
+    const auto& store = getAttributeStore(owner);
     if (store.empty()) return 0;
     return store.front()->getSize();
 }
 
-attr::AttributeHandleBool geo::Primitive::createGroup(attr::AttributeOwner owner, std::string name) {
+attr::AttributeHandleBool geo::Primitive::createGroup(attr::AttributeOwner owner, std::string name)
+{
     auto newGroup = std::make_shared<attr::Attribute>(name, attr::AttrType::boolT);
     // Match the owner's current element count so existing elements start as non-members.
     newGroup->resize(getElementCount(owner));
@@ -153,86 +172,113 @@ attr::AttributeHandleBool geo::Primitive::createGroup(attr::AttributeOwner owner
     return attr::AttributeHandleBool(newGroup);
 }
 
-void geo::Primitive::addToGroup(attr::AttributeOwner owner, const std::string &name,
-                                const std::vector<Offset> &offsets) {
+void geo::Primitive::addToGroup(
+    attr::AttributeOwner owner,
+    const std::string& name,
+    const std::vector<Offset>& offsets
+)
+{
     auto group = getGroupByName(owner, name);
     if (!group) throw std::runtime_error("addToGroup: no group named '" + name + "'");
     attr::AttributeHandleBool handle(group);
-    for (Offset offset : offsets) {
+    for (Offset offset : offsets)
+    {
         handle.setValue(offset, true);
     }
 }
 
-std::shared_ptr<attr::Attribute> geo::Primitive::getGroupByName(attr::AttributeOwner owner,
-                                                              const std::string &name) const {
-    for (const auto &group : getGroupStore(owner)) {
+std::shared_ptr<attr::Attribute>
+geo::Primitive::getGroupByName(attr::AttributeOwner owner, const std::string& name) const
+{
+    for (const auto& group : getGroupStore(owner))
+    {
         if (group && group->getName() == name) return group;
     }
     return nullptr;
 }
 
-size_t geo::Primitive::getNumGroups(attr::AttributeOwner owner) const {
+size_t geo::Primitive::getNumGroups(attr::AttributeOwner owner) const
+{
     return getGroupStore(owner).size();
 }
 
 std::weak_ptr<const attr::Attribute>
-geo::Primitive::getGroupByIndex(attr::AttributeOwner owner, unsigned int index) const {
-    const auto &store = getGroupStore(owner);
-    if (index >= store.size()) {
-        throw std::out_of_range("Group index out of range: " + std::to_string(index) +
-                                " size: " + std::to_string(store.size()));
+geo::Primitive::getGroupByIndex(attr::AttributeOwner owner, unsigned int index) const
+{
+    const auto& store = getGroupStore(owner);
+    if (index >= store.size())
+    {
+        throw std::out_of_range(
+            "Group index out of range: " + std::to_string(index) +
+            " size: " + std::to_string(store.size())
+        );
     }
     return store[index];
 }
 
-bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string name) {
+bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string name)
+{
     return static_cast<bool>(getAttribByName(owner, name));
 }
 
-std::shared_ptr<attr::Attribute> geo::Primitive::getAttribByName(attr::AttributeOwner owner,
-                                                               std::string name,
-                                                               bool includeIntrinsics) {
-    auto &vector = getAttributeStore(owner);
-    for (auto it = vector.begin(); it != vector.end(); ++it) {
+std::shared_ptr<attr::Attribute> geo::Primitive::getAttribByName(
+    attr::AttributeOwner owner,
+    std::string name,
+    bool includeIntrinsics
+)
+{
+    auto& vector = getAttributeStore(owner);
+    for (auto it = vector.begin(); it != vector.end(); ++it)
+    {
         std::shared_ptr<attr::Attribute> attribute = (*it);
-        if (attribute->getName() == name) {
-            if (!includeIntrinsics && attribute->isIntrinsic())
-                continue;
+        if (attribute->getName() == name)
+        {
+            if (!includeIntrinsics && attribute->isIntrinsic()) continue;
             return attribute;
         }
     }
     return nullptr;
 }
 
-std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(attr::AttributeOwner owner,
-                                                                     std::string name,
-                                                                     bool includeIntrinsics) const {
-    const auto &vector = getAttributeStore(owner);
-    for (const std::shared_ptr<attr::Attribute>& attribute : vector) {
-        if (attribute->getName() == name) {
-            if (!includeIntrinsics && attribute->isIntrinsic())
-                continue;
+std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(
+    attr::AttributeOwner owner,
+    std::string name,
+    bool includeIntrinsics
+) const
+{
+    const auto& vector = getAttributeStore(owner);
+    for (const std::shared_ptr<attr::Attribute>& attribute : vector)
+    {
+        if (attribute->getName() == name)
+        {
+            if (!includeIntrinsics && attribute->isIntrinsic()) continue;
             return attribute;
         }
     }
     return nullptr;
 }
 
-void geo::Primitive::incrementVersion() {
+void geo::Primitive::incrementVersion()
+{
     // TODO: temporary placeholder. Replace once PrimPath class is implemented
     path_ += "_02";
 }
 
-attr::attribVector geo::Primitive::deepCopyAttributes(attr::attribVector originalVector) {
+attr::attribVector geo::Primitive::deepCopyAttributes(attr::attribVector originalVector)
+{
     attr::attribVector copied;
     const size_t sourceSize = originalVector.size();
 
     copied.reserve(sourceSize);
 
-    for (const std::shared_ptr<attr::Attribute> sourceAttrib : originalVector) {
-        if (sourceAttrib) {
+    for (const std::shared_ptr<attr::Attribute> sourceAttrib : originalVector)
+    {
+        if (sourceAttrib)
+        {
             copied.push_back(std::make_shared<attr::Attribute>(*sourceAttrib));
-        } else {
+        }
+        else
+        {
             copied.push_back(nullptr);
         }
     }

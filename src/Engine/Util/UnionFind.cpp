@@ -1,13 +1,13 @@
 #include "Engine/Util/UnionFind.h"
 #include <utility>
 
-namespace enzo::util
-{
+namespace enzo::util {
 
 UnionFind::UnionFind(std::size_t elementCount)
     : parent_(elementCount), rank_(elementCount, 0), componentCount_(elementCount)
 {
-    for (std::size_t i = 0; i < elementCount; ++i) parent_[i] = i;
+    for (std::size_t i = 0; i < elementCount; ++i)
+        parent_[i] = i;
 }
 
 std::size_t UnionFind::find(std::size_t x)
@@ -35,4 +35,4 @@ bool UnionFind::unite(std::size_t a, std::size_t b)
     return true;
 }
 
-} // namespace util
+} // namespace enzo::util

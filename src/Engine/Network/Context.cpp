@@ -1,27 +1,25 @@
 #include "Engine/Network/Context.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
-#include "Engine/Core/Types.h"
 #include <exception>
+#include <icecream.hpp>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <icecream.hpp>
 
 namespace enzo {
 
-
 op::Context::Context(nt::OpId opId, nt::NetworkManager& networkManager)
-: opId_{opId}, networkManager_(networkManager)
+    : opId_{opId}, networkManager_(networkManager)
 {
-
 }
 
 NodePacket op::Context::cloneInputPacket(unsigned int inputIndex)
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
-    if(!inputConnection)
+    if (!inputConnection)
     {
         return NodePacket();
     }
@@ -43,7 +41,7 @@ floatT op::Context::evalFloatParm(std::string_view parmName, const unsigned int 
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
-    if(auto sharedParm = parameter.lock())
+    if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalFloat(index);
     }
@@ -59,7 +57,7 @@ intT op::Context::evalIntParm(std::string_view parmName, const unsigned int inde
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
-    if(auto sharedParm = parameter.lock())
+    if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalInt(index);
     }
@@ -75,7 +73,7 @@ boolT op::Context::evalBoolParm(std::string_view parmName, const unsigned int in
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
-    if(auto sharedParm = parameter.lock())
+    if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalInt(index);
     }
@@ -91,7 +89,7 @@ String op::Context::evalStringParm(std::string_view parmName, const unsigned int
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
 
-    if(auto sharedParm = parameter.lock())
+    if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalString(index);
     }

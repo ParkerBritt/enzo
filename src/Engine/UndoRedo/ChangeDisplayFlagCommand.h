@@ -1,27 +1,32 @@
 #pragma once
 
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <optional>
 
 namespace enzo::nt {
 
-class ChangeDisplayFlagCommand : public UndoCommand {
+class ChangeDisplayFlagCommand : public UndoCommand
+{
   public:
-    ChangeDisplayFlagCommand(std::optional<OpId> prev, OpId next)
-        : prev_(prev), next_(next) {}
+    ChangeDisplayFlagCommand(std::optional<OpId> prev, OpId next) : prev_(prev), next_(next) {}
 
-    void undo() override {
-        if (prev_.has_value()) {
+    void undo() override
+    {
+        if (prev_.has_value())
+        {
             if (!nm().isValidOp(*prev_)) return;
             nm().setDisplayOp(*prev_);
-        } else {
+        }
+        else
+        {
             nm().clearDisplayFlag();
         }
     }
 
-    void redo() override {
+    void redo() override
+    {
         if (!nm().isValidOp(next_)) return;
         nm().setDisplayOp(next_);
     }
