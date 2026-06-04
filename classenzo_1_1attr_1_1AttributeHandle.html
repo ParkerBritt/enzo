@@ -113,7 +113,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a024cb9b4a8bf06a921ba32387f12697a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an element to the end of the attribute.  <br /></td></tr>
 <tr class="separator:a024cb9b4a8bf06a921ba32387f12697a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a130fdecdc05f5eced9b17cb5a7a84605" id="r_a130fdecdc05f5eced9b17cb5a7a84605"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a130fdecdc05f5eced9b17cb5a7a84605">resize</a> (std::size_t newSize)</td></tr>
-<tr class="memdesc:a130fdecdc05f5eced9b17cb5a7a84605"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserves more space in the attribute to add new elements.  <br /></td></tr>
+<tr class="memdesc:a130fdecdc05f5eced9b17cb5a7a84605"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes more space in the attribute to add new elements.  <br /></td></tr>
 <tr class="separator:a130fdecdc05f5eced9b17cb5a7a84605"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23012a2cb26a638ca6c26e13e2371740" id="r_a23012a2cb26a638ca6c26e13e2371740"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23012a2cb26a638ca6c26e13e2371740">getAllValues</a> () const</td></tr>
 <tr class="memdesc:a23012a2cb26a638ca6c26e13e2371740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a vector containing all the values stored in this attribute.  <br /></td></tr>
@@ -379,15 +379,12 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Reserves more space in the attribute to add new elements. </p>
-<p>This is important when adding many elements to the attribute as automatic resizing is expensive.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">newCap</td><td>The new maximum number of elements the attribute can hold before needing to automatically allocate more.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Resizes more space in the attribute to add new elements</p>
+<p>Resizes more space in the attribute to add new elements. </p>
+<pre class="fragment">     @brief Reserves more space in the attribute to add new elements
+
+     This is important when adding many elements to the attribute as automatic resizing is
+</pre><p> expensive. </p><pre class="fragment">     @param newCap The new maximum number of elements the attribute can hold before needing to
+</pre><p> automatically allocate more. </p>
 <p>Resizes the container to contain count elements, does nothing if count == size().</p>
 <p>If the current size is greater than count, the container is reduced to its first count elements.</p>
 <p>If the current size is less than count, then:</p>

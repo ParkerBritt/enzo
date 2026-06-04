@@ -96,39 +96,37 @@ $(function(){ initResizable(false); });
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span>enzo::nt</div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>{</div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// forward declaration</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">class </span>NetworkManager;</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="classenzo_1_1nt_1_1UpdateLock.html">   15</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">UpdateLock</a></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">~UpdateLock</a>();</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span>enzo::nt {</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// forward declaration</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">class </span>NetworkManager;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="};">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classenzo_1_1nt_1_1UpdateLock.html">   14</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">UpdateLock</a></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">~UpdateLock</a>();</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classenzo_1_1nt_1_1UpdateLock.html#a82d6ddd668c11f2d9006c82834032e03">getNumLocks</a>();</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164">isLocked</a>();</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a">isUnlocked</a>();</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">UpdateLock</a>();</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> lockCounter;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keyword">friend</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">nt::NetworkManager</a>;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>};</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164">isLocked</a>();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a">isUnlocked</a>();</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UpdateLock.html">UpdateLock</a>();</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> lockCounter;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">friend</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">nt::NetworkManager</a>;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>};</div>
 </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>}</div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a></div><div class="ttdoc">The central coordinator of the engine's node system.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:27</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html">enzo::nt::UpdateLock</a></div><div class="ttdoc">Prevents updates on the network manager while in scope.</div><div class="ttdef"><b>Definition</b> UpdateLock.h:16</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html_a7724849b39d795c8028986848a401c6a"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a">enzo::nt::UpdateLock::isUnlocked</a></div><div class="ttdeci">static bool isUnlocked()</div><div class="ttdoc">Returns whether the lock is active or not. The lock is active as long as getNumLocks &gt; 0.</div><div class="ttdef"><b>Definition</b> UpdateLock.cpp:35</div></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>} <span class="comment">// namespace enzo::nt</span></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a></div><div class="ttdoc">The central coordinator of the engine's node system.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:26</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html">enzo::nt::UpdateLock</a></div><div class="ttdoc">Prevents updates on the network manager while in scope.</div><div class="ttdef"><b>Definition</b> UpdateLock.h:15</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html_a7724849b39d795c8028986848a401c6a"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a">enzo::nt::UpdateLock::isUnlocked</a></div><div class="ttdeci">static bool isUnlocked()</div><div class="ttdoc">Returns whether the lock is active or not. The lock is active as long as getNumLocks.</div><div class="ttdef"><b>Definition</b> UpdateLock.cpp:29</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html_a82d6ddd668c11f2d9006c82834032e03"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html#a82d6ddd668c11f2d9006c82834032e03">enzo::nt::UpdateLock::getNumLocks</a></div><div class="ttdeci">static unsigned int getNumLocks()</div><div class="ttdoc">Returns the number of locks across all UpdateLock objects.</div><div class="ttdef"><b>Definition</b> UpdateLock.cpp:25</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html_aa20acb7b13d9d074c89e793d5c4fa164"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164">enzo::nt::UpdateLock::isLocked</a></div><div class="ttdeci">static bool isLocked()</div><div class="ttdoc">Returns whether the lock is active or not. The lock is active as long as getNumLocks &gt; 0.</div><div class="ttdef"><b>Definition</b> UpdateLock.cpp:30</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1UpdateLock_html_aa20acb7b13d9d074c89e793d5c4fa164"><div class="ttname"><a href="classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164">enzo::nt::UpdateLock::isLocked</a></div><div class="ttdeci">static bool isLocked()</div><div class="ttdoc">Returns whether the lock is active or not. The lock is active as long as getNumLocks.</div><div class="ttdef"><b>Definition</b> UpdateLock.cpp:27</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

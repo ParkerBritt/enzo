@@ -108,13 +108,11 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a82d6ddd668c11f2d9006c82834032e03" id="r_a82d6ddd668c11f2d9006c82834032e03"><td class="memItemLeft" align="right" valign="top">static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82d6ddd668c11f2d9006c82834032e03">getNumLocks</a> ()</td></tr>
 <tr class="memdesc:a82d6ddd668c11f2d9006c82834032e03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of locks across all <a class="el" href="classenzo_1_1nt_1_1UpdateLock.html" title="Prevents updates on the network manager while in scope.">UpdateLock</a> objects.  <br /></td></tr>
 <tr class="separator:a82d6ddd668c11f2d9006c82834032e03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa20acb7b13d9d074c89e793d5c4fa164" id="r_aa20acb7b13d9d074c89e793d5c4fa164"><td class="memItemLeft" align="right" valign="top"><a id="aa20acb7b13d9d074c89e793d5c4fa164" name="aa20acb7b13d9d074c89e793d5c4fa164"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isLocked</b> ()</td></tr>
-<tr class="memdesc:aa20acb7b13d9d074c89e793d5c4fa164"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a> &gt; 0. <br /></td></tr>
+<tr class="memitem:aa20acb7b13d9d074c89e793d5c4fa164" id="r_aa20acb7b13d9d074c89e793d5c4fa164"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa20acb7b13d9d074c89e793d5c4fa164">isLocked</a> ()</td></tr>
+<tr class="memdesc:aa20acb7b13d9d074c89e793d5c4fa164"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a>.  <br /></td></tr>
 <tr class="separator:aa20acb7b13d9d074c89e793d5c4fa164"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7724849b39d795c8028986848a401c6a" id="r_a7724849b39d795c8028986848a401c6a"><td class="memItemLeft" align="right" valign="top"><a id="a7724849b39d795c8028986848a401c6a" name="a7724849b39d795c8028986848a401c6a"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isUnlocked</b> ()</td></tr>
-<tr class="memdesc:a7724849b39d795c8028986848a401c6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a> &gt; 0. <br /></td></tr>
+<tr class="memitem:a7724849b39d795c8028986848a401c6a" id="r_a7724849b39d795c8028986848a401c6a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7724849b39d795c8028986848a401c6a">isUnlocked</a> ()</td></tr>
+<tr class="memdesc:a7724849b39d795c8028986848a401c6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a>.  <br /></td></tr>
 <tr class="separator:a7724849b39d795c8028986848a401c6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -146,6 +144,66 @@ static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isUnlocked</b>
 
 <p>Returns the number of locks across all <a class="el" href="classenzo_1_1nt_1_1UpdateLock.html" title="Prevents updates on the network manager while in scope.">UpdateLock</a> objects. </p>
 <dl class="section return"><dt>Returns</dt><dd>When this value is greater than 0 a lock is in place and the network cannot update, when it's equal to zero the network is able to update again. </dd></dl>
+
+</div>
+</div>
+<a id="aa20acb7b13d9d074c89e793d5c4fa164" name="aa20acb7b13d9d074c89e793d5c4fa164"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa20acb7b13d9d074c89e793d5c4fa164">&#9670;&#160;</a></span>isLocked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enzo::nt::UpdateLock::isLocked </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a>. </p>
+<blockquote class="doxtable">
+<p>&zwj;0 </p>
+</blockquote>
+
+</div>
+</div>
+<a id="a7724849b39d795c8028986848a401c6a" name="a7724849b39d795c8028986848a401c6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7724849b39d795c8028986848a401c6a">&#9670;&#160;</a></span>isUnlocked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enzo::nt::UpdateLock::isUnlocked </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns whether the lock is active or not. The lock is active as long as <a class="el" href="#a82d6ddd668c11f2d9006c82834032e03" title="Returns the number of locks across all UpdateLock objects.">getNumLocks</a>. </p>
+<blockquote class="doxtable">
+<p>&zwj;0 </p>
+</blockquote>
 
 </div>
 </div>
