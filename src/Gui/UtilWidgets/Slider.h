@@ -4,42 +4,42 @@
 #include <QWidget>
 #include <qtmetamacros.h>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 /**
  * @brief Reusable slider widget that draws a horizontal fill bar and emits
  * value changes from mouse drag. Hosts pass a step of 0 for continuous float
  * behavior, or a positive step for discrete int behavior.
  */
-class Slider
-: public QWidget
+class Slider : public QWidget
 {
     Q_OBJECT
-public:
-    Slider(double minValue,
-           double maxValue,
-           bool clampMin,
-           bool clampMax,
-           double step = 0.0,
-           QWidget* parent = nullptr);
+  public:
+    Slider(
+        double minValue,
+        double maxValue,
+        bool clampMin,
+        bool clampMax,
+        double step = 0.0,
+        QWidget* parent = nullptr
+    );
 
     double value() const { return value_; }
     void setValue(double value);
     void setDisplayPrecision(int digits);
 
-Q_SIGNALS:
+  Q_SIGNALS:
     void sliderPressed();
     void sliderMoved(double value);
     void sliderReleased();
 
-protected:
+  protected:
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 
-private:
+  private:
     double normalizedToValue_(double normalized) const;
     double clampAndStep_(double value) const;
     void emitMoved_(double normalized);
@@ -55,4 +55,4 @@ private:
     QPen notchPen_;
 };
 
-}
+} // namespace enzo::ui

@@ -23,73 +23,73 @@
 #include <stdexcept>
 #include <string>
 
-enzo::ui::TabMenu::TabMenu(QWidget *parent, Qt::WindowFlags f)
-    : QWidget(parent, f) {
-  setAttribute(Qt::WA_TranslucentBackground);
-  setWindowFlag(Qt::Popup);
+enzo::ui::TabMenu::TabMenu(QWidget* parent, Qt::WindowFlags f) : QWidget(parent, f)
+{
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlag(Qt::Popup);
 
-  mainLayout_ = new QVBoxLayout(this);
+    mainLayout_ = new QVBoxLayout(this);
 
-  searchBar_ = new QLineEdit();
-  nodeHolder_ = new QWidget();
-  nodeScrollArea_ = new QScrollArea();
-  nodeHolderLayout_ = new QVBoxLayout();
+    searchBar_ = new QLineEdit();
+    nodeHolder_ = new QWidget();
+    nodeScrollArea_ = new QScrollArea();
+    nodeHolderLayout_ = new QVBoxLayout();
 
-  connect(searchBar_, &QLineEdit::textChanged, this, &TabMenu::textChanged);
+    connect(searchBar_, &QLineEdit::textChanged, this, &TabMenu::textChanged);
 
-  auto tableItems = enzo::op::OperatorTable::getData();
-  for (auto tableItem : tableItems) {
-    auto button = new TabMenuButton(tableItem.displayName.c_str());
-    buttons_.push_back(button);
-    button->nodeName = tableItem.internalName;
-    button->setFocusPolicy(Qt::NoFocus);
-    connect(button, &TabMenuButton::clicked, this,
-            &enzo::ui::TabMenu::nodeClicked);
-    nodeHolderLayout_->addWidget(button);
-  }
+    auto tableItems = enzo::op::OperatorTable::getData();
+    for (auto tableItem : tableItems)
+    {
+        auto button = new TabMenuButton(tableItem.displayName.c_str());
+        buttons_.push_back(button);
+        button->nodeName = tableItem.internalName;
+        button->setFocusPolicy(Qt::NoFocus);
+        connect(button, &TabMenuButton::clicked, this, &enzo::ui::TabMenu::nodeClicked);
+        nodeHolderLayout_->addWidget(button);
+    }
 
-  setLayout(mainLayout_);
+    setLayout(mainLayout_);
 
-  // set focus policy
-  searchBar_->setFocusPolicy(Qt::NoFocus);
-  nodeScrollArea_->setFocusPolicy(Qt::NoFocus);
+    // set focus policy
+    searchBar_->setFocusPolicy(Qt::NoFocus);
+    nodeScrollArea_->setFocusPolicy(Qt::NoFocus);
 
-  // disable frames
-  searchBar_->setFrame(false);
-  nodeScrollArea_->setFrameStyle(QStyleOptionFrame::None);
+    // disable frames
+    searchBar_->setFrame(false);
+    nodeScrollArea_->setFrameStyle(QStyleOptionFrame::None);
 
-  mainLayout_->addWidget(searchBar_);
-  mainLayout_->addWidget(nodeScrollArea_);
+    mainLayout_->addWidget(searchBar_);
+    mainLayout_->addWidget(nodeScrollArea_);
 
-  nodeHolderLayout_->setSpacing(0);
-  nodeHolderLayout_->setContentsMargins(4, 4, 4, 4);
-  nodeHolder_->setLayout(nodeHolderLayout_);
-  nodeHolderLayout_->setAlignment(Qt::AlignTop);
+    nodeHolderLayout_->setSpacing(0);
+    nodeHolderLayout_->setContentsMargins(4, 4, 4, 4);
+    nodeHolder_->setLayout(nodeHolderLayout_);
+    nodeHolderLayout_->setAlignment(Qt::AlignTop);
 
-  nodeScrollArea_->setWidget(nodeHolder_);
-  nodeScrollArea_->setWidgetResizable(true);
-  nodeScrollArea_->setMinimumHeight(250);
-  nodeScrollArea_->setMinimumWidth(280);
+    nodeScrollArea_->setWidget(nodeHolder_);
+    nodeScrollArea_->setWidgetResizable(true);
+    nodeScrollArea_->setMinimumHeight(250);
+    nodeScrollArea_->setMinimumWidth(280);
 
-  // style
-  searchBar_->setAlignment(Qt::AlignCenter);
-  nodeHolder_->setProperty("shade", "dark");
-  nodeHolder_->setObjectName("TabMenuNodeHolder");
-  nodeHolder_->setStyleSheet(R"(
+    // style
+    searchBar_->setAlignment(Qt::AlignCenter);
+    nodeHolder_->setProperty("shade", "dark");
+    nodeHolder_->setObjectName("TabMenuNodeHolder");
+    nodeHolder_->setStyleSheet(R"(
            QWidget#TabMenuNodeHolder {
                 background-color: transparent;
            }
     )");
-  nodeScrollArea_->setObjectName("TabMenuNodeScrollArea");
-  nodeScrollArea_->setStyleSheet(R"(
+    nodeScrollArea_->setObjectName("TabMenuNodeScrollArea");
+    nodeScrollArea_->setStyleSheet(R"(
     QWidget#TabMenuNodeScrollArea {
         background-color: rgba(20,20,20,0.8);
         border: 1px solid rgba(54,54,54, 0.7);
         border-radius: 8px;
     }
     )");
-  searchBar_->setObjectName("TabMenuSearch");
-  searchBar_->setStyleSheet(R"(
+    searchBar_->setObjectName("TabMenuSearch");
+    searchBar_->setStyleSheet(R"(
     QWidget#TabMenuSearch {
         background-color: rgba(20,20,20,0.8);
         padding: 3px;
@@ -98,152 +98,180 @@ enzo::ui::TabMenu::TabMenu(QWidget *parent, Qt::WindowFlags f)
     }
     )");
 
-  // drop shadow
-  // auto dropShadow_ = new QGraphicsDropShadowEffect();
-  // dropShadow_->setColor(QColor(0,0,0,80));
-  // dropShadow_->setBlurRadius(15);
-  // dropShadow_->setOffset(4);
-  // setGraphicsEffect(dropShadow_);
+    // drop shadow
+    // auto dropShadow_ = new QGraphicsDropShadowEffect();
+    // dropShadow_->setColor(QColor(0,0,0,80));
+    // dropShadow_->setBlurRadius(15);
+    // dropShadow_->setOffset(4);
+    // setGraphicsEffect(dropShadow_);
 
-  setDisabled(true);
+    setDisabled(true);
 }
 
-void enzo::ui::TabMenu::textChanged(const QString &text) {
-  selectionIndex_ = 0;
-  bool selectionMade = false;
-  visibleButtons_.clear();
-  for (size_t i = 0; i < buttons_.size(); ++i) {
-    auto button = buttons_.at(i);
-    if (text == "" ||
-        button->getDisplayText().toLower().contains(text.toLower())) {
-      // make selection
-      if (!selectionMade) {
-        std::cout << "selecting: " << button->getDisplayText().toStdString()
-                  << "\n";
-        button->setSelected(true);
-      } else {
-        std::cout << "deselecting: " << button->getDisplayText().toStdString()
-                  << "\n";
-        button->setSelected(false);
-      }
-      visibleButtons_.push_back(button);
-      button->setVisible(true);
-      selectionMade = true;
-    } else {
-      button->setVisible(false);
+void enzo::ui::TabMenu::textChanged(const QString& text)
+{
+    selectionIndex_ = 0;
+    bool selectionMade = false;
+    visibleButtons_.clear();
+    for (size_t i = 0; i < buttons_.size(); ++i)
+    {
+        auto button = buttons_.at(i);
+        if (text == "" || button->getDisplayText().toLower().contains(text.toLower()))
+        {
+            // make selection
+            if (!selectionMade)
+            {
+                std::cout << "selecting: " << button->getDisplayText().toStdString() << "\n";
+                button->setSelected(true);
+            }
+            else
+            {
+                std::cout << "deselecting: " << button->getDisplayText().toStdString() << "\n";
+                button->setSelected(false);
+            }
+            visibleButtons_.push_back(button);
+            button->setVisible(true);
+            selectionMade = true;
+        }
+        else
+        {
+            button->setVisible(false);
+        }
     }
-  }
 }
 
-void enzo::ui::TabMenu::createNode(std::string nodeName) {
-  // get node info
-  std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(nodeName);
-  // check valid result
-  if (!opInfo.has_value()) {
-    throw std::runtime_error("Couldn't find op info for: " + nodeName);
-  }
+void enzo::ui::TabMenu::createNode(std::string nodeName)
+{
+    // get node info
+    std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(nodeName);
+    // check valid result
+    if (!opInfo.has_value())
+    {
+        throw std::runtime_error("Couldn't find op info for: " + nodeName);
+    }
 
-  static_cast<NetworkPanel *>(parentWidget())->createNode(opInfo.value());
+    static_cast<NetworkPanel*>(parentWidget())->createNode(opInfo.value());
 }
 
-void enzo::ui::TabMenu::nodeClicked() {
-  // get name of button clicked
-  TabMenuButton *buttonClicked = static_cast<TabMenuButton *>(sender());
+void enzo::ui::TabMenu::nodeClicked()
+{
+    // get name of button clicked
+    TabMenuButton* buttonClicked = static_cast<TabMenuButton*>(sender());
 
-  createNode(buttonClicked->nodeName);
+    createNode(buttonClicked->nodeName);
 
-  doHide();
+    doHide();
 }
 
-void enzo::ui::TabMenu::showOnMouse(float dx, float dy) {
-  setDisabled(false);
-  std::cout << "showing\n";
-  QPoint cursorPos = mapToParent(mapFromGlobal(QCursor::pos()));
-  searchBar_->clear();
-  textChanged("");
-  move(cursorPos + QPoint(dx, dy));
-  show();
-  adjustSize();
-  setFocus();
-  raise();
+void enzo::ui::TabMenu::showOnMouse(float dx, float dy)
+{
+    setDisabled(false);
+    std::cout << "showing\n";
+    QPoint cursorPos = mapToParent(mapFromGlobal(QCursor::pos()));
+    searchBar_->clear();
+    textChanged("");
+    move(cursorPos + QPoint(dx, dy));
+    show();
+    adjustSize();
+    setFocus();
+    raise();
 }
 
-void enzo::ui::TabMenu::doHide() {
-  setDisabled(true);
-  hide();
+void enzo::ui::TabMenu::doHide()
+{
+    setDisabled(true);
+    hide();
 }
 
-void enzo::ui::TabMenu::focusOutEvent(QFocusEvent *event) {
-  QWidget::focusOutEvent(event);
-  doHide();
+void enzo::ui::TabMenu::focusOutEvent(QFocusEvent* event)
+{
+    QWidget::focusOutEvent(event);
+    doHide();
 }
 
-bool enzo::ui::TabMenu::event(QEvent *event) {
-  if ((event->type() == QEvent::KeyPress ||
-       event->type() == QEvent::KeyRelease) &&
-      event->spontaneous()) {
-    auto *clone = static_cast<QKeyEvent *>(event)->clone();
+bool enzo::ui::TabMenu::event(QEvent* event)
+{
+    if ((event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) &&
+        event->spontaneous())
+    {
+        auto* clone = static_cast<QKeyEvent*>(event)->clone();
 
-    if (event->type() == QEvent::KeyPress) {
-      auto key = static_cast<QKeyEvent *>(event)->key();
-      if (key == Qt::Key_Tab || key == Qt::Key_Escape) {
+        if (event->type() == QEvent::KeyPress)
+        {
+            auto key = static_cast<QKeyEvent*>(event)->key();
+            if (key == Qt::Key_Tab || key == Qt::Key_Escape)
+            {
 
-        focusOutEvent(static_cast<QFocusEvent *>(event));
+                focusOutEvent(static_cast<QFocusEvent*>(event));
+                return true;
+            }
+            else if (key == Qt::Key_Enter || key == Qt::Key_Return)
+            {
+                if (visibleButtons_.size() == 0) return true;
+                if (selectionIndex_ >= visibleButtons_.size())
+                    selectionIndex_ = visibleButtons_.size() - 1;
+                auto button = visibleButtons_.at(selectionIndex_);
+                createNode(button->nodeName);
+                doHide();
+                return true;
+            }
+            else if (key == Qt::Key_Up)
+            {
+                moveSelection(SelectionDirection::DOWN);
+            }
+            else if (key == Qt::Key_Down)
+            {
+                moveSelection(SelectionDirection::UP);
+            }
+            // std::cout << "key pressed: " <<
+            // static_cast<QKeyEvent*>(event)->text().toStdString() << "\n";
+        }
+        // else if(event->type() == QEvent::KeyRelease)
+        // {
+        //     std::cout << "key release: " <<
+        //     static_cast<QKeyEvent*>(event)->text().toStdString() << "\n";
+        // }
+        QApplication::sendEvent(searchBar_, clone);
         return true;
-      } else if (key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if (visibleButtons_.size() == 0)
-          return true;
-        if (selectionIndex_ >= visibleButtons_.size())
-          selectionIndex_ = visibleButtons_.size() - 1;
-        auto button = visibleButtons_.at(selectionIndex_);
-        createNode(button->nodeName);
-        doHide();
-        return true;
-      } else if (key == Qt::Key_Up) {
-        moveSelection(SelectionDirection::DOWN);
-      } else if (key == Qt::Key_Down) {
-        moveSelection(SelectionDirection::UP);
-      }
-      // std::cout << "key pressed: " <<
-      // static_cast<QKeyEvent*>(event)->text().toStdString() << "\n";
     }
-    // else if(event->type() == QEvent::KeyRelease)
-    // {
-    //     std::cout << "key release: " <<
-    //     static_cast<QKeyEvent*>(event)->text().toStdString() << "\n";
-    // }
-    QApplication::sendEvent(searchBar_, clone);
-    return true;
-  }
-  return QWidget::event(event);
+    return QWidget::event(event);
 }
 
-void enzo::ui::TabMenu::moveSelection(SelectionDirection direction) {
-  if (direction == SelectionDirection::UP) {
-    if (selectionIndex_ + 1 >= visibleButtons_.size()) {
-      return;
+void enzo::ui::TabMenu::moveSelection(SelectionDirection direction)
+{
+    if (direction == SelectionDirection::UP)
+    {
+        if (selectionIndex_ + 1 >= visibleButtons_.size())
+        {
+            return;
+        }
+        selectionIndex_++;
     }
-    selectionIndex_++;
-  } else if (direction == SelectionDirection::DOWN) {
-    if (selectionIndex_ <= 0) {
-      return;
+    else if (direction == SelectionDirection::DOWN)
+    {
+        if (selectionIndex_ <= 0)
+        {
+            return;
+        }
+        selectionIndex_--;
+        std::cout << "selection index: " << selectionIndex_ << "\n";
     }
-    selectionIndex_--;
-    std::cout << "selection index: " << selectionIndex_ << "\n";
-  }
 
-  for (size_t i = 0; i < visibleButtons_.size(); ++i) {
-    TabMenuButton *button = visibleButtons_.at(i);
-    if (i == selectionIndex_) {
-      button->setSelected(true);
-    } else {
-      button->setSelected(false);
+    for (size_t i = 0; i < visibleButtons_.size(); ++i)
+    {
+        TabMenuButton* button = visibleButtons_.at(i);
+        if (i == selectionIndex_)
+        {
+            button->setSelected(true);
+        }
+        else
+        {
+            button->setSelected(false);
+        }
     }
-  }
 }
 
-enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
-: QPushButton(parent)
+enzo::ui::TabMenuButton::TabMenuButton(const QString& text, QWidget* parent) : QPushButton(parent)
 {
     setObjectName("TabMenuButton");
     setStyleSheet(R"(
@@ -266,8 +294,7 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
     textLabel_ = new QLabel(text, this);
     textLabel_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     textLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    textLabel_->setStyleSheet(
-        "QLabel { color: white; background: transparent; }");
+    textLabel_->setStyleSheet("QLabel { color: white; background: transparent; }");
     this->setStyleSheet("#TabMenuButton {background: transparent; border: none}");
 
     setSelected(false);
@@ -288,22 +315,26 @@ enzo::ui::TabMenuButton::TabMenuButton(const QString &text, QWidget *parent)
     setLayout(mainLayout_);
 }
 
-void enzo::ui::TabMenuButton::enterEvent(QEnterEvent *event) {
-  QPushButton::enterEvent(event);
-  setSelected(true);
+void enzo::ui::TabMenuButton::enterEvent(QEnterEvent* event)
+{
+    QPushButton::enterEvent(event);
+    setSelected(true);
 }
 
-void enzo::ui::TabMenuButton::leaveEvent(QEvent *event) {
-  QPushButton::leaveEvent(event);
-  setSelected(false);
+void enzo::ui::TabMenuButton::leaveEvent(QEvent* event)
+{
+    QPushButton::leaveEvent(event);
+    setSelected(false);
 }
 
-void enzo::ui::TabMenuButton::setSelected(bool selected) {
-  if (selected) {
-    // textLabel_->setStyleSheet(
-    //     "QLabel {color: white; background: transparent; }");
-    this->setStyleSheet(
-        R"(
+void enzo::ui::TabMenuButton::setSelected(bool selected)
+{
+    if (selected)
+    {
+        // textLabel_->setStyleSheet(
+        //     "QLabel {color: white; background: transparent; }");
+        this->setStyleSheet(
+            R"(
         QPushButton {
             background-color: rgba(60,60,60,0.6);
             border: 4px solid transparent;
@@ -311,12 +342,15 @@ void enzo::ui::TabMenuButton::setSelected(bool selected) {
             margin: 0px;
             border-radius: 8px;
         }
-    )");
-  } else {
-    // textLabel_->setStyleSheet(
-    //     "QLabel { color: white;  background: transparent; }");
-    this->setStyleSheet(
-        R"(
+    )"
+        );
+    }
+    else
+    {
+        // textLabel_->setStyleSheet(
+        //     "QLabel { color: white;  background: transparent; }");
+        this->setStyleSheet(
+            R"(
         QPushButton {
             background-color: transparent;
             border: 4px solid transparent;
@@ -324,10 +358,11 @@ void enzo::ui::TabMenuButton::setSelected(bool selected) {
             margin: 0px;
             border-radius: 8px;
         }
-    )");
-  }
+    )"
+        );
+    }
 
-  update();
+    update();
 }
 
 // enzo::ui::TabMenuSearch::TabMenuSearch(QWidget *parent)

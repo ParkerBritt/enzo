@@ -1,7 +1,3 @@
 #include <Gui/UtilWidgets/Splitter.h>
 
-Splitter::Splitter(QWidget *parent)
-: QSplitter(parent)
-{
-    setHandleWidth(0);
-}
+Splitter::Splitter(QWidget* parent) : QSplitter(parent) { setHandleWidth(0); }

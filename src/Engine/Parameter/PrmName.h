@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
-namespace enzo::prm
-{
+namespace enzo::prm {
 class Name
 {
-public:
+  public:
     Name(String token, String label);
     Name();
 
     String getToken() const;
     String getLabel() const;
-private:
+
+  private:
     String token_;
     String label_;
 };
 
-}
+} // namespace enzo::prm

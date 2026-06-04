@@ -1,7 +1,7 @@
 #pragma once
-#include "Engine/Selection/IndexSet.h"
-#include "Engine/Primitives/Primitive.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Primitives/Primitive.h"
+#include "Engine/Selection/IndexSet.h"
 #include <memory>
 #include <string>
 
@@ -16,7 +16,8 @@ namespace enzo {
  * explicit index sets. Group based components look up named groups on the
  * primitive.
  */
-class SelectionComponent {
+class SelectionComponent
+{
   public:
     /**
      * @brief Parses one component string and returns the appropriate subclass.
@@ -29,19 +30,31 @@ class SelectionComponent {
 
     virtual ~SelectionComponent() = default;
 
-    virtual bool containsPrim(const geo::Primitive &prim) const = 0;
+    virtual bool containsPrim(const geo::Primitive& prim) const = 0;
     // When `inverted` is true the answer is flipped, but only for the
     // element type the component actually talks about.
     //
     // `index` is the compacted element number (counting only valid elements)
     // and `offset` is the raw storage offset. Path components match against the
     // compacted index, while group components read group bools keyed by offset.
-    virtual bool containsFace(const geo::Primitive &prim, Index index, Offset offset,
-                              bool inverted = false) const = 0;
-    virtual bool containsPoint(const geo::Primitive &prim, Index index, Offset offset,
-                               bool inverted = false) const = 0;
-    virtual bool containsVertex(const geo::Primitive &prim, Index index, Offset offset,
-                                bool inverted = false) const = 0;
+    virtual bool containsFace(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const = 0;
+    virtual bool containsPoint(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const = 0;
+    virtual bool containsVertex(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const = 0;
     /**
      * @brief Whether the component selects the prim as a whole.
      *
@@ -49,7 +62,7 @@ class SelectionComponent {
      * prim is implicitly included. Group components consult the primitive
      * group flag for this answer, which is why the prim is required.
      */
-    virtual bool isWholePrim(const geo::Primitive &prim) const = 0;
+    virtual bool isWholePrim(const geo::Primitive& prim) const = 0;
 
   protected:
     SelectionComponent() = default;
@@ -59,18 +72,31 @@ class SelectionComponent {
  * @brief Selection component anchored to a primitive path plus optional
  *        per element index sets.
  */
-class PathSelectionComponent : public SelectionComponent {
+class PathSelectionComponent : public SelectionComponent
+{
   public:
     static std::unique_ptr<PathSelectionComponent> parse(std::string_view string);
 
-    bool containsPrim(const geo::Primitive &prim) const override;
-    bool containsFace(const geo::Primitive &prim, Index index, Offset offset,
-                      bool inverted = false) const override;
-    bool containsPoint(const geo::Primitive &prim, Index index, Offset offset,
-                       bool inverted = false) const override;
-    bool containsVertex(const geo::Primitive &prim, Index index, Offset offset,
-                        bool inverted = false) const override;
-    bool isWholePrim(const geo::Primitive &prim) const override;
+    bool containsPrim(const geo::Primitive& prim) const override;
+    bool containsFace(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool containsPoint(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool containsVertex(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool isWholePrim(const geo::Primitive& prim) const override;
 
   private:
     PathSelectionComponent() = default;
@@ -83,18 +109,31 @@ class PathSelectionComponent : public SelectionComponent {
 /**
  * @brief Selection component that resolves membership through a named group.
  */
-class GroupSelectionComponent : public SelectionComponent {
+class GroupSelectionComponent : public SelectionComponent
+{
   public:
     static std::unique_ptr<GroupSelectionComponent> create(std::string_view name);
 
-    bool containsPrim(const geo::Primitive &prim) const override;
-    bool containsFace(const geo::Primitive &prim, Index index, Offset offset,
-                      bool inverted = false) const override;
-    bool containsPoint(const geo::Primitive &prim, Index index, Offset offset,
-                       bool inverted = false) const override;
-    bool containsVertex(const geo::Primitive &prim, Index index, Offset offset,
-                        bool inverted = false) const override;
-    bool isWholePrim(const geo::Primitive &prim) const override;
+    bool containsPrim(const geo::Primitive& prim) const override;
+    bool containsFace(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool containsPoint(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool containsVertex(
+        const geo::Primitive& prim,
+        Index index,
+        Offset offset,
+        bool inverted = false
+    ) const override;
+    bool isWholePrim(const geo::Primitive& prim) const override;
 
   private:
     GroupSelectionComponent() = default;

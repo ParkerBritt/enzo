@@ -4,23 +4,21 @@
 #include <QPushButton>
 #include <qtmetamacros.h>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class BoolSwitch
-: public QPushButton
+class BoolSwitch : public QPushButton
 {
     Q_OBJECT
     Q_PROPERTY(qreal switchX READ switchX WRITE setSwitchX)
     Q_PROPERTY(QColor switchColor READ switchColor WRITE setSwitchColor)
-public:
+  public:
     BoolSwitch(bool initialChecked, QWidget* parent = nullptr);
     void animateSwitch(bool checked);
 
-protected:
+  protected:
     void paintEvent(QPaintEvent*) override;
 
-private:
+  private:
     int fullWidth_ = 35;
     int handleWidth_ = 17;
     qreal switchX_ = 0;
@@ -30,9 +28,17 @@ private:
     QColor switchColor_;
 
     qreal switchX() const { return switchX_; }
-    void setSwitchX(qreal x) { switchX_ = x; update(); }
+    void setSwitchX(qreal x)
+    {
+        switchX_ = x;
+        update();
+    }
     QColor switchColor() const { return switchColor_; }
-    void setSwitchColor(const QColor& c) { switchColor_ = c; update(); }
+    void setSwitchColor(const QColor& c)
+    {
+        switchColor_ = c;
+        update();
+    }
 };
 
-}
+} // namespace enzo::ui

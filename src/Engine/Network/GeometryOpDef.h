@@ -1,51 +1,51 @@
 #pragma once
-#include "Engine/Network/NodePacket.h"
-#include "Engine/Network/Context.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/Context.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/Network/OpInfo.h"
 #include <boost/config.hpp>
 #include <memory>
 #include <vector>
-#include "Engine/Network/OpInfo.h"
-
 
 // forward declaration
-namespace enzo::nt {class NetworkManager;}
+namespace enzo::nt {
+class NetworkManager;
+}
 
-namespace enzo::nt
-{
+namespace enzo::nt {
 class NetworkManager;
 
 /**
-* @brief Abstract class used to create new operators.
-*
-* The operator definition is a base class from which new geometry operators
-* are inherited from. It provides and abstracted interface, to read and
-* write data about itself and the context it is being computed.
-*
-* The class exposes utility functions for setting outputs and reading information
-* about itself like the number of inputs.
-*
-* The most important part of this node is the virtual cookOp member function.
-* This must be overridden to implement the node's logic when being cooked.
-* When a node is cooked it takes the optional input geometry from the context
-* class and outputs new geometry based on the purpose of that operator.
-*/
+ * @brief Abstract class used to create new operators.
+ *
+ * The operator definition is a base class from which new geometry operators
+ * are inherited from. It provides and abstracted interface, to read and
+ * write data about itself and the context it is being computed.
+ *
+ * The class exposes utility functions for setting outputs and reading information
+ * about itself like the number of inputs.
+ *
+ * The most important part of this node is the virtual cookOp member function.
+ * This must be overridden to implement the node's logic when being cooked.
+ * When a node is cooked it takes the optional input geometry from the context
+ * class and outputs new geometry based on the purpose of that operator.
+ */
 class BOOST_SYMBOL_EXPORT GeometryOpDef
 {
-public:
+  public:
     /**
-    * @brief Sets up internal state
-    */
+     * @brief Sets up internal state
+     */
     GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo);
     virtual ~GeometryOpDef() {};
 
     /**
-    * @brief This function is called at runtime to create the output geometry
-    *
-    * @post When overriding, this function must call setOutputGeo(n) at
-    * the end of a successful cook. Any outputs that are not set will output
-    * an emtpy geometry object.
-    */
+     * @brief This function is called at runtime to create the output geometry
+     *
+     * @post When overriding, this function must call setOutputGeo(n) at
+     * the end of a successful cook. Any outputs that are not set will output
+     * an emtpy geometry object.
+     */
     virtual void cookOp(op::Context context) = 0;
 
     /**
@@ -59,27 +59,32 @@ public:
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned outputIndex);
 
     /**
-    * @brief Stops the cook and displays an error. Use inside the #cookOp function.
-    * @todo Add visual error to GUI
-    */
+     * @brief Stops the cook and displays an error. Use inside the #cookOp function.
+     * @todo Add visual error to GUI
+     */
     void throwError(std::string error);
 
     /**
-    * @brief Doesn't interupt the cook but displays a warning on the node. Use inside the #cookOp function.
-    * @todo Add visual error to GUI
-    */
+     * @brief Doesn't interupt the cook but displays a warning on the node. Use inside the #cookOp
+     * function.
+     * @todo Add visual error to GUI
+     */
     void throwWarning(std::string warning);
 
-    /// @brief Returns the minimum number of input connections required for the node to function. Set by op::OpInfo when registering the operator.
+    /// @brief Returns the minimum number of input connections required for the node to function.
+    /// Set by op::OpInfo when registering the operator.
     unsigned int getMinInputs() const;
-    /// @brief Returns the maximum number of input connections accepted by the node. Set by op::OpInfo when registering the operator.
+    /// @brief Returns the maximum number of input connections accepted by the node. Set by
+    /// op::OpInfo when registering the operator.
     unsigned int getMaxInputs() const;
-    /// @brief Returns the number of available outputs the node provides. Set by op::OpInfo when registering the operator.
+    /// @brief Returns the number of available outputs the node provides. Set by op::OpInfo when
+    /// registering the operator.
     unsigned int getMaxOutputs() const;
-private:
+
+  private:
     std::vector<std::shared_ptr<const enzo::NodePacket>> outputPackets_;
 
-protected:
+  protected:
     const op::OpInfo opInfo_;
     nt::NetworkManager* network_;
     bool outputRequested(unsigned int outputIndex);
@@ -87,6 +92,7 @@ protected:
     void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
 };
 
-using opConstructor = GeometryOpDef* (*)(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
+using opConstructor = GeometryOpDef* (*)(enzo::nt::NetworkManager * network,
+                                         enzo::op::OpInfo opInfo);
 
-}
+} // namespace enzo::nt

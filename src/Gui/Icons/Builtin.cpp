@@ -6,16 +6,13 @@
 #include <QDir>
 #include <QString>
 
-namespace enzo::ui::icons
-{
+namespace enzo::ui::icons {
 
-namespace
-{
+namespace {
 
 QString resolveIconsRoot()
 {
-    const QString installed = QCoreApplication::applicationDirPath()
-        + "/../share/icons";
+    const QString installed = QCoreApplication::applicationDirPath() + "/../share/icons";
     if (QDir(installed).exists()) return installed;
 
     const QString dev = QStringLiteral(ENZO_DEV_ICONS_DIR);
@@ -24,7 +21,7 @@ QString resolveIconsRoot()
     return {};
 }
 
-}
+} // namespace
 
 void registerBuiltins()
 {
@@ -32,12 +29,12 @@ void registerBuiltins()
     const QString root = resolveIconsRoot();
     if (root.isEmpty()) return;
 
-    const QFileInfoList subdirs = QDir(root)
-        .entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    const QFileInfoList subdirs =
+        QDir(root).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
     for (const QFileInfo& subdir : subdirs)
     {
         registry.registerDirectory("", subdir.absoluteFilePath());
     }
 }
 
-}
+} // namespace enzo::ui::icons

@@ -1,16 +1,18 @@
 #pragma once
 
-#include "Engine/UndoRedo/UndoCommand.h"
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/UndoCommand.h"
 
 namespace enzo::nt {
 
 class MoveNodeCommand : public UndoCommand
 {
-public:
+  public:
     MoveNodeCommand(OpId opId, Vector2f oldPos, Vector2f newPos)
-        : opId_(opId), oldPos_(oldPos), newPos_(newPos) {}
+        : opId_(opId), oldPos_(oldPos), newPos_(newPos)
+    {
+    }
 
     void undo() override
     {
@@ -26,10 +28,10 @@ public:
 
     UndoCommandType type() const override { return UndoCommandType::MoveNode; }
 
-private:
+  private:
     OpId opId_;
     Vector2f oldPos_;
     Vector2f newPos_;
 };
 
-}
+} // namespace enzo::nt

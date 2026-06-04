@@ -1,41 +1,58 @@
 #pragma once
 
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <icecream.hpp>
 #include <string>
 
 namespace enzo::nt {
 
-class ChangeParameterCommand : public UndoCommand {
+class ChangeParameterCommand : public UndoCommand
+{
   public:
-    ChangeParameterCommand(enzo::nt::OpId opId, std::string paramName, enzo::prm::PrmValues before,
-                           enzo::prm::PrmValues after)
-        : opId_(opId), paramName_(paramName), before_(before), after_(after) {}
+    ChangeParameterCommand(
+        enzo::nt::OpId opId,
+        std::string paramName,
+        enzo::prm::PrmValues before,
+        enzo::prm::PrmValues after
+    )
+        : opId_(opId), paramName_(paramName), before_(before), after_(after)
+    {
+    }
 
-    void undo() override {
+    void undo() override
+    {
         IC(opId_, paramName_);
-        if (!nm().isValidOp(opId_)) {
+        if (!nm().isValidOp(opId_))
+        {
             IC("ChangeParameterCommand::undo — operator not found", opId_);
             return;
         }
-        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock()) {
+        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock())
+        {
             prm->setValues(before_);
-        } else {
+        }
+        else
+        {
             IC("ChangeParameterCommand::undo — parameter not found", opId_, paramName_);
         }
     }
 
-    void redo() override {
+    void redo() override
+    {
         IC(opId_, paramName_);
-        if (!nm().isValidOp(opId_)) {
+        if (!nm().isValidOp(opId_))
+        {
             IC("ChangeParameterCommand::redo — operator not found", opId_);
             return;
         }
-        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock()) {
+        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock())
+        {
             prm->setValues(after_);
-        } else {
+        }
+        else
+        {
             IC("ChangeParameterCommand::redo — parameter not found", opId_, paramName_);
         }
     }

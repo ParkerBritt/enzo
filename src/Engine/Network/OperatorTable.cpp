@@ -1,6 +1,6 @@
 #include "Engine/Network/OperatorTable.h"
-#include "Engine/Network/OpInfo.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/OpInfo.h"
 #include <boost/dll/import.hpp>
 #include <boost/dll/runtime_symbol_info.hpp>
 #include <boost/filesystem/file_status.hpp>
@@ -17,7 +17,7 @@ void op::OperatorTable::addOperator(op::OpInfo info)
     std::cout << "OPERATOR TABLE ADDED\n";
     std::cout << "adding operator: " << info.displayName << "\n";
 
-    for(const prm::Template& templateEntry : info.templates)
+    for (const prm::Template& templateEntry : info.templates)
     {
         std::cout << "name: " << templateEntry.getName() << "\n";
     }
@@ -27,9 +27,9 @@ void op::OperatorTable::addOperator(op::OpInfo info)
 
 nt::opConstructor op::OperatorTable::getOpConstructor(std::string name)
 {
-    for(auto it = opInfoStore_.begin(); it!=opInfoStore_.end(); ++it)
+    for (auto it = opInfoStore_.begin(); it != opInfoStore_.end(); ++it)
     {
-        if(it->internalName==name)
+        if (it->internalName == name)
         {
             return it->ctorFunc;
         }
@@ -39,9 +39,9 @@ nt::opConstructor op::OperatorTable::getOpConstructor(std::string name)
 
 const std::optional<op::OpInfo> op::OperatorTable::getOpInfo(std::string name)
 {
-    for(auto it = opInfoStore_.begin(); it!=opInfoStore_.end(); ++it)
+    for (auto it = opInfoStore_.begin(); it != opInfoStore_.end(); ++it)
     {
-        if(it->internalName==name)
+        if (it->internalName == name)
         {
             return *it;
         }
@@ -49,10 +49,7 @@ const std::optional<op::OpInfo> op::OperatorTable::getOpInfo(std::string name)
     return std::nullopt;
 }
 
-std::vector<op::OpInfo> op::OperatorTable::getData()
-{
-    return opInfoStore_;
-}
+std::vector<op::OpInfo> op::OperatorTable::getData() { return opInfoStore_; }
 
 boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecoratedLibName)
 {
@@ -66,29 +63,30 @@ boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecor
         const boost::filesystem::path enzoLib = enzoRoot / "lib";
         const boost::filesystem::path candidate = enzoLib / libName;
 
-        if(boost::filesystem::exists(candidate))
+        if (boost::filesystem::exists(candidate))
         {
             IC(candidate);
             return candidate;
         }
-        else std::cout << "Couldn't find lib at: " << candidate.string() << "\n"; 
+        else
+            std::cout << "Couldn't find lib at: " << candidate.string() << "\n";
     }
 
-    // check for dev macro
-    #ifndef ENZO_DEV_LIB_DIR
-        #define ENZO_DEV_LIB_DIR ""
-    #endif
-    if(std::string(ENZO_DEV_LIB_DIR).size())
+// check for dev macro
+#ifndef ENZO_DEV_LIB_DIR
+#define ENZO_DEV_LIB_DIR ""
+#endif
+    if (std::string(ENZO_DEV_LIB_DIR).size())
     {
         const auto candidate = boost::filesystem::path(ENZO_DEV_LIB_DIR) / libName;
-        if(boost::filesystem::exists(candidate))
+        if (boost::filesystem::exists(candidate))
         {
             IC(candidate);
             return candidate;
         }
-        else std::cout << "Couldn't find lib at: " << candidate.string() << "\n"; 
+        else
+            std::cout << "Couldn't find lib at: " << candidate.string() << "\n";
     }
-
 
     // TODO: add env var finder
     // TODO: add same dirfinder
@@ -96,11 +94,10 @@ boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecor
     throw std::runtime_error("Couldn't find plugin: " + libName.string());
 }
 
-
 void op::OperatorTable::initPlugins()
 {
-    static bool pluginsLoaded=false;
-    if(pluginsLoaded) return;
+    static bool pluginsLoaded = false;
+    if (pluginsLoaded) return;
 
     using InitPluginFn = void(op::addOperatorPtr);
 

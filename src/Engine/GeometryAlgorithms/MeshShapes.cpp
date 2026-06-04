@@ -27,12 +27,12 @@ std::shared_ptr<geo::Mesh> buildCube(const Vector3& size, const Vector3& center)
 
     // Six quad faces, each wound CCW when viewed from outside the cube.
     const std::vector<Offset> flatPointOffsets = {
-        3, 2, 1, 0,   // -Z bottom
-        4, 5, 6, 7,   // +Z top
-        0, 1, 5, 4,   // -Y front
-        2, 3, 7, 6,   // +Y back
-        1, 2, 6, 5,   // +X right
-        3, 0, 4, 7,   // -X left
+        3, 2, 1, 0, // -Z bottom
+        4, 5, 6, 7, // +Z top
+        0, 1, 5, 4, // -Y front
+        2, 3, 7, 6, // +Y back
+        1, 2, 6, 5, // +X right
+        3, 0, 4, 7, // -X left
     };
     const std::vector<Offset> vertexCounts(6, 4);
     mesh->addFaces(flatPointOffsets, vertexCounts);
@@ -40,4 +40,4 @@ std::shared_ptr<geo::Mesh> buildCube(const Vector3& size, const Vector3& center)
     return mesh;
 }
 
-} // namespace utils
+} // namespace enzo::utils

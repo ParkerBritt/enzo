@@ -2,9 +2,12 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget* parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter)
+enzo::ui::BoolSwitchParm::BoolSwitchParm(
+    std::weak_ptr<enzo::prm::NodeParameter> parameter,
+    QWidget* parent
+)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter)
 {
     auto parameterShared = parameter_.lock();
 
@@ -16,9 +19,8 @@ enzo::ui::BoolSwitchParm::BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter>
     // Switch widgets never want the standard parameter background frame.
     contentWidget_->setStyleSheet(".ParameterBg { background: transparent; border: none; }");
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
     connect(boolSwitch_, &QPushButton::toggled, this, &BoolSwitchParm::onToggle);
 }
 
@@ -41,8 +43,11 @@ void enzo::ui::BoolSwitchParm::onToggle(bool checked)
         auto before = parameterShared->getValues();
         parameterShared->setInt(checked);
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), before,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            before,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

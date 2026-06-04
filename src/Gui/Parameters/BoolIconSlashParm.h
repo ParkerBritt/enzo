@@ -9,14 +9,12 @@
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class SlashIconButton
-: public QAbstractButton
+class SlashIconButton : public QAbstractButton
 {
     Q_OBJECT
-public:
+  public:
     SlashIconButton(QPixmap icon, int iconPx, QWidget* parent = nullptr);
 
     void setSlashProgress(float progress);
@@ -24,27 +22,28 @@ public:
 
     void setTiltAngle(float degrees);
 
-protected:
+  protected:
     void paintEvent(QPaintEvent* event) override;
     QSize sizeHint() const override;
 
-private:
+  private:
     QPixmap icon_;
     int iconPx_;
     float slashProgress_ = 0.0f;
-    float tiltAngle_    = 0.0f;
+    float tiltAngle_ = 0.0f;
 };
 
-class BoolIconSlashParm
-: public Parameter
+class BoolIconSlashParm : public Parameter
 {
     Q_OBJECT
-public:
-    BoolIconSlashParm(std::weak_ptr<prm::NodeParameter> parameter,
-                      std::shared_ptr<prm::style::BoolIconSlash> style,
-                      QWidget* parent = nullptr);
+  public:
+    BoolIconSlashParm(
+        std::weak_ptr<prm::NodeParameter> parameter,
+        std::shared_ptr<prm::style::BoolIconSlash> style,
+        QWidget* parent = nullptr
+    );
 
-private:
+  private:
     void onToggle(bool checked);
     void syncFromParameter();
     void animateTo(bool toggledOn);
@@ -57,4 +56,4 @@ private:
     boost::signals2::scoped_connection valueChangedConnection_;
 };
 
-}
+} // namespace enzo::ui

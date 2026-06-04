@@ -1,25 +1,24 @@
 #include "OpDefs/GopOceanSurface.h"
-#include "Engine/Parameter/Range.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Parameter/Range.h"
+#include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <cstdio>
-#include <tbb/blocked_range.h>
-#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 GopOceanSurface::GopOceanSurface(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GopOceanSurface::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         // TODO: convert to NodePacket
         NodePacket packet = context.cloneInputPacket(0);
@@ -27,7 +26,8 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
         //
         // const Offset pointCount = geo.getNumPoints();
         //
-        // tbb::parallel_for(tbb::blocked_range<Offset>(0, pointCount), [this, &geo](tbb::blocked_range<Offset> range){
+        // tbb::parallel_for(tbb::blocked_range<Offset>(0, pointCount), [this,
+        // &geo](tbb::blocked_range<Offset> range){
         //     for(Offset i=range.begin(); i!=range.end(); ++i)
         //     {
         //         Vector3 pos = geo.getPointPos(i);
@@ -40,7 +40,6 @@ void GopOceanSurface::cookOp(enzo::op::Context context)
 
         setOutputPacket(0, packet);
     }
-
 }
 
 enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
@@ -66,7 +65,8 @@ enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
 
     Vector3 outDisplacement(0.0f, 0.0f, 0.0f);
 
-    for (int i = 0; i < waveDirNum; ++i) {
+    for (int i = 0; i < waveDirNum; ++i)
+    {
         float angle = (float(i) / float(waveDirNum)) * 2.0f * float(M_PI);
         Vector3 dir(std::cos(angle), 0.0f, std::sin(angle));
 
@@ -75,7 +75,8 @@ enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
 
         float a = pos.dot(dir);
 
-        for (int j = 0; j < waveNum; ++j) {
+        for (int j = 0; j < waveNum; ++j)
+        {
             float waveLength = baseWaveLength / (float(j) + 1.0f);
             float amplitude = baseAmp / (float(j) + 1.0f);
             offset += (float(j) + 826.0f) * 0.001f;
@@ -94,13 +95,22 @@ enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
     {
         float bigWaveAngle = 0.75f * 2.0f * float(M_PI);
         float bigWaveStretch = 0.01f;
-        Vector3 bigWaveDir(std::cos(bigWaveAngle) * bigWaveStretch, 1.0f, std::sin(bigWaveAngle) * bigWaveStretch);
+        Vector3 bigWaveDir(
+            std::cos(bigWaveAngle) * bigWaveStretch,
+            1.0f,
+            std::sin(bigWaveAngle) * bigWaveStretch
+        );
 
         int bigWaveNum = 3;
         Vector3 bigWaveMaskPos = pos;
-        bigWaveMaskPos += Vector3(100.0f * float(238 + i), 100.0f * float(238 + i), 100.0f * float(238 + i));
+        bigWaveMaskPos +=
+            Vector3(100.0f * float(238 + i), 100.0f * float(238 + i), 100.0f * float(238 + i));
         // change frequency of noise
-        bigWaveMaskPos = Vector3(bigWaveMaskPos.x() * 0.03f, bigWaveMaskPos.y() * 0.03f, bigWaveMaskPos.z() * 0.03f);
+        bigWaveMaskPos = Vector3(
+            bigWaveMaskPos.x() * 0.03f,
+            bigWaveMaskPos.y() * 0.03f,
+            bigWaveMaskPos.z() * 0.03f
+        );
         float bigWaveMask = 1.0f;
         // bigWaveMask = 1;
 
@@ -116,7 +126,8 @@ enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
         baseWaveLength = 30.0f;
         baseAmp = 0.2f;
 
-        for (int j = 0; j < bigWaveNum; ++j) {
+        for (int j = 0; j < bigWaveNum; ++j)
+        {
             float waveLength = baseWaveLength / (float(j) + 1.0f);
             float amplitude = baseAmp / (float(j) + 1.0f);
             offset += (float(j) + 826.0f) * 0.005f;
@@ -131,11 +142,12 @@ enzo::Vector3 GopOceanSurface::getSurfacePos(const enzo::Vector3 pos)
     }
     outDisplacement = Vector3(outDisplacement.x(), y, outDisplacement.z());
 
-    return Vector3(pos.x() + outDisplacement.x(),
-                   pos.y() + outDisplacement.y(),
-                   pos.z() + outDisplacement.z());
+    return Vector3(
+        pos.x() + outDisplacement.x(),
+        pos.y() + outDisplacement.y(),
+        pos.z() + outDisplacement.z()
+    );
 }
-
 
 std::vector<enzo::prm::Template> GopOceanSurface::parameterList()
 {

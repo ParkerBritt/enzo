@@ -1,8 +1,8 @@
 #include "Engine/Serializer/ParameterSerializable.h"
-#include <string>
-#include <vector>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
+#include <string>
+#include <vector>
 
 struct OperatorSerializable
 {
@@ -11,9 +11,8 @@ struct OperatorSerializable
     float posY = 0;
     std::vector<ParameterSerializable> parameters;
 
-    template <class Archive>
-    void serialize( Archive & ar )
+    template <class Archive> void serialize(Archive& ar)
     {
-        ar( CEREAL_NVP(typeName), CEREAL_NVP(posX), CEREAL_NVP(posY), CEREAL_NVP(parameters) );
+        ar(CEREAL_NVP(typeName), CEREAL_NVP(posX), CEREAL_NVP(posY), CEREAL_NVP(parameters));
     }
 };

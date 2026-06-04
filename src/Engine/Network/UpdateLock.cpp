@@ -4,7 +4,7 @@
 
 namespace enzo {
 
-unsigned int nt::UpdateLock::lockCounter=0;
+unsigned int nt::UpdateLock::lockCounter = 0;
 
 nt::UpdateLock::UpdateLock()
 {
@@ -16,25 +16,16 @@ nt::UpdateLock::~UpdateLock()
 {
     lockCounter--;
     IC("down", lockCounter);
-    if(lockCounter == 0)
+    if (lockCounter == 0)
     {
         nm().update();
     }
 }
 
-unsigned int nt::UpdateLock::getNumLocks()
-{
-    return lockCounter;
-}
+unsigned int nt::UpdateLock::getNumLocks() { return lockCounter; }
 
-bool nt::UpdateLock::isLocked()
-{
-    return lockCounter>0;
-}
+bool nt::UpdateLock::isLocked() { return lockCounter > 0; }
 
-bool nt::UpdateLock::isUnlocked()
-{
-    return !isLocked();
-}
+bool nt::UpdateLock::isUnlocked() { return !isLocked(); }
 
 } // namespace enzo

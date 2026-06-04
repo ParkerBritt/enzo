@@ -6,17 +6,15 @@
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class BoolSwitchParm
-: public Parameter
+class BoolSwitchParm : public Parameter
 {
     Q_OBJECT
-public:
+  public:
     BoolSwitchParm(std::weak_ptr<enzo::prm::NodeParameter> parameter, QWidget* parent = nullptr);
 
-private:
+  private:
     void onToggle(bool checked);
     void syncFromParameter();
 
@@ -25,4 +23,4 @@ private:
     boost::signals2::scoped_connection valueChangedConnection_;
 };
 
-}
+} // namespace enzo::ui

@@ -1,20 +1,22 @@
 #include "Gui/UtilWidgets/Slider.h"
+#include <QLabel>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QVBoxLayout>
-#include <QLabel>
 #include <algorithm>
 #include <cmath>
 
-enzo::ui::Slider::Slider(double minValue, double maxValue, bool clampMin, bool clampMax,
-                         double step, QWidget* parent)
-: QWidget(parent),
-  minValue_(minValue),
-  maxValue_(maxValue),
-  clampMin_(clampMin),
-  clampMax_(clampMax),
-  step_(step)
+enzo::ui::Slider::Slider(
+    double minValue,
+    double maxValue,
+    bool clampMin,
+    bool clampMax,
+    double step,
+    QWidget* parent
+)
+    : QWidget(parent), minValue_(minValue), maxValue_(maxValue), clampMin_(clampMin),
+      clampMax_(clampMax), step_(step)
 {
     setAttribute(Qt::WA_StyledBackground, true);
     setFixedHeight(24);
@@ -72,12 +74,13 @@ void enzo::ui::Slider::paintEvent(QPaintEvent*)
 
     constexpr float margin = 3;
     const double valueRange = maxValue_ - minValue_;
-    const float fillPercent = valueRange > 0
-        ? static_cast<float>(std::clamp<double>((value_ - minValue_) / valueRange, 0.0, 1.0))
-        : 0.0f;
+    const float fillPercent =
+        valueRange > 0
+            ? static_cast<float>(std::clamp<double>((value_ - minValue_) / valueRange, 0.0, 1.0))
+            : 0.0f;
     float fillWidth = (rect().width() - margin * 2) * fillPercent;
-    QRectF fillRect = {rect().left() + margin, rect().top() + margin, fillWidth,
-                       rect().height() - margin * 2};
+    QRectF fillRect =
+        {rect().left() + margin, rect().top() + margin, fillWidth, rect().height() - margin * 2};
 
     // Discrete step notches drawn when steps fit reasonably in the bar
     if (step_ > 0.0 && valueRange > 0.0)
@@ -120,7 +123,4 @@ void enzo::ui::Slider::mouseMoveEvent(QMouseEvent* event)
     emitMoved_(normalized);
 }
 
-void enzo::ui::Slider::mouseReleaseEvent(QMouseEvent*)
-{
-    Q_EMIT sliderReleased();
-}
+void enzo::ui::Slider::mouseReleaseEvent(QMouseEvent*) { Q_EMIT sliderReleased(); }

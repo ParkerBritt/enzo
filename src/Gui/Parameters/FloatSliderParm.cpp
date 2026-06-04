@@ -2,11 +2,13 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::NodeParameter> parameter,
-                                           unsigned int vectorIndex, QWidget *parent)
-: Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
-  parameter_(parameter),
-  vectorIndex_(vectorIndex)
+enzo::ui::FloatSliderParm::FloatSliderParm(
+    std::weak_ptr<prm::NodeParameter> parameter,
+    unsigned int vectorIndex,
+    QWidget* parent
+)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter), vectorIndex_(vectorIndex)
 {
     auto parameterShared = parameter_.lock();
 
@@ -16,13 +18,13 @@ enzo::ui::FloatSliderParm::FloatSliderParm(std::weak_ptr<prm::NodeParameter> par
         range.getMax(),
         range.getMinFlag() == prm::RangeFlag::LOCKED,
         range.getMaxFlag() == prm::RangeFlag::LOCKED,
-        0.0);
+        0.0
+    );
     slider_->setValue(parameterShared->evalFloat(vectorIndex_));
     contentLayout_->addWidget(slider_);
 
-    valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-        syncFromParameter();
-    });
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
 
     connect(slider_, &Slider::sliderPressed, this, &FloatSliderParm::onPressed);
     connect(slider_, &Slider::sliderMoved, this, &FloatSliderParm::onMoved);
@@ -60,8 +62,11 @@ void enzo::ui::FloatSliderParm::onReleased()
     if (auto parameterShared = parameter_.lock())
     {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), valueBeforeDrag_,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            valueBeforeDrag_,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

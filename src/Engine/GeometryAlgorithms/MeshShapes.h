@@ -2,7 +2,9 @@
 #include "Engine/Core/Types.h"
 #include <memory>
 
-namespace enzo::geo { class Mesh; }
+namespace enzo::geo {
+class Mesh;
+}
 
 namespace enzo::utils {
 

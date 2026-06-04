@@ -3,8 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace enzo::util
-{
+namespace enzo::util {
 
 /**
  * @class enzo::util::UnionFind
@@ -21,7 +20,7 @@ namespace enzo::util
  */
 class UnionFind
 {
-public:
+  public:
     /// @brief Constructs an instance with each of @p elementCount elements in its own component.
     explicit UnionFind(std::size_t elementCount);
 
@@ -41,7 +40,7 @@ public:
     /// @brief Total elements managed by this instance.
     std::size_t size() const { return parent_.size(); }
 
-private:
+  private:
     std::vector<std::size_t> parent_;
     std::vector<std::uint8_t> rank_;
     std::size_t componentCount_;

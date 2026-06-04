@@ -4,8 +4,7 @@
 #include <QPropertyAnimation>
 #include <qnamespace.h>
 
-enzo::ui::BoolSwitch::BoolSwitch(bool initialChecked, QWidget* parent)
-: QPushButton(parent)
+enzo::ui::BoolSwitch::BoolSwitch(bool initialChecked, QWidget* parent) : QPushButton(parent)
 {
     setFixedWidth(fullWidth_);
     setMinimumHeight(19);
@@ -39,9 +38,15 @@ void enzo::ui::BoolSwitch::paintEvent(QPaintEvent* event)
     constexpr int borderRadius = 7;
     constexpr int margin = 2;
     painter.drawRoundedRect(
-        QRectF(bgRect.left() + margin + switchX_, bgRect.top() + margin,
-               handleWidth_, bgRect.height() - margin * 2),
-        borderRadius, borderRadius);
+        QRectF(
+            bgRect.left() + margin + switchX_,
+            bgRect.top() + margin,
+            handleWidth_,
+            bgRect.height() - margin * 2
+        ),
+        borderRadius,
+        borderRadius
+    );
 }
 
 void enzo::ui::BoolSwitch::animateSwitch(bool checked)

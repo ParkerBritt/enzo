@@ -1,26 +1,24 @@
 #pragma once
 
-#include "Engine/UndoRedo/UndoCommand.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
-#include "Engine/Core/Types.h"
-#include <vector>
-#include <string>
+#include "Engine/UndoRedo/UndoCommand.h"
 #include <icecream.hpp>
+#include <string>
+#include <vector>
 
 namespace enzo::nt {
 
 class CreateNodeCommand : public UndoCommand
 {
-public:
-    CreateNodeCommand(OpId opId) : opId_(opId)
-    {
-    }
+  public:
+    CreateNodeCommand(OpId opId) : opId_(opId) {}
 
     void undo() override
     {
         GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ =  op.getTypeName();
+        typeName_ = op.getTypeName();
         position_ = op.getPosition();
 
         nm().removeOperator(opId_);
@@ -39,10 +37,10 @@ public:
 
     UndoCommandType type() const override { return UndoCommandType::CreateNode; }
 
-private:
+  private:
     OpId opId_;
     std::string typeName_;
     Vector2f position_;
 };
 
-}
+} // namespace enzo::nt

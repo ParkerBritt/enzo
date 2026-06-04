@@ -7,15 +7,14 @@
 #include <OpenGL/gl.h>
 #endif
 
-#include <glm/fwd.hpp>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <glm/geometric.hpp>
-#include <tbb/blocked_range.h>
-#include <tbb/parallel_for.h>
 #include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "icecream.hpp"
-
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <glm/fwd.hpp>
+#include <glm/geometric.hpp>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 GLPoints::GLPoints()
 {
@@ -38,10 +37,18 @@ void GLPoints::init()
 void GLPoints::initBuffers()
 {
     const GLfloat billboardVertexPositions[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
+        -0.5f,
+        -0.5f,
+        0.0f,
+        0.5f,
+        -0.5f,
+        0.0f,
+        -0.5f,
+        0.5f,
+        0.0f,
+        0.5f,
+        0.5f,
+        0.0f,
     };
 
     points_ = {};
@@ -49,7 +56,12 @@ void GLPoints::initBuffers()
 
     glGenBuffers(1, &billboardVertexBuffer_);
     glBindBuffer(GL_ARRAY_BUFFER, billboardVertexBuffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(billboardVertexPositions), billboardVertexPositions, GL_STATIC_DRAW);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(billboardVertexPositions),
+        billboardVertexPositions,
+        GL_STATIC_DRAW
+    );
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
@@ -61,7 +73,6 @@ void GLPoints::initBuffers()
     glVertexAttribDivisor(1, 1);
 }
 
-
 void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
 {
     const glm::vec3 camPosGlm = camera.getPos();
@@ -69,26 +80,34 @@ void GLPoints::setPoints(const enzo::NodePacket& packet, GLCamera& camera)
 
     points_.clear();
 
-    for(size_t pi = 0; pi < packet.size(); ++pi)
+    for (size_t pi = 0; pi < packet.size(); ++pi)
     {
         auto prim = packet.getPrimitive(pi);
-        if(prim->getType() != enzo::geo::PrimType::MESH) continue;
+        if (prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
         const enzo::Offset numPoints = geometry->getNumSoloPoints();
         const size_t baseIndex = points_.size();
         points_.resize(baseIndex + numPoints);
 
-        std::vector<enzo::Offset> soloPoints = {geometry->soloPointsBegin(), geometry->soloPointsEnd()};
+        std::vector<enzo::Offset> soloPoints = {
+            geometry->soloPointsBegin(),
+            geometry->soloPointsEnd()
+        };
 
-        tbb::parallel_for(tbb::blocked_range<enzo::Offset>(0, numPoints), [&](tbb::blocked_range<enzo::Offset> range)
-        {
-            for(enzo::Offset i=range.begin(); i<range.end(); ++i)
-            {
-                const enzo::Offset ptOffset = soloPoints[i];
-                const enzo::Vector3 pos = geometry->getPointPos(ptOffset);
-                points_[baseIndex + i] = {glm::vec3(pos.x(), pos.y(), pos.z()), static_cast<float>((pos-camPos).norm())*0.005f};
+        tbb::parallel_for(
+            tbb::blocked_range<enzo::Offset>(0, numPoints),
+            [&](tbb::blocked_range<enzo::Offset> range) {
+                for (enzo::Offset i = range.begin(); i < range.end(); ++i)
+                {
+                    const enzo::Offset ptOffset = soloPoints[i];
+                    const enzo::Vector3 pos = geometry->getPointPos(ptOffset);
+                    points_[baseIndex + i] = {
+                        glm::vec3(pos.x(), pos.y(), pos.z()),
+                        static_cast<float>((pos - camPos).norm()) * 0.005f
+                    };
+                }
             }
-        });
+        );
     }
 
     pointCount = points_.size();
@@ -101,16 +120,14 @@ void GLPoints::updatePointSize(GLCamera& camera)
 {
     const glm::vec3 camPosGlm = camera.getPos();
 
-    for(Point& point : points_)
+    for (Point& point : points_)
     {
-        point = {point.position, glm::distance(point.position,camPosGlm)*0.005f};
+        point = {point.position, glm::distance(point.position, camPosGlm) * 0.005f};
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, pointDataBuffer_);
     glBufferData(GL_ARRAY_BUFFER, points_.size() * sizeof(Point), points_.data(), GL_STATIC_DRAW);
 }
-
-
 
 void GLPoints::initShaderProgram()
 {
@@ -145,12 +162,11 @@ void GLPoints::initShaderProgram()
     // compile shader object
     glCompileShader(vertexShader);
 
-
     // log shader error
-    int  success;
+    int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success)
+    if (!success)
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -158,9 +174,7 @@ void GLPoints::initShaderProgram()
     else
     {
         std::cout << "success\n";
-
     }
-
 
     // fragment shader
     const std::string fragmentShaderSource = R"(
@@ -180,7 +194,7 @@ void GLPoints::initShaderProgram()
     glShaderSource(fragmentShader, 1, &fragmentShaderSourceC, NULL);
     glCompileShader(fragmentShader);
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success)
+    if (!success)
     {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -188,7 +202,6 @@ void GLPoints::initShaderProgram()
     else
     {
         std::cout << "success\n";
-
     }
 
     // create shader program
@@ -204,23 +217,11 @@ void GLPoints::initShaderProgram()
     glDeleteShader(fragmentShader);
 }
 
+void GLPoints::bind() { glBindVertexArray(vao); }
 
+void GLPoints::useProgram() { glUseProgram(shaderProgram); }
 
-void GLPoints::bind()
-{
-    glBindVertexArray(vao);
-}
-
-void GLPoints::useProgram()
-{
-    glUseProgram(shaderProgram);
-}
-
-
-void GLPoints::unbind()
-{
-    glBindVertexArray(0);
-}
+void GLPoints::unbind() { glBindVertexArray(0); }
 
 void GLPoints::draw()
 {

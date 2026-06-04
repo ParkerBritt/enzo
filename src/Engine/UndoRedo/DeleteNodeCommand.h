@@ -1,35 +1,35 @@
 #pragma once
 
-#include "Engine/UndoRedo/UndoCommand.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
-#include "Engine/Core/Types.h"
-#include <vector>
+#include "Engine/UndoRedo/UndoCommand.h"
 #include <string>
+#include <vector>
 
 namespace enzo::nt {
 
 class DeleteNodeCommand : public UndoCommand
 {
 
-struct SavedParameter
-{
-    std::string name;
-    prm::PrmValues values;
-};
+    struct SavedParameter
+    {
+        std::string name;
+        prm::PrmValues values;
+    };
 
-public:
+  public:
     DeleteNodeCommand(OpId opId) : opId_(opId)
     {
         GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ =  op.getTypeName();
+        typeName_ = op.getTypeName();
         position_ = op.getPosition();
 
         // Save parms
         savedParms_ = std::vector<SavedParameter>();
-        for(auto weakPrm : op.getParameters())
+        for (auto weakPrm : op.getParameters())
         {
-            if(auto prm = weakPrm.lock())
+            if (auto prm = weakPrm.lock())
             {
                 savedParms_.push_back({prm->getName(), prm->getValues()});
             }
@@ -48,27 +48,24 @@ public:
         nm().moveNode(opId_, position_, true);
 
         // Restore parms
-        for(const auto& saved : savedParms_)
+        for (const auto& saved : savedParms_)
         {
-            if(auto prm = op.getParameter(saved.name).lock())
+            if (auto prm = op.getParameter(saved.name).lock())
             {
                 prm->setValues(saved.values);
             }
         }
     }
 
-    void redo() override
-    {
-        nm().removeOperator(opId_);
-    }
+    void redo() override { nm().removeOperator(opId_); }
 
     UndoCommandType type() const override { return UndoCommandType::DeleteNode; }
 
-private:
+  private:
     OpId opId_;
     std::string typeName_;
     Vector2f position_;
     std::vector<SavedParameter> savedParms_;
 };
 
-}
+} // namespace enzo::nt

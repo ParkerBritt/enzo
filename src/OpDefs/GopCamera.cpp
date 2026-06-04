@@ -1,11 +1,11 @@
 #include "OpDefs/GopCamera.h"
-#include "Engine/Primitives/Camera.h"
 #include "Engine/Core/Types.h"
-#include <cmath>
 #include "Engine/Parameter/Range.h"
+#include "Engine/Primitives/Camera.h"
+#include <cmath>
 
 GopCamera::GopCamera(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
 }
 
@@ -13,7 +13,7 @@ void GopCamera::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         NodePacket packet;
         auto cam = std::make_shared<geo::Camera>();
@@ -28,16 +28,22 @@ void GopCamera::cookOp(enzo::op::Context context)
 
         // Rotation matrices (XYZ order)
         Matrix4 rotX = Matrix4::Identity();
-        rotX(1,1) =  std::cos(rx); rotX(1,2) = -std::sin(rx);
-        rotX(2,1) =  std::sin(rx); rotX(2,2) =  std::cos(rx);
+        rotX(1, 1) = std::cos(rx);
+        rotX(1, 2) = -std::sin(rx);
+        rotX(2, 1) = std::sin(rx);
+        rotX(2, 2) = std::cos(rx);
 
         Matrix4 rotY = Matrix4::Identity();
-        rotY(0,0) =  std::cos(ry); rotY(0,2) =  std::sin(ry);
-        rotY(2,0) = -std::sin(ry); rotY(2,2) =  std::cos(ry);
+        rotY(0, 0) = std::cos(ry);
+        rotY(0, 2) = std::sin(ry);
+        rotY(2, 0) = -std::sin(ry);
+        rotY(2, 2) = std::cos(ry);
 
         Matrix4 rotZ = Matrix4::Identity();
-        rotZ(0,0) =  std::cos(rz); rotZ(0,1) = -std::sin(rz);
-        rotZ(1,0) =  std::sin(rz); rotZ(1,1) =  std::cos(rz);
+        rotZ(0, 0) = std::cos(rz);
+        rotZ(0, 1) = -std::sin(rz);
+        rotZ(1, 0) = std::sin(rz);
+        rotZ(1, 1) = std::cos(rz);
 
         Matrix4 xform = Matrix4::Identity();
         xform(0, 3) = tx;
@@ -56,7 +62,18 @@ void GopCamera::cookOp(enzo::op::Context context)
 std::vector<enzo::prm::Template> GopCamera::parameterList()
 {
     return {
-        enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("transform", "Transform"), enzo::prm::Default(0), 3),
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("rotate", "Rotate"), enzo::prm::Default(0), 3, enzo::prm::Range(0, 360))
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("transform", "Transform"),
+            enzo::prm::Default(0),
+            3
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("rotate", "Rotate"),
+            enzo::prm::Default(0),
+            3,
+            enzo::prm::Range(0, 360)
+        )
     };
 }

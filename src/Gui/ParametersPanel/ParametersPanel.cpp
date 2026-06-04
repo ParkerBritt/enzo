@@ -1,8 +1,8 @@
 #include "Gui/ParametersPanel/ParametersPanel.h"
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/GeometryOperator.h"
-#include "Engine/Parameter/Template.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/Parameter/Template.h"
 #include "Gui/Parameters/BoolParm.h"
 #include "Gui/Parameters/FloatSliderParm.h"
 #include "Gui/Parameters/GroupParm.h"
@@ -15,12 +15,11 @@
 #include <qwidget.h>
 #include <stdexcept>
 
-ParametersPanel::ParametersPanel(QWidget *parent)
-: Panel(parent)
+ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
 {
     mainLayout_ = new QVBoxLayout();
     parametersLayout_ = new QVBoxLayout();
-    parametersLayout_->setContentsMargins(15,15,15,15);
+    parametersLayout_->setContentsMargins(15, 15, 15, 15);
     parametersLayout_->setAlignment(Qt::AlignTop);
     bgWidget_ = new QWidget();
     bgWidget_->setLayout(parametersLayout_);
@@ -39,17 +38,20 @@ ParametersPanel::ParametersPanel(QWidget *parent)
 
 void ParametersPanel::clearParameters()
 {
-    QLayoutItem *child;
-    while ((child = parametersLayout_->takeAt(0)) != nullptr) {
+    QLayoutItem* child;
+    while ((child = parametersLayout_->takeAt(0)) != nullptr)
+    {
         delete child->widget();
         delete child;
     }
 }
 
-enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Template& templateEntry,
-                                                          enzo::nt::GeometryOperator& displayOp,
-                                                          std::vector<enzo::ui::Parameter*>& leafWidgets,
-                                                          int& maxLeftPadding)
+enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
+    const enzo::prm::Template& templateEntry,
+    enzo::nt::GeometryOperator& displayOp,
+    std::vector<enzo::ui::Parameter*>& leafWidgets,
+    int& maxLeftPadding
+)
 {
     using namespace enzo;
 
@@ -58,7 +60,8 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Templ
         ui::GroupParm* groupWidget = new ui::GroupParm(templateEntry);
         for (const prm::Template& child : templateEntry.getChildren())
         {
-            ui::Parameter* childWidget = buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
+            ui::Parameter* childWidget =
+                buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
             if (childWidget) groupWidget->addChild(childWidget);
         }
         // Groups participate in left-padding alignment so their labels line up with leaf labels.
@@ -74,14 +77,26 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(const enzo::prm::Templ
     ui::Parameter* leafWidget = nullptr;
     switch (templateEntry.getType())
     {
-        case prm::Type::FLOAT: leafWidget = new ui::FloatSliderParm(parameter); break;
-        case prm::Type::INT:   leafWidget = new ui::IntSliderParm(parameter); break;
-        case prm::Type::BOOL:  leafWidget = ui::BoolParm::create(parameter); break;
-        case prm::Type::XYZ:   leafWidget = new ui::XYZParm(parameter); break;
-        case prm::Type::STRING: leafWidget = new ui::StringParm(parameter); break;
-        default:
-            throw std::runtime_error("ParametersPanel: parameter type not accounted for "
-                + std::to_string(static_cast<int>(templateEntry.getType())));
+    case prm::Type::FLOAT:
+        leafWidget = new ui::FloatSliderParm(parameter);
+        break;
+    case prm::Type::INT:
+        leafWidget = new ui::IntSliderParm(parameter);
+        break;
+    case prm::Type::BOOL:
+        leafWidget = ui::BoolParm::create(parameter);
+        break;
+    case prm::Type::XYZ:
+        leafWidget = new ui::XYZParm(parameter);
+        break;
+    case prm::Type::STRING:
+        leafWidget = new ui::StringParm(parameter);
+        break;
+    default:
+        throw std::runtime_error(
+            "ParametersPanel: parameter type not accounted for " +
+            std::to_string(static_cast<int>(templateEntry.getType()))
+        );
     }
 
     leafWidgets.push_back(leafWidget);
@@ -107,12 +122,15 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     topWidgets.reserve(templates.size());
     for (const prm::Template& templateEntry : templates)
     {
-        enzo::ui::Parameter* widget = buildTemplateWidget(templateEntry, displayOp, leafWidgets, maxLeftPadding);
+        enzo::ui::Parameter* widget =
+            buildTemplateWidget(templateEntry, displayOp, leafWidgets, maxLeftPadding);
         if (widget) topWidgets.push_back(widget);
     }
 
     const int leftPadding = maxLeftPadding + 5;
-    for (enzo::ui::Parameter* leaf : leafWidgets) leaf->setLeftPadding(leftPadding);
+    for (enzo::ui::Parameter* leaf : leafWidgets)
+        leaf->setLeftPadding(leftPadding);
 
-    for (enzo::ui::Parameter* widget : topWidgets) parametersLayout_->addWidget(widget);
+    for (enzo::ui::Parameter* widget : topWidgets)
+        parametersLayout_->addWidget(widget);
 }

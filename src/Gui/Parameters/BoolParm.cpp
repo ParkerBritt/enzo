@@ -4,7 +4,8 @@
 #include "Gui/Parameters/BoolIconSlashParm.h"
 #include "Gui/Parameters/BoolSwitchParm.h"
 
-enzo::ui::Parameter* enzo::ui::BoolParm::create(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
+enzo::ui::Parameter*
+enzo::ui::BoolParm::create(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
 {
     auto parameterShared = parameter.lock();
     if (!parameterShared) return nullptr;

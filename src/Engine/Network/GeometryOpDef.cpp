@@ -1,11 +1,11 @@
-#include <tbb/parallel_for.h>
 #include "Engine/Network/GeometryOpDef.h"
-#include <stdexcept>
-#include <iostream>
-#include "Engine/Network/GeometryOperator.h"
-#include "Engine/Core/Types.h"
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
+#include <iostream>
+#include <stdexcept>
+#include <tbb/parallel_for.h>
 
 namespace enzo {
 
@@ -15,11 +15,9 @@ bool nt::GeometryOpDef::outputRequested(unsigned int outputIndex)
     return true;
 }
 
-
-
 void nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, NodePacket packet)
 {
-    if(outputIndex>getMaxOutputs())
+    if (outputIndex > getMaxOutputs())
     {
         throw std::runtime_error("Cannot set output packet to index > maxOutputs");
     }
@@ -36,38 +34,25 @@ void nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, NodePacket pac
 void nt::GeometryOpDef::throwError(std::string error)
 {
     std::cerr << "NODE EXCEPTION: " << error << "\n";
-
 }
 
 void nt::GeometryOpDef::throwWarning(std::string warning)
 {
     std::cerr << "NODE WARNING: " << warning << "\n";
-
 }
 
-unsigned int nt::GeometryOpDef::getMinInputs() const
-{
-    return opInfo_.minInputs;
+unsigned int nt::GeometryOpDef::getMinInputs() const { return opInfo_.minInputs; }
 
-}
+unsigned int nt::GeometryOpDef::getMaxInputs() const { return opInfo_.maxInputs; }
 
-unsigned int nt::GeometryOpDef::getMaxInputs() const
-{
-    return opInfo_.maxInputs;
-}
-
-unsigned int nt::GeometryOpDef::getMaxOutputs() const
-{
-    return opInfo_.maxOutputs;
-}
-
+unsigned int nt::GeometryOpDef::getMaxOutputs() const { return opInfo_.maxOutputs; }
 
 nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
-: opInfo_{opInfo}, network_{network}
+    : opInfo_{opInfo}, network_{network}
 {
     // Initialize each slot with an empty packet so consumers never see null.
     outputPackets_.resize(getMaxOutputs());
-    for(auto& slot : outputPackets_)
+    for (auto& slot : outputPackets_)
     {
         slot = std::make_shared<const NodePacket>();
     }
@@ -75,7 +60,7 @@ nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
 
 std::shared_ptr<const NodePacket> nt::GeometryOpDef::getOutputPacket(unsigned outputIndex)
 {
-    if(outputIndex>getMaxOutputs())
+    if (outputIndex > getMaxOutputs())
     {
         throw std::runtime_error("Cannot get output packet at index > maxOutputs");
     }

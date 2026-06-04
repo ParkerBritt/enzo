@@ -1,23 +1,22 @@
 #include "OpDefs/GopGeometryImport.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
+#include <boost/algorithm/string.hpp>
 #include <cstdio>
-#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <tbb/parallel_for.h>
 
 GopGeometryImport::GopGeometryImport(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GopGeometryImport::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         // TODO: convert to NodePacket
         NodePacket packet;
@@ -66,8 +65,8 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //         {
         //             continue;
         //         }
-        //         const Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]), std::stod(result[3])};
-        //         geo.addPoint(pointPos);
+        //         const Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]),
+        //         std::stod(result[3])}; geo.addPoint(pointPos);
         //     }
         //     else if(firstChar=='f' || firstChar=='l')
         //     {
@@ -105,13 +104,16 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
 
         setOutputPacket(0, packet);
     }
-
 }
 
 std::vector<enzo::prm::Template> GopGeometryImport::parameterList()
 {
     return {
         enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("filePath", "File Path")),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), enzo::prm::Default(1))
+        enzo::prm::Template(
+            enzo::prm::Type::FLOAT,
+            enzo::prm::Name("size", "Size"),
+            enzo::prm::Default(1)
+        )
     };
 }

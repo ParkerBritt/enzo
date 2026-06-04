@@ -2,12 +2,13 @@
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopCopyToPoints : public enzo::nt::GeometryOpDef {
+class GopCopyToPoints : public enzo::nt::GeometryOpDef
+{
   public:
-    GopCopyToPoints(enzo::nt::NetworkManager *network, enzo::op::OpInfo opInfo);
+    GopCopyToPoints(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
-    static enzo::nt::GeometryOpDef *ctor(enzo::nt::NetworkManager *network,
-                                         enzo::op::OpInfo opInfo) {
+    static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+    {
         return new GopCopyToPoints(network, opInfo);
     }
 

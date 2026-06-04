@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Network/NodePacket.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NodePacket.h"
 
 namespace enzo::nt {
 class NetworkManager;
@@ -16,9 +16,10 @@ namespace enzo::op {
  * about the network. It allows querying parameters, reading input geometry, and in the future
  * provides values like time.
  */
-class Context {
+class Context
+{
   public:
-    Context(enzo::nt::OpId opId, enzo::nt::NetworkManager &networkManager);
+    Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     floatT evalFloatParm(std::string_view parmName, const unsigned int index = 0) const;
@@ -28,6 +29,6 @@ class Context {
 
   private:
     enzo::nt::OpId opId_;
-    enzo::nt::NetworkManager &networkManager_;
+    enzo::nt::NetworkManager& networkManager_;
 };
 } // namespace enzo::op

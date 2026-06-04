@@ -4,10 +4,11 @@
 
 namespace enzo::ui {
 
-class GroupParm : public Parameter {
+class GroupParm : public Parameter
+{
     Q_OBJECT
   public:
-    GroupParm(const prm::Template& parmTemplate, QWidget *parent = nullptr);
+    GroupParm(const prm::Template& parmTemplate, QWidget* parent = nullptr);
     void addChild(Parameter* child) override;
 };
 

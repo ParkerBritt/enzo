@@ -1,10 +1,12 @@
 #include "OpDefs/GopBoolean.h"
-#include "Engine/Primitives/Mesh.h"
-#include "Engine/Network/NodePacket.h"
 #include "Engine/GeometryAlgorithms/BooleanUtils.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Mesh.h"
 
 GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo) {}
+    : GeometryOpDef(network, opInfo)
+{
+}
 
 void GopBoolean::cookOp(enzo::op::Context context)
 {
@@ -40,8 +42,10 @@ void GopBoolean::cookOp(enzo::op::Context context)
     {
         const std::string opStr = context.evalStringParm("operation");
         utils::BooleanOp op = utils::BooleanOp::UNION;
-        if (opStr == "intersect") op = utils::BooleanOp::INTERSECT;
-        else if (opStr == "subtract") op = utils::BooleanOp::SUBTRACT;
+        if (opStr == "intersect")
+            op = utils::BooleanOp::INTERSECT;
+        else if (opStr == "subtract")
+            op = utils::BooleanOp::SUBTRACT;
 
         std::string error;
         std::shared_ptr<geo::Mesh> result = utils::booleanMesh(*meshA, *meshB, op, &error);

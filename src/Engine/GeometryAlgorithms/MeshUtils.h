@@ -5,7 +5,9 @@
 #include <span>
 #include <vector>
 
-namespace enzo::geo { class Mesh; }
+namespace enzo::geo {
+class Mesh;
+}
 
 namespace enzo::utils {
 
@@ -24,7 +26,6 @@ struct TriangulatedMesh
  */
 TriangulatedMesh triangulateMesh(const geo::Mesh& src);
 
-
 /**
  * @brief Computes the normal of an arbitrary polygon.
  *
@@ -37,9 +38,7 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src);
  *                     in winding order.
  * @return The normalized polygon normal.
  */
-Vector3 polygonNormal(std::span<const Vector3> positions,
-                          std::span<const intT> polygonPoints);
-
+Vector3 polygonNormal(std::span<const Vector3> positions, std::span<const intT> polygonPoints);
 
 /**
  * @brief Ear clip triangulates every face of @p mesh into triangle indices.
@@ -62,7 +61,7 @@ std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
  * @param faceOffsets Offsets of the faces to triangulate.
  * @return Triangles as triples of the mesh's vertex offsets, grouped by face.
  */
-std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh,
-                                                              std::span<const Offset> faceOffsets);
+std::vector<std::array<Offset, 3>>
+earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffsets);
 
 } // namespace enzo::utils

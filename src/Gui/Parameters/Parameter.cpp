@@ -4,19 +4,23 @@
 #include <QVBoxLayout>
 #include <string>
 
-enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent)
-: QWidget(parent)
+enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent) : QWidget(parent)
 {
     mainLayout_ = new QHBoxLayout();
     mainLayout_->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout_);
 
     const std::string tooltipDescription = parmTemplate.getTooltip();
-    int tooltipMinWidth = parmTemplate.getLabel().size()*8;
+    int tooltipMinWidth = parmTemplate.getLabel().size() * 8;
     int tooltipMaxWidth = 400;
-    int tooltipWidth = std::clamp<int>(tooltipDescription.size()*6, std::min(tooltipMinWidth, tooltipMaxWidth), tooltipMaxWidth);
+    int tooltipWidth = std::clamp<int>(
+        tooltipDescription.size() * 6,
+        std::min(tooltipMinWidth, tooltipMaxWidth),
+        tooltipMaxWidth
+    );
     // Had to use this weird table workaround to set the width
-    std::string tooltipFull = "<html><table><tr><td width=\""+std::to_string(tooltipWidth)+"\">";
+    std::string tooltipFull =
+        "<html><table><tr><td width=\"" + std::to_string(tooltipWidth) + "\">";
     tooltipFull += "<span style=\"font-weight:600;\">" + parmTemplate.getLabel() + "</span>";
     if (!tooltipDescription.empty())
     {
@@ -36,8 +40,8 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
 
     contentWidget_ = new QWidget();
     contentLayout_ = parmTemplate.getDirection() == prm::Direction::HORIZONTAL
-        ? static_cast<QBoxLayout*>(new QHBoxLayout())
-        : static_cast<QBoxLayout*>(new QVBoxLayout());
+                         ? static_cast<QBoxLayout*>(new QHBoxLayout())
+                         : static_cast<QBoxLayout*>(new QVBoxLayout());
     contentLayout_->setContentsMargins(0, 0, 0, 0);
     contentWidget_->setLayout(contentLayout_);
     mainLayout_->addWidget(contentWidget_);
@@ -71,6 +75,4 @@ void enzo::ui::Parameter::setLeftPadding(int padding)
     label_->setFixedWidth(padding);
 }
 
-void enzo::ui::Parameter::addChild(Parameter*)
-{
-}
+void enzo::ui::Parameter::addChild(Parameter*) {}

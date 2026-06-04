@@ -1,21 +1,20 @@
 #include "HeaderBar.h"
-#include "Engine/Serializer/Serializer.h"
 #include "Engine/Network/NetworkManager.h"
-#include <qaction.h>
-#include <iostream>
-#include <QFileDialog>
+#include "Engine/Serializer/Serializer.h"
 #include <QCoreApplication>
 #include <QDir>
-#include <QStandardPaths>
-#include <QSettings>
+#include <QFileDialog>
 #include <QFileInfo>
+#include <QSettings>
+#include <QStandardPaths>
+#include <iostream>
+#include <qaction.h>
 
 HeaderBar::HeaderBar()
 {
     mainLayout_ = new QHBoxLayout(this);
     setLayout(mainLayout_);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-    
 
     QMenuBar* header = new QMenuBar();
     header->setStyleSheet(R"(
@@ -72,7 +71,13 @@ HeaderBar::HeaderBar()
     connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
     connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
     connect(fileSaveAsAction, &QAction::triggered, this, &HeaderBar::onFileSaveAsClicked);
-    connect(fileQuitAction, &QAction::triggered, qApp, &QCoreApplication::quit, Qt::QueuedConnection);
+    connect(
+        fileQuitAction,
+        &QAction::triggered,
+        qApp,
+        &QCoreApplication::quit,
+        Qt::QueuedConnection
+    );
 
     // Edit sub menu
     QMenu* editMenu = header->addMenu("Edit");
@@ -87,20 +92,20 @@ HeaderBar::HeaderBar()
     mainLayout_->addWidget(header);
 }
 
-void HeaderBar::onFileNewClicked()
-{
-    enzo::nt::nm().clear();
-}
+void HeaderBar::onFileNewClicked() { enzo::nt::nm().clear(); }
 
 void HeaderBar::onFileOpenClicked()
 {
     QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    QString fileName = QFileDialog::getOpenFileName(this,
-    tr("Open File"), homeDir, tr("Enzo files (*.enzo);;All Files (*)"));
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("Open File"),
+        homeDir,
+        tr("Enzo files (*.enzo);;All Files (*)")
+    );
 
-    if (fileName.isEmpty())
-        return;
+    if (fileName.isEmpty()) return;
 
     openFile(fileName);
 }
@@ -110,8 +115,12 @@ void HeaderBar::onFileSaveAsClicked()
     QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString defaultSavePath = QDir(homeDir).filePath("Untitled.enzo");
 
-    QString filePath = QFileDialog::getSaveFileName(this,
-    tr("Save File"), defaultSavePath, tr("Enzo files (*.enzo);;All Files (*)"));
+    QString filePath = QFileDialog::getSaveFileName(
+        this,
+        tr("Save File"),
+        defaultSavePath,
+        tr("Enzo files (*.enzo);;All Files (*)")
+    );
 
     saveFile(filePath);
 }
@@ -135,10 +144,9 @@ void HeaderBar::saveFile(const QString& filePath)
     }
 
     enzo::nt::Serializer serializer;
-    serializer.save( enzo::nt::nm(), filePath.toStdString());
+    serializer.save(enzo::nt::nm(), filePath.toStdString());
     currentFilePath_ = filePath;
     addRecentFile(filePath);
-
 }
 
 void HeaderBar::openFile(const QString& filePath)
@@ -150,7 +158,7 @@ void HeaderBar::openFile(const QString& filePath)
     }
 
     enzo::nt::Serializer serializer;
-    serializer.load( enzo::nt::nm(), filePath.toStdString());
+    serializer.load(enzo::nt::nm(), filePath.toStdString());
     currentFilePath_ = filePath;
     addRecentFile(filePath);
 }
@@ -182,8 +190,6 @@ void HeaderBar::updateRecentFilesMenu()
     for (const QString& filePath : recentFiles)
     {
         QAction* action = recentFilesMenu_->addAction(QFileInfo(filePath).fileName());
-        connect(action, &QAction::triggered, this, [this, filePath]() {
-            openFile(filePath);
-        });
+        connect(action, &QAction::triggered, this, [this, filePath]() { openFile(filePath); });
     }
 }

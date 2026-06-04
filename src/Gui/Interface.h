@@ -10,7 +10,8 @@ class Viewport;
 class NetworkPanel;
 class GeometrySpreadsheetPanel;
 
-class EnzoUI : public QWidget {
+class EnzoUI : public QWidget
+{
   public:
     EnzoUI();
 
@@ -18,14 +19,14 @@ class EnzoUI : public QWidget {
     void connectSignals();
     int const DEFAULT_HANDLE_WIDTH = 2;
 
-    QVBoxLayout *mainLayout_;
-    QVBoxLayout *viewportSplitLayout_;
-    Splitter *viewportSplitter_;
-    Splitter *networkSplitter_;
-    Splitter *spreadsheetSplitter_;
+    QVBoxLayout* mainLayout_;
+    QVBoxLayout* viewportSplitLayout_;
+    Splitter* viewportSplitter_;
+    Splitter* networkSplitter_;
+    Splitter* spreadsheetSplitter_;
 
-    Viewport *viewport_;
-    NetworkPanel *network_;
-    ParametersPanel *parametersPanel_;
-    GeometrySpreadsheetPanel *geometrySpreadsheetPanel_;
+    Viewport* viewport_;
+    NetworkPanel* network_;
+    ParametersPanel* parametersPanel_;
+    GeometrySpreadsheetPanel* geometrySpreadsheetPanel_;
 };

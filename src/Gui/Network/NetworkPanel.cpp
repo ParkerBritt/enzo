@@ -1,9 +1,9 @@
 #include "Gui/Network/NetworkPanel.h"
-#include "Engine/Network/NetworkManager.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryConnection.h"
 #include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
-#include "Engine/Core/Types.h"
 #include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
 #include "Gui/Network/DisplayFlagButton.h"
@@ -28,7 +28,8 @@
 
 using namespace enzo;
 
-NetworkPanel::NetworkPanel(QWidget *parent) : Panel(parent) {
+NetworkPanel::NetworkPanel(QWidget* parent) : Panel(parent)
+{
 
     mainLayout_ = new QVBoxLayout(this);
     // mainLayout_->setContentsMargins(0,0,0,0);
@@ -45,14 +46,16 @@ NetworkPanel::NetworkPanel(QWidget *parent) : Panel(parent) {
 
     // Node position changed
     enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::OpId opId, enzo::Vector2f pos) {
-        if (auto it = nodeStore_.find(opId); it != nodeStore_.end()) {
+        if (auto it = nodeStore_.find(opId); it != nodeStore_.end())
+        {
             it->second->setPos(pos.x(), pos.y());
         }
     });
 
     // Operators removed
     enzo::nt::nm().operatorRemoved.connect([this](enzo::nt::OpId opId) {
-        if (auto it = nodeStore_.find(opId); it != nodeStore_.end()) {
+        if (auto it = nodeStore_.find(opId); it != nodeStore_.end())
+        {
             scene_->removeItem(it->second);
             delete it->second;
             nodeStore_.erase(it);
@@ -61,7 +64,8 @@ NetworkPanel::NetworkPanel(QWidget *parent) : Panel(parent) {
 
     // Display nodes changed
     enzo::nt::nm().displayNodeChanged.connect([this](std::optional<enzo::nt::OpId> opId) {
-        for (auto &[id, node] : nodeStore_) {
+        for (auto& [id, node] : nodeStore_)
+        {
             node->setDisplayFlag(opId.has_value() && id == *opId);
         }
     });
@@ -69,75 +73,90 @@ NetworkPanel::NetworkPanel(QWidget *parent) : Panel(parent) {
     // Selected nodes changed
     enzo::nt::nm().selectedNodesChanged.connect([this](std::vector<enzo::nt::OpId> selectedIds) {
         // TODO: potentially slow iterating through every node
-        for (auto &[id, node] : nodeStore_) {
+        for (auto& [id, node] : nodeStore_)
+        {
             node->setSelected(false);
         }
-        for (enzo::nt::OpId id : selectedIds) {
-            if (auto it = nodeStore_.find(id); it != nodeStore_.end()) {
+        for (enzo::nt::OpId id : selectedIds)
+        {
+            if (auto it = nodeStore_.find(id); it != nodeStore_.end())
+            {
                 it->second->setSelected(true);
             }
         }
     });
 }
 
-void NetworkPanel::deleteEdge(QGraphicsItem *edge) {
+void NetworkPanel::deleteEdge(QGraphicsItem* edge)
+{
     std::cout << "----\ndeleting edge\n";
-    if (!edge)
-        return;
-    if (auto it = prevHoverItems_.find(edge); it != prevHoverItems_.end()) {
+    if (!edge) return;
+    if (auto it = prevHoverItems_.find(edge); it != prevHoverItems_.end())
+    {
         prevHoverItems_.erase(it);
     }
     // NOTE: deleting edge kept giving me segmentation faults
     // I coundn't figure it out so I'm just leaving it for now
     // delete edge;
-    static_cast<NodeEdgeGraphic *>(edge)->remove();
+    static_cast<NodeEdgeGraphic*>(edge)->remove();
 
     std::cout << "finished deleting edge\n----\n";
 }
 
-void NetworkPanel::mousePressEvent(QMouseEvent *event) {
-    if (event->buttons() & Qt::LeftButton) {
+void NetworkPanel::mousePressEvent(QMouseEvent* event)
+{
+    if (event->buttons() & Qt::LeftButton)
+    {
         leftMousePressed(event);
     }
 }
 
-void NetworkPanel::leftMousePressed(QMouseEvent *event) {
+void NetworkPanel::leftMousePressed(QMouseEvent* event)
+{
     std::cout << "LEFT MOUSE PRESSED\n";
     Qt::KeyboardModifiers mods = event->modifiers();
     leftMouseStart = event->pos();
 
-    QList<QGraphicsItem *> clickedItems = view_->items(event->pos());
-    QGraphicsItem *clickedSocket = itemOfType<SocketGraphic>(clickedItems);
+    QList<QGraphicsItem*> clickedItems = view_->items(event->pos());
+    QGraphicsItem* clickedSocket = itemOfType<SocketGraphic>(clickedItems);
 
     // delete edges
-    if (QGraphicsItem *clickedEdge =
+    if (QGraphicsItem* clickedEdge =
             closestItemOfType<NodeEdgeGraphic>(clickedItems, view_->mapToScene(event->pos()));
-        mods & Qt::ControlModifier && clickedEdge) {
+        mods & Qt::ControlModifier && clickedEdge)
+    {
         deleteEdge(clickedEdge);
     }
     // socket logic
-    else if (clickedSocket) {
+    else if (clickedSocket)
+    {
         // find closest socket
         clickedSocket =
             closestItemOfType<SocketGraphic>(clickedItems, view_->mapToScene(event->pos()));
-        if (clickedSocket) {
-            socketClicked(static_cast<SocketGraphic *>(clickedSocket), event);
+        if (clickedSocket)
+        {
+            socketClicked(static_cast<SocketGraphic*>(clickedSocket), event);
         }
     }
     // floating edge
-    else if (floatingEdge_) {
+    else if (floatingEdge_)
+    {
         destroyFloatingEdge();
-    } else if (QGraphicsItem *clickedNode = itemOfType<NodeGraphic>(clickedItems)) {
+    }
+    else if (QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(clickedItems))
+    {
         state_ = State::MOUSE_DOWN_NODE;
         moveNodeBuffer.clear();
         moveNodeBuffer.push_back(clickedNode);
     }
 }
 
-void NetworkPanel::socketClicked(SocketGraphic *socket, QMouseEvent *event) {
+void NetworkPanel::socketClicked(SocketGraphic* socket, QMouseEvent* event)
+{
     std::cout << "socket clicked\n";
     // clicked first socket
-    if (!floatingEdge_) {
+    if (!floatingEdge_)
+    {
         startSocket_ = socket;
         std::cout << "creating floating edge\n";
         floatingEdge_ = new FloatingEdgeGraphic(socket);
@@ -147,7 +166,8 @@ void NetworkPanel::socketClicked(SocketGraphic *socket, QMouseEvent *event) {
     // clicked second socket
     // connect to opposite type
     else if (socket->getIO() != startSocket_->getIO() &&
-             startSocket_->getOpId() != socket->getOpId()) {
+             startSocket_->getOpId() != socket->getOpId())
+    {
 
         // order sockets in relation to data flow
         // the input node is the node the data flows from
@@ -157,37 +177,47 @@ void NetworkPanel::socketClicked(SocketGraphic *socket, QMouseEvent *event) {
         auto outputNodeSocket =
             startSocket_->getIO() == enzo::nt::SocketIOType::Input ? startSocket_ : socket;
 
-        nt::GeometryOperator &geoOp = enzo::nt::nm().getGeoOperator(outputNodeSocket->getOpId());
+        nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(outputNodeSocket->getOpId());
 
         std::cout << "CONNECTING opid: " << inputNodeSocket->getOpId() << " -> "
                   << outputNodeSocket->getOpId() << "\n";
 
-        nt::connectOperators(inputNodeSocket->getOpId(), inputNodeSocket->getIndex(),
-                             outputNodeSocket->getOpId(), outputNodeSocket->getIndex());
+        nt::connectOperators(
+            inputNodeSocket->getOpId(),
+            inputNodeSocket->getIndex(),
+            outputNodeSocket->getOpId(),
+            outputNodeSocket->getIndex()
+        );
 
         destroyFloatingEdge();
     }
 }
 
-void NetworkPanel::destroyFloatingEdge() {
-    if (floatingEdge_) {
+void NetworkPanel::destroyFloatingEdge()
+{
+    if (floatingEdge_)
+    {
         scene_->removeItem(floatingEdge_);
         delete floatingEdge_;
         floatingEdge_ = nullptr;
     }
 }
 
-void NetworkPanel::mouseMoved(QMouseEvent *event) {
+void NetworkPanel::mouseMoved(QMouseEvent* event)
+{
     // cache and reset prev hover items
-    std::unordered_set<QGraphicsItem *> prevHoverItems = prevHoverItems_;
+    std::unordered_set<QGraphicsItem*> prevHoverItems = prevHoverItems_;
     prevHoverItems_.clear();
     // handle previous items
-    for (QGraphicsItem *item : prevHoverItems) {
-        if (isType<SocketGraphic>(item)) {
-            static_cast<SocketGraphic *>(item)->setHover(false);
+    for (QGraphicsItem* item : prevHoverItems)
+    {
+        if (isType<SocketGraphic>(item))
+        {
+            static_cast<SocketGraphic*>(item)->setHover(false);
         }
-        if (isType<NodeEdgeGraphic>(item)) {
-            static_cast<NodeEdgeGraphic *>(item)->setDeleteHighlight(false);
+        if (isType<NodeEdgeGraphic>(item))
+        {
+            static_cast<NodeEdgeGraphic*>(item)->setDeleteHighlight(false);
         }
     }
 
@@ -195,66 +225,83 @@ void NetworkPanel::mouseMoved(QMouseEvent *event) {
     Qt::KeyboardModifiers mods = event->modifiers();
     bool ctrlMod = mods & Qt::ControlModifier;
 
-    QList<QGraphicsItem *> hoverItems = view_->items(event->pos());
+    QList<QGraphicsItem*> hoverItems = view_->items(event->pos());
 
-    if (state_ == State::MOUSE_DOWN_NODE) {
-        if (QLineF(event->pos(), leftMouseStart).length() > 4.0f) {
+    if (state_ == State::MOUSE_DOWN_NODE)
+    {
+        if (QLineF(event->pos(), leftMouseStart).length() > 4.0f)
+        {
             state_ = State::MOVING_NODE;
             nodeMoveDelta_ = moveNodeBuffer.front()->pos() - view_->mapToScene(event->pos());
         }
         return;
     }
 
-    if (state_ == State::MOVING_NODE) {
+    if (state_ == State::MOVING_NODE)
+    {
         moveNodes(view_->mapToScene(event->pos()) + nodeMoveDelta_);
         return;
     }
 
-    if (floatingEdge_) {
-        if (SocketGraphic *hoverSocket = static_cast<SocketGraphic *>(
-                closestItemOfType<SocketGraphic>(hoverItems, view_->mapToScene(event->pos())));
+    if (floatingEdge_)
+    {
+        if (
+            SocketGraphic* hoverSocket = static_cast<SocketGraphic*>(
+                closestItemOfType<SocketGraphic>(hoverItems, view_->mapToScene(event->pos()))
+            );
             hoverSocket && hoverSocket != startSocket_ &&
             hoverSocket->getIO() != startSocket_->getIO() &&
             hoverSocket->getOpId() != startSocket_->getOpId()
 
-        ) {
+        )
+        {
             floatingEdge_->setFloatPos(hoverSocket->scenePos());
-        } else {
+        }
+        else
+        {
             floatingEdge_->setFloatPos(view_->mapToScene(event->pos()));
         }
         event->accept();
         return;
     }
 
-    QGraphicsItem *hoverEdge =
+    QGraphicsItem* hoverEdge =
         closestItemOfType<NodeEdgeGraphic>(hoverItems, view_->mapToScene(event->pos()));
 
     // set node edge color
-    if (ctrlMod && hoverEdge) {
-        if (event->buttons() & Qt::LeftButton) {
+    if (ctrlMod && hoverEdge)
+    {
+        if (event->buttons() & Qt::LeftButton)
+        {
             deleteEdge(hoverEdge);
-        } else {
-            static_cast<NodeEdgeGraphic *>(hoverEdge)->setDeleteHighlight(true);
+        }
+        else
+        {
+            static_cast<NodeEdgeGraphic*>(hoverEdge)->setDeleteHighlight(true);
             prevHoverItems_.insert(hoverEdge);
         }
     }
 
     // highlight hovered socket
     else if (auto hoverSocket =
-                 closestItemOfType<SocketGraphic>(hoverItems, view_->mapToScene(event->pos()))) {
-        static_cast<SocketGraphic *>(hoverSocket)->setHover(true);
+                 closestItemOfType<SocketGraphic>(hoverItems, view_->mapToScene(event->pos())))
+    {
+        static_cast<SocketGraphic*>(hoverSocket)->setHover(true);
         prevHoverItems_.insert(hoverSocket);
     }
 }
 
-void NetworkPanel::moveNodes(QPointF pos) {
+void NetworkPanel::moveNodes(QPointF pos)
+{
 
-    for (auto node : moveNodeBuffer) {
+    for (auto node : moveNodeBuffer)
+    {
         node->setPos(pos);
     }
 }
 
-void NetworkPanel::keyPressEvent(QKeyEvent *event) {
+void NetworkPanel::keyPressEvent(QKeyEvent* event)
+{
     // modifiers
     Qt::KeyboardModifiers mods = event->modifiers();
     bool ctrlMod = mods & Qt::ControlModifier;
@@ -264,48 +311,57 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event) {
     QPoint widgetPos = mapFromGlobal(globalPos);
     QPointF viewPos = view_->mapToScene(widgetPos);
 
-    QList<QGraphicsItem *> hoverItems = view_->items(widgetPos);
+    QList<QGraphicsItem*> hoverItems = view_->items(widgetPos);
 
     // edge detection
-    switch (event->key()) {
+    switch (event->key())
+    {
 
-    case (Qt::Key_Control): {
-        QGraphicsItem *hoverItem = itemOfType<NodeEdgeGraphic>(hoverItems);
-        if (hoverItem != nullptr) {
-            static_cast<NodeEdgeGraphic *>(hoverItem)->setDeleteHighlight(true);
+    case (Qt::Key_Control):
+    {
+        QGraphicsItem* hoverItem = itemOfType<NodeEdgeGraphic>(hoverItems);
+        if (hoverItem != nullptr)
+        {
+            static_cast<NodeEdgeGraphic*>(hoverItem)->setDeleteHighlight(true);
 
             // deselect sockets
-            for (auto item : hoverItems) {
-                if (isType<SocketGraphic>(item)) {
-                    static_cast<SocketGraphic *>(item)->setHover(false);
+            for (auto item : hoverItems)
+            {
+                if (isType<SocketGraphic>(item))
+                {
+                    static_cast<SocketGraphic*>(item)->setHover(false);
                 }
             }
             prevHoverItems_.insert(hoverItem);
         }
         break;
     }
-    case (Qt::Key_Escape): {
+    case (Qt::Key_Escape):
+    {
         destroyFloatingEdge();
         break;
     }
-    case (Qt::Key_Tab): {
+    case (Qt::Key_Tab):
+    {
         tabMenu_->showOnMouse();
         break;
     }
-    case (Qt::Key_Z): {
-        if (ctrlMod)
-            enzo::nt::nm().undoStack().undo();
+    case (Qt::Key_Z):
+    {
+        if (ctrlMod) enzo::nt::nm().undoStack().undo();
         break;
     }
-    case (Qt::Key_Y): {
-        if (ctrlMod)
-            enzo::nt::nm().undoStack().redo();
+    case (Qt::Key_Y):
+    {
+        if (ctrlMod) enzo::nt::nm().undoStack().redo();
         break;
     }
     case (Qt::Key_Delete):
-    case (Qt::Key_Backspace): {
+    case (Qt::Key_Backspace):
+    {
         auto selectedIds = enzo::nt::nm().getSelectedNodes();
-        for (auto opId : selectedIds) {
+        for (auto opId : selectedIds)
+        {
             enzo::nt::nm().deleteNode(opId);
         }
         break;
@@ -336,13 +392,17 @@ void NetworkPanel::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void NetworkPanel::createNode(op::OpInfo opInfo) {
+void NetworkPanel::createNode(op::OpInfo opInfo)
+{
     QPointF cursorPos = view_->mapToScene(mapFromGlobal(QCursor::pos()));
     enzo::nt::nm().createOperator(
-        opInfo, {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())});
+        opInfo,
+        {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())}
+    );
 }
 
-void NetworkPanel::clearNetwork() {
+void NetworkPanel::clearNetwork()
+{
     destroyFloatingEdge();
     scene_->clear();
     nodeStore_.clear();
@@ -351,68 +411,79 @@ void NetworkPanel::clearNetwork() {
     state_ = State::DEFAULT;
 }
 
-void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId) {
-    auto &op = enzo::nt::nm().getGeoOperator(opId);
+void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
+{
+    auto& op = enzo::nt::nm().getGeoOperator(opId);
     auto pos = op.getPosition();
 
-    NodeGraphic *newNode = new NodeGraphic(opId);
+    NodeGraphic* newNode = new NodeGraphic(opId);
     newNode->setPos(pos.x(), pos.y());
 
     scene_->addItem(newNode);
     nodeStore_.emplace(opId, newNode);
 }
 
-void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection) {
+void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection)
+{
     auto conn = connection.lock();
-    if (!conn)
-        return;
+    if (!conn) return;
 
-    NodeGraphic *inputNode = nodeStore_.at(conn->getInputOpId());
-    NodeGraphic *outputNode = nodeStore_.at(conn->getOutputOpId());
+    NodeGraphic* inputNode = nodeStore_.at(conn->getInputOpId());
+    NodeGraphic* outputNode = nodeStore_.at(conn->getOutputOpId());
 
-    SocketGraphic *inputSocket = inputNode->getOutput(conn->getInputIndex());
-    SocketGraphic *outputSocket = outputNode->getInput(conn->getOutputIndex());
+    SocketGraphic* inputSocket = inputNode->getOutput(conn->getInputIndex());
+    SocketGraphic* outputSocket = outputNode->getInput(conn->getOutputIndex());
 
-    NodeEdgeGraphic *edge = new NodeEdgeGraphic(outputSocket, inputSocket, connection);
+    NodeEdgeGraphic* edge = new NodeEdgeGraphic(outputSocket, inputSocket, connection);
     edge->setPos(outputSocket->scenePos(), inputSocket->scenePos());
     scene_->addItem(edge);
 }
 
-void NetworkPanel::keyReleaseEvent(QKeyEvent *event) {
+void NetworkPanel::keyReleaseEvent(QKeyEvent* event)
+{
     // modifiers
     Qt::KeyboardModifiers mods = event->modifiers();
     bool ctrlMod = mods & Qt::ControlModifier;
 
     // handle previous items
-    for (QGraphicsItem *item : prevHoverItems_) {
-        if (event->key() == Qt::Key_Control && isType<NodeEdgeGraphic>(item)) {
-            static_cast<NodeEdgeGraphic *>(item)->setDeleteHighlight(false);
+    for (QGraphicsItem* item : prevHoverItems_)
+    {
+        if (event->key() == Qt::Key_Control && isType<NodeEdgeGraphic>(item))
+        {
+            static_cast<NodeEdgeGraphic*>(item)->setDeleteHighlight(false);
         }
     }
 }
 
-void NetworkPanel::mouseReleaseEvent(QMouseEvent *event) {
+void NetworkPanel::mouseReleaseEvent(QMouseEvent* event)
+{
     // std::cout << "----\nMOUSE RELEASED\n---\n";
-    QList<QGraphicsItem *> hoverItems = view_->items(event->pos());
-    QGraphicsItem *hoverSocket = itemOfType<SocketGraphic>(hoverItems);
-    if (event->button() == Qt::LeftButton) {
+    QList<QGraphicsItem*> hoverItems = view_->items(event->pos());
+    QGraphicsItem* hoverSocket = itemOfType<SocketGraphic>(hoverItems);
+    if (event->button() == Qt::LeftButton)
+    {
         // display flag
         if (itemOfType<DisplayFlagButton>(hoverItems) &&
-            QLineF(event->pos(), leftMouseStart).length() < 5.0f) {
-            NodeGraphic *clickedNode =
-                static_cast<NodeGraphic *>(itemOfType<NodeGraphic>(hoverItems));
+            QLineF(event->pos(), leftMouseStart).length() < 5.0f)
+        {
+            NodeGraphic* clickedNode =
+                static_cast<NodeGraphic*>(itemOfType<NodeGraphic>(hoverItems));
             enzo::nt::OpId opId = clickedNode->getOpId();
             auto cmd = std::make_unique<enzo::nt::ChangeDisplayFlagCommand>(
-                enzo::nt::nm().getDisplayOp(), opId);
+                enzo::nt::nm().getDisplayOp(),
+                opId
+            );
             enzo::nt::nm().undoStack().push(std::move(cmd));
             enzo::nt::nm().setDisplayOp(opId);
         }
-        if (state_ == State::MOUSE_DOWN_NODE) {
+        if (state_ == State::MOUSE_DOWN_NODE)
+        {
             // Move threshold was never exceeded so registered as click
             // Handle node selection
-            if (QGraphicsItem *clickedNode = itemOfType<NodeGraphic>(hoverItems)) {
+            if (QGraphicsItem* clickedNode = itemOfType<NodeGraphic>(hoverItems))
+            {
                 // Get selected nodes
-                NodeGraphic *node = static_cast<NodeGraphic *>(clickedNode);
+                NodeGraphic* node = static_cast<NodeGraphic*>(clickedNode);
                 enzo::nt::OpId opId = node->getOpId();
                 std::vector<enzo::nt::OpId> prev(enzo::nt::nm().getSelectedNodes());
 
@@ -420,7 +491,8 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event) {
                 bool isCurrentlySelected = std::find(prev.begin(), prev.end(), opId) != prev.end();
                 bool ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
 
-                if (ctrlHeld || !isCurrentlySelected) {
+                if (ctrlHeld || !isCurrentlySelected)
+                {
                     // Toggle selection if ctrl held
                     // Otherwise only allow selection, not deselection
                     std::vector<enzo::nt::OpId> next = ctrlHeld && isCurrentlySelected
@@ -437,20 +509,28 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent *event) {
             }
             moveNodeBuffer.clear();
             state_ = State::DEFAULT;
-        } else if (state_ == State::MOVING_NODE) {
-            for (auto *item : moveNodeBuffer) {
-                auto *node = static_cast<NodeGraphic *>(item);
+        }
+        else if (state_ == State::MOVING_NODE)
+        {
+            for (auto* item : moveNodeBuffer)
+            {
+                auto* node = static_cast<NodeGraphic*>(item);
                 QPointF p = node->pos();
-                enzo::nt::nm().moveNode(node->getOpId(),
-                                        {static_cast<float>(p.x()), static_cast<float>(p.y())});
+                enzo::nt::nm().moveNode(
+                    node->getOpId(),
+                    {static_cast<float>(p.x()), static_cast<float>(p.y())}
+                );
             }
             moveNodeBuffer.clear();
             state_ = State::DEFAULT;
-        } else if (floatingEdge_ && hoverSocket) {
+        }
+        else if (floatingEdge_ && hoverSocket)
+        {
             hoverSocket =
                 closestItemOfType<SocketGraphic>(hoverItems, view_->mapToScene(event->pos()));
-            if (hoverSocket) {
-                socketClicked(static_cast<SocketGraphic *>(hoverSocket), event);
+            if (hoverSocket)
+            {
+                socketClicked(static_cast<SocketGraphic*>(hoverSocket), event);
             }
         }
     }

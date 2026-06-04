@@ -5,10 +5,11 @@ struct ConnectionSerializable
     unsigned int outputNodeIndex = 0;
     unsigned int outputSocketIndex = 0;
 
-    template <class Archive>
-    void serialize( Archive & ar )
+    template <class Archive> void serialize(Archive& ar)
     {
-        ar( CEREAL_NVP(inputNodeIndex), CEREAL_NVP(inputSocketIndex),
-            CEREAL_NVP(outputNodeIndex), CEREAL_NVP(outputSocketIndex) );
+        ar(CEREAL_NVP(inputNodeIndex),
+           CEREAL_NVP(inputSocketIndex),
+           CEREAL_NVP(outputNodeIndex),
+           CEREAL_NVP(outputSocketIndex));
     }
 };

@@ -9,11 +9,9 @@
 
 #include <algorithm>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-namespace
-{
+namespace {
 
 QIcon makeFallbackIcon()
 {
@@ -35,7 +33,7 @@ QIcon makeFallbackIcon()
     return QIcon(pixmap);
 }
 
-}
+} // namespace
 
 IconRegistry& IconRegistry::instance()
 {
@@ -43,10 +41,7 @@ IconRegistry& IconRegistry::instance()
     return registry;
 }
 
-IconRegistry::IconRegistry()
-: fallback_(makeFallbackIcon())
-{
-}
+IconRegistry::IconRegistry() : fallback_(makeFallbackIcon()) {}
 
 void IconRegistry::registerIcon(const std::string& name, QIcon icon)
 {
@@ -109,4 +104,4 @@ QIcon IconRegistry::lookup(const std::string& name, QColor color, float opacity)
     return QIcon(pixmap(name, QSize(BAKE_SIZE, BAKE_SIZE), color, opacity));
 }
 
-}
+} // namespace enzo::ui

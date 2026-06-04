@@ -1,15 +1,14 @@
+#include <QMenu>
+#include <QMenuBar>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QMenuBar>
-#include <QMenu>
 
-class HeaderBar
-: public QWidget
+class HeaderBar : public QWidget
 {
-public:
+  public:
     HeaderBar();
 
-private:
+  private:
     void onFileNewClicked();
     void onFileOpenClicked();
     void onFileSaveClicked();

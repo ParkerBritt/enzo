@@ -7,14 +7,12 @@
 #include <QWidget>
 #include <qtmetamacros.h>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-class Parameter
-: public QWidget
+class Parameter : public QWidget
 {
     Q_OBJECT
-public:
+  public:
     static constexpr int ROW_HEIGHT = 24;
 
     Parameter(const prm::Template& parmTemplate, QWidget* parent = nullptr);
@@ -22,11 +20,11 @@ public:
     void setLeftPadding(int padding);
     virtual void addChild(Parameter* child);
 
-protected:
+  protected:
     QHBoxLayout* mainLayout_ = nullptr;
     QWidget* contentWidget_ = nullptr;
     QBoxLayout* contentLayout_ = nullptr;
     QLabel* label_ = nullptr;
 };
 
-}
+} // namespace enzo::ui

@@ -2,7 +2,7 @@
 #include "Engine/Core/Types.h"
 
 GopPath::GopPath(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
 }
 
@@ -10,13 +10,13 @@ void GopPath::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         NodePacket packet = context.cloneInputPacket(0);
 
         String path = context.evalStringParm("path");
 
-        for(unsigned int p = 0; p < packet.size(); ++p)
+        for (unsigned int p = 0; p < packet.size(); ++p)
         {
             packet.getPrimitive(p)->setPath(path);
         }
@@ -27,7 +27,5 @@ void GopPath::cookOp(enzo::op::Context context)
 
 std::vector<enzo::prm::Template> GopPath::parameterList()
 {
-    return {
-        enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("path", "Path"))
-    };
+    return {enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("path", "Path"))};
 }
