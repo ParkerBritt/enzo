@@ -3,9 +3,9 @@
 #include "GopGeometryImport.h"
 #include "GopHouse.h"
 #include "GopOceanSurface.h"
-#include "GopTestCube.h"
 #include "OpDefs/GopBoolean.h"
 #include "OpDefs/GopCamera.h"
+#include "OpDefs/GopCircle.h"
 #include "OpDefs/GopCopyToPoints.h"
 #include "OpDefs/GopCube.h"
 #include "OpDefs/GopDelete.h"
@@ -161,6 +161,17 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             GopBoolean::parameterList(),
             2,
             2,
+            1,
+        }
+    );
+    addOperator(
+        enzo::op::OpInfo{
+            "circle",
+            "Circle",
+            &GopCircle::ctor,
+            GopCircle::parameterList(),
+            0,
+            0,
             1,
         }
     );

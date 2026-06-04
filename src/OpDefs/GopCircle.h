@@ -2,15 +2,16 @@
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopTestGeoCube : public enzo::nt::GeometryOpDef
+class GopCircle : public enzo::nt::GeometryOpDef
 {
   public:
-    GopTestGeoCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
+    GopCircle(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
     {
-        return new GopTestGeoCube(network, opInfo);
+        return new GopCircle(network, opInfo);
     }
 
     static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 };
+

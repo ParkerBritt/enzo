@@ -37,7 +37,6 @@ add_library(${libName} SHARED
     ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
-    GopTestCube.cpp
     GopGeometryImport.cpp
     GopGrid.cpp
     GopSineWave.cpp
@@ -50,6 +49,7 @@ add_library(${libName} SHARED
     GopExtrude.cpp
     GopCube.cpp
     GopBoolean.cpp
+    GopCircle.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold)
 
