@@ -21,6 +21,8 @@ constexpr int arrowMargin = 8;
 constexpr int popupGap = 5;
 constexpr qreal itemFadeMs = 300;
 constexpr qreal itemStaggerMs = 30;
+constexpr int scrollbarWidth = 3;
+constexpr int scrollbarMargin = 2;
 
 const QColor borderColor("#383838");
 const QColor backgroundColor("#1a1a1a");
@@ -32,7 +34,7 @@ const QColor hoverColor(60, 60, 60, 153);
 
 enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     setCursor(Qt::PointingHandCursor);
 
     popup_ = new DropdownPopup(this);
@@ -212,11 +214,13 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
 
     painter.fillRect(box, backgroundColor);
 
-    // Highlight slides between rows at its animated position
+    // Highlight slides between rows, leaving an even gap from the scrollbar when present
+    const int rightInset =
+        maxScrollOffset() > 0 ? padding + scrollbarMargin + scrollbarWidth : padding;
     QRect highlight(0, static_cast<int>(highlightTop_) - scrollOffset_, width(), itemHeight);
     painter.setPen(Qt::NoPen);
     painter.setBrush(hoverColor);
-    painter.drawRoundedRect(highlight.adjusted(padding, 1, -padding, -1), 5, 5);
+    painter.drawRoundedRect(highlight.adjusted(padding, 1, -rightInset, -1), 5, 5);
 
     // Rows, translated by the scroll offset and naturally clipped to the reveal
     for (int index = 0; index < static_cast<int>(owner_->items_.size()); ++index)
@@ -261,7 +265,16 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
             padding + static_cast<int>((trackHeight - thumbHeight) * scrollFraction);
         painter.setPen(Qt::NoPen);
         painter.setBrush(borderColor);
-        painter.drawRoundedRect(QRect(width() - 5, thumbTop, 3, thumbHeight), 1, 1);
+        painter.drawRoundedRect(
+            QRect(
+                width() - scrollbarMargin - scrollbarWidth,
+                thumbTop,
+                scrollbarWidth,
+                thumbHeight
+            ),
+            1,
+            1
+        );
     }
 
     // Outline drawn last so it sits above the fill
