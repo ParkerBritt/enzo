@@ -401,24 +401,24 @@ void GopExtrude::cookOp(enzo::op::Context context)
     {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const String selectionStr = context.evalStringParm("selection");
-        const float distance = context.evalFloatParm("distance");
-        const float inset = context.evalFloatParm("inset");
-        const bool connected = context.evalBoolParm("connected");
+        const String selectionStr = context.evalParmString("selection");
+        const float distance = context.evalParmFloat("distance");
+        const float inset = context.evalParmFloat("inset");
+        const bool connected = context.evalParmBool("connected");
 
         // An empty group name disables the group, so callers see no stray group.
         GroupNames groupNames;
-        if (context.evalBoolParm("frontGroupEnabled"))
-            groupNames.front = context.evalStringParm("frontGroupName");
-        if (context.evalBoolParm("sideGroupEnabled"))
-            groupNames.side = context.evalStringParm("sideGroupName");
-        if (context.evalBoolParm("backGroupEnabled"))
-            groupNames.back = context.evalStringParm("backGroupName");
+        if (context.evalParmBool("frontGroupEnabled"))
+            groupNames.front = context.evalParmString("frontGroupName");
+        if (context.evalParmBool("sideGroupEnabled"))
+            groupNames.side = context.evalParmString("sideGroupName");
+        if (context.evalParmBool("backGroupEnabled"))
+            groupNames.back = context.evalParmString("backGroupName");
 
         OutputFlags outputs;
-        outputs.front = context.evalBoolParm("frontOutput");
-        outputs.side = context.evalBoolParm("sideOutput");
-        outputs.back = context.evalBoolParm("backOutput");
+        outputs.front = context.evalParmBool("frontOutput");
+        outputs.side = context.evalParmBool("sideOutput");
+        outputs.back = context.evalParmBool("backOutput");
 
         enzo::Selection selection(selectionStr);
 

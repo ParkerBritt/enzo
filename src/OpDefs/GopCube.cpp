@@ -17,19 +17,19 @@ void GopCube::cookOp(enzo::op::Context context)
     if (!outputRequested(0)) return;
 
     // Read shape parameters.
-    const floatT sizeX = context.evalFloatParm("size", 0);
-    const floatT sizeY = context.evalFloatParm("size", 1);
-    const floatT sizeZ = context.evalFloatParm("size", 2);
+    const floatT sizeX = context.evalParmFloat("size", 0);
+    const floatT sizeY = context.evalParmFloat("size", 1);
+    const floatT sizeZ = context.evalParmFloat("size", 2);
 
-    const floatT centerX = context.evalFloatParm("center", 0);
-    const floatT centerY = context.evalFloatParm("center", 1);
-    const floatT centerZ = context.evalFloatParm("center", 2);
+    const floatT centerX = context.evalParmFloat("center", 0);
+    const floatT centerY = context.evalParmFloat("center", 1);
+    const floatT centerZ = context.evalParmFloat("center", 2);
 
-    const floatT uniformScale = context.evalFloatParm("uniformScale");
+    const floatT uniformScale = context.evalParmFloat("uniformScale");
 
-    const floatT rotateX = context.evalFloatParm("rotate", 0) * M_PI / 180.0;
-    const floatT rotateY = context.evalFloatParm("rotate", 1) * M_PI / 180.0;
-    const floatT rotateZ = context.evalFloatParm("rotate", 2) * M_PI / 180.0;
+    const floatT rotateX = context.evalParmFloat("rotate", 0) * M_PI / 180.0;
+    const floatT rotateY = context.evalParmFloat("rotate", 1) * M_PI / 180.0;
+    const floatT rotateZ = context.evalParmFloat("rotate", 2) * M_PI / 180.0;
 
     // Build an axis aligned cube around the origin so rotation pivots on its center.
     const Vector3 scaledSize(sizeX * uniformScale, sizeY * uniformScale, sizeZ * uniformScale);

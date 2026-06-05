@@ -66,6 +66,10 @@ const prm::Default prm::Template::getDefault(unsigned int index) const
 
 const prm::Range& prm::Template::getRange(unsigned int index) const { return ranges_.at(index); }
 
+const std::vector<prm::Name>& prm::Template::getOptions() const { return options_; }
+
+bool prm::Template::hasOptions() const { return !options_.empty(); }
+
 const unsigned int prm::Template::getNumDefaults() const { return defaults_.size(); }
 
 String prm::Template::getName() const { return name_.getToken(); }
@@ -99,6 +103,12 @@ prm::Template& prm::Template::setDocumentation(String documentation)
 prm::Template& prm::Template::setDirection(Direction direction)
 {
     direction_ = direction;
+    return *this;
+}
+
+prm::Template& prm::Template::setOptions(std::vector<prm::Name> options)
+{
+    options_ = std::move(options);
     return *this;
 }
 

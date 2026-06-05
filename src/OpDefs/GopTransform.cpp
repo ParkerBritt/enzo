@@ -24,18 +24,18 @@ void GopTransform::cookOp(enzo::op::Context context)
 
         Eigen::Affine3d transform = Eigen::Affine3d::Identity();
 
-        const floatT rotateX = context.evalFloatParm("rotate", 0);
-        const floatT rotateY = context.evalFloatParm("rotate", 1);
-        const floatT rotateZ = context.evalFloatParm("rotate", 2);
+        const floatT rotateX = context.evalParmFloat("rotate", 0);
+        const floatT rotateY = context.evalParmFloat("rotate", 1);
+        const floatT rotateZ = context.evalParmFloat("rotate", 2);
         transform.rotate(Eigen::AngleAxisd(rotateX, Eigen::Vector3d(1, 0, 0)));
         transform.rotate(Eigen::AngleAxisd(rotateY, Eigen::Vector3d(0, 1, 0)));
         transform.rotate(Eigen::AngleAxisd(rotateZ, Eigen::Vector3d(0, 0, 1)));
 
         const Eigen::Matrix3d R = transform.linear();
         const Eigen::Vector3d t = Vector3(
-            context.evalFloatParm("translate", 0),
-            context.evalFloatParm("translate", 1),
-            context.evalFloatParm("translate", 2)
+            context.evalParmFloat("translate", 0),
+            context.evalParmFloat("translate", 1),
+            context.evalParmFloat("translate", 2)
         );
 
         for (unsigned int p = 0; p < packet.size(); ++p)

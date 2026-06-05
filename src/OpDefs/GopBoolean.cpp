@@ -40,7 +40,7 @@ void GopBoolean::cookOp(enzo::op::Context context)
     NodePacket output;
     if (meshA && meshB)
     {
-        const std::string opStr = context.evalStringParm("operation");
+        const std::string opStr = context.evalParmString("operation");
         utils::BooleanOp op = utils::BooleanOp::UNION;
         if (opStr == "intersect")
             op = utils::BooleanOp::INTERSECT;
@@ -65,6 +65,11 @@ std::vector<enzo::prm::Template> GopBoolean::parameterList()
 {
     using namespace enzo::prm;
     return {
-        Template(Type::STRING, Name("operation", "Operation"), Default("union")),
+        Template(Type::DROPDOWN, Name("operation", "Operation"), Default("union"))
+            .setOptions({
+                Name("union", "Union"),
+                Name("intersect", "Intersect"),
+                Name("subtract", "Subtract"),
+            }),
     };
 }

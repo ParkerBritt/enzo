@@ -55,7 +55,7 @@ void GopTestGeoCube::cookOp(enzo::op::Context context)
         // for (const auto &f : faces)
         //     vertexCountHandle.addValue(static_cast<int>(f.size()));
         //
-        // const float s = context.evalFloatParm("size");
+        // const float s = context.evalParmFloat("size");
         // for (int i = 0; i < PAttrHandle.getAllValues().size(); ++i)
         // {
         //     Vector3 v = PAttrHandle.getValue(i);

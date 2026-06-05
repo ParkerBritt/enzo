@@ -46,9 +46,9 @@ enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
     });
 }
 
-void enzo::ui::Dropdown::addItem(const QString& text)
+void enzo::ui::Dropdown::addItem(const QString& text, const QString& data)
 {
-    items_.push_back({QIcon(), text});
+    items_.push_back({QIcon(), text, data});
     if (currentIndex_ < 0) currentIndex_ = 0;
     updateGeometry();
     update();
@@ -60,6 +60,12 @@ QString enzo::ui::Dropdown::currentText() const
     return items_[currentIndex_].text;
 }
 
+QString enzo::ui::Dropdown::currentData() const
+{
+    if (currentIndex_ < 0 || currentIndex_ >= static_cast<int>(items_.size())) return {};
+    return items_[currentIndex_].data;
+}
+
 void enzo::ui::Dropdown::setCurrentIndex(int index)
 {
     if (index < 0 || index >= static_cast<int>(items_.size())) return;
@@ -67,6 +73,18 @@ void enzo::ui::Dropdown::setCurrentIndex(int index)
     currentIndex_ = index;
     update();
     Q_EMIT currentIndexChanged(index);
+}
+
+void enzo::ui::Dropdown::setCurrentData(const QString& data)
+{
+    for (int index = 0; index < static_cast<int>(items_.size()); ++index)
+    {
+        if (items_[index].data == data)
+        {
+            setCurrentIndex(index);
+            return;
+        }
+    }
 }
 
 QSize enzo::ui::Dropdown::sizeHint() const
@@ -85,10 +103,10 @@ void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    // Box outline matching the other util widgets
+    // Box fill and border
     QRectF box = QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5);
     painter.setPen(QPen(borderColor, 1));
-    painter.setBrush(Qt::NoBrush);
+    painter.setBrush(backgroundColor);
     painter.drawRoundedRect(box, borderRadius, borderRadius);
 
     // Current selection text

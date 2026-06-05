@@ -22,11 +22,11 @@ void GopGrid::cookOp(enzo::op::Context context)
     {
         NodePacket packet;
         auto geo = std::make_shared<geo::Mesh>();
-        floatT width = context.evalFloatParm("size", 0);
-        floatT height = context.evalFloatParm("size", 1);
+        floatT width = context.evalParmFloat("size", 0);
+        floatT height = context.evalParmFloat("size", 1);
 
-        const intT columns = context.evalIntParm("columns");
-        const intT rows = context.evalIntParm("rows");
+        const intT columns = context.evalParmInt("columns");
+        const intT rows = context.evalParmInt("rows");
         if (columns <= 0 || rows <= 0)
         {
             packet.addPrimitive(std::move(geo));

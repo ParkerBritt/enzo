@@ -22,10 +22,16 @@ class Context
     Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
-    floatT evalFloatParm(std::string_view parmName, const unsigned int index = 0) const;
-    intT evalIntParm(std::string_view parmName, const unsigned int index = 0) const;
-    boolT evalBoolParm(std::string_view parmName, const unsigned int index = 0) const;
-    String evalStringParm(std::string_view parmName, const unsigned int index = 0) const;
+    floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
+    intT evalParmInt(std::string_view parmName, const unsigned int index = 0) const;
+    boolT evalParmBool(std::string_view parmName, const unsigned int index = 0) const;
+    String evalParmString(std::string_view parmName, const unsigned int index = 0) const;
+
+    // Read every value of a parameter as a list. The singular forms above read
+    // one value by index, these read them all at once.
+    std::vector<floatT> evalParmFloats(std::string_view parmName) const;
+    std::vector<intT> evalParmInts(std::string_view parmName) const;
+    std::vector<String> evalParmStrings(std::string_view parmName) const;
 
   private:
     enzo::nt::OpId opId_;

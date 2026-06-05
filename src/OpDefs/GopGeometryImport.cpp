@@ -22,7 +22,7 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         NodePacket packet;
         // geo::Primitive geo;
         //
-        // String filePath = context.evalStringParm("filePath");
+        // String filePath = context.evalParmString("filePath");
         // boost::trim(filePath);
         // if(filePath.size()<4)
         // {
@@ -93,7 +93,7 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //     }
         // }
         //
-        // const float scale = context.evalFloatParm("size");
+        // const float scale = context.evalParmFloat("size");
         // const Offset numPoints = geo.getNumPoints();
         // for(Offset i=0; i<numPoints; ++i)
         // {

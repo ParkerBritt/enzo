@@ -36,6 +36,18 @@ class Template
     enzo::String getLabel() const;
     const prm::Default getDefault(unsigned int index = 0) const;
     const prm::Range& getRange(unsigned int index = 0) const;
+    /**
+     * @brief The set of named values this parameter can be set to.
+     *
+     * These are the available entries to pick from, not the value the user has
+     * picked. Each entry is a prm::Name carrying a token (the stored value) and
+     * a label (the displayed text). A dropdown renders these as a menu. Other
+     * enumerated parameters such as radio groups or button strips draw from the
+     * same set.
+     * @return The available options, empty when the parameter is not enumerated.
+     */
+    const std::vector<prm::Name>& getOptions() const;
+    bool hasOptions() const;
     const prm::Type getType() const;
     const unsigned int getSize() const;
     const unsigned int getNumDefaults() const;
@@ -54,6 +66,7 @@ class Template
     Template& setTooltip(String tooltip);
     Template& setDocumentation(String documentation);
     Template& setDirection(Direction direction);
+    Template& setOptions(std::vector<prm::Name> options);
     Template& addParm(Template child);
     Template& setLabelHidden(bool hidden);
     Template& setBackgroundEnabled(bool enabled);
@@ -73,6 +86,7 @@ class Template
     enzo::prm::Type type_;
     std::vector<prm::Default> defaults_;
     std::vector<prm::Range> ranges_;
+    std::vector<prm::Name> options_;
     prm::Name name_;
     unsigned int vectorSize_;
 

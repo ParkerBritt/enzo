@@ -23,6 +23,13 @@ class Parameter
     String evalString(unsigned int index = 0) const;
     intT evalInt(unsigned int index = 0) const;
 
+    // Read every value the parameter holds as a list. A scalar parameter
+    // returns one element, a vector parameter one per component, and a
+    // multi-value parameter such as a multi select dropdown one per selection.
+    std::vector<floatT> evalFloats() const;
+    std::vector<String> evalStrings() const;
+    std::vector<intT> evalInts() const;
+
     void setInt(intT value, unsigned int index = 0);
     void setFloat(floatT value, unsigned int index = 0);
     void setString(String value, unsigned int index = 0);

@@ -4,6 +4,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/Template.h"
 #include "Gui/Parameters/BoolParm.h"
+#include "Gui/Parameters/DropdownParm.h"
 #include "Gui/Parameters/FloatSliderParm.h"
 #include "Gui/Parameters/GroupParm.h"
 #include "Gui/Parameters/IntSliderParm.h"
@@ -91,6 +92,9 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
         break;
     case prm::Type::STRING:
         leafWidget = new ui::StringParm(parameter);
+        break;
+    case prm::Type::DROPDOWN:
+        leafWidget = new ui::DropdownParm(parameter);
         break;
     default:
         throw std::runtime_error(

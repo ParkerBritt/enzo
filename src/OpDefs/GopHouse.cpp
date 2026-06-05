@@ -58,7 +58,7 @@ void GOP_house::cookOp(enzo::op::Context context)
         // for(int i=0; i<PAttrHandle.getAllValues().size(); ++i)
         // {
         //     enzo::Vector3 vector = PAttrHandle.getValue(i);
-        //     vector*=context.evalFloatParm("size");
+        //     vector*=context.evalParmFloat("size");
         //     PAttrHandle.setValue(i, vector);
         // }
 

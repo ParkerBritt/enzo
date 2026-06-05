@@ -39,6 +39,7 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
         break;
     }
     case prm::Type::STRING:
+    case prm::Type::DROPDOWN:
     {
         std::vector<String> vals(size);
         for (unsigned int i = 0; i < size; ++i)
@@ -86,6 +87,21 @@ String prm::Parameter::evalString(unsigned int index) const
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
     return vals[index];
+}
+
+std::vector<floatT> prm::Parameter::evalFloats() const
+{
+    return std::get<std::vector<floatT>>(values_);
+}
+
+std::vector<String> prm::Parameter::evalStrings() const
+{
+    return std::get<std::vector<String>>(values_);
+}
+
+std::vector<intT> prm::Parameter::evalInts() const
+{
+    return std::get<std::vector<intT>>(values_);
 }
 
 unsigned int prm::Parameter::getVectorSize() const { return template_.getSize(); }
