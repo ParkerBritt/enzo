@@ -73,6 +73,7 @@ class DropdownPopup : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(int revealedHeight READ revealedHeight WRITE setRevealedHeight)
+    Q_PROPERTY(qreal fadeElapsed READ fadeElapsed WRITE setFadeElapsed)
   public:
     DropdownPopup(Dropdown* owner);
 
@@ -104,11 +105,19 @@ class DropdownPopup : public QWidget
         update();
     }
 
+    qreal fadeElapsed() const { return fadeElapsed_; }
+    void setFadeElapsed(qreal elapsed)
+    {
+        fadeElapsed_ = elapsed;
+        update();
+    }
+
     Dropdown* owner_;
     int hoveredIndex_ = -1;
     int selectedIndex_ = -1;
     int scrollOffset_ = 0;
     int revealedHeight_ = 0;
+    qreal fadeElapsed_ = 0;
     bool closing_ = false;
 };
 

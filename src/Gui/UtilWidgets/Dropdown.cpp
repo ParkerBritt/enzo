@@ -19,6 +19,8 @@ constexpr int textPadding = 10;
 constexpr int arrowSize = 14;
 constexpr int arrowMargin = 8;
 constexpr int popupGap = 5;
+constexpr qreal itemFadeMs = 300;
+constexpr qreal itemStaggerMs = 30;
 
 const QColor borderColor("#383838");
 const QColor backgroundColor("#1a1a1a");
@@ -143,6 +145,7 @@ void enzo::ui::DropdownPopup::openBeneath(QWidget* anchor, int selectedIndex)
     setGeometry(topLeft.x(), topLeft.y(), anchor->width(), fullHeight);
 
     revealedHeight_ = 0;
+    fadeElapsed_ = 0;
     show();
     setFocus();
 
@@ -153,6 +156,14 @@ void enzo::ui::DropdownPopup::openBeneath(QWidget* anchor, int selectedIndex)
     reveal->setStartValue(0);
     reveal->setEndValue(fullHeight);
     reveal->start(QAbstractAnimation::DeleteWhenStopped);
+
+    // Fade each row in turn from the top
+    const qreal fadeTotal = itemStaggerMs * (owner_->items_.size() - 1) + itemFadeMs;
+    auto fade = new QPropertyAnimation(this, "fadeElapsed", this);
+    fade->setDuration(static_cast<int>(fadeTotal));
+    fade->setStartValue(0.0);
+    fade->setEndValue(fadeTotal);
+    fade->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 int enzo::ui::DropdownPopup::contentHeight() const
@@ -200,12 +211,16 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
             painter.drawRoundedRect(row.adjusted(padding, 1, -padding, -1), 5, 5);
         }
 
+        const qreal opacity =
+            std::clamp((fadeElapsed_ - index * itemStaggerMs) / itemFadeMs, 0.0, 1.0);
+        painter.setOpacity(opacity);
         painter.setPen(index == selectedIndex_ ? selectedTextColor : textColor);
         painter.drawText(
             row.adjusted(textPadding, 0, -textPadding, 0),
             Qt::AlignVCenter | Qt::AlignLeft,
             owner_->items_[index].text
         );
+        painter.setOpacity(1.0);
     }
 
     // Scrollbar indicator when the list overflows
