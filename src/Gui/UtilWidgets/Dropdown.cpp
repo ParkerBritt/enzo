@@ -18,6 +18,7 @@ constexpr int maxPopupHeight = 240;
 constexpr int textPadding = 10;
 constexpr int arrowSize = 14;
 constexpr int arrowMargin = 8;
+constexpr int popupGap = 5;
 
 const QColor borderColor("#383838");
 const QColor backgroundColor("#1a1a1a");
@@ -123,7 +124,7 @@ void enzo::ui::DropdownPopup::openBeneath(QWidget* anchor, int selectedIndex)
     closing_ = false;
 
     const int fullHeight = std::min(contentHeight(), maxPopupHeight);
-    const QPoint topLeft = anchor->mapToGlobal(QPoint(0, anchor->height()));
+    const QPoint topLeft = anchor->mapToGlobal(QPoint(0, anchor->height() + popupGap));
     setGeometry(topLeft.x(), topLeft.y(), anchor->width(), fullHeight);
 
     revealedHeight_ = 0;
@@ -198,9 +199,9 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
         const float visibleFraction = static_cast<float>(height()) / contentHeight();
         const int trackHeight = revealedHeight_ - padding * 2;
         const int thumbHeight = std::max(20, static_cast<int>(trackHeight * visibleFraction));
-        const float scrollFraction =
-            static_cast<float>(scrollOffset_) / maxScrollOffset();
-        const int thumbTop = padding + static_cast<int>((trackHeight - thumbHeight) * scrollFraction);
+        const float scrollFraction = static_cast<float>(scrollOffset_) / maxScrollOffset();
+        const int thumbTop =
+            padding + static_cast<int>((trackHeight - thumbHeight) * scrollFraction);
         painter.setPen(Qt::NoPen);
         painter.setBrush(borderColor);
         painter.drawRoundedRect(QRect(width() - 5, thumbTop, 3, thumbHeight), 1, 1);
@@ -239,6 +240,18 @@ void enzo::ui::DropdownPopup::mousePressEvent(QMouseEvent* event)
     animateClose();
 }
 
+void enzo::ui::DropdownPopup::mouseReleaseEvent(QMouseEvent* event)
+{
+    // Press and hold to open, drag, then release over an item to select
+    if (closing_) return;
+    const int row = rowAt(event->pos().y());
+    if (row < 0) return;
+
+    selectedIndex_ = row;
+    Q_EMIT itemSelected(row);
+    animateClose();
+}
+
 void enzo::ui::DropdownPopup::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape)
@@ -252,8 +265,7 @@ void enzo::ui::DropdownPopup::keyPressEvent(QKeyEvent* event)
 void enzo::ui::DropdownPopup::wheelEvent(QWheelEvent* event)
 {
     if (maxScrollOffset() == 0) return;
-    scrollOffset_ =
-        std::clamp(scrollOffset_ - event->angleDelta().y(), 0, maxScrollOffset());
+    scrollOffset_ = std::clamp(scrollOffset_ - event->angleDelta().y(), 0, maxScrollOffset());
     update();
 }
 
