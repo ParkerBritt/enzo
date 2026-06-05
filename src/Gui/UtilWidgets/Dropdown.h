@@ -18,6 +18,7 @@ class DropdownPopup;
 class Dropdown : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(qreal arrowRotation READ arrowRotation WRITE setArrowRotation)
   public:
     Dropdown(QWidget* parent = nullptr);
 
@@ -44,10 +45,19 @@ class Dropdown : public QWidget
     };
 
     void openPopup();
+    void animateArrow(qreal target);
+
+    qreal arrowRotation() const { return arrowRotation_; }
+    void setArrowRotation(qreal degrees)
+    {
+        arrowRotation_ = degrees;
+        update();
+    }
 
     std::vector<Item> items_;
     int currentIndex_ = -1;
     bool popupOpen_ = false;
+    qreal arrowRotation_ = 0;
 
     DropdownPopup* popup_ = nullptr;
 
@@ -70,6 +80,7 @@ class DropdownPopup : public QWidget
 
   Q_SIGNALS:
     void itemSelected(int index);
+    void aboutToClose();
     void closed();
 
   protected:
