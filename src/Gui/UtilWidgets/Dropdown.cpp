@@ -38,7 +38,10 @@ enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
     popup_ = new DropdownPopup(this);
     connect(popup_, &DropdownPopup::itemSelected, this, &Dropdown::setCurrentIndex);
     connect(popup_, &DropdownPopup::aboutToClose, this, [this] { animateArrow(0); });
-    connect(popup_, &DropdownPopup::closed, this, [this] { popupOpen_ = false; });
+    connect(popup_, &DropdownPopup::closed, this, [this] {
+        popupOpen_ = false;
+        animateArrow(0);
+    });
 }
 
 void enzo::ui::Dropdown::addItem(const QString& text)
@@ -323,9 +326,13 @@ void enzo::ui::DropdownPopup::animateClose()
     collapse->setEasingCurve(QEasingCurve::InCubic);
     collapse->setStartValue(revealedHeight_);
     collapse->setEndValue(0);
-    connect(collapse, &QPropertyAnimation::finished, this, [this] {
-        hide();
-        Q_EMIT closed();
-    });
+    connect(collapse, &QPropertyAnimation::finished, this, [this] { hide(); });
     collapse->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void enzo::ui::DropdownPopup::hideEvent(QHideEvent* event)
+{
+    closing_ = false;
+    Q_EMIT closed();
+    QWidget::hideEvent(event);
 }

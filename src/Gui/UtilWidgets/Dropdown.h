@@ -91,6 +91,7 @@ class DropdownPopup : public QWidget
     void mouseReleaseEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
+    void hideEvent(QHideEvent* event) override;
 
   private:
     void animateClose();
