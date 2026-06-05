@@ -223,6 +223,19 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
         painter.setOpacity(1.0);
     }
 
+    // Soften the bottom edge when rows continue below the fold
+    if (scrollOffset_ < maxScrollOffset())
+    {
+        QColor transparentBackground = backgroundColor;
+        transparentBackground.setAlpha(0);
+        QLinearGradient gradient(0, revealedHeight_ - itemHeight, 0, revealedHeight_);
+        gradient.setColorAt(0.0, transparentBackground);
+        gradient.setColorAt(1.0, backgroundColor);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(gradient);
+        painter.drawRect(QRectF(0, revealedHeight_ - itemHeight, width(), itemHeight));
+    }
+
     // Scrollbar indicator when the list overflows
     if (maxScrollOffset() > 0)
     {
