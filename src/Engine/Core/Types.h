@@ -106,7 +106,8 @@ enum class Type
     XYZ,
     INT,
     TOGGLE,
-    GROUP
+    GROUP,
+    DROPDOWN
 };
 enum class Direction
 {

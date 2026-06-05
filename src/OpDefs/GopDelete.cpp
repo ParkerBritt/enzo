@@ -25,9 +25,9 @@ void GopDelete::cookOp(enzo::op::Context context)
     {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const String selectionStr = context.evalStringParm("selection", 0);
-        const bool invert = context.evalBoolParm("invert");
-        const bool keepPoints = context.evalBoolParm("keep_points");
+        const String selectionStr = context.evalParmString("selection", 0);
+        const bool invert = context.evalParmBool("invert");
+        const bool keepPoints = context.evalParmBool("keep_points");
         enzo::Selection selection(selectionStr);
         selection.setInverted(invert);
 

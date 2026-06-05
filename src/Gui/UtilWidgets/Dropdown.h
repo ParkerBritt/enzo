@@ -24,11 +24,16 @@ class Dropdown : public QWidget
   public:
     Dropdown(QWidget* parent = nullptr);
 
-    void addItem(const QString& text);
+    // The data string is an opaque value carried alongside the visible text,
+    // letting callers work in their own value space (such as parameter tokens)
+    // rather than item indices.
+    void addItem(const QString& text, const QString& data = QString());
 
     int currentIndex() const { return currentIndex_; }
     QString currentText() const;
+    QString currentData() const;
     void setCurrentIndex(int index);
+    void setCurrentData(const QString& data);
 
     QSize sizeHint() const override;
 
@@ -44,6 +49,7 @@ class Dropdown : public QWidget
     {
         QIcon icon;
         QString text;
+        QString data;
     };
 
     void openPopup();

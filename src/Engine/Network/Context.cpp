@@ -36,7 +36,7 @@ bool op::Context::hasInput(unsigned int inputIndex)
 }
 
 // TODO: cache value
-floatT op::Context::evalFloatParm(std::string_view parmName, const unsigned int index) const
+floatT op::Context::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -52,7 +52,7 @@ floatT op::Context::evalFloatParm(std::string_view parmName, const unsigned int 
 }
 
 // TODO: cache value
-intT op::Context::evalIntParm(std::string_view parmName, const unsigned int index) const
+intT op::Context::evalParmInt(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -68,7 +68,7 @@ intT op::Context::evalIntParm(std::string_view parmName, const unsigned int inde
 }
 
 // TODO: cache value
-boolT op::Context::evalBoolParm(std::string_view parmName, const unsigned int index) const
+boolT op::Context::evalParmBool(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -84,7 +84,7 @@ boolT op::Context::evalBoolParm(std::string_view parmName, const unsigned int in
 }
 
 // TODO: cache value
-String op::Context::evalStringParm(std::string_view parmName, const unsigned int index) const
+String op::Context::evalParmString(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -92,6 +92,51 @@ String op::Context::evalStringParm(std::string_view parmName, const unsigned int
     if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalString(index);
+    }
+    else
+    {
+        throw std::runtime_error(parmName + " parameter does not exist.");
+    }
+}
+
+std::vector<floatT> op::Context::evalParmFloats(std::string_view parmName) const
+{
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+
+    if (auto sharedParm = parameter.lock())
+    {
+        return sharedParm->evalFloats();
+    }
+    else
+    {
+        throw std::runtime_error(parmName + " parameter does not exist.");
+    }
+}
+
+std::vector<intT> op::Context::evalParmInts(std::string_view parmName) const
+{
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+
+    if (auto sharedParm = parameter.lock())
+    {
+        return sharedParm->evalInts();
+    }
+    else
+    {
+        throw std::runtime_error(parmName + " parameter does not exist.");
+    }
+}
+
+std::vector<String> op::Context::evalParmStrings(std::string_view parmName) const
+{
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+
+    if (auto sharedParm = parameter.lock())
+    {
+        return sharedParm->evalStrings();
     }
     else
     {

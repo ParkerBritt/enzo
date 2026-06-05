@@ -123,6 +123,7 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
                     if (!prmModel.intValues.empty()) prm->setValues(prmModel.intValues);
                     break;
                 case prm::Type::STRING:
+                case prm::Type::DROPDOWN:
                     if (!prmModel.stringValues.empty()) prm->setValues(prmModel.stringValues);
                     break;
                 default:

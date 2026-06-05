@@ -14,7 +14,7 @@ void GopPath::cookOp(enzo::op::Context context)
     {
         NodePacket packet = context.cloneInputPacket(0);
 
-        String path = context.evalStringParm("path");
+        String path = context.evalParmString("path");
 
         for (unsigned int p = 0; p < packet.size(); ++p)
         {

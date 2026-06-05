@@ -23,9 +23,9 @@ void GopSineWave::cookOp(enzo::op::Context context)
     {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const floatT frequency = context.evalFloatParm("frequency");
-        const floatT offset = context.evalFloatParm("offset");
-        const bool radial = context.evalBoolParm("radial");
+        const floatT frequency = context.evalParmFloat("frequency");
+        const floatT offset = context.evalParmFloat("offset");
+        const bool radial = context.evalParmBool("radial");
 
         for (size_t p = 0; p < packet.size(); ++p)
         {
@@ -37,9 +37,9 @@ void GopSineWave::cookOp(enzo::op::Context context)
             if (radial)
             {
                 const Vector3 center(
-                    context.evalFloatParm("center", 0),
-                    context.evalFloatParm("center", 1),
-                    context.evalFloatParm("center", 2)
+                    context.evalParmFloat("center", 0),
+                    context.evalParmFloat("center", 1),
+                    context.evalParmFloat("center", 2)
                 );
                 tbb::parallel_for(
                     tbb::blocked_range<Offset>(0, pointCount),

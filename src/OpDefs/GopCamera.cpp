@@ -18,13 +18,13 @@ void GopCamera::cookOp(enzo::op::Context context)
         NodePacket packet;
         auto cam = std::make_shared<geo::Camera>();
 
-        floatT tx = context.evalFloatParm("transform", 0);
-        floatT ty = context.evalFloatParm("transform", 1);
-        floatT tz = context.evalFloatParm("transform", 2);
+        floatT tx = context.evalParmFloat("transform", 0);
+        floatT ty = context.evalParmFloat("transform", 1);
+        floatT tz = context.evalParmFloat("transform", 2);
 
-        floatT rx = context.evalFloatParm("rotate", 0) * M_PI / 180.0;
-        floatT ry = context.evalFloatParm("rotate", 1) * M_PI / 180.0;
-        floatT rz = context.evalFloatParm("rotate", 2) * M_PI / 180.0;
+        floatT rx = context.evalParmFloat("rotate", 0) * M_PI / 180.0;
+        floatT ry = context.evalParmFloat("rotate", 1) * M_PI / 180.0;
+        floatT rz = context.evalParmFloat("rotate", 2) * M_PI / 180.0;
 
         // Rotation matrices (XYZ order)
         Matrix4 rotX = Matrix4::Identity();
