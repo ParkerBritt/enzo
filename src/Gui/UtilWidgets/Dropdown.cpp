@@ -35,6 +35,7 @@ enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
 
     popup_ = new DropdownPopup(this);
     connect(popup_, &DropdownPopup::itemSelected, this, &Dropdown::setCurrentIndex);
+    connect(popup_, &DropdownPopup::aboutToClose, this, [this] { animateArrow(0); });
     connect(popup_, &DropdownPopup::closed, this, [this] { popupOpen_ = false; });
 }
 
@@ -88,12 +89,15 @@ void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
     QRect textRect = rect().adjusted(textPadding, 0, -(arrowSize + arrowMargin), 0);
     painter.drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, currentText());
 
-    // Indicator chevron pulled from the icon registry
+    // Indicator chevron pulled from the icon registry, rotated while the popup is open
     const QPixmap chevron =
         IconRegistry::instance().pixmap("chevron-down", QSize(arrowSize, arrowSize), textColor);
-    const int chevronX = width() - arrowMargin - arrowSize;
-    const int chevronY = (height() - arrowSize) / 2;
-    painter.drawPixmap(chevronX, chevronY, chevron);
+    const QPointF chevronCenter(width() - arrowMargin - arrowSize / 2.0, height() / 2.0);
+    painter.save();
+    painter.translate(chevronCenter);
+    painter.rotate(arrowRotation_);
+    painter.drawPixmap(QPointF(-arrowSize / 2.0, -arrowSize / 2.0), chevron);
+    painter.restore();
 }
 
 void enzo::ui::Dropdown::mousePressEvent(QMouseEvent*)
@@ -105,7 +109,18 @@ void enzo::ui::Dropdown::openPopup()
 {
     if (items_.empty()) return;
     popupOpen_ = true;
+    animateArrow(180);
     popup_->openBeneath(this, currentIndex_);
+}
+
+void enzo::ui::Dropdown::animateArrow(qreal target)
+{
+    auto spin = new QPropertyAnimation(this, "arrowRotation", this);
+    spin->setDuration(180);
+    spin->setEasingCurve(QEasingCurve::OutCubic);
+    spin->setStartValue(arrowRotation_);
+    spin->setEndValue(target);
+    spin->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 enzo::ui::DropdownPopup::DropdownPopup(Dropdown* owner)
@@ -273,6 +288,7 @@ void enzo::ui::DropdownPopup::animateClose()
 {
     if (closing_) return;
     closing_ = true;
+    Q_EMIT aboutToClose();
 
     auto collapse = new QPropertyAnimation(this, "revealedHeight", this);
     collapse->setDuration(140);
