@@ -29,7 +29,7 @@ const QColor hoverColor(60, 60, 60, 153);
 
 enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
 {
-    setMinimumHeight(itemHeight);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setCursor(Qt::PointingHandCursor);
 
     popup_ = new DropdownPopup(this);
