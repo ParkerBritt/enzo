@@ -134,6 +134,10 @@ enzo::ui::DropdownPopup::DropdownPopup(Dropdown* owner)
     setAttribute(Qt::WA_TranslucentBackground, true);
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
+
+    hoverAnim_ = new QPropertyAnimation(this, "highlightTop", this);
+    hoverAnim_->setDuration(130);
+    hoverAnim_->setEasingCurve(QEasingCurve::OutCubic);
 }
 
 void enzo::ui::DropdownPopup::openBeneath(QWidget* anchor, int selectedIndex)
@@ -142,6 +146,14 @@ void enzo::ui::DropdownPopup::openBeneath(QWidget* anchor, int selectedIndex)
     hoveredIndex_ = selectedIndex;
     scrollOffset_ = 0;
     closing_ = false;
+
+    // Highlight slides into the current selection from one row above
+    const qreal highlightTarget = padding + std::max(0, selectedIndex) * itemHeight;
+    hoverAnim_->stop();
+    highlightTop_ = highlightTarget - itemHeight;
+    hoverAnim_->setStartValue(highlightTop_);
+    hoverAnim_->setEndValue(highlightTarget);
+    hoverAnim_->start();
 
     const int fullHeight = std::min(contentHeight(), maxPopupHeight);
     const QPoint topLeft = anchor->mapToGlobal(QPoint(0, anchor->height() + popupGap));
@@ -200,6 +212,12 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
 
     painter.fillRect(box, backgroundColor);
 
+    // Highlight slides between rows at its animated position
+    QRect highlight(0, static_cast<int>(highlightTop_) - scrollOffset_, width(), itemHeight);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(hoverColor);
+    painter.drawRoundedRect(highlight.adjusted(padding, 1, -padding, -1), 5, 5);
+
     // Rows, translated by the scroll offset and naturally clipped to the reveal
     for (int index = 0; index < static_cast<int>(owner_->items_.size()); ++index)
     {
@@ -207,13 +225,6 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
         if (top + itemHeight < 0 || top > revealedHeight_) continue;
 
         QRect row(0, top, width(), itemHeight);
-        if (index == hoveredIndex_)
-        {
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(hoverColor);
-            painter.drawRoundedRect(row.adjusted(padding, 1, -padding, -1), 5, 5);
-        }
-
         const qreal opacity =
             std::clamp((fadeElapsed_ - index * itemStaggerMs) / itemFadeMs, 0.0, 1.0);
         painter.setOpacity(opacity);
@@ -263,11 +274,13 @@ void enzo::ui::DropdownPopup::paintEvent(QPaintEvent*)
 void enzo::ui::DropdownPopup::mouseMoveEvent(QMouseEvent* event)
 {
     const int row = rowAt(event->pos().y());
-    if (row != hoveredIndex_)
-    {
-        hoveredIndex_ = row;
-        update();
-    }
+    if (row < 0 || row == hoveredIndex_) return;
+    hoveredIndex_ = row;
+
+    hoverAnim_->stop();
+    hoverAnim_->setStartValue(highlightTop_);
+    hoverAnim_->setEndValue(padding + row * itemHeight);
+    hoverAnim_->start();
 }
 
 void enzo::ui::DropdownPopup::mousePressEvent(QMouseEvent* event)
