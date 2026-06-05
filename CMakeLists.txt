@@ -54,6 +54,7 @@ set(GUI_SOURCES
     src/Gui/UtilWidgets/Splitter.cpp
     src/Gui/UtilWidgets/BoolSwitch.cpp
     src/Gui/UtilWidgets/Slider.cpp
+    src/Gui/UtilWidgets/Dropdown.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
     src/Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
