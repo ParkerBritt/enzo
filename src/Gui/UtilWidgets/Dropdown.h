@@ -6,6 +6,8 @@
 #include <qtmetamacros.h>
 #include <vector>
 
+class QPropertyAnimation;
+
 namespace enzo::ui {
 
 class DropdownPopup;
@@ -74,6 +76,7 @@ class DropdownPopup : public QWidget
     Q_OBJECT
     Q_PROPERTY(int revealedHeight READ revealedHeight WRITE setRevealedHeight)
     Q_PROPERTY(qreal fadeElapsed READ fadeElapsed WRITE setFadeElapsed)
+    Q_PROPERTY(qreal highlightTop READ highlightTop WRITE setHighlightTop)
   public:
     DropdownPopup(Dropdown* owner);
 
@@ -113,13 +116,23 @@ class DropdownPopup : public QWidget
         update();
     }
 
+    qreal highlightTop() const { return highlightTop_; }
+    void setHighlightTop(qreal top)
+    {
+        highlightTop_ = top;
+        update();
+    }
+
     Dropdown* owner_;
     int hoveredIndex_ = -1;
     int selectedIndex_ = -1;
     int scrollOffset_ = 0;
     int revealedHeight_ = 0;
     qreal fadeElapsed_ = 0;
+    qreal highlightTop_ = 0;
     bool closing_ = false;
+
+    QPropertyAnimation* hoverAnim_ = nullptr;
 };
 
 } // namespace enzo::ui
