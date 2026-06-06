@@ -20,8 +20,8 @@ void GopCircle::cookOp(enzo::op::Context context)
     NodePacket packet;
     std::shared_ptr<geo::Mesh> mesh = std::make_shared<geo::Mesh>();
 
-    int numPoints = context.evalIntParm("divisions");
-    float uniform_scale = context.evalFloatParm("uniform_scale");
+    int numPoints = context.evalParmInt("divisions");
+    float uniform_scale = context.evalParmFloat("uniform_scale");
 
     std::vector<enzo::Vector3> newPointPositions;
     newPointPositions.reserve(numPoints);
