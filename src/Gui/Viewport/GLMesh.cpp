@@ -94,6 +94,11 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
 
         const size_t localVertOffset = vertOffset;
         auto faceNormals = geometry->getFaceNormal(true);
+
+        // Storage views resolve each vertex position with two direct loads
+        const std::span<const enzo::intT> vertexPoints = geometry->vertexPointSpan();
+        const std::span<const enzo::Vector3> pointPositions = geometry->pointPosSpan();
+
         tbb::parallel_for(
             tbb::blocked_range<size_t>(0, numFaces),
             [&](tbb::blocked_range<size_t> range) {
@@ -108,7 +113,7 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
                     for (int i = 0; i < faceVertCnt; ++i)
                     {
                         const unsigned int vertexCount = faceStartVert + i;
-                        enzo::Vector3 p = geometry->getPosFromVert(vertexCount);
+                        const enzo::Vector3& p = pointPositions[vertexPoints[vertexCount]];
 
                         vertices[localVertOffset + vertexCount] = {
                             {p.x(), p.y(), p.z()},

@@ -73,13 +73,14 @@ inline bool hasFlag(TransformClass value, TransformClass flag)
 }
 
 // Basic types
-using floatT = double;
+using floatT = float;
 using intT = int64_t;
 using boolT = bool;
 using Vector2f = Eigen::Vector2f;
-using Vector3 = Eigen::Vector3d;
-using Vector4 = Eigen::Vector4d;
-using Matrix4 = Eigen::Matrix4d;
+using Vector3 = Eigen::Vector3f;
+using Vector4 = Eigen::Vector4f;
+using Matrix3 = Eigen::Matrix3f;
+using Matrix4 = Eigen::Matrix4f;
 using String = std::string;
 /**
  * @brief enzo::Index is the continuous index of an element in a given AttributeOwner.

@@ -36,11 +36,11 @@ void GopCube::cookOp(enzo::op::Context context)
     auto mesh = utils::buildCube(scaledSize, Vector3(0, 0, 0));
 
     // Compose rotation then translation into a single homogeneous transform.
-    Eigen::Affine3d transform = Eigen::Affine3d::Identity();
-    transform.translate(Eigen::Vector3d(centerX, centerY, centerZ));
-    transform.rotate(Eigen::AngleAxisd(rotateX, Eigen::Vector3d::UnitX()));
-    transform.rotate(Eigen::AngleAxisd(rotateY, Eigen::Vector3d::UnitY()));
-    transform.rotate(Eigen::AngleAxisd(rotateZ, Eigen::Vector3d::UnitZ()));
+    Eigen::Affine3f transform = Eigen::Affine3f::Identity();
+    transform.translate(Vector3(centerX, centerY, centerZ));
+    transform.rotate(Eigen::AngleAxisf(rotateX, Vector3::UnitX()));
+    transform.rotate(Eigen::AngleAxisf(rotateY, Vector3::UnitY()));
+    transform.rotate(Eigen::AngleAxisf(rotateZ, Vector3::UnitZ()));
 
     mesh->applyTransform(Matrix4(transform.matrix()));
 
