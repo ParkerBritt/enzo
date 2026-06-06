@@ -17,6 +17,7 @@ class Parameter
     std::string getName() const;
     std::string getLabel() const;
     enzo::prm::Type getType() const;
+    enzo::prm::ValueType getValueType() const;
     unsigned int getVectorSize() const;
 
     floatT evalFloat(unsigned int index = 0) const;

@@ -133,6 +133,9 @@ qt_add_executable(${AppExec}
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
 
+# TODO: turn this on when you're ready to handle incomplete enums
+# target_compile_options(${AppExec} PRIVATE -Werror=switch)
+
 
 # --- packaging ---
 set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake)
