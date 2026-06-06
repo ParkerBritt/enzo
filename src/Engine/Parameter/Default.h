@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
+#include <utility>
 namespace enzo::prm {
 class Default
 {
@@ -17,15 +18,15 @@ class Default
 
     floatT getFloat() const { return floatDefault_; }
     intT getInt() const { return (intT)floatDefault_; }
-    const char* getString() const { return stringDefault_; }
+    const String& getString() const { return stringDefault_; }
 
     void set(floatT thefloat, const char* thestring);
     void setFloat(floatT value) { floatDefault_ = value; }
     void setInt(intT value) { floatDefault_ = (intT)value; }
-    void setString(const char* value) { stringDefault_ = value; }
+    void setString(String value) { stringDefault_ = std::move(value); }
 
   private:
     floatT floatDefault_;
-    const char* stringDefault_;
+    String stringDefault_;
 };
 } // namespace enzo::prm

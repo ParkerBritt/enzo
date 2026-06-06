@@ -8,6 +8,8 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget*
 {
     auto parameterShared = parameter_.lock();
 
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
     const unsigned int vectorSize = parameterShared->getVectorSize();
     sliders_.reserve(vectorSize);
     for (unsigned int vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex)

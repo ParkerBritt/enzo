@@ -23,15 +23,29 @@ void GopCircle::cookOp(enzo::op::Context context)
     int numPoints = context.evalParmInt("divisions");
     float uniform_scale = context.evalParmFloat("uniform_scale");
     std::string orientation = context.evalParmString("orientation");
+    std::string arc_type = context.evalParmString("arc");
+    float arcBegin = context.evalParmFloat("arc_angles", 0) / 360;
+    float arcEnd = context.evalParmFloat("arc_angles", 1) / 360;
+
+    float arcDelta = arcEnd - arcBegin;
+    if (arc_type == "closed") arcDelta = 1;
+
+    const bool isArc = (arc_type != "closed");
+
+    numPoints += isArc;
 
     std::vector<enzo::Vector3> newPointPositions;
     newPointPositions.reserve(numPoints);
 
+    // Sliced arc has one extra point in the middle for the triangles to anchor to
+    if (arc_type == "sliced_arc") newPointPositions.push_back({0, 0, 0});
+
     for (int divisionIndex = 0; divisionIndex < numPoints; ++divisionIndex)
     {
-        float delta = static_cast<float>(divisionIndex) / numPoints * std::numbers::pi * 2;
-        float u = sin(delta) * uniform_scale;
-        float v = cos(delta) * uniform_scale;
+        float pointU = static_cast<float>(divisionIndex) / (numPoints - 1 * isArc);
+        float angle = (arcBegin + pointU * arcDelta) * std::numbers::pi * 2;
+        float u = sin(angle) * uniform_scale;
+        float v = cos(angle) * uniform_scale;
 
         enzo::Vector3 position;
         if (orientation == "xy")
@@ -43,8 +57,23 @@ void GopCircle::cookOp(enzo::op::Context context)
 
         newPointPositions.push_back(position);
     }
+
+    // Create points of circle
     auto newPoints = mesh->addPoints(newPointPositions);
-    mesh->addFace(newPoints);
+
+    // Sliced arc gets one face for every two points, creating triangles
+    if (arc_type == "sliced_arc")
+    {
+        for (size_t pointOffset = 1; pointOffset < newPoints.size() - 1; ++pointOffset)
+        {
+            mesh->addFace({newPoints[pointOffset], newPoints[pointOffset + 1], newPoints[0]});
+        }
+    }
+    else
+    {
+        bool closed = arc_type != "open_arc";
+        mesh->addFace(newPoints, closed);
+    }
 
     packet.addPrimitive(std::move(mesh));
     setOutputPacket(0, packet);
@@ -78,6 +107,32 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
             1,
             enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
         ),
-
+        enzo::prm::Template(enzo::prm::Type::GROUP, enzo::prm::Name("arc_group", "Arc"))
+            .setBackgroundEnabled(false)
+            .addParm(
+                enzo::prm::Template(enzo::prm::Type::DROPDOWN, enzo::prm::Name("arc", "Arc Type"))
+                    .setLabelHidden(true)
+                    .setOptions({
+                        Name("closed", "Closed"),
+                        Name("open_arc", "Open Arc"),
+                        Name("closed_arc", "Closed Arc"),
+                        Name("sliced_arc", "Sliced Arc"),
+                    })
+            )
+            .addParm(
+                enzo::prm::Template(
+                    enzo::prm::Type::XYZ,
+                    enzo::prm::Name("arc_angles", "Arc Angles"),
+                    {enzo::prm::Default(0), enzo::prm::Default(360)},
+                    2,
+                    {enzo::prm::Range(
+                        0,
+                        360,
+                        enzo::prm::RangeFlag::LOCKED,
+                        enzo::prm::RangeFlag::UNLOCKED
+                    )}
+                )
+                    .setLabelHidden(true)
+            )
     };
 }
