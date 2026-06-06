@@ -22,14 +22,26 @@ void GopCircle::cookOp(enzo::op::Context context)
 
     int numPoints = context.evalParmInt("divisions");
     float uniform_scale = context.evalParmFloat("uniform_scale");
+    std::string orientation = context.evalParmString("orientation");
 
     std::vector<enzo::Vector3> newPointPositions;
     newPointPositions.reserve(numPoints);
 
-    for (int i = 0; i < numPoints; ++i)
+    for (int divisionIndex = 0; divisionIndex < numPoints; ++divisionIndex)
     {
-        float delta = static_cast<float>(i) / numPoints * std::numbers::pi * 2;
-        newPointPositions.push_back({sin(delta) * uniform_scale, 0, cos(delta) * uniform_scale});
+        float delta = static_cast<float>(divisionIndex) / numPoints * std::numbers::pi * 2;
+        float u = sin(delta) * uniform_scale;
+        float v = cos(delta) * uniform_scale;
+
+        enzo::Vector3 position;
+        if (orientation == "xy")
+            position = {u, v, 0};
+        else if (orientation == "yz")
+            position = {0, u, v};
+        else
+            position = {u, 0, v};
+
+        newPointPositions.push_back(position);
     }
     auto newPoints = mesh->addPoints(newPointPositions);
     mesh->addFace(newPoints);
@@ -42,6 +54,16 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
 {
     using namespace enzo::prm;
     return {
+        enzo::prm::Template(
+            enzo::prm::Type::DROPDOWN,
+            enzo::prm::Name("orientation", "Orientation"),
+            enzo::prm::Default("zx")
+        )
+            .setOptions({
+                Name("xy", "XY Plane"),
+                Name("yz", "YZ Plane"),
+                Name("zx", "ZX Plane"),
+            }),
         enzo::prm::Template(
             enzo::prm::Type::FLOAT,
             enzo::prm::Name("uniform_scale", "Uniform Scale"),
