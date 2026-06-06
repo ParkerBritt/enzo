@@ -19,7 +19,7 @@
 
 namespace enzo {
 
-nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position)
+nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2 position)
 {
 
     OpId opId = ++maxOpId_;
@@ -40,9 +40,9 @@ nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2f position
     return opId;
 }
 
-void nt::NetworkManager::moveNode(OpId opId, Vector2f newPos, bool skipUndo)
+void nt::NetworkManager::moveNode(OpId opId, Vector2 newPos, bool skipUndo)
 {
-    Vector2f oldPos = getGeoOperator(opId).getPosition();
+    Vector2 oldPos = getGeoOperator(opId).getPosition();
     getGeoOperator(opId).setPosition(newPos);
 
     if (!skipUndo)

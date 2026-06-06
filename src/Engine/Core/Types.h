@@ -76,7 +76,7 @@ inline bool hasFlag(TransformClass value, TransformClass flag)
 using floatT = float;
 using intT = int64_t;
 using boolT = bool;
-using Vector2f = Eigen::Vector2f;
+using Vector2 = Eigen::Vector2f;
 using Vector3 = Eigen::Vector3f;
 using Vector4 = Eigen::Vector4f;
 using Matrix3 = Eigen::Matrix3f;
