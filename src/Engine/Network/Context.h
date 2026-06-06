@@ -33,6 +33,10 @@ class Context
     std::vector<intT> evalParmInts(std::string_view parmName) const;
     std::vector<String> evalParmStrings(std::string_view parmName) const;
 
+    // Read the first three float components of a parameter as a Vector3. Missing
+    // components default to zero.
+    Vector3 evalParmVector3(std::string_view parmName) const;
+
   private:
     enzo::nt::OpId opId_;
     enzo::nt::NetworkManager& networkManager_;
