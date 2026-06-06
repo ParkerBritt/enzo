@@ -2,10 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 
-enzo::ui::DropdownParm::DropdownParm(
-    std::weak_ptr<prm::NodeParameter> parameter,
-    QWidget* parent
-)
+enzo::ui::DropdownParm::DropdownParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
     : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
       parameter_(parameter)
 {
