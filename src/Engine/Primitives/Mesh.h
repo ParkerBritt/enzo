@@ -46,6 +46,13 @@ class Mesh : public Primitive
         const Matrix4& mat,
         TransformClass transformClass = TransformClass::POINT
     ) override;
+    void applyTransform(
+        const Transform& transform,
+        TransformClass transformClass = TransformClass::POINT
+    )
+    {
+        applyTransform(transform.getMatrix(), transformClass);
+    }
     bool canMerge() const override { return true; }
     void merge(std::shared_ptr<Primitive> other) override;
     bool hasPoints() const override { return true; }

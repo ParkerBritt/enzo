@@ -20,7 +20,7 @@ NodePacket::Transforms::Iterator::Iterator(
 
 Transform NodePacket::Transforms::Iterator::operator*() const
 {
-    return Transform(*curAttrib_, offset_);
+    return Transform::fromAttribute(*curAttrib_, offset_);
 }
 
 NodePacket::Transforms::Iterator& NodePacket::Transforms::Iterator::operator++()
