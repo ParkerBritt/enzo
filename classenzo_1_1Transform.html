@@ -92,23 +92,147 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classenzo_1_1Transform-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">enzo::Transform Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>An affine transform that composes translation, rotation, and scale.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Transform_8h_source.html">Transform.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a8db6e5d3f7be2fb9a813134dc7fb78c8" id="r_a8db6e5d3f7be2fb9a813134dc7fb78c8"><td class="memItemLeft" align="right" valign="top"><a id="a8db6e5d3f7be2fb9a813134dc7fb78c8" name="a8db6e5d3f7be2fb9a813134dc7fb78c8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Affine</b> = Eigen::Transform&lt;floatT, 3, Eigen::Affine&gt;</td></tr>
+<tr class="separator:a8db6e5d3f7be2fb9a813134dc7fb78c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af25ff9414b8cc0fbea1a3c2386b73bc0" id="r_af25ff9414b8cc0fbea1a3c2386b73bc0"><td class="memItemLeft" align="right" valign="top"><a id="af25ff9414b8cc0fbea1a3c2386b73bc0" name="af25ff9414b8cc0fbea1a3c2386b73bc0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Transform</b> (<a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &amp;attribute, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> offset)</td></tr>
-<tr class="separator:af25ff9414b8cc0fbea1a3c2386b73bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0503206b00d8af4e7cfcb6b901f4b91" id="r_ac0503206b00d8af4e7cfcb6b901f4b91"><td class="memItemLeft" align="right" valign="top"><a id="ac0503206b00d8af4e7cfcb6b901f4b91" name="ac0503206b00d8af4e7cfcb6b901f4b91"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Transform</b> ()</td></tr>
+<tr class="memdesc:ac0503206b00d8af4e7cfcb6b901f4b91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an identity transform. <br /></td></tr>
+<tr class="separator:ac0503206b00d8af4e7cfcb6b901f4b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae334a4305c267a8fd3e28e3ce441418e" id="r_ae334a4305c267a8fd3e28e3ce441418e"><td class="memItemLeft" align="right" valign="top"><a id="ae334a4305c267a8fd3e28e3ce441418e" name="ae334a4305c267a8fd3e28e3ce441418e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Transform</b> (const Matrix4 &amp;matrix)</td></tr>
+<tr class="memdesc:ae334a4305c267a8fd3e28e3ce441418e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps an existing matrix. <br /></td></tr>
+<tr class="separator:ae334a4305c267a8fd3e28e3ce441418e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67235a9e66315b1946d499642d5f955b" id="r_a67235a9e66315b1946d499642d5f955b"><td class="memItemLeft" align="right" valign="top"><a id="a67235a9e66315b1946d499642d5f955b" name="a67235a9e66315b1946d499642d5f955b"></a>
+<a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>translate</b> (const Vector3 &amp;offset)</td></tr>
+<tr class="memdesc:a67235a9e66315b1946d499642d5f955b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the local origin by an offset. <br /></td></tr>
+<tr class="separator:a67235a9e66315b1946d499642d5f955b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14813d81ba6cad9ee0d41791f6a2d496" id="r_a14813d81ba6cad9ee0d41791f6a2d496"><td class="memItemLeft" align="right" valign="top"><a id="a14813d81ba6cad9ee0d41791f6a2d496" name="a14813d81ba6cad9ee0d41791f6a2d496"></a>
+<a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>rotateEuler</b> (const Vector3 &amp;degrees)</td></tr>
+<tr class="memdesc:a14813d81ba6cad9ee0d41791f6a2d496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotates in X, then Y, then Z, with angles given in degrees. <br /></td></tr>
+<tr class="separator:a14813d81ba6cad9ee0d41791f6a2d496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d02aa3a6ebeaf7e3b50525356a63579" id="r_a3d02aa3a6ebeaf7e3b50525356a63579"><td class="memItemLeft" align="right" valign="top"><a id="a3d02aa3a6ebeaf7e3b50525356a63579" name="a3d02aa3a6ebeaf7e3b50525356a63579"></a>
+<a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>scale</b> (const Vector3 &amp;factors)</td></tr>
+<tr class="memdesc:a3d02aa3a6ebeaf7e3b50525356a63579"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales each local axis independently. <br /></td></tr>
+<tr class="separator:a3d02aa3a6ebeaf7e3b50525356a63579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7def7d50a4dee71a537901e9aa9cf08" id="r_af7def7d50a4dee71a537901e9aa9cf08"><td class="memItemLeft" align="right" valign="top"><a id="af7def7d50a4dee71a537901e9aa9cf08" name="af7def7d50a4dee71a537901e9aa9cf08"></a>
+<a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>scale</b> (floatT uniform)</td></tr>
+<tr class="memdesc:af7def7d50a4dee71a537901e9aa9cf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales all local axes by the same factor. <br /></td></tr>
+<tr class="separator:af7def7d50a4dee71a537901e9aa9cf08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a639be07d77ce69a2133040458270e379" id="r_a639be07d77ce69a2133040458270e379"><td class="memItemLeft" align="right" valign="top"><a id="a639be07d77ce69a2133040458270e379" name="a639be07d77ce69a2133040458270e379"></a>
+<a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>compose</b> (const <a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;other)</td></tr>
+<tr class="memdesc:a639be07d77ce69a2133040458270e379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Composes another transform into this one in the local frame. <br /></td></tr>
+<tr class="separator:a639be07d77ce69a2133040458270e379"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4daadd82a963ce115efaf2318405488" id="r_af4daadd82a963ce115efaf2318405488"><td class="memItemLeft" align="right" valign="top"><a id="af4daadd82a963ce115efaf2318405488" name="af4daadd82a963ce115efaf2318405488"></a>
 const Matrix4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getMatrix</b> () const</td></tr>
 <tr class="separator:af4daadd82a963ce115efaf2318405488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:af513ee688eb338cfc2e42f9dcf8fcdcc" id="r_af513ee688eb338cfc2e42f9dcf8fcdcc"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classenzo_1_1Transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af513ee688eb338cfc2e42f9dcf8fcdcc">fromAttribute</a> (const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &amp;attribute, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> offset)</td></tr>
+<tr class="memdesc:af513ee688eb338cfc2e42f9dcf8fcdcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a transform from a single attribute value.  <br /></td></tr>
+<tr class="separator:af513ee688eb338cfc2e42f9dcf8fcdcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad21d035014213d23d9193c6c2fdf697a" id="r_ad21d035014213d23d9193c6c2fdf697a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classenzo_1_1Transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad21d035014213d23d9193c6c2fdf697a">lookAt</a> (const Vector3 &amp;translation, const Vector3 &amp;forward, const Vector3 &amp;up)</td></tr>
+<tr class="memdesc:ad21d035014213d23d9193c6c2fdf697a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds an orientation frame that points down a forward axis.  <br /></td></tr>
+<tr class="separator:ad21d035014213d23d9193c6c2fdf697a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An affine transform that composes translation, rotation, and scale. </p>
+<p>Builder methods mutate in place and return a reference so calls can be chained. Factory methods construct a <a class="el" href="classenzo_1_1Transform.html" title="An affine transform that composes translation, rotation, and scale.">Transform</a> from other representations such as an attribute value or an orientation frame.</p>
+<dl class="section note"><dt>Note</dt><dd>The transform is stored as an Eigen affine transform whose operations skip the homogeneous bottom row, so composing and applying it costs less than a full 4x4 multiply. Builders and accessors are inline so they survive per element hot paths. </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="af513ee688eb338cfc2e42f9dcf8fcdcc" name="af513ee688eb338cfc2e42f9dcf8fcdcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af513ee688eb338cfc2e42f9dcf8fcdcc">&#9670;&#160;</a></span>fromAttribute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1Transform.html">Transform</a> enzo::Transform::fromAttribute </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a></td>          <td class="paramname"><span class="paramname"><em>offset</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads a transform from a single attribute value. </p>
+<dl class="section return"><dt>Returns</dt><dd>The transform encoded at the given offset.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>A vector attribute becomes a translation. A matrix attribute is used directly. Any other type yields the identity. </dd></dl>
+
+</div>
+</div>
+<a id="ad21d035014213d23d9193c6c2fdf697a" name="ad21d035014213d23d9193c6c2fdf697a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad21d035014213d23d9193c6c2fdf697a">&#9670;&#160;</a></span>lookAt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1Transform.html">Transform</a> enzo::Transform::lookAt </td>
+          <td>(</td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>translation</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>forward</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>up</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Builds an orientation frame that points down a forward axis. </p>
+<dl class="section return"><dt>Returns</dt><dd>A transform whose rotation aligns to the frame, placed at translation.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The rotation maps the local Z axis onto forward and the local Y axis toward up. The up vector resolves the remaining roll. When forward and up are parallel the rotation falls back to identity. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Attribute/<a class="el" href="Transform_8h_source.html">Transform.h</a></li>
+<li>src/Engine/Attribute/<b>Transform.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -122,12 +122,20 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    std::vector&lt;intT&gt; evalParmInts(std::string_view parmName) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    std::vector&lt;String&gt; evalParmStrings(std::string_view parmName) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <a class="code hl_typedef" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId_;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>&amp; networkManager_;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>};</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="comment">// Read the first two float components of a parameter as a Vector2. Missing</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="comment">// components default to zero.</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    Vector2 evalParmVector2(std::string_view parmName) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="comment">// Read the first three float components of a parameter as a Vector3. Missing</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="comment">// components default to zero.</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    Vector3 evalParmVector3(std::string_view parmName) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <a class="code hl_typedef" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a> opId_;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>&amp; networkManager_;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>};</div>
 </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <span class="comment">// namespace enzo::op</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>} <span class="comment">// namespace enzo::op</span></div>
 <div class="ttc" id="aTypes_8h_html"><div class="ttname"><a href="Types_8h.html">Types.h</a></div><div class="ttdoc">Basic attribute, parameter, and node types for Enzo.</div></div>
 <div class="ttc" id="aTypes_8h_html_ad40cef50cc1dc0d03924b9d9346e0288"><div class="ttname"><a href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">enzo::nt::OpId</a></div><div class="ttdeci">uint64_t OpId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:135</div></div>
 <div class="ttc" id="aclassenzo_1_1NodePacket_html"><div class="ttname"><a href="classenzo_1_1NodePacket.html">enzo::NodePacket</a></div><div class="ttdef"><b>Definition</b> NodePacket.h:9</div></div>

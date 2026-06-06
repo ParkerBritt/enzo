@@ -123,9 +123,9 @@ $(function(){ initResizable(false); });
 <dd><a class="anchor" id="_todo000011"></a>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes.  </dd>
 <dt>Class <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>  </dt>
 <dd><a class="anchor" id="_todo000013"></a>remove Qobject inheritance, this is no longer needed since switching to boost signals. </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#afa5eb92201d158e1cd245eec1168f2f9">enzo::nt::NetworkManager::createOperator</a>  (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo, Vector2f position={0.f, 0.f})</dt>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a7c53e703bf516be53c182e21b66ad210">enzo::nt::NetworkManager::createOperator</a>  (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo, Vector2 position={0.f, 0.f})</dt>
 <dd><a class="anchor" id="_todo000014"></a>Should probably only have to pass type, now entire opInfo. Fix soon!!!  </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a5f82a693ecc966ad9081da98f447d47f">enzo::nt::NetworkManager::moveNode</a>  (OpId opId, Vector2f newPos, bool skipUndo=false)</dt>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a5173d8d5a1ba5531e0f47963eb24cd7f">enzo::nt::NetworkManager::moveNode</a>  (OpId opId, Vector2 newPos, bool skipUndo=false)</dt>
 <dd><a class="anchor" id="_todo000015"></a>remove skipUndo argument in favour of a global undo RAII lock  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607">enzo::nt::NetworkManager::restoreOperator</a>  (OpId opId, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</dt>
 <dd><a class="anchor" id="_todo000016"></a>maybe replace with createNodeWithId</dd>

@@ -5,5 +5,6 @@ var searchData=
   ['removeoperator_2',['removeOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a1c359b457645bc8772f867955d4ee79a',1,'enzo::nt::NetworkManager']]],
   ['removeoutputconnection_3',['removeOutputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a9f2e1cd930530eed3cc5000649ce9157',1,'enzo::nt::GeometryOperator']]],
   ['resize_4',['resize',['../classenzo_1_1attr_1_1Attribute.html#a85c03efef8653f74ab458484b2a49fd2',1,'enzo::attr::Attribute::resize()'],['../classenzo_1_1attr_1_1AttributeHandle.html#a130fdecdc05f5eced9b17cb5a7a84605',1,'enzo::attr::AttributeHandle::resize()']]],
-  ['restoreoperator_5',['restoreOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607',1,'enzo::nt::NetworkManager']]]
+  ['restoreoperator_5',['restoreOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607',1,'enzo::nt::NetworkManager']]],
+  ['rotateeuler_6',['rotateEuler',['../classenzo_1_1Transform.html#a14813d81ba6cad9ee0d41791f6a2d496',1,'enzo::Transform']]]
 ];
