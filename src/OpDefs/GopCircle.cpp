@@ -26,6 +26,8 @@ void GopCircle::cookOp(enzo::op::Context context)
     std::string arc_type = context.evalParmString("arc");
     float arcBegin = context.evalParmFloat("arc_angles", 0) / 360;
     float arcEnd = context.evalParmFloat("arc_angles", 1) / 360;
+    enzo::Vector3 center = context.evalParmVector3("center");
+    enzo::Vector3 rotate = context.evalParmVector3("rotate");
 
     float arcDelta = arcEnd - arcBegin;
     if (arc_type == "closed") arcDelta = 1;
@@ -75,6 +77,8 @@ void GopCircle::cookOp(enzo::op::Context context)
         mesh->addFace(newPoints, closed);
     }
 
+    mesh->applyTransform(enzo::Transform().translate(center).rotateEuler(rotate));
+
     packet.addPrimitive(std::move(mesh));
     setOutputPacket(0, packet);
 }
@@ -93,6 +97,30 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
                 Name("yz", "YZ Plane"),
                 Name("zx", "ZX Plane"),
             }),
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("center", "Center"),
+            enzo::prm::Default(0),
+            3,
+            enzo::prm::Range(
+                -10,
+                10,
+                enzo::prm::RangeFlag::UNLOCKED,
+                enzo::prm::RangeFlag::UNLOCKED
+            )
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("rotate", "Rotate"),
+            enzo::prm::Default(0),
+            3,
+            enzo::prm::Range(
+                -360,
+                360,
+                enzo::prm::RangeFlag::UNLOCKED,
+                enzo::prm::RangeFlag::UNLOCKED
+            )
+        ),
         enzo::prm::Template(
             enzo::prm::Type::FLOAT,
             enzo::prm::Name("uniform_scale", "Uniform Scale"),

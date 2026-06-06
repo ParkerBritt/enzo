@@ -114,6 +114,18 @@ std::vector<floatT> op::Context::evalParmFloats(std::string_view parmName) const
     }
 }
 
+Vector3 op::Context::evalParmVector3(std::string_view parmName) const
+{
+    std::vector<floatT> components = evalParmFloats(parmName);
+    Vector3 result = Vector3::Zero();
+    for (size_t componentIndex = 0; componentIndex < components.size() && componentIndex < 3;
+         ++componentIndex)
+    {
+        result[componentIndex] = components[componentIndex];
+    }
+    return result;
+}
+
 std::vector<intT> op::Context::evalParmInts(std::string_view parmName) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
