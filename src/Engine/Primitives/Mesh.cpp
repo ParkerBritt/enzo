@@ -183,9 +183,10 @@ void geo::Mesh::merge(Mesh& other)
     pointOffsetsFlat.reserve(other.pointOffsetVertexHandle_.getSize());
     std::vector<Offset> vertexCounts;
     vertexCounts.reserve(srcFaceNum);
+    const std::span<const Offset> otherFaceStarts = other.getFaceStartVertices();
     for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
     {
-        const Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
+        const Offset faceStartVertex = otherFaceStarts[faceOffset];
         const Offset vertexCount = other.getFaceVertCount(faceOffset);
         vertexCounts.push_back(vertexCount);
 
@@ -350,11 +351,12 @@ void geo::Mesh::deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoin
     // Invalidate each face and its vertices.
     // When cascading to points, remember which points those vertices referenced.
     std::unordered_set<Offset> orphanCandidates;
+    const std::span<const Offset> faceStarts = getFaceStartVertices();
     for (Offset faceOffset : faceOffsets)
     {
         validFaceHandle_.setValue(faceOffset, false);
 
-        const Offset start = getFaceStartVertex(faceOffset);
+        const Offset start = faceStarts[faceOffset];
         const Offset count = getFaceVertCount(faceOffset);
         for (Offset v = start; v < start + count; ++v)
         {
@@ -433,10 +435,11 @@ void geo::Mesh::deleteVertices(const std::vector<Offset>& vertOffsets)
     }
 
     // Invalidate any face that has no valid vertices left
+    const std::span<const Offset> faceStarts = getFaceStartVertices();
     for (Offset f : affectedFaces)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const Offset start = getFaceStartVertex(f);
+        const Offset start = faceStarts[f];
         const Offset count = getFaceVertCount(f);
         bool anyValid = false;
         for (Offset v = start; v < start + count; ++v)
@@ -468,10 +471,11 @@ void geo::Mesh::defragment()
 
     // Update each face's vertex count in case any vertices were deleted
     const Offset oldFaceCount = vertexCountFaceHandle_.getSize();
+    const std::span<const Offset> faceStarts = getFaceStartVertices();
     for (Offset f = 0; f < oldFaceCount; ++f)
     {
         if (!validFaceHandle_.getValue(f)) continue;
-        const Offset start = getFaceStartVertex(f);
+        const Offset start = faceStarts[f];
         const Offset oldCount = vertexCountFaceHandle_.getValue(f);
         Offset validCount = 0;
         for (Offset v = start; v < start + oldCount; ++v)
@@ -654,11 +658,6 @@ void geo::Mesh::setPointPos(const Offset offset, const Vector3& pos)
     posPointHandle_.setValue(offset, pos);
 }
 
-unsigned int geo::Mesh::getFaceVertCount(Offset faceOffset) const
-{
-    return vertexCountFaceHandle_.getValue(faceOffset);
-}
-
 unsigned int geo::Mesh::getFacePointCount(Offset faceOffset) const
 {
     return getFaceVertCount(faceOffset);
@@ -745,9 +744,8 @@ geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
     return heMesh;
 }
 
-Offset geo::Mesh::getFaceStartVertex(Offset faceOffset) const
+std::span<const Offset> geo::Mesh::getFaceStartVertices() const
 {
-
     if (faceStartsDirty_.load())
     {
         tbb::spin_mutex::scoped_lock lock(faceStartsMutex_); // lock
@@ -756,7 +754,7 @@ Offset geo::Mesh::getFaceStartVertex(Offset faceOffset) const
             computeFaceStartVertices();
         }
     }
-    return faceStarts_[faceOffset];
+    return faceStarts_;
 }
 
 void geo::Mesh::computeFaceStartVertices() const
@@ -852,10 +850,8 @@ geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute) : mes
     }
 }
 
-Vector3 geo::FaceNormalHandle::operator[](Offset faceOffset) const
+Vector3 geo::FaceNormalHandle::computeNormal(Offset faceOffset) const
 {
-    if (cached_) return cached_->getValue(faceOffset);
-    if (!precomputed_.empty()) return precomputed_[faceOffset];
     // Re-resolve the position span on each call so addPoint between reads
     // can't dangle the data pointer through a std::vector reallocation.
     return utils::polygonNormal(mesh_.posPointHandle_.getSpan(), mesh_.getFacePoints(faceOffset));

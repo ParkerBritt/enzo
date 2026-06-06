@@ -48,6 +48,7 @@ void GopCopyToPoints::cookOp(enzo::op::Context context)
         }
 
         setOutputPacket(0, outputPacket);
+        std::cout << "done\n";
     }
 }
 

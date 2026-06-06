@@ -127,7 +127,7 @@ QVariant AttributeSpreadsheetModel::data(const QModelIndex& index, int role) con
                 if (auto mesh = std::dynamic_pointer_cast<const enzo::geo::Mesh>(primitive_))
                 {
                     const enzo::Offset faceOffset = mesh->getVertexFace(index.row());
-                    const enzo::Offset startVert = mesh->getFaceStartVertex(faceOffset);
+                    const enzo::Offset startVert = mesh->getFaceStartVertices()[faceOffset];
                     const enzo::Offset vertexNumber = index.row() - startVert;
                     return QString::fromStdString(
                         std::to_string(faceOffset) + ":" + std::to_string(vertexNumber)

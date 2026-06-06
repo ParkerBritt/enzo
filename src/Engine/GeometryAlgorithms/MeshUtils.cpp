@@ -181,13 +181,14 @@ earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffset
 {
     std::vector<std::array<Offset, 3>> triangles;
     std::vector<Vector3> corners;
+    const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
     for (const Offset faceOffset : faceOffsets)
     {
         const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
         if (cornerCount < 3) continue;
 
         // Each corner's position lives at its vertex offset on the face.
-        const Offset faceStartVertex = mesh.getFaceStartVertex(faceOffset);
+        const Offset faceStartVertex = faceStarts[faceOffset];
         corners.resize(cornerCount);
         for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
             corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);

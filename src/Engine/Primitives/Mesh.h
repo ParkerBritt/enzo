@@ -110,10 +110,17 @@ class Mesh : public Primitive
     std::unordered_set<Offset>::const_iterator soloPointsEnd() const;
 
     void setPointPos(const Offset offset, const Vector3& pos);
-    Offset getFaceStartVertex(Offset faceOffset) const;
+    /**
+     * @brief Contiguous view of each face's starting vertex offset.
+     * @return Span indexed by face offset. Invalid after a mutation that grows storage.
+     */
+    std::span<const Offset> getFaceStartVertices() const;
     Vector3 getPosFromVert(Offset vertexOffset) const;
     Vector3 getPointPos(Offset pointOffset) const;
-    unsigned int getFaceVertCount(Offset faceOffset) const;
+    unsigned int getFaceVertCount(Offset faceOffset) const
+    {
+        return vertexCountFaceHandle_[faceOffset];
+    }
     unsigned int getFacePointCount(Offset faceOffset) const;
     Offset getVertexFace(Offset vertexOffset) const;
 
@@ -124,7 +131,7 @@ class Mesh : public Primitive
 
     std::span<const intT> getFacePoints(Offset faceOffset) const
     {
-        const Offset start = getFaceStartVertex(faceOffset);
+        const Offset start = getFaceStartVertices()[faceOffset];
         const unsigned int count = getFaceVertCount(faceOffset);
         return pointOffsetVertexHandle_.getSpan().subspan(start, count);
     }
@@ -324,11 +331,17 @@ class Mesh : public Primitive
 class FaceNormalHandle
 {
   public:
-    Vector3 operator[](Offset faceOffset) const;
+    Vector3 operator[](Offset faceOffset) const
+    {
+        if (cached_) return (*cached_)[faceOffset];
+        if (!precomputed_.empty()) return precomputed_[faceOffset];
+        return computeNormal(faceOffset);
+    }
 
   private:
     friend class Mesh;
     FaceNormalHandle(const Mesh& mesh, bool precompute);
+    Vector3 computeNormal(Offset faceOffset) const;
     const Mesh& mesh_;
     std::optional<attr::AttributeHandleRO<Vector3>> cached_;
     std::vector<Vector3> precomputed_;
