@@ -154,10 +154,10 @@ void geo::Mesh::applyTransform(const Matrix4& mat, TransformClass transformClass
                 for (size_t i = range.begin(); i < range.end(); ++i)
                 {
                     const Vector3& pos = posPointHandle_[i];
-                    // w=1.0 extends to homogeneous coords so the 4x4 matrix
-                    // applies translation, rotation, and scale in one multiply
-                    const Vector4 pos4(pos.x(), pos.y(), pos.z(), 1.0);
-                    const Vector3 transformed = (mat * pos4).head<3>();
+                    // Affine point form applies the linear block then adds the
+                    // translation column, skipping the homogeneous row.
+                    const Vector3 transformed =
+                        mat.topLeftCorner<3, 3>() * pos + mat.col(3).head<3>();
                     posPointHandle_.setValue(i, transformed);
                 }
             }

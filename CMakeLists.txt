@@ -16,6 +16,7 @@ set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(ENGINE_SOURCES
     src/Engine/Attribute/Attribute.cpp
+    src/Engine/Attribute/Transform.cpp
     src/Engine/Primitives/Primitive.cpp
     src/Engine/Primitives/Mesh.cpp
     src/Engine/Primitives/Camera.cpp
