@@ -25,7 +25,7 @@ constexpr int scrollbarWidth = 3;
 constexpr int scrollbarMargin = 2;
 
 const QColor borderColor("#383838");
-const QColor backgroundColor("#1a1a1a");
+const QColor backgroundColor("#202020");
 const QColor textColor("#B3B3B3");
 const QColor selectedTextColor("#E6E6E6");
 const QColor hoverColor(60, 60, 60, 153);
