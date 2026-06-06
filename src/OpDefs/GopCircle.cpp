@@ -40,8 +40,9 @@ void GopCircle::cookOp(enzo::op::Context context)
     std::vector<enzo::Vector3> newPointPositions;
     newPointPositions.reserve(numPoints);
 
-    // Sliced arc has one extra point in the middle for the triangles to anchor to
-    if (arc_type == "sliced_arc") newPointPositions.push_back({0, 0, 0});
+    // Sliced and closed arc has one extra point in the middle for the triangles to anchor to
+    if (arc_type == "sliced_arc" || arc_type == "closed_arc")
+        newPointPositions.push_back({0, 0, 0});
 
     for (int divisionIndex = 0; divisionIndex < numPoints; ++divisionIndex)
     {
