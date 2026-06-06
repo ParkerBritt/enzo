@@ -102,10 +102,7 @@ std::vector<String> prm::Parameter::evalStrings() const
     return std::get<std::vector<String>>(values_);
 }
 
-std::vector<intT> prm::Parameter::evalInts() const
-{
-    return std::get<std::vector<intT>>(values_);
-}
+std::vector<intT> prm::Parameter::evalInts() const { return std::get<std::vector<intT>>(values_); }
 
 unsigned int prm::Parameter::getVectorSize() const { return template_.getSize(); }
 
