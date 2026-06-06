@@ -174,32 +174,30 @@ void geo::Mesh::merge(std::shared_ptr<Primitive> other)
 
 void geo::Mesh::merge(Mesh& other)
 {
-    // Copy all unique points and build offset mapping
-    const Offset srcPointNum = other.getNumPoints();
-    std::vector<Offset> pointMapping(srcPointNum);
-    for (Offset pointOffset = 0; pointOffset < srcPointNum; ++pointOffset)
-    {
-        pointMapping[pointOffset] = addPoint(other.getPointPos(pointOffset));
-    }
+    // Copy points from other to self.
+    const std::vector<Offset> newPoints = addPoints(other.posPointHandle_.getSpan());
 
-    // Create faces using mapped point offsets
+    // Copy faces from other to self, remapping each point offset to its merged position.
     const Offset srcFaceNum = other.getNumFaces();
+    std::vector<Offset> pointOffsetsFlat;
+    pointOffsetsFlat.reserve(other.pointOffsetVertexHandle_.getSize());
+    std::vector<Offset> vertexCounts;
+    vertexCounts.reserve(srcFaceNum);
     for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
     {
         const Offset faceStartVertex = other.getFaceStartVertex(faceOffset);
         const Offset vertexCount = other.getFaceVertCount(faceOffset);
+        vertexCounts.push_back(vertexCount);
 
-        std::vector<Offset> pointOffsets;
-        pointOffsets.reserve(vertexCount);
         for (Offset i = 0; i < vertexCount; ++i)
         {
             const Offset otherPointOffset =
                 other.pointOffsetVertexHandle_.getValue(faceStartVertex + i);
-            pointOffsets.push_back(pointMapping[otherPointOffset]);
+            pointOffsetsFlat.push_back(newPoints[otherPointOffset]);
         }
-        // TODO: check closed status
-        addFace(pointOffsets, true);
     }
+    // TODO: check closed status
+    addFaces(pointOffsetsFlat, vertexCounts, true);
 
     // Merge vertex attributes
     for (std::shared_ptr<attr::Attribute> otherAttribute : other.vertexAttributes_)
