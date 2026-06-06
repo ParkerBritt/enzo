@@ -11,7 +11,6 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
-#include <variant>
 
 namespace enzo::nt {
 
@@ -45,18 +44,18 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
             {
                 ParameterSerializable prmModel;
                 prmModel.name = prm->getName();
-                std::visit(
-                    [&prmModel](const auto& v) {
-                        using T = typename std::decay_t<decltype(v)>::value_type;
-                        if constexpr (std::is_same_v<T, floatT>)
-                            prmModel.floatValues = v;
-                        else if constexpr (std::is_same_v<T, intT>)
-                            prmModel.intValues = v;
-                        else
-                            prmModel.stringValues = v;
-                    },
-                    prm->getValues()
-                );
+                switch (prm->getValueType())
+                {
+                case prm::ValueType::Float:
+                    prmModel.floatValues = prm->evalFloats();
+                    break;
+                case prm::ValueType::Int:
+                    prmModel.intValues = prm->evalInts();
+                    break;
+                case prm::ValueType::String:
+                    prmModel.stringValues = prm->evalStrings();
+                    break;
+                }
                 opModel.parameters.push_back(prmModel);
             }
         }
@@ -111,22 +110,16 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
             auto weakPrm = op.getParameter(prmModel.name);
             if (auto prm = weakPrm.lock())
             {
-                switch (prm->getType())
+                switch (prm->getValueType())
                 {
-                case prm::Type::FLOAT:
-                case prm::Type::XYZ:
+                case prm::ValueType::Float:
                     if (!prmModel.floatValues.empty()) prm->setValues(prmModel.floatValues);
                     break;
-                case prm::Type::INT:
-                case prm::Type::BOOL:
-                case prm::Type::TOGGLE:
+                case prm::ValueType::Int:
                     if (!prmModel.intValues.empty()) prm->setValues(prmModel.intValues);
                     break;
-                case prm::Type::STRING:
-                case prm::Type::DROPDOWN:
+                case prm::ValueType::String:
                     if (!prmModel.stringValues.empty()) prm->setValues(prmModel.stringValues);
-                    break;
-                default:
                     break;
                 }
             }

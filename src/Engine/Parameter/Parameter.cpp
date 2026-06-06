@@ -17,10 +17,9 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
         return prm::Default();
     };
 
-    switch (getType())
+    switch (getValueType())
     {
-    case prm::Type::FLOAT:
-    case prm::Type::XYZ:
+    case prm::ValueType::Float:
     {
         std::vector<floatT> vals(size);
         for (unsigned int i = 0; i < size; ++i)
@@ -28,9 +27,7 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
         values_ = std::move(vals);
         break;
     }
-    case prm::Type::INT:
-    case prm::Type::BOOL:
-    case prm::Type::TOGGLE:
+    case prm::ValueType::Int:
     {
         std::vector<intT> vals(size);
         for (unsigned int i = 0; i < size; ++i)
@@ -38,8 +35,7 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
         values_ = std::move(vals);
         break;
     }
-    case prm::Type::STRING:
-    case prm::Type::DROPDOWN:
+    case prm::ValueType::String:
     {
         std::vector<String> vals(size);
         for (unsigned int i = 0; i < size; ++i)
@@ -47,9 +43,6 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
         values_ = std::move(vals);
         break;
     }
-    default:
-        values_ = std::vector<floatT>(size, 0.0);
-        break;
     }
 
     std::cout << "created new parameter: " << prmTemplate.getName() << "\n";
