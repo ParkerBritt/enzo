@@ -64,6 +64,16 @@ floatT prm::Parameter::evalFloat(unsigned int index) const
 
 intT prm::Parameter::evalInt(unsigned int index) const
 {
+    // Maps string tokens to integer indeces for parameters with options like dropdowns.
+    if (template_.hasOptions())
+    {
+        const String token = evalString(index);
+        const std::vector<prm::Name>& options = template_.getOptions();
+        for (unsigned int optionIndex = 0; optionIndex < options.size(); ++optionIndex)
+            if (options[optionIndex].getToken() == token) return optionIndex;
+        return -1;
+    }
+
     auto& vals = std::get<std::vector<intT>>(values_);
     if (index >= vals.size())
         throw std::out_of_range(
