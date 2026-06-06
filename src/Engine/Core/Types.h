@@ -114,6 +114,18 @@ enum class Direction
     HORIZONTAL,
     VERTICAL
 };
+/**
+ * @brief Which kind of value a parameter stores.
+ *
+ * Every prm::Type maps to one of these. Parameter::getValueType is the one place
+ * that mapping lives and the rest of the value handling switches on this tag.
+ */
+enum class ValueType
+{
+    Float,
+    Int,
+    String
+};
 } // namespace prm
 namespace nt {
 /**

@@ -110,6 +110,26 @@ const prm::Template& prm::Parameter::getTemplate() { return template_; }
 
 prm::Type prm::Parameter::getType() const { return template_.getType(); }
 
+prm::ValueType prm::Parameter::getValueType() const
+{
+    switch (getType())
+    {
+    case prm::Type::FLOAT:
+    case prm::Type::XYZ:
+        return prm::ValueType::Float;
+    case prm::Type::INT:
+    case prm::Type::BOOL:
+    case prm::Type::TOGGLE:
+        return prm::ValueType::Int;
+    case prm::Type::STRING:
+    case prm::Type::DROPDOWN:
+        return prm::ValueType::String;
+    case prm::Type::GROUP:
+        return prm::ValueType::Float;
+    }
+    return prm::ValueType::Float;
+}
+
 void prm::Parameter::setInt(intT value, unsigned int index)
 {
     auto& vals = std::get<std::vector<intT>>(values_);
