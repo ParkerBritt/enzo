@@ -90,7 +90,6 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         if (prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
         const size_t numFaces = geometry->getNumFaces();
-        geometry->computeFaceStartVertices();
 
         const size_t localVertOffset = vertOffset;
         auto faceNormals = geometry->getFaceNormal(true);
@@ -98,13 +97,14 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         // Storage views resolve each vertex position with two direct loads
         const std::span<const enzo::intT> vertexPoints = geometry->vertexPointSpan();
         const std::span<const enzo::Vector3> pointPositions = geometry->pointPosSpan();
+        const std::span<const enzo::Offset> faceStarts = geometry->getFaceStartVertices();
 
         tbb::parallel_for(
             tbb::blocked_range<size_t>(0, numFaces),
             [&](tbb::blocked_range<size_t> range) {
                 for (int faceOffset = range.begin(); faceOffset < range.end(); ++faceOffset)
                 {
-                    const enzo::Offset faceStartVert = geometry->getFaceStartVertex(faceOffset);
+                    const enzo::Offset faceStartVert = faceStarts[faceOffset];
                     const unsigned int faceVertCnt = geometry->getFaceVertCount(faceOffset);
 
                     enzo::Vector3 Normal(0, 0, 0);
@@ -131,7 +131,7 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         GL_ARRAY_BUFFER,
         vertices.size() * sizeof(Vertex),
         vertices.data(),
-        GL_STATIC_DRAW
+        GL_DYNAMIC_DRAW
     );
     unbind();
 }
@@ -152,10 +152,11 @@ void GLMesh::setIndexBuffer(const enzo::NodePacket& packet)
 
         // Open faces draw as polylines, closed faces fill and get a wireframe outline.
         std::vector<enzo::Offset> fillFaceOffsets;
+        const std::span<const enzo::Offset> faceStarts = geometry->getFaceStartVertices();
         for (enzo::Offset faceOffset = 0; faceOffset < geometry->getNumFaces(); ++faceOffset)
         {
             int faceVertexCount = geometry->getFaceVertCount(faceOffset);
-            const enzo::Offset startVert = vertOffset + geometry->getFaceStartVertex(faceOffset);
+            const enzo::Offset startVert = vertOffset + faceStarts[faceOffset];
             const enzo::boolT closed = geometry->isClosed(faceOffset);
 
             if (!closed && faceVertexCount >= 2)

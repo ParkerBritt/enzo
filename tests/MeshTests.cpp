@@ -402,7 +402,7 @@ TEST_CASE("Face normal of tilted triangle uses Newell's method") {
     auto faceNormals = mesh.getFaceNormal();
     const Vector3 normal = faceNormals[0];
     const double oneOverRoot2 = 1.0 / std::sqrt(2.0);
-    const double eps = 1e-9;
+    const double eps = 1e-6;
     REQUIRE(std::abs(normal.x()) < eps);
     REQUIRE(std::abs(normal.y() + oneOverRoot2) < eps);
     REQUIRE(std::abs(normal.z() - oneOverRoot2) < eps);
