@@ -28,6 +28,7 @@ void GopCircle::cookOp(enzo::op::Context context)
     float arcEnd = context.evalParmFloat("arc_angles", 1) / 360;
     enzo::Vector3 center = context.evalParmVector3("center");
     enzo::Vector3 rotate = context.evalParmVector3("rotate");
+    enzo::Vector2 radius = context.evalParmVector2("radius");
 
     float arcDelta = arcEnd - arcBegin;
     if (arc_type == "closed") arcDelta = 1;
@@ -46,8 +47,8 @@ void GopCircle::cookOp(enzo::op::Context context)
     {
         float pointU = static_cast<float>(divisionIndex) / (numPoints - 1 * isArc);
         float angle = (arcBegin + pointU * arcDelta) * std::numbers::pi * 2;
-        float u = sin(angle) * uniform_scale;
-        float v = cos(angle) * uniform_scale;
+        float u = sin(angle) * uniform_scale * radius[0];
+        float v = cos(angle) * uniform_scale * radius[1];
 
         enzo::Vector3 position;
         if (orientation == "xy")
@@ -126,6 +127,13 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
             enzo::prm::Name("uniform_scale", "Uniform Scale"),
             enzo::prm::Default(1),
             1,
+            enzo::prm::Range(0, 10, enzo::prm::RangeFlag::UNLOCKED, enzo::prm::RangeFlag::UNLOCKED)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("radius", "Radius"),
+            enzo::prm::Default(1),
+            2,
             enzo::prm::Range(0, 10, enzo::prm::RangeFlag::UNLOCKED, enzo::prm::RangeFlag::UNLOCKED)
         ),
         enzo::prm::Template(

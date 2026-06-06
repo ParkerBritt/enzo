@@ -9,7 +9,7 @@ namespace enzo::nt {
 class MoveNodeCommand : public UndoCommand
 {
   public:
-    MoveNodeCommand(OpId opId, Vector2f oldPos, Vector2f newPos)
+    MoveNodeCommand(OpId opId, Vector2 oldPos, Vector2 newPos)
         : opId_(opId), oldPos_(oldPos), newPos_(newPos)
     {
     }
@@ -30,8 +30,8 @@ class MoveNodeCommand : public UndoCommand
 
   private:
     OpId opId_;
-    Vector2f oldPos_;
-    Vector2f newPos_;
+    Vector2 oldPos_;
+    Vector2 newPos_;
 };
 
 } // namespace enzo::nt

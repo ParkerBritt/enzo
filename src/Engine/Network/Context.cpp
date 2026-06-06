@@ -114,6 +114,18 @@ std::vector<floatT> op::Context::evalParmFloats(std::string_view parmName) const
     }
 }
 
+Vector2 op::Context::evalParmVector2(std::string_view parmName) const
+{
+    std::vector<floatT> components = evalParmFloats(parmName);
+    Vector2 result = Vector2::Zero();
+    for (size_t componentIndex = 0; componentIndex < components.size() && componentIndex < 2;
+         ++componentIndex)
+    {
+        result[componentIndex] = components[componentIndex];
+    }
+    return result;
+}
+
 Vector3 op::Context::evalParmVector3(std::string_view parmName) const
 {
     std::vector<floatT> components = evalParmFloats(parmName);

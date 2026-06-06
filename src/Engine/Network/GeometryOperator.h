@@ -167,9 +167,9 @@ class GeometryOperator
     unsigned int getMaxOutputs() const;
 
     /// @brief Returns the node's position in the network graph.
-    Vector2f getPosition() const { return position_; }
+    Vector2 getPosition() const { return position_; }
     /// @brief Sets the node's position in the network graph.
-    void setPosition(Vector2f pos) { position_ = pos; }
+    void setPosition(Vector2 pos) { position_ = pos; }
 
     /// @brief A signal emitted when the node is dirtied. This will usually notify the
     /// NetworkManager
@@ -185,7 +185,7 @@ class GeometryOperator
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;
-    Vector2f position_{0.f, 0.f};
+    Vector2 position_{0.f, 0.f};
     bool dirty_ = true;
 };
 } // namespace enzo::nt

@@ -33,6 +33,10 @@ class Context
     std::vector<intT> evalParmInts(std::string_view parmName) const;
     std::vector<String> evalParmStrings(std::string_view parmName) const;
 
+    // Read the first two float components of a parameter as a Vector2. Missing
+    // components default to zero.
+    Vector2 evalParmVector2(std::string_view parmName) const;
+
     // Read the first three float components of a parameter as a Vector3. Missing
     // components default to zero.
     Vector3 evalParmVector3(std::string_view parmName) const;

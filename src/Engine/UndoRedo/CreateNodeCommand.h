@@ -40,7 +40,7 @@ class CreateNodeCommand : public UndoCommand
   private:
     OpId opId_;
     std::string typeName_;
-    Vector2f position_;
+    Vector2 position_;
 };
 
 } // namespace enzo::nt
