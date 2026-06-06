@@ -197,6 +197,12 @@ Enumerations</h2></td></tr>
 , <b>VERTICAL</b>
  }</td></tr>
 <tr class="separator:abb6b87b7ce7b370a1929d87c1de3d5be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adde04662eb0d43a49d07351fd9439686" id="r_adde04662eb0d43a49d07351fd9439686"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adde04662eb0d43a49d07351fd9439686">enzo::prm::ValueType</a> { <b>Float</b>
+, <b>Int</b>
+, <b>String</b>
+ }</td></tr>
+<tr class="memdesc:adde04662eb0d43a49d07351fd9439686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which kind of value a parameter stores.  <a href="#adde04662eb0d43a49d07351fd9439686">More...</a><br /></td></tr>
+<tr class="separator:adde04662eb0d43a49d07351fd9439686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae85c7a5ac69deccfa3456f2ce7799cc8" id="r_ae85c7a5ac69deccfa3456f2ce7799cc8"><td class="memItemLeft" align="right" valign="top"><a id="ae85c7a5ac69deccfa3456f2ce7799cc8" name="ae85c7a5ac69deccfa3456f2ce7799cc8"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>SocketIOType</b> { <b>Input</b>
 , <b>Output</b>
  }</td></tr>
@@ -279,6 +285,31 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (Tr
 <li>FACE attributes are stored per face, these attributes have an value for each face.</li>
 <li>PRIMITIVE attributes are stored per primitive object, these attributes only have one value. </li>
 </ul>
+
+</div>
+</div>
+<a id="adde04662eb0d43a49d07351fd9439686" name="adde04662eb0d43a49d07351fd9439686"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adde04662eb0d43a49d07351fd9439686">&#9670;&#160;</a></span>ValueType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#adde04662eb0d43a49d07351fd9439686">enzo::prm::ValueType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Which kind of value a parameter stores. </p>
+<p>Every prm::Type maps to one of these. Parameter::getValueType is the one place that mapping lives and the rest of the value handling switches on this tag. </p>
 
 </div>
 </div>
