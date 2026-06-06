@@ -18,7 +18,8 @@ enzo::ui::DropdownParm::DropdownParm(std::weak_ptr<prm::NodeParameter> parameter
     }
     dropdown_->setCurrentData(QString::fromStdString(parameterShared->evalString()));
     contentLayout_->addWidget(dropdown_);
-    contentLayout_->addStretch();
+
+    // Stay at natural width so a horizontal group neighbour gets the leftover space.
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
     // The dropdown paints its own rounded border, so the standard parameter

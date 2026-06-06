@@ -109,6 +109,16 @@ prm::Template& prm::Template::setDirection(Direction direction)
 prm::Template& prm::Template::setOptions(std::vector<prm::Name> options)
 {
     options_ = std::move(options);
+
+    // Sets default to first option if no default exists.
+    bool hasStringDefault = !defaults_.empty() && !defaults_[0].getString().empty();
+    if (!options_.empty() && !hasStringDefault)
+    {
+        for (prm::Default& theDefault : defaults_)
+        {
+            theDefault.setString(options_.front().getToken());
+        }
+    }
     return *this;
 }
 
