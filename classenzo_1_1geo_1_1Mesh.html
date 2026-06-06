@@ -197,9 +197,9 @@ std::unordered_set&lt; <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a3
 <tr class="memitem:a6a8a9fcac9b6ffd3a64209d5f0e9ffaa" id="r_a6a8a9fcac9b6ffd3a64209d5f0e9ffaa"><td class="memItemLeft" align="right" valign="top"><a id="a6a8a9fcac9b6ffd3a64209d5f0e9ffaa" name="a6a8a9fcac9b6ffd3a64209d5f0e9ffaa"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setPointPos</b> (const <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> offset, const Vector3 &amp;pos)</td></tr>
 <tr class="separator:a6a8a9fcac9b6ffd3a64209d5f0e9ffaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3704932830356d5099758f8d51d1c8f" id="r_ac3704932830356d5099758f8d51d1c8f"><td class="memItemLeft" align="right" valign="top"><a id="ac3704932830356d5099758f8d51d1c8f" name="ac3704932830356d5099758f8d51d1c8f"></a>
-<a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getFaceStartVertex</b> (<a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> faceOffset) const</td></tr>
-<tr class="separator:ac3704932830356d5099758f8d51d1c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01e269e892e2ebc22631edf99aa99844" id="r_a01e269e892e2ebc22631edf99aa99844"><td class="memItemLeft" align="right" valign="top">std::span&lt; const <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01e269e892e2ebc22631edf99aa99844">getFaceStartVertices</a> () const</td></tr>
+<tr class="memdesc:a01e269e892e2ebc22631edf99aa99844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous view of each face's starting vertex offset.  <br /></td></tr>
+<tr class="separator:a01e269e892e2ebc22631edf99aa99844"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafb08aa16d7a50ab58b6c7f0f07d4e66" id="r_aafb08aa16d7a50ab58b6c7f0f07d4e66"><td class="memItemLeft" align="right" valign="top"><a id="aafb08aa16d7a50ab58b6c7f0f07d4e66" name="aafb08aa16d7a50ab58b6c7f0f07d4e66"></a>
 Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>getPosFromVert</b> (<a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> vertexOffset) const</td></tr>
 <tr class="separator:aafb08aa16d7a50ab58b6c7f0f07d4e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,6 +221,12 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getFacePointC
 <tr class="memitem:acb783baa987b5d17cd14c4944ee121a1" id="r_acb783baa987b5d17cd14c4944ee121a1"><td class="memItemLeft" align="right" valign="top"><a id="acb783baa987b5d17cd14c4944ee121a1" name="acb783baa987b5d17cd14c4944ee121a1"></a>
 std::span&lt; const intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getFacePoints</b> (<a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> faceOffset) const</td></tr>
 <tr class="separator:acb783baa987b5d17cd14c4944ee121a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c672dd15eedda5e0084b22217e1c8a" id="r_a69c672dd15eedda5e0084b22217e1c8a"><td class="memItemLeft" align="right" valign="top">std::span&lt; const intT &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69c672dd15eedda5e0084b22217e1c8a">vertexPointSpan</a> () const</td></tr>
+<tr class="memdesc:a69c672dd15eedda5e0084b22217e1c8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous view mapping each vertex offset to its point offset.  <br /></td></tr>
+<tr class="separator:a69c672dd15eedda5e0084b22217e1c8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1f080815c754dd32e6a7534249126bc" id="r_af1f080815c754dd32e6a7534249126bc"><td class="memItemLeft" align="right" valign="top">std::span&lt; const Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1f080815c754dd32e6a7534249126bc">pointPosSpan</a> () const</td></tr>
+<tr class="memdesc:af1f080815c754dd32e6a7534249126bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous view of every point position.  <br /></td></tr>
+<tr class="separator:af1f080815c754dd32e6a7534249126bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45d781f228a6614945cada6cb579b0e3" id="r_a45d781f228a6614945cada6cb579b0e3"><td class="memItemLeft" align="right" valign="top"><a id="a45d781f228a6614945cada6cb579b0e3" name="a45d781f228a6614945cada6cb579b0e3"></a>
 <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumFaces</b> () const</td></tr>
 <tr class="separator:a45d781f228a6614945cada6cb579b0e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -792,6 +798,26 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 
 </div>
 </div>
+<a id="a01e269e892e2ebc22631edf99aa99844" name="a01e269e892e2ebc22631edf99aa99844"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01e269e892e2ebc22631edf99aa99844">&#9670;&#160;</a></span>getFaceStartVertices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::span&lt; const <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> &gt; enzo::geo::Mesh::getFaceStartVertices </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contiguous view of each face's starting vertex offset. </p>
+<dl class="section return"><dt>Returns</dt><dd>Span indexed by face offset. Invalid after a mutation that grows storage. </dd></dl>
+
+</div>
+</div>
 <a id="ad84aa6b8cf951d195c9fb9579f528663" name="ad84aa6b8cf951d195c9fb9579f528663"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad84aa6b8cf951d195c9fb9579f528663">&#9670;&#160;</a></span>getGroupStore() <span class="overload">[1/2]</span></h2>
 
@@ -981,6 +1007,34 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 
 </div>
 </div>
+<a id="af1f080815c754dd32e6a7534249126bc" name="af1f080815c754dd32e6a7534249126bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1f080815c754dd32e6a7534249126bc">&#9670;&#160;</a></span>pointPosSpan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::span&lt; const Vector3 &gt; enzo::geo::Mesh::pointPosSpan </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Contiguous view of every point position. </p>
+<dl class="section return"><dt>Returns</dt><dd>Span indexed by point offset. Invalid after a mutation that grows storage. </dd></dl>
+
+</div>
+</div>
 <a id="a7b5c45ad0e2133a389d71e592d448a10" name="a7b5c45ad0e2133a389d71e592d448a10"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b5c45ad0e2133a389d71e592d448a10">&#9670;&#160;</a></span>transformType()</h2>
 
@@ -1005,6 +1059,34 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+
+</div>
+</div>
+<a id="a69c672dd15eedda5e0084b22217e1c8a" name="a69c672dd15eedda5e0084b22217e1c8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69c672dd15eedda5e0084b22217e1c8a">&#9670;&#160;</a></span>vertexPointSpan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::span&lt; const intT &gt; enzo::geo::Mesh::vertexPointSpan </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Contiguous view mapping each vertex offset to its point offset. </p>
+<dl class="section return"><dt>Returns</dt><dd>Span indexed by vertex offset. Invalid after a mutation that grows storage. </dd></dl>
 
 </div>
 </div>

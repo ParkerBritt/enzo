@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['undodisabler_0',['UndoDisabler',['../classUndoDisabler.html#a8ffd4d586089802f97707e7d39f23d1e',1,'UndoDisabler::UndoDisabler()'],['../classUndoDisabler.html#a90825f3eb09afa63d350187e8f7c3eea',1,'UndoDisabler::UndoDisabler(UndoCommandType command)']]],
-  ['unionfind_1',['UnionFind',['../classenzo_1_1util_1_1UnionFind.html#a31de7e1fd032114457ad39625e743ac5',1,'enzo::util::UnionFind']]],
-  ['unite_2',['unite',['../classenzo_1_1util_1_1UnionFind.html#a27470f591fa30c4085705de3d903950b',1,'enzo::util::UnionFind']]],
-  ['update_3',['update',['../classenzo_1_1nt_1_1NetworkManager.html#ae9fb66020dcbd4760aa9233bdba095fe',1,'enzo::nt::NetworkManager']]]
+  ['throwerror_0',['throwError',['../classenzo_1_1nt_1_1GeometryOpDef.html#a6c2dcbb16f44219223e0c71761d8b7f3',1,'enzo::nt::GeometryOpDef']]],
+  ['throwwarning_1',['throwWarning',['../classenzo_1_1nt_1_1GeometryOpDef.html#abd6d87f16d1dfd29e71940688b551ccb',1,'enzo::nt::GeometryOpDef']]],
+  ['tovector_2',['toVector',['../structenzo_1_1geo_1_1Mesh_1_1FaceOffsets.html#ab2b349378647b66048c354ac2b976e73',1,'enzo::geo::Mesh::FaceOffsets']]]
 ];

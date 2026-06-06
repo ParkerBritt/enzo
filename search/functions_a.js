@@ -1,9 +1,4 @@
 var searchData=
 [
-  ['remove_0',['remove',['../classenzo_1_1nt_1_1GeometryConnection.html#a6e9e4175d0fc8286ad0a070b78d42b4e',1,'enzo::nt::GeometryConnection']]],
-  ['removeinputconnection_1',['removeInputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#af5977683c24063377edfb21e1aa55276',1,'enzo::nt::GeometryOperator']]],
-  ['removeoperator_2',['removeOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a1c359b457645bc8772f867955d4ee79a',1,'enzo::nt::NetworkManager']]],
-  ['removeoutputconnection_3',['removeOutputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a9f2e1cd930530eed3cc5000649ce9157',1,'enzo::nt::GeometryOperator']]],
-  ['resize_4',['resize',['../classenzo_1_1attr_1_1Attribute.html#a85c03efef8653f74ab458484b2a49fd2',1,'enzo::attr::Attribute::resize()'],['../classenzo_1_1attr_1_1AttributeHandle.html#a130fdecdc05f5eced9b17cb5a7a84605',1,'enzo::attr::AttributeHandle::resize()']]],
-  ['restoreoperator_5',['restoreOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607',1,'enzo::nt::NetworkManager']]]
+  ['pointposspan_0',['pointPosSpan',['../classenzo_1_1geo_1_1Mesh.html#af1f080815c754dd32e6a7534249126bc',1,'enzo::geo::Mesh']]]
 ];
