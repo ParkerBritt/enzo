@@ -253,6 +253,7 @@ if(ENZO_BUILD_TESTS)
     add_executable(${TestExec}
         ${ENGINE_SOURCES}
         tests/main-tests.cpp
+        tests/ParameterTests.cpp
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp
