@@ -1,3 +1,4 @@
+#include "Engine/Core/Types.h"
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
 #include <string>
@@ -6,8 +7,8 @@
 struct ParameterSerializable
 {
     std::string name;
-    std::vector<double> floatValues;
-    std::vector<int64_t> intValues;
+    std::vector<enzo::floatT> floatValues;
+    std::vector<enzo::intT> intValues;
     std::vector<std::string> stringValues;
 
     template <class Archive> void serialize(Archive& ar)

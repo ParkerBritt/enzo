@@ -129,6 +129,18 @@ class Mesh : public Primitive
         return pointOffsetVertexHandle_.getSpan().subspan(start, count);
     }
 
+    /**
+     * @brief Contiguous view mapping each vertex offset to its point offset.
+     * @return Span indexed by vertex offset. Invalid after a mutation that grows storage.
+     */
+    std::span<const intT> vertexPointSpan() const { return pointOffsetVertexHandle_.getSpan(); }
+
+    /**
+     * @brief Contiguous view of every point position.
+     * @return Span indexed by point offset. Invalid after a mutation that grows storage.
+     */
+    std::span<const Vector3> pointPosSpan() const { return posPointHandle_.getSpan(); }
+
     Offset getNumFaces() const { return getElementCount(attr::AttributeOwner::FACE); }
     Offset getNumVerts() const { return getElementCount(attr::AttributeOwner::VERTEX); }
     Offset getNumSoloPoints() const;
