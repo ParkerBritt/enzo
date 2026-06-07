@@ -5,6 +5,9 @@
 #include "Engine/Parameter/Range.h"
 #include <any>
 #include <memory>
+#include <optional>
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -69,6 +72,14 @@ class Template
     Template& setDirection(Direction direction);
     Template& setOptions(std::vector<prm::Name> options);
     Template& addParm(Template child);
+    // Supplies the per instance default for a multiparm field, one Default per
+    // instance. Entries past the live count are ignored, missing ones fall back
+    // to the field's own default.
+    Template& setInstanceDefault(std::string fieldToken, std::vector<Default> defaults);
+    /// @brief The default for a multiparm field at a given instance.
+    /// @return The Default when one is set in range, otherwise nullopt.
+    std::optional<Default>
+    getInstanceDefault(const std::string& fieldToken, unsigned int instanceIndex) const;
     Template& setLabelHidden(bool hidden);
     Template& setBackgroundEnabled(bool enabled);
 
@@ -99,6 +110,7 @@ class Template
 
     Direction direction_ = Direction::HORIZONTAL;
     std::vector<Template> children_;
+    std::unordered_map<std::string, std::vector<Default>> instanceDefaults_;
     std::any style_;
     inline const static std::unordered_set<prm::Type> containerTypes_ = {prm::Type::GROUP};
     // Types whose children are the per instance template duplicated by the
