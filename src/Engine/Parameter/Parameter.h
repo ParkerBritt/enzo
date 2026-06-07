@@ -57,7 +57,7 @@ class Parameter
   protected:
     virtual void onFloatSet_(const PrmValues& before) {}
     void handleValueChange_();
-    std::vector<std::shared_ptr<Parameter>> buildInstance_();
+    std::vector<std::shared_ptr<Parameter>> buildInstance_(unsigned int instanceIndex);
 
     Template template_;
     PrmValues values_;

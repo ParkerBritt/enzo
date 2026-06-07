@@ -14,7 +14,7 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
     {
         const unsigned int initialCount = template_.getDefault().getInt();
         for (unsigned int instanceIndex = 0; instanceIndex < initialCount; ++instanceIndex)
-            instances_.push_back(buildInstance_());
+            instances_.push_back(buildInstance_(instanceIndex));
         return;
     }
 
@@ -189,12 +189,33 @@ void prm::Parameter::setValues(const PrmValues& values)
 
 void prm::Parameter::handleValueChange_() { valueChanged(); }
 
-std::vector<std::shared_ptr<prm::Parameter>> prm::Parameter::buildInstance_()
+std::vector<std::shared_ptr<prm::Parameter>>
+prm::Parameter::buildInstance_(unsigned int instanceIndex)
 {
     std::vector<std::shared_ptr<Parameter>> fields;
     for (const Template& fieldTemplate : template_.getChildren())
     {
         auto field = std::make_shared<Parameter>(fieldTemplate);
+
+        // Seed the field from its per instance default when one is set, so each
+        // control point can start at a distinct value.
+        if (auto instanceDefault =
+                template_.getInstanceDefault(fieldTemplate.getToken(), instanceIndex))
+        {
+            switch (field->getValueType())
+            {
+            case prm::ValueType::Float:
+                field->setFloat(instanceDefault->getFloat());
+                break;
+            case prm::ValueType::Int:
+                field->setInt(instanceDefault->getInt());
+                break;
+            case prm::ValueType::String:
+                field->setString(instanceDefault->getString());
+                break;
+            }
+        }
+
         // A field edit bubbles up so the owning node recooks.
         field->valueChanged.connect([this]() { handleValueChange_(); });
         fields.push_back(std::move(field));
@@ -220,7 +241,7 @@ prm::Parameter::getInstanceField(unsigned int instanceIndex, std::string_view fi
 
 void prm::Parameter::addInstance()
 {
-    instances_.push_back(buildInstance_());
+    instances_.push_back(buildInstance_(instances_.size()));
     handleValueChange_();
 }
 

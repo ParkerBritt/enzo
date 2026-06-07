@@ -75,8 +75,14 @@ prm::Template::Template(
     ranges_.resize(vectorSize_, range);
     backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
 
-    // A ramp carries a fixed instance template the caller never builds.
-    if (type_ == prm::Type::RAMP) children_ = rampInstanceTemplate();
+    // A ramp carries a fixed instance template the caller never builds, and
+    // defaults to a linear zero to one curve callers can override.
+    if (type_ == prm::Type::RAMP)
+    {
+        children_ = rampInstanceTemplate();
+        instanceDefaults_["position"] = {prm::Default(0), prm::Default(1)};
+        instanceDefaults_["value"] = {prm::Default(0), prm::Default(1)};
+    }
 }
 
 const prm::Type prm::Template::getType() const { return type_; }
@@ -150,6 +156,21 @@ prm::Template& prm::Template::addParm(Template child)
 {
     children_.push_back(std::move(child));
     return *this;
+}
+
+prm::Template& prm::Template::setInstanceDefault(std::string fieldToken, std::vector<Default> defaults)
+{
+    instanceDefaults_[std::move(fieldToken)] = std::move(defaults);
+    return *this;
+}
+
+std::optional<prm::Default>
+prm::Template::getInstanceDefault(const std::string& fieldToken, unsigned int instanceIndex) const
+{
+    auto entry = instanceDefaults_.find(fieldToken);
+    if (entry == instanceDefaults_.end() || instanceIndex >= entry->second.size())
+        return std::nullopt;
+    return entry->second[instanceIndex];
 }
 
 prm::Template& prm::Template::setLabelHidden(bool hidden)
