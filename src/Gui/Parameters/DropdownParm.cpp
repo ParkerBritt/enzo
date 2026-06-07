@@ -24,7 +24,7 @@ enzo::ui::DropdownParm::DropdownParm(std::weak_ptr<prm::NodeParameter> parameter
 
     // The dropdown paints its own rounded border, so the standard parameter
     // frame would draw a redundant box around it.
-    contentWidget_->setStyleSheet(".ParameterBg { background: transparent; border: none; }");
+    disableBackground();
 
     valueChangedConnection_ =
         parameterShared->valueChanged.connect([this]() { syncFromParameter(); });

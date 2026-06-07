@@ -52,8 +52,10 @@ ParameterSerializable toSerializable(std::string name, const enzo::prm::PrmValue
 {
     ParameterSerializable model;
     model.name = std::move(name);
-    if (auto floats = std::get_if<std::vector<enzo::floatT>>(&values)) model.floatValues = *floats;
-    else if (auto ints = std::get_if<std::vector<enzo::intT>>(&values)) model.intValues = *ints;
+    if (auto floats = std::get_if<std::vector<enzo::floatT>>(&values))
+        model.floatValues = *floats;
+    else if (auto ints = std::get_if<std::vector<enzo::intT>>(&values))
+        model.intValues = *ints;
     else if (auto strings = std::get_if<std::vector<enzo::String>>(&values))
         model.stringValues = *strings;
     return model;

@@ -158,7 +158,8 @@ prm::Template& prm::Template::addParm(Template child)
     return *this;
 }
 
-prm::Template& prm::Template::setInstanceDefault(std::string fieldToken, std::vector<Default> defaults)
+prm::Template&
+prm::Template::setInstanceDefault(std::string fieldToken, std::vector<Default> defaults)
 {
     instanceDefaults_[std::move(fieldToken)] = std::move(defaults);
     return *this;

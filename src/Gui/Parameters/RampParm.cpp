@@ -47,6 +47,10 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
 
     contentLayout_->addLayout(column);
 
+    // The ramp widget paints its own frame, so the standard parameter
+    // frame would draw a redundant box around it.
+    disableBackground();
+
     connect(rampWidget_, &Ramp::edited, this, &RampParm::onRampEdited);
     connect(rampWidget_, &Ramp::editBegan, this, &RampParm::beginEdit);
     connect(rampWidget_, &Ramp::editEnded, this, &RampParm::commitEdit);
@@ -119,7 +123,10 @@ void enzo::ui::RampParm::commitEdit()
     if (after == snapshotBeforeEdit_) return;
 
     auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-        parameterShared->getOpId(), parameterShared->getName(), snapshotBeforeEdit_, after
+        parameterShared->getOpId(),
+        parameterShared->getName(),
+        snapshotBeforeEdit_,
+        after
     );
     enzo::nt::nm().undoStack().push(std::move(cmd));
 }
