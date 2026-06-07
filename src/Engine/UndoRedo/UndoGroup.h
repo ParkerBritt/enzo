@@ -1,38 +1,46 @@
 #pragma once
 
-#include "Engine/Core/Types.h"
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/UndoCommand.h"
+#include <memory>
+#include <vector>
 
 namespace enzo::nt {
 
+/// @brief Bundles several commands into a single atomic undo unit.
 class UndoGroup : public UndoCommand
 {
   public:
     UndoGroup() {}
 
-    void addCommand(nt::UndoCommand& command) { commands_.push_back(command); }
+    /// @brief Appends a command to the group, taking ownership.
+    void addCommand(std::unique_ptr<UndoCommand> command)
+    {
+        commands_.push_back(std::move(command));
+    }
+
+    /// @brief Returns true when the group holds no commands.
+    bool isEmpty() const { return commands_.empty(); }
 
     void undo() override
     {
-        for (auto it = commands_.end(); it != commands_.begin(); --it)
+        for (auto it = commands_.rbegin(); it != commands_.rend(); ++it)
         {
-            it->undo();
+            (*it)->undo();
         }
     }
 
     void redo() override
     {
-        for (auto it = commands_.begin(); it != commands_.end(); ++it)
+        for (auto& command : commands_)
         {
-            it->redo();
+            command->redo();
         }
     }
 
     UndoCommandType type() const override { return UndoCommandType::UndoGroup; }
 
   private:
-    std::vector<UndoCommand> commands_;
+    std::vector<std::unique_ptr<UndoCommand>> commands_;
 };
 
 } // namespace enzo::nt

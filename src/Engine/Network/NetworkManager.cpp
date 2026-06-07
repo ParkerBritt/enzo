@@ -58,10 +58,18 @@ void nt::NetworkManager::deleteNode(OpId opId)
 {
     if (!isValidOp(opId)) return;
 
+    auto updateLock = lockUpdates();
+
+    // Group the disconnects and the node removal into one atomic undo unit
+    UndoTransaction transaction(undoStack_);
+
+    // Disconnect first so the reconnects replay after the node is restored on undo
+    disconnectOperator(opId);
+
+    // Record and remove the bare node last
     auto cmd = std::make_unique<DeleteNodeCommand>(opId);
     undoStack_.push(std::move(cmd));
-
-    removeOperator(opId);
+    removeOperator(opId, false);
 }
 
 void nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
@@ -77,34 +85,15 @@ void nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
     operatorCreated(opId);
 }
 
-void nt::NetworkManager::removeOperator(OpId opId)
+void nt::NetworkManager::removeOperator(OpId opId, bool removeConnections)
 {
     if (!isValidOp(opId)) return;
 
     auto updateLock = lockUpdates();
 
-    GeometryOperator& op = getGeoOperator(opId);
-
-    // Remove all connections (collect first to avoid modifying vectors while iterating)
+    if (removeConnections)
     {
-        auto inputConns = op.getInputConnections();
-        for (auto& weakConn : inputConns)
-        {
-            if (auto conn = weakConn.lock())
-            {
-                // Use const_cast because remove() is non-const but we only have const weak_ptrs
-                const_cast<GeometryConnection&>(*conn).remove();
-            }
-        }
-
-        auto outputConns = op.getOutputConnections();
-        for (auto& weakConn : outputConns)
-        {
-            if (auto conn = weakConn.lock())
-            {
-                const_cast<GeometryConnection&>(*conn).remove();
-            }
-        }
+        disconnectOperator(opId);
     }
 
     // Clear display if this was the display node
@@ -125,6 +114,33 @@ void nt::NetworkManager::removeOperator(OpId opId)
     operatorRemoved(opId);
 
     gopStore_.erase(opId);
+}
+
+void nt::NetworkManager::disconnectOperator(OpId opId)
+{
+    if (!isValidOp(opId)) return;
+
+    GeometryOperator& op = getGeoOperator(opId);
+
+    // Collect first to avoid modifying the vectors while iterating
+    auto inputConns = op.getInputConnections();
+    for (auto& weakConn : inputConns)
+    {
+        if (auto conn = weakConn.lock())
+        {
+            // Use const_cast because remove() is non-const but we only have const weak_ptrs
+            const_cast<GeometryConnection&>(*conn).remove();
+        }
+    }
+
+    auto outputConns = op.getOutputConnections();
+    for (auto& weakConn : outputConns)
+    {
+        if (auto conn = weakConn.lock())
+        {
+            const_cast<GeometryConnection&>(*conn).remove();
+        }
+    }
 }
 
 nt::NetworkManager& nt::NetworkManager::getInstance()

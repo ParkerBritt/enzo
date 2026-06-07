@@ -21,7 +21,7 @@ class CreateNodeCommand : public UndoCommand
         typeName_ = op.getTypeName();
         position_ = op.getPosition();
 
-        nm().removeOperator(opId_);
+        nm().removeOperator(opId_, false);
     }
 
     void redo() override

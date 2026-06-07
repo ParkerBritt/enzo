@@ -6,10 +6,32 @@ namespace enzo::nt {
 void UndoStack::push(std::unique_ptr<UndoCommand> command)
 {
     if (UndoDisabler::isBlocked(command->type())) return;
+
+    // Fold into the open transaction so the whole operation undoes as one unit
+    if (!openGroups_.empty())
+    {
+        openGroups_.back()->addCommand(std::move(command));
+        return;
+    }
+
     // Truncate any redo history
     commands_.erase(commands_.begin() + currentIndex_, commands_.end());
     commands_.push_back(std::move(command));
     currentIndex_++;
+}
+
+void UndoStack::beginGroup() { openGroups_.push_back(std::make_unique<UndoGroup>()); }
+
+void UndoStack::endGroup()
+{
+    if (openGroups_.empty()) return;
+
+    auto group = std::move(openGroups_.back());
+    openGroups_.pop_back();
+
+    // An empty group carries no state, and a nested close routes into its parent
+    if (group->isEmpty()) return;
+    push(std::move(group));
 }
 
 // TODO: Currently the other undo commands (MoveNodeCommand, DeleteNodeCommand, etc.) work
