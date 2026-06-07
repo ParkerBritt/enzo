@@ -11,6 +11,7 @@
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/Parameters/StringParm.h"
 #include "Gui/Parameters/XYZParm.h"
+#include "Gui/UtilWidgets/Ramp.h"
 #include <qboxlayout.h>
 #include <qnamespace.h>
 #include <qwidget.h>
@@ -33,6 +34,9 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     )");
 
     mainLayout_->addWidget(bgWidget_);
+
+    // Temporary ramp preview
+    mainLayout_->addWidget(new enzo::ui::Ramp());
 
     setLayout(mainLayout_);
 }
