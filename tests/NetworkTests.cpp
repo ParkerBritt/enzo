@@ -74,6 +74,28 @@ TEST_CASE_METHOD(NMReset, "network")
     }
 }
 
+TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+    nm.undoStack().clear();
+
+    // Build two connected nodes where the upstream output feeds the downstream input
+    nt::OpId upstream = nm.createOperator(testOpInfo);
+    nt::OpId downstream = nm.createOperator(testOpInfo);
+    nt::connectOperators(upstream, 0, downstream, 0);
+
+    // Delete the downstream node
+    nm.deleteNode(downstream);
+    REQUIRE_FALSE(nm.isValidOp(downstream));
+
+    // Undo must restore the node and its connection without throwing
+    nm.undoStack().undo();
+
+    REQUIRE(nm.isValidOp(downstream));
+    REQUIRE_FALSE(nm.getGeoOperator(downstream).getInputConnection(0).expired());
+}
+
 TEST_CASE_METHOD(NMReset, "reset")
 {
     using namespace enzo;
