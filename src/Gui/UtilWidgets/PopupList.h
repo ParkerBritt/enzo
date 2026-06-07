@@ -26,6 +26,7 @@ class PopupList : public QWidget
     Q_PROPERTY(int revealedHeight READ revealedHeight WRITE setRevealedHeight)
     Q_PROPERTY(qreal fadeElapsed READ fadeElapsed WRITE setFadeElapsed)
     Q_PROPERTY(qreal highlightTop READ highlightTop WRITE setHighlightTop)
+    Q_PROPERTY(int scrollOffset READ scrollOffset WRITE setScrollOffset)
   public:
     struct Item
     {
@@ -85,6 +86,8 @@ class PopupList : public QWidget
     void confirmSelection();
     void ensureVisible(int position);
     void animateHighlightTo(int position);
+    void animateScrollTo(int offset);
+    void jumpScrollTo(int offset);
 
     int revealedHeight() const { return revealedHeight_; }
     void setRevealedHeight(int height)
@@ -107,15 +110,24 @@ class PopupList : public QWidget
         update();
     }
 
+    int scrollOffset() const { return scrollOffset_; }
+    void setScrollOffset(int offset)
+    {
+        scrollOffset_ = offset;
+        update();
+    }
+
     int hoveredPosition_ = -1;
     int selectedPosition_ = -1;
     int scrollOffset_ = 0;
+    int scrollTarget_ = 0;
     int revealedHeight_ = 0;
     qreal fadeElapsed_ = 0;
     qreal highlightTop_ = 0;
     bool closing_ = false;
 
     QPropertyAnimation* hoverAnim_ = nullptr;
+    QPropertyAnimation* scrollAnim_ = nullptr;
 };
 
 } // namespace enzo::ui
