@@ -11,6 +11,7 @@ constexpr double padding = 12.0;
 constexpr double cornerRadius = 9.0;
 constexpr double circleRadius = 5.0;
 constexpr double squareSize = 9.0;
+const QColor panelColor("#1a1a1a");
 const QColor borderColor("#383838");
 const QColor circleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
@@ -104,7 +105,7 @@ void enzo::ui::Ramp::paintEvent(QPaintEvent*)
 
     // Rounded background panel inset from the widget so points can sit on its edges
     painter.setPen(QPen(borderColor, 1));
-    painter.setBrush(Qt::NoBrush);
+    painter.setBrush(panelColor);
     painter.drawRoundedRect(backgroundRect_(), cornerRadius, cornerRadius);
 
     paintCurve_(painter);

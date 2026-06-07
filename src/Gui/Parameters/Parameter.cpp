@@ -63,6 +63,11 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     }
 }
 
+void enzo::ui::Parameter::disableBackground()
+{
+    contentWidget_->setStyleSheet(".ParameterBg { background: transparent; border: none; }");
+}
+
 int enzo::ui::Parameter::getLeftPadding()
 {
     if (!label_) return 0;

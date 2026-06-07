@@ -21,6 +21,10 @@ class Parameter : public QWidget
     virtual void addChild(Parameter* child);
 
   protected:
+    /// @brief Permanently suppress the parameter frame for widgets that paint their own.
+    /// @note This is a type level override, not the configurable Template background flag.
+    void disableBackground();
+
     QHBoxLayout* mainLayout_ = nullptr;
     QWidget* contentWidget_ = nullptr;
     QBoxLayout* contentLayout_ = nullptr;
