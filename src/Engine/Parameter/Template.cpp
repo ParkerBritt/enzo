@@ -22,7 +22,6 @@ std::vector<prm::Template> rampInstanceTemplate()
             .setOptions({
                 prm::Name("constant", "Constant"),
                 prm::Name("linear", "Linear"),
-                prm::Name("smooth", "Smooth"),
             }),
     };
 }

@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Parameter/Ramp.h"
 #include <exception>
 #include <icecream.hpp>
 #include <iostream>
@@ -92,6 +93,21 @@ String op::Context::evalParmString(std::string_view parmName, const unsigned int
     if (auto sharedParm = parameter.lock())
     {
         return sharedParm->evalString(index);
+    }
+    else
+    {
+        throw std::runtime_error(parmName + " parameter does not exist.");
+    }
+}
+
+prm::Ramp op::Context::evalParmRamp(std::string_view parmName) const
+{
+    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+
+    if (auto sharedParm = parameter.lock())
+    {
+        return prm::Ramp(*sharedParm);
     }
     else
     {
