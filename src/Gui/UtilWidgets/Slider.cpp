@@ -129,8 +129,7 @@ void enzo::ui::Slider::paintFill_(
 
 void enzo::ui::Slider::paintValueText_(QPainter& painter) const
 {
-    QString valueText = QString::number(value_, 'g', displayDigits_);
-    valueText.truncate(displayDigits_);
+    QString valueText = QString::number(value_, 'f', 2);
     painter.setPen(QColor("#B3B3B3"));
     painter.drawText(rect(), Qt::AlignCenter, valueText);
 }
