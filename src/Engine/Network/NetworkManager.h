@@ -160,10 +160,15 @@ class NetworkManager : public QObject
     void deleteNode(OpId opId);
 
     /**
-     * @brief Removes an operator and all its connections from the network.
+     * @brief Removes an operator from the network.
+     *
+     * @note During a delete the connections are owned by their own undo commands, so callers
+     * driving an undo or redo pass @p removeConnections as false to remove only the bare node.
+     *
      * @param opId The operator to remove.
+     * @param removeConnections When true the operator's connections are removed first.
      */
-    void removeOperator(OpId opId);
+    void removeOperator(OpId opId, bool removeConnections = true);
 
     /**
      * @brief Restores a previously removed operator with a specific OpId.
@@ -233,6 +238,9 @@ class NetworkManager : public QObject
     NetworkManager() {};
 
     // functions
+    /// @brief Removes all of an operator's connections, each as its own undo command.
+    void disconnectOperator(OpId opId);
+
     std::vector<enzo::nt::OpId> getDependencyGraph(enzo::nt::OpId opId);
     std::vector<enzo::nt::OpId> getDependentsGraph(enzo::nt::OpId opId);
 

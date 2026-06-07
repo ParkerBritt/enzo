@@ -442,8 +442,14 @@ void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnectio
     SocketGraphic* inputSocket = inputNode->getOutput(conn->getInputIndex());
     SocketGraphic* outputSocket = outputNode->getInput(conn->getOutputIndex());
 
+    // Derive endpoints from node geometry so the placement scale animation does not offset the edge
+    QPointF outputSocketPos =
+        outputNode->getSocketScenePosition(conn->getOutputIndex(), enzo::nt::SocketIOType::Input);
+    QPointF inputSocketPos =
+        inputNode->getSocketScenePosition(conn->getInputIndex(), enzo::nt::SocketIOType::Output);
+
     NodeEdgeGraphic* edge = new NodeEdgeGraphic(outputSocket, inputSocket, connection);
-    edge->setPos(outputSocket->scenePos(), inputSocket->scenePos());
+    edge->setPos(outputSocketPos, inputSocketPos);
     scene_->addItem(edge);
 }
 

@@ -58,7 +58,7 @@ class DeleteNodeCommand : public UndoCommand
         }
     }
 
-    void redo() override { nm().removeOperator(opId_); }
+    void redo() override { nm().removeOperator(opId_, false); }
 
     UndoCommandType type() const override { return UndoCommandType::DeleteNode; }
 
