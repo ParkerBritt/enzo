@@ -135,7 +135,7 @@ void enzo::ui::Slider::paintValueText_(QPainter& painter) const
     // The editor draws its own text while open
     if (editor_ && editor_->isVisible()) return;
 
-    QString valueText = QString::number(value_, 'f', 2);
+    QString valueText = QString::number(value_, 'f', displayDigits_);
     painter.setPen(QColor("#B3B3B3"));
     painter.drawText(rect(), Qt::AlignCenter, valueText);
 }
@@ -192,7 +192,7 @@ void enzo::ui::Slider::beginEditing_()
         connect(editor_, &QLineEdit::editingFinished, this, &Slider::commitEditing_);
     }
     editor_->setGeometry(rect());
-    editor_->setText(QString::number(value_, 'f', 2));
+    editor_->setText(QString::number(value_, 'f', displayDigits_));
     editor_->selectAll();
     editor_->show();
     editor_->setFocus();

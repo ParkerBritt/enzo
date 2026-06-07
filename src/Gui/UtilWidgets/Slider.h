@@ -64,7 +64,7 @@ class Slider : public QWidget
     bool clampMax_;
     double step_;
     double value_ = 0.0;
-    int displayDigits_ = 4;
+    int displayDigits_ = 2;
 
     QPen notchPen_;
 
