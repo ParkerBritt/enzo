@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QPointF>
 #include <QRectF>
 #include <QWidget>
 #include <qtmetamacros.h>
@@ -43,12 +44,26 @@ class Ramp : public QWidget
         Square
     };
 
+    /// How the curve is interpolated between control points.
+    enum class Interpolation
+    {
+        Linear,
+        Constant,      // not yet implemented
+        BSpline,       // not yet implemented
+        CatmullRom,    // not yet implemented
+        MonotoneCubic, // not yet implemented
+        Bezier,        // not yet implemented
+        Hermite        // not yet implemented
+    };
+
     QRectF backgroundRect_() const;
     double positionToX_(double position) const;
     double valueToY_(double value) const;
     double xToPosition_(double x) const;
     double yToValue_(double y) const;
 
+    std::vector<QPointF> buildCurveTop_() const;
+    void paintCurve_(QPainter& painter) const;
     void paintControlPoints_(QPainter& painter) const;
     void addControlPoint_(double position, double value);
 
@@ -59,6 +74,7 @@ class Ramp : public QWidget
 
     int activePoint_ = -1;
     Handle activeHandle_ = Handle::None;
+    Interpolation interpolation_ = Interpolation::Linear;
 
     // Visible value range mapped across the panel height
     double valueMin_ = 0.0;
