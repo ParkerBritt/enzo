@@ -16,6 +16,8 @@ constexpr int padding = 4;
 constexpr int borderRadius = 8;
 constexpr int maxPopupHeight = 240;
 constexpr int textPadding = 10;
+constexpr int iconSize = 14;
+constexpr int iconTextGap = 6;
 constexpr qreal itemFadeMs = 300;
 constexpr qreal itemStaggerMs = 30;
 constexpr int scrollbarWidth = 3;
@@ -55,6 +57,32 @@ void enzo::ui::PopupList::showAllItems()
 {
     visibleIndices_.resize(items_.size());
     std::iota(visibleIndices_.begin(), visibleIndices_.end(), 0);
+}
+
+void enzo::ui::PopupList::setHighlightedPosition(int position)
+{
+    if (visibleIndices_.empty())
+    {
+        selectedPosition_ = -1;
+        hoveredPosition_ = -1;
+    }
+    else
+    {
+        selectedPosition_ = std::clamp(position, 0, static_cast<int>(visibleIndices_.size()) - 1);
+        hoveredPosition_ = selectedPosition_;
+    }
+    scrollOffset_ = 0;
+    hoverAnim_->stop();
+    highlightTop_ = padding + std::max(0, selectedPosition_) * itemHeight;
+    update();
+}
+
+void enzo::ui::PopupList::fitToContents()
+{
+    const int fullHeight = std::min(contentHeight(), maxPopupHeight);
+    resize(width(), headerHeight() + fullHeight);
+    revealedHeight_ = fullHeight;
+    update();
 }
 
 int enzo::ui::PopupList::contentHeight() const
@@ -199,9 +227,22 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
         const qreal opacity =
             std::clamp((fadeElapsed_ - position * itemStaggerMs) / itemFadeMs, 0.0, 1.0);
         painter.setOpacity(opacity);
+
+        // Icon sits at the left edge and the text follows when one is present
+        int textLeft = textPadding;
+        if (!item.icon.isNull())
+        {
+            const int iconTop = top + (itemHeight - iconSize) / 2;
+            painter.drawPixmap(
+                QRect(textPadding, iconTop, iconSize, iconSize),
+                item.icon.pixmap(iconSize, iconSize)
+            );
+            textLeft = textPadding + iconSize + iconTextGap;
+        }
+
         painter.setPen(position == selectedPosition_ ? selectedTextColor : textColor);
         painter.drawText(
-            row.adjusted(textPadding, 0, -textPadding, 0),
+            row.adjusted(textLeft, 0, -textPadding, 0),
             Qt::AlignVCenter | Qt::AlignLeft,
             item.text
         );

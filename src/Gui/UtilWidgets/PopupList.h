@@ -66,6 +66,12 @@ class PopupList : public QWidget
     /// @brief Resets the visible subset to every item in declaration order.
     void showAllItems();
 
+    /// @brief Moves the highlight and selection to a position in the visible subset.
+    void setHighlightedPosition(int position);
+
+    /// @brief Resizes an open list to fit the current visible subset.
+    void fitToContents();
+
     int contentHeight() const;
     int listHeight() const;
 
