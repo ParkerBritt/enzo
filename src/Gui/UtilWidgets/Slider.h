@@ -1,11 +1,13 @@
 #pragma once
 
 #include <QPen>
+#include <QPoint>
 #include <QWidget>
 #include <qtmetamacros.h>
 
 class QPainter;
 class QRectF;
+class QLineEdit;
 
 namespace enzo::ui {
 
@@ -41,11 +43,16 @@ class Slider : public QWidget
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
   private:
     double normalizedToValue_(double normalized) const;
     double clampAndStep_(double value) const;
     void emitMoved_(double normalized);
+
+    void beginEditing_();
+    void commitEditing_();
+    void endEditing_();
 
     void paintNotches_(QPainter& painter, const QRectF& trackRect) const;
     void paintFill_(QPainter& painter, const QRectF& trackRect, const QRectF& fillRect) const;
@@ -60,6 +67,11 @@ class Slider : public QWidget
     int displayDigits_ = 4;
 
     QPen notchPen_;
+
+    // Click opens text entry, drag past a small threshold slides instead
+    QLineEdit* editor_ = nullptr;
+    QPoint pressPos_;
+    bool dragging_ = false;
 };
 
 } // namespace enzo::ui
