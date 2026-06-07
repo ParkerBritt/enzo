@@ -79,7 +79,7 @@ void enzo::ui::TabMenu::applyFilter(const QString& text)
     // Refit only while open so the first open animates through openList instead
     if (isVisible())
     {
-        fitToContents();
+        fitToContents(true);
         setHighlightedPosition(0);
     }
 }

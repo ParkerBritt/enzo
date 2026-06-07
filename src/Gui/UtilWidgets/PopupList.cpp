@@ -44,6 +44,14 @@ enzo::ui::PopupList::PopupList(QWidget* parent) : QWidget(parent, Qt::Popup | Qt
     scrollAnim_ = new QPropertyAnimation(this, "scrollOffset", this);
     scrollAnim_->setDuration(180);
     scrollAnim_->setEasingCurve(QEasingCurve::OutCubic);
+
+    backgroundResizeAnim_ = new QPropertyAnimation(this, "revealedHeight", this);
+    backgroundResizeAnim_->setDuration(180);
+    backgroundResizeAnim_->setEasingCurve(QEasingCurve::OutCubic);
+    // Settle the window onto the final box height once the resize lands
+    connect(backgroundResizeAnim_, &QPropertyAnimation::finished, this, [this] {
+        resize(width(), headerHeight() + revealedHeight_);
+    });
 }
 
 void enzo::ui::PopupList::addItem(const Item& item)
@@ -81,13 +89,26 @@ void enzo::ui::PopupList::setHighlightedPosition(int position)
     update();
 }
 
-void enzo::ui::PopupList::fitToContents()
+void enzo::ui::PopupList::fitToContents(bool animated)
 {
     // An empty subset collapses the list so only the header remains
-    const int fullHeight = visibleIndices_.empty() ? 0 : std::min(contentHeight(), maxPopupHeight);
-    resize(width(), headerHeight() + fullHeight);
-    revealedHeight_ = fullHeight;
-    update();
+    const int target = visibleIndices_.empty() ? 0 : std::min(contentHeight(), maxPopupHeight);
+
+    if (!animated)
+    {
+        backgroundResizeAnim_->stop();
+        resize(width(), headerHeight() + target);
+        revealedHeight_ = target;
+        update();
+        return;
+    }
+
+    // Hold the window at the taller height so the box can paint while it animates
+    resize(width(), headerHeight() + std::max(revealedHeight_, target));
+    backgroundResizeAnim_->stop();
+    backgroundResizeAnim_->setStartValue(revealedHeight_);
+    backgroundResizeAnim_->setEndValue(target);
+    backgroundResizeAnim_->start();
 }
 
 int enzo::ui::PopupList::contentHeight() const
@@ -139,12 +160,10 @@ void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int s
     setFocus();
 
     // Unroll the list to its full height
-    auto reveal = new QPropertyAnimation(this, "revealedHeight", this);
-    reveal->setDuration(180);
-    reveal->setEasingCurve(QEasingCurve::OutCubic);
-    reveal->setStartValue(0);
-    reveal->setEndValue(fullHeight);
-    reveal->start(QAbstractAnimation::DeleteWhenStopped);
+    backgroundResizeAnim_->stop();
+    backgroundResizeAnim_->setStartValue(0);
+    backgroundResizeAnim_->setEndValue(fullHeight);
+    backgroundResizeAnim_->start();
 
     // Fade each row in turn from the top
     const size_t rowCount = visibleIndices_.size();
@@ -393,6 +412,7 @@ void enzo::ui::PopupList::animateClose()
     closing_ = true;
     Q_EMIT aboutToClose();
 
+    backgroundResizeAnim_->stop();
     auto collapse = new QPropertyAnimation(this, "revealedHeight", this);
     collapse->setDuration(140);
     collapse->setEasingCurve(QEasingCurve::InCubic);
