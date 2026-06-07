@@ -29,6 +29,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/Context.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
+    src/Engine/Parameter/Ramp.cpp
     src/Engine/Parameter/NodeParameter.cpp
     src/Engine/Parameter/Default.cpp
     src/Engine/Parameter/Range.cpp
@@ -257,6 +258,7 @@ if(ENZO_BUILD_TESTS)
         ${ENGINE_SOURCES}
         tests/main-tests.cpp
         tests/ParameterTests.cpp
+        tests/RampTests.cpp
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp

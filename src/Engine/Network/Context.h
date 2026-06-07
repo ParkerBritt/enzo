@@ -7,6 +7,10 @@ namespace enzo::nt {
 class NetworkManager;
 }
 
+namespace enzo::prm {
+class Ramp;
+}
+
 namespace enzo::op {
 /**
  * @class Context
@@ -40,6 +44,9 @@ class Context
     // Read the first three float components of a parameter as a Vector3. Missing
     // components default to zero.
     Vector3 evalParmVector3(std::string_view parmName) const;
+
+    // Snapshot a ramp parameter into a sampler for use during cook.
+    enzo::prm::Ramp evalParmRamp(std::string_view parmName) const;
 
   private:
     enzo::nt::OpId opId_;
