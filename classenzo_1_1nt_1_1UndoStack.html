@@ -102,6 +102,7 @@ $(function(){ initResizable(false); });
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a95f61aa99d46de0813f3ea65136bf3bb" id="r_a95f61aa99d46de0813f3ea65136bf3bb"><td class="memItemLeft" align="right" valign="top"><a id="a95f61aa99d46de0813f3ea65136bf3bb" name="a95f61aa99d46de0813f3ea65136bf3bb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>push</b> (std::unique_ptr&lt; <a class="el" href="classenzo_1_1nt_1_1UndoCommand.html">UndoCommand</a> &gt; command)</td></tr>
+<tr class="memdesc:a95f61aa99d46de0813f3ea65136bf3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records a command, or folds it into the open group during a transaction. <br /></td></tr>
 <tr class="separator:a95f61aa99d46de0813f3ea65136bf3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f8d2eaf2b99a0c3df554b57af04acbc" id="r_a1f8d2eaf2b99a0c3df554b57af04acbc"><td class="memItemLeft" align="right" valign="top"><a id="a1f8d2eaf2b99a0c3df554b57af04acbc" name="a1f8d2eaf2b99a0c3df554b57af04acbc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>undo</b> ()</td></tr>
@@ -118,6 +119,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>canRedo</b> () const<
 <tr class="memitem:a1494c3457c9f585d1a98308ac6e96fd7" id="r_a1494c3457c9f585d1a98308ac6e96fd7"><td class="memItemLeft" align="right" valign="top"><a id="a1494c3457c9f585d1a98308ac6e96fd7" name="a1494c3457c9f585d1a98308ac6e96fd7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a1494c3457c9f585d1a98308ac6e96fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb3454ee6a04b9ed89ff804e37b2e6da" id="r_aeb3454ee6a04b9ed89ff804e37b2e6da"><td class="memItemLeft" align="right" valign="top"><a id="aeb3454ee6a04b9ed89ff804e37b2e6da" name="aeb3454ee6a04b9ed89ff804e37b2e6da"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>beginGroup</b> ()</td></tr>
+<tr class="memdesc:aeb3454ee6a04b9ed89ff804e37b2e6da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens a transaction so subsequent pushes collect into one atomic group. <br /></td></tr>
+<tr class="separator:aeb3454ee6a04b9ed89ff804e37b2e6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e8b73a7f11e422578f66f4dcfff6ac4" id="r_a5e8b73a7f11e422578f66f4dcfff6ac4"><td class="memItemLeft" align="right" valign="top"><a id="a5e8b73a7f11e422578f66f4dcfff6ac4" name="a5e8b73a7f11e422578f66f4dcfff6ac4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>endGroup</b> ()</td></tr>
+<tr class="memdesc:a5e8b73a7f11e422578f66f4dcfff6ac4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the innermost transaction, recording its commands as a single group. <br /></td></tr>
+<tr class="separator:a5e8b73a7f11e422578f66f4dcfff6ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/UndoRedo/<a class="el" href="UndoStack_8h_source.html">UndoStack.h</a></li>
