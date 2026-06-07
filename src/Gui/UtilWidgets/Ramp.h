@@ -36,6 +36,12 @@ class Ramp : public QWidget
     /// @brief Emitted whenever a drag or click changes the control points.
     void edited();
 
+    /// @brief Emitted as a press begins an edit, before the points change.
+    void editBegan();
+
+    /// @brief Emitted as the press releases and the edit settles.
+    void editEnded();
+
   protected:
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;

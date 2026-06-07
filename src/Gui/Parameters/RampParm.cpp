@@ -1,4 +1,6 @@
 #include "Gui/Parameters/RampParm.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include "Gui/UtilWidgets/Ramp.h"
 #include "Gui/UtilWidgets/Slider.h"
 #include <QHBoxLayout>
@@ -46,9 +48,17 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     contentLayout_->addLayout(column);
 
     connect(rampWidget_, &Ramp::edited, this, &RampParm::onRampEdited);
+    connect(rampWidget_, &Ramp::editBegan, this, &RampParm::beginEdit);
+    connect(rampWidget_, &Ramp::editEnded, this, &RampParm::commitEdit);
     connect(indexSlider_, &Slider::sliderMoved, this, &RampParm::onIndexMoved);
     connect(positionSlider_, &Slider::sliderMoved, this, &RampParm::onPositionMoved);
     connect(valueSlider_, &Slider::sliderMoved, this, &RampParm::onValueMoved);
+
+    // Position and value drags edit instance fields, so each drag is one undo step.
+    connect(positionSlider_, &Slider::sliderPressed, this, &RampParm::beginEdit);
+    connect(positionSlider_, &Slider::sliderReleased, this, &RampParm::commitEdit);
+    connect(valueSlider_, &Slider::sliderPressed, this, &RampParm::beginEdit);
+    connect(valueSlider_, &Slider::sliderReleased, this, &RampParm::commitEdit);
 
     if (auto parameterShared = parameter_.lock())
         valueChangedConnection_ =
@@ -92,6 +102,26 @@ void enzo::ui::RampParm::onPositionMoved(double value)
 void enzo::ui::RampParm::onValueMoved(double value)
 {
     if (auto field = selectedField_("value")) field->setFloat(static_cast<floatT>(value));
+}
+
+void enzo::ui::RampParm::beginEdit()
+{
+    if (auto parameterShared = parameter_.lock())
+        snapshotBeforeEdit_ = toSerializable(*parameterShared);
+}
+
+void enzo::ui::RampParm::commitEdit()
+{
+    auto parameterShared = parameter_.lock();
+    if (!parameterShared) return;
+
+    ParameterSerializable after = toSerializable(*parameterShared);
+    if (after == snapshotBeforeEdit_) return;
+
+    auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
+        parameterShared->getOpId(), parameterShared->getName(), snapshotBeforeEdit_, after
+    );
+    enzo::nt::nm().undoStack().push(std::move(cmd));
 }
 
 void enzo::ui::RampParm::onRampEdited()

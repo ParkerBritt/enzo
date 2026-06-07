@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Serializer/ParameterSerializable.h"
 #include "Gui/Parameters/Parameter.h"
 #include <boost/signals2/connection.hpp>
 #include <memory>
@@ -25,6 +26,9 @@ class RampParm : public Parameter
     void onPositionMoved(double value);
     void onValueMoved(double value);
 
+    void beginEdit();
+    void commitEdit();
+
     void selectInstance(int instanceIndex);
     void syncFromParameter();
     void syncSelectedFields();
@@ -41,6 +45,9 @@ class RampParm : public Parameter
     // Set while writing ramp edits into the parameter so the echoed valueChanged
     // does not rebuild the curve out from under an active drag.
     bool applyingFromRamp_ = false;
+    // Whole multiparm state captured when an edit begins so its release can push
+    // one undo step.
+    ParameterSerializable snapshotBeforeEdit_;
 
     boost::signals2::scoped_connection valueChangedConnection_;
 };
