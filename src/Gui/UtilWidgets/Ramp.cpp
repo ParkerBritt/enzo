@@ -5,79 +5,78 @@
 #include <algorithm>
 
 namespace {
-constexpr double margin = 12.0;
+// Inset from the widget edge to the background panel so handles can overflow it
+constexpr double padding = 12.0;
+constexpr double cornerRadius = 9.0;
 constexpr double circleRadius = 5.0;
 constexpr double squareSize = 9.0;
+const QColor borderColor("#383838");
 const QColor circleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
 } // namespace
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_StyledBackground, true);
     setFixedHeight(100);
-    setProperty("type", "Ramp");
-    setStyleSheet(R"(
-                  QWidget[type="Ramp"]
-                  {
-                      border-radius: 9px;
-                      border: 1px solid #383838;
-                  }
-                  )");
 
     // Default endpoints rising from zero to one
     controlPoints_.push_back({0, 0.0, 0.0});
     controlPoints_.push_back({1, 1.0, 1.0});
 }
 
+QRectF enzo::ui::Ramp::backgroundRect_() const
+{
+    return QRectF(rect()).adjusted(padding, padding, -padding, -padding);
+}
+
 double enzo::ui::Ramp::positionToX_(double position) const
 {
-    const double left = margin;
-    const double right = width() - margin;
-    return left + (right - left) * position;
+    const QRectF panel = backgroundRect_();
+    return panel.left() + panel.width() * position;
 }
 
 double enzo::ui::Ramp::valueToY_(double value) const
 {
-    const double bottom = height() - margin;
-    const double top = margin;
+    const QRectF panel = backgroundRect_();
     const double normalized = (value - valueMin_) / (valueMax_ - valueMin_);
-    return bottom - (bottom - top) * normalized;
+    return panel.bottom() - panel.height() * normalized;
 }
 
 double enzo::ui::Ramp::xToPosition_(double x) const
 {
-    const double left = margin;
-    const double right = width() - margin;
-    return std::clamp((x - left) / (right - left), 0.0, 1.0);
+    const QRectF panel = backgroundRect_();
+    return std::clamp((x - panel.left()) / panel.width(), 0.0, 1.0);
 }
 
 double enzo::ui::Ramp::yToValue_(double y) const
 {
-    const double bottom = height() - margin;
-    const double top = margin;
-    const double normalized = (bottom - y) / (bottom - top);
+    const QRectF panel = backgroundRect_();
+    const double normalized = (panel.bottom() - y) / panel.height();
     return valueMin_ + (valueMax_ - valueMin_) * normalized;
 }
 
-void enzo::ui::Ramp::paintEvent(QPaintEvent* event)
+void enzo::ui::Ramp::paintEvent(QPaintEvent*)
 {
-    QWidget::paintEvent(event);
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // Rounded background panel inset from the widget so points can sit on its edges
+    painter.setPen(QPen(borderColor, 1));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRoundedRect(backgroundRect_(), cornerRadius, cornerRadius);
+
     paintControlPoints_(painter);
 }
 
 void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
 {
-    const double squareCenterY = height() - margin - squareSize / 2.0;
+    const double squareCenterY = backgroundRect_().bottom();
 
     for (const ControlPoint& controlPoint : controlPoints_)
     {
         const double centerX = positionToX_(controlPoint.position);
 
-        // Bottom anchored square sharing the control point x
+        // Square centered on the background bottom edge sharing the control point x
         const QRectF squareRect(
             centerX - squareSize / 2.0,
             squareCenterY - squareSize / 2.0,
@@ -109,7 +108,7 @@ int enzo::ui::Ramp::circleHitIndex_(const QPointF& pos) const
 
 int enzo::ui::Ramp::squareHitIndex_(const QPointF& pos) const
 {
-    const double squareCenterY = height() - margin - squareSize / 2.0;
+    const double squareCenterY = backgroundRect_().bottom();
     for (int pointIndex = 0; pointIndex < static_cast<int>(controlPoints_.size()); ++pointIndex)
     {
         const ControlPoint& controlPoint = controlPoints_[pointIndex];

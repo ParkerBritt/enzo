@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QRectF>
 #include <QWidget>
 #include <qtmetamacros.h>
 #include <vector>
@@ -42,6 +43,7 @@ class Ramp : public QWidget
         Square
     };
 
+    QRectF backgroundRect_() const;
     double positionToX_(double position) const;
     double valueToY_(double value) const;
     double xToPosition_(double x) const;
