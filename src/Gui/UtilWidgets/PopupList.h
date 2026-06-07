@@ -71,7 +71,8 @@ class PopupList : public QWidget
     void setHighlightedPosition(int position);
 
     /// @brief Resizes an open list to fit the current visible subset.
-    void fitToContents();
+    /// @note Pass animated to glide the height change rather than snapping.
+    void fitToContents(bool animated = false);
 
     int contentHeight() const;
     int listHeight() const;
@@ -128,6 +129,7 @@ class PopupList : public QWidget
 
     QPropertyAnimation* hoverAnim_ = nullptr;
     QPropertyAnimation* scrollAnim_ = nullptr;
+    QPropertyAnimation* backgroundResizeAnim_ = nullptr;
 };
 
 } // namespace enzo::ui
