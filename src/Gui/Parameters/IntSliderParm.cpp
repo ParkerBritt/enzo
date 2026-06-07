@@ -17,6 +17,7 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> paramet
         range.getMaxFlag() == prm::RangeFlag::LOCKED,
         1.0
     );
+    slider_->setDisplayPrecision(0);
     slider_->setValue(static_cast<double>(parameterShared->evalInt()));
     contentLayout_->addWidget(slider_);
 
