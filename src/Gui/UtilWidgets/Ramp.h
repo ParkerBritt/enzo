@@ -42,6 +42,9 @@ class Ramp : public QWidget
     /// @brief Emitted as the press releases and the edit settles.
     void editEnded();
 
+    /// @brief Emitted when interaction grabs or creates a different control point.
+    void selectionChanged(int pointIndex);
+
   protected:
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -87,6 +90,7 @@ class Ramp : public QWidget
     void paintCurve_(QPainter& painter) const;
     void paintControlPoints_(QPainter& painter) const;
     void addControlPoint_(double position, double value);
+    void selectPoint_(int pointIndex);
     void sortAndRenumber_();
 
     int circleHitIndex_(const QPointF& pos) const;
