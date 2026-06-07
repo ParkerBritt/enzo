@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Gui/UtilWidgets/PopupList.h"
+
 #include <QIcon>
 #include <QString>
 #include <QWidget>
@@ -45,12 +47,7 @@ class Dropdown : public QWidget
     void mousePressEvent(QMouseEvent* event) override;
 
   private:
-    struct Item
-    {
-        QIcon icon;
-        QString text;
-        QString data;
-    };
+    using Item = PopupList::Item;
 
     void openPopup();
     void animateArrow(qreal target);
@@ -73,72 +70,21 @@ class Dropdown : public QWidget
 };
 
 /**
- * @brief Floating list shown beneath a Dropdown. Lives as a top level popup so it
- * can overlay arbitrary content. The list is custom painted and clipped to an
- * animated reveal height so it unrolls into view rather than resizing its window.
+ * @brief Floating list shown beneath a Dropdown box.
+ *
+ * The list is populated from the owning box and shows every item without
+ * filtering.
  */
-class DropdownPopup : public QWidget
+class DropdownPopup : public PopupList
 {
     Q_OBJECT
-    Q_PROPERTY(int revealedHeight READ revealedHeight WRITE setRevealedHeight)
-    Q_PROPERTY(qreal fadeElapsed READ fadeElapsed WRITE setFadeElapsed)
-    Q_PROPERTY(qreal highlightTop READ highlightTop WRITE setHighlightTop)
   public:
     DropdownPopup(Dropdown* owner);
 
     void openBeneath(QWidget* anchor, int selectedIndex);
 
-  Q_SIGNALS:
-    void itemSelected(int index);
-    void aboutToClose();
-    void closed();
-
-  protected:
-    void paintEvent(QPaintEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void wheelEvent(QWheelEvent* event) override;
-    void hideEvent(QHideEvent* event) override;
-
   private:
-    void animateClose();
-    int contentHeight() const;
-    int rowAt(int localY) const;
-    int maxScrollOffset() const;
-
-    int revealedHeight() const { return revealedHeight_; }
-    void setRevealedHeight(int height)
-    {
-        revealedHeight_ = height;
-        update();
-    }
-
-    qreal fadeElapsed() const { return fadeElapsed_; }
-    void setFadeElapsed(qreal elapsed)
-    {
-        fadeElapsed_ = elapsed;
-        update();
-    }
-
-    qreal highlightTop() const { return highlightTop_; }
-    void setHighlightTop(qreal top)
-    {
-        highlightTop_ = top;
-        update();
-    }
-
     Dropdown* owner_;
-    int hoveredIndex_ = -1;
-    int selectedIndex_ = -1;
-    int scrollOffset_ = 0;
-    int revealedHeight_ = 0;
-    qreal fadeElapsed_ = 0;
-    qreal highlightTop_ = 0;
-    bool closing_ = false;
-
-    QPropertyAnimation* hoverAnim_ = nullptr;
 };
 
 } // namespace enzo::ui
