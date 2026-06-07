@@ -21,8 +21,8 @@
 namespace {
 
 // Lower is faster
-constexpr int placementDurationMs = 150;
-constexpr int removalDurationMs = 100;
+constexpr int placementDurationMs = 100;
+constexpr int removalDurationMs = 80;
 
 } // namespace
 
