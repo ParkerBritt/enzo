@@ -1,13 +1,16 @@
 #pragma once
 #include "Engine/Core/Types.h"
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QPainter>
 #include <unordered_set>
 
 class NodeEdgeGraphic;
+class QPropertyAnimation;
 
-class SocketGraphic : public QGraphicsItem
+class SocketGraphic : public QGraphicsObject
 {
+    Q_OBJECT
+
   public:
     QRectF boundingRect() const override;
 
@@ -40,8 +43,10 @@ class SocketGraphic : public QGraphicsItem
     qreal paddingScale_ = 20;
     QRectF boundRect_;
     enzo::nt::OpId opId_;
+    QPropertyAnimation* scaleAnim_;
 
     void initBoundingBox();
+    void animateScale(qreal target);
 
   protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;

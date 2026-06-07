@@ -1,9 +1,19 @@
 #include "Gui/Network/SocketGraphic.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
 #include "icecream.hpp"
+#include <QPropertyAnimation>
 #include <QTextDocument>
 #include <iostream>
 #include <qgraphicsitem.h>
+
+namespace {
+
+// Lower is faster
+constexpr int hoverDurationMs = 200;
+// Size of a socket while a connection hovers it
+constexpr qreal hoverScale = 1.2;
+
+} // namespace
 
 SocketGraphic::SocketGraphic(
     enzo::nt::SocketIOType type,
@@ -11,12 +21,17 @@ SocketGraphic::SocketGraphic(
     unsigned int socketIndex,
     QGraphicsItem* parent
 )
-    : QGraphicsItem(parent), type_{type}, opId_{opId}, socketIndex_{socketIndex}
+    : QGraphicsObject(parent), type_{type}, opId_{opId}, socketIndex_{socketIndex}
 {
     brushActive_ = QBrush("white");
     brushInactive_ = QBrush("#9f9f9f");
     socketSize_ = 3;
     initBoundingBox();
+
+    scaleAnim_ = new QPropertyAnimation(this, "scale", this);
+    scaleAnim_->setDuration(hoverDurationMs);
+    // Pop out past the target before settling
+    scaleAnim_->setEasingCurve(QEasingCurve::OutBack);
 }
 
 unsigned int SocketGraphic::getIndex() const { return socketIndex_; }
@@ -114,13 +129,20 @@ void SocketGraphic::paint(
 
 void SocketGraphic::setHover(bool state)
 {
-    bool prevState = hovered_;
+    if (state == hovered_) return;
 
     hovered_ = state;
-    if (state != prevState)
-    {
-        update();
-    }
+    animateScale(state ? hoverScale : 1.0);
+    update();
+}
+
+void SocketGraphic::animateScale(qreal target)
+{
+    // Pop toward the target size, restarting from wherever the socket currently sits
+    scaleAnim_->stop();
+    scaleAnim_->setStartValue(scale());
+    scaleAnim_->setEndValue(target);
+    scaleAnim_->start();
 }
 
 void SocketGraphic::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
