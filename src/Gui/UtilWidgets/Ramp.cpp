@@ -218,6 +218,12 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
 void enzo::ui::Ramp::addControlPoint_(double position, double value)
 {
     controlPoints_.push_back({0, position, value});
+    sortAndRenumber_();
+    activePoint_ = circleHitIndex_(QPointF(positionToX_(position), valueToY_(value)));
+}
+
+void enzo::ui::Ramp::sortAndRenumber_()
+{
     std::sort(
         controlPoints_.begin(),
         controlPoints_.end(),
@@ -227,8 +233,6 @@ void enzo::ui::Ramp::addControlPoint_(double position, double value)
     // Point numbers track linear order along the x axis
     for (int pointIndex = 0; pointIndex < static_cast<int>(controlPoints_.size()); ++pointIndex)
         controlPoints_[pointIndex].pointNumber = pointIndex;
-
-    activePoint_ = circleHitIndex_(QPointF(positionToX_(position), valueToY_(value)));
 }
 
 void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
@@ -242,6 +246,20 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
 
     // Only the circle moves the value
     if (activeHandle_ == Handle::Circle) controlPoint.value = yToValue_(pos.y());
+
+    // Reorder so the curve never folds back, then keep dragging the same point
+    const double draggedPosition = controlPoint.position;
+    const double draggedValue = controlPoint.value;
+    sortAndRenumber_();
+    for (int pointIndex = 0; pointIndex < static_cast<int>(controlPoints_.size()); ++pointIndex)
+    {
+        if (controlPoints_[pointIndex].position == draggedPosition
+            && controlPoints_[pointIndex].value == draggedValue)
+        {
+            activePoint_ = pointIndex;
+            break;
+        }
+    }
 
     update();
 }
