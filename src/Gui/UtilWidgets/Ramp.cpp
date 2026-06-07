@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <algorithm>
 
 namespace {
@@ -13,6 +14,8 @@ constexpr double squareSize = 9.0;
 const QColor borderColor("#383838");
 const QColor circleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
+const QColor curveStrokeColor("#B1B2B5");
+const QColor curveFillColor(177, 178, 181, 50);
 } // namespace
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
@@ -65,7 +68,70 @@ void enzo::ui::Ramp::paintEvent(QPaintEvent*)
     painter.setBrush(Qt::NoBrush);
     painter.drawRoundedRect(backgroundRect_(), cornerRadius, cornerRadius);
 
+    paintCurve_(painter);
     paintControlPoints_(painter);
+}
+
+std::vector<QPointF> enzo::ui::Ramp::buildCurveTop_() const
+{
+    std::vector<QPointF> topPoints;
+    if (controlPoints_.empty()) return topPoints;
+
+    const QRectF panel = backgroundRect_();
+
+    switch (interpolation_)
+    {
+    case Interpolation::Linear:
+    default:
+        // Flat extension from the left edge to the first control point
+        topPoints.push_back(QPointF(panel.left(), valueToY_(controlPoints_.front().value)));
+        for (const ControlPoint& controlPoint : controlPoints_)
+            topPoints.push_back(
+                QPointF(positionToX_(controlPoint.position), valueToY_(controlPoint.value))
+            );
+        // Flat extension from the last control point to the right edge
+        topPoints.push_back(QPointF(panel.right(), valueToY_(controlPoints_.back().value)));
+        break;
+    }
+    return topPoints;
+}
+
+void enzo::ui::Ramp::paintCurve_(QPainter& painter) const
+{
+    if (controlPoints_.size() < 2) return;
+
+    const std::vector<QPointF> topPoints = buildCurveTop_();
+    const QRectF panel = backgroundRect_();
+
+    // Fill drops from the curve down to the panel bottom
+    QPainterPath fillPath;
+    fillPath.moveTo(topPoints.front().x(), panel.bottom());
+    for (const QPointF& topPoint : topPoints) fillPath.lineTo(topPoint);
+    fillPath.lineTo(topPoints.back().x(), panel.bottom());
+    fillPath.closeSubpath();
+
+    // Stroke runs only along the top through the control points
+    QPainterPath strokePath;
+    strokePath.moveTo(topPoints.front());
+    for (std::size_t pointIndex = 1; pointIndex < topPoints.size(); ++pointIndex)
+        strokePath.lineTo(topPoints[pointIndex]);
+
+    // Rounded panel clip keeps the fill clear of the corners
+    QPainterPath panelClip;
+    panelClip.addRoundedRect(panel, cornerRadius, cornerRadius);
+
+    painter.save();
+    painter.setClipPath(panelClip);
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(curveFillColor);
+    painter.drawPath(fillPath);
+
+    painter.setPen(QPen(curveStrokeColor, 1.5));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawPath(strokePath);
+
+    painter.restore();
 }
 
 void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
