@@ -66,6 +66,7 @@ class Ramp : public QWidget
     void paintCurve_(QPainter& painter) const;
     void paintControlPoints_(QPainter& painter) const;
     void addControlPoint_(double position, double value);
+    void sortAndRenumber_();
 
     int circleHitIndex_(const QPointF& pos) const;
     int squareHitIndex_(const QPointF& pos) const;
