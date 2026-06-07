@@ -106,7 +106,8 @@ void enzo::ui::Ramp::paintCurve_(QPainter& painter) const
     // Fill drops from the curve down to the panel bottom
     QPainterPath fillPath;
     fillPath.moveTo(topPoints.front().x(), panel.bottom());
-    for (const QPointF& topPoint : topPoints) fillPath.lineTo(topPoint);
+    for (const QPointF& topPoint : topPoints)
+        fillPath.lineTo(topPoint);
     fillPath.lineTo(topPoints.back().x(), panel.bottom());
     fillPath.closeSubpath();
 
@@ -253,8 +254,8 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
     sortAndRenumber_();
     for (int pointIndex = 0; pointIndex < static_cast<int>(controlPoints_.size()); ++pointIndex)
     {
-        if (controlPoints_[pointIndex].position == draggedPosition
-            && controlPoints_[pointIndex].value == draggedValue)
+        if (controlPoints_[pointIndex].position == draggedPosition &&
+            controlPoints_[pointIndex].value == draggedValue)
         {
             activePoint_ = pointIndex;
             break;
