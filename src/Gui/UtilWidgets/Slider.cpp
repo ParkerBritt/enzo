@@ -232,8 +232,8 @@ bool enzo::ui::Slider::eventFilter(QObject* watched, QEvent* event)
     if (editor_ && editor_->isVisible())
     {
         // Escape leaves edit mode without changing the value
-        if (event->type() == QEvent::KeyPress
-            && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape)
+        if (event->type() == QEvent::KeyPress &&
+            static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape)
         {
             endEditing_();
             return true;

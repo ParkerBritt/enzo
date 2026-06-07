@@ -33,3 +33,62 @@ TEST_CASE("evalInt returns minus one when the dropdown token is not an option")
     parameter.setString("nonexistent");
     REQUIRE(parameter.evalInt() == -1);
 }
+
+// A ramp template carrying an initial control point count. The ramp supplies
+// its own instance fields.
+static prm::Template rampTemplate(int points)
+{
+    using namespace enzo::prm;
+    return Template(Type::RAMP, Name("amplitude", "Amplitude"), Default(points));
+}
+
+TEST_CASE("A ramp seeds one instance per the parent default count")
+{
+    prm::Parameter parameter(rampTemplate(2));
+
+    REQUIRE(parameter.getInstanceCount() == 2);
+
+    // The ramp supplies its own fields so the caller never builds them.
+    REQUIRE(parameter.getInstanceField(0, "position") != nullptr);
+    REQUIRE(parameter.getInstanceField(0, "value") != nullptr);
+    REQUIRE(parameter.getInstanceField(0, "interp") != nullptr);
+}
+
+TEST_CASE("Adding and removing instances changes the instance count")
+{
+    prm::Parameter parameter(rampTemplate(2));
+
+    parameter.addInstance();
+    REQUIRE(parameter.getInstanceCount() == 3);
+
+    parameter.removeInstance(1);
+    REQUIRE(parameter.getInstanceCount() == 2);
+}
+
+TEST_CASE("Moving an instance places it at the target index")
+{
+    prm::Parameter parameter(rampTemplate(3));
+
+    // Tag each instance by its value so the order is observable.
+    parameter.getInstanceField(0, "value")->setFloat(0);
+    parameter.getInstanceField(1, "value")->setFloat(1);
+    parameter.getInstanceField(2, "value")->setFloat(2);
+
+    parameter.moveInstance(0, 2);
+
+    REQUIRE(parameter.getInstanceField(0, "value")->evalFloat() == 1);
+    REQUIRE(parameter.getInstanceField(1, "value")->evalFloat() == 2);
+    REQUIRE(parameter.getInstanceField(2, "value")->evalFloat() == 0);
+}
+
+TEST_CASE("Editing an instance field notifies the parent parameter")
+{
+    prm::Parameter parameter(rampTemplate(2));
+
+    bool notified = false;
+    parameter.valueChanged.connect([&notified]() { notified = true; });
+
+    parameter.getInstanceField(0, "value")->setFloat(5);
+
+    REQUIRE(notified);
+}

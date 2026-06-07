@@ -6,6 +6,28 @@
 
 namespace enzo {
 
+namespace {
+// The fixed instance template every ramp carries. Each control point holds a
+// position, a value, and an interpolation mode.
+std::vector<prm::Template> rampInstanceTemplate()
+{
+    return {
+        prm::Template(prm::Type::FLOAT, prm::Name("position", "Position")),
+        prm::Template(prm::Type::FLOAT, prm::Name("value", "Value"), prm::Default(1)),
+        prm::Template(
+            prm::Type::DROPDOWN,
+            prm::Name("interp", "Interpolation"),
+            prm::Default("linear")
+        )
+            .setOptions({
+                prm::Name("constant", "Constant"),
+                prm::Name("linear", "Linear"),
+                prm::Name("smooth", "Smooth"),
+            }),
+    };
+}
+} // namespace
+
 prm::Template::Template(prm::Type type, prm::Name name) : Template(type, name, prm::Default())
 {
     ranges_.resize(vectorSize_);
@@ -53,6 +75,9 @@ prm::Template::Template(
     defaults_.resize(vectorSize_, theDefault);
     ranges_.resize(vectorSize_, range);
     backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
+
+    // A ramp carries a fixed instance template the caller never builds.
+    if (type_ == prm::Type::RAMP) children_ = rampInstanceTemplate();
 }
 
 const prm::Type prm::Template::getType() const { return type_; }
@@ -145,5 +170,7 @@ bool prm::Template::isBackgroundEnabled() const { return backgroundEnabled_; }
 const std::any& prm::Template::getStyle() const { return style_; }
 
 const bool prm::Template::isContainer() const { return containerTypes_.contains(getType()); }
+
+bool prm::Template::isMultiParm() const { return multiParmTypes_.contains(getType()); }
 
 } // namespace enzo

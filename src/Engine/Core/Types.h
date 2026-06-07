@@ -108,7 +108,8 @@ enum class Type
     INT,
     TOGGLE,
     GROUP,
-    DROPDOWN
+    DROPDOWN,
+    RAMP
 };
 enum class Direction
 {

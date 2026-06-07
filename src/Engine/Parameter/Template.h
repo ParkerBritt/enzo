@@ -55,6 +55,7 @@ class Template
     Direction getDirection() const;
     const std::vector<Template>& getChildren() const;
     const bool isContainer() const;
+    bool isMultiParm() const;
 
     enzo::String getTooltip() const;
     enzo::String getDocumentation() const;
@@ -100,6 +101,9 @@ class Template
     std::vector<Template> children_;
     std::any style_;
     inline const static std::unordered_set<prm::Type> containerTypes_ = {prm::Type::GROUP};
+    // Types whose children are the per instance template duplicated by the
+    // parameter count.
+    inline const static std::unordered_set<prm::Type> multiParmTypes_ = {prm::Type::RAMP};
     inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ = {
         prm::Type::GROUP,
         prm::Type::XYZ

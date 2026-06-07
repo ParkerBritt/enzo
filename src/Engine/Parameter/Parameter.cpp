@@ -8,6 +8,16 @@ namespace enzo {
 
 prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
 {
+    // Multiparm parameters such as ramps hold a dynamic list of instances rather
+    // than a flat value. The parent default carries the initial instance count.
+    if (template_.isMultiParm())
+    {
+        const unsigned int initialCount = template_.getDefault().getInt();
+        for (unsigned int instanceIndex = 0; instanceIndex < initialCount; ++instanceIndex)
+            instances_.push_back(buildInstance_());
+        return;
+    }
+
     const unsigned int size = prmTemplate.getSize();
     const unsigned int numDefaults = prmTemplate.getNumDefaults();
 
@@ -120,6 +130,9 @@ prm::ValueType prm::Parameter::getValueType() const
     case prm::Type::INT:
     case prm::Type::BOOL:
     case prm::Type::TOGGLE:
+    // Multiparm parameters (like ramp) use integers to represent their instance
+    // count and store the actual data in their instances.
+    case prm::Type::RAMP:
         return prm::ValueType::Int;
     case prm::Type::STRING:
     case prm::Type::DROPDOWN:
@@ -175,5 +188,61 @@ void prm::Parameter::setValues(const PrmValues& values)
 }
 
 void prm::Parameter::handleValueChange_() { valueChanged(); }
+
+std::vector<std::shared_ptr<prm::Parameter>> prm::Parameter::buildInstance_()
+{
+    std::vector<std::shared_ptr<Parameter>> fields;
+    for (const Template& fieldTemplate : template_.getChildren())
+    {
+        auto field = std::make_shared<Parameter>(fieldTemplate);
+        // A field edit bubbles up so the owning node recooks.
+        field->valueChanged.connect([this]() { handleValueChange_(); });
+        fields.push_back(std::move(field));
+    }
+    return fields;
+}
+
+unsigned int prm::Parameter::getInstanceCount() const { return instances_.size(); }
+
+const std::vector<std::shared_ptr<prm::Parameter>>&
+prm::Parameter::getInstance(unsigned int instanceIndex) const
+{
+    return instances_.at(instanceIndex);
+}
+
+std::shared_ptr<prm::Parameter>
+prm::Parameter::getInstanceField(unsigned int instanceIndex, std::string_view fieldName) const
+{
+    for (const std::shared_ptr<Parameter>& field : instances_.at(instanceIndex))
+        if (field->getName() == fieldName) return field;
+    return nullptr;
+}
+
+void prm::Parameter::addInstance()
+{
+    instances_.push_back(buildInstance_());
+    handleValueChange_();
+}
+
+void prm::Parameter::removeInstance(unsigned int instanceIndex)
+{
+    if (instanceIndex >= instances_.size())
+        throw std::out_of_range(
+            "Cannot remove instance " + std::to_string(instanceIndex) +
+            " for parameter: " + getName()
+        );
+    instances_.erase(instances_.begin() + instanceIndex);
+    handleValueChange_();
+}
+
+void prm::Parameter::moveInstance(unsigned int fromIndex, unsigned int toIndex)
+{
+    if (fromIndex >= instances_.size() || toIndex >= instances_.size())
+        throw std::out_of_range("Cannot move instance for parameter: " + getName());
+    std::vector<std::shared_ptr<Parameter>> moved = std::move(instances_[fromIndex]);
+    instances_.erase(instances_.begin() + fromIndex);
+    instances_.insert(instances_.begin() + toIndex, std::move(moved));
+    handleValueChange_();
+}
 
 } // namespace enzo
