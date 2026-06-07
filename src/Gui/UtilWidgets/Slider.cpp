@@ -1,5 +1,8 @@
 #include "Gui/UtilWidgets/Slider.h"
+#include <QApplication>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
@@ -129,6 +132,9 @@ void enzo::ui::Slider::paintFill_(
 
 void enzo::ui::Slider::paintValueText_(QPainter& painter) const
 {
+    // The editor draws its own text while open
+    if (editor_ && editor_->isVisible()) return;
+
     QString valueText = QString::number(value_, 'f', 2);
     painter.setPen(QColor("#B3B3B3"));
     painter.drawText(rect(), Qt::AlignCenter, valueText);
@@ -136,15 +142,108 @@ void enzo::ui::Slider::paintValueText_(QPainter& painter) const
 
 void enzo::ui::Slider::mousePressEvent(QMouseEvent* event)
 {
-    Q_EMIT sliderPressed();
-    const double normalized = static_cast<double>(event->pos().x()) / rect().width();
-    emitMoved_(normalized);
+    // Defer commitment until a release decides between a click and a drag
+    pressPos_ = event->pos();
+    dragging_ = false;
 }
 
 void enzo::ui::Slider::mouseMoveEvent(QMouseEvent* event)
 {
+    if (!dragging_)
+    {
+        if ((event->pos() - pressPos_).manhattanLength() < QApplication::startDragDistance())
+            return;
+        dragging_ = true;
+        Q_EMIT sliderPressed();
+    }
     const double normalized = static_cast<double>(event->pos().x()) / rect().width();
     emitMoved_(normalized);
 }
 
-void enzo::ui::Slider::mouseReleaseEvent(QMouseEvent*) { Q_EMIT sliderReleased(); }
+void enzo::ui::Slider::mouseReleaseEvent(QMouseEvent*)
+{
+    if (dragging_)
+    {
+        dragging_ = false;
+        Q_EMIT sliderReleased();
+    }
+    else
+    {
+        beginEditing_();
+    }
+}
+
+void enzo::ui::Slider::beginEditing_()
+{
+    if (!editor_)
+    {
+        // Transparent so the slider track and fill stay visible underneath
+        editor_ = new QLineEdit(this);
+        editor_->setAlignment(Qt::AlignCenter);
+        editor_->setFrame(false);
+        editor_->setStyleSheet(R"(
+                      QLineEdit
+                      {
+                          background: transparent;
+                          border: none;
+                          color: #B3B3B3;
+                      }
+                      )");
+        connect(editor_, &QLineEdit::editingFinished, this, &Slider::commitEditing_);
+    }
+    editor_->setGeometry(rect());
+    editor_->setText(QString::number(value_, 'f', 2));
+    editor_->selectAll();
+    editor_->show();
+    editor_->setFocus();
+
+    // Watch the whole app so a click on any widget outside the editor exits
+    qApp->installEventFilter(this);
+}
+
+void enzo::ui::Slider::commitEditing_()
+{
+    if (!editor_ || editor_->isHidden()) return;
+
+    const QString typedText = editor_->text().trimmed();
+    endEditing_();
+
+    // A pure number commits, anything else is left for the text path implemented later
+    bool isNumber = false;
+    const double typedValue = typedText.toDouble(&isNumber);
+    if (!isNumber) return;
+
+    const double newValue = clampAndStep_(typedValue);
+    Q_EMIT sliderPressed();
+    value_ = newValue;
+    update();
+    Q_EMIT sliderMoved(newValue);
+    Q_EMIT sliderReleased();
+}
+
+void enzo::ui::Slider::endEditing_()
+{
+    editor_->hide();
+    qApp->removeEventFilter(this);
+}
+
+bool enzo::ui::Slider::eventFilter(QObject* watched, QEvent* event)
+{
+    if (editor_ && editor_->isVisible())
+    {
+        // Escape leaves edit mode without changing the value
+        if (event->type() == QEvent::KeyPress
+            && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape)
+        {
+            endEditing_();
+            return true;
+        }
+
+        // A click on any widget outside the editor commits and exits
+        if (event->type() == QEvent::MouseButtonPress && watched != editor_)
+        {
+            commitEditing_();
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
