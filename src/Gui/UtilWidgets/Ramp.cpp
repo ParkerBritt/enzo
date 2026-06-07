@@ -16,7 +16,9 @@ const QColor borderColor("#383838");
 const QColor circleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
 const QColor curveStrokeColor("#B1B2B5");
-const QColor curveFillColor(177, 178, 181, 50);
+// Alpha bytes are 66 percent and 13 percent of 255
+const QColor curveFillTopColor(177, 178, 181, 100);
+const QColor curveFillBottomColor(177, 178, 181, 10);
 const QColor selectedRingColor("#4a90d9");
 } // namespace
 
@@ -164,8 +166,12 @@ void enzo::ui::Ramp::paintCurve_(QPainter& painter) const
     painter.save();
     painter.setClipPath(panelClip);
 
+    QLinearGradient fillGradient(0, panel.top(), 0, panel.bottom());
+    fillGradient.setColorAt(0.0, curveFillTopColor);
+    fillGradient.setColorAt(1.0, curveFillBottomColor);
+
     painter.setPen(Qt::NoPen);
-    painter.setBrush(curveFillColor);
+    painter.setBrush(fillGradient);
     painter.drawPath(fillPath);
 
     painter.setPen(QPen(curveStrokeColor, 1.5));
@@ -302,8 +308,9 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
     // Both handles share the control point x
     controlPoint.position = xToPosition_(pos.x());
 
-    // Only the circle moves the value
-    if (activeHandle_ == Handle::Circle) controlPoint.value = yToValue_(pos.y());
+    // Only the circle moves the value, clamped to the visible panel
+    if (activeHandle_ == Handle::Circle)
+        controlPoint.value = std::clamp(yToValue_(pos.y()), valueMin_, valueMax_);
 
     // Reorder so the curve never folds back, then keep dragging the same point
     const double draggedPosition = controlPoint.position;
