@@ -4,12 +4,15 @@
 #include "Gui/Network/NodeEdgeGraphic.h"
 #include "Gui/Network/NodeIconGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QPainter>
+#include <functional>
 #include <iostream>
 
-class NodeGraphic : public QGraphicsItem
+class NodeGraphic : public QGraphicsObject
 {
+    Q_OBJECT
+
   public:
     NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent = nullptr);
     QRectF boundingRect() const override;
@@ -23,6 +26,11 @@ class NodeGraphic : public QGraphicsItem
     void setDisplayFlag(bool state);
     void setSelected(bool selected);
     bool toggleSelected();
+
+    /// @brief Pop the node in with an overshoot when it is placed
+    void animatePlacement();
+    /// @brief Anticipate then collapse the node away, invoking onComplete when finished
+    void animateRemoval(std::function<void()> onComplete);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 

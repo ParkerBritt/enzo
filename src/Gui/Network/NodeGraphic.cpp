@@ -5,9 +5,11 @@
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/NodeIconGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
+#include <QEasingCurve>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSvgItem>
+#include <QPropertyAnimation>
 #include <QTextDocument>
 #include <algorithm>
 #include <iostream>
@@ -16,8 +18,16 @@
 #include <stdexcept>
 #include <string>
 
+namespace {
+
+// Lower is faster
+constexpr int placementDurationMs = 150;
+constexpr int removalDurationMs = 100;
+
+} // namespace
+
 NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent)
-    : QGraphicsItem(parent), opId_{id}
+    : QGraphicsObject(parent), opId_{id}
 {
     socketSize_ = 3;
     titlePadding_ = 1;
@@ -177,6 +187,32 @@ bool NodeGraphic::toggleSelected()
 
     setSelected(selected);
     return selected;
+}
+
+void NodeGraphic::animatePlacement()
+{
+    // Grow from nothing and overshoot the final size before settling
+    auto* placeAnim = new QPropertyAnimation(this, "scale", this);
+    placeAnim->setDuration(placementDurationMs);
+    placeAnim->setEasingCurve(QEasingCurve::OutBack);
+    placeAnim->setStartValue(0.0);
+    placeAnim->setEndValue(1.0);
+
+    setScale(0.0);
+    placeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void NodeGraphic::animateRemoval(std::function<void()> onComplete)
+{
+    // Stretch outward briefly then collapse into the center
+    auto* removeAnim = new QPropertyAnimation(this, "scale", this);
+    removeAnim->setDuration(removalDurationMs);
+    removeAnim->setEasingCurve(QEasingCurve::InBack);
+    removeAnim->setStartValue(scale());
+    removeAnim->setEndValue(0.0);
+    connect(removeAnim, &QPropertyAnimation::finished, this, onComplete);
+
+    removeAnim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void NodeGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
