@@ -44,6 +44,14 @@ void enzo::ui::Slider::setValue(double value)
     update();
 }
 
+void enzo::ui::Slider::setRange(double minValue, double maxValue)
+{
+    minValue_ = minValue;
+    maxValue_ = maxValue;
+    value_ = clampAndStep_(value_);
+    update();
+}
+
 void enzo::ui::Slider::setDisplayPrecision(int digits)
 {
     displayDigits_ = digits;

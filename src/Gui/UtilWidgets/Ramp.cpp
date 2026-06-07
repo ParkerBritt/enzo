@@ -16,6 +16,7 @@ const QColor circleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
 const QColor curveStrokeColor("#B1B2B5");
 const QColor curveFillColor(177, 178, 181, 50);
+const QColor selectedRingColor("#4a90d9");
 } // namespace
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
@@ -25,6 +26,44 @@ enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
     // Default endpoints rising from zero to one
     controlPoints_.push_back({0, 0.0, 0.0});
     controlPoints_.push_back({1, 1.0, 1.0});
+}
+
+void enzo::ui::Ramp::setPoints(const std::vector<QPointF>& points)
+{
+    controlPoints_.clear();
+    controlPoints_.reserve(points.size());
+    for (const QPointF& point : points)
+        controlPoints_.push_back({0, point.x(), point.y()});
+    sortAndRenumber_();
+
+    // Fit the value axis so every point sits inside the panel, always keeping
+    // the zero to one band visible as a reference.
+    double minValue = 0.0;
+    double maxValue = 1.0;
+    for (const ControlPoint& controlPoint : controlPoints_)
+    {
+        minValue = std::min(minValue, controlPoint.value);
+        maxValue = std::max(maxValue, controlPoint.value);
+    }
+    valueMin_ = minValue;
+    valueMax_ = maxValue;
+
+    update();
+}
+
+void enzo::ui::Ramp::setSelectedPoint(int pointIndex)
+{
+    selectedPoint_ = pointIndex;
+    update();
+}
+
+std::vector<QPointF> enzo::ui::Ramp::points() const
+{
+    std::vector<QPointF> result;
+    result.reserve(controlPoints_.size());
+    for (const ControlPoint& controlPoint : controlPoints_)
+        result.push_back(QPointF(controlPoint.position, controlPoint.value));
+    return result;
 }
 
 QRectF enzo::ui::Ramp::backgroundRect_() const
@@ -139,8 +178,9 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
 {
     const double squareCenterY = backgroundRect_().bottom();
 
-    for (const ControlPoint& controlPoint : controlPoints_)
+    for (int pointIndex = 0; pointIndex < static_cast<int>(controlPoints_.size()); ++pointIndex)
     {
+        const ControlPoint& controlPoint = controlPoints_[pointIndex];
         const double centerX = positionToX_(controlPoint.position);
 
         // Square centered on the background bottom edge sharing the control point x
@@ -154,10 +194,12 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
         painter.setBrush(squareColor);
         painter.drawRect(squareRect);
 
-        // Free moving circle at the control point value
+        // Free moving circle at the control point value, ringed when selected
         const double circleCenterY = valueToY_(controlPoint.value);
         painter.setBrush(circleColor);
+        painter.setPen(pointIndex == selectedPoint_ ? QPen(selectedRingColor, 2) : QPen(Qt::NoPen));
         painter.drawEllipse(QPointF(centerX, circleCenterY), circleRadius, circleRadius);
+        painter.setPen(Qt::NoPen);
     }
 }
 
@@ -213,6 +255,7 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
     // Empty space spawns a new control point grabbed by its circle for immediate dragging
     addControlPoint_(xToPosition_(pos.x()), yToValue_(pos.y()));
     activeHandle_ = Handle::Circle;
+    Q_EMIT edited();
     update();
 }
 
@@ -262,6 +305,7 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
         }
     }
 
+    Q_EMIT edited();
     update();
 }
 

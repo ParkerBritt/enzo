@@ -1,5 +1,6 @@
 #include "OpDefs/GopSineWave.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Parameter/Ramp.h"
 #include "Engine/Parameter/Range.h"
 #include "Engine/Primitives/Mesh.h"
 #include <boost/algorithm/string.hpp>
@@ -26,6 +27,7 @@ void GopSineWave::cookOp(enzo::op::Context context)
         const floatT frequency = context.evalParmFloat("frequency");
         const floatT offset = context.evalParmFloat("offset");
         const bool radial = context.evalParmBool("radial");
+        const prm::Ramp amplitude = context.evalParmRamp("amplitude");
 
         for (size_t p = 0; p < packet.size(); ++p)
         {
@@ -43,11 +45,15 @@ void GopSineWave::cookOp(enzo::op::Context context)
                 );
                 tbb::parallel_for(
                     tbb::blocked_range<Offset>(0, pointCount),
-                    [&geo, frequency, center, offset](tbb::blocked_range<Offset> range) {
+                    [&geo, &amplitude, frequency, center, offset](
+                        tbb::blocked_range<Offset> range
+                    ) {
                         for (Offset i = range.begin(); i != range.end(); ++i)
                         {
                             Vector3 pos = geo->getPointPos(i);
-                            pos += Vector3(0, sin((pos - center).norm() * frequency + offset), 0);
+                            // The ramp remaps the wave from its zero to one domain.
+                            const floatT wave = sin((pos - center).norm() * frequency + offset);
+                            pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
                             geo->setPointPos(i, pos);
                         }
                     }
@@ -57,11 +63,13 @@ void GopSineWave::cookOp(enzo::op::Context context)
             {
                 tbb::parallel_for(
                     tbb::blocked_range<Offset>(0, pointCount),
-                    [&geo, frequency, offset](tbb::blocked_range<Offset> range) {
+                    [&geo, &amplitude, frequency, offset](tbb::blocked_range<Offset> range) {
                         for (Offset i = range.begin(); i != range.end(); ++i)
                         {
                             Vector3 pos = geo->getPointPos(i);
-                            pos += Vector3(0, sin(pos.x() * frequency + offset), 0);
+                            // The ramp remaps the wave from its zero to one domain.
+                            const floatT wave = sin(pos.x() * frequency + offset);
+                            pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
                             geo->setPointPos(i, pos);
                         }
                     }
@@ -87,6 +95,11 @@ std::vector<enzo::prm::Template> GopSineWave::parameterList()
             enzo::prm::Type::FLOAT,
             enzo::prm::Name("offset", "Offset"),
             enzo::prm::Default(0)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::RAMP,
+            enzo::prm::Name("amplitude", "Amplitude"),
+            enzo::prm::Default(2)
         )
     };
 }
