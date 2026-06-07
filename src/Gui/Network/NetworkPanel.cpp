@@ -56,9 +56,13 @@ NetworkPanel::NetworkPanel(QWidget* parent) : Panel(parent)
     enzo::nt::nm().operatorRemoved.connect([this](enzo::nt::OpId opId) {
         if (auto it = nodeStore_.find(opId); it != nodeStore_.end())
         {
-            scene_->removeItem(it->second);
-            delete it->second;
+            NodeGraphic* node = it->second;
             nodeStore_.erase(it);
+            // Hold the node alive until the collapse finishes, then drop it
+            node->animateRemoval([this, node] {
+                scene_->removeItem(node);
+                delete node;
+            });
         }
     });
 
@@ -421,6 +425,8 @@ void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
 
     scene_->addItem(newNode);
     nodeStore_.emplace(opId, newNode);
+
+    newNode->animatePlacement();
 }
 
 void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection)
