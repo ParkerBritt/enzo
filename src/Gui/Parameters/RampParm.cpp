@@ -52,6 +52,7 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     disableBackground();
 
     connect(rampWidget_, &Ramp::edited, this, &RampParm::onRampEdited);
+    connect(rampWidget_, &Ramp::selectionChanged, this, &RampParm::selectInstance);
     connect(rampWidget_, &Ramp::editBegan, this, &RampParm::beginEdit);
     connect(rampWidget_, &Ramp::editEnded, this, &RampParm::commitEdit);
     connect(indexSlider_, &Slider::sliderMoved, this, &RampParm::onIndexMoved);

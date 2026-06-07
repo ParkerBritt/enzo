@@ -246,6 +246,7 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
     if (activePoint_ != -1)
     {
         activeHandle_ = Handle::Circle;
+        selectPoint_(activePoint_);
         return;
     }
 
@@ -253,6 +254,7 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
     if (activePoint_ != -1)
     {
         activeHandle_ = Handle::Square;
+        selectPoint_(activePoint_);
         return;
     }
 
@@ -260,6 +262,7 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
     addControlPoint_(xToPosition_(pos.x()), yToValue_(pos.y()));
     activeHandle_ = Handle::Circle;
     Q_EMIT edited();
+    selectPoint_(activePoint_);
     update();
 }
 
@@ -268,6 +271,13 @@ void enzo::ui::Ramp::addControlPoint_(double position, double value)
     controlPoints_.push_back({0, position, value});
     sortAndRenumber_();
     activePoint_ = circleHitIndex_(QPointF(positionToX_(position), valueToY_(value)));
+}
+
+void enzo::ui::Ramp::selectPoint_(int pointIndex)
+{
+    if (pointIndex == selectedPoint_) return;
+    selectedPoint_ = pointIndex;
+    Q_EMIT selectionChanged(selectedPoint_);
 }
 
 void enzo::ui::Ramp::sortAndRenumber_()
@@ -310,6 +320,7 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
     }
 
     Q_EMIT edited();
+    selectPoint_(activePoint_);
     update();
 }
 
