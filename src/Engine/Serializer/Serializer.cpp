@@ -34,7 +34,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
         opIdToIndex[opId] = index++;
 
         OperatorSerializable opModel;
-        opModel.typeName = op.getTypeName();
+        opModel.typeName = op.getType().getName();
         opModel.posX = op.getPosition().x();
         opModel.posY = op.getPosition().y();
 

@@ -32,9 +32,8 @@ NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent)
     socketSize_ = 3;
     titlePadding_ = 1;
     enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(id);
-    titleText_ = geoOp.getTypeName();
-    // TODO: unique node names
-    subTitleText_ = "OpID: " + std::to_string(opId_);
+    titleText_ = geoOp.getName();
+    subTitleText_ = geoOp.getType().getLabel();
     constexpr int height = 27;
     constexpr int width = 100;
     bodyRect_ = QRect(-width * 0.5f, -height * 0.5f, width, height);

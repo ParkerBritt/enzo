@@ -23,7 +23,7 @@ class DeleteNodeCommand : public UndoCommand
     DeleteNodeCommand(OpId opId) : opId_(opId)
     {
         GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ = op.getTypeName();
+        typeName_ = op.getType().getName();
         position_ = op.getPosition();
 
         // Save parms

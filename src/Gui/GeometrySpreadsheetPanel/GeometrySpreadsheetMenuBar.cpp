@@ -151,5 +151,5 @@ GeometrySpreadsheetMenuBar::GeometrySpreadsheetMenuBar(QWidget* parent, Qt::Wind
 void GeometrySpreadsheetMenuBar::setNode(enzo::nt::OpId opId)
 {
     enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(opId);
-    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(geoOp.getLabel()));
+    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(geoOp.getName()));
 }
