@@ -201,7 +201,11 @@ const std::vector<prm::Template>& nt::GeometryOperator::getTemplates() const
     return opInfo_.templates;
 }
 
-std::string nt::GeometryOperator::getLabel() { return opInfo_.displayName; }
+std::string nt::GeometryOperator::getName()
+{
+    // synthesize a placeholder runtime name from the type name and op id
+    return opInfo_.internalName + "_" + std::to_string(opId_);
+}
 
 std::vector<std::weak_ptr<nt::GeometryConnection>>
 nt::GeometryOperator::getOutputConnections() const
@@ -209,7 +213,7 @@ nt::GeometryOperator::getOutputConnections() const
     return {outputConnections_.begin(), outputConnections_.end()};
 }
 
-std::string nt::GeometryOperator::getTypeName() { return opInfo_.internalName; }
+const op::OpInfo& nt::GeometryOperator::getType() const { return opInfo_; }
 
 std::weak_ptr<nt::GeometryConnection> nt::GeometryOperator::getInputConnection(size_t index) const
 {

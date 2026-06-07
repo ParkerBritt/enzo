@@ -18,7 +18,7 @@ class CreateNodeCommand : public UndoCommand
     void undo() override
     {
         GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ = op.getTypeName();
+        typeName_ = op.getType().getName();
         position_ = op.getPosition();
 
         nm().removeOperator(opId_, false);

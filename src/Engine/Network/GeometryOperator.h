@@ -127,22 +127,24 @@ class GeometryOperator
     const std::vector<prm::Template>& getTemplates() const;
 
     /**
-     * @brief NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique
-     * identifier within it's scope.
-     * @todo implement
+     * @brief Returns the runtime name uniquely identifying this node within its scope (eg.
+     * "my_node_05")
+     *
+     * Unlike the type name this is per node and is intended to be user assignable.
+     * @note Uniqueness checked, user assignable labels are not yet implemented. The name is
+     * currently synthesized from the type name and op id.
+     * @todo implement user assignable, uniqueness checked node names
      */
-    std::string getLabel(); // TODO: implement node labels
+    std::string getName();
 
     /**
-     * @brief Returns the name belonging to this type of node (eg. grid or transform). Not to be
-     * confused with the label.
+     * @brief Returns the static type definition this node was created from.
      *
-     * The type name decided at compile time and is shared across all nodes
-     * of the given type. All grids nodes share the same type name. Labels
-     * on the other hand are unique identifiers for a given runtime node (eg. myGrid1, groundGrid,
-     * wall).
+     * The type carries data shared by every node of the same type such as its
+     * name and label. Use getType().getName() for the internal type name (eg.
+     * "copy_to_points") and getType().getLabel() for the display label (eg. "Copy To Points").
      */
-    std::string getTypeName();
+    const op::OpInfo& getType() const;
 
     /**
      * @brief Marks the outputed geometry as outdated and notifies the network
