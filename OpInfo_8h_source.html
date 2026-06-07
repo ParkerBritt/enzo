@@ -121,11 +121,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> minInputs = 0;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> maxInputs = 1;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> maxOutputs = 1;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structenzo_1_1op_1_1OpInfo.html#a40401da0601237115b30540a2ba7a469">   29</a></span>    <span class="keyword">const</span> std::string&amp; <a class="code hl_function" href="structenzo_1_1op_1_1OpInfo.html#a40401da0601237115b30540a2ba7a469">getName</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> internalName; }</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structenzo_1_1op_1_1OpInfo.html#ad133138201d1398e1434246b4146479f">   31</a></span>    <span class="keyword">const</span> std::string&amp; <a class="code hl_function" href="structenzo_1_1op_1_1OpInfo.html#ad133138201d1398e1434246b4146479f">getLabel</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> displayName; }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
 </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace enzo::op</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <span class="comment">// namespace enzo::op</span></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a></div><div class="ttdoc">The central coordinator of the engine's node system.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:26</div></div>
 <div class="ttc" id="astructenzo_1_1op_1_1OpInfo_html"><div class="ttname"><a href="structenzo_1_1op_1_1OpInfo.html">enzo::op::OpInfo</a></div><div class="ttdef"><b>Definition</b> OpInfo.h:19</div></div>
+<div class="ttc" id="astructenzo_1_1op_1_1OpInfo_html_a40401da0601237115b30540a2ba7a469"><div class="ttname"><a href="structenzo_1_1op_1_1OpInfo.html#a40401da0601237115b30540a2ba7a469">enzo::op::OpInfo::getName</a></div><div class="ttdeci">const std::string &amp; getName() const</div><div class="ttdoc">Returns the internal type name shared by all nodes of this type (eg. &quot;copy_to_points&quot;)</div><div class="ttdef"><b>Definition</b> OpInfo.h:29</div></div>
+<div class="ttc" id="astructenzo_1_1op_1_1OpInfo_html_ad133138201d1398e1434246b4146479f"><div class="ttname"><a href="structenzo_1_1op_1_1OpInfo.html#ad133138201d1398e1434246b4146479f">enzo::op::OpInfo::getLabel</a></div><div class="ttdeci">const std::string &amp; getLabel() const</div><div class="ttdoc">Returns the human readable type label shown in the UI (eg. &quot;Copy To Points&quot;)</div><div class="ttdef"><b>Definition</b> OpInfo.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

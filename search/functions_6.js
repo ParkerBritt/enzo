@@ -17,11 +17,11 @@ var searchData=
   ['getinputindex_14',['getInputIndex',['../classenzo_1_1nt_1_1GeometryConnection.html#a3133580f190e629b5516833724c417ce',1,'enzo::nt::GeometryConnection']]],
   ['getinputopid_15',['getInputOpId',['../classenzo_1_1nt_1_1GeometryConnection.html#a927a3fa81daabc851ac1b043a476e998',1,'enzo::nt::GeometryConnection']]],
   ['getinstance_16',['getInstance',['../classenzo_1_1nt_1_1NetworkManager.html#aff1bd35aae8e8a931bc48b573d71761e',1,'enzo::nt::NetworkManager']]],
-  ['getlabel_17',['getLabel',['../classenzo_1_1nt_1_1GeometryOperator.html#a1c727ead5dba7645c6ba33d1849e54e3',1,'enzo::nt::GeometryOperator']]],
+  ['getlabel_17',['getLabel',['../structenzo_1_1op_1_1OpInfo.html#ad133138201d1398e1434246b4146479f',1,'enzo::op::OpInfo']]],
   ['getmaxinputs_18',['getMaxInputs',['../classenzo_1_1nt_1_1GeometryOpDef.html#a688ebe04b06e3c6799e63a13f7a26897',1,'enzo::nt::GeometryOpDef::getMaxInputs()'],['../classenzo_1_1nt_1_1GeometryOperator.html#ad51fc061699c2e0e754c045b2cd9587c',1,'enzo::nt::GeometryOperator::getMaxInputs()']]],
   ['getmaxoutputs_19',['getMaxOutputs',['../classenzo_1_1nt_1_1GeometryOpDef.html#ab77e11173dff8a8635c1b1586c41cc65',1,'enzo::nt::GeometryOpDef::getMaxOutputs()'],['../classenzo_1_1nt_1_1GeometryOperator.html#ad3253fd17de91514f050bbdb7f01e736',1,'enzo::nt::GeometryOperator::getMaxOutputs()']]],
   ['getmininputs_20',['getMinInputs',['../classenzo_1_1nt_1_1GeometryOpDef.html#a0e63dbecac46ec2b2353d981f23babe2',1,'enzo::nt::GeometryOpDef::getMinInputs()'],['../classenzo_1_1nt_1_1GeometryOperator.html#a7643be4eadf7a542f5bd6d4668c41aa2',1,'enzo::nt::GeometryOperator::getMinInputs()']]],
-  ['getname_21',['getName',['../classenzo_1_1attr_1_1Attribute.html#a1287e363fb7fd3b29598ee484aef3ffb',1,'enzo::attr::Attribute::getName()'],['../classenzo_1_1attr_1_1AttributeHandle.html#ad5721feb43b96e1a56d1c1910e30cdeb',1,'enzo::attr::AttributeHandle::getName()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a9e957683864e267d44d5a93ef9d19d05',1,'enzo::attr::AttributeHandleRO::getName()']]],
+  ['getname_21',['getName',['../classenzo_1_1attr_1_1Attribute.html#a1287e363fb7fd3b29598ee484aef3ffb',1,'enzo::attr::Attribute::getName()'],['../classenzo_1_1attr_1_1AttributeHandle.html#ad5721feb43b96e1a56d1c1910e30cdeb',1,'enzo::attr::AttributeHandle::getName()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a9e957683864e267d44d5a93ef9d19d05',1,'enzo::attr::AttributeHandleRO::getName()'],['../classenzo_1_1nt_1_1GeometryOperator.html#a50b6c3d0b425bb9a865b5e7d6f709e85',1,'enzo::nt::GeometryOperator::getName()'],['../structenzo_1_1op_1_1OpInfo.html#a40401da0601237115b30540a2ba7a469',1,'enzo::op::OpInfo::getName()']]],
   ['getnumgroups_22',['getNumGroups',['../classenzo_1_1geo_1_1Primitive.html#ad4ace0e2521c9e0205b35ec802ac7559',1,'enzo::geo::Primitive']]],
   ['getnumlocks_23',['getNumLocks',['../classenzo_1_1nt_1_1UpdateLock.html#a82d6ddd668c11f2d9006c82834032e03',1,'enzo::nt::UpdateLock']]],
   ['getoptions_24',['getOptions',['../classenzo_1_1prm_1_1Template.html#a7e21428d471c1d21ea002188a5975a97',1,'enzo::prm::Template']]],
@@ -36,9 +36,8 @@ var searchData=
   ['getsize_33',['getSize',['../classenzo_1_1attr_1_1AttributeHandle.html#acb6a9cdc04a954df493a418e0b11073d',1,'enzo::attr::AttributeHandle::getSize()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a8459a3a8cd80c9342e669fec0a5ad09d',1,'enzo::attr::AttributeHandleRO::getSize()']]],
   ['getspan_34',['getSpan',['../classenzo_1_1attr_1_1AttributeHandle.html#a168f67dc74235a2ddbb1670a60b9ff7d',1,'enzo::attr::AttributeHandle']]],
   ['gettemplates_35',['getTemplates',['../classenzo_1_1nt_1_1GeometryOperator.html#aa75d71ec8d5ba62ccf2744d2b8206c70',1,'enzo::nt::GeometryOperator']]],
-  ['gettype_36',['getType',['../classenzo_1_1attr_1_1Attribute.html#a046fbe38ddbdc1799216470130c46bf5',1,'enzo::attr::Attribute']]],
-  ['gettypename_37',['getTypeName',['../classenzo_1_1nt_1_1GeometryOperator.html#af45622ff0d66b10ec042448e4e4bba58',1,'enzo::nt::GeometryOperator']]],
-  ['gettypesize_38',['getTypeSize',['../classenzo_1_1attr_1_1Attribute.html#ab223d15b7829aa0b5d508f9c6a13e913',1,'enzo::attr::Attribute']]],
-  ['getvalue_39',['getValue',['../classenzo_1_1attr_1_1AttributeHandle.html#a255a4b9b7f1ac5210f8cad0d5cc79078',1,'enzo::attr::AttributeHandle::getValue()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a4ea3683824a23196064e0427801c0f76',1,'enzo::attr::AttributeHandleRO::getValue()']]],
-  ['getvertexnormal_40',['getVertexNormal',['../classenzo_1_1geo_1_1Mesh.html#a55d01cfb8b4e7e1f61db48124087ecc8',1,'enzo::geo::Mesh']]]
+  ['gettype_36',['getType',['../classenzo_1_1attr_1_1Attribute.html#a046fbe38ddbdc1799216470130c46bf5',1,'enzo::attr::Attribute::getType()'],['../classenzo_1_1nt_1_1GeometryOperator.html#a85fb3199911adab65ef977e8799c8fea',1,'enzo::nt::GeometryOperator::getType()']]],
+  ['gettypesize_37',['getTypeSize',['../classenzo_1_1attr_1_1Attribute.html#ab223d15b7829aa0b5d508f9c6a13e913',1,'enzo::attr::Attribute']]],
+  ['getvalue_38',['getValue',['../classenzo_1_1attr_1_1AttributeHandle.html#a255a4b9b7f1ac5210f8cad0d5cc79078',1,'enzo::attr::AttributeHandle::getValue()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a4ea3683824a23196064e0427801c0f76',1,'enzo::attr::AttributeHandleRO::getValue()']]],
+  ['getvertexnormal_39',['getVertexNormal',['../classenzo_1_1geo_1_1Mesh.html#a55d01cfb8b4e7e1f61db48124087ecc8',1,'enzo::geo::Mesh']]]
 ];

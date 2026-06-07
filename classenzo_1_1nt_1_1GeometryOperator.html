@@ -155,12 +155,12 @@ std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodePa
 <tr class="memitem:aa75d71ec8d5ba62ccf2744d2b8206c70" id="r_aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa75d71ec8d5ba62ccf2744d2b8206c70">getTemplates</a> () const</td></tr>
 <tr class="memdesc:aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
 <tr class="separator:aa75d71ec8d5ba62ccf2744d2b8206c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c727ead5dba7645c6ba33d1849e54e3" id="r_a1c727ead5dba7645c6ba33d1849e54e3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c727ead5dba7645c6ba33d1849e54e3">getLabel</a> ()</td></tr>
-<tr class="memdesc:a1c727ead5dba7645c6ba33d1849e54e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope.  <br /></td></tr>
-<tr class="separator:a1c727ead5dba7645c6ba33d1849e54e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af45622ff0d66b10ec042448e4e4bba58" id="r_af45622ff0d66b10ec042448e4e4bba58"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af45622ff0d66b10ec042448e4e4bba58">getTypeName</a> ()</td></tr>
-<tr class="memdesc:af45622ff0d66b10ec042448e4e4bba58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name belonging to this type of node (eg. grid or transform). Not to be confused with the label.  <br /></td></tr>
-<tr class="separator:af45622ff0d66b10ec042448e4e4bba58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50b6c3d0b425bb9a865b5e7d6f709e85" id="r_a50b6c3d0b425bb9a865b5e7d6f709e85"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50b6c3d0b425bb9a865b5e7d6f709e85">getName</a> ()</td></tr>
+<tr class="memdesc:a50b6c3d0b425bb9a865b5e7d6f709e85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the runtime name uniquely identifying this node within its scope (eg. "my_node_05")  <br /></td></tr>
+<tr class="separator:a50b6c3d0b425bb9a865b5e7d6f709e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85fb3199911adab65ef977e8799c8fea" id="r_a85fb3199911adab65ef977e8799c8fea"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85fb3199911adab65ef977e8799c8fea">getType</a> () const</td></tr>
+<tr class="memdesc:a85fb3199911adab65ef977e8799c8fea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the static type definition this node was created from.  <br /></td></tr>
+<tr class="separator:a85fb3199911adab65ef977e8799c8fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a892fe23575ba1bf13956f3cb414d0922" id="r_a892fe23575ba1bf13956f3cb414d0922"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a892fe23575ba1bf13956f3cb414d0922">dirtyNode</a> (bool dirtyDescendents=true)</td></tr>
 <tr class="memdesc:a892fe23575ba1bf13956f3cb414d0922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the outputed geometry as outdated and notifies the network.  <br /></td></tr>
 <tr class="separator:a892fe23575ba1bf13956f3cb414d0922"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -337,14 +337,14 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="a1c727ead5dba7645c6ba33d1849e54e3" name="a1c727ead5dba7645c6ba33d1849e54e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c727ead5dba7645c6ba33d1849e54e3">&#9670;&#160;</a></span>getLabel()</h2>
+<a id="a50b6c3d0b425bb9a865b5e7d6f709e85" name="a50b6c3d0b425bb9a865b5e7d6f709e85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50b6c3d0b425bb9a865b5e7d6f709e85">&#9670;&#160;</a></span>getName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string enzo::nt::GeometryOperator::getLabel </td>
+          <td class="memname">std::string enzo::nt::GeometryOperator::getName </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -352,8 +352,9 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
       </table>
 </div><div class="memdoc">
 
-<p>NOT YET IMPLEMENTED. Returns the runtime label given to this node as a unique identifier within it's scope. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>implement </dd></dl>
+<p>Returns the runtime name uniquely identifying this node within its scope (eg. "my_node_05") </p>
+<p>Unlike the type name this is per node and is intended to be user assignable. </p><dl class="section note"><dt>Note</dt><dd>Uniqueness checked, user assignable labels are not yet implemented. The name is currently synthesized from the type name and op id. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo</a></b></dt><dd>implement user assignable, uniqueness checked node names </dd></dl>
 
 </div>
 </div>
@@ -438,23 +439,23 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
 
 </div>
 </div>
-<a id="af45622ff0d66b10ec042448e4e4bba58" name="af45622ff0d66b10ec042448e4e4bba58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af45622ff0d66b10ec042448e4e4bba58">&#9670;&#160;</a></span>getTypeName()</h2>
+<a id="a85fb3199911adab65ef977e8799c8fea" name="a85fb3199911adab65ef977e8799c8fea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85fb3199911adab65ef977e8799c8fea">&#9670;&#160;</a></span>getType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string enzo::nt::GeometryOperator::getTypeName </td>
+          <td class="memname">const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> &amp; enzo::nt::GeometryOperator::getType </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the name belonging to this type of node (eg. grid or transform). Not to be confused with the label. </p>
-<p>The type name decided at compile time and is shared across all nodes of the given type. All grids nodes share the same type name. Labels on the other hand are unique identifiers for a given runtime node (eg. myGrid1, groundGrid, wall). </p>
+<p>Returns the static type definition this node was created from. </p>
+<p>The type carries data shared by every node of the same type such as its name and label. Use <a class="el" href="#a85fb3199911adab65ef977e8799c8fea" title="Returns the static type definition this node was created from.">getType()</a>.<a class="el" href="#a50b6c3d0b425bb9a865b5e7d6f709e85" title="Returns the runtime name uniquely identifying this node within its scope (eg. &quot;my_node_05&quot;)">getName()</a> for the internal type name (eg. "copy_to_points") and <a class="el" href="#a85fb3199911adab65ef977e8799c8fea" title="Returns the static type definition this node was created from.">getType()</a>.getLabel() for the display label (eg. "Copy To Points"). </p>
 
 </div>
 </div>
