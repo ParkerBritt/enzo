@@ -28,10 +28,10 @@ enzo::ui::TabMenu::TabMenu(NetworkPanel* network) : PopupList(network), network_
     searchBar_->setObjectName("TabMenuSearch");
     searchBar_->setStyleSheet(R"(
     QWidget#TabMenuSearch {
-        background-color: rgba(20,20,20,0.8);
+        background-color: rgb(25,25,25);
         padding: 3px;
         border-radius: 6px;
-        border: 1px solid rgba(54,54,54, 0.7);
+        border: 1px solid #383838;
     }
     )");
     connect(searchBar_, &QLineEdit::textChanged, this, &TabMenu::applyFilter);

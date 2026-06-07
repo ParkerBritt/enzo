@@ -24,7 +24,7 @@ constexpr int scrollbarWidth = 3;
 constexpr int scrollbarMargin = 2;
 
 const QColor borderColor("#383838");
-const QColor backgroundColor("#202020");
+const QColor backgroundColor(25, 25, 25);
 const QColor textColor("#B3B3B3");
 const QColor selectedTextColor("#E6E6E6");
 const QColor hoverColor(60, 60, 60, 153);
@@ -83,7 +83,8 @@ void enzo::ui::PopupList::setHighlightedPosition(int position)
 
 void enzo::ui::PopupList::fitToContents()
 {
-    const int fullHeight = std::min(contentHeight(), maxPopupHeight);
+    // An empty subset collapses the list so only the header remains
+    const int fullHeight = visibleIndices_.empty() ? 0 : std::min(contentHeight(), maxPopupHeight);
     resize(width(), headerHeight() + fullHeight);
     revealedHeight_ = fullHeight;
     update();
@@ -221,6 +222,10 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // A collapsed list draws nothing so no border seam shows beneath the header
+    if (revealedHeight_ <= 0) return;
+
     painter.translate(0, headerHeight());
 
     // Grow the rounded box with the reveal so the bottom edge stays clean
