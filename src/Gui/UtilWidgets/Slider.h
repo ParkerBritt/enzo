@@ -4,6 +4,9 @@
 #include <QWidget>
 #include <qtmetamacros.h>
 
+class QPainter;
+class QRectF;
+
 namespace enzo::ui {
 
 /**
@@ -43,6 +46,10 @@ class Slider : public QWidget
     double normalizedToValue_(double normalized) const;
     double clampAndStep_(double value) const;
     void emitMoved_(double normalized);
+
+    void paintNotches_(QPainter& painter, const QRectF& trackRect) const;
+    void paintFill_(QPainter& painter, const QRectF& trackRect, const QRectF& fillRect) const;
+    void paintValueText_(QPainter& painter) const;
 
     double minValue_;
     double maxValue_;

@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QVBoxLayout>
 #include <algorithm>
 #include <cmath>
@@ -78,36 +79,60 @@ void enzo::ui::Slider::paintEvent(QPaintEvent*)
         valueRange > 0
             ? static_cast<float>(std::clamp<double>((value_ - minValue_) / valueRange, 0.0, 1.0))
             : 0.0f;
-    float fillWidth = (rect().width() - margin * 2) * fillPercent;
-    QRectF fillRect =
-        {rect().left() + margin, rect().top() + margin, fillWidth, rect().height() - margin * 2};
 
+    const QRectF trackRect = QRectF(rect()).adjusted(margin, margin, -margin, -margin);
+    QRectF fillRect = trackRect;
+    fillRect.setWidth(trackRect.width() * fillPercent);
+
+    paintNotches_(painter, trackRect);
+    paintFill_(painter, trackRect, fillRect);
+    paintValueText_(painter);
+}
+
+void enzo::ui::Slider::paintNotches_(QPainter& painter, const QRectF& trackRect) const
+{
     // Discrete step notches drawn when steps fit reasonably in the bar
-    if (step_ > 0.0 && valueRange > 0.0)
+    const double valueRange = maxValue_ - minValue_;
+    if (step_ <= 0.0 || valueRange <= 0.0) return;
+
+    const int notchCount = std::min<int>(static_cast<int>(valueRange / step_), 100);
+    if (notchCount <= 1) return;
+
+    painter.setPen(notchPen_);
+    for (int notchIndex = 1; notchIndex < notchCount; ++notchIndex)
     {
-        const int notchCount = std::min<int>(static_cast<int>(valueRange / step_), 100);
-        if (notchCount > 1)
-        {
-            painter.setPen(notchPen_);
-            QRectF notchRect = rect();
-            notchRect.adjust(margin, margin, -margin, -margin);
-            for (int i = 1; i < notchCount; ++i)
-            {
-                float x = ((i - 1) * notchRect.width()) / notchCount + 1 + 4;
-                const float y = notchRect.bottom() - 2;
-                painter.drawLine(x, y, x, y - 5);
-            }
-        }
+        const float x = ((notchIndex - 1) * trackRect.width()) / notchCount + 5;
+        const float y = trackRect.bottom() - 2;
+        painter.drawLine(x, y, x, y - 5);
     }
+}
 
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor("#383838"));
-    painter.drawRoundedRect(fillRect, 8, 8);
+void enzo::ui::Slider::paintFill_(
+    QPainter& painter,
+    const QRectF& trackRect,
+    const QRectF& fillRect
+) const
+{
+    // Reveal the full length rounded bar through a rounded mask at the fill width
+    // so the anchored left end keeps its radius and the moving right end stays round
+    constexpr double cornerRadius = 8;
+    QPainterPath fullBar;
+    fullBar.addRoundedRect(trackRect, cornerRadius, cornerRadius);
+    QPainterPath fillMask;
+    fillMask.addRoundedRect(fillRect, cornerRadius, cornerRadius);
 
-    QString valStr = QString::number(value_, 'g', displayDigits_);
-    valStr.truncate(displayDigits_);
+    painter.save();
+    painter.setClipPath(fillMask);
+    painter.fillPath(fullBar, QColor("#383838"));
+    painter.restore();
+}
+
+void enzo::ui::Slider::paintValueText_(QPainter& painter) const
+{
+    QString valueText = QString::number(value_, 'g', displayDigits_);
+    valueText.truncate(displayDigits_);
     painter.setPen(QColor("#B3B3B3"));
-    painter.drawText(rect(), Qt::AlignCenter, valStr);
+    painter.drawText(rect(), Qt::AlignCenter, valueText);
 }
 
 void enzo::ui::Slider::mousePressEvent(QMouseEvent* event)
