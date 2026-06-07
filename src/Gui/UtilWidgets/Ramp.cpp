@@ -237,6 +237,9 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
 {
     const QPointF pos = event->position();
 
+    // The host snapshots the pre edit state here before any point moves.
+    Q_EMIT editBegan();
+
     // Circle takes priority so the value handle stays reachable when stacked on the square
     activePoint_ = circleHitIndex_(pos);
     if (activePoint_ != -1)
@@ -313,4 +316,5 @@ void enzo::ui::Ramp::mouseReleaseEvent(QMouseEvent*)
 {
     activePoint_ = -1;
     activeHandle_ = Handle::None;
+    Q_EMIT editEnded();
 }

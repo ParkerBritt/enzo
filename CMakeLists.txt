@@ -261,6 +261,7 @@ if(ENZO_BUILD_TESTS)
         tests/ParameterTests.cpp
         tests/RampTests.cpp
         tests/SerializerTests.cpp
+        tests/UndoTests.cpp
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp
