@@ -260,6 +260,8 @@ void NetworkPanel::mouseMoved(QMouseEvent* event)
         )
         {
             floatingEdge_->setFloatPos(hoverSocket->scenePos());
+            hoverSocket->setHover(true);
+            prevHoverItems_.insert(hoverSocket);
         }
         else
         {
