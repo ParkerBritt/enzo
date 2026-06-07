@@ -40,6 +40,10 @@ enzo::ui::PopupList::PopupList(QWidget* parent) : QWidget(parent, Qt::Popup | Qt
     hoverAnim_ = new QPropertyAnimation(this, "highlightTop", this);
     hoverAnim_->setDuration(130);
     hoverAnim_->setEasingCurve(QEasingCurve::OutCubic);
+
+    scrollAnim_ = new QPropertyAnimation(this, "scrollOffset", this);
+    scrollAnim_->setDuration(180);
+    scrollAnim_->setEasingCurve(QEasingCurve::OutCubic);
 }
 
 void enzo::ui::PopupList::addItem(const Item& item)
@@ -71,7 +75,7 @@ void enzo::ui::PopupList::setHighlightedPosition(int position)
         selectedPosition_ = std::clamp(position, 0, static_cast<int>(visibleIndices_.size()) - 1);
         hoveredPosition_ = selectedPosition_;
     }
-    scrollOffset_ = 0;
+    jumpScrollTo(0);
     hoverAnim_->stop();
     highlightTop_ = padding + std::max(0, selectedPosition_) * itemHeight;
     update();
@@ -113,7 +117,7 @@ void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int s
 {
     selectedPosition_ = selectedPosition;
     hoveredPosition_ = selectedPosition;
-    scrollOffset_ = 0;
+    jumpScrollTo(0);
     closing_ = false;
 
     const int fullHeight = std::min(contentHeight(), maxPopupHeight);
@@ -153,17 +157,19 @@ void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int s
 
 void enzo::ui::PopupList::ensureVisible(int position)
 {
+    // Measure against the target so repeated steps walk past the fold smoothly
+    int desired = scrollTarget_;
     const int top = padding + position * itemHeight;
     const int bottom = top + itemHeight;
-    if (top - scrollOffset_ < padding)
+    if (top - desired < padding)
     {
-        scrollOffset_ = top - padding;
+        desired = top - padding;
     }
-    else if (bottom - scrollOffset_ > listHeight() - padding)
+    else if (bottom - desired > listHeight() - padding)
     {
-        scrollOffset_ = bottom - listHeight() + padding;
+        desired = bottom - listHeight() + padding;
     }
-    scrollOffset_ = std::clamp(scrollOffset_, 0, maxScrollOffset());
+    animateScrollTo(desired);
 }
 
 void enzo::ui::PopupList::animateHighlightTo(int position)
@@ -172,6 +178,23 @@ void enzo::ui::PopupList::animateHighlightTo(int position)
     hoverAnim_->setStartValue(highlightTop_);
     hoverAnim_->setEndValue(padding + position * itemHeight);
     hoverAnim_->start();
+}
+
+void enzo::ui::PopupList::animateScrollTo(int offset)
+{
+    scrollTarget_ = std::clamp(offset, 0, maxScrollOffset());
+    if (scrollTarget_ == scrollOffset_) return;
+    scrollAnim_->stop();
+    scrollAnim_->setStartValue(scrollOffset_);
+    scrollAnim_->setEndValue(scrollTarget_);
+    scrollAnim_->start();
+}
+
+void enzo::ui::PopupList::jumpScrollTo(int offset)
+{
+    scrollAnim_->stop();
+    scrollOffset_ = std::clamp(offset, 0, maxScrollOffset());
+    scrollTarget_ = scrollOffset_;
 }
 
 void enzo::ui::PopupList::moveHighlight(int delta)
@@ -355,8 +378,8 @@ void enzo::ui::PopupList::keyPressEvent(QKeyEvent* event)
 void enzo::ui::PopupList::wheelEvent(QWheelEvent* event)
 {
     if (maxScrollOffset() == 0) return;
-    scrollOffset_ = std::clamp(scrollOffset_ - event->angleDelta().y(), 0, maxScrollOffset());
-    update();
+    // Accumulate against the target so successive ticks glide further rather than restart
+    animateScrollTo(scrollTarget_ - event->angleDelta().y());
 }
 
 void enzo::ui::PopupList::animateClose()
