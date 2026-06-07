@@ -31,6 +31,7 @@ class Slider : public QWidget
 
     double value() const { return value_; }
     void setValue(double value);
+    void setRange(double minValue, double maxValue);
     void setDisplayPrecision(int digits);
 
   Q_SIGNALS:

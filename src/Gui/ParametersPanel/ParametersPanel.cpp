@@ -9,9 +9,9 @@
 #include "Gui/Parameters/GroupParm.h"
 #include "Gui/Parameters/IntSliderParm.h"
 #include "Gui/Parameters/Parameter.h"
+#include "Gui/Parameters/RampParm.h"
 #include "Gui/Parameters/StringParm.h"
 #include "Gui/Parameters/XYZParm.h"
-#include "Gui/UtilWidgets/Ramp.h"
 #include <qboxlayout.h>
 #include <qnamespace.h>
 #include <qwidget.h>
@@ -34,9 +34,6 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     )");
 
     mainLayout_->addWidget(bgWidget_);
-
-    // Temporary ramp preview
-    mainLayout_->addWidget(new enzo::ui::Ramp());
 
     setLayout(mainLayout_);
 }
@@ -99,6 +96,9 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
         break;
     case prm::Type::DROPDOWN:
         leafWidget = new ui::DropdownParm(parameter);
+        break;
+    case prm::Type::RAMP:
+        leafWidget = new ui::RampParm(parameter);
         break;
     default:
         throw std::runtime_error(

@@ -91,6 +91,7 @@ set(GUI_SOURCES
     src/Gui/Parameters/BoolIconSlashParm.cpp
     src/Gui/Parameters/BoolParm.cpp
     src/Gui/Parameters/XYZParm.cpp
+    src/Gui/Parameters/RampParm.cpp
     src/Gui/Parameters/StringParm.cpp
     src/Gui/Parameters/DropdownParm.cpp
     src/Gui/Parameters/GroupParm.cpp

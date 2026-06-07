@@ -21,6 +21,21 @@ class Ramp : public QWidget
   public:
     Ramp(QWidget* parent = nullptr);
 
+    /// @brief Replaces the displayed control points, one per QPointF where x is
+    /// position and y is value. Fits the value axis to span the points.
+    void setPoints(const std::vector<QPointF>& points);
+
+    /// @brief Marks which control point is the active one for the host editor.
+    void setSelectedPoint(int pointIndex);
+
+    /// @brief The current control points, one per QPointF where x is position
+    /// and y is value, ordered by position.
+    std::vector<QPointF> points() const;
+
+  Q_SIGNALS:
+    /// @brief Emitted whenever a drag or click changes the control points.
+    void edited();
+
   protected:
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -72,6 +87,7 @@ class Ramp : public QWidget
     int squareHitIndex_(const QPointF& pos) const;
 
     std::vector<ControlPoint> controlPoints_;
+    int selectedPoint_ = -1;
 
     int activePoint_ = -1;
     Handle activeHandle_ = Handle::None;

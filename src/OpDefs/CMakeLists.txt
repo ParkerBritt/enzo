@@ -34,6 +34,7 @@ add_library(${libName} SHARED
     ../Engine/Parameter/Default.cpp
     ../Engine/Parameter/Range.cpp
     ../Engine/Parameter/PrmName.cpp
+    ../Engine/Parameter/Ramp.cpp
     ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
