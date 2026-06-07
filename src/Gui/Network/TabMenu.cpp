@@ -51,10 +51,7 @@ enzo::ui::TabMenu::TabMenu(NetworkPanel* network) : PopupList(network), network_
     });
 }
 
-int enzo::ui::TabMenu::headerHeight() const
-{
-    return searchMargin * 2 + searchHeight;
-}
+int enzo::ui::TabMenu::headerHeight() const { return searchMargin * 2 + searchHeight; }
 
 void enzo::ui::TabMenu::showOnMouse(float dx, float dy)
 {

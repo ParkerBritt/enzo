@@ -955,8 +955,7 @@ std::shared_ptr<geo::Mesh> assembleMesh(
         // by walking the source face's corners and comparing point offsets.
         const std::span<const intT> sourceFacePoints =
             sourceMesh.getFacePoints(face.source.faceOffset);
-        const Offset sourceFaceStart =
-            sourceMesh.getFaceStartVertices()[face.source.faceOffset];
+        const Offset sourceFaceStart = sourceMesh.getFaceStartVertices()[face.source.faceOffset];
 
         for (size_t cornerIndex = 0; cornerIndex < face.loop.size(); ++cornerIndex)
         {

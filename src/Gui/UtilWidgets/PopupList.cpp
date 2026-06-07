@@ -31,7 +31,8 @@ const QColor hoverColor(60, 60, 60, 153);
 
 } // namespace
 
-enzo::ui::PopupList::PopupList(QWidget* parent) : QWidget(parent, Qt::Popup | Qt::FramelessWindowHint)
+enzo::ui::PopupList::PopupList(QWidget* parent)
+    : QWidget(parent, Qt::Popup | Qt::FramelessWindowHint)
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
     setMouseTracking(true);
@@ -54,10 +55,7 @@ enzo::ui::PopupList::PopupList(QWidget* parent) : QWidget(parent, Qt::Popup | Qt
     });
 }
 
-void enzo::ui::PopupList::addItem(const Item& item)
-{
-    items_.push_back(item);
-}
+void enzo::ui::PopupList::addItem(const Item& item) { items_.push_back(item); }
 
 void enzo::ui::PopupList::clearItems()
 {
@@ -116,10 +114,7 @@ int enzo::ui::PopupList::contentHeight() const
     return static_cast<int>(visibleIndices_.size()) * itemHeight + padding * 2;
 }
 
-int enzo::ui::PopupList::listHeight() const
-{
-    return height() - headerHeight();
-}
+int enzo::ui::PopupList::listHeight() const { return height() - headerHeight(); }
 
 int enzo::ui::PopupList::maxScrollOffset() const
 {
@@ -351,8 +346,7 @@ void enzo::ui::PopupList::mouseMoveEvent(QMouseEvent* event)
 void enzo::ui::PopupList::mousePressEvent(QMouseEvent* event)
 {
     const QPoint pos = event->pos();
-    const bool insideBox =
-        QRect(0, headerHeight(), width(), revealedHeight_).contains(pos);
+    const bool insideBox = QRect(0, headerHeight(), width(), revealedHeight_).contains(pos);
     if (insideBox)
     {
         const int position = rowAt(pos.y());
