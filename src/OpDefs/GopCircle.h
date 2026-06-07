@@ -14,4 +14,3 @@ class GopCircle : public enzo::nt::GeometryOpDef
 
     static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 };
-
