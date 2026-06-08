@@ -1,6 +1,7 @@
 #include "Gui/Parameters/RampParm.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include "Gui/UtilWidgets/Dropdown.h"
 #include "Gui/UtilWidgets/Ramp.h"
 #include "Gui/UtilWidgets/Slider.h"
 #include <QHBoxLayout>
@@ -11,8 +12,8 @@
 
 namespace {
 
-// Pairs a caption with its slider on one row.
-QHBoxLayout* sliderRow(const QString& label, enzo::ui::Slider* slider)
+// Pairs a caption with its field widget on one row.
+QHBoxLayout* fieldRow(const QString& label, QWidget* field)
 {
     QHBoxLayout* row = new QHBoxLayout();
     row->setContentsMargins(0, 0, 0, 0);
@@ -20,7 +21,7 @@ QHBoxLayout* sliderRow(const QString& label, enzo::ui::Slider* slider)
     caption->setStyleSheet("QLabel{background: none}");
     caption->setFixedWidth(60);
     row->addWidget(caption);
-    row->addWidget(slider);
+    row->addWidget(field);
     return row;
 }
 
@@ -41,9 +42,20 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     positionSlider_ = new Slider(0, 1, true, true, 0.0);
     valueSlider_ = new Slider(0, 1, false, false, 0.0);
 
-    column->addLayout(sliderRow("Point", indexSlider_));
-    column->addLayout(sliderRow("Position", positionSlider_));
-    column->addLayout(sliderRow("Value", valueSlider_));
+    interpDropdown_ = new Dropdown();
+    // Populate dropdown with options
+    const prm::Template& interpTemplate =
+        std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate().getChild("interp");
+    for (const prm::Name& option : interpTemplate.getOptions())
+        interpDropdown_->addItem(
+            QString::fromStdString(option.getLabel()),
+            QString::fromStdString(option.getToken())
+        );
+
+    column->addLayout(fieldRow("Point", indexSlider_));
+    column->addLayout(fieldRow("Position", positionSlider_));
+    column->addLayout(fieldRow("Value", valueSlider_));
+    column->addLayout(fieldRow("Interp", interpDropdown_));
 
     contentLayout_->addLayout(column);
 
@@ -58,6 +70,7 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     connect(indexSlider_, &Slider::sliderMoved, this, &RampParm::onIndexMoved);
     connect(positionSlider_, &Slider::sliderMoved, this, &RampParm::onPositionMoved);
     connect(valueSlider_, &Slider::sliderMoved, this, &RampParm::onValueMoved);
+    connect(interpDropdown_, &Dropdown::currentIndexChanged, this, &RampParm::onInterpChanged);
 
     // Position and value drags edit instance fields, so each drag is one undo step.
     connect(positionSlider_, &Slider::sliderPressed, this, &RampParm::beginEdit);
@@ -107,6 +120,17 @@ void enzo::ui::RampParm::onPositionMoved(double value)
 void enzo::ui::RampParm::onValueMoved(double value)
 {
     if (auto field = selectedField_("value")) field->setFloat(static_cast<floatT>(value));
+}
+
+void enzo::ui::RampParm::onInterpChanged()
+{
+    auto field = selectedField_("interp");
+    if (!field) return;
+
+    // An interp change is a single edit, so snapshot and commit it as one undo step.
+    beginEdit();
+    field->setString(interpDropdown_->currentData().toStdString());
+    commitEdit();
 }
 
 void enzo::ui::RampParm::beginEdit()
@@ -192,4 +216,10 @@ void enzo::ui::RampParm::syncSelectedFields()
     indexSlider_->setValue(selectedInstance_);
     if (auto field = selectedField_("position")) positionSlider_->setValue(field->evalFloat());
     if (auto field = selectedField_("value")) valueSlider_->setValue(field->evalFloat());
+    if (auto field = selectedField_("interp"))
+    {
+        interpDropdown_->blockSignals(true);
+        interpDropdown_->setCurrentData(QString::fromStdString(field->evalString()));
+        interpDropdown_->blockSignals(false);
+    }
 }

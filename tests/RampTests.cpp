@@ -1,14 +1,14 @@
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Ramp.h"
+#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 using namespace enzo;
 
 namespace {
 
-prm::Ramp::Key makeKey(
-    floatT position, floatT value, prm::Interpolation interp = prm::Interpolation::LINEAR
-)
+prm::Ramp::Key
+makeKey(floatT position, floatT value, prm::Interpolation interp = prm::Interpolation::LINEAR)
 {
     return {position, value, interp};
 }
@@ -39,13 +39,47 @@ TEST_CASE("Linear interpolation blends between neighbouring keys")
 
 TEST_CASE("Constant interpolation holds the left key value across the segment")
 {
-    prm::Ramp ramp(std::vector<prm::Ramp::Key>{
-        makeKey(0, 3, prm::Interpolation::CONSTANT),
-        makeKey(1, 9),
-    });
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 3, prm::Interpolation::CONSTANT),
+            makeKey(1, 9),
+        }
+    );
 
     REQUIRE(ramp.sample(0.0) == 3);
     REQUIRE(ramp.sample(0.99) == 3);
+}
+
+TEST_CASE("B spline interpolation reproduces a straight line on interior segments")
+{
+    // A uniform cubic B spline has linear precision, so evenly spaced collinear
+    // keys stay on the line away from the clamped end segments.
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 10, prm::Interpolation::BSPLINE),
+            makeKey(2, 20, prm::Interpolation::BSPLINE),
+            makeKey(3, 30, prm::Interpolation::BSPLINE),
+        }
+    );
+
+    REQUIRE(ramp.sample(1.5) == 15);
+}
+
+TEST_CASE("B spline interpolation smooths symmetrically around a peak")
+{
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 1, prm::Interpolation::BSPLINE),
+            makeKey(2, 0, prm::Interpolation::BSPLINE),
+        }
+    );
+
+    // The curve approaches rather than touches the peak key.
+    REQUIRE(ramp.sample(1.0) == Catch::Approx(2.0 / 3.0));
+    // A symmetric configuration samples symmetrically about the peak.
+    REQUIRE(ramp.sample(0.5) == Catch::Approx(ramp.sample(1.5)));
 }
 
 TEST_CASE("A ramp snapshot sorts the control points by position")

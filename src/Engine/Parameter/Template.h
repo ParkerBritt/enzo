@@ -51,12 +51,21 @@ class Template
      */
     const std::vector<prm::Name>& getOptions() const;
     bool hasOptions() const;
+
+    /// @brief The number of available options.
+    intT getNumOptions() const;
+
     const prm::Type getType() const;
     const unsigned int getSize() const;
     const unsigned int getNumDefaults() const;
 
     Direction getDirection() const;
     const std::vector<Template>& getChildren() const;
+
+    /// @brief Returns the child template with the given token.
+    /// @note Throws std::out_of_range when no child carries the token.
+    const Template& getChild(const enzo::String& token) const;
+
     const bool isContainer() const;
     bool isMultiParm() const;
 

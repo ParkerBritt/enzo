@@ -1,12 +1,13 @@
 #include <Engine/Attribute/AttributeHandle.h>
-#include <Engine/Primitives/Mesh.h>
 #include <Engine/Core/Types.h>
+#include <Engine/Primitives/Mesh.h>
 #include <catch2/catch_test_macros.hpp>
 #include <cmath>
 
 using namespace enzo;
 
-TEST_CASE("Delete faces") {
+TEST_CASE("Delete faces")
+{
     geo::Mesh mesh;
     auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
     auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
@@ -28,7 +29,8 @@ TEST_CASE("Delete faces") {
     REQUIRE(mesh.isValidVertex(6));
 }
 
-TEST_CASE("Delete points") {
+TEST_CASE("Delete points")
+{
     geo::Mesh mesh;
 
     // Create points
@@ -63,7 +65,8 @@ TEST_CASE("Delete points") {
     REQUIRE(mesh.isValidVertex(5));
 }
 
-TEST_CASE("Delete vertices") {
+TEST_CASE("Delete vertices")
+{
     geo::Mesh mesh;
 
     // Create points
@@ -91,7 +94,8 @@ TEST_CASE("Delete vertices") {
     REQUIRE(mesh.isValidPoint(2));
 }
 
-TEST_CASE("Delete face adds points to solo") {
+TEST_CASE("Delete face adds points to solo")
+{
     geo::Mesh mesh;
 
     // Create points
@@ -112,7 +116,8 @@ TEST_CASE("Delete face adds points to solo") {
     REQUIRE(mesh.getNumSoloPoints() == 3);
 }
 
-TEST_CASE("Delete all vertices on face") {
+TEST_CASE("Delete all vertices on face")
+{
     geo::Mesh mesh;
 
     // Create points
@@ -140,7 +145,8 @@ TEST_CASE("Delete all vertices on face") {
     REQUIRE(mesh.isValidPoint(2));
 }
 
-TEST_CASE("Delete points and faces") {
+TEST_CASE("Delete points and faces")
+{
     geo::Mesh mesh;
 
     // Create points
@@ -175,7 +181,8 @@ TEST_CASE("Delete points and faces") {
     REQUIRE(mesh.isValidVertex(5));
 }
 
-TEST_CASE("Create face group") {
+TEST_CASE("Create face group")
+{
     geo::Mesh mesh;
 
     // Build a mesh with two faces
@@ -199,7 +206,8 @@ TEST_CASE("Create face group") {
     REQUIRE(handle.getValue(1) == false);
 }
 
-TEST_CASE("Add to face group") {
+TEST_CASE("Add to face group")
+{
     geo::Mesh mesh;
 
     // Build a mesh with three faces
@@ -220,7 +228,8 @@ TEST_CASE("Add to face group") {
     REQUIRE(handle.getValue(2) == true);
 }
 
-TEST_CASE("Create primitive group") {
+TEST_CASE("Create primitive group")
+{
     geo::Mesh mesh;
 
     // Primitive groups have exactly one slot per primitive
@@ -237,7 +246,8 @@ TEST_CASE("Create primitive group") {
     REQUIRE(handle.getValue(0) == true);
 }
 
-TEST_CASE("Group name can match attribute name") {
+TEST_CASE("Group name can match attribute name")
+{
     geo::Mesh mesh;
 
     // Build a mesh with one face
@@ -258,7 +268,8 @@ TEST_CASE("Group name can match attribute name") {
     REQUIRE(attribute != group);
 }
 
-TEST_CASE("Group survives defragment") {
+TEST_CASE("Group survives defragment")
+{
     geo::Mesh mesh;
 
     // Build a mesh with three faces, put faces 0 and 2 in a group
@@ -284,7 +295,8 @@ TEST_CASE("Group survives defragment") {
     REQUIRE(handle.getValue(1) == true);
 }
 
-TEST_CASE("Add faces") {
+TEST_CASE("Add faces")
+{
     geo::Mesh mesh;
 
     // Build the source points
@@ -295,8 +307,13 @@ TEST_CASE("Add faces") {
 
     // Two triangles in a single batch call
     std::vector<Offset> pointOffsetsFlat{
-        pointOffset0, pointOffset1, pointOffset2,
-        pointOffset1, pointOffset2, pointOffset3};
+        pointOffset0,
+        pointOffset1,
+        pointOffset2,
+        pointOffset1,
+        pointOffset2,
+        pointOffset3
+    };
     std::vector<Offset> vertexCounts{3, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
@@ -320,7 +337,8 @@ TEST_CASE("Add faces") {
     REQUIRE(face1Points[2] == static_cast<intT>(pointOffset3));
 }
 
-TEST_CASE("Add faces mixed sizes") {
+TEST_CASE("Add faces mixed sizes")
+{
     geo::Mesh mesh;
 
     // Build the source points
@@ -332,8 +350,14 @@ TEST_CASE("Add faces mixed sizes") {
 
     // One quad, one tri
     std::vector<Offset> pointOffsetsFlat{
-        pointOffset0, pointOffset1, pointOffset2, pointOffset3,
-        pointOffset0, pointOffset1, pointOffset4};
+        pointOffset0,
+        pointOffset1,
+        pointOffset2,
+        pointOffset3,
+        pointOffset0,
+        pointOffset1,
+        pointOffset4
+    };
     std::vector<Offset> vertexCounts{4, 3};
     auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts);
 
@@ -349,7 +373,8 @@ TEST_CASE("Add faces mixed sizes") {
     REQUIRE(triPoints[2] == static_cast<intT>(pointOffset4));
 }
 
-TEST_CASE("Add faces resizes group") {
+TEST_CASE("Add faces resizes group")
+{
     geo::Mesh mesh;
 
     // Build a mesh with two faces, both in a group
@@ -376,7 +401,8 @@ TEST_CASE("Add faces resizes group") {
     REQUIRE(handle.getValue(2) == false);
 }
 
-TEST_CASE("Face normal of axis aligned quad") {
+TEST_CASE("Face normal of axis aligned quad")
+{
     geo::Mesh mesh;
 
     // CCW from +Y so the right hand rule normal is +Y
@@ -390,7 +416,8 @@ TEST_CASE("Face normal of axis aligned quad") {
     REQUIRE(faceNormals[0] == Vector3(0, 1, 0));
 }
 
-TEST_CASE("Face normal of tilted triangle uses Newell's method") {
+TEST_CASE("Face normal of tilted triangle uses Newell's method")
+{
     geo::Mesh mesh;
 
     // Triangle in the plane y = -z (normal direction (0, -1, 1)/sqrt(2))
@@ -408,7 +435,8 @@ TEST_CASE("Face normal of tilted triangle uses Newell's method") {
     REQUIRE(std::abs(normal.z() - oneOverRoot2) < eps);
 }
 
-TEST_CASE("Face normal prefers Normal attribute over Newell") {
+TEST_CASE("Face normal prefers Normal attribute over Newell")
+{
     geo::Mesh mesh;
 
     auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
@@ -426,7 +454,8 @@ TEST_CASE("Face normal prefers Normal attribute over Newell") {
     REQUIRE(faceNormals[0] == Vector3(1, 0, 0));
 }
 
-TEST_CASE("Face normal precompute path matches on the fly") {
+TEST_CASE("Face normal precompute path matches on the fly")
+{
     geo::Mesh mesh;
 
     // Two faces with different orientations
@@ -444,7 +473,8 @@ TEST_CASE("Face normal precompute path matches on the fly") {
     REQUIRE(onTheFly[1] == precomputed[1]);
 }
 
-TEST_CASE("Vertex normal falls back to owning face") {
+TEST_CASE("Vertex normal falls back to owning face")
+{
     geo::Mesh mesh;
 
     // Axis aligned quad, face normal is +Y
@@ -461,7 +491,8 @@ TEST_CASE("Vertex normal falls back to owning face") {
     REQUIRE(vertexNormals[3] == Vector3(0, 1, 0));
 }
 
-TEST_CASE("Vertex normal prefers Normal attribute over face fallback") {
+TEST_CASE("Vertex normal prefers Normal attribute over face fallback")
+{
     geo::Mesh mesh;
 
     auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));

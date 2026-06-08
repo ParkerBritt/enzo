@@ -8,12 +8,13 @@ namespace enzo::prm {
 class Parameter;
 
 /// @brief How a ramp blends from one control point to the next.
-// The full set also includes catmull rom, monotone cubic, bezier, b spline, and
-// hermite. Only constant and linear are sampled today.
+// The full set also includes catmull rom, monotone cubic, bezier, and hermite.
+// Only constant, linear, and b spline are sampled today.
 enum class Interpolation
 {
     CONSTANT,
-    LINEAR
+    LINEAR,
+    BSPLINE
 };
 
 /// @brief A sampled snapshot of a ramp parameter read during cook.
@@ -43,6 +44,9 @@ class Ramp
     const Key& key(size_t index) const;
 
   private:
+    /// @brief Samples the segment after @p leftIndex as a uniform cubic b spline.
+    floatT sampleBSpline(size_t leftIndex, floatT fraction) const;
+
     std::vector<Key> keys_;
 };
 

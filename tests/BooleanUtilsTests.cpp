@@ -1,8 +1,8 @@
 #include <Engine/Attribute/AttributeHandle.h>
-#include <Engine/Primitives/Mesh.h>
 #include <Engine/Core/Types.h>
 #include <Engine/GeometryAlgorithms/BooleanUtils.h>
 #include <Engine/GeometryAlgorithms/MeshShapes.h>
+#include <Engine/Primitives/Mesh.h>
 #include <catch2/catch_test_macros.hpp>
 
 #include <cmath>
@@ -27,7 +27,6 @@ size_t countFacesWithVertexCount(const geo::Mesh& mesh, unsigned int expected)
 
 } // namespace
 
-
 TEST_CASE("Union of two disjoint cubes preserves both as quads")
 {
     // Build two cubes that do not touch.
@@ -43,7 +42,6 @@ TEST_CASE("Union of two disjoint cubes preserves both as quads")
     REQUIRE(countFacesWithVertexCount(*result, 3) == 0);
 }
 
-
 TEST_CASE("Union of overlapping cubes keeps un-cut quads as quads")
 {
     // Offset along every axis so no pair of input face planes is coplanar.
@@ -53,10 +51,10 @@ TEST_CASE("Union of overlapping cubes keeps un-cut quads as quads")
     auto result = utils::booleanMesh(*cubeA, *cubeB, utils::BooleanOp::UNION);
     REQUIRE(result != nullptr);
 
-    // Cube A's three negative-axis faces and cube B's three positive-axis faces lie entirely outside the other cube, so they should survive as quads.
+    // Cube A's three negative-axis faces and cube B's three positive-axis faces lie entirely
+    // outside the other cube, so they should survive as quads.
     REQUIRE(countFacesWithVertexCount(*result, 4) >= 6);
 }
-
 
 TEST_CASE("Face attribute carries from source mesh to result face")
 {
@@ -87,13 +85,14 @@ TEST_CASE("Face attribute carries from source mesh to result face")
     {
         if (!result->isValidFace(faceOffset)) continue;
         const auto value = tagHandle.getValue(faceOffset);
-        if (value == 11) ++fromA;
-        else if (value == 22) ++fromB;
+        if (value == 11)
+            ++fromA;
+        else if (value == 22)
+            ++fromB;
     }
     REQUIRE(fromA == 6);
     REQUIRE(fromB == 6);
 }
-
 
 TEST_CASE("Point attribute survives on un-cut points")
 {
@@ -123,13 +122,14 @@ TEST_CASE("Point attribute survives on un-cut points")
     {
         if (!result->isValidPoint(pointOffset)) continue;
         const auto value = srcHandle.getValue(pointOffset);
-        if (value == 1) ++fromA;
-        else if (value == 2) ++fromB;
+        if (value == 1)
+            ++fromA;
+        else if (value == 2)
+            ++fromB;
     }
     REQUIRE(fromA == 8);
     REQUIRE(fromB == 8);
 }
-
 
 TEST_CASE("Cut point interpolates point attribute from edge endpoints")
 {

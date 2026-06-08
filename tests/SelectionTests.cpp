@@ -1,9 +1,9 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Primitive.h"
-#include <catch2/catch_test_macros.hpp>
+#include <Engine/Primitives/Mesh.h>
 #include <Engine/Selection/IndexSet.h>
 #include <Engine/Selection/Selection.h>
-#include <Engine/Primitives/Mesh.h>
+#include <catch2/catch_test_macros.hpp>
 #include <memory>
 
 using namespace enzo;
@@ -38,19 +38,22 @@ TEST_CASE("containsPrim")
     REQUIRE_FALSE(selection.containsPrim(unselectedPrim));
 }
 
-TEST_CASE("Selection containsFace for explicit face indices") {
+TEST_CASE("Selection containsFace for explicit face indices")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected f{10}");
     REQUIRE(selection.containsFace(prim, 10, 10));
     REQUIRE_FALSE(selection.containsFace(prim, 11, 11));
 }
 
-TEST_CASE("Selection getFaces explicit indices") {
+TEST_CASE("Selection getFaces explicit indices")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 11; ++i) {
+    for (int i = 0; i < 11; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{10}");
@@ -58,25 +61,29 @@ TEST_CASE("Selection getFaces explicit indices") {
     REQUIRE(faces == std::vector<Index>{10});
 }
 
-TEST_CASE("Selection containsFace wildcard") {
+TEST_CASE("Selection containsFace wildcard")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected f{*}");
     REQUIRE(selection.containsFace(prim, 0, 0));
     REQUIRE(selection.containsFace(prim, 999, 999));
 }
 
-TEST_CASE("Selection wildcard does not apply to unselected prims") {
+TEST_CASE("Selection wildcard does not apply to unselected prims")
+{
     geo::PrimPtr other = std::make_shared<geo::Mesh>("/other");
     Selection selection("/selected f{*}");
     REQUIRE_FALSE(selection.containsFace(other, 0, 0));
 }
 
-TEST_CASE("Selection getFaces wildcard") {
+TEST_CASE("Selection getFaces wildcard")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{*}");
@@ -84,7 +91,8 @@ TEST_CASE("Selection getFaces wildcard") {
     REQUIRE(faces == std::vector<Index>{0, 1, 2, 3, 4});
 }
 
-TEST_CASE("Selection empty string selects every prim") {
+TEST_CASE("Selection empty string selects every prim")
+{
     NodePacket packet;
     geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
     geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
@@ -100,7 +108,8 @@ TEST_CASE("Selection empty string selects every prim") {
     REQUIRE(selection.containsPrim(b, true));
 }
 
-TEST_CASE("Selection empty string contains every component") {
+TEST_CASE("Selection empty string contains every component")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
     Selection selection("");
 
@@ -113,9 +122,11 @@ TEST_CASE("Selection empty string contains every component") {
     REQUIRE(selection.containsVertex(prim, 999, 999));
 }
 
-TEST_CASE("Selection empty string getPoints returns all points") {
+TEST_CASE("Selection empty string getPoints returns all points")
+{
     auto mesh = std::make_shared<geo::Mesh>("/foo");
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         mesh->addPoint(Vector3(i, 0, 0));
     }
     Selection selection("");
@@ -123,12 +134,14 @@ TEST_CASE("Selection empty string getPoints returns all points") {
     REQUIRE(points == std::vector<Offset>{0, 1, 2, 3});
 }
 
-TEST_CASE("Selection empty string getFaces returns all faces") {
+TEST_CASE("Selection empty string getFaces returns all faces")
+{
     auto mesh = std::make_shared<geo::Mesh>("/foo");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("");
@@ -136,7 +149,8 @@ TEST_CASE("Selection empty string getFaces returns all faces") {
     REQUIRE(faces == std::vector<Offset>{0, 1, 2});
 }
 
-TEST_CASE("Selection empty string inverted selects nothing") {
+TEST_CASE("Selection empty string inverted selects nothing")
+{
     NodePacket packet;
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
     packet.addPrimitive(prim);
@@ -152,7 +166,8 @@ TEST_CASE("Selection empty string inverted selects nothing") {
     REQUIRE_FALSE(selection.containsVertex(prim, 0, 0));
 }
 
-TEST_CASE("Selection without path getPrims returns all prims") {
+TEST_CASE("Selection without path getPrims returns all prims")
+{
     NodePacket packet;
     geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
     geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
@@ -164,7 +179,8 @@ TEST_CASE("Selection without path getPrims returns all prims") {
     REQUIRE(prims.size() == 2);
 }
 
-TEST_CASE("Selection without path containsPoint matches on any prim") {
+TEST_CASE("Selection without path containsPoint matches on any prim")
+{
     geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
     geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
 
@@ -174,7 +190,8 @@ TEST_CASE("Selection without path containsPoint matches on any prim") {
     REQUIRE_FALSE(selection.containsPoint(a, 1, 1));
 }
 
-TEST_CASE("Selection without path containsPrim is partial") {
+TEST_CASE("Selection without path containsPrim is partial")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/foo");
 
     Selection selection("p{0}");
@@ -182,14 +199,16 @@ TEST_CASE("Selection without path containsPrim is partial") {
     REQUIRE_FALSE(selection.containsPrim(prim, true));
 }
 
-TEST_CASE("setInverted toggles the flag") {
+TEST_CASE("setInverted toggles the flag")
+{
     Selection selection("/a");
     REQUIRE_FALSE(selection.getInverted());
     selection.setInverted(true);
     REQUIRE(selection.getInverted());
 }
 
-TEST_CASE("containsPrim inverted") {
+TEST_CASE("containsPrim inverted")
+{
     geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
     geo::PrimPtr unselectedPrim = std::make_shared<geo::Mesh>("/unselected");
 
@@ -208,7 +227,8 @@ TEST_CASE("containsPrim inverted") {
     REQUIRE(partial.containsPrim(unselectedPrim, true));
 }
 
-TEST_CASE("containsFace inverted") {
+TEST_CASE("containsFace inverted")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected f{10}");
     selection.setInverted(true);
@@ -216,7 +236,8 @@ TEST_CASE("containsFace inverted") {
     REQUIRE(selection.containsFace(prim, 11, 11));
 }
 
-TEST_CASE("getPrims inverted includes unmentioned prims") {
+TEST_CASE("getPrims inverted includes unmentioned prims")
+{
     NodePacket packet;
     geo::PrimPtr selectedPrim = std::make_shared<geo::Mesh>("/selected");
     geo::PrimPtr unselectedPrim = std::make_shared<geo::Mesh>("/unselected");
@@ -230,7 +251,8 @@ TEST_CASE("getPrims inverted includes unmentioned prims") {
     REQUIRE(prims[0]->getPath() == "/unselected");
 }
 
-TEST_CASE("Selection containsPoint range") {
+TEST_CASE("Selection containsPoint range")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected p{0-8}");
 
@@ -243,7 +265,8 @@ TEST_CASE("Selection containsPoint range") {
     REQUIRE_FALSE(selection.containsPoint(prim, 9, 9));
 }
 
-TEST_CASE("Selection containsFace range") {
+TEST_CASE("Selection containsFace range")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected f{2-4}");
     REQUIRE_FALSE(selection.containsFace(prim, 1, 1));
@@ -253,7 +276,8 @@ TEST_CASE("Selection containsFace range") {
     REQUIRE_FALSE(selection.containsFace(prim, 5, 5));
 }
 
-TEST_CASE("Selection range mixed with explicit indices") {
+TEST_CASE("Selection range mixed with explicit indices")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected p{0-2 5 7-8}");
 
@@ -272,7 +296,8 @@ TEST_CASE("Selection range mixed with explicit indices") {
     REQUIRE_FALSE(selection.containsPoint(prim, 9, 9));
 }
 
-TEST_CASE("Selection range single-element treats endpoints equally") {
+TEST_CASE("Selection range single-element treats endpoints equally")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected p{3-3}");
     REQUIRE(selection.containsPoint(prim, 3, 3));
@@ -280,10 +305,12 @@ TEST_CASE("Selection range single-element treats endpoints equally") {
     REQUIRE_FALSE(selection.containsPoint(prim, 4, 4));
 }
 
-TEST_CASE("Selection getPoints range walks valid points") {
+TEST_CASE("Selection getPoints range walks valid points")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     // Build 10 points so we can range across them
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 10; ++i)
+    {
         mesh->addPoint(Vector3(i, 0, 0));
     }
     Selection selection("/selected p{2-5}");
@@ -291,12 +318,14 @@ TEST_CASE("Selection getPoints range walks valid points") {
     REQUIRE(points == std::vector<Offset>{2, 3, 4, 5});
 }
 
-TEST_CASE("getFaces inverted returns complement") {
+TEST_CASE("getFaces inverted returns complement")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected f{2}");
@@ -308,7 +337,8 @@ TEST_CASE("getFaces inverted returns complement") {
 // Inverting a partial selection only flips membership for the primitive part
 // it actually talks about. A face-only selection inverted is still face-only.
 
-TEST_CASE("Inverted face-only selection leaves points untouched") {
+TEST_CASE("Inverted face-only selection leaves points untouched")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
     Selection selection("/mesh f{0-20}");
     selection.setInverted(true);
@@ -326,12 +356,14 @@ TEST_CASE("Inverted face-only selection leaves points untouched") {
     REQUIRE_FALSE(selection.containsVertex(prim, 99, 99));
 }
 
-TEST_CASE("Inverted face-only getPoints and getVertices are empty") {
+TEST_CASE("Inverted face-only getPoints and getVertices are empty")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/mesh f{0}");
@@ -343,7 +375,8 @@ TEST_CASE("Inverted face-only getPoints and getVertices are empty") {
     REQUIRE(selection.getFaces(mesh) == std::vector<Offset>{1, 2, 3, 4});
 }
 
-TEST_CASE("Inverted point-only selection leaves faces and vertices untouched") {
+TEST_CASE("Inverted point-only selection leaves faces and vertices untouched")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
     Selection selection("/mesh p{0-2}");
     selection.setInverted(true);
@@ -356,7 +389,8 @@ TEST_CASE("Inverted point-only selection leaves faces and vertices untouched") {
     REQUIRE_FALSE(selection.containsVertex(prim, 0, 0));
 }
 
-TEST_CASE("Inverted vertex-only selection leaves faces and points untouched") {
+TEST_CASE("Inverted vertex-only selection leaves faces and points untouched")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/mesh");
     Selection selection("/mesh v{0-2}");
     selection.setInverted(true);
@@ -369,7 +403,8 @@ TEST_CASE("Inverted vertex-only selection leaves faces and points untouched") {
     REQUIRE_FALSE(selection.containsPoint(prim, 0, 0));
 }
 
-TEST_CASE("Inverted pathless face selection inverts faces on every prim") {
+TEST_CASE("Inverted pathless face selection inverts faces on every prim")
+{
     geo::PrimPtr a = std::make_shared<geo::Mesh>("/a");
     geo::PrimPtr b = std::make_shared<geo::Mesh>("/b");
     Selection selection("f{0-2}");
@@ -387,30 +422,35 @@ TEST_CASE("Inverted pathless face selection inverts faces on every prim") {
 
 // Whole-prim selection: no blocks present, so every component is implicitly included.
 
-TEST_CASE("containsPoint whole-prim") {
+TEST_CASE("containsPoint whole-prim")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected");
     REQUIRE(selection.containsPoint(prim, 0, 0));
     REQUIRE(selection.containsPoint(prim, 42, 42));
 }
 
-TEST_CASE("containsFace whole-prim") {
+TEST_CASE("containsFace whole-prim")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected");
     REQUIRE(selection.containsFace(prim, 0, 0));
     REQUIRE(selection.containsFace(prim, 42, 42));
 }
 
-TEST_CASE("containsVertex whole-prim") {
+TEST_CASE("containsVertex whole-prim")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected");
     REQUIRE(selection.containsVertex(prim, 0, 0));
     REQUIRE(selection.containsVertex(prim, 42, 42));
 }
 
-TEST_CASE("getPoints whole-prim") {
+TEST_CASE("getPoints whole-prim")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i)
+    {
         mesh->addPoint(Vector3(i, 0, 0));
     }
     Selection selection("/selected");
@@ -418,12 +458,14 @@ TEST_CASE("getPoints whole-prim") {
     REQUIRE(points == std::vector<Offset>{0, 1, 2, 3, 4});
 }
 
-TEST_CASE("getFaces whole-prim") {
+TEST_CASE("getFaces whole-prim")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset p2 = mesh->addPoint(Vector3(0, 1, 0));
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
+    {
         mesh->addFace({p0, p1, p2});
     }
     Selection selection("/selected");
@@ -431,7 +473,8 @@ TEST_CASE("getFaces whole-prim") {
     REQUIRE(faces == std::vector<Offset>{0, 1, 2});
 }
 
-TEST_CASE("getVertices whole-prim") {
+TEST_CASE("getVertices whole-prim")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
@@ -444,25 +487,29 @@ TEST_CASE("getVertices whole-prim") {
 
 // Partial selection: any block present restricts the selection to only those listed blocks.
 
-TEST_CASE("containsFace excluded when only points listed") {
+TEST_CASE("containsFace excluded when only points listed")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected p{0}");
     REQUIRE_FALSE(selection.containsFace(prim, 0, 0));
 }
 
-TEST_CASE("containsVertex excluded when only points listed") {
+TEST_CASE("containsVertex excluded when only points listed")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected p{0}");
     REQUIRE_FALSE(selection.containsVertex(prim, 0, 0));
 }
 
-TEST_CASE("containsPoint excluded when only faces listed") {
+TEST_CASE("containsPoint excluded when only faces listed")
+{
     geo::PrimPtr prim = std::make_shared<geo::Mesh>("/selected");
     Selection selection("/selected f{0}");
     REQUIRE_FALSE(selection.containsPoint(prim, 0, 0));
 }
 
-TEST_CASE("getFaces empty when only points listed") {
+TEST_CASE("getFaces empty when only points listed")
+{
     auto mesh = std::make_shared<geo::Mesh>("/selected");
     Offset p0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset p1 = mesh->addPoint(Vector3(1, 0, 0));
@@ -475,7 +522,8 @@ TEST_CASE("getFaces empty when only points listed") {
 
 // Group selections: a name without a leading slash names a group rather than a path.
 
-TEST_CASE("Selection by group name returns faces in the group") {
+TEST_CASE("Selection by group name returns faces in the group")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Build three faces, mark 0 and 2 as members of the group
@@ -493,7 +541,8 @@ TEST_CASE("Selection by group name returns faces in the group") {
     REQUIRE(faces == std::vector<Offset>{0, 2});
 }
 
-TEST_CASE("Two group components combine into the union of their faces") {
+TEST_CASE("Two group components combine into the union of their faces")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
     Offset point0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset point1 = mesh->addPoint(Vector3(1, 0, 0));
@@ -512,7 +561,8 @@ TEST_CASE("Two group components combine into the union of their faces") {
     REQUIRE(selection.getFaces(mesh) == std::vector<Offset>{0, 2});
 }
 
-TEST_CASE("Inverting two group components selects the complement of their union") {
+TEST_CASE("Inverting two group components selects the complement of their union")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
     Offset point0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset point1 = mesh->addPoint(Vector3(1, 0, 0));
@@ -533,7 +583,8 @@ TEST_CASE("Inverting two group components selects the complement of their union"
     REQUIRE(selection.getFaces(mesh) == std::vector<Offset>{1, 3});
 }
 
-TEST_CASE("Selection by group name uses offsets not compacted indices") {
+TEST_CASE("Selection by group name uses offsets not compacted indices")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Four faces, then delete the second so storage offsets and compacted
@@ -556,7 +607,8 @@ TEST_CASE("Selection by group name uses offsets not compacted indices") {
     REQUIRE(selection.getFaces(mesh) == std::vector<Offset>{3});
 }
 
-TEST_CASE("Inverted face group selects no points or vertices") {
+TEST_CASE("Inverted face group selects no points or vertices")
+{
     // Mirrors an extrude feeding a delete: a face-only group, then inverted.
     // The group says nothing about points or vertices, so inverting it must
     // not sweep them all in (which would delete the whole mesh downstream).
@@ -579,7 +631,8 @@ TEST_CASE("Inverted face group selects no points or vertices") {
     REQUIRE(selection.getVertices(mesh).empty());
 }
 
-TEST_CASE("Inverted group selection excludes only the group members on a fragmented mesh") {
+TEST_CASE("Inverted group selection excludes only the group members on a fragmented mesh")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Same fragmented layout: valid offsets {0, 2, 3}, with the group at offset 3.
@@ -600,7 +653,8 @@ TEST_CASE("Inverted group selection excludes only the group members on a fragmen
     REQUIRE(selection.getFaces(mesh) == std::vector<Offset>{0, 2});
 }
 
-TEST_CASE("Selection by group name on a prim without the group returns empty") {
+TEST_CASE("Selection by group name on a prim without the group returns empty")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
 
     // Build a face so the mesh isn't empty
@@ -614,7 +668,8 @@ TEST_CASE("Selection by group name on a prim without the group returns empty") {
     REQUIRE_FALSE(selection.containsPrim(mesh));
 }
 
-TEST_CASE("Selection by group name getPrims only includes prims with the group") {
+TEST_CASE("Selection by group name getPrims only includes prims with the group")
+{
     NodePacket packet;
     auto withGroup = std::make_shared<geo::Mesh>("/with");
     auto withoutGroup = std::make_shared<geo::Mesh>("/without");
@@ -628,7 +683,8 @@ TEST_CASE("Selection by group name getPrims only includes prims with the group")
     REQUIRE(prims[0]->getPath() == "/with");
 }
 
-TEST_CASE("Selection by primitive group includes prims where the flag is set") {
+TEST_CASE("Selection by primitive group includes prims where the flag is set")
+{
     NodePacket packet;
     auto active = std::make_shared<geo::Mesh>("/active");
     auto inactive = std::make_shared<geo::Mesh>("/inactive");
@@ -647,7 +703,8 @@ TEST_CASE("Selection by primitive group includes prims where the flag is set") {
     REQUIRE(prims[0]->getPath() == "/active");
 }
 
-TEST_CASE("Selection by primitive group treats the prim as whole-prim selection") {
+TEST_CASE("Selection by primitive group treats the prim as whole-prim selection")
+{
     auto mesh = std::make_shared<geo::Mesh>("/mesh");
     Offset point0 = mesh->addPoint(Vector3(0, 0, 0));
     Offset point1 = mesh->addPoint(Vector3(1, 0, 0));
