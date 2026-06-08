@@ -1,23 +1,16 @@
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/benchmark/catch_benchmark.hpp>
-#include <memory>
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
+#include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <iostream>
+#include <memory>
 
-struct NMReset 
+struct NMReset
 {
-    NMReset()
-    {
-        enzo::nt::nm()._reset();
-    }
-    ~NMReset()
-    {
-        enzo::nt::nm()._reset();
-    }
-
+    NMReset() { enzo::nt::nm()._reset(); }
+    ~NMReset() { enzo::nt::nm()._reset(); }
 };
 
 // TODO: fix this init monstrosity
@@ -38,33 +31,26 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
     nt::OpId prevOp = startOp;
     std::vector<nt::OpId> prevOps;
 
-    for(int k=0; k<10; k++)
+    for (int k = 0; k < 10; k++)
     {
-        for(int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             nt::OpId newOp = nm.createOperator(testOpInfo);
             prevOps.push_back(newOp);
             nt::connectOperators(newOp, i, prevOp, 0);
         }
-        for(int j=0; j<10; j++)
+        for (int j = 0; j < 10; j++)
         {
             std::vector<nt::OpId> prevOpsBuffer = prevOps;
-            for(int i=0; i<size(prevOpsBuffer); ++i)
+            for (int i = 0; i < size(prevOpsBuffer); ++i)
             {
                 prevOps.clear();
                 nt::OpId newOp = nm.createOperator(testOpInfo);
                 prevOps.push_back(newOp);
                 nt::connectOperators(newOp, 0, prevOpsBuffer[i], 0);
-
-                
             }
         }
     }
 
-    BENCHMARK("Cook 100 Ops")
-    {
-        nm.setDisplayOp(startOp);
-    };
-    
-
+    BENCHMARK("Cook 100 Ops") { nm.setDisplayOp(startOp); };
 }

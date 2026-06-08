@@ -9,6 +9,7 @@ namespace enzo::ui {
 
 class Ramp;
 class Slider;
+class Dropdown;
 
 /**
  * @brief Editor for a ramp multiparm. A curve widget edits every control point
@@ -25,6 +26,7 @@ class RampParm : public Parameter
     void onIndexMoved(double value);
     void onPositionMoved(double value);
     void onValueMoved(double value);
+    void onInterpChanged();
 
     void beginEdit();
     void commitEdit();
@@ -40,6 +42,7 @@ class RampParm : public Parameter
     Slider* indexSlider_ = nullptr;
     Slider* positionSlider_ = nullptr;
     Slider* valueSlider_ = nullptr;
+    Dropdown* interpDropdown_ = nullptr;
 
     int selectedInstance_ = 0;
     // Set while writing ramp edits into the parameter so the echoed valueChanged

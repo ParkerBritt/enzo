@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Parameter/Default.h"
 #include "Engine/Parameter/Range.h"
+#include <stdexcept>
 #include <utility>
 
 namespace enzo {
@@ -22,6 +23,7 @@ std::vector<prm::Template> rampInstanceTemplate()
             .setOptions({
                 prm::Name("constant", "Constant"),
                 prm::Name("linear", "Linear"),
+                prm::Name("bspline", "B Spline"),
             }),
     };
 }
@@ -100,6 +102,8 @@ const std::vector<prm::Name>& prm::Template::getOptions() const { return options
 
 bool prm::Template::hasOptions() const { return !options_.empty(); }
 
+intT prm::Template::getNumOptions() const { return static_cast<intT>(options_.size()); }
+
 const unsigned int prm::Template::getNumDefaults() const { return defaults_.size(); }
 
 String prm::Template::getName() const { return name_.getToken(); }
@@ -111,6 +115,13 @@ String prm::Template::getLabel() const { return name_.getLabel(); }
 prm::Direction prm::Template::getDirection() const { return direction_; }
 
 const std::vector<prm::Template>& prm::Template::getChildren() const { return children_; }
+
+const prm::Template& prm::Template::getChild(const enzo::String& token) const
+{
+    for (const Template& child : children_)
+        if (child.getToken() == token) return child;
+    throw std::out_of_range("No child template with token " + token);
+}
 
 String prm::Template::getTooltip() const { return tooltip_; }
 

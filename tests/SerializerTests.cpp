@@ -9,7 +9,11 @@ namespace {
 prm::Parameter makeRamp(int pointCount)
 {
     return prm::Parameter(
-        prm::Template(prm::Type::RAMP, prm::Name("amplitude", "Amplitude"), prm::Default(pointCount))
+        prm::Template(
+            prm::Type::RAMP,
+            prm::Name("amplitude", "Amplitude"),
+            prm::Default(pointCount)
+        )
     );
 }
 
