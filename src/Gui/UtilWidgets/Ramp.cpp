@@ -37,12 +37,16 @@ enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
     controlPoints_.push_back({1, 1.0, 1.0});
 }
 
-void enzo::ui::Ramp::setPoints(const std::vector<QPointF>& points)
+void enzo::ui::Ramp::setPoints(
+    const std::vector<QPointF>& points, const std::vector<prm::Interpolation>& interps
+)
 {
     controlPoints_.clear();
     controlPoints_.reserve(points.size());
-    for (const QPointF& point : points)
-        controlPoints_.push_back({0, point.x(), point.y()});
+    for (std::size_t pointIndex = 0; pointIndex < points.size(); ++pointIndex)
+        controlPoints_.push_back(
+            {0, points[pointIndex].x(), points[pointIndex].y(), interps[pointIndex]}
+        );
     sortAndRenumber_();
 
     // Fit the value axis so every point sits inside the panel, always keeping
@@ -127,20 +131,66 @@ std::vector<QPointF> enzo::ui::Ramp::buildCurveTop_() const
 
     const QRectF panel = backgroundRect_();
 
-    switch (interpolation_)
+    // A snapshot of the points lets b spline segments sample with neighbour awareness.
+    std::vector<prm::Ramp::Key> keys;
+    keys.reserve(controlPoints_.size());
+    for (const ControlPoint& controlPoint : controlPoints_)
+        keys.push_back({static_cast<floatT>(controlPoint.position),
+                        static_cast<floatT>(controlPoint.value), controlPoint.interp});
+    const prm::Ramp ramp(keys);
+
+    // Flat extension from the left edge to the first control point
+    topPoints.push_back(QPointF(panel.left(), valueToY_(controlPoints_.front().value)));
+    topPoints.push_back(
+        QPointF(positionToX_(controlPoints_.front().position),
+                valueToY_(controlPoints_.front().value))
+    );
+
+    for (std::size_t leftIndex = 0; leftIndex + 1 < controlPoints_.size(); ++leftIndex)
     {
-    case Interpolation::Linear:
-    default:
-        // Flat extension from the left edge to the first control point
-        topPoints.push_back(QPointF(panel.left(), valueToY_(controlPoints_.front().value)));
-        for (const ControlPoint& controlPoint : controlPoints_)
-            topPoints.push_back(
-                QPointF(positionToX_(controlPoint.position), valueToY_(controlPoint.value))
-            );
-        // Flat extension from the last control point to the right edge
-        topPoints.push_back(QPointF(panel.right(), valueToY_(controlPoints_.back().value)));
-        break;
+        const ControlPoint& leftPoint = controlPoints_[leftIndex];
+        const ControlPoint& rightPoint = controlPoints_[leftIndex + 1];
+        const double leftX = positionToX_(leftPoint.position);
+        const double rightX = positionToX_(rightPoint.position);
+
+        // A run of b splines rounds toward the points bordering it, so a segment
+        // curves when its right point or its left neighbour is a b spline.
+        const bool previousCurves =
+            leftIndex > 0 && controlPoints_[leftIndex - 1].interp == prm::Interpolation::BSPLINE;
+
+        switch (leftPoint.interp)
+        {
+        case prm::Interpolation::CONSTANT:
+            // Hold the left value across the segment then step up at the right point.
+            topPoints.push_back(QPointF(rightX, valueToY_(leftPoint.value)));
+            topPoints.push_back(QPointF(rightX, valueToY_(rightPoint.value)));
+            break;
+        case prm::Interpolation::BSPLINE:
+            if (rightPoint.interp == prm::Interpolation::BSPLINE || previousCurves)
+            {
+                // Trace the curve at roughly one sample every few pixels.
+                const int sampleCount = std::max(2, static_cast<int>((rightX - leftX) / 3.0));
+                for (int sample = 1; sample <= sampleCount; ++sample)
+                {
+                    const double fraction = static_cast<double>(sample) / sampleCount;
+                    const double position =
+                        leftPoint.position + (rightPoint.position - leftPoint.position) * fraction;
+                    topPoints.push_back(QPointF(
+                        positionToX_(position),
+                        valueToY_(ramp.sample(static_cast<floatT>(position)))
+                    ));
+                }
+                break;
+            }
+            [[fallthrough]];
+        case prm::Interpolation::LINEAR:
+            topPoints.push_back(QPointF(rightX, valueToY_(rightPoint.value)));
+            break;
+        }
     }
+
+    // Flat extension from the last control point to the right edge
+    topPoints.push_back(QPointF(panel.right(), valueToY_(controlPoints_.back().value)));
     return topPoints;
 }
 

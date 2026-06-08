@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Parameter/Ramp.h"
 #include <QEasingCurve>
 #include <QPointF>
 #include <QRectF>
@@ -24,8 +25,11 @@ class Ramp : public QWidget
     Ramp(QWidget* parent = nullptr);
 
     /// @brief Replaces the displayed control points, one per QPointF where x is
-    /// position and y is value. Fits the value axis to span the points.
-    void setPoints(const std::vector<QPointF>& points);
+    /// position and y is value. The interp of each point governs the segment to
+    /// its right. Fits the value axis to span the points.
+    void setPoints(
+        const std::vector<QPointF>& points, const std::vector<prm::Interpolation>& interps
+    );
 
     /// @brief Marks which control point is the active one for the host editor.
     void setSelectedPoint(int pointIndex);
@@ -61,6 +65,8 @@ class Ramp : public QWidget
         int pointNumber;
         double position; // x axis between 0 and 1
         double value;    // y axis unconstrained
+        // Governs how the segment toward the next point is drawn.
+        prm::Interpolation interp = prm::Interpolation::LINEAR;
     };
 
     /// Which handle of a control point a drag is acting on.
@@ -69,18 +75,6 @@ class Ramp : public QWidget
         None,
         Circle,
         Square
-    };
-
-    /// How the curve is interpolated between control points.
-    enum class Interpolation
-    {
-        Linear,
-        Constant,      // not yet implemented
-        BSpline,       // not yet implemented
-        CatmullRom,    // not yet implemented
-        MonotoneCubic, // not yet implemented
-        Bezier,        // not yet implemented
-        Hermite        // not yet implemented
     };
 
     QRectF backgroundRect_() const;
@@ -118,7 +112,6 @@ class Ramp : public QWidget
 
     int activePoint_ = -1;
     Handle activeHandle_ = Handle::None;
-    Interpolation interpolation_ = Interpolation::Linear;
 
     // Visible value range mapped across the panel height
     double valueMin_ = 0.0;

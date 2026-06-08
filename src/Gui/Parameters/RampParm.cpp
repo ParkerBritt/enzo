@@ -198,13 +198,20 @@ void enzo::ui::RampParm::syncFromParameter()
     if (!applyingFromRamp_)
     {
         std::vector<QPointF> points;
+        std::vector<prm::Interpolation> interps;
         points.reserve(count);
+        interps.reserve(count);
         for (int instanceIndex = 0; instanceIndex < count; ++instanceIndex)
+        {
             points.push_back(QPointF(
                 parameterShared->getInstanceField(instanceIndex, "position")->evalFloat(),
                 parameterShared->getInstanceField(instanceIndex, "value")->evalFloat()
             ));
-        rampWidget_->setPoints(points);
+            const intT interpIndex =
+                parameterShared->getInstanceField(instanceIndex, "interp")->evalInt();
+            interps.push_back(static_cast<prm::Interpolation>(interpIndex));
+        }
+        rampWidget_->setPoints(points, interps);
         rampWidget_->setSelectedPoint(selectedInstance_);
     }
 
