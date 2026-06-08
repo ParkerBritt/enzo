@@ -5,7 +5,11 @@
 
 namespace enzo {
 
-prm::Ramp::Ramp(std::vector<Key> keys) : keys_{std::move(keys)} {}
+prm::Ramp::Ramp(std::vector<Key> keys) : keys_{std::move(keys)}
+{
+    buildSplineCache();
+    buildLookupTable();
+}
 
 prm::Ramp::Ramp(const Parameter& rampParameter)
 {
@@ -30,6 +34,9 @@ prm::Ramp::Ramp(const Parameter& rampParameter)
     std::sort(keys_.begin(), keys_.end(), [](const Key& firstKey, const Key& secondKey) {
         return firstKey.position < secondKey.position;
     });
+
+    buildSplineCache();
+    buildLookupTable();
 }
 
 bool prm::Ramp::empty() const { return keys_.empty(); }
@@ -38,7 +45,23 @@ size_t prm::Ramp::size() const { return keys_.size(); }
 
 const prm::Ramp::Key& prm::Ramp::key(size_t index) const { return keys_.at(index); }
 
-floatT prm::Ramp::sample(floatT position) const
+void prm::Ramp::buildLookupTable()
+{
+    lookupTable_.clear();
+    if (keys_.empty()) return;
+
+    // The table spans the full ramp range, from the first key to the last.
+    tableStartPosition_ = keys_.front().position;
+    tablePositionSpan_ = keys_.back().position - tableStartPosition_;
+
+    // Sample the true curve at every step so runtime sampling only blends.
+    const floatT step = tablePositionSpan_ / lookupTableSteps;
+    lookupTable_.resize(lookupTableSteps + 1);
+    for (int stepIndex = 0; stepIndex <= lookupTableSteps; ++stepIndex)
+        lookupTable_[stepIndex] = sampleExact(tableStartPosition_ + stepIndex * step);
+}
+
+floatT prm::Ramp::sampleExact(floatT position) const
 {
     if (keys_.empty()) return 0;
     if (position <= keys_.front().position) return keys_.front().value;
@@ -68,83 +91,117 @@ floatT prm::Ramp::sample(floatT position) const
         return linearValue;
     case Interpolation::BSPLINE:
     {
-        // A run of b spline keys rounds toward the keys bordering it. A segment
-        // curves when either its right key or its left neighbour is a b spline, so
-        // the run reaches one key past its last b spline key. A lone b spline key
-        // has nothing to round against and stays a straight line.
-        const bool nextCurves = rightKey.interp == Interpolation::BSPLINE;
-        const bool previousCurves =
-            leftIndex > 0 && keys_[leftIndex - 1].interp == Interpolation::BSPLINE;
-        if (nextCurves || previousCurves) return sampleBSpline(leftIndex, position);
+        // A run of b spline keys rounds toward the keys bordering it. A lone b spline
+        // key has nothing to round against and stays a straight line, so it maps to
+        // no run and falls back to the linear blend.
+        const int runIndex = segmentRun_[leftIndex];
+        if (runIndex >= 0) return sampleBSpline(splineRuns_[runIndex], leftIndex, position);
         return linearValue;
     }
     }
     return leftKey.value;
 }
 
-floatT prm::Ramp::sampleBSpline(size_t leftIndex, floatT position) const
+void prm::Ramp::buildSplineCache()
+{
+    splineRuns_.clear();
+    segmentRun_.assign(keys_.size(), -1);
+    const int lastIndex = static_cast<int>(keys_.size()) - 1;
+
+    // Walk the keys collecting each maximal block of b spline keys.
+    int keyIndex = 0;
+    while (keyIndex <= lastIndex)
+    {
+        if (keys_[keyIndex].interp != Interpolation::BSPLINE)
+        {
+            ++keyIndex;
+            continue;
+        }
+        int blockFirst = keyIndex;
+        int blockLast = keyIndex;
+        while (blockLast < lastIndex && keys_[blockLast + 1].interp == Interpolation::BSPLINE)
+            ++blockLast;
+        keyIndex = blockLast + 1;
+
+        // A lone b spline key has nothing to round against and curves nothing.
+        if (blockLast == blockFirst) continue;
+
+        // The curve lands on the first key of the block and on the key one step past
+        // the last, clamped to the ramp end.
+        SplineRun run;
+        run.landFirst = blockFirst;
+        run.landLast = blockLast < lastIndex ? blockLast + 1 : blockLast;
+        const int controlCount = run.landLast - run.landFirst + 3;
+        run.controlPositions.resize(controlCount);
+        run.controlValues.resize(controlCount);
+
+        // Reflect a phantom control point across each landing key so the curve meets
+        // that key while the interior keys stay rounded. The real keys fill the
+        // middle, indexed one past the low phantom.
+        run.controlPositions.front() =
+            2 * keys_[run.landFirst].position - keys_[run.landFirst + 1].position;
+        run.controlValues.front() =
+            2 * keys_[run.landFirst].value - keys_[run.landFirst + 1].value;
+        for (int landIndex = run.landFirst; landIndex <= run.landLast; ++landIndex)
+        {
+            run.controlPositions[landIndex - run.landFirst + 1] = keys_[landIndex].position;
+            run.controlValues[landIndex - run.landFirst + 1] = keys_[landIndex].value;
+        }
+        run.controlPositions.back() =
+            2 * keys_[run.landLast].position - keys_[run.landLast - 1].position;
+        run.controlValues.back() =
+            2 * keys_[run.landLast].value - keys_[run.landLast - 1].value;
+
+        // Every segment whose left key sits in the block curves through this run.
+        const int runIndex = static_cast<int>(splineRuns_.size());
+        const int lastSegment = std::min(blockLast, lastIndex - 1);
+        for (int segment = blockFirst; segment <= lastSegment; ++segment)
+            segmentRun_[segment] = runIndex;
+
+        splineRuns_.push_back(std::move(run));
+    }
+}
+
+floatT prm::Ramp::sampleBSpline(const SplineRun& run, size_t leftIndex, floatT position) const
 {
     // The curved keys form a parametric uniform cubic b spline. Each key is a
     // control point carrying its position and value, so sampling finds the
     // parameter where the spline reaches the wanted position and reads its value
     // there. Uniform knots give every key the same local pull, so a key only sways
     // the curve within two keys of itself and close keys round rather than pinch.
-    const int lastIndex = static_cast<int>(keys_.size()) - 1;
+    const int landFirst = run.landFirst;
+    const int landLast = run.landLast;
     const int segment = static_cast<int>(leftIndex);
+    const floatT* const positions = run.controlPositions.data();
+    const floatT* const values = run.controlValues.data();
 
-    // The run is the contiguous block of b spline keys around this segment. The
-    // curve lands on the first b spline key and on the key one step past the last,
-    // clamped to the ramp ends.
-    int runFirst = segment;
-    while (runFirst > 0 && keys_[runFirst - 1].interp == Interpolation::BSPLINE) --runFirst;
-    int runLast = segment;
-    while (runLast < lastIndex && keys_[runLast + 1].interp == Interpolation::BSPLINE) ++runLast;
-    const int landFirst = runFirst;
-    const int landLast = runLast < lastIndex ? runLast + 1 : runLast;
-
-    // Reflect a phantom control point across a landing key so the curve meets that
-    // key while the interior keys stay rounded.
-    const auto controlPosition = [&](int keyIndex) -> floatT {
-        if (keyIndex < landFirst)
-            return 2 * keys_[landFirst].position - keys_[2 * landFirst - keyIndex].position;
-        if (keyIndex > landLast)
-            return 2 * keys_[landLast].position - keys_[2 * landLast - keyIndex].position;
-        return keys_[keyIndex].position;
-    };
-    const auto controlValue = [&](int keyIndex) -> floatT {
-        if (keyIndex < landFirst)
-            return 2 * keys_[landFirst].value - keys_[2 * landFirst - keyIndex].value;
-        if (keyIndex > landLast)
-            return 2 * keys_[landLast].value - keys_[2 * landLast - keyIndex].value;
-        return keys_[keyIndex].value;
-    };
-
-    // Evaluate a spline component at parameter t. The integer part selects the
-    // segment and the fraction drives the uniform cubic basis or its slope.
-    const auto evaluate = [&](const auto& control, floatT t, bool slope) -> floatT {
+    // Read the four control points around parameter t into c0 to c3. The integer
+    // part of t selects the segment and indexes straight into the run arrays.
+    const auto controlsAt = [&](const floatT* control, floatT t, floatT* out) {
         int base = static_cast<int>(std::floor(t));
         base = std::min(std::max(base, landFirst), landLast - 1);
-        const floatT u = t - base;
+        const int localBase = base - landFirst;
+        out[0] = control[localBase];
+        out[1] = control[localBase + 1];
+        out[2] = control[localBase + 2];
+        out[3] = control[localBase + 3];
+        return t - base;
+    };
+
+    // The uniform cubic basis blended over the four control points.
+    const auto valueOf = [](floatT u, const floatT* control) -> floatT {
         const floatT u2 = u * u;
-        const floatT control0 = control(base - 1);
-        const floatT control1 = control(base);
-        const floatT control2 = control(base + 1);
-        const floatT control3 = control(base + 2);
-        if (slope)
-        {
-            const floatT weight0 = (-3 + 6 * u - 3 * u2) / 6;
-            const floatT weight1 = (-12 * u + 9 * u2) / 6;
-            const floatT weight2 = (3 + 6 * u - 9 * u2) / 6;
-            const floatT weight3 = 3 * u2 / 6;
-            return weight0 * control0 + weight1 * control1 + weight2 * control2 +
-                   weight3 * control3;
-        }
         const floatT u3 = u2 * u;
-        const floatT weight0 = (1 - 3 * u + 3 * u2 - u3) / 6;
-        const floatT weight1 = (4 - 6 * u2 + 3 * u3) / 6;
-        const floatT weight2 = (1 + 3 * u + 3 * u2 - 3 * u3) / 6;
-        const floatT weight3 = u3 / 6;
-        return weight0 * control0 + weight1 * control1 + weight2 * control2 + weight3 * control3;
+        return ((1 - 3 * u + 3 * u2 - u3) * control[0] + (4 - 6 * u2 + 3 * u3) * control[1] +
+                (1 + 3 * u + 3 * u2 - 3 * u3) * control[2] + u3 * control[3]) /
+               6;
+    };
+    // Its derivative, used by the Newton step on the position spline.
+    const auto slopeOf = [](floatT u, const floatT* control) -> floatT {
+        const floatT u2 = u * u;
+        return ((-3 + 6 * u - 3 * u2) * control[0] + (-12 * u + 9 * u2) * control[1] +
+                (3 + 6 * u - 9 * u2) * control[2] + 3 * u2 * control[3]) /
+               6;
     };
 
     // The spline position rises monotonically along the run, so a bracketed Newton
@@ -155,17 +212,22 @@ floatT prm::Ramp::sampleBSpline(size_t leftIndex, floatT position) const
     floatT t = span > 0 ? segment + (position - keys_[segment].position) / span : segment;
     for (int step = 0; step < 32; ++step)
     {
-        const floatT offset = evaluate(controlPosition, t, false) - position;
+        floatT control[4];
+        const floatT u = controlsAt(positions, t, control);
+        const floatT offset = valueOf(u, control) - position;
         if (std::fabs(offset) < 1e-6f) break;
         if (offset > 0)
             upperT = t;
         else
             lowerT = t;
-        const floatT positionSlope = evaluate(controlPosition, t, true);
+        const floatT positionSlope = slopeOf(u, control);
         const floatT newtonT = positionSlope > 0 ? t - offset / positionSlope : t;
         t = newtonT > lowerT && newtonT < upperT ? newtonT : (lowerT + upperT) / 2;
     }
-    return evaluate(controlValue, t, false);
+
+    floatT control[4];
+    const floatT u = controlsAt(values, t, control);
+    return valueOf(u, control);
 }
 
 } // namespace enzo
