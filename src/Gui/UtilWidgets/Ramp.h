@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QEasingCurve>
 #include <QPointF>
 #include <QRectF>
 #include <QWidget>
@@ -18,6 +19,7 @@ namespace enzo::ui {
 class Ramp : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(qreal hoverScale READ hoverScale WRITE setHoverScale)
   public:
     Ramp(QWidget* parent = nullptr);
 
@@ -50,6 +52,7 @@ class Ramp : public QWidget
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 
   private:
     /// A single ramp knot ordered by pointNumber with an x position and a y value.
@@ -96,8 +99,22 @@ class Ramp : public QWidget
     int circleHitIndex_(const QPointF& pos) const;
     int squareHitIndex_(const QPointF& pos) const;
 
+    qreal hoverScale() const { return hoverScale_; }
+    void setHoverScale(qreal scale)
+    {
+        hoverScale_ = scale;
+        update();
+    }
+    void animateHoverScale_(qreal target, QEasingCurve::Type easing);
+    void hoverPoint_(int pointIndex);
+
     std::vector<ControlPoint> controlPoints_;
     int selectedPoint_ = -1;
+
+    // The dot the hover scale currently applies to, with its animated scale and target
+    int scaledPoint_ = -1;
+    qreal hoverScale_ = 1.0;
+    qreal scaleTarget_ = 1.0;
 
     int activePoint_ = -1;
     Handle activeHandle_ = Handle::None;

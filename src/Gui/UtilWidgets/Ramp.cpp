@@ -3,28 +3,34 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPropertyAnimation>
 #include <algorithm>
 
 namespace {
 // Inset from the widget edge to the background panel so handles can overflow it
 constexpr double padding = 12.0;
-constexpr double cornerRadius = 9.0;
+constexpr double backgroundCornerRadius = 9.0;
 constexpr double circleRadius = 5.0;
 constexpr double squareSize = 9.0;
 const QColor panelColor("#1a1a1a");
 const QColor borderColor("#383838");
-const QColor circleColor("#ffffff");
+const QColor circleColor("#B1B2B5");
+const QColor selectedCircleColor("#ffffff");
 const QColor squareColor("#B1B2B5");
 const QColor curveStrokeColor("#B1B2B5");
-// Alpha bytes are 66 percent and 13 percent of 255
 const QColor curveFillTopColor(177, 178, 181, 100);
 const QColor curveFillBottomColor(177, 178, 181, 10);
-const QColor selectedRingColor("#4a90d9");
+// Hitbox scale multiplier for circle handle
+constexpr double circleHitRadiusScale = 2.4;
+constexpr double hoverScaleTarget = 1.15;
+constexpr double dragScaleTarget = 0.9;
+constexpr int hoverScaleDurationMs = 200;
 } // namespace
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
 {
     setFixedHeight(100);
+    setMouseTracking(true);
 
     // Default endpoints rising from zero to one
     controlPoints_.push_back({0, 0.0, 0.0});
@@ -108,7 +114,7 @@ void enzo::ui::Ramp::paintEvent(QPaintEvent*)
     // Rounded background panel inset from the widget so points can sit on its edges
     painter.setPen(QPen(borderColor, 1));
     painter.setBrush(panelColor);
-    painter.drawRoundedRect(backgroundRect_(), cornerRadius, cornerRadius);
+    painter.drawRoundedRect(backgroundRect_(), backgroundCornerRadius, backgroundCornerRadius);
 
     paintCurve_(painter);
     paintControlPoints_(painter);
@@ -161,7 +167,7 @@ void enzo::ui::Ramp::paintCurve_(QPainter& painter) const
 
     // Rounded panel clip keeps the fill clear of the corners
     QPainterPath panelClip;
-    panelClip.addRoundedRect(panel, cornerRadius, cornerRadius);
+    panelClip.addRoundedRect(panel, backgroundCornerRadius, backgroundCornerRadius);
 
     painter.save();
     painter.setClipPath(panelClip);
@@ -189,6 +195,7 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
     {
         const ControlPoint& controlPoint = controlPoints_[pointIndex];
         const double centerX = positionToX_(controlPoint.position);
+        bool isSelected = pointIndex == selectedPoint_;
 
         // Square centered on the background bottom edge sharing the control point x
         const QRectF squareRect(
@@ -203,9 +210,11 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
 
         // Free moving circle at the control point value, ringed when selected
         const double circleCenterY = valueToY_(controlPoint.value);
-        painter.setBrush(circleColor);
-        painter.setPen(pointIndex == selectedPoint_ ? QPen(selectedRingColor, 2) : QPen(Qt::NoPen));
-        painter.drawEllipse(QPointF(centerX, circleCenterY), circleRadius, circleRadius);
+        const double radius =
+            pointIndex == scaledPoint_ ? circleRadius * hoverScale_ : circleRadius;
+        painter.setBrush(isSelected ? selectedCircleColor : circleColor);
+        painter.setPen(QPen(Qt::NoPen));
+        painter.drawEllipse(QPointF(centerX, circleCenterY), radius, radius);
         painter.setPen(Qt::NoPen);
     }
 }
@@ -217,7 +226,7 @@ int enzo::ui::Ramp::circleHitIndex_(const QPointF& pos) const
         const ControlPoint& controlPoint = controlPoints_[pointIndex];
         const QPointF center(positionToX_(controlPoint.position), valueToY_(controlPoint.value));
         // Hit radius runs larger than the drawn circle so the handle is easy to grab
-        if (QLineF(center, pos).length() <= circleRadius * 2.0) return pointIndex;
+        if (QLineF(center, pos).length() <= circleRadius * circleHitRadiusScale) return pointIndex;
     }
     return -1;
 }
@@ -249,25 +258,26 @@ void enzo::ui::Ramp::mousePressEvent(QMouseEvent* event)
 
     // Circle takes priority so the value handle stays reachable when stacked on the square
     activePoint_ = circleHitIndex_(pos);
-    if (activePoint_ != -1)
-    {
-        activeHandle_ = Handle::Circle;
-        selectPoint_(activePoint_);
-        return;
-    }
+    activeHandle_ = Handle::Circle;
 
-    activePoint_ = squareHitIndex_(pos);
-    if (activePoint_ != -1)
+    if (activePoint_ == -1)
     {
+        activePoint_ = squareHitIndex_(pos);
         activeHandle_ = Handle::Square;
-        selectPoint_(activePoint_);
-        return;
     }
 
     // Empty space spawns a new control point grabbed by its circle for immediate dragging
-    addControlPoint_(xToPosition_(pos.x()), yToValue_(pos.y()));
-    activeHandle_ = Handle::Circle;
-    Q_EMIT edited();
+    if (activePoint_ == -1)
+    {
+        addControlPoint_(xToPosition_(pos.x()), yToValue_(pos.y()));
+        activeHandle_ = Handle::Circle;
+        Q_EMIT edited();
+    }
+
+    // The grabbed dot eases to its drag size while it is dragged
+    scaledPoint_ = activePoint_;
+    animateHoverScale_(dragScaleTarget, QEasingCurve::OutCubic);
+
     selectPoint_(activePoint_);
     update();
 }
@@ -286,6 +296,37 @@ void enzo::ui::Ramp::selectPoint_(int pointIndex)
     Q_EMIT selectionChanged(selectedPoint_);
 }
 
+void enzo::ui::Ramp::animateHoverScale_(qreal target, QEasingCurve::Type easing)
+{
+    if (qFuzzyCompare(scaleTarget_, target)) return;
+    scaleTarget_ = target;
+
+    auto grow = new QPropertyAnimation(this, "hoverScale", this);
+    grow->setDuration(hoverScaleDurationMs);
+    grow->setEasingCurve(easing);
+    grow->setStartValue(hoverScale_);
+    grow->setEndValue(target);
+    grow->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void enzo::ui::Ramp::hoverPoint_(int pointIndex)
+{
+    // A new dot starts from rest so it grows in cleanly, the old one snaps back
+    if (pointIndex != -1 && pointIndex != scaledPoint_)
+    {
+        scaledPoint_ = pointIndex;
+        setHoverScale(1.0);
+    }
+
+    const bool grow = pointIndex != -1;
+    animateHoverScale_(
+        grow ? hoverScaleTarget : 1.0,
+        grow ? QEasingCurve::OutBack : QEasingCurve::OutCubic
+    );
+}
+
+void enzo::ui::Ramp::leaveEvent(QEvent*) { hoverPoint_(-1); }
+
 void enzo::ui::Ramp::sortAndRenumber_()
 {
     std::sort(
@@ -301,8 +342,15 @@ void enzo::ui::Ramp::sortAndRenumber_()
 
 void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
 {
-    if (activePoint_ == -1) return;
     const QPointF pos = event->position();
+
+    // With no drag in progress the cursor just grows the dot it rests on
+    if (activePoint_ == -1)
+    {
+        hoverPoint_(circleHitIndex_(pos));
+        return;
+    }
+
     ControlPoint& controlPoint = controlPoints_[activePoint_];
 
     // Both handles share the control point x
@@ -331,9 +379,12 @@ void enzo::ui::Ramp::mouseMoveEvent(QMouseEvent* event)
     update();
 }
 
-void enzo::ui::Ramp::mouseReleaseEvent(QMouseEvent*)
+void enzo::ui::Ramp::mouseReleaseEvent(QMouseEvent* event)
 {
     activePoint_ = -1;
     activeHandle_ = Handle::None;
     Q_EMIT editEnded();
+
+    // Regrow the dot if the cursor settles back over one
+    hoverPoint_(circleHitIndex_(event->position()));
 }
