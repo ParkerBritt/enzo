@@ -44,8 +44,10 @@ class Ramp
     const Key& key(size_t index) const;
 
   private:
-    /// @brief Samples the segment after @p leftIndex as a uniform cubic b spline.
-    floatT sampleBSpline(size_t leftIndex, floatT fraction) const;
+    /// @brief Samples the curved run holding @p leftIndex as a parametric uniform cubic b spline.
+    /// @note Keys are control points carrying position and value, so a key sways the
+    /// curve only within two keys of itself and close keys round rather than pinch.
+    floatT sampleBSpline(size_t leftIndex, floatT position) const;
 
     std::vector<Key> keys_;
 };

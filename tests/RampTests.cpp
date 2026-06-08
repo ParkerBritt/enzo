@@ -82,6 +82,18 @@ TEST_CASE("B spline interpolation smooths symmetrically around a peak")
     REQUIRE(ramp.sample(0.5) == Catch::Approx(ramp.sample(1.5)));
 }
 
+TEST_CASE("A b spline against a non b spline neighbour interpolates linearly")
+{
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 10, prm::Interpolation::LINEAR),
+        }
+    );
+
+    REQUIRE(ramp.sample(0.5) == 5);
+}
+
 TEST_CASE("A ramp snapshot sorts the control points by position")
 {
     using namespace enzo::prm;
