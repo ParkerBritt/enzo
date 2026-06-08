@@ -94,6 +94,40 @@ TEST_CASE("A b spline against a non b spline neighbour interpolates linearly")
     REQUIRE(ramp.sample(0.5) == 5);
 }
 
+TEST_CASE("B spline sampling matches a pinned golden curve")
+{
+    // A mixed ramp with a curved run bordered by linear keys on both sides. The
+    // run rounds through its interior keys and lands on the linear neighbours, so
+    // this pins the reflected endpoints and the run boundaries against drift while
+    // the sampler is optimised. The golden values are the exact curve, so the
+    // margin below also bounds how far the lookup table strays from it.
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0.0, 0, prm::Interpolation::LINEAR),
+            makeKey(0.2, 1, prm::Interpolation::BSPLINE),
+            makeKey(0.4, 0, prm::Interpolation::BSPLINE),
+            makeKey(0.6, 2, prm::Interpolation::BSPLINE),
+            makeKey(0.8, 1, prm::Interpolation::LINEAR),
+            makeKey(1.0, 0, prm::Interpolation::LINEAR),
+        }
+    );
+
+    // Sampled at every 0.05 across the domain.
+    const floatT golden[] = {
+        0.00000000f, 0.25000000f, 0.50000000f, 0.75000000f, 1.00000000f,
+        0.75781250f, 0.56250000f, 0.46093750f, 0.50000000f, 0.70312500f,
+        0.99999994f, 1.29687500f, 1.50000000f, 1.53906250f, 1.43750024f,
+        1.24218750f, 1.00000000f, 0.74999988f, 0.50000012f, 0.25000006f,
+        0.00000000f,
+    };
+
+    for (int sampleIndex = 0; sampleIndex <= 20; ++sampleIndex)
+    {
+        const floatT position = sampleIndex / 20.0f;
+        REQUIRE(ramp.sample(position) == Catch::Approx(golden[sampleIndex]).margin(1e-3));
+    }
+}
+
 TEST_CASE("A ramp snapshot sorts the control points by position")
 {
     using namespace enzo::prm;
