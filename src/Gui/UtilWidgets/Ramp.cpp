@@ -38,7 +38,8 @@ enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
 }
 
 void enzo::ui::Ramp::setPoints(
-    const std::vector<QPointF>& points, const std::vector<prm::Interpolation>& interps
+    const std::vector<QPointF>& points,
+    const std::vector<prm::Interpolation>& interps
 )
 {
     controlPoints_.clear();
@@ -135,16 +136,19 @@ std::vector<QPointF> enzo::ui::Ramp::buildCurveTop_() const
     std::vector<prm::Ramp::Key> keys;
     keys.reserve(controlPoints_.size());
     for (const ControlPoint& controlPoint : controlPoints_)
-        keys.push_back({static_cast<floatT>(controlPoint.position),
-                        static_cast<floatT>(controlPoint.value), controlPoint.interp});
+        keys.push_back(
+            {static_cast<floatT>(controlPoint.position),
+             static_cast<floatT>(controlPoint.value),
+             controlPoint.interp}
+        );
     const prm::Ramp ramp(keys);
 
     // Flat extension from the left edge to the first control point
     topPoints.push_back(QPointF(panel.left(), valueToY_(controlPoints_.front().value)));
-    topPoints.push_back(
-        QPointF(positionToX_(controlPoints_.front().position),
-                valueToY_(controlPoints_.front().value))
-    );
+    topPoints.push_back(QPointF(
+        positionToX_(controlPoints_.front().position),
+        valueToY_(controlPoints_.front().value)
+    ));
 
     for (std::size_t leftIndex = 0; leftIndex + 1 < controlPoints_.size(); ++leftIndex)
     {
