@@ -145,6 +145,19 @@ prm::ValueType prm::Parameter::getValueType() const
 
 void prm::Parameter::setInt(intT value, unsigned int index)
 {
+    // Maps integer indeces back to string tokens for parameters with options like dropdowns.
+    if (template_.hasOptions())
+    {
+        const std::vector<prm::Name>& options = template_.getOptions();
+        if (value < 0 || value >= static_cast<intT>(options.size()))
+            throw std::out_of_range(
+                "Option index: " + std::to_string(value) + " out of range for parameter: " +
+                getName()
+            );
+        setString(options[value].getToken(), index);
+        return;
+    }
+
     auto& vals = std::get<std::vector<intT>>(values_);
     if (index >= vals.size())
         throw std::out_of_range(
