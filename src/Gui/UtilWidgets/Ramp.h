@@ -27,9 +27,8 @@ class Ramp : public QWidget
     /// @brief Replaces the displayed control points, one per QPointF where x is
     /// position and y is value. The interp of each point governs the segment to
     /// its right. Fits the value axis to span the points.
-    void setPoints(
-        const std::vector<QPointF>& points, const std::vector<prm::Interpolation>& interps
-    );
+    void
+    setPoints(const std::vector<QPointF>& points, const std::vector<prm::Interpolation>& interps);
 
     /// @brief Marks which control point is the active one for the host editor.
     void setSelectedPoint(int pointIndex);
