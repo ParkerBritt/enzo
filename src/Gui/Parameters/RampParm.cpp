@@ -166,17 +166,24 @@ void enzo::ui::RampParm::onRampEdited()
     // The guard stops the echoed valueChanged from rebuilding the curve mid drag.
     applyingFromRamp_ = true;
 
-    while (parameterShared->getInstanceCount() < points.size())
-        parameterShared->addInstance();
-    while (parameterShared->getInstanceCount() > points.size())
-        parameterShared->removeInstance(parameterShared->getInstanceCount() - 1);
-
-    for (unsigned int instanceIndex = 0; instanceIndex < points.size(); ++instanceIndex)
     {
-        parameterShared->getInstanceField(instanceIndex, "position")
-            ->setFloat(static_cast<floatT>(points[instanceIndex].x()));
-        parameterShared->getInstanceField(instanceIndex, "value")
-            ->setFloat(static_cast<floatT>(points[instanceIndex].y()));
+        // Each field write dirties the node, which on its own would recook the
+        // curve once per point. Holding one update lock over the whole rewrite
+        // coalesces them into a single cook when the lock releases.
+        auto updateLock = enzo::nt::nm().lockUpdates();
+
+        while (parameterShared->getInstanceCount() < points.size())
+            parameterShared->addInstance();
+        while (parameterShared->getInstanceCount() > points.size())
+            parameterShared->removeInstance(parameterShared->getInstanceCount() - 1);
+
+        for (unsigned int instanceIndex = 0; instanceIndex < points.size(); ++instanceIndex)
+        {
+            parameterShared->getInstanceField(instanceIndex, "position")
+                ->setFloat(static_cast<floatT>(points[instanceIndex].x()));
+            parameterShared->getInstanceField(instanceIndex, "value")
+                ->setFloat(static_cast<floatT>(points[instanceIndex].y()));
+        }
     }
 
     applyingFromRamp_ = false;
