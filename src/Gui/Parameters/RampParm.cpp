@@ -41,16 +41,23 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     interpButton_ = new IconButton("spline");
     flipHorizontalButton_ = new IconButton("arrow-left-right");
     flipVerticalButton_ = new IconButton("arrow-down-up");
+    addPointButton_ = new IconButton("plus");
+    deletePointButton_ = new IconButton("x");
     interpButton_->setToolTip("Set interpolation for all points");
     flipHorizontalButton_->setToolTip("Flip left to right");
     flipVerticalButton_->setToolTip("Flip up and down");
+    addPointButton_->setToolTip("Add a point after the selected one");
+    deletePointButton_->setToolTip("Delete the selected point");
 
     const int panelInset = static_cast<int>(std::lround(Ramp::panelInset));
 
     QHBoxLayout* toolRow = new QHBoxLayout();
-    // Push the strip to the right and inset it so it lines up with the curve panel.
-    toolRow->setContentsMargins(0, 0, panelInset, 0);
+    // Inset both ends so the strip lines up with the curve panel below. Add and
+    // delete sit on the left, the interp and flip tools on the right.
+    toolRow->setContentsMargins(panelInset, 0, panelInset, 0);
     toolRow->setSpacing(2);
+    toolRow->addWidget(deletePointButton_);
+    toolRow->addWidget(addPointButton_);
     toolRow->addStretch();
     toolRow->addWidget(interpButton_);
     toolRow->addWidget(flipHorizontalButton_);
@@ -110,6 +117,8 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     connect(interpButton_, &IconButton::clicked, this, &RampParm::openInterpPopup);
     connect(flipHorizontalButton_, &IconButton::clicked, this, &RampParm::flipHorizontal);
     connect(flipVerticalButton_, &IconButton::clicked, this, &RampParm::flipVertical);
+    connect(addPointButton_, &IconButton::clicked, this, &RampParm::addPoint);
+    connect(deletePointButton_, &IconButton::clicked, this, &RampParm::deletePoint);
     connect(interpPopup_, &PopupList::itemSelected, this, [this](int index) {
         setAllInterps(static_cast<prm::Interpolation>(index));
     });
@@ -267,6 +276,66 @@ void enzo::ui::RampParm::setAllInterps(prm::Interpolation interp)
     if (points.empty()) return;
 
     const std::vector<prm::Interpolation> interps(points.size(), interp);
+    applyControlPoints(points, interps);
+}
+
+void enzo::ui::RampParm::addPoint()
+{
+    std::vector<QPointF> points = rampWidget_->points();
+    std::vector<prm::Interpolation> interps = rampWidget_->interps();
+    const int count = static_cast<int>(points.size());
+    if (count == 0) return;
+
+    const int selected = std::clamp(selectedInstance_, 0, count - 1);
+
+    // Split the segment to the right of the selected point, falling back to the
+    // one on its left when it is already the last point.
+    int leftIndex = selected;
+    int rightIndex = selected + 1;
+    if (rightIndex >= count)
+    {
+        leftIndex = selected - 1;
+        rightIndex = selected;
+    }
+
+    QPointF newPoint;
+    prm::Interpolation newInterp;
+    if (leftIndex < 0)
+    {
+        // A lone point has no neighbour, so the new one lands halfway to the right edge.
+        newPoint = QPointF((points[selected].x() + 1.0) / 2.0, points[selected].y());
+        newInterp = interps[selected];
+        leftIndex = selected;
+    }
+    else
+    {
+        // The new point inherits the left interp so the split keeps the segment shape.
+        newPoint = (points[leftIndex] + points[rightIndex]) / 2.0;
+        newInterp = interps[leftIndex];
+    }
+
+    points.push_back(newPoint);
+    interps.push_back(newInterp);
+
+    // Sorting by position drops the new point right after everything left of it.
+    selectedInstance_ = leftIndex + 1;
+    applyControlPoints(points, interps);
+}
+
+void enzo::ui::RampParm::deletePoint()
+{
+    std::vector<QPointF> points = rampWidget_->points();
+    std::vector<prm::Interpolation> interps = rampWidget_->interps();
+    const int count = static_cast<int>(points.size());
+
+    // Keep at least one point so the ramp always has a value.
+    if (count <= 1) return;
+
+    const int selected = std::clamp(selectedInstance_, 0, count - 1);
+    points.erase(points.begin() + selected);
+    interps.erase(interps.begin() + selected);
+
+    selectedInstance_ = std::clamp(selected, 0, count - 2);
     applyControlPoints(points, interps);
 }
 
