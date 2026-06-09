@@ -8,10 +8,8 @@
 
 namespace {
 // Inset from the widget edge to the background panel so handles can overflow it
-constexpr double padding = 12.0;
+constexpr double padding = enzo::ui::Ramp::panelInset;
 constexpr double backgroundCornerRadius = 9.0;
-constexpr double circleRadius = 5.0;
-constexpr double squareSize = 9.0;
 const QColor panelColor("#1a1a1a");
 const QColor borderColor("#383838");
 const QColor circleColor("#B1B2B5");
@@ -22,7 +20,6 @@ const QColor curveFillTopColor(177, 178, 181, 100);
 const QColor curveFillBottomColor(177, 178, 181, 10);
 // Hitbox scale multiplier for circle handle
 constexpr double circleHitRadiusScale = 4;
-constexpr double hoverScaleTarget = 1.15;
 constexpr double dragScaleTarget = 0.9;
 constexpr int hoverScaleDurationMs = 200;
 } // namespace

@@ -5,6 +5,7 @@
 #include <QPointF>
 #include <QRectF>
 #include <QWidget>
+#include <algorithm>
 #include <qtmetamacros.h>
 #include <vector>
 
@@ -23,6 +24,17 @@ class Ramp : public QWidget
     Q_PROPERTY(qreal hoverScale READ hoverScale WRITE setHoverScale)
   public:
     Ramp(QWidget* parent = nullptr);
+
+    // Control point handle sizes, shared with the layout so the panel inset can
+    // be sized to exactly clear them.
+    static constexpr double circleRadius = 5.0;
+    static constexpr double squareSize = 9.0;
+    static constexpr double hoverScaleTarget = 1.15;
+
+    // Inset from the widget edge to the curve panel, just wide enough that the
+    // largest handle a point can draw stays inside the widget.
+    static constexpr double panelInset =
+        std::max(circleRadius * hoverScaleTarget, squareSize / 2.0);
 
     /// @brief Replaces the displayed control points, one per QPointF where x is
     /// position and y is value. The interp of each point governs the segment to

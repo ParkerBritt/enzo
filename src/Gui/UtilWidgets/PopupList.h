@@ -38,7 +38,15 @@ class PopupList : public QWidget
     PopupList(QWidget* parent = nullptr);
 
     void addItem(const Item& item);
+
+    /// @brief Adds an iconless row showing only text.
+    void addItem(const QString& text);
+
     void clearItems();
+
+    /// @brief Reveals the list anchored at a global position.
+    /// @note selectedPosition is the row highlighted on open.
+    void open(const QPoint& globalTopLeft, int width, int selectedPosition = 0);
 
   Q_SIGNALS:
     // The index identifies the chosen item within items_ rather than its position
