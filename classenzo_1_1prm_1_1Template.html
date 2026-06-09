@@ -133,6 +133,10 @@ const <a class="el" href="classenzo_1_1prm_1_1Range.html">prm::Range</a> &amp;&#
 <tr class="memitem:a733f731bff17152d79039b236dd1f435" id="r_a733f731bff17152d79039b236dd1f435"><td class="memItemLeft" align="right" valign="top"><a id="a733f731bff17152d79039b236dd1f435" name="a733f731bff17152d79039b236dd1f435"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasOptions</b> () const</td></tr>
 <tr class="separator:a733f731bff17152d79039b236dd1f435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcd4923cddc8f349de85c1edfc14d04e" id="r_afcd4923cddc8f349de85c1edfc14d04e"><td class="memItemLeft" align="right" valign="top"><a id="afcd4923cddc8f349de85c1edfc14d04e" name="afcd4923cddc8f349de85c1edfc14d04e"></a>
+intT&#160;</td><td class="memItemRight" valign="bottom"><b>getNumOptions</b> () const</td></tr>
+<tr class="memdesc:afcd4923cddc8f349de85c1edfc14d04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of available options. <br /></td></tr>
+<tr class="separator:afcd4923cddc8f349de85c1edfc14d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0090b0308a7ad92a21b72b2ffa245ccb" id="r_a0090b0308a7ad92a21b72b2ffa245ccb"><td class="memItemLeft" align="right" valign="top"><a id="a0090b0308a7ad92a21b72b2ffa245ccb" name="a0090b0308a7ad92a21b72b2ffa245ccb"></a>
 const prm::Type&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> () const</td></tr>
 <tr class="separator:a0090b0308a7ad92a21b72b2ffa245ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,9 +152,15 @@ Direction&#160;</td><td class="memItemRight" valign="bottom"><b>getDirection</b>
 <tr class="memitem:aeaa554bf387f83771774100155f2fe3d" id="r_aeaa554bf387f83771774100155f2fe3d"><td class="memItemLeft" align="right" valign="top"><a id="aeaa554bf387f83771774100155f2fe3d" name="aeaa554bf387f83771774100155f2fe3d"></a>
 const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getChildren</b> () const</td></tr>
 <tr class="separator:aeaa554bf387f83771774100155f2fe3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49d13a701051e29ef7629511da3bb233" id="r_a49d13a701051e29ef7629511da3bb233"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49d13a701051e29ef7629511da3bb233">getChild</a> (const enzo::String &amp;token) const</td></tr>
+<tr class="memdesc:a49d13a701051e29ef7629511da3bb233"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the child template with the given token.  <br /></td></tr>
+<tr class="separator:a49d13a701051e29ef7629511da3bb233"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af05512fe212e5fc7cafe0c907a1674d9" id="r_af05512fe212e5fc7cafe0c907a1674d9"><td class="memItemLeft" align="right" valign="top"><a id="af05512fe212e5fc7cafe0c907a1674d9" name="af05512fe212e5fc7cafe0c907a1674d9"></a>
 const bool&#160;</td><td class="memItemRight" valign="bottom"><b>isContainer</b> () const</td></tr>
 <tr class="separator:af05512fe212e5fc7cafe0c907a1674d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafdcc5bd39100fbe7706f43aed229d62" id="r_aafdcc5bd39100fbe7706f43aed229d62"><td class="memItemLeft" align="right" valign="top"><a id="aafdcc5bd39100fbe7706f43aed229d62" name="aafdcc5bd39100fbe7706f43aed229d62"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isMultiParm</b> () const</td></tr>
+<tr class="separator:aafdcc5bd39100fbe7706f43aed229d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a304f16a3609d40fd15474490fd532d2c" id="r_a304f16a3609d40fd15474490fd532d2c"><td class="memItemLeft" align="right" valign="top"><a id="a304f16a3609d40fd15474490fd532d2c" name="a304f16a3609d40fd15474490fd532d2c"></a>
 enzo::String&#160;</td><td class="memItemRight" valign="bottom"><b>getTooltip</b> () const</td></tr>
 <tr class="separator:a304f16a3609d40fd15474490fd532d2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,6 +188,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBackgroundEnabled</
 <tr class="memitem:a656c24444e0f851386481497313ff70b" id="r_a656c24444e0f851386481497313ff70b"><td class="memItemLeft" align="right" valign="top"><a id="a656c24444e0f851386481497313ff70b" name="a656c24444e0f851386481497313ff70b"></a>
 <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>addParm</b> (<a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> child)</td></tr>
 <tr class="separator:a656c24444e0f851386481497313ff70b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6c1ae32f3e361199dd4d64775c15550" id="r_ab6c1ae32f3e361199dd4d64775c15550"><td class="memItemLeft" align="right" valign="top"><a id="ab6c1ae32f3e361199dd4d64775c15550" name="ab6c1ae32f3e361199dd4d64775c15550"></a>
+<a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>setInstanceDefault</b> (std::string fieldToken, std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> &gt; defaults)</td></tr>
+<tr class="separator:ab6c1ae32f3e361199dd4d64775c15550"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a835a52d13353367e34ae3a6ba75f83f1" id="r_a835a52d13353367e34ae3a6ba75f83f1"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a835a52d13353367e34ae3a6ba75f83f1">getInstanceDefault</a> (const std::string &amp;fieldToken, unsigned int instanceIndex) const</td></tr>
+<tr class="memdesc:a835a52d13353367e34ae3a6ba75f83f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default for a multiparm field at a given instance.  <br /></td></tr>
+<tr class="separator:a835a52d13353367e34ae3a6ba75f83f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb38c64b796ddf2e6ab2159bdec20b39" id="r_aeb38c64b796ddf2e6ab2159bdec20b39"><td class="memItemLeft" align="right" valign="top"><a id="aeb38c64b796ddf2e6ab2159bdec20b39" name="aeb38c64b796ddf2e6ab2159bdec20b39"></a>
 <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>setLabelHidden</b> (bool hidden)</td></tr>
 <tr class="separator:aeb38c64b796ddf2e6ab2159bdec20b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,6 +209,50 @@ const std::any &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSt
 <tr class="separator:af1b3f96c1b6318cdc1b09c2a0a970315"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a49d13a701051e29ef7629511da3bb233" name="a49d13a701051e29ef7629511da3bb233"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49d13a701051e29ef7629511da3bb233">&#9670;&#160;</a></span>getChild()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &amp; enzo::prm::Template::getChild </td>
+          <td>(</td>
+          <td class="paramtype">const enzo::String &amp;</td>          <td class="paramname"><span class="paramname"><em>token</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the child template with the given token. </p>
+<dl class="section note"><dt>Note</dt><dd>Throws std::out_of_range when no child carries the token. </dd></dl>
+
+</div>
+</div>
+<a id="a835a52d13353367e34ae3a6ba75f83f1" name="a835a52d13353367e34ae3a6ba75f83f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a835a52d13353367e34ae3a6ba75f83f1">&#9670;&#160;</a></span>getInstanceDefault()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">prm::Default</a> &gt; enzo::prm::Template::getInstanceDefault </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fieldToken</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>instanceIndex</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default for a multiparm field at a given instance. </p>
+<dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> when one is set in range, otherwise nullopt. </dd></dl>
+
+</div>
+</div>
 <a id="a7e21428d471c1d21ea002188a5975a97" name="a7e21428d471c1d21ea002188a5975a97"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7e21428d471c1d21ea002188a5975a97">&#9670;&#160;</a></span>getOptions()</h2>
 

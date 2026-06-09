@@ -94,31 +94,51 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">ParameterSerializable.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="Types_8h.html">Engine/Core/Types.h</a>&quot;</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;cereal/types/string.hpp&gt;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;cereal/types/vector.hpp&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="foldopen" id="foldopen00007" data-start="{" data-end="};">
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="structParameterSerializable.html">    7</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    std::string name;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    std::vector&lt;enzo::floatT&gt; floatValues;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    std::vector&lt;enzo::intT&gt; intValues;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    std::vector&lt;std::string&gt; stringValues;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt; <span class="keywordtype">void</span> serialize(Archive&amp; ar)</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        ar(CEREAL_NVP(name),</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>           CEREAL_NVP(floatValues),</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>           CEREAL_NVP(intValues),</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>           CEREAL_NVP(stringValues));</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    }</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>};</div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="Types_8h.html">Engine/Core/Types.h</a>&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Engine/Parameter/Parameter.h&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;cereal/types/string.hpp&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;cereal/types/vector.hpp&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="foldopen" id="foldopen00009" data-start="{" data-end="};">
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="structParameterSerializable.html">    9</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>{</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    std::string name;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    std::vector&lt;enzo::floatT&gt; floatValues;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    std::vector&lt;enzo::intT&gt; intValues;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    std::vector&lt;std::string&gt; stringValues;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="comment">// Multiparm parameters such as ramps store nothing flat. Each instance is a</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="comment">// list of field models, so the structure nests one level per instance.</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    std::vector&lt;std::vector&lt;ParameterSerializable&gt;&gt; instances;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a>&amp; other) <span class="keyword">const</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt; <span class="keywordtype">void</span> serialize(Archive&amp; ar)</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        ar(CEREAL_NVP(name),</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>           CEREAL_NVP(floatValues),</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>           CEREAL_NVP(intValues),</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>           CEREAL_NVP(stringValues),</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>           CEREAL_NVP(instances));</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    }</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
 </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">// Capture a parameter&#39;s live state into a serializable model. Multiparms recurse</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">// one model per instance field, flat parameters store their value vector.</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a> toSerializable(<a class="code hl_class" href="classenzo_1_1prm_1_1Parameter.html">enzo::prm::Parameter</a>&amp; parameter);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">// Snapshots a flat parameter from its name and values without a live Parameter.</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a> toSerializable(std::string name, <span class="keyword">const</span> enzo::prm::PrmValues&amp; values);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">// Write a serialized model back onto a live parameter. Multiparms reconcile their</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// instance count to the model before writing each field by name.</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keywordtype">void</span> applySerializable(<a class="code hl_class" href="classenzo_1_1prm_1_1Parameter.html">enzo::prm::Parameter</a>&amp; parameter, <span class="keyword">const</span> <a class="code hl_struct" href="structParameterSerializable.html">ParameterSerializable</a>&amp; model);</div>
 <div class="ttc" id="aTypes_8h_html"><div class="ttname"><a href="Types_8h.html">Types.h</a></div><div class="ttdoc">Basic attribute, parameter, and node types for Enzo.</div></div>
-<div class="ttc" id="astructParameterSerializable_html"><div class="ttname"><a href="structParameterSerializable.html">ParameterSerializable</a></div><div class="ttdef"><b>Definition</b> ParameterSerializable.h:8</div></div>
+<div class="ttc" id="aclassenzo_1_1prm_1_1Parameter_html"><div class="ttname"><a href="classenzo_1_1prm_1_1Parameter.html">enzo::prm::Parameter</a></div><div class="ttdef"><b>Definition</b> Parameter.h:14</div></div>
+<div class="ttc" id="astructParameterSerializable_html"><div class="ttname"><a href="structParameterSerializable.html">ParameterSerializable</a></div><div class="ttdef"><b>Definition</b> ParameterSerializable.h:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
