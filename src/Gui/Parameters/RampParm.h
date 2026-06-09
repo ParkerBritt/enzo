@@ -41,6 +41,9 @@ class RampParm : public Parameter
     void openInterpPopup();
     void setAllInterps(prm::Interpolation interp);
 
+    void addPoint();
+    void deletePoint();
+
     /// @brief Replaces every control point and records it as one undo step.
     void applyControlPoints(
         const std::vector<QPointF>& points,
@@ -63,6 +66,8 @@ class RampParm : public Parameter
     IconButton* interpButton_ = nullptr;
     IconButton* flipHorizontalButton_ = nullptr;
     IconButton* flipVerticalButton_ = nullptr;
+    IconButton* addPointButton_ = nullptr;
+    IconButton* deletePointButton_ = nullptr;
     PopupList* interpPopup_ = nullptr;
 
     int selectedInstance_ = 0;
