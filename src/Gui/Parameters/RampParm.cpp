@@ -162,6 +162,7 @@ void enzo::ui::RampParm::onRampEdited()
     if (!parameterShared) return;
 
     const std::vector<QPointF> points = rampWidget_->points();
+    const std::vector<prm::Interpolation> interps = rampWidget_->interps();
 
     // The guard stops the echoed valueChanged from rebuilding the curve mid drag.
     applyingFromRamp_ = true;
@@ -183,6 +184,8 @@ void enzo::ui::RampParm::onRampEdited()
                 ->setFloat(static_cast<floatT>(points[instanceIndex].x()));
             parameterShared->getInstanceField(instanceIndex, "value")
                 ->setFloat(static_cast<floatT>(points[instanceIndex].y()));
+            parameterShared->getInstanceField(instanceIndex, "interp")
+                ->setInt(static_cast<intT>(interps[instanceIndex]));
         }
     }
 

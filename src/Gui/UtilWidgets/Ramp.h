@@ -37,6 +37,10 @@ class Ramp : public QWidget
     /// and y is value, ordered by position.
     std::vector<QPointF> points() const;
 
+    /// @brief The interp of each control point, ordered by position to match
+    /// points(). Each entry governs the segment toward the next point.
+    std::vector<prm::Interpolation> interps() const;
+
   Q_SIGNALS:
     /// @brief Emitted whenever a drag or click changes the control points.
     void edited();

@@ -80,6 +80,15 @@ std::vector<QPointF> enzo::ui::Ramp::points() const
     return result;
 }
 
+std::vector<enzo::prm::Interpolation> enzo::ui::Ramp::interps() const
+{
+    std::vector<prm::Interpolation> result;
+    result.reserve(controlPoints_.size());
+    for (const ControlPoint& controlPoint : controlPoints_)
+        result.push_back(controlPoint.interp);
+    return result;
+}
+
 QRectF enzo::ui::Ramp::backgroundRect_() const
 {
     return QRectF(rect()).adjusted(padding, padding, -padding, -padding);
@@ -341,6 +350,11 @@ void enzo::ui::Ramp::addControlPoint_(double position, double value)
     controlPoints_.push_back({0, position, value});
     sortAndRenumber_();
     activePoint_ = circleHitIndex_(QPointF(positionToX_(position), valueToY_(value)));
+
+    // A new point inherits the interp of the point on its left so the segment it
+    // splits keeps the same shape it had before the split.
+    if (activePoint_ > 0)
+        controlPoints_[activePoint_].interp = controlPoints_[activePoint_ - 1].interp;
 }
 
 void enzo::ui::Ramp::selectPoint_(int pointIndex)
