@@ -1,15 +1,20 @@
 #pragma once
+#include "Engine/Parameter/Ramp.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Gui/Parameters/Parameter.h"
+#include <QPointF>
 #include <boost/signals2/connection.hpp>
 #include <memory>
+#include <vector>
 
 namespace enzo::ui {
 
 class Ramp;
 class Slider;
 class Dropdown;
+class IconButton;
+class PopupList;
 
 /**
  * @brief Editor for a ramp multiparm. A curve widget edits every control point
@@ -31,6 +36,17 @@ class RampParm : public Parameter
     void beginEdit();
     void commitEdit();
 
+    void flipHorizontal();
+    void flipVertical();
+    void openInterpPopup();
+    void setAllInterps(prm::Interpolation interp);
+
+    /// @brief Replaces every control point and records it as one undo step.
+    void applyControlPoints(
+        const std::vector<QPointF>& points,
+        const std::vector<prm::Interpolation>& interps
+    );
+
     void selectInstance(int instanceIndex);
     void syncFromParameter();
     void syncSelectedFields();
@@ -43,6 +59,11 @@ class RampParm : public Parameter
     Slider* positionSlider_ = nullptr;
     Slider* valueSlider_ = nullptr;
     Dropdown* interpDropdown_ = nullptr;
+
+    IconButton* interpButton_ = nullptr;
+    IconButton* flipHorizontalButton_ = nullptr;
+    IconButton* flipVerticalButton_ = nullptr;
+    PopupList* interpPopup_ = nullptr;
 
     int selectedInstance_ = 0;
     // Set while writing ramp edits into the parameter so the echoed valueChanged

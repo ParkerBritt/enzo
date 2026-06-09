@@ -57,6 +57,8 @@ enzo::ui::PopupList::PopupList(QWidget* parent)
 
 void enzo::ui::PopupList::addItem(const Item& item) { items_.push_back(item); }
 
+void enzo::ui::PopupList::addItem(const QString& text) { items_.push_back({QIcon(), text, {}}); }
+
 void enzo::ui::PopupList::clearItems()
 {
     items_.clear();
@@ -67,6 +69,12 @@ void enzo::ui::PopupList::showAllItems()
 {
     visibleIndices_.resize(items_.size());
     std::iota(visibleIndices_.begin(), visibleIndices_.end(), 0);
+}
+
+void enzo::ui::PopupList::open(const QPoint& globalTopLeft, int width, int selectedPosition)
+{
+    showAllItems();
+    openList(globalTopLeft, width, selectedPosition);
 }
 
 void enzo::ui::PopupList::setHighlightedPosition(int position)
