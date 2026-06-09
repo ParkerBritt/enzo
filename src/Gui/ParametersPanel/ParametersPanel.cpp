@@ -12,6 +12,7 @@
 #include "Gui/Parameters/RampParm.h"
 #include "Gui/Parameters/StringParm.h"
 #include "Gui/Parameters/XYZParm.h"
+#include <QScrollArea>
 #include <qboxlayout.h>
 #include <qnamespace.h>
 #include <qwidget.h>
@@ -33,7 +34,31 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
         }
     )");
 
-    mainLayout_->addWidget(bgWidget_);
+    // Add scrollArea for lots of parameters.
+    scrollArea_ = new QScrollArea();
+    scrollArea_->setWidget(bgWidget_);
+    scrollArea_->setWidgetResizable(true);
+    scrollArea_->setFrameShape(QFrame::NoFrame);
+    scrollArea_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea_->setStyleSheet(R"(
+        QScrollBar:vertical {
+            background: #1B1B1B;
+            width: 15px;
+        }
+        QScrollBar::handle:vertical {
+            background: #282828;
+            min-height: 50px;
+            border-radius: 5px;
+            border: 1px solid #2D2D2D;
+            margin: 2px;
+        }
+        QScrollBar::add-page:vertical,
+        QScrollBar::sub-page:vertical,
+        QScrollBar::add-line:vertical,
+        QScrollBar::sub-line:vertical { height: 0px; }
+    )");
+
+    mainLayout_->addWidget(scrollArea_);
 
     setLayout(mainLayout_);
 }
