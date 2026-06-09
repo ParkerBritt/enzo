@@ -1,6 +1,6 @@
 #pragma once
-#include "Engine/Parameter/Ramp.h"
 #include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Parameter/Ramp.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Gui/Parameters/Parameter.h"
 #include <QPointF>

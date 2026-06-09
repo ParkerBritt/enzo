@@ -12,8 +12,7 @@ constexpr qreal hoverGrow = 1.1;
 
 } // namespace
 
-enzo::ui::IconButton::IconButton(const std::string& iconName, QWidget* parent)
-    : QPushButton(parent)
+enzo::ui::IconButton::IconButton(const std::string& iconName, QWidget* parent) : QPushButton(parent)
 {
     setFixedSize(buttonSize, buttonSize);
     setCursor(Qt::PointingHandCursor);
