@@ -105,6 +105,9 @@ enzo::ui::RampParm::RampParm(std::weak_ptr<prm::NodeParameter> parameter, QWidge
     // frame would draw a redundant box around it.
     disableBackground();
 
+    // The ramp is tall, so the caption sits at the top rather than the row centre.
+    if (label_) mainLayout_->setAlignment(label_, Qt::AlignTop);
+
     connect(rampWidget_, &Ramp::edited, this, &RampParm::onRampEdited);
     connect(rampWidget_, &Ramp::selectionChanged, this, &RampParm::selectInstance);
     connect(rampWidget_, &Ramp::editBegan, this, &RampParm::beginEdit);
