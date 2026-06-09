@@ -21,6 +21,7 @@ add_library(${libName} SHARED
     ../Engine/Primitives/Camera.cpp
     ../Engine/Network/NodePacket.cpp
     ../Engine/Attribute/Attribute.cpp
+    ../Engine/Attribute/Transform.cpp
     ../Engine/Selection/Selection.cpp
     ../Engine/Selection/SelectionComponent.cpp
     ../Engine/Selection/IndexSet.cpp
