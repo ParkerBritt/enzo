@@ -383,10 +383,7 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
     painter.drawRoundedRect(box, borderRadius, borderRadius);
 }
 
-void enzo::ui::PopupList::mouseMoveEvent(QMouseEvent* event)
-{
-    hoverRowAt(event->pos().y());
-}
+void enzo::ui::PopupList::mouseMoveEvent(QMouseEvent* event) { hoverRowAt(event->pos().y()); }
 
 void enzo::ui::PopupList::hoverRowAt(int localY)
 {

@@ -6,6 +6,7 @@ class Name
 {
   public:
     Name(String token, String label);
+    Name(String token);
     Name();
 
     String getToken() const;

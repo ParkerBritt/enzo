@@ -123,6 +123,7 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
                 enzo::prm::RangeFlag::UNLOCKED
             )
         ),
+        enzo::prm::Template(enzo::prm::Type::SPACER, enzo::prm::Name("spacer1")),
         enzo::prm::Template(
             enzo::prm::Type::FLOAT,
             enzo::prm::Name("uniform_scale", "Uniform Scale"),
@@ -137,6 +138,7 @@ std::vector<enzo::prm::Template> GopCircle::parameterList()
             2,
             enzo::prm::Range(0, 10, enzo::prm::RangeFlag::UNLOCKED, enzo::prm::RangeFlag::UNLOCKED)
         ),
+        enzo::prm::Template(enzo::prm::Type::SPACER, enzo::prm::Name("spacer2")),
         enzo::prm::Template(
             enzo::prm::Type::INT,
             enzo::prm::Name("divisions", "Divisions"),

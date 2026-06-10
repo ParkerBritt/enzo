@@ -10,6 +10,7 @@
 #include "Gui/Parameters/IntSliderParm.h"
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/Parameters/RampParm.h"
+#include "Gui/Parameters/SpacerParm.h"
 #include "Gui/Parameters/StringParm.h"
 #include "Gui/Parameters/XYZParm.h"
 #include "Gui/Style.h"
@@ -140,6 +141,9 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
         break;
     case prm::Type::RAMP:
         leafWidget = new ui::RampParm(parameter);
+        break;
+    case prm::Type::SPACER:
+        leafWidget = new ui::SpacerParm(templateEntry);
         break;
     default:
         throw std::runtime_error(

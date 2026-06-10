@@ -97,12 +97,8 @@ class PopupList : public QWidget
     /// @param selectedPosition Position within the visible subset to highlight on open.
     /// @param takeFocus Hands keyboard focus to the list. A submenu opened on hover leaves
     ///        it with the parent until the cursor moves onto the child.
-    void openList(
-        const QPoint& globalTopLeft,
-        int width,
-        int selectedPosition,
-        bool takeFocus = true
-    );
+    void
+    openList(const QPoint& globalTopLeft, int width, int selectedPosition, bool takeFocus = true);
     void animateClose();
 
     /// @brief Turns the staggered row fade on open off so rows appear at once.
