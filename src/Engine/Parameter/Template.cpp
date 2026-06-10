@@ -62,6 +62,7 @@ prm::Template::Template(
     }
     ranges_ = ranges;
     backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
+    labelHidden_ = labelHiddenByDefault_.contains(type_);
 }
 
 prm::Template::Template(
@@ -76,6 +77,7 @@ prm::Template::Template(
     defaults_.resize(vectorSize_, theDefault);
     ranges_.resize(vectorSize_, range);
     backgroundEnabled_ = !backgroundDisabledByDefault_.contains(type_);
+    labelHidden_ = labelHiddenByDefault_.contains(type_);
 
     // A ramp carries a fixed instance template the caller never builds, and
     // defaults to a linear zero to one curve callers can override.

@@ -133,6 +133,8 @@ prm::ValueType prm::Parameter::getValueType() const
     // Multiparm parameters (like ramp) use integers to represent their instance
     // count and store the actual data in their instances.
     case prm::Type::RAMP:
+    // Spacers are purely visual and store an int nobody reads.
+    case prm::Type::SPACER:
         return prm::ValueType::Int;
     case prm::Type::STRING:
     case prm::Type::DROPDOWN:

@@ -84,8 +84,10 @@ void enzo::ui::Menu::onHighlightChanged(int position, bool fromPointer)
 {
     // Hovering a branch reveals its child. Keyboard travel waits for the Right key
     // and only folds away whatever child is open.
-    if (fromPointer && isBranch(position)) openSubmenu(position, false);
-    else closeSubmenu();
+    if (fromPointer && isBranch(position))
+        openSubmenu(position, false);
+    else
+        closeSubmenu();
 }
 
 void enzo::ui::Menu::openSubmenu(int position, bool takeFocus)
@@ -108,8 +110,7 @@ void enzo::ui::Menu::openSubmenu(int position, bool takeFocus)
 
     // Anchor the child to the right edge of the row with its first row aligned
     const QRect row = rowRect(position);
-    const QPoint anchor =
-        mapToGlobal(QPoint(width() - submenuOverlap, row.top() - listPadding));
+    const QPoint anchor = mapToGlobal(QPoint(width() - submenuOverlap, row.top() - listPadding));
     submenu_->popup(anchor, takeFocus);
 }
 
@@ -142,7 +143,8 @@ void enzo::ui::Menu::mousePressEvent(QMouseEvent* event)
 QWidget* enzo::ui::Menu::ownerAt(const QPoint& globalPos) const
 {
     const Menu* root = this;
-    while (root->parentMenu_) root = root->parentMenu_;
+    while (root->parentMenu_)
+        root = root->parentMenu_;
     QWidget* owner = root->parentWidget();
     if (!owner) return nullptr;
     if (!owner->rect().contains(owner->mapFromGlobal(globalPos))) return nullptr;

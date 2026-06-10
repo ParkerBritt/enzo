@@ -98,6 +98,7 @@ set(GUI_SOURCES
     src/Gui/Parameters/StringParm.cpp
     src/Gui/Parameters/DropdownParm.cpp
     src/Gui/Parameters/GroupParm.cpp
+    src/Gui/Parameters/SpacerParm.cpp
     src/Gui/HeaderBar/HeaderBar.cpp
     src/Gui/Panels/Panel.cpp
     src/Gui/Panels/CornerOverlay.cpp

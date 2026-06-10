@@ -17,4 +17,7 @@ inline constexpr int parameterGap = 3;
 /// Height in pixels of the ramp curve editor.
 inline constexpr int rampHeight = 80;
 
+/// Height in pixels of a spacer parameter row.
+inline constexpr int spacerHeight = 12;
+
 } // namespace enzo::ui

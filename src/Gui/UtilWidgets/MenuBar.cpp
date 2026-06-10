@@ -56,8 +56,8 @@ QRect enzo::ui::MenuBar::titleRect(int index) const
     int left = 0;
     for (int before = 0; before < index; ++before)
     {
-        left += fontMetrics().horizontalAdvance(items_[before].title) + titlePaddingX * 2
-                + titleSpacing;
+        left += fontMetrics().horizontalAdvance(items_[before].title) + titlePaddingX * 2 +
+                titleSpacing;
     }
     const int width = fontMetrics().horizontalAdvance(items_[index].title) + titlePaddingX * 2;
     return QRect(left, 0, width, height());

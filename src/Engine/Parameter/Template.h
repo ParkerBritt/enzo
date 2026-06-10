@@ -125,10 +125,10 @@ class Template
     // Types whose children are the per instance template duplicated by the
     // parameter count.
     inline const static std::unordered_set<prm::Type> multiParmTypes_ = {prm::Type::RAMP};
-    inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ = {
-        prm::Type::GROUP,
-        prm::Type::XYZ
-    };
+    inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ =
+        {prm::Type::GROUP, prm::Type::XYZ, prm::Type::SPACER};
+    // Types that render without a label, such as blank spacers.
+    inline const static std::unordered_set<prm::Type> labelHiddenByDefault_ = {prm::Type::SPACER};
 };
 
 } // namespace enzo::prm

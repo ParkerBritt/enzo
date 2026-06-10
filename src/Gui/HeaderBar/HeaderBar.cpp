@@ -56,10 +56,9 @@ std::vector<Entry> HeaderBar::recentFileEntries()
     std::vector<Entry> entries;
     for (const QString& filePath : recentFiles)
     {
-        entries.push_back(
-            {.text = QFileInfo(filePath).fileName(),
-             .action = [this, filePath] { openFile(filePath); }}
-        );
+        entries.push_back({.text = QFileInfo(filePath).fileName(), .action = [this, filePath] {
+                               openFile(filePath);
+                           }});
     }
     return entries;
 }
