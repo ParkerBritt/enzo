@@ -5,91 +5,99 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QHBoxLayout>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QToolButton>
 #include <iostream>
-#include <qaction.h>
+
+using Entry = enzo::ui::Menu::Entry;
 
 HeaderBar::HeaderBar()
 {
     mainLayout_ = new QHBoxLayout(this);
-    setLayout(mainLayout_);
+    mainLayout_->setContentsMargins(4, 2, 4, 2);
+    mainLayout_->setSpacing(2);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-
-    QMenuBar* header = new QMenuBar();
-    header->setStyleSheet(R"(
-    QMenuBar::item
+    setStyleSheet(R"(
+    QToolButton
     {
+        border: none;
         border-radius: 6px;
-        padding: 2px 6px;
+        padding: 2px 8px;
+        color: #B3B3B3;
+        background: transparent;
     }
-    QMenuBar::item:selected
-    {
-        background: #282828;
-    }
-
-    QMenu::item
-    {
-        border-radius: 6px;
-        padding: 2px 6px;
-        height: 24px;
-        width: 150px;
-    }
-    QMenu::item:selected
+    QToolButton:hover
     {
         background: #282828;
     }
     )");
 
-    // File menu
-    QMenu* fileMenu = header->addMenu("File");
-    QMenu* fileImportMenu = new QMenu("Import", this);
+    // One menu instance is repopulated by whichever button opens it
+    menu_ = new enzo::ui::Menu(this);
 
-    // Create actions
-    QAction* fileOpenAction = new QAction("Open");
-    QAction* fileSaveAction = new QAction("Save");
-    QAction* fileSaveAsAction = new QAction("Save As...");
-    QAction* fileImportEnzoAction = new QAction("Enzo");
-    QAction* fileNewAction = new QAction("New");
-    QAction* fileQuitAction = new QAction("Quit");
+    addMenuButton("File", [this] { return fileEntries(); });
+    addMenuButton("Edit", [] { return std::vector<Entry>{}; });
+    addMenuButton("Window", [] { return std::vector<Entry>{}; });
+    addMenuButton("Help", [] { return std::vector<Entry>{{.text = "Info"}}; });
 
-    // Add Actions
-    fileMenu->addAction(fileNewAction);
-    fileMenu->addAction(fileOpenAction);
-    recentFilesMenu_ = new QMenu("Open Recent", this);
-    fileMenu->addMenu(recentFilesMenu_);
-    updateRecentFilesMenu();
-    fileMenu->addMenu(fileImportMenu);
-    fileMenu->addAction(fileSaveAction);
-    fileMenu->addAction(fileSaveAsAction);
-    fileMenu->addAction(fileQuitAction);
+    mainLayout_->addStretch();
+}
 
-    fileImportMenu->addAction(fileImportEnzoAction);
+void HeaderBar::addMenuButton(
+    const QString& title,
+    std::function<std::vector<Entry>()> build
+)
+{
+    QToolButton* button = new QToolButton(this);
+    button->setText(title);
+    button->setAutoRaise(true);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->setCursor(Qt::PointingHandCursor);
 
-    // Connect actions
-    connect(fileNewAction, &QAction::triggered, this, &HeaderBar::onFileNewClicked);
-    connect(fileSaveAction, &QAction::triggered, this, &HeaderBar::onFileSaveClicked);
-    connect(fileOpenAction, &QAction::triggered, this, &HeaderBar::onFileOpenClicked);
-    connect(fileSaveAsAction, &QAction::triggered, this, &HeaderBar::onFileSaveAsClicked);
-    connect(
-        fileQuitAction,
-        &QAction::triggered,
-        qApp,
-        &QCoreApplication::quit,
-        Qt::QueuedConnection
-    );
+    connect(button, &QToolButton::clicked, this, [this, button, build] {
+        std::vector<Entry> entries = build();
+        if (entries.empty()) return;
+        menu_->setEntries(std::move(entries));
+        menu_->popup(button->mapToGlobal(QPoint(0, button->height())));
+    });
 
-    // Edit sub menu
-    QMenu* editMenu = header->addMenu("Edit");
+    mainLayout_->addWidget(button);
+}
 
-    // Window sub menu
-    QMenu* windowMenu = header->addMenu("Window");
+std::vector<Entry> HeaderBar::fileEntries()
+{
+    return {
+        {.text = "New", .action = [this] { onFileNewClicked(); }},
+        {.text = "Open", .action = [this] { onFileOpenClicked(); }},
+        {.text = "Open Recent", .children = recentFileEntries()},
+        {.text = "Import", .children = {{.text = "Enzo"}}},
+        {.text = "Save", .action = [this] { onFileSaveClicked(); }},
+        {.text = "Save As...", .action = [this] { onFileSaveAsClicked(); }},
+        {.text = "Quit", .action = [] { QCoreApplication::quit(); }},
+    };
+}
 
-    // Help sub menu
-    QMenu* helpMenu = header->addMenu("Help");
-    helpMenu->addAction("Info");
+std::vector<Entry> HeaderBar::recentFileEntries()
+{
+    QSettings settings;
+    QStringList recentFiles = settings.value("recentFiles").toStringList();
 
-    mainLayout_->addWidget(header);
+    if (recentFiles.isEmpty())
+    {
+        return {{.text = "No Recent Files"}};
+    }
+
+    std::vector<Entry> entries;
+    for (const QString& filePath : recentFiles)
+    {
+        entries.push_back(
+            {.text = QFileInfo(filePath).fileName(),
+             .action = [this, filePath] { openFile(filePath); }}
+        );
+    }
+    return entries;
 }
 
 void HeaderBar::onFileNewClicked() { enzo::nt::nm().clear(); }
@@ -171,25 +179,4 @@ void HeaderBar::addRecentFile(const QString& filePath)
     recentFiles.prepend(filePath);
     recentFiles = recentFiles.mid(0, 10);
     settings.setValue("recentFiles", recentFiles);
-    updateRecentFilesMenu();
-}
-
-void HeaderBar::updateRecentFilesMenu()
-{
-    recentFilesMenu_->clear();
-
-    QSettings settings;
-    QStringList recentFiles = settings.value("recentFiles").toStringList();
-
-    if (recentFiles.isEmpty())
-    {
-        recentFilesMenu_->addAction("No Recent Files")->setEnabled(false);
-        return;
-    }
-
-    for (const QString& filePath : recentFiles)
-    {
-        QAction* action = recentFilesMenu_->addAction(QFileInfo(filePath).fileName());
-        connect(action, &QAction::triggered, this, [this, filePath]() { openFile(filePath); });
-    }
 }

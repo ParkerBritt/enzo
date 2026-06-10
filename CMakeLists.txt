@@ -58,6 +58,7 @@ set(GUI_SOURCES
     src/Gui/UtilWidgets/Slider.cpp
     src/Gui/UtilWidgets/Ramp.cpp
     src/Gui/UtilWidgets/PopupList.cpp
+    src/Gui/UtilWidgets/Menu.cpp
     src/Gui/UtilWidgets/Dropdown.cpp
     src/Gui/UtilWidgets/IconButton.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp

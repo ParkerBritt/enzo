@@ -7,6 +7,7 @@
 #include <vector>
 
 class QPropertyAnimation;
+class QPainter;
 
 namespace enzo::ui {
 
@@ -19,6 +20,10 @@ namespace enzo::ui {
  * the contents while keyboard navigation, selection, and scrolling stay in the
  * base. A subclass reserves a strip above the list for its own chrome by
  * overriding headerHeight.
+ *
+ * Selection, highlight changes, and per row decoration are routed through virtual
+ * hooks so a subclass such as Menu can layer nested menus on top without touching
+ * the geometry and animation that live here.
  */
 class PopupList : public QWidget
 {
@@ -67,16 +72,50 @@ class PopupList : public QWidget
     /// @brief Height reserved above the list for subclass chrome such as a search field.
     virtual int headerHeight() const { return 0; }
 
+    /// @brief Hook run when a row is chosen by click or Enter.
+    /// @note The base reports the selection through itemSelected and closes the list.
+    virtual void onRowActivated(int position);
+
+    /// @brief Hook run when the highlighted row changes.
+    /// @note fromPointer marks a hover move apart from keyboard navigation.
+    virtual void onHighlightChanged(int position, bool fromPointer) {}
+
+    /// @brief Hook to paint extra decoration on a row such as a submenu chevron.
+    /// @note The row rectangle is given in list local coordinates.
+    virtual void paintRowDecoration(QPainter& painter, int position, const QRect& row) {}
+
+    /// @brief Local rectangle of a visible row including the header offset and scroll.
+    QRect rowRect(int position) const;
+
+    /// @brief Width that fits the longest visible row.
+    int preferredWidth() const;
+
+    /// @brief Moves the highlight to the row at a local y, firing the highlight hook.
+    void hoverRowAt(int localY);
+
     /// @brief Reveals the list at a global position with the given width.
-    /// @note selectedPosition is the position within the visible subset to highlight on open.
-    void openList(const QPoint& globalTopLeft, int width, int selectedPosition);
+    /// @param selectedPosition Position within the visible subset to highlight on open.
+    /// @param takeFocus Hands keyboard focus to the list. A submenu opened on hover leaves
+    ///        it with the parent until the cursor moves onto the child.
+    void openList(
+        const QPoint& globalTopLeft,
+        int width,
+        int selectedPosition,
+        bool takeFocus = true
+    );
     void animateClose();
+
+    /// @brief Turns the staggered row fade on open off so rows appear at once.
+    void setRowFadeEnabled(bool enabled) { rowFadeEnabled_ = enabled; }
 
     /// @brief Resets the visible subset to every item in declaration order.
     void showAllItems();
 
     /// @brief Moves the highlight and selection to a position in the visible subset.
     void setHighlightedPosition(int position);
+
+    /// @brief Position of the highlighted row within the visible subset.
+    int highlightedPosition() const { return selectedPosition_; }
 
     /// @brief Resizes an open list to fit the current visible subset.
     /// @note Pass animated to glide the height change rather than snapping.
@@ -97,6 +136,9 @@ class PopupList : public QWidget
     void animateHighlightTo(int position);
     void animateScrollTo(int offset);
     void jumpScrollTo(int offset);
+
+    /// @brief Routes a chosen row through onRowActivated once.
+    void chooseRow(int position);
 
     int revealedHeight() const { return revealedHeight_; }
     void setRevealedHeight(int height)
@@ -134,6 +176,7 @@ class PopupList : public QWidget
     qreal fadeElapsed_ = 0;
     qreal highlightTop_ = 0;
     bool closing_ = false;
+    bool rowFadeEnabled_ = true;
 
     QPropertyAnimation* hoverAnim_ = nullptr;
     QPropertyAnimation* scrollAnim_ = nullptr;
