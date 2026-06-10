@@ -1,5 +1,6 @@
 #include "Gui/UtilWidgets/Dropdown.h"
 #include "Gui/IconRegistry.h"
+#include "Gui/Style.h"
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -8,8 +9,6 @@
 
 namespace {
 
-constexpr int itemHeight = 24;
-constexpr int borderRadius = 8;
 constexpr int textPadding = 10;
 constexpr int arrowSize = 14;
 constexpr int arrowMargin = 8;
@@ -84,7 +83,7 @@ QSize enzo::ui::Dropdown::sizeHint() const
         widest = std::max(widest, fontMetrics().horizontalAdvance(item.text));
     }
     const int width = textPadding * 2 + widest + arrowSize + arrowMargin;
-    return {width, itemHeight};
+    return {width, parameterHeight};
 }
 
 void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
@@ -96,7 +95,7 @@ void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
     QRectF box = QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5);
     painter.setPen(QPen(borderColor, 1));
     painter.setBrush(backgroundColor);
-    painter.drawRoundedRect(box, borderRadius, borderRadius);
+    painter.drawRoundedRect(box, parameterBorderRadius, parameterBorderRadius);
 
     // Current selection text
     painter.setPen(textColor);

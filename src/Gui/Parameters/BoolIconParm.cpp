@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include "Gui/IconRegistry.h"
+#include "Gui/Style.h"
 #include <QSize>
 
 enzo::ui::BoolIconParm::BoolIconParm(
@@ -14,7 +15,7 @@ enzo::ui::BoolIconParm::BoolIconParm(
 {
     auto parameterShared = parameter_.lock();
 
-    const int sizePx = ROW_HEIGHT;
+    const int sizePx = parameterHeight;
     const int iconPx = sizePx * style_->scale() - 8;
 
     button_ = new QPushButton();

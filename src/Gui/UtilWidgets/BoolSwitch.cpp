@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/BoolSwitch.h"
+#include "Gui/Style.h"
 #include <QPainter>
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
@@ -12,13 +13,14 @@ enzo::ui::BoolSwitch::BoolSwitch(bool initialChecked, QWidget* parent) : QPushBu
     setFocusPolicy(Qt::NoFocus);
 
     setProperty("class", "BoolSwitch");
-    setStyleSheet(R"(
+    setStyleSheet(QString(R"(
                   .BoolSwitch
                   {
-                      border-radius: 8px;
+                      border-radius: %1px;
                       border: 1px solid #383838;
                   }
-                  )");
+                  )")
+                      .arg(parameterBorderRadius));
 
     setChecked(initialChecked);
     switchXEnd_ = fullWidth_ - handleWidth_ - 4;
@@ -35,7 +37,8 @@ void enzo::ui::BoolSwitch::paintEvent(QPaintEvent* event)
     QRect bgRect = rect();
     painter.setPen(Qt::NoPen);
     painter.setBrush(switchColor_);
-    constexpr int borderRadius = 7;
+    // The handle radius follows the frame radius with an offset tuned by eye
+    constexpr int borderRadius = parameterBorderRadius - 1;
     constexpr int margin = 2;
     painter.drawRoundedRect(
         QRectF(

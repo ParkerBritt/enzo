@@ -1,6 +1,7 @@
 #include "Gui/Parameters/StringParm.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include "Gui/Style.h"
 
 enzo::ui::StringParm::StringParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
     : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
@@ -9,7 +10,7 @@ enzo::ui::StringParm::StringParm(std::weak_ptr<prm::NodeParameter> parameter, QW
     auto parameterShared = parameter_.lock();
 
     lineEdit_ = new QLineEdit();
-    lineEdit_->setFixedHeight(24);
+    lineEdit_->setFixedHeight(parameterHeight);
     lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
     lineEdit_->setStyleSheet(
         "QLineEdit { background: transparent; border: none; padding: 0 5px; }"

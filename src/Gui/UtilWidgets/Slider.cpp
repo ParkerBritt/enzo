@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/Slider.h"
+#include "Gui/Style.h"
 #include <QApplication>
 #include <QKeyEvent>
 #include <QLabel>
@@ -23,15 +24,16 @@ enzo::ui::Slider::Slider(
       clampMax_(clampMax), step_(step)
 {
     setAttribute(Qt::WA_StyledBackground, true);
-    setFixedHeight(24);
+    setFixedHeight(parameterHeight);
     setProperty("type", "Slider");
-    setStyleSheet(R"(
+    setStyleSheet(QString(R"(
                   QWidget[type="Slider"]
                   {
-                      border-radius: 9px;
+                      border-radius: %1px;
                       border: 1px solid #383838;
                   }
-                  )");
+                  )")
+                      .arg(parameterBorderRadius));
     notchPen_ = QPen(QColor("#383838"), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     value_ = clampAndStep_(minValue_);
 }
@@ -126,7 +128,8 @@ void enzo::ui::Slider::paintFill_(
 {
     // Reveal the full length rounded bar through a rounded mask at the fill width
     // so the anchored left end keeps its radius and the moving right end stays round
-    constexpr double cornerRadius = 8;
+    // The fill radius follows the frame radius with an offset tuned by eye
+    constexpr double cornerRadius = parameterBorderRadius - 1;
     QPainterPath fullBar;
     fullBar.addRoundedRect(trackRect, cornerRadius, cornerRadius);
     QPainterPath fillMask;
