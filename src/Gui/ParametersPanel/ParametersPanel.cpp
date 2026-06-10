@@ -12,6 +12,7 @@
 #include "Gui/Parameters/RampParm.h"
 #include "Gui/Parameters/StringParm.h"
 #include "Gui/Parameters/XYZParm.h"
+#include <QLabel>
 #include <QScrollArea>
 #include <qboxlayout.h>
 #include <qnamespace.h>
@@ -58,7 +59,17 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
         QScrollBar::sub-line:vertical { height: 0px; }
     )");
 
+    // Placeholder shown while no node is selected.
+    noSelectionLabel_ = new QLabel("No Node Selected");
+    noSelectionLabel_->setAlignment(Qt::AlignCenter);
+    noSelectionLabel_->setStyleSheet(R"(
+        background-color: #282828;
+        color: rgba(255, 255, 255, 50%);
+    )");
+
     mainLayout_->addWidget(scrollArea_);
+    mainLayout_->addWidget(noSelectionLabel_);
+    scrollArea_->hide();
 
     setLayout(mainLayout_);
 }
@@ -71,6 +82,9 @@ void ParametersPanel::clearParameters()
         delete child->widget();
         delete child;
     }
+
+    scrollArea_->hide();
+    noSelectionLabel_->show();
 }
 
 enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
@@ -166,4 +180,7 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
 
     for (enzo::ui::Parameter* widget : topWidgets)
         parametersLayout_->addWidget(widget);
+
+    noSelectionLabel_->hide();
+    scrollArea_->show();
 }

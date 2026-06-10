@@ -16,6 +16,7 @@ namespace enzo::ui {
 class Parameter;
 }
 
+class QLabel;
 class QScrollArea;
 
 class ParametersPanel : public Panel
@@ -38,4 +39,5 @@ class ParametersPanel : public Panel
     QVBoxLayout* parametersLayout_;
     QScrollArea* scrollArea_;
     QWidget* bgWidget_;
+    QLabel* noSelectionLabel_;
 };
