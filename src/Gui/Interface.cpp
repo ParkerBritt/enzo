@@ -5,6 +5,7 @@
 #include "Gui/HeaderBar/HeaderBar.h"
 #include "Gui/IconRegistry.h"
 #include "Gui/Network/NetworkPanel.h"
+#include "Gui/Style.h"
 #include "Gui/Viewport/Viewport.h"
 #include <Gui/UtilWidgets/Splitter.h>
 #include <QApplication>
@@ -39,11 +40,11 @@ EnzoUI::EnzoUI()
     }
     )");
 
-    qApp->setStyleSheet(R"(
+    qApp->setStyleSheet(QString(R"(
     *
     {
         font-family: Rubik;
-        font-size: 9pt;
+        font-size: %1pt;
     }
     QToolTip
     {
@@ -53,7 +54,8 @@ EnzoUI::EnzoUI()
         border-radius: 10px;
         padding: 2px 4px;
     }
-    )");
+    )")
+                            .arg(enzo::ui::fontSize));
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();
