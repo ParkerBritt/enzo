@@ -46,11 +46,16 @@ class Menu : public PopupList
     /// @brief Opens the menu with its top left at a global position.
     /// @param takeFocus Hands keyboard focus to the menu. A child opened on hover leaves
     ///        focus with the parent until the cursor moves onto it.
+    /// @note An already open menu moves to the new spot with its submenus folded away.
     void popup(const QPoint& globalTopLeft, bool takeFocus = true);
+
+    /// @brief Folds the whole menu chain away with the close animation.
+    void dismiss();
 
   protected:
     void keyPressEvent(QKeyEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void onRowActivated(int position) override;
     void onHighlightChanged(int position, bool fromPointer) override;
     void paintRowDecoration(QPainter& painter, int position, const QRect& row) override;
@@ -65,6 +70,9 @@ class Menu : public PopupList
 
     /// @brief Drives the hover on whichever level the cursor sits over.
     void routeHover(const QPoint& globalPos);
+
+    /// @brief Root menu's owner widget when the point lies inside it, else null.
+    QWidget* ownerAt(const QPoint& globalPos) const;
 
     /// @brief Width that fits the rows plus room for a branch chevron.
     int menuWidth() const;

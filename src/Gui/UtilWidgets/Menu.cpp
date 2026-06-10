@@ -1,5 +1,6 @@
 #include "Gui/UtilWidgets/Menu.h"
 
+#include <QCoreApplication>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -50,6 +51,8 @@ void enzo::ui::Menu::setEntries(std::vector<Entry> entries)
 
 void enzo::ui::Menu::popup(const QPoint& globalTopLeft, bool takeFocus)
 {
+    // A reopen while visible folds any submenu away before the move
+    closeSubmenu();
     openList(globalTopLeft, menuWidth(), 0, takeFocus);
 }
 
@@ -115,6 +118,39 @@ void enzo::ui::Menu::mouseMoveEvent(QMouseEvent* event)
     routeHover(event->globalPosition().toPoint());
 }
 
+void enzo::ui::Menu::mousePressEvent(QMouseEvent* event)
+{
+    // A press over the owning widget is handed to it so a menu bar can toggle
+    // or switch menus. Any other press keeps the base behavior.
+    const QPoint globalPos = event->globalPosition().toPoint();
+    if (QWidget* owner = ownerAt(globalPos))
+    {
+        QMouseEvent forwarded(
+            event->type(),
+            owner->mapFromGlobal(globalPos),
+            globalPos,
+            event->button(),
+            event->buttons(),
+            event->modifiers()
+        );
+        QCoreApplication::sendEvent(owner, &forwarded);
+        return;
+    }
+    PopupList::mousePressEvent(event);
+}
+
+QWidget* enzo::ui::Menu::ownerAt(const QPoint& globalPos) const
+{
+    const Menu* root = this;
+    while (root->parentMenu_) root = root->parentMenu_;
+    QWidget* owner = root->parentWidget();
+    if (!owner) return nullptr;
+    if (!owner->rect().contains(owner->mapFromGlobal(globalPos))) return nullptr;
+    return owner;
+}
+
+void enzo::ui::Menu::dismiss() { animateClose(); }
+
 void enzo::ui::Menu::routeHover(const QPoint& globalPos)
 {
     // The deepest open menu receives the move. Hand it up to whichever level the
@@ -124,7 +160,24 @@ void enzo::ui::Menu::routeHover(const QPoint& globalPos)
     {
         target = target->parentMenu_;
     }
-    if (!target) return;
+
+    // A miss on every level is handed to the widget owning the root menu,
+    // mirroring how QMenu cooperates with QMenuBar
+    if (!target)
+    {
+        QWidget* owner = ownerAt(globalPos);
+        if (!owner) return;
+        QMouseEvent forwarded(
+            QEvent::MouseMove,
+            owner->mapFromGlobal(globalPos),
+            globalPos,
+            Qt::NoButton,
+            Qt::NoButton,
+            Qt::NoModifier
+        );
+        QCoreApplication::sendEvent(owner, &forwarded);
+        return;
+    }
 
     if (!target->hasFocus()) target->setFocus();
     target->hoverRowAt(target->mapFromGlobal(globalPos).y());

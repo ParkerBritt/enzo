@@ -1,6 +1,7 @@
 #include "HeaderBar.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Serializer/Serializer.h"
+#include "Gui/UtilWidgets/MenuBar.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileDialog>
@@ -8,7 +9,6 @@
 #include <QHBoxLayout>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QToolButton>
 #include <iostream>
 
 using Entry = enzo::ui::Menu::Entry;
@@ -19,51 +19,15 @@ HeaderBar::HeaderBar()
     mainLayout_->setContentsMargins(4, 2, 4, 2);
     mainLayout_->setSpacing(2);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-    setStyleSheet(R"(
-    QToolButton
-    {
-        border: none;
-        border-radius: 6px;
-        padding: 2px 8px;
-        color: #B3B3B3;
-        background: transparent;
-    }
-    QToolButton:hover
-    {
-        background: #282828;
-    }
-    )");
 
-    // One menu instance is repopulated by whichever button opens it
-    menu_ = new enzo::ui::Menu(this);
+    auto* menuBar = new enzo::ui::MenuBar(this);
+    menuBar->addMenu("File", [this] { return fileEntries(); });
+    menuBar->addMenu("Edit", [] { return std::vector<Entry>{}; });
+    menuBar->addMenu("Window", [] { return std::vector<Entry>{}; });
+    menuBar->addMenu("Help", [] { return std::vector<Entry>{{.text = "Info"}}; });
 
-    addMenuButton("File", [this] { return fileEntries(); });
-    addMenuButton("Edit", [] { return std::vector<Entry>{}; });
-    addMenuButton("Window", [] { return std::vector<Entry>{}; });
-    addMenuButton("Help", [] { return std::vector<Entry>{{.text = "Info"}}; });
-
+    mainLayout_->addWidget(menuBar);
     mainLayout_->addStretch();
-}
-
-void HeaderBar::addMenuButton(
-    const QString& title,
-    std::function<std::vector<Entry>()> build
-)
-{
-    QToolButton* button = new QToolButton(this);
-    button->setText(title);
-    button->setAutoRaise(true);
-    button->setFocusPolicy(Qt::NoFocus);
-    button->setCursor(Qt::PointingHandCursor);
-
-    connect(button, &QToolButton::clicked, this, [this, button, build] {
-        std::vector<Entry> entries = build();
-        if (entries.empty()) return;
-        menu_->setEntries(std::move(entries));
-        menu_->popup(button->mapToGlobal(QPoint(0, button->height())));
-    });
-
-    mainLayout_->addWidget(button);
 }
 
 std::vector<Entry> HeaderBar::fileEntries()
