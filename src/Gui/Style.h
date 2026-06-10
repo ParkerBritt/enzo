@@ -2,6 +2,9 @@
 
 namespace enzo::ui {
 
+/// Application wide font size in points.
+inline constexpr int fontSize = 9;
+
 /// Default height in pixels for a parameter row and the widgets that sit in one.
 inline constexpr int parameterHeight = 23;
 
