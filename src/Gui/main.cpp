@@ -27,9 +27,9 @@ int main(int argc, char** argv)
     // load fonts
     QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-VariableFont_wght.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf");
-    QFont appFont("Rubik");
-    appFont.setPointSize(9);
-    app.setFont(appFont);
+    // Widget font sizes come from the application stylesheet. This default
+    // only covers painting outside the widget tree, like pixmap icons.
+    app.setFont(QFont("Rubik"));
 
     app.setWindowIcon(QIcon(":/icons/icon-main-white.png"));
 

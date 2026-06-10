@@ -40,6 +40,11 @@ EnzoUI::EnzoUI()
     )");
 
     qApp->setStyleSheet(R"(
+    *
+    {
+        font-family: Rubik;
+        font-size: 9pt;
+    }
     QToolTip
     {
         background-color: #1a1a1a;
