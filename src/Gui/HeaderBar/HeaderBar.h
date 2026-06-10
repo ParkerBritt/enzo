@@ -1,7 +1,12 @@
-#include <QMenu>
-#include <QMenuBar>
-#include <QVBoxLayout>
+#pragma once
+
+#include "Gui/UtilWidgets/Menu.h"
+
+#include <QBoxLayout>
+#include <QString>
 #include <QWidget>
+#include <functional>
+#include <vector>
 
 class HeaderBar : public QWidget
 {
@@ -15,11 +20,19 @@ class HeaderBar : public QWidget
     void onFileSaveAsClicked();
 
     void addRecentFile(const QString& filePath);
-    void updateRecentFilesMenu();
     void saveFile(const QString& filePath);
     void openFile(const QString& filePath);
 
+    /// @brief Adds a top bar button that opens a menu built fresh on each click.
+    void addMenuButton(
+        const QString& title,
+        std::function<std::vector<enzo::ui::Menu::Entry>()> build
+    );
+
+    std::vector<enzo::ui::Menu::Entry> fileEntries();
+    std::vector<enzo::ui::Menu::Entry> recentFileEntries();
+
     QBoxLayout* mainLayout_;
-    QMenu* recentFilesMenu_;
+    enzo::ui::Menu* menu_;
     QString currentFilePath_;
 };

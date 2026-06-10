@@ -138,7 +138,12 @@ int enzo::ui::PopupList::rowAt(int widgetY) const
     return position;
 }
 
-void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int selectedPosition)
+void enzo::ui::PopupList::openList(
+    const QPoint& globalTopLeft,
+    int width,
+    int selectedPosition,
+    bool takeFocus
+)
 {
     selectedPosition_ = selectedPosition;
     hoveredPosition_ = selectedPosition;
@@ -160,7 +165,7 @@ void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int s
     revealedHeight_ = 0;
     fadeElapsed_ = 0;
     show();
-    setFocus();
+    if (takeFocus) setFocus();
 
     // Unroll the list to its full height
     backgroundResizeAnim_->stop();
@@ -168,9 +173,14 @@ void enzo::ui::PopupList::openList(const QPoint& globalTopLeft, int width, int s
     backgroundResizeAnim_->setEndValue(fullHeight);
     backgroundResizeAnim_->start();
 
-    // Fade each row in turn from the top
+    // Fade each row in turn from the top unless the fade is turned off
     const size_t rowCount = visibleIndices_.size();
     const qreal fadeTotal = itemStaggerMs * (rowCount == 0 ? 0 : rowCount - 1) + itemFadeMs;
+    if (!rowFadeEnabled_)
+    {
+        fadeElapsed_ = fadeTotal;
+        return;
+    }
     auto fade = new QPropertyAnimation(this, "fadeElapsed", this);
     fade->setDuration(static_cast<int>(fadeTotal));
     fade->setStartValue(0.0);
@@ -230,14 +240,44 @@ void enzo::ui::PopupList::moveHighlight(int delta)
     hoveredPosition_ = next;
     ensureVisible(next);
     animateHighlightTo(next);
+    onHighlightChanged(next, false);
 }
 
-void enzo::ui::PopupList::confirmSelection()
+void enzo::ui::PopupList::confirmSelection() { chooseRow(selectedPosition_); }
+
+void enzo::ui::PopupList::chooseRow(int position)
 {
-    if (selectedPosition_ < 0 || selectedPosition_ >= static_cast<int>(visibleIndices_.size()))
-        return;
-    Q_EMIT itemSelected(visibleIndices_[selectedPosition_]);
+    // A list already folding away ignores further presses so an action runs once
+    if (closing_) return;
+    if (position < 0 || position >= static_cast<int>(visibleIndices_.size())) return;
+    selectedPosition_ = position;
+    onRowActivated(position);
+}
+
+void enzo::ui::PopupList::onRowActivated(int position)
+{
+    Q_EMIT itemSelected(visibleIndices_[position]);
     animateClose();
+}
+
+QRect enzo::ui::PopupList::rowRect(int position) const
+{
+    const int top = headerHeight() + padding + position * itemHeight - scrollOffset_;
+    return QRect(0, top, width(), itemHeight);
+}
+
+int enzo::ui::PopupList::preferredWidth() const
+{
+    int widest = 0;
+    bool anyIcon = false;
+    for (int index : visibleIndices_)
+    {
+        widest = std::max(widest, fontMetrics().horizontalAdvance(items_[index].text));
+        anyIcon = anyIcon || !items_[index].icon.isNull();
+    }
+    int width = textPadding * 2 + widest;
+    if (anyIcon) width += iconSize + iconTextGap;
+    return width;
 }
 
 void enzo::ui::PopupList::paintEvent(QPaintEvent*)
@@ -296,6 +336,7 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
             Qt::AlignVCenter | Qt::AlignLeft,
             item.text
         );
+        paintRowDecoration(painter, position, row);
         painter.setOpacity(1.0);
     }
 
@@ -344,11 +385,17 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
 
 void enzo::ui::PopupList::mouseMoveEvent(QMouseEvent* event)
 {
-    const int position = rowAt(event->pos().y());
+    hoverRowAt(event->pos().y());
+}
+
+void enzo::ui::PopupList::hoverRowAt(int localY)
+{
+    const int position = rowAt(localY);
     if (position < 0 || position == hoveredPosition_) return;
     hoveredPosition_ = position;
     selectedPosition_ = position;
     animateHighlightTo(position);
+    onHighlightChanged(position, true);
 }
 
 void enzo::ui::PopupList::mousePressEvent(QMouseEvent* event)
@@ -360,10 +407,11 @@ void enzo::ui::PopupList::mousePressEvent(QMouseEvent* event)
         const int position = rowAt(pos.y());
         if (position >= 0)
         {
-            selectedPosition_ = position;
-            Q_EMIT itemSelected(visibleIndices_[position]);
+            chooseRow(position);
+            return;
         }
     }
+    // A press outside the rows dismisses the list
     animateClose();
 }
 
@@ -373,10 +421,7 @@ void enzo::ui::PopupList::mouseReleaseEvent(QMouseEvent* event)
     if (closing_) return;
     const int position = rowAt(event->pos().y());
     if (position < 0) return;
-
-    selectedPosition_ = position;
-    Q_EMIT itemSelected(visibleIndices_[position]);
-    animateClose();
+    chooseRow(position);
 }
 
 void enzo::ui::PopupList::keyPressEvent(QKeyEvent* event)
