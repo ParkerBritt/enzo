@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include "Gui/IconRegistry.h"
+#include "Gui/Style.h"
 #include <QEasingCurve>
 #include <QPaintEvent>
 #include <QPainter>
@@ -126,7 +127,7 @@ BoolIconSlashParm::BoolIconSlashParm(
 {
     auto parameterShared = parameter_.lock();
 
-    const int sizePx = ROW_HEIGHT;
+    const int sizePx = parameterHeight;
     const int iconPx = sizePx * style_->scale() - 8;
 
     QPixmap iconPixmap = IconRegistry::instance().pixmap(style_->icon(), QSize(iconPx, iconPx));

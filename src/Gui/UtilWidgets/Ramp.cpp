@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/Ramp.h"
+#include "Gui/Style.h"
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
@@ -9,7 +10,7 @@
 namespace {
 // Inset from the widget edge to the background panel so handles can overflow it
 constexpr double padding = enzo::ui::Ramp::panelInset;
-constexpr double backgroundCornerRadius = 9.0;
+constexpr double backgroundCornerRadius = enzo::ui::parameterBorderRadius;
 const QColor panelColor("#1a1a1a");
 const QColor borderColor("#383838");
 const QColor circleColor("#B1B2B5");
@@ -26,7 +27,7 @@ constexpr int hoverScaleDurationMs = 200;
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
 {
-    setFixedHeight(100);
+    setFixedHeight(rampHeight);
     setMouseTracking(true);
 
     // Default endpoints rising from zero to one

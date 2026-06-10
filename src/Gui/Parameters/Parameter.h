@@ -13,8 +13,6 @@ class Parameter : public QWidget
 {
     Q_OBJECT
   public:
-    static constexpr int ROW_HEIGHT = 24;
-
     Parameter(const prm::Template& parmTemplate, QWidget* parent = nullptr);
     int getLeftPadding();
     void setLeftPadding(int padding);

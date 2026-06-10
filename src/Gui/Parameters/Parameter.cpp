@@ -1,4 +1,5 @@
 #include "Gui/Parameters/Parameter.h"
+#include "Gui/Style.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -49,13 +50,14 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     contentWidget_->setProperty("class", "ParameterBg");
     if (parmTemplate.isBackgroundEnabled())
     {
-        contentWidget_->setStyleSheet(R"(
+        contentWidget_->setStyleSheet(QString(R"(
             .ParameterBg {
                 background: #1a1a1a;
-                border-radius: 8px;
+                border-radius: %1px;
                 border: 1px solid #383838;
             }
-        )");
+        )")
+                                          .arg(parameterBorderRadius));
     }
     else
     {
