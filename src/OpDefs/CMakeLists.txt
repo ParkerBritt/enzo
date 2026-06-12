@@ -52,6 +52,7 @@ add_library(${libName} SHARED
     GopCube.cpp
     GopBoolean.cpp
     GopCircle.cpp
+    GopSweep.cpp
 )
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold)
 

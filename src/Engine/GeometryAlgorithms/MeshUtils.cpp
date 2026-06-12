@@ -207,4 +207,57 @@ std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
     return earClipTriangleIndices(mesh, mesh.getFaces().toVector());
 }
 
+std::span<const Vector3> FaceTangents::operator()(Offset faceOffset)
+{
+    const std::span<const intT> facePoints = mesh_.getFacePoints(faceOffset);
+    const std::span<const Vector3> positions = mesh_.pointPosSpan();
+    const size_t pointCount = facePoints.size();
+    const bool closed = mesh_.isClosed(faceOffset);
+
+    tangents_.assign(pointCount, Vector3(0, 0, 0));
+    if (pointCount < 2) return tangents_;
+
+    // Normalized direction from one face point to another, zero when they coincide.
+    auto direction = [&](size_t fromLocal, size_t toLocal) -> Vector3 {
+        const Vector3 delta = positions[facePoints[toLocal]] - positions[facePoints[fromLocal]];
+        const double length = delta.norm();
+        return length > 0 ? Vector3(delta / length) : Vector3(0, 0, 0);
+    };
+
+    if (mode_ == TangentMode::FirstPoint)
+    {
+        // Each point looks to the next. The final open point has no next, so it
+        // reuses the last segment, while a closed face wraps to the first point.
+        for (size_t pointIndex = 0; pointIndex < pointCount; ++pointIndex)
+        {
+            if (pointIndex + 1 < pointCount)
+                tangents_[pointIndex] = direction(pointIndex, pointIndex + 1);
+            else if (closed)
+                tangents_[pointIndex] = direction(pointIndex, 0);
+            else
+                tangents_[pointIndex] = direction(pointIndex - 1, pointIndex);
+        }
+        return tangents_;
+    }
+
+    // Two point mode averages the incoming and outgoing segment directions, each
+    // normalized first so a long segment does not outweigh a short one. Open
+    // endpoints have only one neighbour and fall back to that single direction.
+    for (size_t pointIndex = 0; pointIndex < pointCount; ++pointIndex)
+    {
+        const bool hasIncoming = closed || pointIndex > 0;
+        const bool hasOutgoing = closed || pointIndex + 1 < pointCount;
+        const size_t prevIndex = (pointIndex + pointCount - 1) % pointCount;
+        const size_t nextIndex = (pointIndex + 1) % pointCount;
+
+        Vector3 averaged(0, 0, 0);
+        if (hasIncoming) averaged += direction(prevIndex, pointIndex);
+        if (hasOutgoing) averaged += direction(pointIndex, nextIndex);
+
+        const double length = averaged.norm();
+        tangents_[pointIndex] = length > 0 ? Vector3(averaged / length) : Vector3(0, 0, 0);
+    }
+    return tangents_;
+}
+
 } // namespace enzo::utils

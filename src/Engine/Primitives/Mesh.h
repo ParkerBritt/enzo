@@ -97,6 +97,8 @@ class Mesh : public Primitive
     duplicatePoints(std::span<const Offset> srcPointOffsets, bool copyAttributes = true);
 
     void deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoints = true);
+    /// @brief Removes every face from the mesh.
+    void deleteAllFaces(bool andPoints = true);
     void deletePoints(const std::vector<Offset>& pointOffsets) override
     {
         deletePoints(pointOffsets, false);

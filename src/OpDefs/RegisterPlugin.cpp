@@ -14,6 +14,7 @@
 #include "OpDefs/GopMerge.h"
 #include "OpDefs/GopPath.h"
 #include "OpDefs/GopSineWave.h"
+#include "OpDefs/GopSweep.h"
 #include "OpDefs/GopTransform.hpp"
 #include <boost/config.hpp>
 #include <boost/dll.hpp>
@@ -172,6 +173,17 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             GopCircle::parameterList(),
             0,
             0,
+            1,
+        }
+    );
+    addOperator(
+        enzo::op::OpInfo{
+            "sweep",
+            "Sweep",
+            &GopSweep::ctor,
+            GopSweep::parameterList(),
+            1,
+            1,
             1,
         }
     );
