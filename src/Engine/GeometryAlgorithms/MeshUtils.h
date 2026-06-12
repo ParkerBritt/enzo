@@ -64,4 +64,40 @@ std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
 std::vector<std::array<Offset, 3>>
 earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffsets);
 
+/// @brief How a point's tangent along its face is computed.
+enum class TangentMode
+{
+    // Direction from each point to the next.
+    FirstPoint,
+    // Average of the incoming and outgoing segment directions.
+    TwoPoint
+};
+
+/**
+ * @brief Tangents along a face in winding order.
+ *
+ * Construct once and call per face.
+ *
+ * e.g.
+ *   geo::FaceTangents faceTangents(mesh, TangentMode::TwoPoint);
+ *   for (Offset face : mesh.getFaces())
+ *       for (Vector3 tangent : faceTangents(face)) ...
+ *
+ * @note Each call replaces the previous result, so finish reading a face's
+ * tangents before asking for the next.
+ */
+class FaceTangents
+{
+  public:
+    FaceTangents(const geo::Mesh& mesh, TangentMode mode) : mesh_(mesh), mode_(mode) {}
+
+    /// @brief Returns the tangents for the given face.
+    std::span<const Vector3> operator()(Offset faceOffset);
+
+  private:
+    const geo::Mesh& mesh_;
+    TangentMode mode_;
+    std::vector<Vector3> tangents_;
+};
+
 } // namespace enzo::utils
