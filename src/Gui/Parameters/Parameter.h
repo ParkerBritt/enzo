@@ -7,6 +7,8 @@
 #include <QWidget>
 #include <qtmetamacros.h>
 
+class QEvent;
+
 namespace enzo::ui {
 
 class Parameter : public QWidget
@@ -24,6 +26,9 @@ class Parameter : public QWidget
     /// @brief Permanently suppress the parameter frame for widgets that paint their own.
     /// @note This is a type level override, not the configurable Template background flag.
     void disableBackground();
+
+    /// @brief Dims the whole row while the parameter is disabled.
+    void changeEvent(QEvent* event) override;
 
     QHBoxLayout* mainLayout_ = nullptr;
     QWidget* contentWidget_ = nullptr;

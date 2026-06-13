@@ -40,11 +40,14 @@ void enzo::ui::IconButton::paintEvent(QPaintEvent*)
     const QIcon buttonIcon = icon();
     if (buttonIcon.isNull()) return;
 
+    // A disabled button shows only its rest icon, never the hover highlight.
+    const bool active = hovered_ && isEnabled();
+
     QPainter painter(this);
-    painter.setOpacity(hovered_ ? 1.0 : restOpacity);
+    painter.setOpacity(active ? 1.0 : restOpacity);
 
     QSize size = iconSize();
-    if (hovered_) size *= hoverGrow;
+    if (active) size *= hoverGrow;
 
     const QPixmap pixmap = buttonIcon.pixmap(size);
     const QPoint topLeft = rect().center() - QPoint(size.width() / 2, size.height() / 2);
