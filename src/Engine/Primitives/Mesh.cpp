@@ -384,10 +384,7 @@ void geo::Mesh::deleteFaces(const std::vector<Offset>& faceOffsets, bool andPoin
     soloPointsDirty_ = true;
 }
 
-void geo::Mesh::deleteAllFaces(bool andPoints)
-{
-    deleteFaces(getFaces().toVector(), andPoints);
-}
+void geo::Mesh::deleteAllFaces(bool andPoints) { deleteFaces(getFaces().toVector(), andPoints); }
 
 void geo::Mesh::deletePoints(const std::vector<Offset>& pointOffsets, bool andFaces)
 {

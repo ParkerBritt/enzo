@@ -98,6 +98,12 @@ class Transform
         return *this;
     }
 
+    /**
+     * @brief Applies the transform to a point.
+     * @return The point with the transform's scale, rotation, and translation applied.
+     */
+    Vector3 operator*(const Vector3& point) const { return xform_ * point; }
+
     const Matrix4& getMatrix() const { return xform_.matrix(); }
 
   private:
