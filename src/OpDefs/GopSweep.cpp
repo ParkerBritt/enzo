@@ -20,18 +20,20 @@ struct Profile
     bool closed = true;
 };
 
+// How the profile is modulated as it travels along each curve.
+struct SweepSettings
+{
+    bool applyScale = false;
+    enzo::prm::Ramp scaleRamp;
+};
+
 // Defined at the bottom of the file, below the node code they serve.
 Profile buildProfile(enzo::op::Context& context);
 std::vector<enzo::Vector3> buildCircleProfile(int columns);
 std::vector<enzo::Vector3> buildSquareProfile(int columns);
 std::vector<enzo::Vector3> buildRibbonProfile(int columns);
 Profile buildProfileFromInput(enzo::NodePacket& packet);
-void sweepMesh(
-    enzo::geo::Mesh& mesh,
-    const Profile& profile,
-    bool applyScale,
-    const enzo::prm::Ramp& scaleRamp
-);
+void sweepMesh(enzo::geo::Mesh& mesh, const Profile& profile, const SweepSettings& settings);
 } // namespace
 
 GopSweep::GopSweep(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
@@ -47,10 +49,12 @@ void GopSweep::cookOp(enzo::op::Context context)
 
     NodePacket packet = context.cloneInputPacket(0);
 
-    const bool applyScale = context.evalParmBool("applyscale");
-    const prm::Ramp scaleRamp = context.evalParmRamp("scaleramp");
+    const SweepSettings settings{
+        context.evalParmBool("applyScale"),
+        context.evalParmRamp("scaleRamp"),
+    };
 
-    if (context.evalParmString("profileshape") == "input" && !context.hasInput(1))
+    if (context.evalParmString("profileShape") == "input" && !context.hasInput(1))
     {
         throwError("Sweep needs a profile shape wired into the second input.");
         return;
@@ -62,7 +66,7 @@ void GopSweep::cookOp(enzo::op::Context context)
         std::shared_ptr<geo::Mesh> mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
         if (!mesh) continue;
 
-        sweepMesh(*mesh, profile, applyScale, scaleRamp);
+        sweepMesh(*mesh, profile, settings);
     }
 
     setOutputPacket(0, packet);
@@ -72,44 +76,48 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
 {
     using namespace enzo::prm;
     return {
-        Template(Type::DROPDOWN, Name("profileshape", "Profile Shape"), Default("round"))
+        Template(Type::DROPDOWN, Name("profileShape", "Profile Shape"), Default("round"))
             .setOptions({
                 Name("input", "Second Input"),
                 Name("round", "Round"),
                 Name("square", "Square"),
                 Name("ribbon", "Ribbon"),
             }),
-        // One column count per procedural profile, each shown only for its own
-        // shape. The condition reads the dropdown's option index, where round is
-        // 1, square is 2 and ribbon is 3.
+        Template(
+            Type::FLOAT,
+            Name("profileScale", "Profile Scale"),
+            Default(1),
+            1,
+            Range(0, 10, RangeFlag::UNLOCKED, RangeFlag::UNLOCKED)
+        ),
         Template(
             Type::INT,
-            Name("roundcolumns", "Columns"),
+            Name("roundColumns", "Columns"),
             Default(12),
             1,
             Range(3, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setHideCondition("profileshape != 1"),
+            .setHideCondition("profileShape != 1"),
         Template(
             Type::INT,
-            Name("squarecolumns", "Columns"),
+            Name("squareColumns", "Columns"),
             Default(1),
             1,
             Range(1, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setHideCondition("profileshape != 2"),
+            .setHideCondition("profileShape != 2"),
         Template(
             Type::INT,
-            Name("ribboncolumns", "Columns"),
+            Name("ribbonColumns", "Columns"),
             Default(2),
             1,
             Range(2, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setHideCondition("profileshape != 3"),
-        Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(0)),
-        Template(Type::RAMP, Name("scaleramp", "Scale Ramp"), Default(2))
+            .setHideCondition("profileShape != 3"),
+        Template(Type::BOOL, Name("applyScale", "Apply Scale"), Default(0)),
+        Template(Type::RAMP, Name("scaleRamp", "Scale Ramp"), Default(2))
             .setInstanceDefault("value", {Default(1), Default(1)})
-            .setDisableCondition("applyscale == 0"),
+            .setDisableCondition("applyScale == 0"),
     };
 }
 
@@ -124,18 +132,27 @@ using namespace enzo;
  */
 Profile buildProfile(op::Context& context)
 {
-    const std::string profileShape = context.evalParmString("profileshape");
+    const std::string profileShape = context.evalParmString("profileShape");
 
+    Profile profile;
     if (profileShape == "square")
-        return {buildSquareProfile(context.evalParmInt("squarecolumns")), true};
-    if (profileShape == "ribbon")
-        return {buildRibbonProfile(context.evalParmInt("ribboncolumns")), false};
-    if (profileShape == "input")
+        profile = {buildSquareProfile(context.evalParmInt("squareColumns")), true};
+    else if (profileShape == "ribbon")
+        profile = {buildRibbonProfile(context.evalParmInt("ribbonColumns")), false};
+    else if (profileShape == "input")
     {
         NodePacket profilePacket = context.cloneInputPacket(1);
-        return buildProfileFromInput(profilePacket);
+        profile = buildProfileFromInput(profilePacket);
     }
-    return {buildCircleProfile(context.evalParmInt("roundcolumns")), true};
+    else
+        profile = {buildCircleProfile(context.evalParmInt("roundColumns")), true};
+
+    // Profile Scale sizes the resting cross section.
+    const float profileScale = context.evalParmFloat("profileScale");
+    for (Vector3& point : profile.points)
+        point *= profileScale;
+
+    return profile;
 }
 
 /**
@@ -233,11 +250,10 @@ Profile buildProfileFromInput(NodePacket& packet)
 class Sweeper
 {
   public:
-    Sweeper(geo::Mesh& mesh, const Profile& profile, bool applyScale, const prm::Ramp& scaleRamp)
+    Sweeper(geo::Mesh& mesh, const Profile& profile, const SweepSettings& settings)
         : mesh_(mesh), profile_(profile),
-          profilePointCount_(static_cast<int>(profile.points.size())), applyScale_(applyScale),
-          scaleRamp_(scaleRamp), faceTangents_(mesh, utils::TangentMode::TwoPoint),
-          faceNormals_(mesh.getFaceNormal())
+          profilePointCount_(static_cast<int>(profile.points.size())), settings_(settings),
+          faceTangents_(mesh, utils::TangentMode::TwoPoint), faceNormals_(mesh.getFaceNormal())
     {
     }
 
@@ -283,7 +299,7 @@ class Sweeper
             // The ramp reads how far along the curve the point sits to set the
             // radius. With scaling off the profile keeps its full size.
             const float curveU = static_cast<float>(relPointNum) / (curvePointCount - 1);
-            const float radius = applyScale_ ? scaleRamp_.sample(curveU) : 1.0f;
+            const float radius = settings_.applyScale ? settings_.scaleRamp.sample(curveU) : 1.0f;
 
             // The scale runs first so it sizes the profile before the orientation
             // turns it.
@@ -329,8 +345,7 @@ class Sweeper
     geo::Mesh& mesh_;
     const Profile& profile_;
     int profilePointCount_;
-    bool applyScale_;
-    const prm::Ramp& scaleRamp_;
+    const SweepSettings& settings_;
     utils::FaceTangents faceTangents_;
     geo::FaceNormalHandle faceNormals_;
 
@@ -340,9 +355,9 @@ class Sweeper
     std::vector<Offset> faceVertexCounts_;
 };
 
-void sweepMesh(geo::Mesh& mesh, const Profile& profile, bool applyScale, const prm::Ramp& scaleRamp)
+void sweepMesh(geo::Mesh& mesh, const Profile& profile, const SweepSettings& settings)
 {
-    Sweeper(mesh, profile, applyScale, scaleRamp).sweep();
+    Sweeper(mesh, profile, settings).sweep();
 }
 
 } // namespace
