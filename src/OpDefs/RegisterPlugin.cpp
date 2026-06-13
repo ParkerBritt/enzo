@@ -183,7 +183,7 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             &GopSweep::ctor,
             GopSweep::parameterList(),
             1,
-            1,
+            2,
             1,
         }
     );
