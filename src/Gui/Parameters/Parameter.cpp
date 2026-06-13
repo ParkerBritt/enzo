@@ -1,11 +1,48 @@
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/Style.h"
 #include <QEvent>
+#include <QFontMetrics>
 #include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <string>
+
+namespace {
+
+std::string buildTooltip(const enzo::prm::Template& parmTemplate)
+{
+    const std::string description = parmTemplate.getTooltip();
+    const std::string label = parmTemplate.getLabel();
+    const std::string name = "name: " + parmTemplate.getName();
+
+    // Measure the label and name at their own point sizes so neither title line wraps
+    QFont labelFont;
+    labelFont.setPointSize(10);
+    QFont nameFont;
+    nameFont.setPointSize(9);
+    int minWidth = std::max(
+                       QFontMetrics(labelFont).horizontalAdvance(QString::fromStdString(label)),
+                       QFontMetrics(nameFont).horizontalAdvance(QString::fromStdString(name))
+                   ) *
+                   1.3;
+
+    int maxWidth = 400;
+    int width = std::clamp<int>(description.size() * 6, std::min(minWidth, maxWidth), maxWidth);
+
+    // Had to use this weird table workaround to set the width
+    std::string tooltip = "<html><table><tr><td width=\"" + std::to_string(width) + "\">";
+    tooltip += "<span style=\"font-size:10pt; font-weight:600;\">" + label + "</span>";
+    tooltip += "<br><span style=\"font-size:9pt; font-weight:500;\">" + name + "</span>";
+    if (!description.empty())
+    {
+        tooltip += "<br><span style=\"font-size:8pt;\">" + description + "</span>";
+    }
+    tooltip += "</div></html>";
+    return tooltip;
+}
+
+} // namespace
 
 enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent)
     : QWidget(parent), parmTemplate_(parmTemplate)
@@ -14,24 +51,7 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     mainLayout_->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout_);
 
-    const std::string tooltipDescription = parmTemplate.getTooltip();
-    int tooltipMinWidth = parmTemplate.getLabel().size() * 8;
-    int tooltipMaxWidth = 400;
-    int tooltipWidth = std::clamp<int>(
-        tooltipDescription.size() * 6,
-        std::min(tooltipMinWidth, tooltipMaxWidth),
-        tooltipMaxWidth
-    );
-    // Had to use this weird table workaround to set the width
-    std::string tooltipFull =
-        "<html><table><tr><td width=\"" + std::to_string(tooltipWidth) + "\">";
-    tooltipFull += "<span style=\"font-weight:600;\">" + parmTemplate.getLabel() + "</span>";
-    if (!tooltipDescription.empty())
-    {
-        tooltipFull += "<br><span style=\"font-size:small;\">" + tooltipDescription + "</span>";
-    }
-    tooltipFull += "</div></html>";
-    setToolTip(QString::fromStdString(tooltipFull));
+    setToolTip(QString::fromStdString(buildTooltip(parmTemplate)));
 
     if (!parmTemplate.isLabelHidden())
     {
