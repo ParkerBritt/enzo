@@ -1,5 +1,7 @@
 #include "Gui/Parameters/Parameter.h"
 #include "Gui/Style.h"
+#include <QEvent>
+#include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -69,6 +71,24 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
 void enzo::ui::Parameter::disableBackground()
 {
     contentWidget_->setStyleSheet(".ParameterBg { background: transparent; border: none; }");
+}
+
+void enzo::ui::Parameter::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent(event);
+    if (event->type() != QEvent::EnabledChange) return;
+
+    // One opacity effect over the whole row dims the label and editor together,
+    // so even widgets that paint themselves read as disabled with no extra code.
+    if (isEnabled())
+    {
+        setGraphicsEffect(nullptr);
+        return;
+    }
+
+    auto* dim = new QGraphicsOpacityEffect(this);
+    dim->setOpacity(disabledOpacity);
+    setGraphicsEffect(dim);
 }
 
 int enzo::ui::Parameter::getLeftPadding()

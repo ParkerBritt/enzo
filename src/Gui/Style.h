@@ -20,4 +20,7 @@ inline constexpr int rampHeight = 80;
 /// Height in pixels of a spacer parameter row.
 inline constexpr int spacerHeight = 12;
 
+/// Opacity of a disabled parameter row, dimming its label and editor together.
+inline constexpr double disabledOpacity = 0.4;
+
 } // namespace enzo::ui
