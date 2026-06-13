@@ -106,7 +106,7 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
             Range(2, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
             .setHideCondition("profileshape != 3"),
-        Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(1)),
+        Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(0)),
         Template(Type::RAMP, Name("scaleramp", "Scale Ramp"), Default(2))
             .setInstanceDefault("value", {Default(1), Default(1)})
             .setDisableCondition("applyscale == 0"),
