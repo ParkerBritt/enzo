@@ -1,14 +1,64 @@
 #include "OpDefs/GopSweep.h"
-#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
+#include "Engine/Parameter/Ramp.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/AngleAxis.h>
 #include <cmath>
 #include <numbers>
+#include <span>
+
+namespace {
+// Defined at the bottom of the file, below the node code they serve.
+std::vector<enzo::Vector3> buildCircleProfile(int pointCount);
+void sweepMesh(
+    enzo::geo::Mesh& mesh,
+    std::span<const enzo::Vector3> profile,
+    bool applyScale,
+    const enzo::prm::Ramp& scaleRamp
+);
+} // namespace
+
+GopSweep::GopSweep(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+    : GeometryOpDef(network, opInfo)
+{
+}
+
+void GopSweep::cookOp(enzo::op::Context context)
+{
+    using namespace enzo;
+
+    if (!outputRequested(0)) return;
+
+    NodePacket packet = context.cloneInputPacket(0);
+
+    const bool applyScale = context.evalParmBool("applyscale");
+    const prm::Ramp scaleRamp = context.evalParmRamp("scaleramp");
+    const std::vector<Vector3> profile = buildCircleProfile(10);
+
+    for (auto prim : packet.getPrimitives())
+    {
+        std::shared_ptr<geo::Mesh> mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
+        if (!mesh) continue;
+
+        sweepMesh(*mesh, profile, applyScale, scaleRamp);
+    }
+
+    setOutputPacket(0, packet);
+}
+
+std::vector<enzo::prm::Template> GopSweep::parameterList()
+{
+    using namespace enzo::prm;
+    return {
+        Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(1)),
+        Template(Type::RAMP, Name("scaleramp", "Scale Ramp"), Default(2))
+            .setInstanceDefault("value", {Default(1), Default(1)}),
+    };
+}
 
 namespace {
 using namespace enzo;
@@ -41,8 +91,14 @@ std::vector<Vector3> buildCircleProfile(int pointCount)
 class Sweeper
 {
   public:
-    Sweeper(geo::Mesh& mesh, std::span<const Vector3> profile)
+    Sweeper(
+        geo::Mesh& mesh,
+        std::span<const Vector3> profile,
+        bool applyScale,
+        const prm::Ramp& scaleRamp
+    )
         : mesh_(mesh), profile_(profile), profilePointCount_(static_cast<int>(profile.size())),
+          applyScale_(applyScale), scaleRamp_(scaleRamp),
           faceTangents_(mesh, utils::TangentMode::TwoPoint), faceNormals_(mesh.getFaceNormal())
     {
     }
@@ -86,13 +142,16 @@ class Sweeper
         int relPointNum = 0;
         for (intT pointOffset : mesh_.getFacePoints(curveFace))
         {
+            // The ramp reads how far along the curve the point sits to set the
+            // radius. With scaling off the profile keeps its full size.
             const float curveU = static_cast<float>(relPointNum) / (curvePointCount - 1);
+            const float radius = applyScale_ ? scaleRamp_.sample(curveU) : 1.0f;
 
             // The scale runs first so it sizes the profile before the orientation
             // turns it.
             Transform transform =
                 Transform::lookAt(mesh_.getPointPos(pointOffset), tangents[relPointNum], normal);
-            transform.scale(curveU); // TODO: control radius with a ramp parameter
+            transform.scale(radius);
 
             for (const Vector3& profilePos : profile_)
                 ringPositions_.push_back(transform * profilePos);
@@ -130,6 +189,8 @@ class Sweeper
     geo::Mesh& mesh_;
     std::span<const Vector3> profile_;
     int profilePointCount_;
+    bool applyScale_;
+    const prm::Ramp& scaleRamp_;
     utils::FaceTangents faceTangents_;
     geo::FaceNormalHandle faceNormals_;
 
@@ -139,32 +200,14 @@ class Sweeper
     std::vector<Offset> faceVertexCounts_;
 };
 
+void sweepMesh(
+    geo::Mesh& mesh,
+    std::span<const Vector3> profile,
+    bool applyScale,
+    const prm::Ramp& scaleRamp
+)
+{
+    Sweeper(mesh, profile, applyScale, scaleRamp).sweep();
+}
+
 } // namespace
-
-GopSweep::GopSweep(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
-{
-}
-
-void GopSweep::cookOp(enzo::op::Context context)
-{
-    using namespace enzo;
-
-    if (!outputRequested(0)) return;
-
-    NodePacket packet = context.cloneInputPacket(0);
-
-    const std::vector<Vector3> profile = buildCircleProfile(10);
-
-    for (auto prim : packet.getPrimitives())
-    {
-        std::shared_ptr<geo::Mesh> mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
-        if (!mesh) continue;
-
-        Sweeper(*mesh, profile).sweep();
-    }
-
-    setOutputPacket(0, packet);
-}
-
-std::vector<enzo::prm::Template> GopSweep::parameterList() { return {}; }
