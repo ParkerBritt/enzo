@@ -89,7 +89,7 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
             1,
             Range(3, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setDisableWhen("profileshape != 1"),
+            .setHideCondition("profileshape != 1"),
         Template(
             Type::INT,
             Name("squarecolumns", "Columns"),
@@ -97,7 +97,7 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
             1,
             Range(1, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setDisableWhen("profileshape != 2"),
+            .setHideCondition("profileshape != 2"),
         Template(
             Type::INT,
             Name("ribboncolumns", "Columns"),
@@ -105,11 +105,11 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
             1,
             Range(2, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
-            .setDisableWhen("profileshape != 3"),
+            .setHideCondition("profileshape != 3"),
         Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(1)),
         Template(Type::RAMP, Name("scaleramp", "Scale Ramp"), Default(2))
             .setInstanceDefault("value", {Default(1), Default(1)})
-            .setDisableWhen("applyscale == 0"),
+            .setDisableCondition("applyscale == 0"),
     };
 }
 

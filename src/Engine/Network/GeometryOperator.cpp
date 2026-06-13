@@ -16,14 +16,15 @@ namespace enzo {
 
 namespace {
 
-// A parsed disableWhen condition such as "applyscale == 0".
-struct DisableCondition
+// A parsed comparison such as "applyscale == 0", read from a disable or hide
+// condition string.
+struct ParameterComparison
 {
     std::string controller;
     std::string comparator;
     intT target;
 
-    // Whether the controller's value satisfies the condition.
+    // Whether the controller's value satisfies the comparison.
     bool isMet(intT value) const
     {
         const bool isEqual = value == target;
@@ -32,13 +33,13 @@ struct DisableCondition
     }
 };
 
-// Reads a disableWhen string into a condition, empty when it is blank or malformed.
-std::optional<DisableCondition> parseDisableCondition(const std::string& text)
+// Reads a comparison string, empty when it is blank or malformed.
+std::optional<ParameterComparison> parseParameterComparison(const std::string& text)
 {
     std::istringstream stream(text);
-    DisableCondition condition;
-    if (stream >> condition.controller >> condition.comparator >> condition.target)
-        return condition;
+    ParameterComparison comparison;
+    if (stream >> comparison.controller >> comparison.comparator >> comparison.target)
+        return comparison;
     return std::nullopt;
 }
 
@@ -226,23 +227,36 @@ std::weak_ptr<prm::NodeParameter> nt::GeometryOperator::getParameter(std::string
     return std::weak_ptr<prm::NodeParameter>();
 }
 
+bool nt::GeometryOperator::isComparisonTrue(const std::string& conditionText)
+{
+    const std::optional<ParameterComparison> comparison = parseParameterComparison(conditionText);
+    if (!comparison) return false;
+
+    // The controlling parameter the comparison reads from.
+    auto controller = getParameter(comparison->controller);
+    if (controller.expired()) return false;
+
+    return comparison->isMet(controller.lock()->evalInt());
+}
+
 bool nt::GeometryOperator::isParameterEnabled(std::string_view parmName)
 {
-    // The parameter being tested. An unknown parameter is treated as enabled.
+    // An unknown parameter is treated as enabled.
     auto parameter = getParameter(parmName);
     if (parameter.expired()) return true;
 
-    // Its disableWhen condition. No condition means it is always enabled.
-    const std::optional<DisableCondition> condition =
-        parseDisableCondition(parameter.lock()->getTemplate().getDisableWhen());
-    if (!condition) return true;
+    // Disabled only while its disable comparison is true.
+    return !isComparisonTrue(parameter.lock()->getTemplate().getDisableCondition());
+}
 
-    // The controlling parameter the condition reads from.
-    auto controller = getParameter(condition->controller);
-    if (controller.expired()) return true;
+bool nt::GeometryOperator::isParameterHidden(std::string_view parmName)
+{
+    // An unknown parameter is treated as shown.
+    auto parameter = getParameter(parmName);
+    if (parameter.expired()) return false;
 
-    // Disabled only while the condition holds.
-    return !condition->isMet(controller.lock()->evalInt());
+    // Hidden only while its hide comparison is true.
+    return isComparisonTrue(parameter.lock()->getTemplate().getHideCondition());
 }
 
 std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const

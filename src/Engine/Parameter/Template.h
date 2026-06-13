@@ -73,7 +73,10 @@ class Template
     enzo::String getDocumentation() const;
     /// @brief A condition that greys the parameter out, such as "applyscale == 0".
     /// @return The condition, empty when the parameter is always enabled.
-    enzo::String getDisableWhen() const;
+    enzo::String getDisableCondition() const;
+    /// @brief A condition that hides the parameter, such as "profileshape != 1".
+    /// @return The condition, empty when the parameter is always shown.
+    enzo::String getHideCondition() const;
     bool isLabelHidden() const;
     bool isBackgroundEnabled() const;
 
@@ -81,7 +84,8 @@ class Template
     // be configured inline at construction.
     Template& setTooltip(String tooltip);
     Template& setDocumentation(String documentation);
-    Template& setDisableWhen(String condition);
+    Template& setDisableCondition(String condition);
+    Template& setHideCondition(String condition);
     Template& setDirection(Direction direction);
     Template& setOptions(std::vector<prm::Name> options);
     Template& addParm(Template child);
@@ -117,7 +121,8 @@ class Template
 
     String tooltip_;
     String documentation_;
-    String disableWhen_;
+    String disableCondition_;
+    String hideCondition_;
 
     bool labelHidden_ = false;
     bool backgroundEnabled_ = true;
