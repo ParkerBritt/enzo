@@ -14,6 +14,8 @@ class Parameter : public QWidget
     Q_OBJECT
   public:
     Parameter(const prm::Template& parmTemplate, QWidget* parent = nullptr);
+    /// @brief Returns the name of the parameter this widget edits.
+    enzo::String getName() const { return parmTemplate_.getName(); }
     int getLeftPadding();
     void setLeftPadding(int padding);
     virtual void addChild(Parameter* child);
@@ -27,6 +29,7 @@ class Parameter : public QWidget
     QWidget* contentWidget_ = nullptr;
     QBoxLayout* contentLayout_ = nullptr;
     QLabel* label_ = nullptr;
+    const prm::Template parmTemplate_;
 };
 
 } // namespace enzo::ui

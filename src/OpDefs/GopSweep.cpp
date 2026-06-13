@@ -56,7 +56,8 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
     return {
         Template(Type::BOOL, Name("applyscale", "Apply Scale"), Default(1)),
         Template(Type::RAMP, Name("scaleramp", "Scale Ramp"), Default(2))
-            .setInstanceDefault("value", {Default(1), Default(1)}),
+            .setInstanceDefault("value", {Default(1), Default(1)})
+            .setDisableWhen("applyscale == 0"),
     };
 }
 

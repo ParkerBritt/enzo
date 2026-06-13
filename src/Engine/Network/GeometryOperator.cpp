@@ -9,9 +9,40 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 
 namespace enzo {
+
+namespace {
+
+// A parsed disableWhen condition such as "applyscale == 0".
+struct DisableCondition
+{
+    std::string controller;
+    std::string comparator;
+    intT target;
+
+    // Whether the controller's value satisfies the condition.
+    bool isMet(intT value) const
+    {
+        const bool isEqual = value == target;
+        if (comparator == "!=") return !isEqual;
+        return isEqual;
+    }
+};
+
+// Reads a disableWhen string into a condition, empty when it is blank or malformed.
+std::optional<DisableCondition> parseDisableCondition(const std::string& text)
+{
+    std::istringstream stream(text);
+    DisableCondition condition;
+    if (stream >> condition.controller >> condition.comparator >> condition.target)
+        return condition;
+    return std::nullopt;
+}
+
+} // namespace
 
 std::weak_ptr<nt::GeometryConnection> nt::connectOperators(
     nt::OpId inputOpId,
@@ -69,7 +100,9 @@ void nt::GeometryOperator::initParameters()
         }
 
         auto parameter = std::make_shared<prm::NodeParameter>(templateEntry, opId_);
-        parameter->valueChanged.connect([this]() { dirtyNode(); });
+        parameter->valueChanged.connect([this, name = templateEntry.getName()]() {
+            onParameterChanged(name);
+        });
         IC(parameter);
         parameters_.push_back(parameter);
     };
@@ -83,6 +116,12 @@ void nt::GeometryOperator::dirtyNode(bool dirtyDescendents)
     std::cout << "Dirtying op: " << opId_ << "\n";
     dirty_ = true;
     nodeDirtied(opId_, dirtyDescendents);
+}
+
+void nt::GeometryOperator::onParameterChanged(const std::string& parmName)
+{
+    parameterChanged(parmName);
+    dirtyNode();
 }
 
 bool nt::GeometryOperator::isDirty() { return dirty_; }
@@ -185,6 +224,25 @@ std::weak_ptr<prm::NodeParameter> nt::GeometryOperator::getParameter(std::string
         }
     }
     return std::weak_ptr<prm::NodeParameter>();
+}
+
+bool nt::GeometryOperator::isParameterEnabled(std::string_view parmName)
+{
+    // The parameter being tested. An unknown parameter is treated as enabled.
+    auto parameter = getParameter(parmName);
+    if (parameter.expired()) return true;
+
+    // Its disableWhen condition. No condition means it is always enabled.
+    const std::optional<DisableCondition> condition =
+        parseDisableCondition(parameter.lock()->getTemplate().getDisableWhen());
+    if (!condition) return true;
+
+    // The controlling parameter the condition reads from.
+    auto controller = getParameter(condition->controller);
+    if (controller.expired()) return true;
+
+    // Disabled only while the condition holds.
+    return !condition->isMet(controller.lock()->evalInt());
 }
 
 std::vector<std::weak_ptr<nt::GeometryConnection>> nt::GeometryOperator::getInputConnections() const

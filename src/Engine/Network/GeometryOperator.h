@@ -122,6 +122,10 @@ class GeometryOperator
     /// name exists.
     std::weak_ptr<prm::NodeParameter> getParameter(std::string_view parameterName);
 
+    /// @brief Whether the named parameter's disableWhen condition leaves it enabled.
+    /// @return True when the condition is empty, unparsable, or not met.
+    bool isParameterEnabled(std::string_view parmName);
+
     /// @brief Returns the template tree declared by this node's type.
     /// @returns Top level templates. Group templates contain child templates recursively.
     const std::vector<prm::Template>& getTemplates() const;
@@ -177,8 +181,14 @@ class GeometryOperator
     /// NetworkManager
     boost::signals2::signal<void(nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
 
+    /// @brief A signal emitted when one parameter's value changes, carrying its name.
+    boost::signals2::signal<void(const std::string& parmName)> parameterChanged;
+
   private:
     void initParameters();
+
+    /// @brief Notifies observers a parameter changed and dirties the node.
+    void onParameterChanged(const std::string& parmName);
 
     // TODO: avoid duplicate connections
     std::vector<std::shared_ptr<nt::GeometryConnection>> inputConnections_;

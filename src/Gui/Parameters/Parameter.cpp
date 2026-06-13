@@ -5,7 +5,8 @@
 #include <QVBoxLayout>
 #include <string>
 
-enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent) : QWidget(parent)
+enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* parent)
+    : QWidget(parent), parmTemplate_(parmTemplate)
 {
     mainLayout_ = new QHBoxLayout();
     mainLayout_->setContentsMargins(0, 0, 0, 0);
