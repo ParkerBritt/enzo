@@ -89,7 +89,10 @@ enum class TangentMode
 class FaceTangents
 {
   public:
-    FaceTangents(const geo::Mesh& mesh, TangentMode mode) : mesh_(mesh), mode_(mode) {}
+    FaceTangents(const geo::Mesh& mesh, TangentMode mode = TangentMode::FirstPoint)
+        : mesh_(mesh), mode_(mode)
+    {
+    }
 
     /// @brief Returns the tangents for the given face.
     std::span<const Vector3> operator()(Offset faceOffset);

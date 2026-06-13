@@ -1,6 +1,7 @@
 #include "OpDefs/GopSweep.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
+#include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/src/Core/Matrix.h>
@@ -36,21 +37,39 @@ void GopSweep::cookOp(enzo::op::Context context)
 
         const int profileNumPoints = profilePositions.size();
 
+        // TODO: too many indentation levels, should do something about that
         for (auto prim : packet.getPrimitives())
         {
             std::shared_ptr<enzo::geo::Mesh> mesh =
                 std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
             if (!mesh) continue;
 
-            // Place points
             std::vector<enzo::Vector3> pointPositions;
             pointPositions.reserve(circleDivisions * prim->getNumPoints());
+            enzo::utils::FaceTangents tangents(*mesh);
 
-            for (auto point : prim->getPoints())
+            // Add profile points to each point on source curve
+            for (enzo::Offset faceOffset : mesh->getFaces())
             {
-                for (auto profilePos : profilePositions)
+                const int numCurvePoints = mesh->getFacePointCount(faceOffset);
+                const auto faceTangents = tangents(faceOffset);
+
+                for (auto point : mesh->getFacePoints(faceOffset))
                 {
-                    pointPositions.push_back(profilePos + mesh->getPointPos(point));
+                    const float curveU = relPointNum / (numCurvePoints - 1);
+                    const enzo::Vector3 tangent = faceTangents[point];
+
+                    // Build transform
+                    enzo::Transform transform;
+                    transform.scale(curveU); // TODO:  control with ramp parameter
+                    transform.lookAt(tangent, normal);
+                    transform.translate(mesh->getPointPos(point));
+
+                    // Add profile points
+                    for (auto profilePos : profilePositions)
+                    {
+                        pointPositions.push_back(profilePos * transform);
+                    }
                 }
             }
             std::vector<enzo::Offset> newPoints = mesh->addPoints(pointPositions);
