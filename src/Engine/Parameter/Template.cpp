@@ -129,7 +129,9 @@ String prm::Template::getTooltip() const { return tooltip_; }
 
 String prm::Template::getDocumentation() const { return documentation_; }
 
-String prm::Template::getDisableWhen() const { return disableWhen_; }
+String prm::Template::getDisableCondition() const { return disableCondition_; }
+
+String prm::Template::getHideCondition() const { return hideCondition_; }
 
 bool prm::Template::isLabelHidden() const { return labelHidden_; }
 
@@ -145,9 +147,15 @@ prm::Template& prm::Template::setDocumentation(String documentation)
     return *this;
 }
 
-prm::Template& prm::Template::setDisableWhen(String condition)
+prm::Template& prm::Template::setDisableCondition(String condition)
 {
-    disableWhen_ = std::move(condition);
+    disableCondition_ = std::move(condition);
+    return *this;
+}
+
+prm::Template& prm::Template::setHideCondition(String condition)
+{
+    hideCondition_ = std::move(condition);
     return *this;
 }
 

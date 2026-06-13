@@ -203,5 +203,8 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
 void ParametersPanel::refreshEnabledStates(enzo::nt::GeometryOperator& op)
 {
     for (enzo::ui::Parameter* leaf : leafWidgets_)
+    {
+        leaf->setVisible(!op.isParameterHidden(leaf->getName()));
         leaf->setEnabled(op.isParameterEnabled(leaf->getName()));
+    }
 }
