@@ -4,6 +4,7 @@
 #include "Gui/Panels/Panel.h"
 #include <QVBoxLayout>
 #include <QWidget>
+#include <boost/signals2/connection.hpp>
 #include <vector>
 
 namespace enzo::nt {
@@ -35,9 +36,17 @@ class ParametersPanel : public Panel
         int& maxLeftPadding
     );
 
+    /// @brief Greys out each leaf whose disableWhen condition currently holds.
+    void refreshEnabledStates(enzo::nt::GeometryOperator& op);
+
     QVBoxLayout* mainLayout_;
     QVBoxLayout* parametersLayout_;
     QScrollArea* scrollArea_;
     QWidget* bgWidget_;
     QLabel* noSelectionLabel_;
+
+    // Leaf widgets of the selected node, kept so their enabled state can refresh.
+    std::vector<enzo::ui::Parameter*> leafWidgets_;
+    // Refreshes enabled state while the selected node's parameters change.
+    boost::signals2::scoped_connection parameterChangedConnection_;
 };

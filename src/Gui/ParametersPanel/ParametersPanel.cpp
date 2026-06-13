@@ -163,12 +163,14 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     using namespace enzo;
     enzo::nt::NetworkManager& nm = enzo::nt::nm();
 
+    // Drop the previous node's subscription before its widgets are deleted.
+    parameterChangedConnection_.disconnect();
+    leafWidgets_.clear();
     clearParameters();
 
     enzo::nt::GeometryOperator& displayOp = nm.getGeoOperator(opId);
     const std::vector<prm::Template>& templates = displayOp.getTemplates();
 
-    std::vector<enzo::ui::Parameter*> leafWidgets;
     int maxLeftPadding = 0;
 
     std::vector<enzo::ui::Parameter*> topWidgets;
@@ -176,17 +178,30 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     for (const prm::Template& templateEntry : templates)
     {
         enzo::ui::Parameter* widget =
-            buildTemplateWidget(templateEntry, displayOp, leafWidgets, maxLeftPadding);
+            buildTemplateWidget(templateEntry, displayOp, leafWidgets_, maxLeftPadding);
         if (widget) topWidgets.push_back(widget);
     }
 
     const int leftPadding = maxLeftPadding + 5;
-    for (enzo::ui::Parameter* leaf : leafWidgets)
+    for (enzo::ui::Parameter* leaf : leafWidgets_)
         leaf->setLeftPadding(leftPadding);
 
     for (enzo::ui::Parameter* widget : topWidgets)
         parametersLayout_->addWidget(widget);
 
+    // Paint the initial enabled state, then follow parameter changes for this node.
+    refreshEnabledStates(displayOp);
+    parameterChangedConnection_ =
+        displayOp.parameterChanged.connect([this, opId](const std::string&) {
+            refreshEnabledStates(enzo::nt::nm().getGeoOperator(opId));
+        });
+
     noSelectionLabel_->hide();
     scrollArea_->show();
+}
+
+void ParametersPanel::refreshEnabledStates(enzo::nt::GeometryOperator& op)
+{
+    for (enzo::ui::Parameter* leaf : leafWidgets_)
+        leaf->setEnabled(op.isParameterEnabled(leaf->getName()));
 }
