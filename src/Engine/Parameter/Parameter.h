@@ -3,6 +3,7 @@
 #include "Engine/Parameter/Template.h"
 #include <boost/signals2.hpp>
 #include <memory>
+#include <optional>
 #include <string_view>
 #include <variant>
 
@@ -37,6 +38,17 @@ class Parameter
     void setFloat(floatT value, unsigned int index = 0);
     void setString(String value, unsigned int index = 0);
 
+    // A component may hold a daslang expression instead of a literal. When set,
+    // the eval functions run the expression to produce the value, and setting a
+    // literal clears it.
+    void setExpression(String expression, unsigned int index = 0);
+    void clearExpression(unsigned int index = 0);
+    bool hasExpression(unsigned int index = 0) const;
+
+    /// @brief The expression on a component.
+    /// @return The expression when one is set, otherwise nullopt.
+    std::optional<String> getExpression(unsigned int index = 0) const;
+
     PrmValues getValues() const;
     void setValues(const PrmValues& values);
 
@@ -61,6 +73,9 @@ class Parameter
 
     Template template_;
     PrmValues values_;
+    // One optional expression per component, parallel to the value vector. An
+    // empty slot means the component uses its literal value.
+    std::vector<std::optional<String>> expressions_;
     std::vector<std::vector<std::shared_ptr<Parameter>>> instances_;
 };
 } // namespace enzo::prm
