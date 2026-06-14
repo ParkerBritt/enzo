@@ -34,6 +34,42 @@ TEST_CASE("evalInt returns minus one when the dropdown token is not an option")
     REQUIRE(parameter.evalInt() == -1);
 }
 
+static prm::Template floatTemplate()
+{
+    using namespace enzo::prm;
+    return Template(Type::FLOAT, Name("distance", "Distance"), Default(1));
+}
+
+TEST_CASE("evalFloat runs an expression instead of the literal")
+{
+    prm::Parameter parameter(floatTemplate());
+
+    parameter.setExpression("2 + 3");
+    REQUIRE(parameter.hasExpression());
+    REQUIRE(parameter.evalFloat() == 5.0f);
+}
+
+TEST_CASE("Setting a literal clears the expression")
+{
+    prm::Parameter parameter(floatTemplate());
+
+    parameter.setExpression("2 + 3");
+    parameter.setFloat(9.0f);
+
+    REQUIRE_FALSE(parameter.hasExpression());
+    REQUIRE(parameter.evalFloat() == 9.0f);
+}
+
+TEST_CASE("A failed expression falls back to the stored literal")
+{
+    prm::Parameter parameter(floatTemplate());
+
+    parameter.setFloat(4.0f);
+    parameter.setExpression("2 +");
+
+    REQUIRE(parameter.evalFloat() == 4.0f);
+}
+
 // A ramp template carrying an initial control point count. The ramp supplies
 // its own instance fields.
 static prm::Template rampTemplate(int points)

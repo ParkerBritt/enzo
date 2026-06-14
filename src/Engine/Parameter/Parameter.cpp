@@ -1,4 +1,5 @@
 #include "Engine/Parameter/Parameter.h"
+#include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Parameter/Default.h"
 #include <iostream>
 #include <stdexcept>
@@ -20,6 +21,8 @@ prm::Parameter::Parameter(Template prmTemplate) : template_{prmTemplate}
 
     const unsigned int size = prmTemplate.getSize();
     const unsigned int numDefaults = prmTemplate.getNumDefaults();
+
+    expressions_.resize(size);
 
     auto getDefault = [&](unsigned int i) -> prm::Default {
         if (i < numDefaults) return prmTemplate.getDefault(i);
@@ -69,6 +72,17 @@ floatT prm::Parameter::evalFloat(unsigned int index) const
         throw std::out_of_range(
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
+
+    // An expression drives the value, falling back to the stored literal when it
+    // fails to compile or run.
+    if (hasExpression(index))
+    {
+        floatT result = vals[index];
+        String error;
+        expr::ExpressionEngine::instance().evalFloat(*expressions_[index], result, error);
+        return result;
+    }
+
     return vals[index];
 }
 
@@ -89,6 +103,17 @@ intT prm::Parameter::evalInt(unsigned int index) const
         throw std::out_of_range(
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
+
+    // An expression drives the value, falling back to the stored literal when it
+    // fails to compile or run.
+    if (hasExpression(index))
+    {
+        intT result = vals[index];
+        String error;
+        expr::ExpressionEngine::instance().evalInt(*expressions_[index], result, error);
+        return result;
+    }
+
     return vals[index];
 }
 
@@ -166,6 +191,7 @@ void prm::Parameter::setInt(intT value, unsigned int index)
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
     vals[index] = value;
+    expressions_[index].reset();
     handleValueChange_();
 }
 
@@ -178,6 +204,7 @@ void prm::Parameter::setFloat(floatT value, unsigned int index)
         );
     PrmValues before = vals;
     vals[index] = value;
+    expressions_[index].reset();
 
     onFloatSet_(before);
     handleValueChange_();
@@ -191,7 +218,36 @@ void prm::Parameter::setString(String value, unsigned int index)
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
     vals[index] = value;
+    expressions_[index].reset();
     handleValueChange_();
+}
+
+void prm::Parameter::setExpression(String expression, unsigned int index)
+{
+    if (index >= expressions_.size())
+        throw std::out_of_range(
+            "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
+        );
+    expressions_[index] = std::move(expression);
+    handleValueChange_();
+}
+
+void prm::Parameter::clearExpression(unsigned int index)
+{
+    if (index >= expressions_.size()) return;
+    expressions_[index].reset();
+    handleValueChange_();
+}
+
+bool prm::Parameter::hasExpression(unsigned int index) const
+{
+    return index < expressions_.size() && expressions_[index].has_value();
+}
+
+std::optional<String> prm::Parameter::getExpression(unsigned int index) const
+{
+    if (index >= expressions_.size()) return std::nullopt;
+    return expressions_[index];
 }
 
 prm::PrmValues prm::Parameter::getValues() const { return values_; }
