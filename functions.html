@@ -131,6 +131,7 @@ $(function(){ initResizable(false); });
 
 <h3><a id="index_d" name="index_d"></a>- d -</h3><ul>
 <li>defragment()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Mesh.html#af039b0c050656f9e7ea14339ac27d0cd">enzo::geo::Mesh</a>, <a class="el" href="classenzo_1_1geo_1_1Primitive.html#af26e93804c110b1333b0dfa13a3e1ed2">enzo::geo::Primitive</a></li>
+<li>deleteAllFaces()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Mesh.html#a159cbe87411578c684da77c2133e4a81">enzo::geo::Mesh</a></li>
 <li>deleteNode()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#aa0921669d2f73b4563ec2b127c943a2b">enzo::nt::NetworkManager</a></li>
 <li>dirtyNode()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a892fe23575ba1bf13956f3cb414d0922">enzo::nt::GeometryOperator</a></li>
 <li>duplicatePoints()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066">enzo::geo::Mesh</a></li>
@@ -157,6 +158,7 @@ $(function(){ initResizable(false); });
 <li>getAllValues()&#160;:&#160;<a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html#a23012a2cb26a638ca6c26e13e2371740">enzo::attr::AttributeHandle&lt; T &gt;</a>, <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html#af031f9dd9c0659222f2a25de5ff21c1f">enzo::attr::AttributeHandleRO&lt; T &gt;</a></li>
 <li>getAttribByName()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Primitive.html#ad01b0c72577d3f92e577de94f247138e">enzo::geo::Primitive</a></li>
 <li>getChild()&#160;:&#160;<a class="el" href="classenzo_1_1prm_1_1Template.html#a49d13a701051e29ef7629511da3bb233">enzo::prm::Template</a></li>
+<li>getDisableCondition()&#160;:&#160;<a class="el" href="classenzo_1_1prm_1_1Template.html#ab870cd1e2304a2d15f1f2823feec5c4c">enzo::prm::Template</a></li>
 <li>getDisplayOp()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a4590f941a67bc8c01c8d3333259f895a">enzo::nt::NetworkManager</a></li>
 <li>getElementCount()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Primitive.html#a733db47967e273ab214d8a838e62b88e">enzo::geo::Primitive</a></li>
 <li>getFaceNormal()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Mesh.html#a146bcd956329c0a1541c5908a36619e0">enzo::geo::Mesh</a></li>
@@ -164,6 +166,7 @@ $(function(){ initResizable(false); });
 <li>getGeoOperator()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#aafd67ab1806831c63bc9540d42b85364">enzo::nt::NetworkManager</a></li>
 <li>getGroupByIndex()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Primitive.html#a4ed9c839d335539a53784a341ad623f4">enzo::geo::Primitive</a></li>
 <li>getGroupByName()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Primitive.html#a6cca3120c244c5796dc64f7ac5a0e867">enzo::geo::Primitive</a></li>
+<li>getHideCondition()&#160;:&#160;<a class="el" href="classenzo_1_1prm_1_1Template.html#abd7352af6cc81c249d3c3e9531d094e8">enzo::prm::Template</a></li>
 <li>getInputConnection()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#ad6cbdda02c603497fd71cc1f09bbcea1">enzo::nt::GeometryOperator</a></li>
 <li>getInputConnections()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#ad74198d30940f120f2b7e50e60db34af">enzo::nt::GeometryOperator</a></li>
 <li>getInputIndex()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html#a3133580f190e629b5516833724c417ce">enzo::nt::GeometryConnection</a></li>
@@ -202,6 +205,8 @@ $(function(){ initResizable(false); });
 <li>isEmpty()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1UndoGroup.html#a9d606e988ecbd13784fac1967b2228b3">enzo::nt::UndoGroup</a></li>
 <li>isIntrinsic()&#160;:&#160;<a class="el" href="classenzo_1_1attr_1_1Attribute.html#a10a9ed312201a64abba043fa59d5b58a">enzo::attr::Attribute</a></li>
 <li>isLocked()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1UpdateLock.html#aa20acb7b13d9d074c89e793d5c4fa164">enzo::nt::UpdateLock</a></li>
+<li>isParameterEnabled()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#af09a2fec53bbec6d9579a625750159b7">enzo::nt::GeometryOperator</a></li>
+<li>isParameterHidden()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a449f52424c464f5e33cbb2f00d783eb7">enzo::nt::GeometryOperator</a></li>
 <li>isPrivate()&#160;:&#160;<a class="el" href="classenzo_1_1attr_1_1Attribute.html#a210dc1d3319508ada6a8e17fdfb72418">enzo::attr::Attribute</a></li>
 <li>isUnlocked()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a">enzo::nt::UpdateLock</a></li>
 <li>isValidOp()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a740e83ec5b9e4708590a6b458300c80b">enzo::nt::NetworkManager</a></li>
@@ -227,6 +232,8 @@ $(function(){ initResizable(false); });
 
 
 <h3><a id="index_o" name="index_o"></a>- o -</h3><ul>
+<li>operator()()&#160;:&#160;<a class="el" href="classenzo_1_1utils_1_1FaceTangents.html#abb5964daab0ef098c0c8b20173d54e82">enzo::utils::FaceTangents</a></li>
+<li>operator*()&#160;:&#160;<a class="el" href="classenzo_1_1Transform.html#a9d5b54b81ecd5aa9cc235dff84c40354">enzo::Transform</a></li>
 <li>operator&lt;&lt;&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html#acdd05f5d8c994fc8242ca675f262e91b">enzo::nt::GeometryConnection</a></li>
 <li>operator=()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#ac9acde728b61d17a7b07459bb2b63214">enzo::nt::GeometryOperator</a></li>
 <li>operator[]()&#160;:&#160;<a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html#ad63cc140a4da8aa3f79490ac2324a1d7">enzo::attr::AttributeHandle&lt; T &gt;</a>, <a class="el" href="classenzo_1_1attr_1_1AttributeHandleRO.html#a690f520581dfd095e2c6e486c45adf78">enzo::attr::AttributeHandleRO&lt; T &gt;</a></li>
@@ -235,6 +242,7 @@ $(function(){ initResizable(false); });
 
 
 <h3><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>parameterChanged&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a2bdaf9298a55c3a331eebc2baa63e2cb">enzo::nt::GeometryOperator</a></li>
 <li>pointPosSpan()&#160;:&#160;<a class="el" href="classenzo_1_1geo_1_1Mesh.html#af1f080815c754dd32e6a7534249126bc">enzo::geo::Mesh</a></li>
 <li>push()&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1UndoStack.html#a95f61aa99d46de0813f3ea65136bf3bb">enzo::nt::UndoStack</a></li>
 </ul>

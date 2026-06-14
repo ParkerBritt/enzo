@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: Class Members - Variables</title>
+<title>Enzo: enzo::utils::FaceTangents Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -58,8 +58,6 @@ $(function() {
 /* @license-end */
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
-<div id="doc-content">
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
 $(function(){ initResizable(false); });
@@ -86,11 +84,43 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>utils</b></li><li class="navelem"><a class="el" href="classenzo_1_1utils_1_1FaceTangents.html">FaceTangents</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="classenzo_1_1utils_1_1FaceTangents-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::utils::FaceTangents Class Reference</div></div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div><ul>
-<li>nodeDirtied&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a9081423edda2d9ca3b703af7f8152dbb">enzo::nt::GeometryOperator</a></li>
-<li>parameterChanged&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a2bdaf9298a55c3a331eebc2baa63e2cb">enzo::nt::GeometryOperator</a></li>
-<li>removed&#160;:&#160;<a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html#a87f5e95b7f9606249e77e440788b2fe7">enzo::nt::GeometryConnection</a></li>
+
+<p>Tangents along a face in winding order.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="MeshUtils_8h_source.html">MeshUtils.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:adb337527a891c5f2f013033f112d0408" id="r_adb337527a891c5f2f013033f112d0408"><td class="memItemLeft" align="right" valign="top"><a id="adb337527a891c5f2f013033f112d0408" name="adb337527a891c5f2f013033f112d0408"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>FaceTangents</b> (const <a class="el" href="classenzo_1_1geo_1_1Mesh.html">geo::Mesh</a> &amp;mesh, TangentMode mode=TangentMode::FirstPoint)</td></tr>
+<tr class="separator:adb337527a891c5f2f013033f112d0408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb5964daab0ef098c0c8b20173d54e82" id="r_abb5964daab0ef098c0c8b20173d54e82"><td class="memItemLeft" align="right" valign="top"><a id="abb5964daab0ef098c0c8b20173d54e82" name="abb5964daab0ef098c0c8b20173d54e82"></a>
+std::span&lt; const Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (<a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> faceOffset)</td></tr>
+<tr class="memdesc:abb5964daab0ef098c0c8b20173d54e82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the tangents for the given face. <br /></td></tr>
+<tr class="separator:abb5964daab0ef098c0c8b20173d54e82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Tangents along a face in winding order. </p>
+<p>Construct once and call per face.</p>
+<p>e.g. geo::FaceTangents faceTangents(mesh, TangentMode::TwoPoint); for (Offset face : mesh.getFaces()) for (Vector3 tangent : faceTangents(face)) ...</p>
+<dl class="section note"><dt>Note</dt><dd>Each call replaces the previous result, so finish reading a face's tangents before asking for the next. </dd></dl>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/Engine/GeometryAlgorithms/<a class="el" href="MeshUtils_8h_source.html">MeshUtils.h</a></li>
+<li>src/Engine/GeometryAlgorithms/<b>MeshUtils.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -141,6 +141,9 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>compose</b> (const <a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;other)</td></tr>
 <tr class="memdesc:a639be07d77ce69a2133040458270e379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Composes another transform into this one in the local frame. <br /></td></tr>
 <tr class="separator:a639be07d77ce69a2133040458270e379"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d5b54b81ecd5aa9cc235dff84c40354" id="r_a9d5b54b81ecd5aa9cc235dff84c40354"><td class="memItemLeft" align="right" valign="top">Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d5b54b81ecd5aa9cc235dff84c40354">operator*</a> (const Vector3 &amp;point) const</td></tr>
+<tr class="memdesc:a9d5b54b81ecd5aa9cc235dff84c40354"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transform to a point.  <br /></td></tr>
+<tr class="separator:a9d5b54b81ecd5aa9cc235dff84c40354"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4daadd82a963ce115efaf2318405488" id="r_af4daadd82a963ce115efaf2318405488"><td class="memItemLeft" align="right" valign="top"><a id="af4daadd82a963ce115efaf2318405488" name="af4daadd82a963ce115efaf2318405488"></a>
 const Matrix4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getMatrix</b> () const</td></tr>
 <tr class="separator:af4daadd82a963ce115efaf2318405488"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,6 +230,34 @@ Static Public Member Functions</h2></td></tr>
 <p>Builds an orientation frame that points down a forward axis. </p>
 <dl class="section return"><dt>Returns</dt><dd>A transform whose rotation aligns to the frame, placed at translation.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The rotation maps the local Z axis onto forward and the local Y axis toward up. The up vector resolves the remaining roll. When forward and up are parallel the rotation falls back to identity. </dd></dl>
+
+</div>
+</div>
+<a id="a9d5b54b81ecd5aa9cc235dff84c40354" name="a9d5b54b81ecd5aa9cc235dff84c40354"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d5b54b81ecd5aa9cc235dff84c40354">&#9670;&#160;</a></span>operator*()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Vector3 enzo::Transform::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Applies the transform to a point. </p>
+<dl class="section return"><dt>Returns</dt><dd>The point with the transform's scale, rotation, and translation applied. </dd></dl>
 
 </div>
 </div>

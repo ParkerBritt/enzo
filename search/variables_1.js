@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['removed_0',['removed',['../classenzo_1_1nt_1_1GeometryConnection.html#a87f5e95b7f9606249e77e440788b2fe7',1,'enzo::nt::GeometryConnection']]]
+  ['parameterchanged_0',['parameterChanged',['../classenzo_1_1nt_1_1GeometryOperator.html#a2bdaf9298a55c3a331eebc2baa63e2cb',1,'enzo::nt::GeometryOperator']]]
 ];
