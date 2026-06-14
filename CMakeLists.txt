@@ -30,6 +30,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/OperatorTable.cpp
     src/Engine/Network/Context.cpp
     src/Engine/Expression/DasRuntime.cpp
+    src/Engine/Expression/ExpressionEngine.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -306,6 +307,7 @@ if(ENZO_BUILD_TESTS)
     add_executable(${TestExec}
         ${ENGINE_SOURCES}
         tests/main-tests.cpp
+        tests/ExpressionEngineTests.cpp
         tests/ParameterTests.cpp
         tests/RampTests.cpp
         tests/SerializerTests.cpp
@@ -325,6 +327,12 @@ if(ENZO_BUILD_TESTS)
         ${BOOST_INCLUDE_DIRS}
     )
     target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+
+    # Stage the test binary next to daslib so daslang resolves its standard
+    # library the same way the app does.
+    set_target_properties(${TestExec} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
+    )
 
     # benchmarks
     add_executable(${BenchExec}
