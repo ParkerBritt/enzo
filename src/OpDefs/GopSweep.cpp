@@ -3,6 +3,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Parameter/Ramp.h"
+#include "Engine/Parameter/Style.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/src/Core/Matrix.h>
@@ -10,6 +11,7 @@
 #include <cmath>
 #include <numbers>
 #include <span>
+#include <string>
 
 namespace {
 // A profile cross section and whether its last point joins back to its first.
@@ -25,6 +27,8 @@ struct SweepSettings
 {
     bool applyScale = false;
     enzo::prm::Ramp scaleRamp;
+    bool capEnds = false;
+    std::string capGroupName;
 };
 
 // Defined at the bottom of the file, below the node code they serve.
@@ -49,10 +53,14 @@ void GopSweep::cookOp(enzo::op::Context context)
 
     NodePacket packet = context.cloneInputPacket(0);
 
-    const SweepSettings settings{
+    SweepSettings settings{
         context.evalParmBool("applyScale"),
         context.evalParmRamp("scaleRamp"),
+        context.evalParmString("endCapType") == "single",
+        {},
     };
+    if (settings.capEnds && context.evalParmBool("endCapGroupEnabled"))
+        settings.capGroupName = context.evalParmString("endCapGroupName");
 
     if (context.evalParmString("profileShape") == "input" && !context.hasInput(1))
     {
@@ -114,10 +122,56 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
             Range(2, 64, RangeFlag::LOCKED, RangeFlag::UNLOCKED)
         )
             .setHideCondition("profileShape != 3"),
+
+        Template(Type::GROUP, Name("endCapRow", "End Cap"))
+            .setDirection(Direction::HORIZONTAL)
+            .setTooltip(
+                "Controls for closing the open ends of the swept tube and grouping the caps."
+            )
+            .addParm(Template(Type::DROPDOWN, Name("endCapType", "Cap Type"), Default("none"))
+                         .setOptions({
+                             Name("none", "None"),
+                             Name("single", "Single Polygon"),
+                         })
+                         .setLabelHidden(true)
+                         .setTooltip(
+                             "How to close the open ends of the swept tube. None leaves the ends "
+                             "open, Single Polygon fills each end with one face."
+                         ))
+            .addParm(Template(Type::GROUP, Name("endCapGroup", "Cap Group"))
+                         .setDirection(Direction::HORIZONTAL)
+                         .setBackgroundEnabled(true)
+                         .setLabelHidden(true)
+                         .setHideCondition("endCapType == 0")
+                         .setTooltip(
+                             "Enter the name to put the end cap polygons in this group. You can "
+                             "use this group name in later nodes to easily target just the cap "
+                             "polygons."
+                         )
+                         .addParm(Template(Type::BOOL, Name("endCapGroupEnabled", "Cap Group"))
+                                      .setTooltip(
+                                          "Create a face group with the end cap polygons in this "
+                                          "group. You can use this group in later nodes to easily "
+                                          "target just the cap polygons."
+                                      )
+                                      .setLabelHidden(true)
+                                      .setStyle(style::BoolIconSlash{}.setIcon("squares-subtract")))
+                         .addParm(Template(
+                                      Type::STRING,
+                                      Name("endCapGroupName", "Cap Name"),
+                                      Default("sweepCap")
+                         )
+                                      .setTooltip(
+                                          "Enter the name to put the end cap polygons in this "
+                                          "group. You can use this group name in later nodes to "
+                                          "easily target just the cap polygons."
+                                      )
+                                      .setLabelHidden(true)
+                                      .setBackgroundEnabled(false))),
         Template(Type::BOOL, Name("applyScale", "Apply Scale"), Default(0)),
         Template(Type::RAMP, Name("scaleRamp", "Scale Ramp"), Default(2))
             .setInstanceDefault("value", {Default(1), Default(1)})
-            .setDisableCondition("applyScale == 0"),
+            .setDisableCondition("applyScale == 0")
     };
 }
 
@@ -277,9 +331,21 @@ class Sweeper
             const int curvePointCount = mesh_.getFacePointCount(curveFace);
             if (curvePointCount < 2) continue;
             bridgeRings(curveFace, ringStart);
+            if (settings_.capEnds) capEnds(curveFace, ringStart);
             ringStart += curvePointCount * profilePointCount_;
         }
         mesh_.addFaces(facePointOffsets_, faceVertexCounts_);
+
+        // The cap faces go in last so they can be tagged into their own group.
+        if (!capPointOffsets_.empty())
+        {
+            std::vector<Offset> capFaces = mesh_.addFaces(capPointOffsets_, capVertexCounts_);
+            if (!settings_.capGroupName.empty())
+            {
+                mesh_.createFaceGroup(settings_.capGroupName);
+                mesh_.addToFaceGroup(settings_.capGroupName, capFaces);
+            }
+        }
 
         // Remove the source curves now the swept surface replaces them.
         mesh_.deleteFaces(sourceCurves);
@@ -342,6 +408,26 @@ class Sweeper
         }
     }
 
+    /// @brief Closes each open end of the curve with a single polygon.
+    void capEnds(Offset curveFace, size_t ringStart)
+    {
+        // A closed curve has no open ends, and an open profile has no ring loop
+        // to fill, so neither case gets a cap.
+        if (mesh_.isClosed(curveFace) || !profile_.closed) return;
+
+        const int curvePointCount = mesh_.getFacePointCount(curveFace);
+        const size_t lastRing = ringStart + (curvePointCount - 1) * profilePointCount_;
+
+        // The start cap winds opposite the end cap so both faces turn outward.
+        for (int column = profilePointCount_ - 1; column >= 0; --column)
+            capPointOffsets_.push_back(ringPoints_[ringStart + column]);
+        capVertexCounts_.push_back(profilePointCount_);
+
+        for (int column = 0; column < profilePointCount_; ++column)
+            capPointOffsets_.push_back(ringPoints_[lastRing + column]);
+        capVertexCounts_.push_back(profilePointCount_);
+    }
+
     geo::Mesh& mesh_;
     const Profile& profile_;
     int profilePointCount_;
@@ -353,6 +439,8 @@ class Sweeper
     std::vector<Offset> ringPoints_;
     std::vector<Offset> facePointOffsets_;
     std::vector<Offset> faceVertexCounts_;
+    std::vector<Offset> capPointOffsets_;
+    std::vector<Offset> capVertexCounts_;
 };
 
 void sweepMesh(geo::Mesh& mesh, const Profile& profile, const SweepSettings& settings)
