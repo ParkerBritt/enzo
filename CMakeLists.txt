@@ -29,6 +29,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/GeometryOpDef.cpp
     src/Engine/Network/OperatorTable.cpp
     src/Engine/Network/Context.cpp
+    src/Engine/Expression/DasRuntime.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
