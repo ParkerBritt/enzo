@@ -134,6 +134,36 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 # manifold (boolean ops)
 find_package(manifold CONFIG REQUIRED)
 
+# daslang (das scripting language), built from the vendored submodule
+set(DASLANG_DIR "${CMAKE_SOURCE_DIR}/extern/daslang")
+
+# Trim daslang to the core libraries enzo links against.
+set(DAS_TOOLS_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_TESTS_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_TUTORIAL_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_AOT_EXAMPLES_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_TREE_SITTER_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_GLFW_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_AUDIO_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_STDDLG_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_STBIMAGE_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_PUGIXML_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_HV_DISABLED ON CACHE BOOL "" FORCE)
+set(DAS_SQLITE_DISABLED ON CACHE BOOL "" FORCE)
+
+add_subdirectory(${DASLANG_DIR} ${CMAKE_BINARY_DIR}/daslang EXCLUDE_FROM_ALL)
+
+# daslang exposes its public headers only as a private requirement, so the
+# include path is added by hand.
+list(APPEND ENGINE_INCLUDE_DIRECTORIES ${DASLANG_DIR}/include)
+
+# daslang loads its standard library (daslib) from a folder next to the bin
+# directory of the running executable.
+set(DAS_DASLIB_DIR "${DASLANG_DIR}/daslib")
+
+# Dev builds stage into build/enzo so the layout mirrors the installed package.
+set(ENZO_DEV_STAGE_DIR "${CMAKE_BINARY_DIR}/enzo")
+
 
 
 qt_add_executable(${AppExec}
@@ -144,7 +174,13 @@ qt_add_executable(${AppExec}
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
 
-# TODO: turn this on when you're ready to handle incomplete enums
+# Stage enzo/bin with daslib as its sibling so dev mirrors the package layout.
+set_target_properties(${AppExec} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
+)
+file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
+
+# TODO: turn this on when ready to handle incomplete enums
 # target_compile_options(${AppExec} PRIVATE -Werror=switch)
 
 
@@ -188,6 +224,11 @@ install(FILES static/icons/icon-main-white-square.svg
 install(DIRECTORY static/icons/
     DESTINATION ${CMAKE_PROJECT_NAME}/share/icons
     FILES_MATCHING PATTERN "*.svg"
+)
+
+# Ship daslib as a sibling of enzo/bin so the runtime finds the standard library.
+install(DIRECTORY ${DAS_DASLIB_DIR}
+    DESTINATION ${CMAKE_PROJECT_NAME}
 )
 
 # install(TARGETS ${AppExec}
@@ -240,7 +281,7 @@ install(DIRECTORY static/icons/
 # --- end packaging
 
 
-target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
+target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
 target_include_directories(${AppExec} PUBLIC
     ${ENGINE_INCLUDE_DIRECTORIES}
 )
@@ -276,7 +317,7 @@ if(ENZO_BUILD_TESTS)
         tests/PathTests.cpp
         tests/NetworkPathTests.cpp
     )
-    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
+    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
     target_include_directories(${TestExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}
@@ -290,7 +331,7 @@ if(ENZO_BUILD_TESTS)
 
         tests/Benchmarks.cpp
     )
-    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
+    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
     target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
     target_include_directories(${BenchExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}
