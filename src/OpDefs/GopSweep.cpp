@@ -29,6 +29,7 @@ struct SweepSettings
     enzo::prm::Ramp scaleRamp;
     bool capEnds = false;
     std::string capGroupName;
+    bool stretchTurns = true;
 };
 
 // Defined at the bottom of the file, below the node code they serve.
@@ -58,6 +59,7 @@ void GopSweep::cookOp(enzo::op::Context context)
         context.evalParmRamp("scaleRamp"),
         context.evalParmString("endCapType") == "single",
         {},
+        context.evalParmBool("stretchTurns"),
     };
     if (settings.capEnds && context.evalParmBool("endCapGroupEnabled"))
         settings.capGroupName = context.evalParmString("endCapGroupName");
@@ -168,6 +170,11 @@ std::vector<enzo::prm::Template> GopSweep::parameterList()
                                       )
                                       .setLabelHidden(true)
                                       .setBackgroundEnabled(false))),
+        Template(Type::BOOL, Name("stretchTurns", "Stretch Around Turns"), Default(1))
+            .setTooltip(
+                "Widen the profile where the curve bends so the tube keeps its thickness "
+                "around turns instead of pinching."
+            ),
         Template(Type::BOOL, Name("applyScale", "Apply Scale"), Default(0)),
         Template(Type::RAMP, Name("scaleRamp", "Scale Ramp"), Default(2))
             .setInstanceDefault("value", {Default(1), Default(1)})
@@ -357,27 +364,60 @@ class Sweeper
     {
         const int curvePointCount = mesh_.getFacePointCount(curveFace);
         const std::span<const Vector3> tangents = faceTangents_(curveFace);
+        const std::span<const intT> facePoints = mesh_.getFacePoints(curveFace);
         const Vector3 normal = faceNormals_[curveFace];
 
-        int relPointNum = 0;
-        for (intT pointOffset : mesh_.getFacePoints(curveFace))
+        for (int relPointNum = 0; relPointNum < curvePointCount; ++relPointNum)
         {
+            const Vector3 pointPos = mesh_.getPointPos(facePoints[relPointNum]);
+
             // The ramp reads how far along the curve the point sits to set the
             // radius. With scaling off the profile keeps its full size.
             const float curveU = static_cast<float>(relPointNum) / (curvePointCount - 1);
             const float radius = settings_.applyScale ? settings_.scaleRamp.sample(curveU) : 1.0f;
 
+            // Local X already lines up across the turn, so only X grows to keep
+            // the tube from pinching there.
+            const float stretchX =
+                settings_.stretchTurns ? calculateStretch(curveFace, relPointNum) : 1.0f;
+
             // The scale runs first so it sizes the profile before the orientation
             // turns it.
-            Transform transform =
-                Transform::lookAt(mesh_.getPointPos(pointOffset), tangents[relPointNum], normal);
-            transform.scale(radius);
+            Transform transform = Transform::lookAt(pointPos, tangents[relPointNum], normal);
+            transform.scale(Vector3(radius * stretchX, radius, radius));
 
             for (const Vector3& profilePos : profile_.points)
                 ringPositions_.push_back(transform * profilePos);
-
-            ++relPointNum;
         }
+    }
+
+    /// @brief Returns how much to widen the profile across a turn so the tube keeps its width.
+    float calculateStretch(Offset curveFace, int relPointNum)
+    {
+        // The widening is capped so a near fold cannot run away.
+        constexpr float maxStretch = 8.0f;
+
+        const std::span<const intT> facePoints = mesh_.getFacePoints(curveFace);
+        const int curvePointCount = static_cast<int>(facePoints.size());
+        const Vector3 pointPos = mesh_.getPointPos(facePoints[relPointNum]);
+
+        // The way the curve heads on from this point. An open end has nothing
+        // ahead, so it reuses the segment arriving into it.
+        Vector3 onwardDirection;
+        if (relPointNum + 1 < curvePointCount)
+            onwardDirection = mesh_.getPointPos(facePoints[relPointNum + 1]) - pointPos;
+        else if (mesh_.isClosed(curveFace))
+            onwardDirection = mesh_.getPointPos(facePoints[0]) - pointPos;
+        else
+            onwardDirection = pointPos - mesh_.getPointPos(facePoints[relPointNum - 1]);
+
+        // The profile faces along the average of the turn, so the sharper the
+        // turn the more it leans away from each segment and the wider it grows.
+        const Vector3 tangent = faceTangents_(curveFace)[relPointNum];
+        const float bendLean = tangent.dot(onwardDirection.normalized());
+        if (bendLean <= 1e-3f) return 1.0f;
+
+        return std::min(1.0f / bendLean, maxStretch);
     }
 
     /// @brief Bridges the curve's neighbouring rings into quad faces.
