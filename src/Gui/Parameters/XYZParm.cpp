@@ -1,6 +1,7 @@
 #include "Gui/Parameters/XYZParm.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include <iostream>
 
 enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
     : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
@@ -33,6 +34,14 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget*
             onMoved(vectorIndex, value);
         });
         connect(slider, &Slider::sliderReleased, this, &XYZParm::onReleased);
+        connect(
+            slider,
+            &Slider::expressionEntered,
+            this,
+            [this, vectorIndex](const QString& expression) {
+                onExpressionEntered(vectorIndex, expression);
+            }
+        );
     }
 
     valueChangedConnection_ =
@@ -45,8 +54,29 @@ void enzo::ui::XYZParm::syncFromParameter()
     {
         for (unsigned int vectorIndex = 0; vectorIndex < sliders_.size(); ++vectorIndex)
         {
-            sliders_[vectorIndex]->setValue(parameterShared->evalFloat(vectorIndex));
+            String error;
+            sliders_[vectorIndex]->setValue(parameterShared->evalFloat(vectorIndex, error));
+
+            // A component shows its expression source when one drives it, red
+            // when it failed to evaluate.
+            std::optional<String> expression = parameterShared->getExpression(vectorIndex);
+            sliders_[vectorIndex]->setExpressionText(
+                expression ? QString::fromStdString(*expression) : QString()
+            );
+            sliders_[vectorIndex]->setExpressionHasError(!error.empty());
+
+            if (!error.empty())
+                std::cerr << "Expression error on " << parameterShared->getName() << ": " << error
+                          << "\n";
         }
+    }
+}
+
+void enzo::ui::XYZParm::onExpressionEntered(unsigned int vectorIndex, const QString& expression)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        parameterShared->setExpression(expression.toStdString(), vectorIndex);
     }
 }
 
