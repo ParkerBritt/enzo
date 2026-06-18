@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <cmath>
+#include <iostream>
 
 enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
     : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
@@ -18,8 +19,8 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> paramet
         1.0
     );
     slider_->setDisplayPrecision(0);
-    slider_->setValue(static_cast<double>(parameterShared->evalInt()));
     contentLayout_->addWidget(slider_);
+    syncFromParameter();
 
     valueChangedConnection_ =
         parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
@@ -27,13 +28,33 @@ enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> paramet
     connect(slider_, &Slider::sliderPressed, this, &IntSliderParm::onPressed);
     connect(slider_, &Slider::sliderMoved, this, &IntSliderParm::onMoved);
     connect(slider_, &Slider::sliderReleased, this, &IntSliderParm::onReleased);
+    connect(slider_, &Slider::expressionEntered, this, &IntSliderParm::onExpressionEntered);
 }
 
 void enzo::ui::IntSliderParm::syncFromParameter()
 {
     if (auto parameterShared = parameter_.lock())
     {
-        slider_->setValue(static_cast<double>(parameterShared->evalInt()));
+        String error;
+        slider_->setValue(static_cast<double>(parameterShared->evalInt(0, error)));
+
+        // The slider shows the expression source when one drives the value, red
+        // when it failed to evaluate.
+        std::optional<String> expression = parameterShared->getExpression(0);
+        slider_->setExpressionText(expression ? QString::fromStdString(*expression) : QString());
+        slider_->setExpressionHasError(!error.empty());
+
+        if (!error.empty())
+            std::cerr << "Expression error on " << parameterShared->getName() << ": " << error
+                      << "\n";
+    }
+}
+
+void enzo::ui::IntSliderParm::onExpressionEntered(const QString& expression)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        parameterShared->setExpression(expression.toStdString());
     }
 }
 

@@ -1,6 +1,7 @@
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Parameter/Default.h"
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -67,6 +68,13 @@ std::string prm::Parameter::getLabel() const { return template_.getLabel(); }
 
 floatT prm::Parameter::evalFloat(unsigned int index) const
 {
+    String error;
+    return evalFloat(index, error);
+}
+
+floatT prm::Parameter::evalFloat(unsigned int index, String& error) const
+{
+    error.clear();
     auto& vals = std::get<std::vector<floatT>>(values_);
     if (index >= vals.size())
         throw std::out_of_range(
@@ -78,9 +86,8 @@ floatT prm::Parameter::evalFloat(unsigned int index) const
     if (hasExpression(index))
     {
         floatT result = vals[index];
-        String error;
         expr::ExpressionEngine::instance().evalFloat(*expressions_[index], result, error);
-        return result;
+        return clampToRange_(result, index);
     }
 
     return vals[index];
@@ -88,6 +95,14 @@ floatT prm::Parameter::evalFloat(unsigned int index) const
 
 intT prm::Parameter::evalInt(unsigned int index) const
 {
+    String error;
+    return evalInt(index, error);
+}
+
+intT prm::Parameter::evalInt(unsigned int index, String& error) const
+{
+    error.clear();
+
     // Maps string tokens to integer indeces for parameters with options like dropdowns.
     if (template_.hasOptions())
     {
@@ -109,9 +124,8 @@ intT prm::Parameter::evalInt(unsigned int index) const
     if (hasExpression(index))
     {
         intT result = vals[index];
-        String error;
         expr::ExpressionEngine::instance().evalInt(*expressions_[index], result, error);
-        return result;
+        return clampToRange_(result, index);
     }
 
     return vals[index];
@@ -256,6 +270,27 @@ void prm::Parameter::setValues(const PrmValues& values)
 {
     values_ = values;
     handleValueChange_();
+}
+
+floatT prm::Parameter::clampToRange_(floatT value, unsigned int index) const
+{
+    const prm::Range& range = template_.getRange(index);
+    if (range.getMinFlag() == prm::RangeFlag::LOCKED && value < range.getMin())
+        return range.getMin();
+    if (range.getMaxFlag() == prm::RangeFlag::LOCKED && value > range.getMax())
+        return range.getMax();
+    return value;
+}
+
+intT prm::Parameter::clampToRange_(intT value, unsigned int index) const
+{
+    const prm::Range& range = template_.getRange(index);
+    // Round the locked bounds inward so the result always sits inside the range.
+    if (range.getMinFlag() == prm::RangeFlag::LOCKED && value < range.getMin())
+        return static_cast<intT>(std::ceil(range.getMin()));
+    if (range.getMaxFlag() == prm::RangeFlag::LOCKED && value > range.getMax())
+        return static_cast<intT>(std::floor(range.getMax()));
+    return value;
 }
 
 void prm::Parameter::handleValueChange_() { valueChanged(); }

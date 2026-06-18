@@ -19,6 +19,7 @@ class IntSliderParm : public Parameter
     void onPressed();
     void onMoved(double value);
     void onReleased();
+    void onExpressionEntered(const QString& expression);
     void syncFromParameter();
 
     std::weak_ptr<prm::NodeParameter> parameter_;

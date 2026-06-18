@@ -2,6 +2,7 @@
 
 #include <QPen>
 #include <QPoint>
+#include <QString>
 #include <QWidget>
 #include <qtmetamacros.h>
 
@@ -34,10 +35,20 @@ class Slider : public QWidget
     void setRange(double minValue, double maxValue);
     void setDisplayPrecision(int digits);
 
+    /// @brief Shows an expression in place of the numeric value, empty to hide it.
+    void setExpressionText(const QString& text);
+
+    /// @brief Colors the shown expression red when it failed to evaluate.
+    void setExpressionHasError(bool hasError);
+
   Q_SIGNALS:
     void sliderPressed();
     void sliderMoved(double value);
     void sliderReleased();
+
+    // Emitted when the typed text is not a plain number, so the host can treat it
+    // as an expression.
+    void expressionEntered(const QString& expression);
 
   protected:
     void paintEvent(QPaintEvent* event) override;
@@ -66,6 +77,11 @@ class Slider : public QWidget
     double step_;
     double value_ = 0.0;
     int displayDigits_ = 2;
+
+    // The expression shown in place of the value, empty when the value is a literal.
+    QString expressionText_;
+    // True when the shown expression failed to evaluate, drawing it red.
+    bool expressionHasError_ = false;
 
     QPen notchPen_;
 

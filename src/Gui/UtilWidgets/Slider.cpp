@@ -60,6 +60,20 @@ void enzo::ui::Slider::setDisplayPrecision(int digits)
     update();
 }
 
+void enzo::ui::Slider::setExpressionText(const QString& text)
+{
+    if (expressionText_ == text) return;
+    expressionText_ = text;
+    update();
+}
+
+void enzo::ui::Slider::setExpressionHasError(bool hasError)
+{
+    if (expressionHasError_ == hasError) return;
+    expressionHasError_ = hasError;
+    update();
+}
+
 double enzo::ui::Slider::clampAndStep_(double value) const
 {
     if (clampMin_ && value < minValue_) value = minValue_;
@@ -146,6 +160,15 @@ void enzo::ui::Slider::paintValueText_(QPainter& painter) const
     // The editor draws its own text while open
     if (editor_ && editor_->isVisible()) return;
 
+    // An expression shows in a distinct color in place of the numeric value,
+    // blue when it evaluates and red when it fails.
+    if (!expressionText_.isEmpty())
+    {
+        painter.setPen(QColor(expressionHasError_ ? "#F87171" : "#8AB4F8"));
+        painter.drawText(rect(), Qt::AlignCenter, expressionText_);
+        return;
+    }
+
     QString valueText = QString::number(value_, 'f', displayDigits_);
     painter.setPen(QColor("#B3B3B3"));
     painter.drawText(rect(), Qt::AlignCenter, valueText);
@@ -203,7 +226,10 @@ void enzo::ui::Slider::beginEditing_()
         connect(editor_, &QLineEdit::editingFinished, this, &Slider::commitEditing_);
     }
     editor_->setGeometry(rect());
-    editor_->setText(QString::number(value_, 'f', displayDigits_));
+    // Editing an expression starts from its source, a literal from its number.
+    editor_->setText(
+        expressionText_.isEmpty() ? QString::number(value_, 'f', displayDigits_) : expressionText_
+    );
     editor_->selectAll();
     editor_->show();
     editor_->setFocus();
@@ -219,10 +245,14 @@ void enzo::ui::Slider::commitEditing_()
     const QString typedText = editor_->text().trimmed();
     endEditing_();
 
-    // A pure number commits, anything else is left for the text path implemented later
+    // A pure number commits as a value, anything else commits as an expression.
     bool isNumber = false;
     const double typedValue = typedText.toDouble(&isNumber);
-    if (!isNumber) return;
+    if (!isNumber)
+    {
+        Q_EMIT expressionEntered(typedText);
+        return;
+    }
 
     const double newValue = clampAndStep_(typedValue);
     Q_EMIT sliderPressed();

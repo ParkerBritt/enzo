@@ -11,6 +11,7 @@ constexpr const char* evalFunctionName = "enzoEvalExpression";
 String wrapExpression(const String& expression, const String& returnType)
 {
     return "options gen2\n"
+           "require math\n"
            "[export]\n"
            "def " +
            String(evalFunctionName) + " : " + returnType +
