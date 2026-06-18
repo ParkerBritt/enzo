@@ -27,6 +27,12 @@ class Parameter
     String evalString(unsigned int index = 0) const;
     intT evalInt(unsigned int index = 0) const;
 
+    // Variants that report a driving expression's failure. The value still falls
+    // back to the stored literal on failure, and error is left empty on success
+    // or when the component holds no expression.
+    floatT evalFloat(unsigned int index, String& error) const;
+    intT evalInt(unsigned int index, String& error) const;
+
     // Read every value the parameter holds as a list. A scalar parameter
     // returns one element, a vector parameter one per component, and a
     // multi-value parameter such as a multi select dropdown one per selection.
@@ -49,6 +55,15 @@ class Parameter
     /// @return The expression when one is set, otherwise nullopt.
     std::optional<String> getExpression(unsigned int index = 0) const;
 
+    /// @brief Evaluates a component's expression and reports any failure.
+    ///
+    /// e.g. an expression of "1 +" reports a compile error while "5 + 5"
+    /// reports nothing.
+    ///
+    /// @return The error text when the expression fails to compile or run,
+    /// otherwise nullopt, including when the component holds no expression.
+    std::optional<String> getExpressionError(unsigned int index = 0) const;
+
     PrmValues getValues() const;
     void setValues(const PrmValues& values);
 
@@ -69,6 +84,10 @@ class Parameter
   protected:
     virtual void onFloatSet_(const PrmValues& before) {}
     void handleValueChange_();
+
+    /// @brief Returns the value pulled within a component's locked range bounds.
+    floatT clampToRange_(floatT value, unsigned int index) const;
+    intT clampToRange_(intT value, unsigned int index) const;
     std::vector<std::shared_ptr<Parameter>> buildInstance_(unsigned int instanceIndex);
 
     Template template_;

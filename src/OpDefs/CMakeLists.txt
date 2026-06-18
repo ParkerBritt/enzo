@@ -36,6 +36,8 @@ add_library(${libName} SHARED
     ../Engine/Parameter/Range.cpp
     ../Engine/Parameter/PrmName.cpp
     ../Engine/Parameter/Ramp.cpp
+    ../Engine/Expression/DasRuntime.cpp
+    ../Engine/Expression/ExpressionEngine.cpp
     ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
@@ -54,7 +56,7 @@ add_library(${libName} SHARED
     GopCircle.cpp
     GopSweep.cpp
 )
-target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold)
+target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
 
 # packaging
 install(TARGETS ${libName}
@@ -68,4 +70,5 @@ target_include_directories(${libName} PUBLIC
     ../
     .
     ../../extern/icecream-cpp/include
+    ${DASLANG_DIR}/include
 )

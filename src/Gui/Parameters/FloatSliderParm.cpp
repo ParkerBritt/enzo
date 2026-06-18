@@ -1,6 +1,7 @@
 #include "Gui/Parameters/FloatSliderParm.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include <iostream>
 
 enzo::ui::FloatSliderParm::FloatSliderParm(
     std::weak_ptr<prm::NodeParameter> parameter,
@@ -20,8 +21,8 @@ enzo::ui::FloatSliderParm::FloatSliderParm(
         range.getMaxFlag() == prm::RangeFlag::LOCKED,
         0.0
     );
-    slider_->setValue(parameterShared->evalFloat(vectorIndex_));
     contentLayout_->addWidget(slider_);
+    syncFromParameter();
 
     valueChangedConnection_ =
         parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
@@ -29,13 +30,33 @@ enzo::ui::FloatSliderParm::FloatSliderParm(
     connect(slider_, &Slider::sliderPressed, this, &FloatSliderParm::onPressed);
     connect(slider_, &Slider::sliderMoved, this, &FloatSliderParm::onMoved);
     connect(slider_, &Slider::sliderReleased, this, &FloatSliderParm::onReleased);
+    connect(slider_, &Slider::expressionEntered, this, &FloatSliderParm::onExpressionEntered);
 }
 
 void enzo::ui::FloatSliderParm::syncFromParameter()
 {
     if (auto parameterShared = parameter_.lock())
     {
-        slider_->setValue(parameterShared->evalFloat(vectorIndex_));
+        String error;
+        slider_->setValue(parameterShared->evalFloat(vectorIndex_, error));
+
+        // The slider shows the expression source when one drives the value, red
+        // when it failed to evaluate.
+        std::optional<String> expression = parameterShared->getExpression(vectorIndex_);
+        slider_->setExpressionText(expression ? QString::fromStdString(*expression) : QString());
+        slider_->setExpressionHasError(!error.empty());
+
+        if (!error.empty())
+            std::cerr << "Expression error on " << parameterShared->getName() << ": " << error
+                      << "\n";
+    }
+}
+
+void enzo::ui::FloatSliderParm::onExpressionEntered(const QString& expression)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        parameterShared->setExpression(expression.toStdString(), vectorIndex_);
     }
 }
 
