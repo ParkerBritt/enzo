@@ -20,6 +20,7 @@ class XYZParm : public Parameter
     void onPressed(unsigned int vectorIndex);
     void onMoved(unsigned int vectorIndex, double value);
     void onReleased();
+    void onExpressionEntered(unsigned int vectorIndex, const QString& expression);
     void syncFromParameter();
 
     std::weak_ptr<prm::NodeParameter> parameter_;
