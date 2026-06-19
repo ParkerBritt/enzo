@@ -309,6 +309,7 @@ if(ENZO_BUILD_TESTS)
         tests/main-tests.cpp
         tests/ExpressionEngineTests.cpp
         tests/ParameterTests.cpp
+        tests/ParmAddressTests.cpp
         tests/RampTests.cpp
         tests/SerializerTests.cpp
         tests/UndoTests.cpp
