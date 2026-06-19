@@ -6,7 +6,7 @@ class GopCube : public enzo::nt::GeometryOpDef
 {
   public:
     GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
-    virtual void cookOp(enzo::op::Context context);
+    virtual void cookOp(enzo::op::CookContext context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
     {
         return new GopCube(network, opInfo);

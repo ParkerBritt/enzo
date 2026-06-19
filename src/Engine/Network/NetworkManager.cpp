@@ -284,7 +284,7 @@ void nt::NetworkManager::cookOp(nt::OpId opId)
         nt::GeometryOperator& op = getGeoOperator(dependencyOpId);
         if (op.isDirty())
         {
-            op::Context context(dependencyOpId, nt::nm());
+            op::CookContext context(dependencyOpId, nt::nm());
             op.cookOp(context);
         }
     }

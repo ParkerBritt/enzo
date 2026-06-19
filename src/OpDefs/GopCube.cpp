@@ -10,7 +10,7 @@ GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopCube::cookOp(enzo::op::Context context)
+void GopCube::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

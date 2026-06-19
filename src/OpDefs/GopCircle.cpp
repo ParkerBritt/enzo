@@ -13,7 +13,7 @@ GopCircle::GopCircle(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopCircle::cookOp(enzo::op::Context context)
+void GopCircle::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

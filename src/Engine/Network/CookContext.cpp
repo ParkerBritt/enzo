@@ -1,4 +1,4 @@
-#include "Engine/Network/Context.h"
+#include "Engine/Network/CookContext.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
@@ -11,12 +11,12 @@
 
 namespace enzo {
 
-op::Context::Context(nt::OpId opId, nt::NetworkManager& networkManager)
+op::CookContext::CookContext(nt::OpId opId, nt::NetworkManager& networkManager)
     : opId_{opId}, networkManager_(networkManager)
 {
 }
 
-NodePacket op::Context::cloneInputPacket(unsigned int inputIndex)
+NodePacket op::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
@@ -30,14 +30,14 @@ NodePacket op::Context::cloneInputPacket(unsigned int inputIndex)
     return geoOp.getOutputPacket(inputConnection->getInputIndex())->deepCopy();
 }
 
-bool op::Context::hasInput(unsigned int inputIndex)
+bool op::CookContext::hasInput(unsigned int inputIndex)
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     return !selfOp.getInputConnection(inputIndex).expired();
 }
 
 // TODO: cache value
-floatT op::Context::evalParmFloat(std::string_view parmName, const unsigned int index) const
+floatT op::CookContext::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -53,7 +53,7 @@ floatT op::Context::evalParmFloat(std::string_view parmName, const unsigned int 
 }
 
 // TODO: cache value
-intT op::Context::evalParmInt(std::string_view parmName, const unsigned int index) const
+intT op::CookContext::evalParmInt(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -69,7 +69,7 @@ intT op::Context::evalParmInt(std::string_view parmName, const unsigned int inde
 }
 
 // TODO: cache value
-boolT op::Context::evalParmBool(std::string_view parmName, const unsigned int index) const
+boolT op::CookContext::evalParmBool(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -85,7 +85,7 @@ boolT op::Context::evalParmBool(std::string_view parmName, const unsigned int in
 }
 
 // TODO: cache value
-String op::Context::evalParmString(std::string_view parmName, const unsigned int index) const
+String op::CookContext::evalParmString(std::string_view parmName, const unsigned int index) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -100,7 +100,7 @@ String op::Context::evalParmString(std::string_view parmName, const unsigned int
     }
 }
 
-prm::Ramp op::Context::evalParmRamp(std::string_view parmName) const
+prm::Ramp op::CookContext::evalParmRamp(std::string_view parmName) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -115,7 +115,7 @@ prm::Ramp op::Context::evalParmRamp(std::string_view parmName) const
     }
 }
 
-std::vector<floatT> op::Context::evalParmFloats(std::string_view parmName) const
+std::vector<floatT> op::CookContext::evalParmFloats(std::string_view parmName) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -130,7 +130,7 @@ std::vector<floatT> op::Context::evalParmFloats(std::string_view parmName) const
     }
 }
 
-Vector2 op::Context::evalParmVector2(std::string_view parmName) const
+Vector2 op::CookContext::evalParmVector2(std::string_view parmName) const
 {
     std::vector<floatT> components = evalParmFloats(parmName);
     Vector2 result = Vector2::Zero();
@@ -142,7 +142,7 @@ Vector2 op::Context::evalParmVector2(std::string_view parmName) const
     return result;
 }
 
-Vector3 op::Context::evalParmVector3(std::string_view parmName) const
+Vector3 op::CookContext::evalParmVector3(std::string_view parmName) const
 {
     std::vector<floatT> components = evalParmFloats(parmName);
     Vector3 result = Vector3::Zero();
@@ -154,7 +154,7 @@ Vector3 op::Context::evalParmVector3(std::string_view parmName) const
     return result;
 }
 
-std::vector<intT> op::Context::evalParmInts(std::string_view parmName) const
+std::vector<intT> op::CookContext::evalParmInts(std::string_view parmName) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
@@ -169,7 +169,7 @@ std::vector<intT> op::Context::evalParmInts(std::string_view parmName) const
     }
 }
 
-std::vector<String> op::Context::evalParmStrings(std::string_view parmName) const
+std::vector<String> op::CookContext::evalParmStrings(std::string_view parmName) const
 {
     nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
     std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);

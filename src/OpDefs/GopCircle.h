@@ -6,7 +6,7 @@ class GopCircle : public enzo::nt::GeometryOpDef
 {
   public:
     GopCircle(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
-    virtual void cookOp(enzo::op::Context context);
+    virtual void cookOp(enzo::op::CookContext context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
     {
         return new GopCircle(network, opInfo);

@@ -1,5 +1,5 @@
 #include "Engine/Network/GeometryOperator.h"
-#include "Engine/Network/Context.h"
+#include "Engine/Network/CookContext.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
@@ -127,7 +127,7 @@ void nt::GeometryOperator::onParameterChanged(const std::string& parmName)
 
 bool nt::GeometryOperator::isDirty() { return dirty_; }
 
-void nt::GeometryOperator::cookOp(op::Context context)
+void nt::GeometryOperator::cookOp(op::CookContext context)
 {
     std::cout << "Cooking op: " << opId_ << "\n";
     if (dirty_)

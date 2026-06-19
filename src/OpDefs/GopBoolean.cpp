@@ -8,7 +8,7 @@ GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInf
 {
 }
 
-void GopBoolean::cookOp(enzo::op::Context context)
+void GopBoolean::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

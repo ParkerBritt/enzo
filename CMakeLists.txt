@@ -28,7 +28,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/GeometryConnection.cpp
     src/Engine/Network/GeometryOpDef.cpp
     src/Engine/Network/OperatorTable.cpp
-    src/Engine/Network/Context.cpp
+    src/Engine/Network/CookContext.cpp
     src/Engine/Expression/DasRuntime.cpp
     src/Engine/Expression/ExpressionEngine.cpp
     src/Engine/Parameter/Template.cpp

@@ -7,7 +7,7 @@ GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GOP_house::cookOp(enzo::op::Context context)
+void GOP_house::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
     // std::cout << "COOKING\n";
