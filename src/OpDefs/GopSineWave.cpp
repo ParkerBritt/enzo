@@ -16,7 +16,7 @@ GopSineWave::GopSineWave(enzo::nt::NetworkManager* network, enzo::op::OpInfo opI
 {
 }
 
-void GopSineWave::cookOp(enzo::op::Context context)
+void GopSineWave::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

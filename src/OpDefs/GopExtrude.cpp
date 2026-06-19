@@ -393,7 +393,7 @@ GopExtrude::GopExtrude(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInf
 {
 }
 
-void GopExtrude::cookOp(enzo::op::Context context)
+void GopExtrude::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

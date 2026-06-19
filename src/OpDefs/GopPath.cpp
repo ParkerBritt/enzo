@@ -6,7 +6,7 @@ GopPath::GopPath(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopPath::cookOp(enzo::op::Context context)
+void GopPath::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

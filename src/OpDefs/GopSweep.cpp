@@ -33,7 +33,7 @@ struct SweepSettings
 };
 
 // Defined at the bottom of the file, below the node code they serve.
-Profile buildProfile(enzo::op::Context& context);
+Profile buildProfile(enzo::op::CookContext& context);
 std::vector<enzo::Vector3> buildCircleProfile(int columns);
 std::vector<enzo::Vector3> buildSquareProfile(int columns);
 std::vector<enzo::Vector3> buildRibbonProfile(int columns);
@@ -46,7 +46,7 @@ GopSweep::GopSweep(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopSweep::cookOp(enzo::op::Context context)
+void GopSweep::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 
@@ -191,7 +191,7 @@ using namespace enzo;
  * Each procedural shape reads its own column count. The second input option
  * takes its shape and open or closed state from the wired in curve.
  */
-Profile buildProfile(op::Context& context)
+Profile buildProfile(op::CookContext& context)
 {
     const std::string profileShape = context.evalParmString("profileShape");
 

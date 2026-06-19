@@ -42,7 +42,7 @@ class GeometryOperator
 
     /// @brief Computes the output geometry based on the [cookOp](@ref nt::GeometryOpDef::cookOp)
     /// definition in nt::GeometryOpDef. This is set by the @p opInfo constructor parameter
-    void cookOp(op::Context context);
+    void cookOp(op::CookContext context);
 
     /**
      * @brief Returns the current output geometry.

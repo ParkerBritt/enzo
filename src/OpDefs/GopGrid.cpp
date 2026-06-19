@@ -14,7 +14,7 @@ GopGrid::GopGrid(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopGrid::cookOp(enzo::op::Context context)
+void GopGrid::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

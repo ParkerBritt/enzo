@@ -10,7 +10,7 @@ GopTransform::GopTransform(enzo::nt::NetworkManager* network, enzo::op::OpInfo o
 {
 }
 
-void GopTransform::cookOp(enzo::op::Context context)
+void GopTransform::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

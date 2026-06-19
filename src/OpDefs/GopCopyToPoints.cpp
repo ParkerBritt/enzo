@@ -11,7 +11,7 @@ GopCopyToPoints::GopCopyToPoints(enzo::nt::NetworkManager* network, enzo::op::Op
 {
 }
 
-void GopCopyToPoints::cookOp(enzo::op::Context context)
+void GopCopyToPoints::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

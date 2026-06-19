@@ -15,7 +15,7 @@ add_library(${libName} SHARED
     ../Engine/Network/GeometryOpDef.cpp
     ../Engine/Network/GeometryOperator.cpp
     ../Engine/Network/GeometryConnection.cpp
-    ../Engine/Network/Context.cpp
+    ../Engine/Network/CookContext.cpp
     ../Engine/Primitives/Primitive.cpp
     ../Engine/Primitives/Mesh.cpp
     ../Engine/Primitives/Camera.cpp

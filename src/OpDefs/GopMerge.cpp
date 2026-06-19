@@ -9,7 +9,7 @@ GopMerge::GopMerge(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopMerge::cookOp(enzo::op::Context context)
+void GopMerge::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

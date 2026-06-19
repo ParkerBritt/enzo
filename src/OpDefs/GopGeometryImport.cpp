@@ -12,7 +12,7 @@ GopGeometryImport::GopGeometryImport(enzo::nt::NetworkManager* network, enzo::op
 {
 }
 
-void GopGeometryImport::cookOp(enzo::op::Context context)
+void GopGeometryImport::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

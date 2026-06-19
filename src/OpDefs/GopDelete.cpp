@@ -17,7 +17,7 @@ GopDelete::GopDelete(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopDelete::cookOp(enzo::op::Context context)
+void GopDelete::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

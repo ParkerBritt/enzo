@@ -14,7 +14,7 @@ GopOceanSurface::GopOceanSurface(enzo::nt::NetworkManager* network, enzo::op::Op
 {
 }
 
-void GopOceanSurface::cookOp(enzo::op::Context context)
+void GopOceanSurface::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

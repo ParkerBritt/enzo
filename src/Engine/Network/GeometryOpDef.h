@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Context.h"
+#include "Engine/Network/CookContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Network/OpInfo.h"
 #include <boost/config.hpp>
@@ -46,7 +46,7 @@ class BOOST_SYMBOL_EXPORT GeometryOpDef
      * the end of a successful cook. Any outputs that are not set will output
      * an emtpy geometry object.
      */
-    virtual void cookOp(op::Context context) = 0;
+    virtual void cookOp(op::CookContext context) = 0;
 
     /**
      * @brief Returns the current output geometry as a shared pointer.

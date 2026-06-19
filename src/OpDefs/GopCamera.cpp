@@ -9,7 +9,7 @@ GopCamera::GopCamera(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
 {
 }
 
-void GopCamera::cookOp(enzo::op::Context context)
+void GopCamera::cookOp(enzo::op::CookContext context)
 {
     using namespace enzo;
 

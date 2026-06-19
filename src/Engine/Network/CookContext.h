@@ -13,17 +13,17 @@ class Ramp;
 
 namespace enzo::op {
 /**
- * @class Context
+ * @class CookContext
  * @brief Provides network context for the cookOp function.
  *
- * The context class is an interface for the cookOp function that provides important runtime context
- * about the network. It allows querying parameters, reading input geometry, and in the future
+ * The cook context is the handle a node holds while it cooks. It provides important runtime context
+ * about the network, allowing querying parameters, reading input geometry, and in the future
  * provides values like time.
  */
-class Context
+class CookContext
 {
   public:
-    Context(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
+    CookContext(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
