@@ -12,8 +12,8 @@ var searchData=
   ['isrelative_9',['isRelative',['../classenzo_1_1Path.html#ae4e66cdaea03d410db20e80b3c0eeb58',1,'enzo::Path']]],
   ['isroot_10',['isRoot',['../classenzo_1_1Path.html#abdbbb5e13a84588b6b5a4e8f2206b39b',1,'enzo::Path']]],
   ['isunlocked_11',['isUnlocked',['../classenzo_1_1nt_1_1UpdateLock.html#a7724849b39d795c8028986848a401c6a',1,'enzo::nt::UpdateLock']]],
-  ['isvalid_12',['isValid',['../classenzo_1_1Path.html#aa09ee6e429d8b0aa80dbfc98af48b830',1,'enzo::Path']]],
-  ['isvalidformatting_13',['isValidFormatting',['../classenzo_1_1Path.html#add273166f07dcbb0de6f87cf19726ff5',1,'enzo::Path']]],
+  ['isvalid_12',['isValid',['../classenzo_1_1Path.html#aa09ee6e429d8b0aa80dbfc98af48b830',1,'enzo::Path::isValid()'],['../classenzo_1_1NetworkPath.html#a97e3bbc86dd1663d90eaca95c86cfb47',1,'enzo::NetworkPath::isValid()']]],
+  ['isvalidformatting_13',['isValidFormatting',['../classenzo_1_1Path.html#add273166f07dcbb0de6f87cf19726ff5',1,'enzo::Path::isValidFormatting()'],['../classenzo_1_1NetworkPath.html#a0d6581f048ea1cc0d2305b9ec2177d82',1,'enzo::NetworkPath::isValidFormatting()']]],
   ['isvalidname_14',['isValidName',['../classenzo_1_1Path.html#a5f1dc9079c22cf25f999058b114f7e4d',1,'enzo::Path']]],
   ['isvalidop_15',['isValidOp',['../classenzo_1_1nt_1_1NetworkManager.html#a740e83ec5b9e4708590a6b458300c80b',1,'enzo::nt::NetworkManager']]],
   ['iswholeprim_16',['isWholePrim',['../classenzo_1_1SelectionComponent.html#ab28e959db1dfdc3e1820b4aaaaeb42d9',1,'enzo::SelectionComponent::isWholePrim()'],['../classenzo_1_1PathSelectionComponent.html#a93f3c02a13e0ee3f237d5235d8a13915',1,'enzo::PathSelectionComponent::isWholePrim()'],['../classenzo_1_1GroupSelectionComponent.html#a47425dd7654b60542e26bbd74c7be8cb',1,'enzo::GroupSelectionComponent::isWholePrim()']]]

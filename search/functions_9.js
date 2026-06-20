@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['join_0',['join',['../classenzo_1_1Path.html#a5006a39b4e7cebc27016b0c5624abb67',1,'enzo::Path']]],
-  ['joinpath_1',['joinPath',['../classenzo_1_1Path.html#a8585342c3634b8148b94b53954a1164c',1,'enzo::Path']]]
+  ['lockupdates_0',['lockUpdates',['../classenzo_1_1nt_1_1NetworkManager.html#a5b7ea58a5d266f86e9dbc7de04eac3e0',1,'enzo::nt::NetworkManager']]],
+  ['lookat_1',['lookAt',['../classenzo_1_1Transform.html#ad21d035014213d23d9193c6c2fdf697a',1,'enzo::Transform']]]
 ];

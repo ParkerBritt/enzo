@@ -12,7 +12,8 @@ var searchData=
   ['addtoprimitivegroup_9',['addToPrimitiveGroup',['../classenzo_1_1geo_1_1Primitive.html#ac77f112a72211660d37a82929b22d5ce',1,'enzo::geo::Primitive']]],
   ['addtovertexgroup_10',['addToVertexGroup',['../classenzo_1_1geo_1_1Mesh.html#a46c56197ab0a5857a6e9d8869dfa48f0',1,'enzo::geo::Mesh']]],
   ['addvalue_11',['addValue',['../classenzo_1_1attr_1_1AttributeHandle.html#a024cb9b4a8bf06a921ba32387f12697a',1,'enzo::attr::AttributeHandle']]],
-  ['attribute_12',['Attribute',['../classenzo_1_1attr_1_1Attribute.html#a12ad203d431d99a0e07d5652d39cd807',1,'enzo::attr::Attribute']]],
-  ['attributehandle_13',['AttributeHandle',['../classenzo_1_1attr_1_1AttributeHandle.html#ab3dde5cfe4d9c8764eaa3d6036d95f40',1,'enzo::attr::AttributeHandle']]],
-  ['attributehandlero_14',['AttributeHandleRO',['../classenzo_1_1attr_1_1AttributeHandleRO.html#a2c7d6591a3e6099d1019e7cb1d3bca81',1,'enzo::attr::AttributeHandleRO']]]
+  ['append_12',['append',['../classenzo_1_1Path.html#ab0330ab616bdd478175d8de62426baa0',1,'enzo::Path']]],
+  ['attribute_13',['Attribute',['../classenzo_1_1attr_1_1Attribute.html#a12ad203d431d99a0e07d5652d39cd807',1,'enzo::attr::Attribute']]],
+  ['attributehandle_14',['AttributeHandle',['../classenzo_1_1attr_1_1AttributeHandle.html#ab3dde5cfe4d9c8764eaa3d6036d95f40',1,'enzo::attr::AttributeHandle']]],
+  ['attributehandlero_15',['AttributeHandleRO',['../classenzo_1_1attr_1_1AttributeHandleRO.html#a2c7d6591a3e6099d1019e7cb1d3bca81',1,'enzo::attr::AttributeHandleRO']]]
 ];

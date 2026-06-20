@@ -104,6 +104,15 @@ $(function(){ initResizable(false); });
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Path_8h_source.html">Path.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for enzo::Path:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classenzo_1_1Path.png" usemap="#enzo::Path_map" alt=""/>
+  <map id="enzo::Path_map" name="enzo::Path_map">
+<area href="classenzo_1_1NetworkPath.html" title="A path that references a network entity, either a node or a parameter on a node." alt="enzo::NetworkPath" shape="rect" coords="0,56,116,80"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -113,12 +122,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9bf19fc32fb72ed8e231f7ddca17dca5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40444fc78b58b14994c8fcd6210dc084" id="r_a40444fc78b58b14994c8fcd6210dc084"><td class="memItemLeft" align="right" valign="top"><a id="a40444fc78b58b14994c8fcd6210dc084" name="a40444fc78b58b14994c8fcd6210dc084"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (const std::string &amp;path)</td></tr>
-<tr class="memdesc:a40444fc78b58b14994c8fcd6210dc084"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">enzo::Path</a> object from a given std::string. <br /></td></tr>
+<tr class="memdesc:a40444fc78b58b14994c8fcd6210dc084"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">enzo::Path</a> object from a given std::string. <br /></td></tr>
 <tr class="separator:a40444fc78b58b14994c8fcd6210dc084"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1afdc47ec0b031305e66c2587ce49cc4" id="r_a1afdc47ec0b031305e66c2587ce49cc4"><td class="memItemLeft" align="right" valign="top"><a id="a1afdc47ec0b031305e66c2587ce49cc4" name="a1afdc47ec0b031305e66c2587ce49cc4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (const char *)</td></tr>
-<tr class="memdesc:a1afdc47ec0b031305e66c2587ce49cc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicity construct an <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">enzo::Path</a> object. <br /></td></tr>
-<tr class="separator:a1afdc47ec0b031305e66c2587ce49cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c2c3319e05ca9e0d398442ac81528fe" id="r_a7c2c3319e05ca9e0d398442ac81528fe"><td class="memItemLeft" align="right" valign="top"><a id="a7c2c3319e05ca9e0d398442ac81528fe" name="a7c2c3319e05ca9e0d398442ac81528fe"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (const char *path)</td></tr>
+<tr class="memdesc:a7c2c3319e05ca9e0d398442ac81528fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">enzo::Path</a> object from a C string. <br /></td></tr>
+<tr class="separator:a7c2c3319e05ca9e0d398442ac81528fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9082493fffa5c90a283f6d2d736fb9ea" id="r_a9082493fffa5c90a283f6d2d736fb9ea"><td class="memItemLeft" align="right" valign="top"><a id="a9082493fffa5c90a283f6d2d736fb9ea" name="a9082493fffa5c90a283f6d2d736fb9ea"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isEmpty</b> () const</td></tr>
 <tr class="memdesc:a9082493fffa5c90a283f6d2d736fb9ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> has no characters. <br /></td></tr>
@@ -136,7 +145,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isRelative</b> () con
 <tr class="memdesc:ae4e66cdaea03d410db20e80b3c0eeb58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> is a relative path. <br /></td></tr>
 <tr class="separator:ae4e66cdaea03d410db20e80b3c0eeb58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa09ee6e429d8b0aa80dbfc98af48b830" id="r_aa09ee6e429d8b0aa80dbfc98af48b830"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa09ee6e429d8b0aa80dbfc98af48b830">isValid</a> () const</td></tr>
-<tr class="memdesc:aa09ee6e429d8b0aa80dbfc98af48b830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs multiple validation checks and returns true if the path is fully valid.  <br /></td></tr>
+<tr class="memdesc:aa09ee6e429d8b0aa80dbfc98af48b830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs every validation check and returns true if the path is fully valid.  <br /></td></tr>
 <tr class="separator:aa09ee6e429d8b0aa80dbfc98af48b830"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35b5b2ceccbbd69a3d37b94aaf615adf" id="r_a35b5b2ceccbbd69a3d37b94aaf615adf"><td class="memItemLeft" align="right" valign="top"><a id="a35b5b2ceccbbd69a3d37b94aaf615adf" name="a35b5b2ceccbbd69a3d37b94aaf615adf"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> () const</td></tr>
@@ -146,9 +155,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> ()
 <a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getParent</b> () const</td></tr>
 <tr class="memdesc:ad523aa27b6dee121d4e4d6f7c3105b1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent path as a <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> if it exists. <br /></td></tr>
 <tr class="separator:ad523aa27b6dee121d4e4d6f7c3105b1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d545a526c90b1465f3b875e57d15550" id="r_a6d545a526c90b1465f3b875e57d15550"><td class="memItemLeft" align="right" valign="top"><a id="a6d545a526c90b1465f3b875e57d15550" name="a6d545a526c90b1465f3b875e57d15550"></a>
-std::vector&lt; <a class="el" href="classenzo_1_1Path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrefixes</b> () const</td></tr>
-<tr class="memdesc:a6d545a526c90b1465f3b875e57d15550"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> objects of all the prefixes to the specified path. <br /></td></tr>
+<tr class="memitem:a6d545a526c90b1465f3b875e57d15550" id="r_a6d545a526c90b1465f3b875e57d15550"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classenzo_1_1Path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d545a526c90b1465f3b875e57d15550">getPrefixes</a> () const</td></tr>
+<tr class="memdesc:a6d545a526c90b1465f3b875e57d15550"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every ancestor path leading up to this path, ordered from shortest to longest. The path itself is not included.  <br /></td></tr>
 <tr class="separator:a6d545a526c90b1465f3b875e57d15550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac784d68cf05d0ea2cce4f07dbd9b1f91" id="r_ac784d68cf05d0ea2cce4f07dbd9b1f91"><td class="memItemLeft" align="right" valign="top"><a id="ac784d68cf05d0ea2cce4f07dbd9b1f91" name="ac784d68cf05d0ea2cce4f07dbd9b1f91"></a>
 std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>split</b> () const</td></tr>
@@ -158,14 +166,11 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getString</b> () const</td></tr>
 <tr class="memdesc:af65d4d4073b064352a01a89a7f96db7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the path of the <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> as an std::string. <br /></td></tr>
 <tr class="separator:af65d4d4073b064352a01a89a7f96db7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5006a39b4e7cebc27016b0c5624abb67" id="r_a5006a39b4e7cebc27016b0c5624abb67"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5006a39b4e7cebc27016b0c5624abb67">join</a> (std::string name) const</td></tr>
-<tr class="memdesc:a5006a39b4e7cebc27016b0c5624abb67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends the name to the end of the path and constructs a new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> based off this.  <br /></td></tr>
-<tr class="separator:a5006a39b4e7cebc27016b0c5624abb67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8585342c3634b8148b94b53954a1164c" id="r_a8585342c3634b8148b94b53954a1164c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8585342c3634b8148b94b53954a1164c">joinPath</a> (const <a class="el" href="classenzo_1_1Path.html">enzo::Path</a> &amp;path) const</td></tr>
-<tr class="memdesc:a8585342c3634b8148b94b53954a1164c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends the path to the end of the path and constructs a new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> based off this.  <br /></td></tr>
-<tr class="separator:a8585342c3634b8148b94b53954a1164c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb6d1f099169ee61ed5bbf5115483fca" id="r_afb6d1f099169ee61ed5bbf5115483fca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb6d1f099169ee61ed5bbf5115483fca">increment</a> (int increment=1) const</td></tr>
-<tr class="memdesc:afb6d1f099169ee61ed5bbf5115483fca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the given path by an increment value which is defaulted at 1.  <br /></td></tr>
+<tr class="memitem:ab0330ab616bdd478175d8de62426baa0" id="r_ab0330ab616bdd478175d8de62426baa0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0330ab616bdd478175d8de62426baa0">append</a> (const <a class="el" href="classenzo_1_1Path.html">enzo::Path</a> &amp;path) const</td></tr>
+<tr class="memdesc:ab0330ab616bdd478175d8de62426baa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a new path formed by appending the given path to this one.  <br /></td></tr>
+<tr class="separator:ab0330ab616bdd478175d8de62426baa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb6d1f099169ee61ed5bbf5115483fca" id="r_afb6d1f099169ee61ed5bbf5115483fca"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb6d1f099169ee61ed5bbf5115483fca">increment</a> (int increment=1) const</td></tr>
+<tr class="memdesc:afb6d1f099169ee61ed5bbf5115483fca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the numerical suffix of the path's name by a given amount.  <br /></td></tr>
 <tr class="separator:afb6d1f099169ee61ed5bbf5115483fca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31123f52bb0b90c669044193276d397a" id="r_a31123f52bb0b90c669044193276d397a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31123f52bb0b90c669044193276d397a">makeRelative</a> () const</td></tr>
 <tr class="memdesc:a31123f52bb0b90c669044193276d397a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an absolute path to relative, stripping the root character.  <br /></td></tr>
@@ -179,18 +184,23 @@ const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 <tr class="memitem:a514432b8ef3825bbc53e80010dc91aba" id="r_a514432b8ef3825bbc53e80010dc91aba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514432b8ef3825bbc53e80010dc91aba">hasPrefix</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;prefix) const</td></tr>
 <tr class="memdesc:a514432b8ef3825bbc53e80010dc91aba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> has any additional prefixes.  <br /></td></tr>
 <tr class="separator:a514432b8ef3825bbc53e80010dc91aba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a784cc1274eeebb854d260f13c34e0667" id="r_a784cc1274eeebb854d260f13c34e0667"><td class="memItemLeft" align="right" valign="top"><a id="a784cc1274eeebb854d260f13c34e0667" name="a784cc1274eeebb854d260f13c34e0667"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;other) const</td></tr>
-<tr class="separator:a784cc1274eeebb854d260f13c34e0667"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89f987296ffae090b5bb38fca7a780cc" id="r_a89f987296ffae090b5bb38fca7a780cc"><td class="memItemLeft" align="right" valign="top"><a id="a89f987296ffae090b5bb38fca7a780cc" name="a89f987296ffae090b5bb38fca7a780cc"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;other) const</td></tr>
-<tr class="separator:a89f987296ffae090b5bb38fca7a780cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a922863b7a9915408c87d65003dc3f2" id="r_a6a922863b7a9915408c87d65003dc3f2"><td class="memItemLeft" align="right" valign="top"><a id="a6a922863b7a9915408c87d65003dc3f2" name="a6a922863b7a9915408c87d65003dc3f2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>operator std::string_view</b> () const</td></tr>
+<tr class="memdesc:a6a922863b7a9915408c87d65003dc3f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows a <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> to be viewed as its underlying string, e.g. for comparisons against string_views. <br /></td></tr>
+<tr class="separator:a6a922863b7a9915408c87d65003dc3f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6d6302df73a07fad10a32b3dc9e148e" id="r_ac6d6302df73a07fad10a32b3dc9e148e"><td class="memItemLeft" align="right" valign="top"><a id="ac6d6302df73a07fad10a32b3dc9e148e" name="ac6d6302df73a07fad10a32b3dc9e148e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (std::string_view other) const</td></tr>
+<tr class="separator:ac6d6302df73a07fad10a32b3dc9e148e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f4359dfed728286b9f564016c56d596" id="r_a6f4359dfed728286b9f564016c56d596"><td class="memItemLeft" align="right" valign="top"><a id="a6f4359dfed728286b9f564016c56d596" name="a6f4359dfed728286b9f564016c56d596"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (std::string_view other) const</td></tr>
+<tr class="separator:a6f4359dfed728286b9f564016c56d596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3a8cbedc1cc3f13976b0fc8bd712ad24" id="r_a3a8cbedc1cc3f13976b0fc8bd712ad24"><td class="memItemLeft" align="right" valign="top"><a id="a3a8cbedc1cc3f13976b0fc8bd712ad24" name="a3a8cbedc1cc3f13976b0fc8bd712ad24"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Strip</b> (const std::string &amp;str)</td></tr>
-<tr class="separator:a3a8cbedc1cc3f13976b0fc8bd712ad24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a353ae9138a08a9ad053eab44b8c21fbb" id="r_a353ae9138a08a9ad053eab44b8c21fbb"><td class="memItemLeft" align="right" valign="top"><a id="a353ae9138a08a9ad053eab44b8c21fbb" name="a353ae9138a08a9ad053eab44b8c21fbb"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>strip</b> (const std::string &amp;str)</td></tr>
+<tr class="memdesc:a353ae9138a08a9ad053eab44b8c21fbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the string with surrounding whitespace removed. <br /></td></tr>
+<tr class="separator:a353ae9138a08a9ad053eab44b8c21fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add273166f07dcbb0de6f87cf19726ff5" id="r_add273166f07dcbb0de6f87cf19726ff5"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add273166f07dcbb0de6f87cf19726ff5">isValidFormatting</a> (const std::string &amp;pathString)</td></tr>
 <tr class="memdesc:add273166f07dcbb0de6f87cf19726ff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the path to make sure it fits the alphanumeric guidelines.  <br /></td></tr>
 <tr class="separator:add273166f07dcbb0de6f87cf19726ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,6 +217,53 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A default path class for creation and manipulation of tree-based paths. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab0330ab616bdd478175d8de62426baa0" name="ab0330ab616bdd478175d8de62426baa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0330ab616bdd478175d8de62426baa0">&#9670;&#160;</a></span>append()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1Path.html">enzo::Path</a> enzo::Path::append </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">enzo::Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a new path formed by appending the given path to this one. </p>
+<p>The appended path may be a single component or a multi component path. A leading root delimiter on the appended path is ignored so it joins as a relative segment.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>The path to append to the end of this path.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> with <code>path</code> appended. </dd></dl>
+
+</div>
+</div>
+<a id="a6d545a526c90b1465f3b875e57d15550" name="a6d545a526c90b1465f3b875e57d15550"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d545a526c90b1465f3b875e57d15550">&#9670;&#160;</a></span>getPrefixes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="classenzo_1_1Path.html">enzo::Path</a> &gt; enzo::Path::getPrefixes </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns every ancestor path leading up to this path, ordered from shortest to longest. The path itself is not included. </p>
+<p>E.g. the path "/World/Set/Props/Chair" returns /World /World/Set /World/Set/Props </p>
+
+</div>
+</div>
 <a id="a514432b8ef3825bbc53e80010dc91aba" name="a514432b8ef3825bbc53e80010dc91aba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a514432b8ef3825bbc53e80010dc91aba">&#9670;&#160;</a></span>hasPrefix()</h2>
 
@@ -232,6 +289,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classenzo_1_1Path.html">enzo::Path</a> enzo::Path::increment </td>
@@ -240,16 +300,22 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Increments the given path by an increment value which is defaulted at 1. </p>
+<p>Increments the numerical suffix of the path's name by a given amount. </p>
+<p>A name with no numerical suffix is treated as 0, so the first increment produces a "1" suffix.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">increment</td><td>The value you want to increment the path by. Default is 1.</td></tr>
+    <tr><td class="paramname">increment</td><td>The amount to increment by. Defaults to 1.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> object with the incremented value or a value of 1 if no incrementation exists. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> with the incremented name. </dd></dl>
 
 </div>
 </div>
@@ -276,8 +342,12 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 </table>
 </div><div class="memdoc">
 
-<p>Runs multiple validation checks and returns true if the path is fully valid. </p>
-<p><a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> class only accepts alphanumeric values and underscores. </p>
+<p>Runs every validation check and returns true if the path is fully valid. </p>
+<p>A path is valid when it is non empty and every component is a valid name. The root path "/" is also valid.</p>
+<p>Examples "/geo/mesh_01" valid "geo/mesh" valid relative path "/geo//mesh" invalid empty component "/geo/me!sh" invalid illegal character</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5f1dc9079c22cf25f999058b114f7e4d" title="Checks the given name to make sure it fits the alphanumeric guidelines.">isValidName</a> for the per component character rules. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classenzo_1_1NetworkPath.html#a97e3bbc86dd1663d90eaca95c86cfb47">enzo::NetworkPath</a>.</p>
 
 </div>
 </div>
@@ -307,11 +377,12 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 <p>Checks the path to make sure it fits the alphanumeric guidelines. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">path</td><td>A std::string representation of the path.</td></tr>
+    <tr><td class="paramname">pathString</td><td>A std::string representation of the path.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true or false based on whether the path formatting is valid or not. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true or false based on whether the path formatting is valid or not.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5f1dc9079c22cf25f999058b114f7e4d" title="Checks the given name to make sure it fits the alphanumeric guidelines.">isValidName</a> for the per component character rules. </dd></dl>
 
 </div>
 </div>
@@ -339,6 +410,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 </div><div class="memdoc">
 
 <p>Checks the given name to make sure it fits the alphanumeric guidelines. </p>
+<p>A valid name is non empty and contains only alphanumeric characters and underscores.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>The name that is being checked.</td></tr>
@@ -346,58 +418,6 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true or false based on whether the name is valid or not. </dd></dl>
-
-</div>
-</div>
-<a id="a5006a39b4e7cebc27016b0c5624abb67" name="a5006a39b4e7cebc27016b0c5624abb67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5006a39b4e7cebc27016b0c5624abb67">&#9670;&#160;</a></span>join()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1Path.html">enzo::Path</a> enzo::Path::join </td>
-          <td>(</td>
-          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Appends the name to the end of the path and constructs a new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> based off this. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">name</td><td>The correctly formatted name of the child you want to append to the end of the path.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> object of the path the child has been appended to. </dd></dl>
-
-</div>
-</div>
-<a id="a8585342c3634b8148b94b53954a1164c" name="a8585342c3634b8148b94b53954a1164c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8585342c3634b8148b94b53954a1164c">&#9670;&#160;</a></span>joinPath()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1Path.html">enzo::Path</a> enzo::Path::joinPath </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">enzo::Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Appends the path to the end of the path and constructs a new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> based off this. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">name</td><td>The <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> object you want to append to the end of the path.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> object of the path the path has been appended to. </dd></dl>
 
 </div>
 </div>
@@ -468,8 +488,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/Engine/Operator/<a class="el" href="Path_8h_source.html">Path.h</a></li>
-<li>src/Engine/Operator/<b>Path.cpp</b></li>
+<li>src/Engine/Core/<a class="el" href="Path_8h_source.html">Path.h</a></li>
+<li>src/Engine/Core/<b>Path.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

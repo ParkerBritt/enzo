@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['ramp_0',['Ramp',['../classenzo_1_1prm_1_1Ramp.html#a64721dcc28bd4091c3dc79a456fc8c5d',1,'enzo::prm::Ramp']]],
-  ['remove_1',['remove',['../classenzo_1_1nt_1_1GeometryConnection.html#a6e9e4175d0fc8286ad0a070b78d42b4e',1,'enzo::nt::GeometryConnection']]],
-  ['removeinputconnection_2',['removeInputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#af5977683c24063377edfb21e1aa55276',1,'enzo::nt::GeometryOperator']]],
-  ['removeoperator_3',['removeOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a4c7e81c55b8198a550ebe14425bebc09',1,'enzo::nt::NetworkManager']]],
-  ['removeoutputconnection_4',['removeOutputConnection',['../classenzo_1_1nt_1_1GeometryOperator.html#a9f2e1cd930530eed3cc5000649ce9157',1,'enzo::nt::GeometryOperator']]],
-  ['resize_5',['resize',['../classenzo_1_1attr_1_1Attribute.html#a85c03efef8653f74ab458484b2a49fd2',1,'enzo::attr::Attribute::resize()'],['../classenzo_1_1attr_1_1AttributeHandle.html#a130fdecdc05f5eced9b17cb5a7a84605',1,'enzo::attr::AttributeHandle::resize()']]],
-  ['restoreoperator_6',['restoreOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607',1,'enzo::nt::NetworkManager']]],
-  ['rotateeuler_7',['rotateEuler',['../classenzo_1_1Transform.html#a14813d81ba6cad9ee0d41791f6a2d496',1,'enzo::Transform']]]
+  ['sameset_0',['sameSet',['../classenzo_1_1util_1_1UnionFind.html#a8544dfdce96d2b7e5257465b06947b62',1,'enzo::util::UnionFind']]],
+  ['sample_1',['sample',['../classenzo_1_1prm_1_1Ramp.html#abd2ddde4d911979600f986de4e68a5a0',1,'enzo::prm::Ramp']]],
+  ['scale_2',['scale',['../classenzo_1_1Transform.html#a3d02aa3a6ebeaf7e3b50525356a63579',1,'enzo::Transform::scale(const Vector3 &amp;factors)'],['../classenzo_1_1Transform.html#af7def7d50a4dee71a537901e9aa9cf08',1,'enzo::Transform::scale(floatT uniform)']]],
+  ['setdisplayop_3',['setDisplayOp',['../classenzo_1_1nt_1_1NetworkManager.html#a8f4282b7156e1515a094c7da36eccc3d',1,'enzo::nt::NetworkManager']]],
+  ['setposition_4',['setPosition',['../classenzo_1_1nt_1_1GeometryOperator.html#ae5302ff6288e71dc79a950e0d63fd921',1,'enzo::nt::GeometryOperator']]],
+  ['setselectednode_5',['setSelectedNode',['../classenzo_1_1nt_1_1NetworkManager.html#a87db6e7d3bc10c86954afe54c23d9d07',1,'enzo::nt::NetworkManager']]],
+  ['setselectednodes_6',['setSelectedNodes',['../classenzo_1_1nt_1_1NetworkManager.html#a1faabea92ba39a0d7ff4f6fecd0c70c9',1,'enzo::nt::NetworkManager']]],
+  ['setvalue_7',['setValue',['../classenzo_1_1attr_1_1AttributeHandle.html#aa18502cec545a116e244d7fdb0e7248e',1,'enzo::attr::AttributeHandle']]],
+  ['size_8',['size',['../classenzo_1_1util_1_1UnionFind.html#aa09880043a521510c7a91af1400a809a',1,'enzo::util::UnionFind']]],
+  ['split_9',['split',['../classenzo_1_1Path.html#ac784d68cf05d0ea2cce4f07dbd9b1f91',1,'enzo::Path']]],
+  ['strip_10',['strip',['../classenzo_1_1Path.html#a353ae9138a08a9ad053eab44b8c21fbb',1,'enzo::Path']]]
 ];
