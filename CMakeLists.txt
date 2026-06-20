@@ -29,7 +29,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/GeometryOpDef.cpp
     src/Engine/Network/OperatorTable.cpp
     src/Engine/Network/CookContext.cpp
-    src/Engine/Dependency/DependencyGraph.cpp
+    src/Engine/NetworkGraph/NetworkGraph.cpp
     src/Engine/Expression/DasRuntime.cpp
     src/Engine/Expression/ExpressionEngine.cpp
     src/Engine/Parameter/Template.cpp
@@ -310,7 +310,7 @@ if(ENZO_BUILD_TESTS)
         tests/main-tests.cpp
         tests/ExpressionEngineTests.cpp
         tests/ParameterTests.cpp
-        tests/DependencyGraphTests.cpp
+        tests/NetworkGraphTests.cpp
         tests/RampTests.cpp
         tests/SerializerTests.cpp
         tests/UndoTests.cpp

@@ -5,10 +5,10 @@
 #include <functional>
 #include <string>
 
-namespace enzo::dep {
+namespace enzo::nt {
 
 /**
- * @brief A point in the dependency graph, either an operator output or a parameter.
+ * @brief A point in the network graph, either an operator output or a parameter.
  *
  * An empty parm names the node's cooked output itself, while a filled parm
  * narrows the unit to one parameter component within the node.
@@ -18,7 +18,7 @@ namespace enzo::dep {
  */
 struct Unit
 {
-    nt::OpId opId = 0;
+    OpId opId = 0;
     std::string parm;
     unsigned int index = 0;
 
@@ -31,12 +31,12 @@ struct Unit
     bool operator==(const Unit& other) const = default;
 };
 
-} // namespace enzo::dep
+} // namespace enzo::nt
 
 // Hashing lives in one place so a Unit can key an unordered container.
-template <> struct std::hash<enzo::dep::Unit>
+template <> struct std::hash<enzo::nt::Unit>
 {
-    std::size_t operator()(const enzo::dep::Unit& unit) const noexcept
+    std::size_t operator()(const enzo::nt::Unit& unit) const noexcept
     {
         std::size_t seed = 0;
         boost::hash_combine(seed, unit.opId);
