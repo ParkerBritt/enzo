@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Dependency/Unit.h"
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace enzo::dep {
@@ -42,10 +43,7 @@ class DependencyGraph
     /// @brief Replaces every captured dependency of one parameter at once.
     /// @note A parameter rebuilds its full reference set each time it evaluates,
     /// so its previous captured edges are dropped and the new set takes over.
-    void setCapturedDependencies(
-        const Unit& dependent,
-        const std::vector<Unit>& dependencies
-    );
+    void setCapturedDependencies(const Unit& dependent, const std::vector<Unit>& dependencies);
 
     /// @brief Removes every edge touching the node, as a unit or through any of
     /// its parameters.
@@ -56,12 +54,12 @@ class DependencyGraph
 
     /// @brief Returns the nodes to cook before @p target, in cook order.
     /// @note Considers wired edges only. Reports a cycle rather than looping.
-    std::vector<nt::OpId> cookOrder(nt::OpId target) const;
+    std::vector<nt::OpId> getCookOrder(nt::OpId target) const;
 
     /// @brief Returns everything that depends on @p changed, directly or through
     /// a chain.
     /// @note Considers both wired and captured edges.
-    std::vector<Unit> dependents(const Unit& changed) const;
+    std::vector<Unit> getDependents(const Unit& changed) const;
 
   private:
     // The unit an edge reaches and how the dependency was learned.
@@ -69,12 +67,36 @@ class DependencyGraph
     {
         Unit unit;
         DependencyKind kind;
+
+        bool operator==(const Edge& other) const = default;
     };
 
-    // Forward adjacency keyed by the depended upon unit listing what reads it.
-    // The reverse adjacency lets the cook order walk upstream from a target.
-    std::unordered_map<Unit, std::vector<Edge>> dependents_;
-    std::unordered_map<Unit, std::vector<Edge>> dependencies_;
+    using EdgeMap = std::unordered_map<Unit, std::vector<Edge>>;
+
+    /// @brief Records that @p dependent reads @p dependency.
+    void linkEdge_(const Unit& dependency, const Unit& dependent, DependencyKind kind);
+
+    /// @brief Removes the edge where @p dependent reads @p dependency.
+    void unlinkEdge_(const Unit& dependency, const Unit& dependent, DependencyKind kind);
+
+    /// @brief Erases one matching edge from a single side.
+    static void eraseEdge_(EdgeMap& side, const Unit& key, const Edge& edge);
+
+    /// @brief Erases a node and its parameters from a single side.
+    static void eraseNode_(EdgeMap& side, nt::OpId opId);
+
+    /// @brief Adds @p unit to @p opOrder after its wired dependencies.
+    void addToCookOrder_(
+        const Unit& unit,
+        std::vector<nt::OpId>& opOrder,
+        std::unordered_set<Unit>& addedUnits,
+        std::unordered_set<Unit>& unitsBeingAdded
+    ) const;
+
+    // What reads each unit, keyed by the unit read.
+    EdgeMap dependents_;
+    // What each unit reads, keyed by the reader.
+    EdgeMap dependencies_;
 };
 
 } // namespace enzo::dep
