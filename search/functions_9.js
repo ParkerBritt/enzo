@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['movenode_0',['moveNode',['../classenzo_1_1nt_1_1NetworkManager.html#a5173d8d5a1ba5531e0f47963eb24cd7f',1,'enzo::nt::NetworkManager']]]
+  ['join_0',['join',['../classenzo_1_1Path.html#a5006a39b4e7cebc27016b0c5624abb67',1,'enzo::Path']]],
+  ['joinpath_1',['joinPath',['../classenzo_1_1Path.html#a8585342c3634b8148b94b53954a1164c',1,'enzo::Path']]]
 ];
