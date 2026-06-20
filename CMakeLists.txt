@@ -22,6 +22,7 @@ set(ENGINE_SOURCES
     src/Engine/Primitives/Camera.cpp
     src/Engine/Selection/PrimPath.cpp
     src/Engine/Core/Path.cpp
+    src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/GeometryOperator.cpp
     src/Engine/Network/GeometryConnection.cpp
@@ -273,6 +274,7 @@ if(ENZO_BUILD_TESTS)
         tests/MeshTests.cpp
         tests/BooleanUtilsTests.cpp
         tests/PathTests.cpp
+        tests/NetworkPathTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
