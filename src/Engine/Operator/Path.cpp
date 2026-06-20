@@ -2,40 +2,33 @@
 #include <cctype>
 #include <string_view>
 #include <utility>
-#include <cctype>
 
-enzo::Path::Path() 
+enzo::Path::Path()
     : path_("")
 {
 }
 
 enzo::Path::Path(const std::string& path)
-{   
-    if (!isValidFormatting(path))
+{
+    // Trim surrounding whitespace before validating so checks like isRoot are not
+    // thrown off by padding such as " / "
+    std::string stripped = strip(path);
+
+    if (!isValidFormatting(stripped))
     {
-        // NOTE: Need to put something better here for error handling
         path_ = "";
         return;
     }
 
-    path_ = Strip(path);
+    path_ = std::move(stripped);
 }
 
 enzo::Path::Path(const char* path)
+    : Path(std::string(path))
 {
-    std::string pathString(path);
-
-    if (!isValidFormatting(pathString))
-    {
-        // NOTE: Will replace this with proper error handling
-        path_ = "";
-        return;
-    }
-
-    path_ = std::move(pathString);
 }
 
-std::string enzo::Path::Strip(const std::string& str)
+std::string enzo::Path::strip(const std::string& str)
 {
     size_t startWhitespace = str.find_first_not_of(" \t\n\r\f\v");
 
@@ -97,6 +90,8 @@ bool enzo::Path::isValidFormatting(const std::string& pathString)
     if (pathView.front() == '/')
         pathView.remove_prefix(1);
 
+    // Walk the components between the slashes and validate each one
+    // e.g. "foo/bar/baz" checks "foo" then "bar" then "baz"
     std::string_view remaining = pathView;
     while (!remaining.empty())
     {
@@ -117,7 +112,6 @@ bool enzo::Path::isValidFormatting(const std::string& pathString)
 
 bool enzo::Path::isValid() const
 {
-    // Put all of the validations in here
     return isValidFormatting(path_);
 }
 
@@ -185,16 +179,13 @@ std::vector<enzo::Path> enzo::Path::getPrefixes() const
 
     std::vector<std::string> components = split();
 
-    std::string currentPrefix = isAbsolute() ? "" : "";
-
-    for (size_t i = 0; i < components.size() - 1; i++)
+    std::string currentPrefix;
+    for (size_t i = 0; i + 1 < components.size(); i++)
     {
-        if (isAbsolute())
-            currentPrefix += "/" + components[i];
-        else
-            currentPrefix += (i == 0 ? "" : "/") + components[i];
-
-        prefixes.emplace_back(enzo::Path(currentPrefix));
+        // Delimiter is "/" except before the first component of a relative path
+        std::string delimiter = (isAbsolute() || i != 0) ? "/" : "";
+        currentPrefix += delimiter + components[i];
+        prefixes.emplace_back(currentPrefix);
     }
 
     return prefixes;
@@ -205,18 +196,7 @@ const std::string& enzo::Path::getString() const
     return path_;
 }
 
-enzo::Path enzo::Path::join(std::string name) const
-{
-    if (!isValidName(name))
-        return *this;
-
-    if (isEmpty())
-        return enzo::Path(name);
-
-    return Path(path_ + "/" + name);
-}
-
-enzo::Path enzo::Path::joinPath(const enzo::Path& path) const
+enzo::Path enzo::Path::append(const enzo::Path& path) const
 {
     if (path.isEmpty())
         return *this;
@@ -224,6 +204,7 @@ enzo::Path enzo::Path::joinPath(const enzo::Path& path) const
     if (isEmpty())
         return path;
 
+    // Drop the appended path's root delimiter so it joins as a relative segment
     std::string appendedPath = path.isAbsolute() ? path.getString().substr(1) : path.getString();
 
     return enzo::Path(path_ + "/" + appendedPath);
@@ -237,7 +218,7 @@ enzo::Path enzo::Path::increment(int increment) const
     std::string name = getName();
     enzo::Path parent = getParent();
 
-    // Find where numerical suffix starts
+    // Find where the numerical suffix starts
     size_t digitStartPos = name.size();
     while (digitStartPos > 0 && std::isdigit(static_cast<unsigned char>(name[digitStartPos - 1])))
         digitStartPos--;
@@ -248,7 +229,7 @@ enzo::Path enzo::Path::increment(int increment) const
     int number = suffix.empty() ? 0 : std::stoi(suffix);
     std::string incrementedName = base + std::to_string(number + increment);
 
-    return parent.join(incrementedName);
+    return parent.append(enzo::Path(incrementedName));
 }
 
 enzo::Path enzo::Path::makeRelative() const
@@ -269,12 +250,13 @@ enzo::Path enzo::Path::makeAbsolute() const
 
 enzo::Path enzo::Path::makeRelativeTo(const enzo::Path& anchor) const
 {
-    if (!isAbsolute() || !anchor.isAbsolute() || !hasPrefix(anchor))
+    // Only paths that share the anchor as a prefix can be made relative to it
+    if (!(isAbsolute() && anchor.isAbsolute() && hasPrefix(anchor)))
         return *this;
 
-    // in the off chance we need to account for the anchor being the same as the path
+    // Account for the anchor being the same as the path
     if (path_ == anchor.getString())
-        return Path(); 
+        return Path();
 
     std::string anchorStr = anchor.isRoot() ? "/" : anchor.getString() + "/";
     std::string relative = path_.substr(anchorStr.size());
@@ -296,14 +278,19 @@ bool enzo::Path::hasPrefix(const Path& prefix) const
     return path_.compare(0, prefix.getString().size() + 1, prefix.getString() + "/") == 0;
 }
 
-bool enzo::Path::operator==(const Path& other) const
+enzo::Path::operator std::string_view() const
 {
-    return path_ == other.getString();
+    return path_;
 }
 
-bool enzo::Path::operator!=(const Path& other) const
+bool enzo::Path::operator==(std::string_view other) const
 {
-    return path_ != other.getString();
+    return path_ == other;
+}
+
+bool enzo::Path::operator!=(std::string_view other) const
+{
+    return path_ != other;
 }
 
 std::ostream& enzo::operator<<(std::ostream& os, const enzo::Path& other)

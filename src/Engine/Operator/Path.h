@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace enzo
@@ -14,13 +15,14 @@ namespace enzo
     {
         public:
             /// @brief Constructs an empty enzo::Path object.
-            Path(); 
-            /// @brief Constructs a enzo::Path object from a given std::string.
+            Path();
+            /// @brief Constructs an enzo::Path object from a given std::string.
             Path(const std::string& path);
-            /// @brief Implicity construct an enzo::Path object.
-            Path(const char*);
+            /// @brief Constructs an enzo::Path object from a C string.
+            Path(const char* path);
 
-            static std::string Strip(const std::string& str);
+            /// @brief Returns the string with surrounding whitespace removed.
+            static std::string strip(const std::string& str);
 
             /// @brief Checks if the Path has no characters.
             bool isEmpty() const;
@@ -34,10 +36,19 @@ namespace enzo
             /// @brief Returns true if the Path is a relative path.
             bool isRelative() const;
 
-            /** 
-            * @brief Runs multiple validation checks and returns true if the path is fully valid.
+            /**
+            * @brief Runs every validation check and returns true if the path is fully valid.
             *
-            * Path class only accepts alphanumeric values and underscores.
+            * A path is valid when it is non empty and every component is a valid name.
+            * The root path "/" is also valid.
+            *
+            * Examples
+            *   "/geo/mesh_01" valid
+            *   "geo/mesh"     valid relative path
+            *   "/geo//mesh"   invalid empty component
+            *   "/geo/me!sh"   invalid illegal character
+            *
+            * @see isValidName for the per component character rules.
             */
             virtual bool isValid() const;
 
@@ -47,7 +58,15 @@ namespace enzo
             /// @brief Returns the parent path as a Path if it exists.
             Path getParent() const;
 
-            /// @brief Returns a vector of Path objects of all the prefixes to the specified path.
+            /**
+            * @brief Returns every ancestor path leading up to this path, ordered from
+            * shortest to longest. The path itself is not included.
+            *
+            * E.g. the path "/World/Set/Props/Chair" returns
+            *   /World
+            *   /World/Set
+            *   /World/Set/Props
+            */
             std::vector<Path> getPrefixes() const;
 
             /// @brief Splits all of the components of a Path and returns them as a vector of strings.
@@ -59,14 +78,18 @@ namespace enzo
             /**
             * @brief Checks the path to make sure it fits the alphanumeric guidelines.
             *
-            * @param path A std::string representation of the path.
+            * @param pathString A std::string representation of the path.
             *
             * @returns true or false based on whether the path formatting is valid or not.
+            *
+            * @see isValidName for the per component character rules.
             */
             static bool isValidFormatting(const std::string& pathString);
 
             /**
             * @brief Checks the given name to make sure it fits the alphanumeric guidelines.
+            *
+            * A valid name is non empty and contains only alphanumeric characters and underscores.
             *
             * @param name The name that is being checked.
             *
@@ -75,31 +98,29 @@ namespace enzo
             static bool isValidName(const std::string& name);
 
             /**
-            * @brief Appends the name to the end of the path and constructs a new Path based off this.
+            * @brief Returns a new path formed by appending the given path to this one.
             *
-            * @param name The correctly formatted name of the child you want to append to the end of the path.
+            * The appended path may be a single component or a multi component path. A
+            * leading root delimiter on the appended path is ignored so it joins as a
+            * relative segment.
             *
-            * @returns A Path object of the path the child has been appended to.
+            * @param path The path to append to the end of this path.
+            *
+            * @returns A new Path with @p path appended.
             */
-            Path join(std::string name) const;
+            Path append(const enzo::Path& path) const;
 
             /**
-            * @brief Appends the path to the end of the path and constructs a new Path based off this.
+            * @brief Increments the numerical suffix of the path's name by a given amount.
             *
-            * @param name The Path object you want to append to the end of the path.
+            * A name with no numerical suffix is treated as 0, so the first increment
+            * produces a "1" suffix.
             *
-            * @returns A Path object of the path the path has been appended to.
+            * @param increment The amount to increment by. Defaults to 1.
+            *
+            * @returns A new Path with the incremented name.
             */
-            Path joinPath(const enzo::Path& path) const;
-
-            /**
-            * @brief Increments the given path by an increment value which is defaulted at 1.
-            *
-            * @param increment The value you want to increment the path by. Default is 1.
-            *
-            * @returns A Path object with the incremented value or a value of 1 if no incrementation exists.
-            */
-            Path increment(int increment = 1) const;
+            virtual Path increment(int increment = 1) const;
 
             /**
             * @brief Converts an absolute path to relative, stripping the root character.
@@ -131,9 +152,12 @@ namespace enzo
             */
             bool hasPrefix(const Path& prefix) const;
 
-            bool operator==(const Path& other) const;
-            bool operator!=(const Path& other) const;
-        
+            /// @brief Allows a Path to be viewed as its underlying string, e.g. for comparisons against string_views.
+            operator std::string_view() const;
+
+            bool operator==(std::string_view other) const;
+            bool operator!=(std::string_view other) const;
+
         protected:
             std::string path_;
     };
