@@ -21,7 +21,7 @@ set(ENGINE_SOURCES
     src/Engine/Primitives/Mesh.cpp
     src/Engine/Primitives/Camera.cpp
     src/Engine/Selection/PrimPath.cpp
-    src/Engine/Operator/Path.cpp
+    src/Engine/Core/Path.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/GeometryOperator.cpp
     src/Engine/Network/GeometryConnection.cpp
