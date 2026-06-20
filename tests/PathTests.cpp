@@ -1,6 +1,6 @@
 
 #include <catch2/catch_test_macros.hpp>
-#include "Engine/Operator/Path.h"
+#include "Engine/Core/Path.h"
 
 TEST_CASE("pathValidation")
 {
