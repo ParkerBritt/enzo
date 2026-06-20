@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/UpdateLock.h"
+#include "Engine/NetworkGraph/NetworkGraph.h"
 #include "Engine/UndoRedo/UndoStack.h"
 #include <QObject>
 #include <memory>
@@ -194,6 +195,9 @@ class NetworkManager : public QObject
      */
     void cookOp(enzo::nt::OpId opId);
 
+    /// @brief Returns the graph that owns the network's wiring and dependencies.
+    nt::NetworkGraph& graph() { return graph_; }
+
     /** @name Signals
      * @{
      */
@@ -241,9 +245,6 @@ class NetworkManager : public QObject
     /// @brief Removes all of an operator's connections, each as its own undo command.
     void disconnectOperator(OpId opId);
 
-    std::vector<enzo::nt::OpId> getDependencyGraph(enzo::nt::OpId opId);
-    std::vector<enzo::nt::OpId> getDependentsGraph(enzo::nt::OpId opId);
-
     /**
      * @brief Slot called when a node of @p OpId is dirtied
      */
@@ -257,6 +258,8 @@ class NetworkManager : public QObject
     enzo::nt::OpId maxOpId_ = 0;
     // operator selected for displaying in the viewport
     std::optional<OpId> displayOp_ = std::nullopt;
+    // owns the network's wiring and dependencies
+    nt::NetworkGraph graph_;
 
     UndoStack undoStack_;
 };

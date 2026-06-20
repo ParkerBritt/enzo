@@ -68,6 +68,9 @@ std::weak_ptr<nt::GeometryConnection> nt::connectOperators(
     IC();
     outputOp.addInputConnection(newConnection);
 
+    // Record the wiring in the graph, input feeds output
+    nm.graph().connect({inputOpId, inputIndex, outputOpId, outputIndex});
+
     nm.connectionCreated(newConnection);
 
     auto cmd = std::make_unique<ChangeConnectionCommand>(

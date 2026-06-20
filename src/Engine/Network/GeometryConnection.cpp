@@ -39,6 +39,10 @@ void nt::GeometryConnection::remove()
     IC();
     nm.getGeoOperator(outputOperatorId_).removeInputConnection(outputIndex_);
     IC();
+
+    // Drop the wiring from the graph, input feeds output
+    nm.graph().disconnect({inputOperatorId_, inputIndex_, outputOperatorId_, outputIndex_});
+
     removed();
     IC();
 }

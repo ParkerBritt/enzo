@@ -86,6 +86,46 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
     REQUIRE_FALSE(nm.getGeoOperator(downstream).getInputConnection(0).expired());
 }
 
+TEST_CASE_METHOD(NMReset, "Cooking a node cooks its whole upstream chain")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    // Wire a three node chain where each output feeds the next input
+    nt::OpId first = nm.createOperator(testOpInfo);
+    nt::OpId second = nm.createOperator(testOpInfo);
+    nt::OpId third = nm.createOperator(testOpInfo);
+    nt::connectOperators(first, 0, second, 0);
+    nt::connectOperators(second, 0, third, 0);
+
+    nm.cookOp(third);
+
+    REQUIRE_FALSE(nm.getGeoOperator(first).isDirty());
+    REQUIRE_FALSE(nm.getGeoOperator(second).isDirty());
+    REQUIRE_FALSE(nm.getGeoOperator(third).isDirty());
+}
+
+TEST_CASE_METHOD(NMReset, "Dirtying an upstream node restages everything downstream")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::OpId first = nm.createOperator(testOpInfo);
+    nt::OpId second = nm.createOperator(testOpInfo);
+    nt::OpId third = nm.createOperator(testOpInfo);
+    nt::connectOperators(first, 0, second, 0);
+    nt::connectOperators(second, 0, third, 0);
+
+    // Start from a fully cooked chain
+    nm.cookOp(third);
+
+    // A change at the top must mark the whole chain below it stale
+    nm.getGeoOperator(first).dirtyNode();
+
+    REQUIRE(nm.getGeoOperator(second).isDirty());
+    REQUIRE(nm.getGeoOperator(third).isDirty());
+}
+
 TEST_CASE_METHOD(NMReset, "reset")
 {
     using namespace enzo;
