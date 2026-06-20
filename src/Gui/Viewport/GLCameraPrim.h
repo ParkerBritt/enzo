@@ -1,12 +1,11 @@
 #pragma once
+#include "Engine/Network/NodePacket.h"
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/ext/vector_float3.hpp>
-#include "Engine/Operator/NodePacket.h"
 
-class GLCameraPrim
-: protected QOpenGLFunctions_3_3_Core
+class GLCameraPrim : protected QOpenGLFunctions_3_3_Core
 {
-public:
+  public:
     GLCameraPrim();
     GLuint vao;
     GLuint vbo;
@@ -22,7 +21,7 @@ public:
 
     void setCameras(const enzo::NodePacket& packet);
 
-private:
+  private:
     size_t instanceCount_ = 0;
     GLuint instanceVbo_;
 };

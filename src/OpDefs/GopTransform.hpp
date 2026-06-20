@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Operator/GeometryOpDef.h"
+#include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
 class GopTransform
@@ -13,6 +13,6 @@ public:
         return new GopTransform(network, opInfo);
     }
 
-    static BOOST_SYMBOL_EXPORT enzo::prm::Template parameterList[];
+    static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 
 };

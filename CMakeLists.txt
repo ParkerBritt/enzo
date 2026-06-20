@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 
 # set vars
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 # set exec names
 set(AppExec enzoGui)
 set(TestExec tests)
@@ -15,20 +15,22 @@ project(enzo)
 set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(ENGINE_SOURCES
-    src/Engine/Operator/Attribute.cpp
-    src/Engine/Operator/Primitive.cpp
-    src/Engine/Operator/Mesh.cpp
-    src/Engine/Operator/Camera.cpp
-    src/Engine/Operator/PrimPath.cpp
-    src/Engine/Operator/NodePacket.cpp
-    src/Engine/Operator/GeometryOperator.cpp
-    src/Engine/Operator/GeometryConnection.cpp
-    src/Engine/Operator/GeometryOpDef.cpp
-    src/Engine/Operator/OperatorTable.cpp
-    src/Engine/Operator/Context.cpp
-    src/Engine/Operator/Path.cpp
+    src/Engine/Attribute/Attribute.cpp
+    src/Engine/Attribute/Transform.cpp
+    src/Engine/Primitives/Primitive.cpp
+    src/Engine/Primitives/Mesh.cpp
+    src/Engine/Primitives/Camera.cpp
+    src/Engine/Selection/PrimPath.cpp
+    src/Engine/Network/NodePacket.cpp
+    src/Engine/Network/GeometryOperator.cpp
+    src/Engine/Network/GeometryConnection.cpp
+    src/Engine/Network/GeometryOpDef.cpp
+    src/Engine/Network/OperatorTable.cpp
+    src/Engine/Network/Context.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
+    src/Engine/Parameter/Ramp.cpp
+    src/Engine/Parameter/NodeParameter.cpp
     src/Engine/Parameter/Default.cpp
     src/Engine/Parameter/Range.cpp
     src/Engine/Parameter/PrmName.cpp
@@ -36,13 +38,30 @@ set(ENGINE_SOURCES
     src/Engine/Network/UpdateLock.cpp
     src/Engine/UndoRedo/UndoStack.cpp
     src/Engine/Serializer/Serializer.cpp
+    src/Engine/Selection/Selection.cpp
+    src/Engine/Selection/SelectionComponent.cpp
+    src/Engine/Selection/IndexSet.cpp
+    src/Engine/GeometryAlgorithms/MeshUtils.cpp
+    src/Engine/GeometryAlgorithms/MeshShapes.cpp
+    src/Engine/GeometryAlgorithms/BooleanUtils.cpp
+    src/Engine/Util/UnionFind.cpp
 )
 
 set(GUI_SOURCES
     static/resources.qrc
     src/Gui/main.cpp
     src/Gui/Interface.cpp
+    src/Gui/IconRegistry.cpp
+    src/Gui/Icons/Builtin.cpp
     src/Gui/UtilWidgets/Splitter.cpp
+    src/Gui/UtilWidgets/BoolSwitch.cpp
+    src/Gui/UtilWidgets/Slider.cpp
+    src/Gui/UtilWidgets/Ramp.cpp
+    src/Gui/UtilWidgets/PopupList.cpp
+    src/Gui/UtilWidgets/Menu.cpp
+    src/Gui/UtilWidgets/MenuBar.cpp
+    src/Gui/UtilWidgets/Dropdown.cpp
+    src/Gui/UtilWidgets/IconButton.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
     src/Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
     src/Gui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
@@ -67,12 +86,19 @@ set(GUI_SOURCES
     src/Gui/Network/NodeIconGraphic.cpp
     src/Gui/Network/TabMenu.cpp
     src/Gui/ParametersPanel/ParametersPanel.cpp
-    src/Gui/Parameters/SliderParmBase.cpp
+    src/Gui/Parameters/Parameter.cpp
     src/Gui/Parameters/FloatSliderParm.cpp
     src/Gui/Parameters/IntSliderParm.cpp
     src/Gui/Parameters/BoolSwitchParm.cpp
-    src/Gui/Parameters/FormParm.cpp
+    src/Gui/Parameters/BoolIconParm.cpp
+    src/Gui/Parameters/BoolIconSlashParm.cpp
+    src/Gui/Parameters/BoolParm.cpp
+    src/Gui/Parameters/XYZParm.cpp
+    src/Gui/Parameters/RampParm.cpp
     src/Gui/Parameters/StringParm.cpp
+    src/Gui/Parameters/DropdownParm.cpp
+    src/Gui/Parameters/GroupParm.cpp
+    src/Gui/Parameters/SpacerParm.cpp
     src/Gui/HeaderBar/HeaderBar.cpp
     src/Gui/Panels/Panel.cpp
     src/Gui/Panels/CornerOverlay.cpp
@@ -103,6 +129,9 @@ find_package(Boost REQUIRED COMPONENTS filesystem system)
 # cgal
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+# manifold (boolean ops)
+find_package(manifold CONFIG REQUIRED)
+
 
 
 qt_add_executable(${AppExec}
@@ -111,6 +140,10 @@ qt_add_executable(${AppExec}
 )
 
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
+
+# TODO: turn this on when you're ready to handle incomplete enums
+# target_compile_options(${AppExec} PRIVATE -Werror=switch)
 
 
 # --- packaging ---
@@ -148,6 +181,11 @@ install(FILES flatpak/org.enzosoftware.Enzo.metainfo.xml
 install(FILES static/icons/icon-main-white-square.svg
     DESTINATION share/icons/hicolor/scalable/apps
     RENAME org.enzosoftware.Enzo.svg
+)
+
+install(DIRECTORY static/icons/
+    DESTINATION ${CMAKE_PROJECT_NAME}/share/icons
+    FILES_MATCHING PATTERN "*.svg"
 )
 
 # install(TARGETS ${AppExec}
@@ -200,7 +238,7 @@ install(FILES static/icons/icon-main-white-square.svg
 # --- end packaging
 
 
-target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
 target_include_directories(${AppExec} PUBLIC
     ${ENGINE_INCLUDE_DIRECTORIES}
 )
@@ -224,10 +262,17 @@ if(ENZO_BUILD_TESTS)
     add_executable(${TestExec}
         ${ENGINE_SOURCES}
         tests/main-tests.cpp
+        tests/ParameterTests.cpp
+        tests/RampTests.cpp
+        tests/SerializerTests.cpp
+        tests/UndoTests.cpp
         tests/OperatorTests.cpp
         tests/NetworkTests.cpp
+        tests/SelectionTests.cpp
+        tests/MeshTests.cpp
+        tests/BooleanUtilsTests.cpp
     )
-    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
     target_include_directories(${TestExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}
@@ -241,7 +286,7 @@ if(ENZO_BUILD_TESTS)
 
         tests/Benchmarks.cpp
     )
-    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold)
     target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
     target_include_directories(${BenchExec} PUBLIC
         ${ENGINE_INCLUDE_DIRECTORIES}

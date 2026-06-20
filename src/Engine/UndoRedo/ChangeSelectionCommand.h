@@ -1,16 +1,19 @@
 #pragma once
 
+#include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Types.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <vector>
 
 namespace enzo::nt {
 
-class ChangeSelectionCommand : public UndoCommand {
+class ChangeSelectionCommand : public UndoCommand
+{
   public:
     ChangeSelectionCommand(std::vector<OpId> prev, std::vector<OpId> next)
-        : prev_(std::move(prev)), next_(std::move(next)) {}
+        : prev_(std::move(prev)), next_(std::move(next))
+    {
+    }
 
     void undo() override { nm().setSelectedNodes(prev_); }
     void redo() override { nm().setSelectedNodes(next_); }

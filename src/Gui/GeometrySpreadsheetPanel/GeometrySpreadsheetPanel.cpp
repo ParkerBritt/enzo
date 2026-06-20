@@ -11,7 +11,8 @@
 #include <qpushbutton.h>
 #include <qtablewidget.h>
 
-GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(parent) {
+GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(parent)
+{
     primView_ = new QTreeView(parent);
     attributeView_ = new QTreeView(parent);
 
@@ -89,19 +90,27 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(pare
         }
     )");
 
-    connect(primView_->selectionModel(), &QItemSelectionModel::currentChanged, this,
-            &GeometrySpreadsheetPanel::onPrimitiveSelected);
+    connect(
+        primView_->selectionModel(),
+        &QItemSelectionModel::currentChanged,
+        this,
+        &GeometrySpreadsheetPanel::onPrimitiveSelected
+    );
 
     menuBar_ = new GeometrySpreadsheetMenuBar();
     // connect buttons
-    connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::POINT); });
-    connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::VERTEX); });
-    connect(menuBar_->modeSelection->faceButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::FACE); });
-    connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this,
-            [this]() { model_->setOwner(enzo::ga::AttributeOwner::PRIMITIVE); });
+    connect(menuBar_->modeSelection->pointButton, &QPushButton::clicked, this, [this]() {
+        model_->setOwner(enzo::attr::AttributeOwner::POINT);
+    });
+    connect(menuBar_->modeSelection->vertexButton, &QPushButton::clicked, this, [this]() {
+        model_->setOwner(enzo::attr::AttributeOwner::VERTEX);
+    });
+    connect(menuBar_->modeSelection->faceButton, &QPushButton::clicked, this, [this]() {
+        model_->setOwner(enzo::attr::AttributeOwner::FACE);
+    });
+    connect(menuBar_->modeSelection->primitiveButton, &QPushButton::clicked, this, [this]() {
+        model_->setOwner(enzo::attr::AttributeOwner::PRIMITIVE);
+    });
     // set default
     menuBar_->modeSelection->pointButton->click();
 
@@ -119,32 +128,40 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget *parent) : Panel(pare
     setLayout(mainLayout_);
 }
 
-void GeometrySpreadsheetPanel::clear() {
+void GeometrySpreadsheetPanel::clear()
+{
     model_->clear();
     primModel_->clear();
 }
 
 void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId) { menuBar_->setNode(opId); }
 
-void GeometrySpreadsheetPanel::packetChanged(std::shared_ptr<const enzo::NodePacket> packet) {
+void GeometrySpreadsheetPanel::packetChanged(std::shared_ptr<const enzo::NodePacket> packet)
+{
     currentPacket_ = std::move(packet);
-    if (currentPacket_ && currentPacket_->size() > 0) {
+    if (currentPacket_ && currentPacket_->size() > 0)
+    {
         primModel_->setPacket(*currentPacket_);
         // select first primitive by default
         primView_->setCurrentIndex(primModel_->index(0, 0));
-    } else {
+    }
+    else
+    {
         clear();
     }
 }
 
-void GeometrySpreadsheetPanel::onPrimitiveSelected(const QModelIndex &current,
-                                                   const QModelIndex &previous) {
+void GeometrySpreadsheetPanel::onPrimitiveSelected(
+    const QModelIndex& current,
+    const QModelIndex& previous
+)
+{
     Q_UNUSED(previous)
-    if (!current.isValid() || !currentPacket_)
-        return;
+    if (!current.isValid() || !currentPacket_) return;
 
     int row = current.row();
-    if (row >= 0 && row < static_cast<int>(currentPacket_->size())) {
+    if (row >= 0 && row < static_cast<int>(currentPacket_->size()))
+    {
         model_->primitiveChanged(currentPacket_->getPrimitive(row));
         attributeView_->update();
     }

@@ -1,77 +1,70 @@
 #include "Gui/Parameters/IntSliderParm.h"
-#include <QPaintEvent>
-#include <QPainter>
-#include <algorithm>
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <cmath>
 
-enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent,
-                                       Qt::WindowFlags f)
-    : SliderParmBase(parameter, 0, parent, f) {
-    notchPen_ = QPen(QColor("#383838"), notchWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    setStyleSheet(R"(
-                  QWidget[type="SliderParm"]
-                  {
-                      border-radius: 6px;
-                      border: 1px solid #383838;
-                  }
-                  )");
-    syncFromParameter();
+enzo::ui::IntSliderParm::IntSliderParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter)
+{
+    auto parameterShared = parameter_.lock();
+
+    const auto range = parameterShared->getTemplate().getRange(0);
+    slider_ = new Slider(
+        range.getMin(),
+        range.getMax(),
+        range.getMinFlag() == prm::RangeFlag::LOCKED,
+        range.getMaxFlag() == prm::RangeFlag::LOCKED,
+        1.0
+    );
+    slider_->setDisplayPrecision(0);
+    slider_->setValue(static_cast<double>(parameterShared->evalInt()));
+    contentLayout_->addWidget(slider_);
+
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
+
+    connect(slider_, &Slider::sliderPressed, this, &IntSliderParm::onPressed);
+    connect(slider_, &Slider::sliderMoved, this, &IntSliderParm::onMoved);
+    connect(slider_, &Slider::sliderReleased, this, &IntSliderParm::onReleased);
 }
 
-void enzo::ui::IntSliderParm::paintEvent(QPaintEvent *event) {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    const int valueRange = maxValue_ - minValue_;
-    float fillPercent =
-        std::clamp<float>(static_cast<float>(value_ - minValue_) / valueRange, 0, 1);
-    float margin = 3;
-    float fillWidth = rect().width() - margin * 2;
-    fillWidth *= fillPercent;
-
-    QRectF fillRect = {rect().left() + margin, rect().top() + margin, fillWidth,
-                       rect().height() - margin * 2};
-
-    painter.setPen(notchPen_);
-    QRectF markerLinesRect = rect();
-    markerLinesRect.adjust(margin, margin, -margin, -margin);
-
-    const int notchCount = std::min<int>(valueRange, 100);
-    for (int i = 1; i < notchCount; ++i) {
-        float x = ((i - 1) * markerLinesRect.width()) / notchCount;
-        x += notchWidth + 4; // offset
-        const float y = markerLinesRect.bottom() - 2;
-        painter.drawLine(x, y, x, y - 5);
-    }
-
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor("#383838"));
-    painter.drawRoundedRect(fillRect, 6, 6);
-}
-
-void enzo::ui::IntSliderParm::syncFromParameter() {
-    if (auto parameterShared = parameter_.lock()) {
-        setValueImpl(parameterShared->evalInt(vectorIndex_));
+void enzo::ui::IntSliderParm::syncFromParameter()
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        slider_->setValue(static_cast<double>(parameterShared->evalInt()));
     }
 }
 
-void enzo::ui::IntSliderParm::applyValue(float normalizedValue) {
-    float value = minValue_ + (maxValue_ - minValue_) * normalizedValue;
-    if (auto parameterShared = parameter_.lock()) {
-        parameterShared->setInt(rint(value), vectorIndex_);
+void enzo::ui::IntSliderParm::onPressed()
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        valueBeforeDrag_ = parameterShared->getValues();
+        undoDisabler_.emplace(UndoCommandType::ChangeParameter);
     }
 }
 
-void enzo::ui::IntSliderParm::setValueImpl(bt::intT value) {
-    if (clampMin_ && value < minValue_) {
-        value = minValue_;
+void enzo::ui::IntSliderParm::onMoved(double value)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        parameterShared->setInt(static_cast<intT>(std::lround(value)));
     }
-    if (clampMax_ && value > maxValue_) {
-        value = maxValue_;
-    }
+}
 
-    value_ = value;
-    QString valStr = QString::number(value_);
-    valStr.truncate(4);
-    valueLabel_->setText(valStr);
+void enzo::ui::IntSliderParm::onReleased()
+{
+    undoDisabler_.reset();
+    if (auto parameterShared = parameter_.lock())
+    {
+        auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            valueBeforeDrag_,
+            parameterShared->getValues()
+        );
+        enzo::nt::nm().undoStack().push(std::move(cmd));
+    }
 }

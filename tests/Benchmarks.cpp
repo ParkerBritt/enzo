@@ -1,23 +1,17 @@
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/benchmark/catch_benchmark.hpp>
-#include <memory>
+#include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Types.h"
-#include "Engine/Operator/OperatorTable.h"
+#include "Engine/Network/OperatorTable.h"
+#include "Engine/Parameter/Ramp.h"
+#include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <iostream>
+#include <memory>
 
-struct NMReset 
+struct NMReset
 {
-    NMReset()
-    {
-        enzo::nt::nm()._reset();
-    }
-    ~NMReset()
-    {
-        enzo::nt::nm()._reset();
-    }
-
+    NMReset() { enzo::nt::nm()._reset(); }
+    ~NMReset() { enzo::nt::nm()._reset(); }
 };
 
 // TODO: fix this init monstrosity
@@ -38,33 +32,51 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
     nt::OpId prevOp = startOp;
     std::vector<nt::OpId> prevOps;
 
-    for(int k=0; k<10; k++)
+    for (int k = 0; k < 10; k++)
     {
-        for(int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             nt::OpId newOp = nm.createOperator(testOpInfo);
             prevOps.push_back(newOp);
             nt::connectOperators(newOp, i, prevOp, 0);
         }
-        for(int j=0; j<10; j++)
+        for (int j = 0; j < 10; j++)
         {
             std::vector<nt::OpId> prevOpsBuffer = prevOps;
-            for(int i=0; i<size(prevOpsBuffer); ++i)
+            for (int i = 0; i < size(prevOpsBuffer); ++i)
             {
                 prevOps.clear();
                 nt::OpId newOp = nm.createOperator(testOpInfo);
                 prevOps.push_back(newOp);
                 nt::connectOperators(newOp, 0, prevOpsBuffer[i], 0);
-
-                
             }
         }
     }
 
-    BENCHMARK("Cook 100 Ops")
-    {
-        nm.setDisplayOp(startOp);
-    };
-    
+    BENCHMARK("Cook 100 Ops") { nm.setDisplayOp(startOp); };
+}
 
+TEST_CASE("Ramp sampling")
+{
+    using namespace enzo;
+
+    // A curved run bordered by linear keys, the shape the per point hotpath sees.
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            {0.0f, 0.0f, prm::Interpolation::LINEAR},
+            {0.2f, 1.0f, prm::Interpolation::BSPLINE},
+            {0.4f, 0.0f, prm::Interpolation::BSPLINE},
+            {0.6f, 2.0f, prm::Interpolation::BSPLINE},
+            {0.8f, 1.0f, prm::Interpolation::LINEAR},
+            {1.0f, 0.0f, prm::Interpolation::LINEAR},
+        }
+    );
+
+    BENCHMARK("Sample b spline ramp 10k points")
+    {
+        floatT total = 0;
+        for (int i = 0; i < 10000; ++i)
+            total += ramp.sample(i / 10000.0f);
+        return total;
+    };
 }

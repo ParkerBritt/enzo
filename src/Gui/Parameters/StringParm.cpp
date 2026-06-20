@@ -1,38 +1,35 @@
 #include "Gui/Parameters/StringParm.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include "Gui/Style.h"
 
-enzo::ui::StringParm::StringParm(std::weak_ptr<prm::Parameter> parameter, QWidget *parent)
-    : QLineEdit(parent), parameter_(parameter) {
-    setAttribute(Qt::WA_StyledBackground, true);
-    setFixedHeight(24);
+enzo::ui::StringParm::StringParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget* parent)
+    : Parameter(std::shared_ptr<prm::NodeParameter>(parameter)->getTemplate(), parent),
+      parameter_(parameter)
+{
+    auto parameterShared = parameter_.lock();
 
-    if (auto parameterShared = parameter_.lock()) {
-        setText(QString::fromStdString(parameterShared->evalString()));
-        valueChangedConnection_ = parameterShared->valueChanged.connect([this]() {
-            syncFromParameter();
-        });
-    } else {
-        throw std::bad_weak_ptr();
-    }
+    lineEdit_ = new QLineEdit();
+    lineEdit_->setFixedHeight(parameterHeight);
+    lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
+    lineEdit_->setStyleSheet(
+        "QLineEdit { background: transparent; border: none; padding: 0 5px; }"
+    );
+    contentLayout_->addWidget(lineEdit_);
 
-    setProperty("type", "StringParm");
-    setStyleSheet(R"(
-                  QWidget[type="StringParm"]
-                  {
-                      border-radius: 6px;
-                      border: 1px solid #383838;
-                      padding: 0px 5px 0px 5px;
-                  }
-                  )");
+    valueChangedConnection_ =
+        parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
 
-    connect(this, &QLineEdit::textEdited, this, &StringParm::setValueQString);
-    connect(this, &QLineEdit::editingFinished, this, &StringParm::onEditingFinished);
+    connect(lineEdit_, &QLineEdit::textEdited, this, &StringParm::setValueQString);
+    connect(lineEdit_, &QLineEdit::editingFinished, this, &StringParm::onEditingFinished);
 }
 
-void enzo::ui::StringParm::setValueQString(QString value) {
-    if (auto parameterShared = parameter_.lock()) {
-        if (!undoDisabler_) {
+void enzo::ui::StringParm::setValueQString(QString value)
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        if (!undoDisabler_)
+        {
             valueBeforeEdit_ = parameterShared->getValues();
             undoDisabler_.emplace(UndoCommandType::ChangeParameter);
         }
@@ -40,20 +37,28 @@ void enzo::ui::StringParm::setValueQString(QString value) {
     }
 }
 
-void enzo::ui::StringParm::syncFromParameter() {
-    if (auto parameterShared = parameter_.lock()) {
-        if (!hasFocus()) {
-            setText(QString::fromStdString(parameterShared->evalString()));
+void enzo::ui::StringParm::syncFromParameter()
+{
+    if (auto parameterShared = parameter_.lock())
+    {
+        if (!lineEdit_->hasFocus())
+        {
+            lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
         }
     }
 }
 
-void enzo::ui::StringParm::onEditingFinished() {
+void enzo::ui::StringParm::onEditingFinished()
+{
     undoDisabler_.reset();
-    if (auto parameterShared = parameter_.lock()) {
+    if (auto parameterShared = parameter_.lock())
+    {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(), parameterShared->getName(), valueBeforeEdit_,
-            parameterShared->getValues());
+            parameterShared->getOpId(),
+            parameterShared->getName(),
+            valueBeforeEdit_,
+            parameterShared->getValues()
+        );
         enzo::nt::nm().undoStack().push(std::move(cmd));
     }
 }

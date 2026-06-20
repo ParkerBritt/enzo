@@ -1,11 +1,14 @@
 #include "Gui/Interface.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/NodePacket.h"
+#include "Engine/Network/NodePacket.h"
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.h"
 #include "Gui/HeaderBar/HeaderBar.h"
+#include "Gui/IconRegistry.h"
 #include "Gui/Network/NetworkPanel.h"
+#include "Gui/Style.h"
 #include "Gui/Viewport/Viewport.h"
 #include <Gui/UtilWidgets/Splitter.h>
+#include <QApplication>
 #include <QTimer>
 #include <icecream.hpp>
 #include <qnamespace.h>
@@ -13,7 +16,8 @@
 #include <qsizepolicy.h>
 #include <qsplitter.h>
 
-EnzoUI::EnzoUI() {
+EnzoUI::EnzoUI()
+{
     // layout
     mainLayout_ = new QVBoxLayout(this);
     setLayout(mainLayout_);
@@ -27,7 +31,7 @@ EnzoUI::EnzoUI() {
     setStyleSheet(R"(
     QWidget
     {
-        background-color: #1a1a1a; 
+        background-color: #1a1a1a;
         color: rgba(255,255,255,0.8);
     }
     QSplitter::handle
@@ -35,6 +39,23 @@ EnzoUI::EnzoUI() {
         image: none;
     }
     )");
+
+    qApp->setStyleSheet(QString(R"(
+    *
+    {
+        font-family: Rubik;
+        font-size: %1pt;
+    }
+    QToolTip
+    {
+        background-color: #1a1a1a;
+        color: rgba(255,255,255,0.8);
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 2px 4px;
+    }
+    )")
+                            .arg(enzo::ui::fontSize));
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();
@@ -52,6 +73,11 @@ EnzoUI::EnzoUI() {
     viewportSplitter_ = new Splitter(this);
     networkSplitter_ = new Splitter(this);
     spreadsheetSplitter_ = new Splitter(this);
+
+    viewportSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+    networkSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+    spreadsheetSplitter_->setHandleWidth(DEFAULT_HANDLE_WIDTH);
+
     networkSplitter_->setOrientation(Qt::Vertical);
     spreadsheetSplitter_->setOrientation(Qt::Vertical);
 
@@ -67,7 +93,7 @@ EnzoUI::EnzoUI() {
     networkSplitter_->addWidget(network_);
     networkSplitter_->setSizes({40, 100});
 
-    HeaderBar *header = new HeaderBar();
+    HeaderBar* header = new HeaderBar();
 
     mainLayout_->addWidget(header);
     mainLayout_->addWidget(viewportSplitter_);
@@ -75,12 +101,14 @@ EnzoUI::EnzoUI() {
     connectSignals();
 }
 
-void EnzoUI::connectSignals() {
+void EnzoUI::connectSignals()
+{
 
     // Selection changed
     enzo::nt::nm().selectedNodesChanged.connect(
         [this](std::vector<enzo::nt::OpId> selectedNodeIds) {
-            if (selectedNodeIds.empty()) {
+            if (selectedNodeIds.empty())
+            {
                 parametersPanel_->clearParameters();
                 geometrySpreadsheetPanel_->clear();
                 return;
@@ -90,23 +118,28 @@ void EnzoUI::connectSignals() {
             geometrySpreadsheetPanel_->setNode(selectedId);
             auto packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
             geometrySpreadsheetPanel_->packetChanged(packet);
-        });
+        }
+    );
 
     // Operator created
-    enzo::nt::nm().operatorCreated.connect(
-        [this](enzo::nt::OpId opId) { network_->onOperatorCreated(opId); });
+    enzo::nt::nm().operatorCreated.connect([this](enzo::nt::OpId opId) {
+        network_->onOperatorCreated(opId);
+    });
 
     // Connection created
-    enzo::nt::nm().connectionCreated.connect(
-        [this](std::weak_ptr<enzo::nt::GeometryConnection> conn) {
-            network_->onConnectionCreated(conn);
-        });
+    enzo::nt::nm().connectionCreated.connect([this](
+                                                 std::weak_ptr<enzo::nt::GeometryConnection> conn
+                                             ) { network_->onConnectionCreated(conn); });
 
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect(
-        [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) { viewport_->setGeometry(packet); }
+    );
     enzo::nt::nm().selectedGeoChanged.connect(
-        [this](std::shared_ptr<const enzo::NodePacket> packet) { geometrySpreadsheetPanel_->packetChanged(packet); });
+        [this](std::shared_ptr<const enzo::NodePacket> packet) {
+            geometrySpreadsheetPanel_->packetChanged(packet);
+        }
+    );
 
     // Network cleared
     enzo::nt::nm().networkCleared.connect([this]() {

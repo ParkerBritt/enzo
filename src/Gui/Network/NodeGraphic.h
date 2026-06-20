@@ -1,20 +1,22 @@
 #pragma once
-#include <QGraphicsItem>
-#include <QPainter>
-#include "Engine/Types.h"
+#include "Engine/Core/Types.h"
 #include "Gui/Network/DisplayFlagButton.h"
-#include "Gui/Network/SocketGraphic.h"
-#include "Gui/Network/NodeIconGraphic.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
+#include "Gui/Network/NodeIconGraphic.h"
+#include "Gui/Network/SocketGraphic.h"
+#include <QGraphicsObject>
+#include <QPainter>
+#include <functional>
 #include <iostream>
 
-class NodeGraphic
-: public QGraphicsItem
+class NodeGraphic : public QGraphicsObject
 {
-public:
-    NodeGraphic(enzo::nt::OpId id, QGraphicsItem *parent = nullptr);
+    Q_OBJECT
+
+  public:
+    NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent = nullptr);
     QRectF boundingRect() const override;
-    
+
     SocketGraphic* getInput(int indx) const;
     SocketGraphic* getOutput(int indx) const;
     enzo::nt::OpId getOpId() const;
@@ -25,13 +27,14 @@ public:
     void setSelected(bool selected);
     bool toggleSelected();
 
+    /// @brief Pop the node in with an overshoot when it is placed
+    void animatePlacement();
+    /// @brief Anticipate then collapse the node away, invoking onComplete when finished
+    void animateRemoval(std::function<void()> onComplete);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-
-
-
-private:
+  private:
     void initSockets();
     void initFlagButtons();
     void initIcon();
@@ -42,14 +45,14 @@ private:
     std::vector<SocketGraphic*> outputs_;
 
     // std::vector<NodeEdgeGraphic*> edges_;
-    bool selected_=false;
-    std::string titleText_="";
-    std::string subTitleText_="";
-    int maxTitleLen_=10;
+    bool selected_ = false;
+    std::string titleText_ = "";
+    std::string subTitleText_ = "";
+    int maxTitleLen_ = 10;
     QRectF bodyRect_;
     int socketSize_ = 1;
-    int inputSocketCnt_=0;
-    int outputSocketCnt_=0;
+    int inputSocketCnt_ = 0;
+    int outputSocketCnt_ = 0;
     NodeIconGraphic* icon_;
     int iconScale_;
     float iconPadding_ = 5;
@@ -65,10 +68,9 @@ private:
     DisplayFlagButton* displayFlagButton_;
 
     void updatePositions();
-protected:
-        QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
-        // void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-        // void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
+  protected:
+    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value) override;
+    // void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    // void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 };
-

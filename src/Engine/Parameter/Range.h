@@ -1,29 +1,33 @@
 #pragma once
 
-#include "Engine/Types.h"
-namespace enzo::prm
+#include "Engine/Core/Types.h"
+namespace enzo::prm {
+enum class RangeFlag
 {
-    enum class RangeFlag
-    {
-        UNLOCKED,
-        LOCKED
+    UNLOCKED,
+    LOCKED
 
-    };
+};
 
-    class Range
-    {
-    public:
-        Range(bt::floatT minValue=0, bt::floatT maxValue=10, RangeFlag minFlag=RangeFlag::UNLOCKED, RangeFlag maxFlag=RangeFlag::UNLOCKED);
+class Range
+{
+  public:
+    Range(
+        floatT minValue = 0,
+        floatT maxValue = 10,
+        RangeFlag minFlag = RangeFlag::UNLOCKED,
+        RangeFlag maxFlag = RangeFlag::UNLOCKED
+    );
 
-        bt::floatT getMin() const	    { return minValue_; }
-        bt::floatT getMax() const	    { return maxValue_; }
-        RangeFlag getMinFlag() const    { return minFlag_; }
-        RangeFlag getMaxFlag() const    { return maxFlag_; }
+    floatT getMin() const { return minValue_; }
+    floatT getMax() const { return maxValue_; }
+    RangeFlag getMinFlag() const { return minFlag_; }
+    RangeFlag getMaxFlag() const { return maxFlag_; }
 
-    private:
-        bt::floatT minValue_;
-        bt::floatT maxValue_;
-        RangeFlag minFlag_;
-        RangeFlag maxFlag_;
-    };
-}
+  private:
+    floatT minValue_;
+    floatT maxValue_;
+    RangeFlag minFlag_;
+    RangeFlag maxFlag_;
+};
+} // namespace enzo::prm

@@ -1,6 +1,7 @@
 #pragma once
 
-enum class UndoCommandType {
+enum class UndoCommandType
+{
     MoveNode,
     CreateNode,
     DeleteNode,

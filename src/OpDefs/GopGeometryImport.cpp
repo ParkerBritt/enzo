@@ -1,29 +1,28 @@
 #include "OpDefs/GopGeometryImport.h"
-#include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Types.h"
+#include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Core/Types.h"
+#include <boost/algorithm/string.hpp>
 #include <cstdio>
-#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <tbb/parallel_for.h>
 
 GopGeometryImport::GopGeometryImport(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GopGeometryImport::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         // TODO: convert to NodePacket
         NodePacket packet;
         // geo::Primitive geo;
         //
-        // bt::String filePath = context.evalStringParm("filePath");
+        // String filePath = context.evalParmString("filePath");
         // boost::trim(filePath);
         // if(filePath.size()<4)
         // {
@@ -66,8 +65,8 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //         {
         //             continue;
         //         }
-        //         const bt::Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]), std::stod(result[3])};
-        //         geo.addPoint(pointPos);
+        //         const Vector3 pointPos = {std::stod(result[1]), std::stod(result[2]),
+        //         std::stod(result[3])}; geo.addPoint(pointPos);
         //     }
         //     else if(firstChar=='f' || firstChar=='l')
         //     {
@@ -80,9 +79,9 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //             continue;
         //         }
         //
-        //         ga::Offset numVerts = result.size()-1;
+        //         Offset numVerts = result.size()-1;
         //
-        //         std::vector<ga::Offset> verts;
+        //         std::vector<Offset> verts;
         //         verts.reserve(numVerts);
         //
         //         for(int i=1; i<numVerts+1; ++i)
@@ -94,23 +93,27 @@ void GopGeometryImport::cookOp(enzo::op::Context context)
         //     }
         // }
         //
-        // const float scale = context.evalFloatParm("size");
-        // const ga::Offset numPoints = geo.getNumPoints();
-        // for(ga::Offset i=0; i<numPoints; ++i)
+        // const float scale = context.evalParmFloat("size");
+        // const Offset numPoints = geo.getNumPoints();
+        // for(Offset i=0; i<numPoints; ++i)
         // {
-        //     enzo::bt::Vector3 pointPos = geo.getPointPos(i);
+        //     enzo::Vector3 pointPos = geo.getPointPos(i);
         //     pointPos*=scale;
         //     geo.setPointPos(i, pointPos);
         // }
 
         setOutputPacket(0, packet);
     }
-
 }
 
-enzo::prm::Template GopGeometryImport::parameterList[] =
+std::vector<enzo::prm::Template> GopGeometryImport::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("filePath", "File Path")),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), enzo::prm::Default(1)),
-    enzo::prm::Terminator
-};
+    return {
+        enzo::prm::Template(enzo::prm::Type::STRING, enzo::prm::Name("filePath", "File Path")),
+        enzo::prm::Template(
+            enzo::prm::Type::FLOAT,
+            enzo::prm::Name("size", "Size"),
+            enzo::prm::Default(1)
+        )
+    };
+}

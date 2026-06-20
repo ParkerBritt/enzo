@@ -1,23 +1,36 @@
 #pragma once
-#include "Engine/Types.h"
-#include "Gui/Parameters/SliderParmBase.h"
+#include "Engine/Parameter/NodeParameter.h"
+#include "Engine/UndoRedo/UndoDisabler.h"
+#include "Gui/Parameters/Parameter.h"
+#include "Gui/UtilWidgets/Slider.h"
+#include <boost/signals2/connection.hpp>
+#include <memory>
+#include <optional>
 
 namespace enzo::ui {
 
-class FloatSliderParm : public SliderParmBase {
+class FloatSliderParm : public Parameter
+{
     Q_OBJECT
   public:
-    FloatSliderParm(std::weak_ptr<prm::Parameter> parameter, unsigned int vectorIndex = 0,
-                    QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-
-  protected:
-    void paintEvent(QPaintEvent *event) override;
-    void syncFromParameter() override;
-    void applyValue(float normalizedValue) override;
+    FloatSliderParm(
+        std::weak_ptr<prm::NodeParameter> parameter,
+        unsigned int vectorIndex = 0,
+        QWidget* parent = nullptr
+    );
 
   private:
-    bt::floatT value_;
-    void setValueImpl(bt::floatT value);
+    void onPressed();
+    void onMoved(double value);
+    void onReleased();
+    void syncFromParameter();
+
+    std::weak_ptr<prm::NodeParameter> parameter_;
+    unsigned int vectorIndex_;
+    Slider* slider_ = nullptr;
+    boost::signals2::scoped_connection valueChangedConnection_;
+    std::optional<UndoDisabler> undoDisabler_;
+    prm::PrmValues valueBeforeDrag_;
 };
 
 } // namespace enzo::ui

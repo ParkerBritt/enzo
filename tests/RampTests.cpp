@@ -1,0 +1,146 @@
+#include "Engine/Parameter/Parameter.h"
+#include "Engine/Parameter/Ramp.h"
+#include <catch2/catch_approx.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+using namespace enzo;
+
+namespace {
+
+prm::Ramp::Key
+makeKey(floatT position, floatT value, prm::Interpolation interp = prm::Interpolation::LINEAR)
+{
+    return {position, value, interp};
+}
+
+} // namespace
+
+TEST_CASE("Sampling an empty ramp returns zero")
+{
+    prm::Ramp ramp;
+    REQUIRE(ramp.sample(0.5) == 0);
+}
+
+TEST_CASE("Sampling outside the ramp domain clamps to the end keys")
+{
+    prm::Ramp ramp(std::vector<prm::Ramp::Key>{makeKey(0.2, 1), makeKey(0.8, 5)});
+
+    REQUIRE(ramp.sample(0.0) == 1);
+    REQUIRE(ramp.sample(1.0) == 5);
+}
+
+TEST_CASE("Linear interpolation blends between neighbouring keys")
+{
+    prm::Ramp ramp(std::vector<prm::Ramp::Key>{makeKey(0, 0), makeKey(1, 10)});
+
+    REQUIRE(ramp.sample(0.5) == 5);
+    REQUIRE(ramp.sample(0.25) == 2.5);
+}
+
+TEST_CASE("Constant interpolation holds the left key value across the segment")
+{
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 3, prm::Interpolation::CONSTANT),
+            makeKey(1, 9),
+        }
+    );
+
+    REQUIRE(ramp.sample(0.0) == 3);
+    REQUIRE(ramp.sample(0.99) == 3);
+}
+
+TEST_CASE("B spline interpolation reproduces a straight line on interior segments")
+{
+    // A uniform cubic B spline has linear precision, so evenly spaced collinear
+    // keys stay on the line away from the clamped end segments.
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 10, prm::Interpolation::BSPLINE),
+            makeKey(2, 20, prm::Interpolation::BSPLINE),
+            makeKey(3, 30, prm::Interpolation::BSPLINE),
+        }
+    );
+
+    REQUIRE(ramp.sample(1.5) == 15);
+}
+
+TEST_CASE("B spline interpolation smooths symmetrically around a peak")
+{
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 1, prm::Interpolation::BSPLINE),
+            makeKey(2, 0, prm::Interpolation::BSPLINE),
+        }
+    );
+
+    // The curve approaches rather than touches the peak key.
+    REQUIRE(ramp.sample(1.0) == Catch::Approx(2.0 / 3.0));
+    // A symmetric configuration samples symmetrically about the peak.
+    REQUIRE(ramp.sample(0.5) == Catch::Approx(ramp.sample(1.5)));
+}
+
+TEST_CASE("A b spline against a non b spline neighbour interpolates linearly")
+{
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0, 0, prm::Interpolation::BSPLINE),
+            makeKey(1, 10, prm::Interpolation::LINEAR),
+        }
+    );
+
+    REQUIRE(ramp.sample(0.5) == 5);
+}
+
+TEST_CASE("B spline sampling matches a pinned golden curve")
+{
+    // A mixed ramp with a curved run bordered by linear keys on both sides. The
+    // run rounds through its interior keys and lands on the linear neighbours, so
+    // this pins the reflected endpoints and the run boundaries against drift while
+    // the sampler is optimised. The golden values are the exact curve, so the
+    // margin below also bounds how far the lookup table strays from it.
+    prm::Ramp ramp(
+        std::vector<prm::Ramp::Key>{
+            makeKey(0.0, 0, prm::Interpolation::LINEAR),
+            makeKey(0.2, 1, prm::Interpolation::BSPLINE),
+            makeKey(0.4, 0, prm::Interpolation::BSPLINE),
+            makeKey(0.6, 2, prm::Interpolation::BSPLINE),
+            makeKey(0.8, 1, prm::Interpolation::LINEAR),
+            makeKey(1.0, 0, prm::Interpolation::LINEAR),
+        }
+    );
+
+    // Sampled at every 0.05 across the domain.
+    const floatT golden[] = {
+        0.00000000f, 0.25000000f, 0.50000000f, 0.75000000f, 1.00000000f,
+        0.75781250f, 0.56250000f, 0.46093750f, 0.50000000f, 0.70312500f,
+        0.99999994f, 1.29687500f, 1.50000000f, 1.53906250f, 1.43750024f,
+        1.24218750f, 1.00000000f, 0.74999988f, 0.50000012f, 0.25000006f,
+        0.00000000f,
+    };
+
+    for (int sampleIndex = 0; sampleIndex <= 20; ++sampleIndex)
+    {
+        const floatT position = sampleIndex / 20.0f;
+        REQUIRE(ramp.sample(position) == Catch::Approx(golden[sampleIndex]).margin(1e-3));
+    }
+}
+
+TEST_CASE("A ramp snapshot sorts the control points by position")
+{
+    using namespace enzo::prm;
+    Parameter parameter(Template(Type::RAMP, Name("amplitude", "Amplitude"), Default(2)));
+
+    // Seed two points out of order so the snapshot must sort them by position.
+    parameter.getInstanceField(0, "position")->setFloat(1);
+    parameter.getInstanceField(0, "value")->setFloat(10);
+    parameter.getInstanceField(1, "position")->setFloat(0);
+    parameter.getInstanceField(1, "value")->setFloat(0);
+
+    const Ramp ramp(parameter);
+
+    REQUIRE(ramp.size() == 2);
+    REQUIRE(ramp.sample(0.5) == 5);
+}

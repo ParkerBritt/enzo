@@ -5,20 +5,29 @@ project(enzoOps1)
 find_package(Boost REQUIRED)
 # eigen (math)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+# manifold (boolean ops)
+find_package(manifold CONFIG REQUIRED)
 
 set(libName enzoOps1)
 add_library(${libName} SHARED
     RegisterPlugin.cpp
-    ../Engine/Operator/OperatorTable.cpp
-    ../Engine/Operator/GeometryOpDef.cpp
-    ../Engine/Operator/GeometryOperator.cpp
-    ../Engine/Operator/GeometryConnection.cpp
-    ../Engine/Operator/Context.cpp
-    ../Engine/Operator/Primitive.cpp
-    ../Engine/Operator/Mesh.cpp
-    ../Engine/Operator/Camera.cpp
-    ../Engine/Operator/NodePacket.cpp
-    ../Engine/Operator/Attribute.cpp
+    ../Engine/Network/OperatorTable.cpp
+    ../Engine/Network/GeometryOpDef.cpp
+    ../Engine/Network/GeometryOperator.cpp
+    ../Engine/Network/GeometryConnection.cpp
+    ../Engine/Network/Context.cpp
+    ../Engine/Primitives/Primitive.cpp
+    ../Engine/Primitives/Mesh.cpp
+    ../Engine/Primitives/Camera.cpp
+    ../Engine/Network/NodePacket.cpp
+    ../Engine/Attribute/Attribute.cpp
+    ../Engine/Attribute/Transform.cpp
+    ../Engine/Selection/Selection.cpp
+    ../Engine/Selection/SelectionComponent.cpp
+    ../Engine/Selection/IndexSet.cpp
+    ../Engine/GeometryAlgorithms/MeshUtils.cpp
+    ../Engine/GeometryAlgorithms/BooleanUtils.cpp
+    ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
     ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
@@ -26,18 +35,26 @@ add_library(${libName} SHARED
     ../Engine/Parameter/Default.cpp
     ../Engine/Parameter/Range.cpp
     ../Engine/Parameter/PrmName.cpp
+    ../Engine/Parameter/Ramp.cpp
+    ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
-    GopTestCube.cpp
     GopGeometryImport.cpp
     GopGrid.cpp
     GopSineWave.cpp
     GopOceanSurface.cpp
     GopMerge.cpp
+    GopCopyToPoints.cpp
     GopPath.cpp
     GopCamera.cpp
+    GopDelete.cpp
+    GopExtrude.cpp
+    GopCube.cpp
+    GopBoolean.cpp
+    GopCircle.cpp
+    GopSweep.cpp
 )
-target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb)
+target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold)
 
 # packaging
 install(TARGETS ${libName}

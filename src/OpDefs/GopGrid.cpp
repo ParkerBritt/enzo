@@ -1,99 +1,106 @@
 #include "OpDefs/GopGrid.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Types.h"
+#include "Engine/Primitives/Mesh.h"
+#include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <cstdio>
-#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <tbb/parallel_for.h>
 
 GopGrid::GopGrid(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GopGrid::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         NodePacket packet;
         auto geo = std::make_shared<geo::Mesh>();
-        bt::floatT width = context.evalFloatParm("size", 0);
-        bt::floatT height = context.evalFloatParm("size", 1);
+        floatT width = context.evalParmFloat("size", 0);
+        floatT height = context.evalParmFloat("size", 1);
 
-        const bt::intT columns = context.evalIntParm("columns");
-        const bt::intT rows = context.evalIntParm("rows");
-        if(columns<=0 || rows<=0)
+        const intT columns = context.evalParmInt("columns");
+        const intT rows = context.evalParmInt("rows");
+        if (columns <= 0 || rows <= 0)
         {
             packet.addPrimitive(std::move(geo));
             setOutputPacket(0, packet);
             return;
         }
-        
-        const bt::floatT centerOffsetX = width/2.0;
-        const bt::floatT centerOffsetY = height/2.0;
 
-        const bt::floatT columnDivisor = std::max<bt::floatT>(columns-1, 1);
-        const bt::floatT rowDivisor = std::max<bt::floatT>(rows-1, 1);
+        const floatT centerOffsetX = width / 2.0;
+        const floatT centerOffsetY = height / 2.0;
+
+        const floatT columnDivisor = std::max<floatT>(columns - 1, 1);
+        const floatT rowDivisor = std::max<floatT>(rows - 1, 1);
         // add points
-        for(int i=0;i<columns;i++)
+        for (int i = 0; i < columns; i++)
         {
-            for(int j=0;j<rows;++j)
+            for (int j = 0; j < rows; ++j)
             {
-                const bt::floatT x = i/columnDivisor*width-centerOffsetX;
-                const bt::floatT z = j/rowDivisor*height-centerOffsetY;
-                geo->addPoint(bt::Vector3(x, 0, z));
+                const floatT x = i / columnDivisor * width - centerOffsetX;
+                const floatT z = j / rowDivisor * height - centerOffsetY;
+                geo->addPoint(Vector3(x, 0, z));
             }
         }
 
-        if(columns > 1 && rows > 1)
+        if (columns > 1 && rows > 1)
         {
             // add faces
-            for(int i=0;i<std::floor((columns-1)*(rows)-1);i++)
+            for (int col = 0; col < columns - 1; ++col)
             {
-                const int endOffset = (i+1)%rows==0;
-                const ga::Offset startPt = i+endOffset; 
-                geo->addFace({startPt,startPt+rows,startPt+rows+1,startPt+1});
+                for (int row = 0; row < rows - 1; ++row)
+                {
+                    const Offset startPt = col * rows + row;
+                    geo->addFace({startPt, startPt + 1, startPt + rows + 1, startPt + rows});
+                }
             }
         }
         else
         {
             // add lines
-            const size_t iterationLimit = std::max(columns, rows)-1; 
-            for(int i=0;i<iterationLimit;i++)
+            const size_t iterationLimit = std::max(columns, rows) - 1;
+            for (int i = 0; i < iterationLimit; i++)
             {
-                const ga::Offset startPt = i; 
-                geo->addFace({startPt,startPt+1}, false);
+                const Offset startPt = i;
+                geo->addFace({startPt, startPt + 1}, false);
             }
         }
 
         packet.addPrimitive(std::move(geo));
         setOutputPacket(0, packet);
     }
-
 }
 
-enzo::prm::Template GopGrid::parameterList[] =
+std::vector<enzo::prm::Template> GopGrid::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("size", "Size"), enzo::prm::Default(10), 2, enzo::prm::Range(0, 100)),
-    enzo::prm::Template(
-        enzo::prm::Type::INT,
-        enzo::prm::Name("rows", "Rows"),
-        enzo::prm::Default(10),
-        1,
-        enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
-    ),
-    enzo::prm::Template(
-        enzo::prm::Type::INT,
-        enzo::prm::Name("columns", "Columns"),
-        enzo::prm::Default(10),
-        1,
-        enzo::prm::Range(1, 100,  enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
-    ),
-    enzo::prm::Terminator
-};
+    return {
+        enzo::prm::Template(
+            enzo::prm::Type::XYZ,
+            enzo::prm::Name("size", "Size"),
+            enzo::prm::Default(10),
+            2,
+            enzo::prm::Range(0, 100)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::INT,
+            enzo::prm::Name("rows", "Rows"),
+            enzo::prm::Default(10),
+            1,
+            enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::INT,
+            enzo::prm::Name("columns", "Columns"),
+            enzo::prm::Default(10),
+            1,
+            enzo::prm::Range(1, 100, enzo::prm::RangeFlag::LOCKED, enzo::prm::RangeFlag::UNLOCKED)
+        )
+    };
+}

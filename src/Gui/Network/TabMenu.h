@@ -1,76 +1,39 @@
 #pragma once
 
-#include <qcontainerfwd.h>
-#include <qlineedit.h>
-#include <QLabel>
-#include <qpushbutton.h>
-#include <qscrollarea.h>
-#include <qwidget.h>
-#include <QVBoxLayout>
-#include <QSvgWidget>
-#include <iostream>
+#include "Gui/UtilWidgets/PopupList.h"
 
-namespace enzo::ui
+#include <QLineEdit>
+
+class NetworkPanel;
+
+namespace enzo::ui {
+
+/**
+ * @brief Search menu that creates a node in the network from the operator table.
+ *
+ * The menu opens at the cursor with a search field above the list and filters the
+ * operators as the user types.
+ */
+class TabMenu : public PopupList
 {
-class TabMenuButton
-: public QPushButton
-{
-public:
-    TabMenuButton(const QString &text, QWidget *parent = nullptr);
-    std::string nodeName;
-    QString getDisplayText() {return displayText_;}
-    void setSelected(bool selected);
-    void enterEvent(QEnterEvent *event);
-    void leaveEvent(QEvent *event);
-private:
+    Q_OBJECT
+  public:
+    TabMenu(NetworkPanel* network);
 
-    QHBoxLayout* mainLayout_;
-    QLabel* textLabel_;
-    QSvgWidget* icon_;
-    QString displayText_;
-};
+    /// @brief Opens the menu at the cursor offset by the given amount.
+    void showOnMouse(float dx = 0, float dy = 0);
 
-class TabMenu
-: public QWidget
-{
-public:
-    TabMenu(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    void showOnMouse(float dx=0, float dy=0);
-     
-private:
-    enum class SelectionDirection
-    {
-        UP,
-        DOWN
-    };
+  protected:
+    int headerHeight() const override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
-    void createNode(std::string nodeName);
-    QVBoxLayout* mainLayout_;
+  private:
+    void applyFilter(const QString& text);
+    void createNode(const std::string& nodeName);
+
+    NetworkPanel* network_;
     QLineEdit* searchBar_;
-    QScrollArea* nodeScrollArea_;
-    QWidget* nodeHolder_;
-    QVBoxLayout* nodeHolderLayout_;
-    void doHide();
-    void textChanged(const QString &text);
-    std::vector<TabMenuButton*> buttons_;
-    std::vector<TabMenuButton*> visibleButtons_;
-    unsigned int selectionIndex_ = 0;
-    void moveSelection(SelectionDirection direction);
-
-protected:
-    void focusOutEvent(QFocusEvent *event) override;
-    bool event(QEvent *event) override;
-    // void resizeEvent(QResizeEvent *event) override;
-protected Q_SLOTS:
-    void nodeClicked();
 };
 
-
-// class TabMenuSearch
-// : public QLineEdit
-// {
-//     TabMenuSearch(QWidget *parent = nullptr);
-
-// };
-
-}
+} // namespace enzo::ui

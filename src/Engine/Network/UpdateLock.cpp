@@ -2,35 +2,30 @@
 #include "Engine/Network/NetworkManager.h"
 #include <icecream.hpp>
 
-unsigned int enzo::nt::UpdateLock::lockCounter=0;
+namespace enzo {
 
-enzo::nt::UpdateLock::UpdateLock()
+unsigned int nt::UpdateLock::lockCounter = 0;
+
+nt::UpdateLock::UpdateLock()
 {
     lockCounter++;
     IC("up", lockCounter);
 }
 
-enzo::nt::UpdateLock::~UpdateLock()
+nt::UpdateLock::~UpdateLock()
 {
     lockCounter--;
     IC("down", lockCounter);
-    if(lockCounter == 0)
+    if (lockCounter == 0)
     {
         nm().update();
     }
 }
 
-unsigned int enzo::nt::UpdateLock::getNumLocks()
-{
-    return lockCounter;
-}
+unsigned int nt::UpdateLock::getNumLocks() { return lockCounter; }
 
-bool enzo::nt::UpdateLock::isLocked()
-{
-    return lockCounter>0;
-}
+bool nt::UpdateLock::isLocked() { return lockCounter > 0; }
 
-bool enzo::nt::UpdateLock::isUnlocked()
-{
-    return !isLocked();
-}
+bool nt::UpdateLock::isUnlocked() { return !isLocked(); }
+
+} // namespace enzo

@@ -1,15 +1,15 @@
 #include "Gui/Viewport/ViewportGLWidget.h"
-#include "Engine/Operator/AttributeHandle.h"
-#include "Engine/Types.h"
+#include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Core/Types.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLPoints.h"
-#include <glm/mat4x4.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/mat4x4.hpp>
 #include <memory>
 #include <qtimer.h>
-#include "Engine/Operator/Mesh.h"
 
 void ViewportGLWidget::initializeGL()
 {
@@ -28,8 +28,10 @@ void ViewportGLWidget::initializeGL()
     cameraPrims_ = std::make_unique<GLCameraPrim>();
 
     QSurfaceFormat fmt = context()->format();
-    std::cout << "format: " << (fmt.renderableType() == QSurfaceFormat::OpenGLES ? "GLES" : "Desktop") << "\n";
-    std::cout << "format: " << (fmt.renderableType() == QSurfaceFormat::OpenGL ? "true" : "false") << "\n";
+    std::cout << "format: "
+              << (fmt.renderableType() == QSurfaceFormat::OpenGLES ? "GLES" : "Desktop") << "\n";
+    std::cout << "format: " << (fmt.renderableType() == QSurfaceFormat::OpenGL ? "true" : "false")
+              << "\n";
 
     // init loop
     QTimer* loopTimer = new QTimer(this);
@@ -38,7 +40,6 @@ void ViewportGLWidget::initializeGL()
 
     // init camera
     curCamera = GLCamera(-10, 5, -10);
-
 
     // vertex shader
     const std::string vertexShaderSource = R"(
@@ -65,12 +66,11 @@ void ViewportGLWidget::initializeGL()
     // compile shader object
     glCompileShader(vertexShader);
 
-    
     // log shader error
-    int  success;
+    int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success)
+    if (!success)
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -78,14 +78,14 @@ void ViewportGLWidget::initializeGL()
     else
     {
         std::cout << "success\n";
-
     }
-    
-    
+
     // fragment shader
     const std::string fragmentShaderSource = R"(
     #version 330 core
     in vec3 Normal;
+
+    uniform bool uWireframe;
 
     out vec4 FragColor;
 
@@ -101,6 +101,12 @@ void ViewportGLWidget::initializeGL()
 
     void main()
     {
+        if(uWireframe)
+        {
+            FragColor = vec4(0.4, 0.4, 0.4, 1.0);
+            return;
+        }
+
         vec3 lightDir = normalize(vec3(1.0,1.0,1.0));
         float brightness = remap(dot(Normal, lightDir), -1, 1, 0.5, 1);
 
@@ -125,37 +131,39 @@ void ViewportGLWidget::initializeGL()
     glAttachShader(shaderProgram, fragmentShader);
     // link program
     glLinkProgram(shaderProgram);
-    
+
     // delete shaders now that the program is complete
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
-
 
     constexpr float clearValue = 0.19;
     glClearColor(clearValue, clearValue, clearValue, 1.0f);
 }
 
-
-
-void ViewportGLWidget::resizeGL(int w, int h)
-{
-}
+void ViewportGLWidget::resizeGL(int w, int h) {}
 
 void ViewportGLWidget::paintGL()
 {
 
-
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-
     glm::mat4 projMatrix = glm::perspective(
-        glm::radians(45.0f),                  // FOV
-        float(width()) / height(),          // aspect ratio
-        0.1f,                                 // near plane
-        1000.0f                                // far plane
+        glm::radians(45.0f),       // FOV
+        float(width()) / height(), // aspect ratio
+        0.1f,                      // near plane
+        1000.0f                    // far plane
     );
 
+    // draw grid first so all other geometry overdraws it
+    gridMesh_->useProgram();
+    glUniformMatrix4fv(
+        glGetUniformLocation(gridMesh_->shaderProgram, "uProj"),
+        1,
+        GL_FALSE,
+        glm::value_ptr(projMatrix)
+    );
+    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
+    gridMesh_->draw();
 
     glUseProgram(shaderProgram);
     GLint projMLoc = glGetUniformLocation(shaderProgram, "uProj");
@@ -164,29 +172,48 @@ void ViewportGLWidget::paintGL()
     GLint viewMLoc = glGetUniformLocation(shaderProgram, "uView");
     curCamera.setUniform(viewMLoc);
 
+    GLint wireLoc = glGetUniformLocation(shaderProgram, "uWireframe");
+    glUniform1i(wireLoc, 0);
     triangleMesh_->draw();
+
+    if (wireframeMode_)
+    {
+        glUniform1i(wireLoc, 1);
+        triangleMesh_->drawWireframe();
+    }
 
     points_->useProgram();
     points_->bind();
     points_->updatePointSize(curCamera);
-    glUniformMatrix4fv(glGetUniformLocation(points_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    glUniformMatrix4fv(
+        glGetUniformLocation(points_->shaderProgram, "uProj"),
+        1,
+        GL_FALSE,
+        glm::value_ptr(projMatrix)
+    );
     curCamera.setUniform(glGetUniformLocation(points_->shaderProgram, "uView"));
 
-    glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraRight"), 1, glm::value_ptr(curCamera.getRight()));
-    glUniform3fv(glGetUniformLocation(points_->shaderProgram, "uCameraUp"), 1, glm::value_ptr(curCamera.getUp()));
+    glUniform3fv(
+        glGetUniformLocation(points_->shaderProgram, "uCameraRight"),
+        1,
+        glm::value_ptr(curCamera.getRight())
+    );
+    glUniform3fv(
+        glGetUniformLocation(points_->shaderProgram, "uCameraUp"),
+        1,
+        glm::value_ptr(curCamera.getUp())
+    );
     points_->draw();
 
     cameraPrims_->useProgram();
-    glUniformMatrix4fv(glGetUniformLocation(cameraPrims_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
+    glUniformMatrix4fv(
+        glGetUniformLocation(cameraPrims_->shaderProgram, "uProj"),
+        1,
+        GL_FALSE,
+        glm::value_ptr(projMatrix)
+    );
     curCamera.setUniform(glGetUniformLocation(cameraPrims_->shaderProgram, "uView"));
     cameraPrims_->draw();
-
-    gridMesh_->useProgram();
-    glUniformMatrix4fv(glGetUniformLocation(gridMesh_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(projMatrix));
-    curCamera.setUniform(glGetUniformLocation(gridMesh_->shaderProgram, "uView"));
-    gridMesh_->draw();
-
-
 }
 
 // std::unique_ptr<GLMesh> ViewportGLWidget::meshFromGeo(enzo::geo::Geometry& geometry)
@@ -194,22 +221,25 @@ void ViewportGLWidget::paintGL()
 //     using namespace enzo;
 
 //     auto mesh = std::make_unique<GLMesh>();
-//         
-//     std::shared_ptr<ga::Attribute> PAttr = geometry.getAttribByName(ga::AttrOwner::POINT, "P");
-//     ga::AttributeHandleVector3 PAttrHandle = ga::AttributeHandleVector3(PAttr);
-
+//
+//     std::shared_ptr<attr::Attribute> PAttr = geometry.getAttribByName(attr::AttrOwner::POINT,
+//     "P"); attr::AttributeHandleVector3 PAttrHandle = attr::AttributeHandleVector3(PAttr);
 
 //     mesh->setPosBuffer(geometry);
 //     mesh->setIndexBuffer(geometry);
 
-
-
-//     return mesh; 
+//     return mesh;
 // }
 
 void ViewportGLWidget::clearGeometry()
 {
     geometryChanged(std::make_shared<const enzo::NodePacket>());
+}
+
+void ViewportGLWidget::toggleWireframe()
+{
+    wireframeMode_ = !wireframeMode_;
+    update();
 }
 
 void ViewportGLWidget::geometryChanged(std::shared_ptr<const enzo::NodePacket> packet)

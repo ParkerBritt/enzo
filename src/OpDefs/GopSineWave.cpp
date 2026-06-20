@@ -1,73 +1,105 @@
 #include "OpDefs/GopSineWave.h"
-#include "Engine/Operator/Mesh.h"
+#include "Engine/Core/Types.h"
+#include "Engine/Parameter/Ramp.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Types.h"
+#include "Engine/Primitives/Mesh.h"
+#include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <cstdio>
-#include <tbb/blocked_range.h>
-#include <tbb/parallel_for.h>
 #include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 GopSineWave::GopSineWave(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GopSineWave::cookOp(enzo::op::Context context)
 {
     using namespace enzo;
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         NodePacket packet = context.cloneInputPacket(0);
 
-        const bt::floatT frequency = context.evalFloatParm("frequency");
-        const bool radial = context.evalBoolParm("radial");
+        const floatT frequency = context.evalParmFloat("frequency");
+        const floatT offset = context.evalParmFloat("offset");
+        const bool radial = context.evalParmBool("radial");
+        const prm::Ramp amplitude = context.evalParmRamp("amplitude");
 
-        for(size_t p = 0; p < packet.size(); ++p)
+        for (size_t p = 0; p < packet.size(); ++p)
         {
             auto prim = packet.getPrimitive(p);
-            if(prim->getType() != geo::PrimType::MESH) continue;
+            if (prim->getType() != geo::PrimType::MESH) continue;
             auto geo = std::static_pointer_cast<geo::Mesh>(prim);
-            const ga::Offset pointCount = geo->getNumPoints();
+            const Offset pointCount = geo->getNumPoints();
 
-            if(radial)
+            if (radial)
             {
-                const bt::Vector3 center(context.evalFloatParm("center", 0), context.evalFloatParm("center", 1), context.evalFloatParm("center", 2));
-                tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency, center](tbb::blocked_range<ga::Offset> range){
-                    for(ga::Offset i=range.begin(); i!=range.end(); ++i)
-                    {
-                        bt::Vector3 pos = geo->getPointPos(i);
-                        pos += bt::Vector3(0, sin((pos-center).norm()*frequency), 0);
-                        geo->setPointPos(i, pos);
+                const Vector3 center(
+                    context.evalParmFloat("center", 0),
+                    context.evalParmFloat("center", 1),
+                    context.evalParmFloat("center", 2)
+                );
+                tbb::parallel_for(
+                    tbb::blocked_range<Offset>(0, pointCount),
+                    [&geo, &amplitude, frequency, center, offset](
+                        tbb::blocked_range<Offset> range
+                    ) {
+                        for (Offset i = range.begin(); i != range.end(); ++i)
+                        {
+                            Vector3 pos = geo->getPointPos(i);
+                            // The ramp remaps the wave from its zero to one domain.
+                            const floatT wave = sin((pos - center).norm() * frequency + offset);
+                            pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
+                            geo->setPointPos(i, pos);
+                        }
                     }
-                });
+                );
             }
             else
             {
-                tbb::parallel_for(tbb::blocked_range<ga::Offset>(0, pointCount), [&geo, frequency](tbb::blocked_range<ga::Offset> range){
-                    for(ga::Offset i=range.begin(); i!=range.end(); ++i)
-                    {
-                        bt::Vector3 pos = geo->getPointPos(i);
-                        pos += bt::Vector3(0, sin(pos.x()*frequency), 0);
-                        geo->setPointPos(i, pos);
+                tbb::parallel_for(
+                    tbb::blocked_range<Offset>(0, pointCount),
+                    [&geo, &amplitude, frequency, offset](tbb::blocked_range<Offset> range) {
+                        for (Offset i = range.begin(); i != range.end(); ++i)
+                        {
+                            Vector3 pos = geo->getPointPos(i);
+                            // The ramp remaps the wave from its zero to one domain.
+                            const floatT wave = sin(pos.x() * frequency + offset);
+                            pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
+                            geo->setPointPos(i, pos);
+                        }
                     }
-                });
+                );
             }
         }
 
         setOutputPacket(0, packet);
     }
-
 }
 
-enzo::prm::Template GopSineWave::parameterList[] =
+std::vector<enzo::prm::Template> GopSineWave::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("radial", "Radial Mode")),
-    enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("center", "Center"), 3),
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("frequency", "Frequency"), enzo::prm::Default(1), 1),
-    enzo::prm::Terminator
-};
+    return {
+        enzo::prm::Template(enzo::prm::Type::BOOL, enzo::prm::Name("radial", "Radial Mode")),
+        enzo::prm::Template(enzo::prm::Type::XYZ, enzo::prm::Name("center", "Center"), 3),
+        enzo::prm::Template(
+            enzo::prm::Type::FLOAT,
+            enzo::prm::Name("frequency", "Frequency"),
+            enzo::prm::Default(1)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::FLOAT,
+            enzo::prm::Name("offset", "Offset"),
+            enzo::prm::Default(0)
+        ),
+        enzo::prm::Template(
+            enzo::prm::Type::RAMP,
+            enzo::prm::Name("amplitude", "Amplitude"),
+            enzo::prm::Default(2)
+        )
+    };
+}

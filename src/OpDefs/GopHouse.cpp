@@ -1,11 +1,10 @@
 #include "OpDefs/GopHouse.h"
-#include "Engine/Operator/AttributeHandle.h"
+#include "Engine/Attribute/AttributeHandle.h"
 #include <tbb/parallel_for.h>
 
 GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-: GeometryOpDef(network, opInfo)
+    : GeometryOpDef(network, opInfo)
 {
-
 }
 
 void GOP_house::cookOp(enzo::op::Context context)
@@ -13,16 +12,16 @@ void GOP_house::cookOp(enzo::op::Context context)
     using namespace enzo;
     // std::cout << "COOKING\n";
 
-    if(outputRequested(0))
+    if (outputRequested(0))
     {
         // TODO: convert to NodePacket
         NodePacket packet;
         // geo::Primitive geo;
         //
-        // auto PAttr = geo.getAttribByName(ga::AttrOwner::POINT, "P");
-        // ga::AttributeHandleVector3 PAttrHandle(PAttr);
+        // auto PAttr = geo.getAttribByName(attr::AttrOwner::POINT, "P");
+        // attr::AttributeHandleVector3 PAttrHandle(PAttr);
         // int startPt = PAttrHandle.getSize();
-        // std::vector<bt::Vector3> pts = {
+        // std::vector<Vector3> pts = {
         //     {-1,-1,-1},
         //     {1,-1,-1},
         //     {1,-1,1},
@@ -48,28 +47,26 @@ void GOP_house::cookOp(enzo::op::Context context)
         //
         // for (auto& p : pts) PAttrHandle.addValue(p);
         //
-        // auto pointAttr = geo.getAttribByName(ga::AttrOwner::VERTEX, "point");
-        // ga::AttributeHandleInt pointAttrHandle(pointAttr);
+        // auto pointAttr = geo.getAttribByName(attr::AttrOwner::VERTEX, "point");
+        // attr::AttributeHandleInt pointAttrHandle(pointAttr);
         // for (auto& f : faces) for (int i : f) pointAttrHandle.addValue(startPt + i);
         //
-        // auto vertexCountAttr = geo.getAttribByName(ga::AttrOwner::PRIMITIVE, "vertexCount");
-        // ga::AttributeHandleInt vertexCountHandle(vertexCountAttr);
+        // auto vertexCountAttr = geo.getAttribByName(attr::AttrOwner::PRIMITIVE, "vertexCount");
+        // attr::AttributeHandleInt vertexCountHandle(vertexCountAttr);
         // for (auto& f : faces) vertexCountHandle.addValue(f.size());
         //
         // for(int i=0; i<PAttrHandle.getAllValues().size(); ++i)
         // {
-        //     enzo::bt::Vector3 vector = PAttrHandle.getValue(i);
-        //     vector*=context.evalFloatParm("size");
+        //     enzo::Vector3 vector = PAttrHandle.getValue(i);
+        //     vector*=context.evalParmFloat("size");
         //     PAttrHandle.setValue(i, vector);
         // }
 
         setOutputPacket(0, packet);
     }
-
 }
 
-enzo::prm::Template GOP_house::parameterList[] =
+std::vector<enzo::prm::Template> GOP_house::parameterList()
 {
-    enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1),
-    enzo::prm::Terminator
-};
+    return {enzo::prm::Template(enzo::prm::Type::FLOAT, enzo::prm::Name("size", "Size"), 1)};
+}

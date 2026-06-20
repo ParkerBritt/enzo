@@ -1,11 +1,10 @@
 #pragma once
-#include "Engine/Operator/GeometryOpDef.h"
+#include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopCamera
-: public enzo::nt::GeometryOpDef
+class GopCamera : public enzo::nt::GeometryOpDef
 {
-public:
+  public:
     GopCamera(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
     virtual void cookOp(enzo::op::Context context);
     static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
@@ -13,5 +12,5 @@ public:
         return new GopCamera(network, opInfo);
     }
 
-    static BOOST_SYMBOL_EXPORT enzo::prm::Template parameterList[];
+    static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();
 };

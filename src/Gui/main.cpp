@@ -1,12 +1,14 @@
-#include "Engine/Operator/OperatorTable.h"
+#include "Engine/Network/OperatorTable.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QPushButton>
 #include <QSurfaceFormat>
 
+#include "Gui/Icons/Builtin.h"
 #include "Interface.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     // set up rendering
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGL);
@@ -25,14 +27,16 @@ int main(int argc, char **argv) {
     // load fonts
     QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-VariableFont_wght.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf");
-    QFont appFont("Rubik");
-    appFont.setPointSize(9);
-    app.setFont(appFont);
+    // Widget font sizes come from the application stylesheet. This default
+    // only covers painting outside the widget tree, like pixmap icons.
+    app.setFont(QFont("Rubik"));
 
     app.setWindowIcon(QIcon(":/icons/icon-main-white.png"));
 
+    enzo::ui::icons::registerBuiltins();
+
     EnzoUI interface;
-    interface.show();
+    interface.showMaximized();
 
     return app.exec();
 }

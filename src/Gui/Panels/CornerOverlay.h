@@ -3,12 +3,13 @@
 #include <QPen>
 #include <QWidget>
 
-class CornerOverlay : public QWidget {
-public:
+class CornerOverlay : public QWidget
+{
+  public:
     CornerOverlay(QWidget* parent);
     void setBorderColor(QColor color);
 
-protected:
+  protected:
     void paintEvent(QPaintEvent*) override;
     QPen borderPen_ = QPen(QColor("#303030"));
 };

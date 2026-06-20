@@ -1,26 +1,30 @@
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QMenuBar>
-#include <QMenu>
+#pragma once
 
-class HeaderBar
-: public QWidget
+#include "Gui/UtilWidgets/Menu.h"
+
+#include <QBoxLayout>
+#include <QString>
+#include <QWidget>
+#include <vector>
+
+class HeaderBar : public QWidget
 {
-public:
+  public:
     HeaderBar();
 
-private:
+  private:
     void onFileNewClicked();
     void onFileOpenClicked();
     void onFileSaveClicked();
     void onFileSaveAsClicked();
 
     void addRecentFile(const QString& filePath);
-    void updateRecentFilesMenu();
     void saveFile(const QString& filePath);
     void openFile(const QString& filePath);
 
+    std::vector<enzo::ui::Menu::Entry> fileEntries();
+    std::vector<enzo::ui::Menu::Entry> recentFileEntries();
+
     QBoxLayout* mainLayout_;
-    QMenu* recentFilesMenu_;
     QString currentFilePath_;
 };

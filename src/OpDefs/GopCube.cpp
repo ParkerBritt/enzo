@@ -1,0 +1,61 @@
+#include "OpDefs/GopCube.h"
+#include "Engine/Core/Types.h"
+#include "Engine/GeometryAlgorithms/MeshShapes.h"
+#include "Engine/Parameter/Range.h"
+#include "Engine/Primitives/Mesh.h"
+#include <Eigen/Geometry>
+
+GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+    : GeometryOpDef(network, opInfo)
+{
+}
+
+void GopCube::cookOp(enzo::op::Context context)
+{
+    using namespace enzo;
+
+    if (!outputRequested(0)) return;
+
+    // Read shape parameters.
+    const floatT sizeX = context.evalParmFloat("size", 0);
+    const floatT sizeY = context.evalParmFloat("size", 1);
+    const floatT sizeZ = context.evalParmFloat("size", 2);
+
+    const floatT centerX = context.evalParmFloat("center", 0);
+    const floatT centerY = context.evalParmFloat("center", 1);
+    const floatT centerZ = context.evalParmFloat("center", 2);
+
+    const floatT uniformScale = context.evalParmFloat("uniformScale");
+
+    const floatT rotateX = context.evalParmFloat("rotate", 0) * M_PI / 180.0;
+    const floatT rotateY = context.evalParmFloat("rotate", 1) * M_PI / 180.0;
+    const floatT rotateZ = context.evalParmFloat("rotate", 2) * M_PI / 180.0;
+
+    // Build an axis aligned cube around the origin so rotation pivots on its center.
+    const Vector3 scaledSize(sizeX * uniformScale, sizeY * uniformScale, sizeZ * uniformScale);
+    auto mesh = utils::buildCube(scaledSize, Vector3(0, 0, 0));
+
+    // Compose rotation then translation into a single homogeneous transform.
+    Eigen::Affine3f transform = Eigen::Affine3f::Identity();
+    transform.translate(Vector3(centerX, centerY, centerZ));
+    transform.rotate(Eigen::AngleAxisf(rotateX, Vector3::UnitX()));
+    transform.rotate(Eigen::AngleAxisf(rotateY, Vector3::UnitY()));
+    transform.rotate(Eigen::AngleAxisf(rotateZ, Vector3::UnitZ()));
+
+    mesh->applyTransform(Matrix4(transform.matrix()));
+
+    NodePacket packet;
+    packet.addPrimitive(std::move(mesh));
+    setOutputPacket(0, packet);
+}
+
+std::vector<enzo::prm::Template> GopCube::parameterList()
+{
+    using namespace enzo::prm;
+    return {
+        Template(Type::XYZ, Name("size", "Size"), Default(1), 3, Range(0, 100)),
+        Template(Type::XYZ, Name("center", "Center"), Default(0), 3),
+        Template(Type::XYZ, Name("rotate", "Rotation"), Default(0), 3, Range(-360, 360)),
+        Template(Type::FLOAT, Name("uniformScale", "Uniform Scale"), Default(1), 1, Range(0, 10)),
+    };
+}

@@ -1,4 +1,15 @@
 #include "Gui/Network/NodeGraphic.h"
+#include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Gui/Network/DisplayFlagButton.h"
+#include "Gui/Network/NodeIconGraphic.h"
+#include "Gui/Network/SocketGraphic.h"
+#include <QEasingCurve>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSvgItem>
+#include <QPropertyAnimation>
 #include <QTextDocument>
 #include <algorithm>
 #include <iostream>
@@ -6,29 +17,27 @@
 #include <qnamespace.h>
 #include <stdexcept>
 #include <string>
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Operator/GeometryOperator.h"
-#include "Engine/Types.h"
-#include "Gui/Network/DisplayFlagButton.h"
-#include "Gui/Network/SocketGraphic.h"
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSvgItem>
-#include "Gui/Network/NodeIconGraphic.h"
 
-NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem *parent)
-: QGraphicsItem(parent), opId_{id}
+namespace {
+
+// Lower is faster
+constexpr int placementDurationMs = 100;
+constexpr int removalDurationMs = 80;
+
+} // namespace
+
+NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent)
+    : QGraphicsObject(parent), opId_{id}
 {
     socketSize_ = 3;
-    titlePadding_=1;
+    titlePadding_ = 1;
     enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(id);
-    titleText_ = geoOp.getTypeName();
-    // TODO: unique node names
-    subTitleText_ = "OpID: " + std::to_string(opId_);
+    titleText_ = geoOp.getName();
+    subTitleText_ = geoOp.getType().getLabel();
     constexpr int height = 27;
     constexpr int width = 100;
-    bodyRect_ = QRect(-width*0.5f, -height*0.5f, width, height);
-    iconScale_=height*0.55;
+    bodyRect_ = QRect(-width * 0.5f, -height * 0.5f, width, height);
+    iconScale_ = height * 0.55;
 
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
@@ -36,7 +45,6 @@ NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem *parent)
     initIcon();
     initSockets();
     initFlagButtons();
-
 }
 
 void NodeGraphic::initFonts()
@@ -51,33 +59,43 @@ void NodeGraphic::initFonts()
     // compute text positions
     QRectF titleBounds = QFontMetricsF(titleFont_).boundingRect(titleText_.c_str());
     QRectF subTitleBounds = QFontMetricsF(subTitleFont_).boundingRect(subTitleText_.c_str());
-    float titleOffsetX = (titleBounds.width()-bodyRect_.width()-iconScale_)*0.5f;
-    float titleOffsetY = subTitleBounds.height()*0.5f+titlePadding_+(-(subTitleBounds.height()*0.5+titleBounds.height()+titlePadding_)+bodyRect_.height())*0.5f;
+    float titleOffsetX = (titleBounds.width() - bodyRect_.width() - iconScale_) * 0.5f;
+    float titleOffsetY = subTitleBounds.height() * 0.5f + titlePadding_ +
+                         (-(subTitleBounds.height() * 0.5 + titleBounds.height() + titlePadding_) +
+                          bodyRect_.height()) *
+                             0.5f;
     // float titleOffsetY = (bodyRect_.height())*0.5f;
     // titleOffsetY -= subTitleBounds.height()*0.5f;
     float subTitleOffsetX = titleOffsetX;
-    float subTitleOffsetY = (-(subTitleBounds.height()*0.5+titleBounds.height()+titlePadding_)+bodyRect_.height())*0.5f;
+    float subTitleOffsetY =
+        (-(subTitleBounds.height() * 0.5 + titleBounds.height() + titlePadding_) +
+         bodyRect_.height()) *
+        0.5f;
 
     titleRect_ = bodyRect_.adjusted(-titleOffsetX, titleOffsetY, -titleOffsetX, titleOffsetY);
-    subTitleRect_ = bodyRect_.adjusted(-subTitleOffsetX, subTitleOffsetY, -subTitleOffsetX, subTitleOffsetY);
-
+    subTitleRect_ =
+        bodyRect_.adjusted(-subTitleOffsetX, subTitleOffsetY, -subTitleOffsetX, subTitleOffsetY);
 }
 
 void NodeGraphic::initIcon()
 {
     icon_ = new NodeIconGraphic(":/node-icons/grid.svg", this);
-    // icon_ = new NodeIconGraphic("/home/parker/MyRepos/masters/static/icons/icon-main-white.svg", this);
-    
-    icon_->setScale(1.0f/icon_->boundingRect().width()*iconScale_);
+    // icon_ = new NodeIconGraphic("/home/parker/MyRepos/masters/static/icons/icon-main-white.svg",
+    // this);
+
+    icon_->setScale(1.0f / icon_->boundingRect().width() * iconScale_);
     // icon_->setScale(0.01);
-    icon_->setPos(titleRect_.left()-iconScale_-iconPadding_, -iconScale_*0.5f);
+    icon_->setPos(titleRect_.left() - iconScale_ - iconPadding_, -iconScale_ * 0.5f);
 }
 
 void NodeGraphic::initFlagButtons()
 {
     displayFlagButton_ = new DisplayFlagButton(this);
     float padding = 2;
-    displayFlagButton_->setPos(QPointF(bodyRect_.right()-displayFlagButton_->getWidth()/2.0f-padding, bodyRect_.center().y()));
+    displayFlagButton_->setPos(QPointF(
+        bodyRect_.right() - displayFlagButton_->getWidth() / 2.0f - padding,
+        bodyRect_.center().y()
+    ));
 }
 
 #include <icecream.hpp>
@@ -85,7 +103,7 @@ void NodeGraphic::initSockets()
 {
     enzo::nt::GeometryOperator& op = enzo::nt::nm().getGeoOperator(opId_);
     IC();
-    for(int i=0, max=op.getMaxInputs(); i<max; ++i)
+    for (int i = 0, max = op.getMaxInputs(); i < max; ++i)
     {
         IC();
         std::cout << "CREATING INPUT SOCKET!\n";
@@ -94,7 +112,7 @@ void NodeGraphic::initSockets()
         inputs_.push_back(socketInput);
     }
 
-    for(int i=0, max=op.getMaxOutputs(); i<max; ++i)
+    for (int i = 0, max = op.getMaxOutputs(); i < max; ++i)
     {
         IC();
         std::cout << "CREATING OUTPUT SOCKET!\n";
@@ -102,7 +120,6 @@ void NodeGraphic::initSockets()
         socketOutput->setPos(getSocketPosition(i, enzo::nt::SocketIOType::Output));
         outputs_.push_back(socketOutput);
     }
-
 }
 
 // void setInputEdge(NodeEdgeGraphic* edge, int indx)
@@ -115,7 +132,6 @@ void NodeGraphic::initSockets()
 
 // }
 
-
 // void NodeGraphic::addEdge(NodeEdgeGraphic* edge)
 // {
 //     edges_.push_back(edge);
@@ -123,25 +139,29 @@ void NodeGraphic::initSockets()
 
 SocketGraphic* NodeGraphic::getInput(int indx) const
 {
-    if(inputs_.size()==0)
+    if (inputs_.size() == 0)
     {
-        throw std::out_of_range("Can't access inputs when node has no inputs: " + std::to_string(indx)); 
+        throw std::out_of_range(
+            "Can't access inputs when node has no inputs: " + std::to_string(indx)
+        );
     }
-    else if(indx>inputs_.size()-1)
+    else if (indx > inputs_.size() - 1)
     {
-        throw std::out_of_range("Can't access input: " + std::to_string(indx)); 
+        throw std::out_of_range("Can't access input: " + std::to_string(indx));
     }
     return inputs_.at(indx);
 }
 SocketGraphic* NodeGraphic::getOutput(int indx) const
 {
-    if(outputs_.size()==0)
+    if (outputs_.size() == 0)
     {
-        throw std::out_of_range("Can't access outputs when node has no outputs: " + std::to_string(indx)); 
+        throw std::out_of_range(
+            "Can't access outputs when node has no outputs: " + std::to_string(indx)
+        );
     }
-    else if(indx>inputs_.size()-1)
+    else if (indx > inputs_.size() - 1)
     {
-        throw std::out_of_range("Can't access input: " + std::to_string(indx)); 
+        throw std::out_of_range("Can't access input: " + std::to_string(indx));
     }
     return outputs_.at(indx);
 }
@@ -156,7 +176,7 @@ QRectF NodeGraphic::boundingRect() const
 
 void NodeGraphic::setSelected(bool selected)
 {
-    selected_=selected;
+    selected_ = selected;
     update();
 }
 
@@ -168,8 +188,33 @@ bool NodeGraphic::toggleSelected()
     return selected;
 }
 
+void NodeGraphic::animatePlacement()
+{
+    // Grow from nothing and overshoot the final size before settling
+    auto* placeAnim = new QPropertyAnimation(this, "scale", this);
+    placeAnim->setDuration(placementDurationMs);
+    placeAnim->setEasingCurve(QEasingCurve::OutBack);
+    placeAnim->setStartValue(0.0);
+    placeAnim->setEndValue(1.0);
 
-void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    setScale(0.0);
+    placeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void NodeGraphic::animateRemoval(std::function<void()> onComplete)
+{
+    // Stretch outward briefly then collapse into the center
+    auto* removeAnim = new QPropertyAnimation(this, "scale", this);
+    removeAnim->setDuration(removalDurationMs);
+    removeAnim->setEasingCurve(QEasingCurve::InBack);
+    removeAnim->setStartValue(scale());
+    removeAnim->setEndValue(0.0);
+    connect(removeAnim, &QPropertyAnimation::finished, this, onComplete);
+
+    removeAnim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void NodeGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     // default outline
     QPen defaultPen = QPen(QColor("#353535"));
@@ -179,8 +224,10 @@ void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     // set fill
     painter->setBrush(QBrush(QColor("#1b1b1b")));
 
-    if(selected_) painter->setPen(selectedPen);
-    else painter->setPen(defaultPen);
+    if (selected_)
+        painter->setPen(selectedPen);
+    else
+        painter->setPen(defaultPen);
     painter->drawRoundedRect(bodyRect_, 5, 5);
 
     painter->setPen(QPen(QColor("white")));
@@ -193,8 +240,6 @@ void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     painter->setFont(subTitleFont_);
     painter->drawText(subTitleRect_, Qt::AlignLeft, subTitleText_.c_str());
-
- 
 }
 
 // void NodeGraphic::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -211,60 +256,55 @@ void NodeGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
 void NodeGraphic::updatePositions()
 {
-    for(int socketIndex=0; socketIndex<inputs_.size(); ++socketIndex)
+    for (int socketIndex = 0; socketIndex < inputs_.size(); ++socketIndex)
     {
-        inputs_[socketIndex]->posChanged(getSocketScenePosition(socketIndex, enzo::nt::SocketIOType::Input));
+        inputs_[socketIndex]->posChanged(
+            getSocketScenePosition(socketIndex, enzo::nt::SocketIOType::Input)
+        );
     }
-    for(int socketIndex=0; socketIndex<outputs_.size(); ++socketIndex)
+    for (int socketIndex = 0; socketIndex < outputs_.size(); ++socketIndex)
     {
-        outputs_[socketIndex]->posChanged(getSocketScenePosition(socketIndex, enzo::nt::SocketIOType::Output));
+        outputs_[socketIndex]->posChanged(
+            getSocketScenePosition(socketIndex, enzo::nt::SocketIOType::Output)
+        );
     }
 }
 
 QPointF NodeGraphic::getSocketPosition(int socketIndex, enzo::nt::SocketIOType socketType)
 {
     enzo::nt::GeometryOperator& op = enzo::nt::nm().getGeoOperator(opId_);
-    int maxSocketNumber = socketType==enzo::nt::SocketIOType::Input ? op.getMaxInputs() : op.getMaxOutputs();
-    float socketSpread = socketSize_*1.5*maxSocketNumber;
+    int maxSocketNumber =
+        socketType == enzo::nt::SocketIOType::Input ? op.getMaxInputs() : op.getMaxOutputs();
+    float socketSpread = socketSize_ * 1.5 * maxSocketNumber;
 
     float xPos, yPos;
     xPos = bodyRect_.center().x();
     yPos = socketType == enzo::nt::SocketIOType::Input ? bodyRect_.top() : bodyRect_.bottom();
 
-    xPos += ((socketIndex/static_cast<float>(std::max(maxSocketNumber-1, 1)))-0.5)*2*socketSpread;
+    xPos += ((socketIndex / static_cast<float>(std::max(maxSocketNumber - 1, 1))) - 0.5) * 2 *
+            socketSpread;
 
     return QPointF(xPos, yPos);
 }
 QPointF NodeGraphic::getSocketScenePosition(int socketIndex, enzo::nt::SocketIOType socketType)
 {
-    return this->pos()+getSocketPosition(socketIndex, socketType);
+    return this->pos() + getSocketPosition(socketIndex, socketType);
 }
 
-enzo::nt::OpId NodeGraphic::getOpId() const
-{
-    return opId_;
-}
+enzo::nt::OpId NodeGraphic::getOpId() const { return opId_; }
 
-void NodeGraphic::setDisplayFlag(bool state)
-{
-    displayFlagButton_->setEnabled(state);
-}
+void NodeGraphic::setDisplayFlag(bool state) { displayFlagButton_->setEnabled(state); }
 
+QRectF NodeGraphic::getBodyRect() { return bodyRect_; }
 
-QRectF NodeGraphic::getBodyRect()
-{
-    return bodyRect_;
-}
-
-
-
-QVariant NodeGraphic::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+QVariant NodeGraphic::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value)
 {
     QVariant returnVal = QGraphicsItem::itemChange(change, value);
 
-    if (change == ItemPositionHasChanged) {
+    if (change == ItemPositionHasChanged)
+    {
         updatePositions();
     };
-    
+
     return returnVal;
 }

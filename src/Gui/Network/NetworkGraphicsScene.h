@@ -2,15 +2,16 @@
 
 #include <QGraphicsScene>
 
-class NetworkGraphicsScene
-: public QGraphicsScene
+class NetworkGraphicsScene : public QGraphicsScene
 {
-public:
+  public:
     NetworkGraphicsScene();
-private:
-    uint sceneWidth_;
-    uint sceneHeight_;
-    uint gridSize_;
-protected:
-    void drawBackground(QPainter *painter, const QRectF &rect) override;
+
+  private:
+    unsigned int sceneWidth_;
+    unsigned int sceneHeight_;
+    unsigned int gridSize_;
+
+  protected:
+    void drawBackground(QPainter* painter, const QRectF& rect) override;
 };
