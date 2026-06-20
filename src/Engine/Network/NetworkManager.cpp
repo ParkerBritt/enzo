@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <iostream>
 #include <memory>
-#include <stack>
 #include <stdexcept>
 #include <string>
 
@@ -113,6 +112,7 @@ void nt::NetworkManager::removeOperator(OpId opId, bool removeConnections)
     // Signal before erasing so listeners can still query the operator
     operatorRemoved(opId);
 
+    graph_.removeNode(opId);
     gopStore_.erase(opId);
 }
 
@@ -267,6 +267,7 @@ void nt::NetworkManager::setSelectedNodes(std::vector<nt::OpId> opIds)
 void nt::NetworkManager::clear()
 {
     gopStore_.clear();
+    graph_.clear();
     selectedNodes_.clear();
     maxOpId_ = 0;
     displayOp_.reset();
@@ -277,76 +278,17 @@ void nt::NetworkManager::clear()
 
 void nt::NetworkManager::cookOp(nt::OpId opId)
 {
-    std::vector<nt::OpId> dependencyGraph = getDependencyGraph(opId);
+    std::vector<nt::OpId> cookOrder = graph_.getCookOrder(opId);
 
-    for (nt::OpId dependencyOpId : dependencyGraph)
+    for (nt::OpId cookOpId : cookOrder)
     {
-        nt::GeometryOperator& op = getGeoOperator(dependencyOpId);
+        nt::GeometryOperator& op = getGeoOperator(cookOpId);
         if (op.isDirty())
         {
-            op::CookContext context(dependencyOpId, nt::nm());
+            op::CookContext context(cookOpId, nt::nm());
             op.cookOp(context);
         }
     }
-}
-
-std::vector<nt::OpId> nt::NetworkManager::getDependencyGraph(nt::OpId opId)
-{
-    std::stack<nt::OpId> traversalBuffer;
-    std::vector<nt::OpId> dependencyGraph;
-    traversalBuffer.push(opId);
-    dependencyGraph.push_back(opId);
-
-    while (traversalBuffer.size() != 0)
-    {
-        nt::OpId currentOp = traversalBuffer.top();
-        traversalBuffer.pop();
-        auto inputConnections = getGeoOperator(currentOp).getInputConnections();
-        for (auto connection : inputConnections)
-        {
-            if (auto connectionPtr = connection.lock())
-            {
-                traversalBuffer.push(connectionPtr->getInputOpId());
-                dependencyGraph.push_back(connectionPtr->getInputOpId());
-            }
-            else
-            {
-                throw std::runtime_error("Connection weak ptr invalid");
-            }
-        }
-    }
-
-    std::reverse(dependencyGraph.begin(), dependencyGraph.end());
-    return dependencyGraph;
-}
-
-std::vector<nt::OpId> nt::NetworkManager::getDependentsGraph(nt::OpId opId)
-{
-    std::stack<nt::OpId> traversalBuffer;
-    std::vector<nt::OpId> dependencyGraph;
-    traversalBuffer.push(opId);
-    dependencyGraph.push_back(opId);
-
-    while (traversalBuffer.size() != 0)
-    {
-        nt::OpId currentOp = traversalBuffer.top();
-        traversalBuffer.pop();
-        auto outputConnections = getGeoOperator(currentOp).getOutputConnections();
-        for (auto connection : outputConnections)
-        {
-            if (auto connectionPtr = connection.lock())
-            {
-                traversalBuffer.push(connectionPtr->getOutputOpId());
-                dependencyGraph.push_back(connectionPtr->getOutputOpId());
-            }
-            else
-            {
-                throw std::runtime_error("Connection weak ptr invalid");
-            }
-        }
-    }
-
-    return dependencyGraph;
 }
 
 std::optional<nt::OpId> nt::NetworkManager::getDisplayOp() { return displayOp_; }
@@ -355,13 +297,10 @@ void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
 {
     if (dirtyDependents)
     {
-        std::vector<OpId> dependentIds = getDependentsGraph(opId);
-        for (OpId dependentId : dependentIds)
+        std::vector<nt::Unit> dependents = graph_.getDependents(nt::Unit{opId});
+        for (const nt::Unit& dependent : dependents)
         {
-            // dirty node
-            nt::GeometryOperator& dependentOp = getGeoOperator(dependentId);
-            std::cout << "Manager dirtying id: " << dependentId << "\n";
-            dependentOp.dirtyNode(false);
+            getGeoOperator(dependent.opId).dirtyNode(false);
         }
 
         if (nt::UpdateLock::isUnlocked())
@@ -377,6 +316,7 @@ void nt::NetworkManager::_reset()
     std::cout << "resetting network manager\n";
 
     gopStore_.clear();
+    graph_.clear();
     maxOpId_ = 0;
     displayOp_.reset();
 }
