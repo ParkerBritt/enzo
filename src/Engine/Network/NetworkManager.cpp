@@ -1,16 +1,12 @@
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Attribute/Attribute.h"
-#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/OpInfo.h"
 #include "Engine/Network/UpdateLock.h"
-#include "Engine/Primitives/Primitive.h"
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/UndoRedo/DeleteNodeCommand.h"
 #include "Engine/UndoRedo/MoveNodeCommand.h"
-#include "icecream.hpp"
 #include <algorithm>
 #include <iostream>
 #include <memory>

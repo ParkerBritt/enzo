@@ -9,7 +9,6 @@
 #include <memory>
 #include <optional>
 #include <sstream>
-#include <stdexcept>
 
 namespace enzo {
 
