@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 

@@ -4,9 +4,7 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Network/OpInfo.h"
 #include "Engine/Parameter/NodeParameter.h"
-#include <functional>
 #include <memory>
-#include <optional>
 
 namespace enzo::nt {
 /**
