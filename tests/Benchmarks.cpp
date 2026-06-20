@@ -38,7 +38,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
         {
             nt::OpId newOp = nm.createOperator(testOpInfo);
             prevOps.push_back(newOp);
-            nt::connectOperators(newOp, i, prevOp, 0);
+            nt::nm().connectNodes(newOp, i, prevOp, 0);
         }
         for (int j = 0; j < 10; j++)
         {
@@ -48,7 +48,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
                 prevOps.clear();
                 nt::OpId newOp = nm.createOperator(testOpInfo);
                 prevOps.push_back(newOp);
-                nt::connectOperators(newOp, 0, prevOpsBuffer[i], 0);
+                nt::nm().connectNodes(newOp, 0, prevOpsBuffer[i], 0);
             }
         }
     }

@@ -1,5 +1,8 @@
 #pragma once
 #include "Engine/Core/Types.h"
+#include <boost/functional/hash.hpp>
+#include <cstddef>
+#include <functional>
 
 namespace enzo::nt {
 
@@ -24,3 +27,17 @@ struct Connection
 };
 
 } // namespace enzo::nt
+
+// Hashing lives in one place so a Connection can key an unordered container.
+template <> struct std::hash<enzo::nt::Connection>
+{
+    std::size_t operator()(const enzo::nt::Connection& connection) const noexcept
+    {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, connection.sourceOp);
+        boost::hash_combine(seed, connection.sourceOutput);
+        boost::hash_combine(seed, connection.targetOp);
+        boost::hash_combine(seed, connection.targetInput);
+        return seed;
+    }
+};

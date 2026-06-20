@@ -1,6 +1,5 @@
 #include "Gui/Network/NetworkPanel.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryConnection.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
@@ -93,18 +92,10 @@ NetworkPanel::NetworkPanel(QWidget* parent) : Panel(parent)
 
 void NetworkPanel::deleteEdge(QGraphicsItem* edge)
 {
-    std::cout << "----\ndeleting edge\n";
     if (!edge) return;
-    if (auto it = prevHoverItems_.find(edge); it != prevHoverItems_.end())
-    {
-        prevHoverItems_.erase(it);
-    }
-    // NOTE: deleting edge kept giving me segmentation faults
-    // I coundn't figure it out so I'm just leaving it for now
-    // delete edge;
-    static_cast<NodeEdgeGraphic*>(edge)->remove();
 
-    std::cout << "finished deleting edge\n----\n";
+    // Disconnect in the engine, the graphic is torn down by onConnectionRemoved
+    enzo::nt::nm().disconnectNodes(static_cast<NodeEdgeGraphic*>(edge)->getConnection());
 }
 
 void NetworkPanel::mousePressEvent(QMouseEvent* event)
@@ -186,7 +177,7 @@ void NetworkPanel::socketClicked(SocketGraphic* socket, QMouseEvent* event)
         std::cout << "CONNECTING opid: " << inputNodeSocket->getOpId() << " -> "
                   << outputNodeSocket->getOpId() << "\n";
 
-        nt::connectOperators(
+        nt::nm().connectNodes(
             inputNodeSocket->getOpId(),
             inputNodeSocket->getIndex(),
             outputNodeSocket->getOpId(),
@@ -431,26 +422,38 @@ void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
     newNode->animatePlacement();
 }
 
-void NetworkPanel::onConnectionCreated(std::weak_ptr<enzo::nt::GeometryConnection> connection)
+void NetworkPanel::onConnectionCreated(enzo::nt::Connection connection)
 {
-    auto conn = connection.lock();
-    if (!conn) return;
+    NodeGraphic* sourceNode = nodeStore_.at(connection.sourceOp);
+    NodeGraphic* targetNode = nodeStore_.at(connection.targetOp);
 
-    NodeGraphic* inputNode = nodeStore_.at(conn->getInputOpId());
-    NodeGraphic* outputNode = nodeStore_.at(conn->getOutputOpId());
-
-    SocketGraphic* inputSocket = inputNode->getOutput(conn->getInputIndex());
-    SocketGraphic* outputSocket = outputNode->getInput(conn->getOutputIndex());
+    SocketGraphic* sourceSocket = sourceNode->getOutput(connection.sourceOutput);
+    SocketGraphic* targetSocket = targetNode->getInput(connection.targetInput);
 
     // Derive endpoints from node geometry so the placement scale animation does not offset the edge
-    QPointF outputSocketPos =
-        outputNode->getSocketScenePosition(conn->getOutputIndex(), enzo::nt::SocketIOType::Input);
-    QPointF inputSocketPos =
-        inputNode->getSocketScenePosition(conn->getInputIndex(), enzo::nt::SocketIOType::Output);
+    QPointF targetSocketPos =
+        targetNode->getSocketScenePosition(connection.targetInput, enzo::nt::SocketIOType::Input);
+    QPointF sourceSocketPos =
+        sourceNode->getSocketScenePosition(connection.sourceOutput, enzo::nt::SocketIOType::Output);
 
-    NodeEdgeGraphic* edge = new NodeEdgeGraphic(outputSocket, inputSocket, connection);
-    edge->setPos(outputSocketPos, inputSocketPos);
+    NodeEdgeGraphic* edge = new NodeEdgeGraphic(targetSocket, sourceSocket, connection);
+    edge->setPos(targetSocketPos, sourceSocketPos);
     scene_->addItem(edge);
+
+    edgeStore_[connection] = edge;
+}
+
+void NetworkPanel::onConnectionRemoved(enzo::nt::Connection connection)
+{
+    auto it = edgeStore_.find(connection);
+    if (it == edgeStore_.end()) return;
+
+    NodeEdgeGraphic* edge = it->second;
+    edgeStore_.erase(it);
+
+    prevHoverItems_.erase(edge);
+    edge->remove();
+    delete edge;
 }
 
 void NetworkPanel::keyReleaseEvent(QKeyEvent* event)

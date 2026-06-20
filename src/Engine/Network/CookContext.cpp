@@ -18,22 +18,20 @@ op::CookContext::CookContext(nt::OpId opId, nt::NetworkManager& networkManager)
 
 NodePacket op::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    auto inputConnection = selfOp.getInputConnection(inputIndex).lock();
+    auto inputConnection = networkManager_.graph().getInputConnection(opId_, inputIndex);
     if (!inputConnection)
     {
         return NodePacket();
     }
-    const nt::OpId opId = inputConnection->getInputOpId();
-    const nt::GeometryOperator& geoOp = networkManager_.getGeoOperator(opId);
-    networkManager_.cookOp(opId);
-    return geoOp.getOutputPacket(inputConnection->getInputIndex())->deepCopy();
+    const nt::OpId sourceOpId = inputConnection->sourceOp;
+    const nt::GeometryOperator& sourceOp = networkManager_.getGeoOperator(sourceOpId);
+    networkManager_.cookOp(sourceOpId);
+    return sourceOp.getOutputPacket(inputConnection->sourceOutput)->deepCopy();
 }
 
 bool op::CookContext::hasInput(unsigned int inputIndex)
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    return !selfOp.getInputConnection(inputIndex).expired();
+    return networkManager_.graph().getInputConnection(opId_, inputIndex).has_value();
 }
 
 // TODO: cache value

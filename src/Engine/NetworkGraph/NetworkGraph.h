@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/NetworkGraph/Connection.h"
 #include "Engine/NetworkGraph/Unit.h"
+#include <optional>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -30,6 +31,10 @@ class NetworkGraph
 
     /// @brief Returns the connections feeding @p target, ordered by input slot.
     std::vector<Connection> getInputs(OpId target) const;
+
+    /// @brief Returns the connection on one input slot of @p target, if any.
+    /// @note An input slot holds at most one connection.
+    std::optional<Connection> getInputConnection(OpId target, unsigned int inputSlot) const;
 
     /// @brief Returns the connections leaving @p source.
     std::vector<Connection> getOutputs(OpId source) const;

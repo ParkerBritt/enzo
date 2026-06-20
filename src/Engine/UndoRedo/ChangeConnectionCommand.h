@@ -47,15 +47,11 @@ class ChangeConnectionCommand : public UndoCommand
     UndoCommandType type() const override { return UndoCommandType::ChangeConnection; }
 
   private:
-    void connect() { connectOperators(inputOpId_, inputIndex_, outputOpId_, outputIndex_); }
+    void connect() { nm().connectNodes(inputOpId_, inputIndex_, outputOpId_, outputIndex_); }
 
     void disconnect()
     {
-        auto& outputOp = nm().getGeoOperator(outputOpId_);
-        if (auto conn = outputOp.getInputConnection(outputIndex_).lock())
-        {
-            conn->remove();
-        }
+        nm().disconnectNodes({inputOpId_, inputIndex_, outputOpId_, outputIndex_});
     }
 
     OpId inputOpId_;

@@ -14,7 +14,6 @@ add_library(${libName} SHARED
     ../Engine/Network/OperatorTable.cpp
     ../Engine/Network/GeometryOpDef.cpp
     ../Engine/Network/GeometryOperator.cpp
-    ../Engine/Network/GeometryConnection.cpp
     ../Engine/Network/CookContext.cpp
     ../Engine/Primitives/Primitive.cpp
     ../Engine/Primitives/Mesh.cpp
@@ -29,6 +28,7 @@ add_library(${libName} SHARED
     ../Engine/GeometryAlgorithms/BooleanUtils.cpp
     ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
+    ../Engine/NetworkGraph/NetworkGraph.cpp
     ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
     ../Engine/Parameter/Parameter.cpp

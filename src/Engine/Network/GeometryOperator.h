@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryConnection.h"
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Network/OpInfo.h"
@@ -10,13 +9,6 @@
 #include <optional>
 
 namespace enzo::nt {
-std::weak_ptr<GeometryConnection> connectOperators(
-    enzo::nt::OpId inputOpId,
-    unsigned int inputIndex,
-    enzo::nt::OpId outputOpId,
-    unsigned int outputIndex
-);
-
 /**
  * @class GeometryOperator
  * @brief The unique runtime representation of a node
@@ -52,67 +44,6 @@ class GeometryOperator
      * @todo Add option to force cook or cook if dirty.
      */
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
-
-    /** @brief Adds a GeometryConnection to one of the inputs. Replacing old connections if needed.
-     *
-     * Which input is decided and stored on the connection.
-     *
-     * Nodes can only have one connection so it will automatically remove existing connections
-     * with the same index, prioritizing the new one.
-     */
-    void addInputConnection(std::shared_ptr<nt::GeometryConnection> connection);
-
-    /** @brief Adds a GeometryConnection to one of the outputs. Replacing old connections if needed.
-     *
-     * Which output is decided and stored on the connection.
-     *
-     * Nodes can only have one connection so it will automatically remove existing connections
-     * with the same index, prioritizing the new one.
-     */
-    void addOutputConnection(std::shared_ptr<nt::GeometryConnection> connection);
-
-    /** @brief Removes an input from the node's container.
-     *
-     * Does not remove the connection from any other node it's connected
-     * to, likely causing undefined behavior if called incorrectly.
-     *
-     * @todo remove in favor of the rewrite suggested in GeometryConnection
-     * todo in which connections are handled by the network manager rather than individual nodes.
-     */
-    void removeInputConnection(unsigned int inputIndex);
-
-    /** @brief Removes an output from the node's container.
-     *
-     * Does not remove the connection from any other node it's connected
-     * to, likely causing undefined behavior if called incorrectly.
-     *
-     * @todo remove in favor of the rewrite suggested in GeometryConnection
-     * todo in which connections are handled by the network manager rather than individual nodes.
-     */
-    void removeOutputConnection(const nt::GeometryConnection* connection);
-
-    /**
-     * @brief Returns a vector containing weak pointers for all input connections.
-     *
-     * Connections returned by this function are weak pointers to indicate
-     * ownership belongs to the node/network and can be modified or deleted at any time.
-     */
-    std::vector<std::weak_ptr<GeometryConnection>> getInputConnections() const;
-
-    /**
-     * @brief Returns a vector containing weak pointers for all output connections.
-     *
-     * Connections returned by this function are weak pointers to indicate
-     * ownership belongs to the node/network and can be modified or deleted at any time.
-     */
-    std::vector<std::weak_ptr<GeometryConnection>> getOutputConnections() const;
-
-    /**
-     * @brief Returns an optional connection from a specific input index.
-     *
-     * @returns Nullopt if the connection doesn't exist.
-     */
-    std::weak_ptr<GeometryConnection> getInputConnection(size_t index) const;
 
     /// @brief Returns all parameters belonging to this node.
     std::vector<std::weak_ptr<prm::NodeParameter>> getParameters();
@@ -198,9 +129,6 @@ class GeometryOperator
     /// @brief Notifies observers a parameter changed and dirties the node.
     void onParameterChanged(const std::string& parmName);
 
-    // TODO: avoid duplicate connections
-    std::vector<std::shared_ptr<nt::GeometryConnection>> inputConnections_;
-    std::vector<std::shared_ptr<nt::GeometryConnection>> outputConnections_;
     std::vector<std::shared_ptr<prm::NodeParameter>> parameters_;
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;

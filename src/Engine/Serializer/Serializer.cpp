@@ -135,17 +135,14 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
     // Serialize connections (collect from output side to avoid duplicates)
     for (auto [opId, op] : ops)
     {
-        for (auto weakConn : op.getOutputConnections())
+        for (const nt::Connection& conn : networkManager.graph().getOutputs(opId))
         {
-            if (auto conn = weakConn.lock())
-            {
-                ConnectionSerializable connModel;
-                connModel.inputNodeIndex = opIdToIndex[conn->getInputOpId()];
-                connModel.inputSocketIndex = conn->getInputIndex();
-                connModel.outputNodeIndex = opIdToIndex[conn->getOutputOpId()];
-                connModel.outputSocketIndex = conn->getOutputIndex();
-                networkModel.connections.push_back(connModel);
-            }
+            ConnectionSerializable connModel;
+            connModel.inputNodeIndex = opIdToIndex[conn.sourceOp];
+            connModel.inputSocketIndex = conn.sourceOutput;
+            connModel.outputNodeIndex = opIdToIndex[conn.targetOp];
+            connModel.outputSocketIndex = conn.targetInput;
+            networkModel.connections.push_back(connModel);
         }
     }
 
@@ -184,7 +181,7 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     // Recreate connections
     for (const ConnectionSerializable& conn : network.connections)
     {
-        connectOperators(
+        nm().connectNodes(
             opIds[conn.inputNodeIndex],
             conn.inputSocketIndex,
             opIds[conn.outputNodeIndex],

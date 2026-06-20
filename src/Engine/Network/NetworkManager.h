@@ -198,6 +198,19 @@ class NetworkManager : public QObject
     /// @brief Returns the graph that owns the network's wiring and dependencies.
     nt::NetworkGraph& graph() { return graph_; }
 
+    /// @brief Wires one node's output into another node's input.
+    /// @return The connection that was created.
+    /// @note Replaces any connection already on the target input slot.
+    nt::Connection connectNodes(
+        OpId inputOpId,
+        unsigned int inputIndex,
+        OpId outputOpId,
+        unsigned int outputIndex
+    );
+
+    /// @brief Removes a wired connection between two nodes.
+    void disconnectNodes(const nt::Connection& connection);
+
     /** @name Signals
      * @{
      */
@@ -222,7 +235,10 @@ class NetworkManager : public QObject
     boost::signals2::signal<void(nt::OpId)> operatorRemoved;
 
     // @brief A signal emitted when a connection is created between two operators
-    boost::signals2::signal<void(std::weak_ptr<nt::GeometryConnection>)> connectionCreated;
+    boost::signals2::signal<void(nt::Connection)> connectionCreated;
+
+    // @brief A signal emitted when a connection is removed between two operators
+    boost::signals2::signal<void(nt::Connection)> connectionRemoved;
 
     // @brief A signal emitted when the network is cleared
     boost::signals2::signal<void()> networkCleared;

@@ -52,6 +52,18 @@ std::vector<Connection> NetworkGraph::getInputs(OpId target) const
     return inputs;
 }
 
+std::optional<Connection>
+NetworkGraph::getInputConnection(OpId target, unsigned int inputSlot) const
+{
+    auto entry = byTarget_.find(target);
+    if (entry == byTarget_.end()) return std::nullopt;
+
+    for (const Connection& connection : entry->second)
+        if (connection.targetInput == inputSlot) return connection;
+
+    return std::nullopt;
+}
+
 std::vector<Connection> NetworkGraph::getOutputs(OpId source) const
 {
     auto entry = bySource_.find(source);

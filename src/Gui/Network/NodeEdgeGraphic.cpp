@@ -1,17 +1,14 @@
 #include "Gui/Network/NodeEdgeGraphic.h"
-#include "Engine/Network/GeometryConnection.h"
 #include "Gui/Network/SocketGraphic.h"
-#include "icecream.hpp"
 #include <QGraphicsScene>
 #include <QGraphicsSceneHoverEvent>
 #include <QTextDocument>
-#include <iostream>
 #include <qgraphicsitem.h>
 
 NodeEdgeGraphic::NodeEdgeGraphic(
     SocketGraphic* socket1,
     SocketGraphic* socket2,
-    std::weak_ptr<enzo::nt::GeometryConnection> connection,
+    enzo::nt::Connection connection,
     QGraphicsItem* parent
 )
     : QGraphicsItem(parent), socket1_{socket1}, socket2_{socket2}, defaultColor_{QColor("white")},
@@ -28,12 +25,6 @@ NodeEdgeGraphic::NodeEdgeGraphic(
     deleteHighlightPen_.setWidth(2);
     updateDeleteHighlightPen();
 
-    // remove self when connection is removed
-    if (auto connectionShared = connection_.lock())
-    {
-        connectionShared->removed.connect([this]() { this->remove(false); });
-    }
-
     socket1_->addEdge(this);
     socket2_->addEdge(this);
 }
@@ -48,12 +39,7 @@ void NodeEdgeGraphic::updateDeleteHighlightPen()
     deleteHighlightPen_.setBrush(QBrush(gradient));
 }
 
-NodeEdgeGraphic::~NodeEdgeGraphic()
-{
-    std::cout << "edge destructor\n";
-    remove();
-    std::cout << "destructor finished\n";
-}
+NodeEdgeGraphic::~NodeEdgeGraphic() { remove(); }
 
 void NodeEdgeGraphic::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
@@ -163,48 +149,13 @@ void NodeEdgeGraphic::paint(
     painter->drawPath(path_);
 }
 
-void NodeEdgeGraphic::remove(bool full)
+void NodeEdgeGraphic::remove()
 {
-    if (removed_)
-    {
-        std::cerr << "WARNING: avoiding double edge graphic deletion\n";
-    }
+    // Tears down the graphic only, the engine connection is removed elsewhere
+    if (removed_) return;
     removed_ = true;
-    IC();
-    // TODO: possible memory leak
-    // these probably aren't necessary but i'm trying to fix a bug
 
-    IC();
-    if (connection_.expired())
-    {
-        return;
-    }
-    IC();
-
-    IC();
-    // prepareGeometryChange();
-    IC();
-    // update();
-    IC();
-    // scene()->update();
-    IC();
-
-    IC();
     scene()->removeItem(this);
-    IC();
     socket1_->removeEdge(this);
-    IC();
     socket2_->removeEdge(this);
-    IC();
-
-    if (full)
-    {
-        if (auto connectionShared = connection_.lock())
-        {
-            // remove connection
-            connection_ = std::weak_ptr<enzo::nt::GeometryConnection>();
-            connectionShared->remove();
-        }
-    }
-    IC();
 }
