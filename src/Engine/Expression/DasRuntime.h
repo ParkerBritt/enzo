@@ -4,6 +4,8 @@
 
 namespace enzo::expr {
 
+class ExpressionContext;
+
 /**
  * @brief A compiled daslang program ready to run.
  *
@@ -27,12 +29,24 @@ class CompiledScript
     ~CompiledScript();
 
     /// @brief Runs an exported function and returns its result as a float.
+    /// @param context The world the script reads while it runs, may be null.
     /// @return True on success, false when the function is missing or panics.
-    bool evalFloat(const String& functionName, floatT& result, String& error);
+    bool evalFloat(
+        const String& functionName,
+        const ExpressionContext* context,
+        floatT& result,
+        String& error
+    );
 
     /// @brief Runs an exported function and returns its result as an integer.
+    /// @param context The world the script reads while it runs, may be null.
     /// @return True on success, false when the function is missing or panics.
-    bool evalInt(const String& functionName, intT& result, String& error);
+    bool evalInt(
+        const String& functionName,
+        const ExpressionContext* context,
+        intT& result,
+        String& error
+    );
 
   private:
     friend class DasRuntime;

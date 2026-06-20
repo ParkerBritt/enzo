@@ -1,8 +1,13 @@
 #include "Engine/Expression/DasRuntime.h"
+#include "Engine/Expression/DasContext.h"
+#include "Engine/Expression/ExpressionContext.h"
 #include "daScript/daScript.h"
 
 // Makes daslang's builtin modules (math, strings, and the rest) available.
 DECLARE_ALL_DEFAULT_MODULES;
+
+// Makes our parameter functions module (prm and friends) available.
+DECLARE_MODULE(ParameterModule);
 
 namespace enzo::expr {
 
@@ -11,7 +16,7 @@ namespace enzo::expr {
 struct CompiledScript::Impl
 {
     das::ProgramPtr program;
-    std::shared_ptr<das::Context> context;
+    std::shared_ptr<DasContext> context;
 };
 
 CompiledScript::CompiledScript() : impl_(std::make_unique<Impl>()) {}
@@ -29,7 +34,7 @@ String collectErrors(const das::ProgramPtr& program)
     return message;
 }
 
-bool evalRaw(das::Context& context, const String& functionName, vec4f& result, String& error)
+bool evalRaw(DasContext& context, const String& functionName, vec4f& result, String& error)
 {
     das::SimFunction* function = context.findFunction(functionName.c_str());
     if (!function)
@@ -46,18 +51,47 @@ bool evalRaw(das::Context& context, const String& functionName, vec4f& result, S
     }
     return true;
 }
+
+// Installs the evaluation world on the context for one run and restores it
+// after, so a nested prm() call leaves the outer evaluation's world intact.
+class ScopedExpressionContext
+{
+  public:
+    ScopedExpressionContext(DasContext& context, const ExpressionContext* expressionContext)
+        : context_(context), previous_(context.expressionContext)
+    {
+        context_.expressionContext = expressionContext;
+    }
+    ~ScopedExpressionContext() { context_.expressionContext = previous_; }
+
+  private:
+    DasContext& context_;
+    const ExpressionContext* previous_;
+};
 } // namespace
 
-bool CompiledScript::evalFloat(const String& functionName, floatT& result, String& error)
+bool CompiledScript::evalFloat(
+    const String& functionName,
+    const ExpressionContext* context,
+    floatT& result,
+    String& error
+)
 {
+    ScopedExpressionContext scope(*impl_->context, context);
     vec4f raw;
     if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
     result = das::cast<float>::to(raw);
     return true;
 }
 
-bool CompiledScript::evalInt(const String& functionName, intT& result, String& error)
+bool CompiledScript::evalInt(
+    const String& functionName,
+    const ExpressionContext* context,
+    intT& result,
+    String& error
+)
 {
+    ScopedExpressionContext scope(*impl_->context, context);
     vec4f raw;
     if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
     result = das::cast<int64_t>::to(raw);
@@ -73,6 +107,7 @@ DasRuntime& DasRuntime::instance()
 DasRuntime::DasRuntime()
 {
     PULL_ALL_DEFAULT_MODULES;
+    PULL_MODULE(ParameterModule);
     das::Module::Initialize();
 }
 
@@ -106,7 +141,7 @@ DasRuntime::compile(const String& name, const String& source, String& error)
     }
 
     // Build the runtime context that runs the program.
-    auto context = std::make_shared<das::Context>(program->getContextStackSize());
+    auto context = std::make_shared<DasContext>(program->getContextStackSize());
     if (!program->simulate(*context, logs))
     {
         error = collectErrors(program);
