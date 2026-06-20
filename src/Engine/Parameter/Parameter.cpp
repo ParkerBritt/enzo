@@ -1,4 +1,5 @@
 #include "Engine/Parameter/Parameter.h"
+#include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Parameter/Default.h"
 #include <cmath>
@@ -85,8 +86,11 @@ floatT prm::Parameter::evalFloat(unsigned int index, String& error) const
     // fails to compile or run.
     if (hasExpression(index))
     {
+        auto context = makeExpressionContext_();
         floatT result = vals[index];
-        expr::ExpressionEngine::instance().evalFloat(*expressions_[index], result, error);
+        expr::ExpressionEngine::instance().evalFloat(
+            *expressions_[index], context.get(), result, error
+        );
         return clampToRange_(result, index);
     }
 
@@ -123,12 +127,20 @@ intT prm::Parameter::evalInt(unsigned int index, String& error) const
     // fails to compile or run.
     if (hasExpression(index))
     {
+        auto context = makeExpressionContext_();
         intT result = vals[index];
-        expr::ExpressionEngine::instance().evalInt(*expressions_[index], result, error);
+        expr::ExpressionEngine::instance().evalInt(
+            *expressions_[index], context.get(), result, error
+        );
         return clampToRange_(result, index);
     }
 
     return vals[index];
+}
+
+std::unique_ptr<expr::ExpressionContext> prm::Parameter::makeExpressionContext_() const
+{
+    return nullptr;
 }
 
 String prm::Parameter::evalString(unsigned int index) const

@@ -6,6 +6,7 @@
 namespace enzo::expr {
 
 class CompiledScript;
+class ExpressionContext;
 
 /**
  * @brief Evaluator for parameter expressions written in daslang.
@@ -22,12 +23,24 @@ class ExpressionEngine
     static ExpressionEngine& instance();
 
     /// @brief Evaluates an expression and returns its result as a float.
+    /// @param context The world the expression reads, e.g. for prm(), may be null.
     /// @return True on success, false when the expression fails to compile or run.
-    bool evalFloat(const String& expression, floatT& result, String& error);
+    bool evalFloat(
+        const String& expression,
+        const ExpressionContext* context,
+        floatT& result,
+        String& error
+    );
 
     /// @brief Evaluates an expression and returns its result as an integer.
+    /// @param context The world the expression reads, e.g. for prm(), may be null.
     /// @return True on success, false when the expression fails to compile or run.
-    bool evalInt(const String& expression, intT& result, String& error);
+    bool evalInt(
+        const String& expression,
+        const ExpressionContext* context,
+        intT& result,
+        String& error
+    );
 
     ExpressionEngine(const ExpressionEngine&) = delete;
     ExpressionEngine& operator=(const ExpressionEngine&) = delete;

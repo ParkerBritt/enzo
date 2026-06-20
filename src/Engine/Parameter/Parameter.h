@@ -7,6 +7,10 @@
 #include <string_view>
 #include <variant>
 
+namespace enzo::expr {
+class ExpressionContext;
+}
+
 namespace enzo::prm {
 
 using PrmValues = std::variant<std::vector<floatT>, std::vector<intT>, std::vector<String>>;
@@ -84,6 +88,11 @@ class Parameter
   protected:
     virtual void onFloatSet_(const PrmValues& before) {}
     void handleValueChange_();
+
+    /// @brief The world an expression on this parameter reads, e.g. for prm().
+    /// @return A context, or null when the parameter has nothing to offer such
+    /// as a bare parameter with no owning node.
+    virtual std::unique_ptr<expr::ExpressionContext> makeExpressionContext_() const;
 
     /// @brief Returns the value pulled within a component's locked range bounds.
     floatT clampToRange_(floatT value, unsigned int index) const;

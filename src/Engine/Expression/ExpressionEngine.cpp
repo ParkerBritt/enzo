@@ -12,6 +12,7 @@ String wrapExpression(const String& expression, const String& returnType)
 {
     return "options gen2\n"
            "require math\n"
+           "require enzo_parameter\n"
            "[export]\n"
            "def " +
            String(evalFunctionName) + " : " + returnType +
@@ -40,18 +41,28 @@ ExpressionEngine::compileCached_(const String& source, String& error)
     return script;
 }
 
-bool ExpressionEngine::evalFloat(const String& expression, floatT& result, String& error)
+bool ExpressionEngine::evalFloat(
+    const String& expression,
+    const ExpressionContext* context,
+    floatT& result,
+    String& error
+)
 {
     auto script = compileCached_(wrapExpression(expression, "float"), error);
     if (!script) return false;
-    return script->evalFloat(evalFunctionName, result, error);
+    return script->evalFloat(evalFunctionName, context, result, error);
 }
 
-bool ExpressionEngine::evalInt(const String& expression, intT& result, String& error)
+bool ExpressionEngine::evalInt(
+    const String& expression,
+    const ExpressionContext* context,
+    intT& result,
+    String& error
+)
 {
     auto script = compileCached_(wrapExpression(expression, "int64"), error);
     if (!script) return false;
-    return script->evalInt(evalFunctionName, result, error);
+    return script->evalInt(evalFunctionName, context, result, error);
 }
 
 } // namespace enzo::expr
