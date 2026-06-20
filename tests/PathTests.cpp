@@ -67,8 +67,8 @@ TEST_CASE("pathgetters")
     REQUIRE(relPathPrefixes[0].getString() == "rel");
 
     //path parents
-    REQUIRE(basicPath.getParentPath().getString() == "/abs/path/to");
-    REQUIRE(relPath.getParentPath().getString() == "rel");
+    REQUIRE(basicPath.getParent().getString() == "/abs/path/to");
+    REQUIRE(relPath.getParent().getString() == "rel");
 }
 
 TEST_CASE("pathManipulation")
@@ -78,10 +78,10 @@ TEST_CASE("pathManipulation")
     // appending to path
     Path basicPath = "/abs/path/to/object";
     std::string path = "/subcomponent/leaf";
-    Path appendedPath = basicPath.joinPath(path);
+    Path appendedPath = basicPath.append(path);
 
     REQUIRE(appendedPath.getString() == "/abs/path/to/object/subcomponent/leaf");
-    REQUIRE(basicPath.join("subcomponent").getString() == "/abs/path/to/object/subcomponent");
+    REQUIRE(basicPath.append("subcomponent").getString() == "/abs/path/to/object/subcomponent");
 
     // incrementing names
     Path mesh = "/geo/mesh";
