@@ -6,6 +6,7 @@
 #include "Engine/Network/OpInfo.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/Primitives/Primitive.h"
+#include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/UndoRedo/DeleteNodeCommand.h"
 #include "Engine/UndoRedo/MoveNodeCommand.h"
@@ -120,26 +121,15 @@ void nt::NetworkManager::disconnectOperator(OpId opId)
 {
     if (!isValidOp(opId)) return;
 
-    GeometryOperator& op = getGeoOperator(opId);
-
-    // Collect first to avoid modifying the vectors while iterating
-    auto inputConns = op.getInputConnections();
-    for (auto& weakConn : inputConns)
+    // getInputs and getOutputs return copies, so disconnecting while iterating is safe
+    for (const nt::Connection& connection : graph_.getInputs(opId))
     {
-        if (auto conn = weakConn.lock())
-        {
-            // Use const_cast because remove() is non-const but we only have const weak_ptrs
-            const_cast<GeometryConnection&>(*conn).remove();
-        }
+        disconnectNodes(connection);
     }
 
-    auto outputConns = op.getOutputConnections();
-    for (auto& weakConn : outputConns)
+    for (const nt::Connection& connection : graph_.getOutputs(opId))
     {
-        if (auto conn = weakConn.lock())
-        {
-            const_cast<GeometryConnection&>(*conn).remove();
-        }
+        disconnectNodes(connection);
     }
 }
 
@@ -289,6 +279,61 @@ void nt::NetworkManager::cookOp(nt::OpId opId)
             op.cookOp(context);
         }
     }
+}
+
+nt::Connection nt::NetworkManager::connectNodes(
+    OpId inputOpId,
+    unsigned int inputIndex,
+    OpId outputOpId,
+    unsigned int outputIndex
+)
+{
+    auto updateLock = lockUpdates();
+
+    nt::Connection connection{inputOpId, inputIndex, outputOpId, outputIndex};
+
+    // An input slot holds one connection, so replace whatever was there
+    if (auto existing = graph_.getInputConnection(outputOpId, outputIndex))
+    {
+        disconnectNodes(*existing);
+    }
+
+    graph_.connect(connection);
+    getGeoOperator(outputOpId).dirtyNode();
+    connectionCreated(connection);
+
+    auto cmd = std::make_unique<ChangeConnectionCommand>(
+        inputOpId,
+        inputIndex,
+        outputOpId,
+        outputIndex,
+        ChangeConnectionCommand::Action::Connect
+    );
+    undoStack_.push(std::move(cmd));
+
+    return connection;
+}
+
+void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
+{
+    auto cmd = std::make_unique<ChangeConnectionCommand>(
+        connection.sourceOp,
+        connection.sourceOutput,
+        connection.targetOp,
+        connection.targetInput,
+        ChangeConnectionCommand::Action::Disconnect
+    );
+    undoStack_.push(std::move(cmd));
+
+    graph_.disconnect(connection);
+
+    // Only the downstream node goes stale, its input changed
+    if (isValidOp(connection.targetOp))
+    {
+        getGeoOperator(connection.targetOp).dirtyNode();
+    }
+
+    connectionRemoved(connection);
 }
 
 std::optional<nt::OpId> nt::NetworkManager::getDisplayOp() { return displayOp_; }

@@ -1,10 +1,9 @@
 #pragma once
-#include "Engine/Network/GeometryConnection.h"
+#include "Engine/NetworkGraph/Connection.h"
 #include "Gui/Network/SocketGraphic.h"
 #include <QGraphicsItem>
 
 #include <QPainter>
-#include <memory>
 
 class NodeEdgeGraphic : public QGraphicsItem
 {
@@ -12,7 +11,7 @@ class NodeEdgeGraphic : public QGraphicsItem
     NodeEdgeGraphic(
         SocketGraphic* socket1,
         SocketGraphic* socket2,
-        std::weak_ptr<enzo::nt::GeometryConnection> connection,
+        enzo::nt::Connection connection,
         QGraphicsItem* parent = nullptr
     );
     ~NodeEdgeGraphic();
@@ -26,7 +25,9 @@ class NodeEdgeGraphic : public QGraphicsItem
     void setPos(QPointF pos1, QPointF pos2);
     void setStartPos(QPointF pos);
     void setEndPos(QPointF pos);
-    void remove(bool full = true);
+    void remove();
+    /// @brief Returns the connection this edge draws.
+    enzo::nt::Connection getConnection() const { return connection_; }
     void setDeleteHighlight(bool state);
     QPen deleteHighlightPen_;
     QPen defaultPen_;
@@ -49,7 +50,7 @@ class NodeEdgeGraphic : public QGraphicsItem
 
     bool removed_ = false;
 
-    std::weak_ptr<enzo::nt::GeometryConnection> connection_;
+    enzo::nt::Connection connection_;
 
     void updatePath();
 

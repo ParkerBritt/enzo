@@ -127,9 +127,14 @@ void EnzoUI::connectSignals()
     });
 
     // Connection created
-    enzo::nt::nm().connectionCreated.connect([this](
-                                                 std::weak_ptr<enzo::nt::GeometryConnection> conn
-                                             ) { network_->onConnectionCreated(conn); });
+    enzo::nt::nm().connectionCreated.connect([this](enzo::nt::Connection conn) {
+        network_->onConnectionCreated(conn);
+    });
+
+    // Connection removed
+    enzo::nt::nm().connectionRemoved.connect([this](enzo::nt::Connection conn) {
+        network_->onConnectionRemoved(conn);
+    });
 
     // Display/geometry changed
     enzo::nt::nm().displayGeoChanged.connect(

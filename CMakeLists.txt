@@ -25,7 +25,6 @@ set(ENGINE_SOURCES
     src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/GeometryOperator.cpp
-    src/Engine/Network/GeometryConnection.cpp
     src/Engine/Network/GeometryOpDef.cpp
     src/Engine/Network/OperatorTable.cpp
     src/Engine/Network/CookContext.cpp

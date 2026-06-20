@@ -21,6 +21,7 @@ struct OperatorTableInit
 static OperatorTableInit _operatorTableInit;
 auto testOpInfoOptional = enzo::op::OperatorTable::getOpInfo("grid");
 auto testOpInfo = testOpInfoOptional.value();
+auto transformOpInfo = enzo::op::OperatorTable::getOpInfo("transform").value();
 
 TEST_CASE_METHOD(NMReset, "network fixture separation start")
 {
@@ -49,19 +50,10 @@ TEST_CASE_METHOD(NMReset, "network")
     nt::OpId newOpId2 = nm.createOperator(testOpInfo);
 
     REQUIRE(nm.isValidOp(newOpId));
-    if (nm.isValidOp(newOpId))
-    {
-        auto newConnection = std::make_shared<nt::GeometryConnection>(newOpId, 1, newOpId2, 3);
+    REQUIRE(nm.isValidOp(newOpId2));
 
-        auto& inputOp = nm.getGeoOperator(newOpId);
-        auto& outputOp = nm.getGeoOperator(newOpId2);
-
-        // set output on the upper operator
-        outputOp.addOutputConnection(newConnection);
-
-        // set input on the lower operator
-        inputOp.addInputConnection(newConnection);
-    }
+    nm.connectNodes(newOpId, 0, newOpId2, 0);
+    REQUIRE(nm.graph().getInputConnection(newOpId2, 0).has_value());
 }
 
 TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
@@ -73,7 +65,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
     // Build two connected nodes where the upstream output feeds the downstream input
     nt::OpId upstream = nm.createOperator(testOpInfo);
     nt::OpId downstream = nm.createOperator(testOpInfo);
-    nt::connectOperators(upstream, 0, downstream, 0);
+    nt::nm().connectNodes(upstream, 0, downstream, 0);
 
     // Delete the downstream node
     nm.deleteNode(downstream);
@@ -83,7 +75,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
     nm.undoStack().undo();
 
     REQUIRE(nm.isValidOp(downstream));
-    REQUIRE_FALSE(nm.getGeoOperator(downstream).getInputConnection(0).expired());
+    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
 }
 
 TEST_CASE_METHOD(NMReset, "Cooking a node cooks its whole upstream chain")
@@ -95,8 +87,8 @@ TEST_CASE_METHOD(NMReset, "Cooking a node cooks its whole upstream chain")
     nt::OpId first = nm.createOperator(testOpInfo);
     nt::OpId second = nm.createOperator(testOpInfo);
     nt::OpId third = nm.createOperator(testOpInfo);
-    nt::connectOperators(first, 0, second, 0);
-    nt::connectOperators(second, 0, third, 0);
+    nt::nm().connectNodes(first, 0, second, 0);
+    nt::nm().connectNodes(second, 0, third, 0);
 
     nm.cookOp(third);
 
@@ -113,8 +105,8 @@ TEST_CASE_METHOD(NMReset, "Dirtying an upstream node restages everything downstr
     nt::OpId first = nm.createOperator(testOpInfo);
     nt::OpId second = nm.createOperator(testOpInfo);
     nt::OpId third = nm.createOperator(testOpInfo);
-    nt::connectOperators(first, 0, second, 0);
-    nt::connectOperators(second, 0, third, 0);
+    nt::nm().connectNodes(first, 0, second, 0);
+    nt::nm().connectNodes(second, 0, third, 0);
 
     // Start from a fully cooked chain
     nm.cookOp(third);
@@ -124,6 +116,38 @@ TEST_CASE_METHOD(NMReset, "Dirtying an upstream node restages everything downstr
 
     REQUIRE(nm.getGeoOperator(second).isDirty());
     REQUIRE(nm.getGeoOperator(third).isDirty());
+}
+
+TEST_CASE_METHOD(NMReset, "Cooking pulls geometry across an input connection")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    // A grid feeding a transform, which copies the grid's primitives through
+    nt::OpId grid = nm.createOperator(testOpInfo);
+    nt::OpId transform = nm.createOperator(transformOpInfo);
+    nt::nm().connectNodes(grid, 0, transform, 0);
+
+    nm.cookOp(transform);
+
+    size_t gridSize = nm.getGeoOperator(grid).getOutputPacket(0)->size();
+    size_t transformSize = nm.getGeoOperator(transform).getOutputPacket(0)->size();
+
+    REQUIRE(gridSize > 0);
+    REQUIRE(transformSize == gridSize);
+}
+
+TEST_CASE_METHOD(NMReset, "A node with no input cooks to an empty output")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    // A transform with nothing wired in has no primitives to pass through
+    nt::OpId transform = nm.createOperator(transformOpInfo);
+
+    nm.cookOp(transform);
+
+    REQUIRE(nm.getGeoOperator(transform).getOutputPacket(0)->size() == 0);
 }
 
 TEST_CASE_METHOD(NMReset, "reset")
