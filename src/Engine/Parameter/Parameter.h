@@ -94,6 +94,14 @@ class Parameter
     /// as a bare parameter with no owning node.
     virtual std::unique_ptr<expr::ExpressionContext> makeExpressionContext_() const;
 
+    /// @brief Hands the dependencies an expression captured to the network graph.
+    /// @note Only a parameter with an owning node has a place to record them, so
+    /// the base does nothing.
+    virtual void
+    submitExpressionDependencies_(const expr::ExpressionContext& context, unsigned int index) const
+    {
+    }
+
     /// @brief Returns the value pulled within a component's locked range bounds.
     floatT clampToRange_(floatT value, unsigned int index) const;
     intT clampToRange_(intT value, unsigned int index) const;

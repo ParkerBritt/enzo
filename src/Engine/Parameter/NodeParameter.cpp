@@ -18,6 +18,17 @@ std::unique_ptr<expr::ExpressionContext> prm::NodeParameter::makeExpressionConte
     return std::make_unique<expr::ExpressionContext>(opId_);
 }
 
+void prm::NodeParameter::submitExpressionDependencies_(
+    const expr::ExpressionContext& context,
+    unsigned int index
+) const
+{
+    nt::nm().graph().setCapturedDependencies(
+        nt::Unit{opId_, getName(), index},
+        context.getExpressionDependencies()
+    );
+}
+
 void prm::NodeParameter::addUndo_(prm::PrmValues before)
 {
     auto cmd = std::make_unique<nt::ChangeParameterCommand>(opId_, getName(), before, values_);

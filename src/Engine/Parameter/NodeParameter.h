@@ -17,6 +17,13 @@ class NodeParameter : public Parameter
     /// parameter belongs to.
     std::unique_ptr<expr::ExpressionContext> makeExpressionContext_() const override;
 
+    /// @brief Records the parameters an expression read as captured dependencies
+    /// of this component in the network graph.
+    void submitExpressionDependencies_(
+        const expr::ExpressionContext& context,
+        unsigned int index
+    ) const override;
+
   private:
     void addUndo_(PrmValues before);
 

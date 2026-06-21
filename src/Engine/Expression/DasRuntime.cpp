@@ -111,7 +111,7 @@ DasRuntime::DasRuntime()
     das::Module::Initialize();
 }
 
-DasRuntime::~DasRuntime() { das::Module::Shutdown(); }
+DasRuntime::~DasRuntime() { das::Module::ShutdownStandalone(); }
 
 std::shared_ptr<CompiledScript>
 DasRuntime::compile(const String& name, const String& source, String& error)

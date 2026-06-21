@@ -21,7 +21,16 @@ std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* 
 {
     const ExpressionContext* context = static_cast<DasContext*>(dasContext)->expressionContext;
     if (!context) return nullptr;
-    return nt::nm().findParameter(NetworkPath(path ? path : ""), context->currentOp()).lock();
+
+    auto parameter =
+        nt::nm().findParameter(NetworkPath(path ? path : ""), context->currentOp()).lock();
+
+    // Reading a parameter makes it a dependency, so the expression recooks when
+    // that parameter changes.
+    if (parameter)
+        context->recordExpressionDependency(nt::Unit{parameter->getOpId(), parameter->getName()});
+
+    return parameter;
 }
 
 // Parameter functions exposed to daslang expressions
