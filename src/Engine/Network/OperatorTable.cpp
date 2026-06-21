@@ -102,7 +102,9 @@ void op::OperatorTable::initPlugins()
     using InitPluginFn = void(op::addOperatorPtr);
 
     const auto so = findPlugin("enzoOps1");
-    static boost::dll::shared_library lib(so, boost::dll::load_mode::default_mode);
+    // Held open for the life of the program to avoid unloading in the wrong
+    // order. Freed by OS.
+    static auto& lib = *new boost::dll::shared_library(so, boost::dll::load_mode::default_mode);
 
     auto initPlugin = lib.get<InitPluginFn>("newSopOperator");
     initPlugin(op::OperatorTable::addOperator);
