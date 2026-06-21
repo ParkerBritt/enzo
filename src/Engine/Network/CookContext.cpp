@@ -43,7 +43,7 @@ floatT op::CookContext::evalParmFloat(std::string_view parmName, const unsigned 
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -59,7 +59,7 @@ intT op::CookContext::evalParmInt(std::string_view parmName, const unsigned int 
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -75,7 +75,7 @@ boolT op::CookContext::evalParmBool(std::string_view parmName, const unsigned in
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -91,7 +91,7 @@ String op::CookContext::evalParmString(std::string_view parmName, const unsigned
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -106,7 +106,7 @@ prm::Ramp op::CookContext::evalParmRamp(std::string_view parmName) const
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -121,7 +121,7 @@ std::vector<floatT> op::CookContext::evalParmFloats(std::string_view parmName) c
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -160,7 +160,7 @@ std::vector<intT> op::CookContext::evalParmInts(std::string_view parmName) const
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 
@@ -175,7 +175,7 @@ std::vector<String> op::CookContext::evalParmStrings(std::string_view parmName) 
     }
     else
     {
-        throw std::runtime_error(parmName + " parameter does not exist.");
+        throw std::runtime_error(std::string(parmName) + " parameter does not exist.");
     }
 }
 

@@ -4,7 +4,6 @@
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
 #include "Engine/UndoRedo/UndoStack.h"
-#include <QObject>
 #include <memory>
 #include <unordered_map>
 
@@ -23,14 +22,9 @@ namespace enzo::nt {
  * consistent view of the network, providing global access. Beyond just storing
  * operators, it also controls cooking and traversing dependency graphs,
  * ensuring that updates flow correctly through the network when nodes change.
- *
- * @todo remove Qobject inheritance, this is no longer needed since switching to boost signals.
- *
  */
-class NetworkManager : public QObject
+class NetworkManager
 {
-    // TODO: make not Q_OBJECT
-    Q_OBJECT
   public:
     /// @brief Iterable range over operators, yields {OpId, GeometryOperator&} pairs.
     class OperatorRange
@@ -265,10 +259,10 @@ class NetworkManager : public QObject
 
     UndoStack& undoStack() { return undoStack_; }
 
-#ifdef UNIT_TEST
     /// @brief For use in unit tests, resets the state of the operator.
+    /// @todo Find a cleaner way to give tests a fresh manager so this
+    /// doesn't pollute the public functions.
     void _reset();
-#endif
 
   private:
     NetworkManager() {};

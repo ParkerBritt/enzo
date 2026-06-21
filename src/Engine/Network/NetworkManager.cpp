@@ -381,7 +381,6 @@ void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
     }
 }
 
-#ifdef UNIT_TEST
 void nt::NetworkManager::_reset()
 {
     std::cout << "resetting network manager\n";
@@ -391,7 +390,6 @@ void nt::NetworkManager::_reset()
     maxOpId_ = 0;
     displayOp_.reset();
 }
-#endif
 
 // std::unordered_map<nt::OpId, std::unique_ptr<nt::GeometryOperator>>
 // nt::NetworkManager::gopStore_;

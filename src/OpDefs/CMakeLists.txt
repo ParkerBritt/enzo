@@ -11,36 +11,6 @@ find_package(manifold CONFIG REQUIRED)
 set(libName enzoOps1)
 add_library(${libName} SHARED
     RegisterPlugin.cpp
-    ../Engine/Network/OperatorTable.cpp
-    ../Engine/Network/GeometryOpDef.cpp
-    ../Engine/Network/GeometryOperator.cpp
-    ../Engine/Network/CookContext.cpp
-    ../Engine/Primitives/Primitive.cpp
-    ../Engine/Primitives/Mesh.cpp
-    ../Engine/Primitives/Camera.cpp
-    ../Engine/Network/NodePacket.cpp
-    ../Engine/Attribute/Attribute.cpp
-    ../Engine/Attribute/Transform.cpp
-    ../Engine/Selection/Selection.cpp
-    ../Engine/Selection/SelectionComponent.cpp
-    ../Engine/Selection/IndexSet.cpp
-    ../Engine/GeometryAlgorithms/MeshUtils.cpp
-    ../Engine/GeometryAlgorithms/BooleanUtils.cpp
-    ../Engine/Util/UnionFind.cpp
-    ../Engine/Network/NetworkManager.cpp
-    ../Engine/Core/Path.cpp
-    ../Engine/Network/NetworkPath.cpp
-    ../Engine/NetworkGraph/NetworkGraph.cpp
-    ../Engine/Network/UpdateLock.cpp
-    ../Engine/Parameter/Template.cpp
-    ../Engine/Parameter/Parameter.cpp
-    ../Engine/Parameter/Default.cpp
-    ../Engine/Parameter/Range.cpp
-    ../Engine/Parameter/PrmName.cpp
-    ../Engine/Parameter/Ramp.cpp
-    ../Engine/Expression/DasRuntime.cpp
-    ../Engine/Expression/ExpressionEngine.cpp
-    ../Engine/GeometryAlgorithms/MeshShapes.cpp
     GopTransform.cpp
     GopHouse.cpp
     GopGeometryImport.cpp
@@ -58,14 +28,8 @@ add_library(${libName} SHARED
     GopCircle.cpp
     GopSweep.cpp
 )
-# daslang is built without RTTI, so the files that subclass its types match it.
-# Otherwise their typeinfo references daslang symbols that were never emitted.
-set_source_files_properties(
-    ../Engine/Expression/DasRuntime.cpp
-    PROPERTIES COMPILE_OPTIONS "-fno-rtti"
-)
 
-target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
+target_link_libraries(${libName} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
 
 # packaging
 install(TARGETS ${libName}
