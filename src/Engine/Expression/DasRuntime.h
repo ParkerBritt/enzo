@@ -28,8 +28,7 @@ class CompiledScript
   public:
     ~CompiledScript();
 
-    /// @brief Runs an exported function and returns its result as a float.
-    /// @param context The world the script reads while it runs, may be null.
+    /// @brief Evaluates an exported function as a float.
     /// @return True on success, false when the function is missing or panics.
     bool evalFloat(
         const String& functionName,
@@ -38,13 +37,21 @@ class CompiledScript
         String& error
     );
 
-    /// @brief Runs an exported function and returns its result as an integer.
-    /// @param context The world the script reads while it runs, may be null.
+    /// @brief Evaluates an exported function as an integer.
     /// @return True on success, false when the function is missing or panics.
     bool evalInt(
         const String& functionName,
         const ExpressionContext* context,
         intT& result,
+        String& error
+    );
+
+    /// @brief Evaluates an exported function as a string.
+    /// @return True on success, false when the function is missing or panics.
+    bool evalString(
+        const String& functionName,
+        const ExpressionContext* context,
+        String& result,
         String& error
     );
 
