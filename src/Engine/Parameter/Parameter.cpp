@@ -153,16 +153,22 @@ String prm::Parameter::evalString(unsigned int index) const
     return vals[index];
 }
 
+// TODO: evaluate each component's expression like the scalar evalFloat does,
+// rather than returning the raw literals.
 std::vector<floatT> prm::Parameter::evalFloats() const
 {
     return std::get<std::vector<floatT>>(values_);
 }
 
+// TODO: evaluate each component's expression like the scalar evalString does,
+// rather than returning the raw literals.
 std::vector<String> prm::Parameter::evalStrings() const
 {
     return std::get<std::vector<String>>(values_);
 }
 
+// TODO: evaluate each component's expression like the scalar evalInt does,
+// rather than returning the raw literals.
 std::vector<intT> prm::Parameter::evalInts() const { return std::get<std::vector<intT>>(values_); }
 
 unsigned int prm::Parameter::getVectorSize() const { return template_.getSize(); }
