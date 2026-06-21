@@ -141,6 +141,21 @@ TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions 
     REQUIRE(nm.getGeoOperator(reader).isDirty());
 }
 
+TEST_CASE_METHOD(NMReset, "Prm reports an error when the path matches no parameter")
+{
+    auto& nm = nt::nm();
+
+    // The reader points its expression at a node that does not exist
+    nt::OpId reader = nm.createOperator(transformOpInfo());
+    auto translate = nm.getGeoOperator(reader).getParameter("translate").lock();
+    translate->setExpression("prm(\"does_not_exist.translate\")");
+
+    // A bad path falls back to zero and surfaces the failure as an error
+    String error;
+    REQUIRE(translate->evalFloat(0, error) == 0.0f);
+    REQUIRE_FALSE(error.empty());
+}
+
 TEST_CASE_METHOD(NMReset, "PrmI reads another node's integer parameter")
 {
     auto& nm = nt::nm();

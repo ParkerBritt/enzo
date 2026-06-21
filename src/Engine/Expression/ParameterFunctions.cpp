@@ -16,18 +16,23 @@ namespace {
 
 // Returns the parameter a path points at, resolved relative to the node the
 // running expression belongs to. daslang hands us that node on the context.
-// Empty when there is no context or the path matches nothing.
+//
+// Raises a daslang error when there is no context or the path matches nothing,
+// so the failure surfaces as the expression's error rather than a silent value.
+// TODO: when a node error API exists, a failing parameter eval during a node's
+// cook should also raise that node's error, not just the expression's.
 std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* dasContext)
 {
     const ExpressionContext* context = static_cast<DasContext*>(dasContext)->expressionContext;
-    if (!context) return nullptr;
+    if (!context) dasContext->throw_error("parameter functions need a node to resolve against");
 
-    auto parameter =
-        nt::nm().findParameter(NetworkPath(path ? path : ""), context->currentOp()).lock();
+    const char* safePath = path ? path : "";
+    auto parameter = nt::nm().findParameter(NetworkPath(safePath), context->currentOp()).lock();
+    if (!parameter) dasContext->throw_error_ex("no parameter matches path '%s'", safePath);
 
     // Reading a parameter makes its node a dependency, so the expression recooks
     // when that node changes.
-    if (parameter) context->recordExpressionDependency(nt::Unit{parameter->getOpId()});
+    context->recordExpressionDependency(nt::Unit{parameter->getOpId()});
 
     return parameter;
 }
