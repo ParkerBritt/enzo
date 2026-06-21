@@ -43,6 +43,13 @@ ParameterSerializable toSerializable(enzo::prm::Parameter& parameter)
         model.stringValues = parameter.evalStrings();
         break;
     }
+
+    // The expression driving each component, parallel to the stored literals. A
+    // component recomputes its expression on load rather than reusing a value.
+    const unsigned int componentCount = parameter.getVectorSize();
+    model.expressions.resize(componentCount);
+    for (unsigned int component = 0; component < componentCount; ++component)
+        model.expressions[component] = parameter.getExpression(component);
     return model;
 }
 
@@ -94,6 +101,12 @@ void applySerializable(enzo::prm::Parameter& parameter, const ParameterSerializa
         if (!model.stringValues.empty()) parameter.setValues(model.stringValues);
         break;
     }
+
+    // Restore each component's expression after its literal. Setting the literal
+    // clears any expression, so this comes last.
+    for (unsigned int component = 0; component < model.expressions.size(); ++component)
+        if (model.expressions[component])
+            parameter.setExpression(*model.expressions[component], component);
 }
 
 namespace enzo::nt {

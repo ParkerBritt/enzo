@@ -1,8 +1,10 @@
 #pragma once
 #include "Engine/Core/Types.h"
 #include "Engine/Parameter/Parameter.h"
+#include <cereal/types/optional.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -12,6 +14,9 @@ struct ParameterSerializable
     std::vector<enzo::floatT> floatValues;
     std::vector<enzo::intT> intValues;
     std::vector<std::string> stringValues;
+    // One optional expression per component, parallel to the value vector. An
+    // empty slot means the component uses its literal value.
+    std::vector<std::optional<std::string>> expressions;
     // Multiparm parameters such as ramps store nothing flat. Each instance is a
     // list of field models, so the structure nests one level per instance.
     std::vector<std::vector<ParameterSerializable>> instances;
@@ -24,6 +29,7 @@ struct ParameterSerializable
            CEREAL_NVP(floatValues),
            CEREAL_NVP(intValues),
            CEREAL_NVP(stringValues),
+           CEREAL_NVP(expressions),
            CEREAL_NVP(instances));
     }
 };

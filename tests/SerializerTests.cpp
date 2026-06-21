@@ -53,6 +53,24 @@ TEST_CASE("A flat parameter round trips through the serializable model")
     REQUIRE(restored.evalFloat() == 3.5f);
 }
 
+TEST_CASE("A flat parameter expression round trips through the serializable model")
+{
+    prm::Parameter source(
+        prm::Template(prm::Type::FLOAT, prm::Name("frequency", "Frequency"), prm::Default(0))
+    );
+    source.setExpression("5 + 5");
+
+    ParameterSerializable model = toSerializable(source);
+
+    prm::Parameter restored(
+        prm::Template(prm::Type::FLOAT, prm::Name("frequency", "Frequency"), prm::Default(0))
+    );
+    applySerializable(restored, model);
+
+    REQUIRE(restored.hasExpression());
+    REQUIRE(restored.getExpression() == "5 + 5");
+}
+
 TEST_CASE("A ramp serializes its instance fields without touching the flat value")
 {
     prm::Parameter source = makeRamp(2);
