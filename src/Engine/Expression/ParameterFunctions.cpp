@@ -25,10 +25,9 @@ std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* 
     auto parameter =
         nt::nm().findParameter(NetworkPath(path ? path : ""), context->currentOp()).lock();
 
-    // Reading a parameter makes it a dependency, so the expression recooks when
-    // that parameter changes.
-    if (parameter)
-        context->recordExpressionDependency(nt::Unit{parameter->getOpId(), parameter->getName()});
+    // Reading a parameter makes its node a dependency, so the expression recooks
+    // when that node changes.
+    if (parameter) context->recordExpressionDependency(nt::Unit{parameter->getOpId()});
 
     return parameter;
 }

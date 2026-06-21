@@ -241,8 +241,8 @@ std::vector<Unit> NetworkGraph::getDependents(const Unit& changed) const
             for (const Connection& connection : outputs->second)
                 addDependent_(Unit{connection.targetOp}, dependents, seen, pending);
 
-        // Captured readers are the units whose expressions read this one
-        auto captured = capturedDependents_.find(unit);
+        // Captured readers are the units whose expressions read this node
+        auto captured = capturedDependents_.find(Unit{unit.opId});
         if (captured != capturedDependents_.end())
             for (const Unit& reader : captured->second)
                 addDependent_(reader, dependents, seen, pending);

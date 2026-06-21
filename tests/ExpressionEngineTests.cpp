@@ -64,3 +64,27 @@ TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")
 
     REQUIRE(translate->evalFloat() == 7.0f);
 }
+
+TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions read it")
+{
+    auto& nm = nt::nm();
+
+    // The source node holds the value the reader pulls
+    nt::OpId source = nm.createOperator(transformOpInfo());
+    nm.getGeoOperator(source).getParameter("translate").lock()->setFloat(7.0f);
+
+    // The reader pulls the source's translate through an expression
+    nt::OpId reader = nm.createOperator(transformOpInfo());
+    auto translate = nm.getGeoOperator(reader).getParameter("translate").lock();
+    translate->setExpression("prm(\"transform_1.translate\")");
+
+    // Evaluating once records the captured dependency, then cooking clears the
+    // reader so the later source change is what dirties it
+    translate->evalFloat();
+    nm.cookOp(reader);
+    REQUIRE_FALSE(nm.getGeoOperator(reader).isDirty());
+
+    // Changing the source marks the reader stale through the captured edge
+    nm.getGeoOperator(source).getParameter("translate").lock()->setFloat(9.0f);
+    REQUIRE(nm.getGeoOperator(reader).isDirty());
+}
