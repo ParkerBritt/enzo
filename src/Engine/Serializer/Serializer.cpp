@@ -132,6 +132,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
 
         OperatorSerializable opModel;
         opModel.typeName = op.getType().getName();
+        opModel.path = op.getPath().getString();
         opModel.posX = op.getPosition().x();
         opModel.posY = op.getPosition().y();
 
@@ -182,6 +183,7 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
         opIds.push_back(id);
 
         auto& op = networkManager.getGeoOperator(id);
+        if (!node.path.empty()) op.setPath(node.path);
         for (const ParameterSerializable& prmModel : node.parameters)
         {
             auto weakPrm = op.getParameter(prmModel.name);

@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/Path.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryOpDef.h"
 #include "Engine/Network/NodePacket.h"
@@ -67,12 +68,18 @@ class GeometryOperator
      * @brief Returns the runtime name uniquely identifying this node within its scope (eg.
      * "my_node_05")
      *
-     * Unlike the type name this is per node and is intended to be user assignable.
-     * @note Uniqueness checked, user assignable labels are not yet implemented. The name is
-     * currently synthesized from the type name and op id.
-     * @todo implement user assignable, uniqueness checked node names
+     * The name is the leaf of the node's path, not stored separately. Unlike the type name it is
+     * per node and is intended to be user assignable.
+     * @note The starting name is synthesized from the type name and op id as a placeholder.
+     * @todo implement uniqueness checked node names
      */
-    std::string getName();
+    std::string getName() const;
+
+    /// @brief Returns the full path locating this node within the network.
+    const Path& getPath() const { return path_; }
+
+    /// @brief Sets the full path locating this node within the network.
+    void setPath(const Path& path) { path_ = path; }
 
     /**
      * @brief Returns the static type definition this node was created from.
@@ -131,6 +138,8 @@ class GeometryOperator
     std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
     enzo::nt::OpId opId_;
     enzo::op::OpInfo opInfo_;
+    // Full path locating this node within the network, its leaf is the node name
+    Path path_;
     Vector2 position_{0.f, 0.f};
     bool dirty_ = true;
 };
