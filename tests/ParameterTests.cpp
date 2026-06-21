@@ -60,14 +60,56 @@ TEST_CASE("Setting a literal clears the expression")
     REQUIRE(parameter.evalFloat() == 9.0f);
 }
 
-TEST_CASE("A failed expression falls back to the stored literal")
+TEST_CASE("A failed expression yields zero rather than the stored literal")
 {
     prm::Parameter parameter(floatTemplate());
 
     parameter.setFloat(4.0f);
     parameter.setExpression("2 +");
 
-    REQUIRE(parameter.evalFloat() == 4.0f);
+    REQUIRE(parameter.evalFloat() == 0.0f);
+}
+
+static prm::Template intTemplate()
+{
+    using namespace enzo::prm;
+    return Template(Type::INT, Name("count", "Count"), Default(7));
+}
+
+static prm::Template stringTemplate()
+{
+    using namespace enzo::prm;
+    return Template(Type::STRING, Name("label", "Label"), Default("hello"));
+}
+
+TEST_CASE("evalInt reads a float parameter by casting the literal")
+{
+    prm::Parameter parameter(floatTemplate());
+
+    parameter.setFloat(3.7f);
+    REQUIRE(parameter.evalInt() == 3);
+}
+
+TEST_CASE("evalFloat reads an int parameter by casting the literal")
+{
+    prm::Parameter parameter(intTemplate());
+
+    parameter.setInt(5);
+    REQUIRE(parameter.evalFloat() == 5.0f);
+}
+
+TEST_CASE("evalFloat reads a string parameter as zero")
+{
+    prm::Parameter parameter(stringTemplate());
+
+    REQUIRE(parameter.evalFloat() == 0.0f);
+}
+
+TEST_CASE("evalString reads a numeric parameter as empty")
+{
+    prm::Parameter parameter(intTemplate());
+
+    REQUIRE(parameter.evalString().empty());
 }
 
 // A ramp template carrying an initial control point count. The ramp supplies

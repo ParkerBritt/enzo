@@ -106,6 +106,14 @@ class Parameter
     /// @brief Returns the value pulled within a component's locked range bounds.
     floatT clampToRange_(floatT value, unsigned int index) const;
     intT clampToRange_(intT value, unsigned int index) const;
+
+    // Reads a component's stored literal converted to the requested type. A float
+    // and an int store convert to each other with a plain numeric cast, while any
+    // other mismatch yields the type's default. e.g. an int parameter read as a
+    // float casts cleanly, but a string parameter read as a float gives zero.
+    floatT readFloatLiteral_(unsigned int index) const;
+    intT readIntLiteral_(unsigned int index) const;
+    String readStringLiteral_(unsigned int index) const;
     std::vector<std::shared_ptr<Parameter>> buildInstance_(unsigned int instanceIndex);
 
     Template template_;
