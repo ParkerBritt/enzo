@@ -16,7 +16,8 @@
 
 namespace enzo {
 
-nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2 position)
+nt::OpId
+nt::NetworkManager::createOperator(op::OpInfo opInfo, const std::string& path, Vector2 position)
 {
 
     OpId opId = ++maxOpId_;
@@ -24,6 +25,7 @@ nt::OpId nt::NetworkManager::createOperator(op::OpInfo opInfo, Vector2 position)
 
     std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
     newOp->setPosition(position);
+    if (!path.empty()) newOp->setPath(path);
     newOp->nodeDirtied.connect([this](nt::OpId opId, bool dirtyDependents) {
         onNodeDirtied(opId, dirtyDependents);
     });

@@ -394,6 +394,7 @@ void NetworkPanel::createNode(op::OpInfo opInfo)
     QPointF cursorPos = view_->mapToScene(mapFromGlobal(QCursor::pos()));
     enzo::nt::nm().createOperator(
         opInfo,
+        "",
         {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())}
     );
 }
