@@ -76,25 +76,22 @@ floatT prm::Parameter::evalFloat(unsigned int index) const
 floatT prm::Parameter::evalFloat(unsigned int index, String& error) const
 {
     error.clear();
-    auto& vals = std::get<std::vector<floatT>>(values_);
-    if (index >= vals.size())
-        throw std::out_of_range(
-            "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
-        );
 
-    // An expression drives the value, falling back to the stored literal when it
-    // fails to compile or run.
+    // An expression drives the value, yielding zero when it fails to compile or
+    // run.
     if (hasExpression(index))
     {
         auto context = makeExpressionContext_();
-        floatT result = vals[index];
-        expr::ExpressionEngine::instance()
-            .evalFloat(*expressions_[index], context.get(), result, error);
+        floatT result = 0;
+        const bool runSuccessful =
+            expr::ExpressionEngine::instance()
+                .evalFloat(*expressions_[index], context.get(), result, error);
         if (context) submitExpressionDependencies_(*context, index);
+        if (!runSuccessful) return 0;
         return clampToRange_(result, index);
     }
 
-    return vals[index];
+    return readFloatLiteral_(index);
 }
 
 intT prm::Parameter::evalInt(unsigned int index) const
@@ -117,25 +114,20 @@ intT prm::Parameter::evalInt(unsigned int index, String& error) const
         return -1;
     }
 
-    auto& vals = std::get<std::vector<intT>>(values_);
-    if (index >= vals.size())
-        throw std::out_of_range(
-            "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
-        );
-
-    // An expression drives the value, falling back to the stored literal when it
-    // fails to compile or run.
+    // An expression drives the value, yielding zero when it fails to compile or
+    // run.
     if (hasExpression(index))
     {
         auto context = makeExpressionContext_();
-        intT result = vals[index];
-        expr::ExpressionEngine::instance()
-            .evalInt(*expressions_[index], context.get(), result, error);
+        intT result = 0;
+        const bool runSuccessful = expr::ExpressionEngine::instance()
+                                       .evalInt(*expressions_[index], context.get(), result, error);
         if (context) submitExpressionDependencies_(*context, index);
+        if (!runSuccessful) return 0;
         return clampToRange_(result, index);
     }
 
-    return vals[index];
+    return readIntLiteral_(index);
 }
 
 std::unique_ptr<expr::ExpressionContext> prm::Parameter::makeExpressionContext_() const
@@ -152,25 +144,22 @@ String prm::Parameter::evalString(unsigned int index) const
 String prm::Parameter::evalString(unsigned int index, String& error) const
 {
     error.clear();
-    auto& vals = std::get<std::vector<String>>(values_);
-    if (index >= vals.size())
-        throw std::out_of_range(
-            "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
-        );
 
-    // An expression drives the value, falling back to the stored literal when it
-    // fails to compile or run.
+    // An expression drives the value, yielding an empty string when it fails to
+    // compile or run.
     if (hasExpression(index))
     {
         auto context = makeExpressionContext_();
-        String result = vals[index];
-        expr::ExpressionEngine::instance()
-            .evalString(*expressions_[index], context.get(), result, error);
+        String result;
+        const bool runSuccessful =
+            expr::ExpressionEngine::instance()
+                .evalString(*expressions_[index], context.get(), result, error);
         if (context) submitExpressionDependencies_(*context, index);
+        if (!runSuccessful) return String();
         return result;
     }
 
-    return vals[index];
+    return readStringLiteral_(index);
 }
 
 // Evaluates each component, running any expression that drives it to produce
@@ -343,6 +332,31 @@ intT prm::Parameter::clampToRange_(intT value, unsigned int index) const
     if (range.getMaxFlag() == prm::RangeFlag::LOCKED && value > range.getMax())
         return static_cast<intT>(std::floor(range.getMax()));
     return value;
+}
+
+floatT prm::Parameter::readFloatLiteral_(unsigned int index) const
+{
+    if (const auto* floats = std::get_if<std::vector<floatT>>(&values_))
+        return index < floats->size() ? (*floats)[index] : 0;
+    if (const auto* ints = std::get_if<std::vector<intT>>(&values_))
+        return index < ints->size() ? static_cast<floatT>((*ints)[index]) : 0;
+    return 0;
+}
+
+intT prm::Parameter::readIntLiteral_(unsigned int index) const
+{
+    if (const auto* ints = std::get_if<std::vector<intT>>(&values_))
+        return index < ints->size() ? (*ints)[index] : 0;
+    if (const auto* floats = std::get_if<std::vector<floatT>>(&values_))
+        return index < floats->size() ? static_cast<intT>((*floats)[index]) : 0;
+    return 0;
+}
+
+String prm::Parameter::readStringLiteral_(unsigned int index) const
+{
+    if (const auto* strings = std::get_if<std::vector<String>>(&values_))
+        return index < strings->size() ? (*strings)[index] : String();
+    return String();
 }
 
 void prm::Parameter::handleValueChange_() { valueChanged(); }
