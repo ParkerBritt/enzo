@@ -126,6 +126,29 @@ TEST_CASE("Applying a ramp model reconciles a mismatched instance count")
     REQUIRE(restoredDown.getInstanceCount() == 1);
 }
 
+TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
+{
+    auto& nm = nt::nm();
+    auto gridInfo = op::OperatorTable::getOpInfo("grid").value();
+
+    nt::OpId grid = nm.createOperator(gridInfo);
+    // Use a path the placeholder would never regenerate so the test fails if the
+    // path is not actually serialized
+    const std::string savedPath = "/my_renamed_grid";
+    nm.getGeoOperator(grid).setPath(savedPath);
+
+    const std::string path = "/tmp/enzo_serializer_path_roundtrip.json";
+    nt::Serializer serializer;
+    serializer.save(nm, path);
+
+    nm._reset();
+    serializer.load(nm, path);
+
+    REQUIRE(nm.operators().size() == 1);
+    for (auto [opId, op] : nm.operators())
+        REQUIRE(op.getPath().getString() == savedPath);
+}
+
 TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 {
     auto& nm = nt::nm();

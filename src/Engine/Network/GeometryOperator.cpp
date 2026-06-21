@@ -44,7 +44,8 @@ std::optional<ParameterComparison> parseParameterComparison(const std::string& t
 } // namespace
 
 nt::GeometryOperator::GeometryOperator(nt::OpId opId, op::OpInfo opInfo)
-    : opId_{opId}, opInfo_{opInfo}, opDef_(opInfo.ctorFunc(&nt::nm(), opInfo))
+    : opId_{opId}, opInfo_{opInfo}, opDef_(opInfo.ctorFunc(&nt::nm(), opInfo)),
+      path_{"/" + opInfo.internalName + "_" + std::to_string(opId)}
 {
 
     initParameters();
@@ -157,11 +158,7 @@ const std::vector<prm::Template>& nt::GeometryOperator::getTemplates() const
     return opInfo_.templates;
 }
 
-std::string nt::GeometryOperator::getName()
-{
-    // synthesize a placeholder runtime name from the type name and op id
-    return opInfo_.internalName + "_" + std::to_string(opId_);
-}
+std::string nt::GeometryOperator::getName() const { return path_.getName(); }
 
 const op::OpInfo& nt::GeometryOperator::getType() const { return opInfo_; }
 
