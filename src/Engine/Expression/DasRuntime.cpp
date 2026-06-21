@@ -98,6 +98,23 @@ bool CompiledScript::evalInt(
     return true;
 }
 
+bool CompiledScript::evalString(
+    const String& functionName,
+    const ExpressionContext* context,
+    String& result,
+    String& error
+)
+{
+    ScopedExpressionContext scope(*impl_->context, context);
+    vec4f raw;
+    if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
+
+    // daslang hands back a heap string as a char pointer, null when empty.
+    const char* text = das::cast<char*>::to(raw);
+    result = text ? text : "";
+    return true;
+}
+
 DasRuntime& DasRuntime::instance()
 {
     static DasRuntime runtime;

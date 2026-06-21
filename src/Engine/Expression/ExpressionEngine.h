@@ -42,6 +42,16 @@ class ExpressionEngine
         String& error
     );
 
+    /// @brief Evaluates an expression and returns its result as a string.
+    /// @param context The world the expression reads, e.g. for prm(), may be null.
+    /// @return True on success, false when the expression fails to compile or run.
+    bool evalString(
+        const String& expression,
+        const ExpressionContext* context,
+        String& result,
+        String& error
+    );
+
     ExpressionEngine(const ExpressionEngine&) = delete;
     ExpressionEngine& operator=(const ExpressionEngine&) = delete;
 

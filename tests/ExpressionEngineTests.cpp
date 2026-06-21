@@ -49,6 +49,18 @@ static op::OpInfo transformOpInfo()
     return op::OperatorTable::getOpInfo("transform").value();
 }
 
+static op::OpInfo gridOpInfo()
+{
+    op::OperatorTable::initPlugins();
+    return op::OperatorTable::getOpInfo("grid").value();
+}
+
+static op::OpInfo pathOpInfo()
+{
+    op::OperatorTable::initPlugins();
+    return op::OperatorTable::getOpInfo("path").value();
+}
+
 TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")
 {
     auto& nm = nt::nm();
@@ -127,4 +139,36 @@ TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions 
     // Changing the source marks the reader stale through the captured edge
     nm.getGeoOperator(source).getParameter("translate").lock()->setFloat(9.0f);
     REQUIRE(nm.getGeoOperator(reader).isDirty());
+}
+
+TEST_CASE_METHOD(NMReset, "PrmI reads another node's integer parameter")
+{
+    auto& nm = nt::nm();
+
+    // The source node holds the integer the expression should pull
+    nt::OpId source = nm.createOperator(gridOpInfo());
+    nm.getGeoOperator(source).getParameter("rows").lock()->setInt(5);
+
+    // A second node reads the source's rows through a path expression
+    nt::OpId reader = nm.createOperator(gridOpInfo());
+    auto rows = nm.getGeoOperator(reader).getParameter("rows").lock();
+    rows->setExpression("prmI(\"grid_1.rows\")");
+
+    REQUIRE(rows->evalInt() == 5);
+}
+
+TEST_CASE_METHOD(NMReset, "PrmS reads another node's string parameter")
+{
+    auto& nm = nt::nm();
+
+    // The source node holds the string the expression should pull
+    nt::OpId source = nm.createOperator(pathOpInfo());
+    nm.getGeoOperator(source).getParameter("path").lock()->setString("hello");
+
+    // A second node reads the source's path through a path expression
+    nt::OpId reader = nm.createOperator(pathOpInfo());
+    auto path = nm.getGeoOperator(reader).getParameter("path").lock();
+    path->setExpression("prmS(\"path_1.path\")");
+
+    REQUIRE(path->evalString() == "hello");
 }

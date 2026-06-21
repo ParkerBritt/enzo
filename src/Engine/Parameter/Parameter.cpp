@@ -145,31 +145,65 @@ std::unique_ptr<expr::ExpressionContext> prm::Parameter::makeExpressionContext_(
 
 String prm::Parameter::evalString(unsigned int index) const
 {
+    String error;
+    return evalString(index, error);
+}
+
+String prm::Parameter::evalString(unsigned int index, String& error) const
+{
+    error.clear();
     auto& vals = std::get<std::vector<String>>(values_);
     if (index >= vals.size())
         throw std::out_of_range(
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
+
+    // An expression drives the value, falling back to the stored literal when it
+    // fails to compile or run.
+    if (hasExpression(index))
+    {
+        auto context = makeExpressionContext_();
+        String result = vals[index];
+        expr::ExpressionEngine::instance()
+            .evalString(*expressions_[index], context.get(), result, error);
+        if (context) submitExpressionDependencies_(*context, index);
+        return result;
+    }
+
     return vals[index];
 }
 
-// TODO: evaluate each component's expression like the scalar evalFloat does,
-// rather than returning the raw literals.
+// Evaluates each component, running any expression that drives it to produce
+// the value.
 std::vector<floatT> prm::Parameter::evalFloats() const
 {
-    return std::get<std::vector<floatT>>(values_);
+    const auto& vals = std::get<std::vector<floatT>>(values_);
+    std::vector<floatT> results;
+    results.reserve(vals.size());
+    for (unsigned int index = 0; index < vals.size(); ++index)
+        results.push_back(evalFloat(index));
+    return results;
 }
 
-// TODO: evaluate each component's expression like the scalar evalString does,
-// rather than returning the raw literals.
 std::vector<String> prm::Parameter::evalStrings() const
 {
-    return std::get<std::vector<String>>(values_);
+    const auto& vals = std::get<std::vector<String>>(values_);
+    std::vector<String> results;
+    results.reserve(vals.size());
+    for (unsigned int index = 0; index < vals.size(); ++index)
+        results.push_back(evalString(index));
+    return results;
 }
 
-// TODO: evaluate each component's expression like the scalar evalInt does,
-// rather than returning the raw literals.
-std::vector<intT> prm::Parameter::evalInts() const { return std::get<std::vector<intT>>(values_); }
+std::vector<intT> prm::Parameter::evalInts() const
+{
+    const auto& vals = std::get<std::vector<intT>>(values_);
+    std::vector<intT> results;
+    results.reserve(vals.size());
+    for (unsigned int index = 0; index < vals.size(); ++index)
+        results.push_back(evalInt(index));
+    return results;
+}
 
 unsigned int prm::Parameter::getVectorSize() const { return template_.getSize(); }
 

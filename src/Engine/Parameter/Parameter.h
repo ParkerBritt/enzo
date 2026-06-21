@@ -36,6 +36,7 @@ class Parameter
     // or when the component holds no expression.
     floatT evalFloat(unsigned int index, String& error) const;
     intT evalInt(unsigned int index, String& error) const;
+    String evalString(unsigned int index, String& error) const;
 
     // Read every value the parameter holds as a list. A scalar parameter
     // returns one element, a vector parameter one per component, and a

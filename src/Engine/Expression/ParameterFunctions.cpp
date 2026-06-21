@@ -34,14 +34,33 @@ std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* 
 
 // Parameter functions exposed to daslang expressions
 
-// Returns one component of another parameter by path, e.g. prm("grid_1.t", 1)
-// for the second component of a vector. The index defaults to 0, so
-// prm("grid_1.tx") reads the first component. Falls back to zero when nothing
-// resolves the path.
+/// @brief Evaluates a parameter as a float, one component at a time.
+///
+/// e.g. prm("grid_1.t", 1) reads the second component of a vector, while the
+/// index defaults to 0 so prm("grid_1.tx") reads the first.
+///
+/// @return The float value, or zero when nothing resolves the path.
 floatT prm(const char* path, int32_t index, das::Context* dasContext)
 {
     auto parameter = parameterAt(path, dasContext);
     return parameter ? parameter->evalFloat(static_cast<unsigned int>(index)) : 0;
+}
+
+/// @brief Evaluates a parameter as an integer, e.g. prmI("copies.count").
+/// @return The integer value, or zero when nothing resolves the path.
+intT prmI(const char* path, int32_t index, das::Context* dasContext)
+{
+    auto parameter = parameterAt(path, dasContext);
+    return parameter ? parameter->evalInt(static_cast<unsigned int>(index)) : 0;
+}
+
+/// @brief Evaluates a parameter as a string, e.g. prmS("file.name").
+/// @return The string value, or empty when nothing resolves the path.
+char* prmS(const char* path, int32_t index, das::Context* dasContext)
+{
+    auto parameter = parameterAt(path, dasContext);
+    const String value = parameter ? parameter->evalString(static_cast<unsigned int>(index)) : "";
+    return dasContext->allocateString(value, nullptr);
 }
 
 } // namespace
@@ -62,6 +81,26 @@ class ParameterModule : public das::Module
             "prm",
             das::SideEffects::modifyExternal,
             "enzo::expr::prm"
+        )
+            ->args({"path", "index", "context"})
+            ->arg_init(1, new das::ExprConstInt(0));
+
+        das::addExtern<DAS_BIND_FUN(prmI)>(
+            *this,
+            lib,
+            "prmI",
+            das::SideEffects::modifyExternal,
+            "enzo::expr::prmI"
+        )
+            ->args({"path", "index", "context"})
+            ->arg_init(1, new das::ExprConstInt(0));
+
+        das::addExtern<DAS_BIND_FUN(prmS)>(
+            *this,
+            lib,
+            "prmS",
+            das::SideEffects::modifyExternal,
+            "enzo::expr::prmS"
         )
             ->args({"path", "index", "context"})
             ->arg_init(1, new das::ExprConstInt(0));

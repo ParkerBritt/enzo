@@ -65,4 +65,16 @@ bool ExpressionEngine::evalInt(
     return script->evalInt(evalFunctionName, context, result, error);
 }
 
+bool ExpressionEngine::evalString(
+    const String& expression,
+    const ExpressionContext* context,
+    String& result,
+    String& error
+)
+{
+    auto script = compileCached_(wrapExpression(expression, "string"), error);
+    if (!script) return false;
+    return script->evalString(evalFunctionName, context, result, error);
+}
+
 } // namespace enzo::expr
