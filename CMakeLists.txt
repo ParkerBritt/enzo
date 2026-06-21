@@ -175,14 +175,21 @@ set_source_files_properties(
     PROPERTIES COMPILE_OPTIONS "-fno-rtti"
 )
 
+# The engine is a self contained library with no knowledge of the ui or the
+# operator plugins. The ui executable and the plugins both link against it, so
+# the whole process shares one engine and one set of its singletons. The engine
+# loads the plugins at runtime rather than linking them.
+add_library(enzoEngine SHARED ${ENGINE_SOURCES})
+target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
+target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
+target_compile_definitions(enzoEngine PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+
 
 
 qt_add_executable(${AppExec}
     ${GUI_SOURCES}
-    ${ENGINE_SOURCES}
 )
 
-target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
 
 # Stage enzo/bin with daslib as its sibling so dev mirrors the package layout.
@@ -213,7 +220,7 @@ include(CPack)
 # cpack_add_component("runtimes")
 # cpack_add_component("tgz-runtimes")
 
-install(TARGETS ${AppExec}
+install(TARGETS ${AppExec} enzoEngine
     RUNTIME DESTINATION ${ENZO_BIN_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
@@ -292,7 +299,7 @@ install(DIRECTORY ${DAS_DASLIB_DIR}
 # --- end packaging
 
 
-target_link_libraries(${AppExec} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
 target_include_directories(${AppExec} PUBLIC
     ${ENGINE_INCLUDE_DIRECTORIES}
 )
@@ -314,7 +321,6 @@ if(ENZO_BUILD_TESTS)
     FetchContent_MakeAvailable(Catch2)
 
     add_executable(${TestExec}
-        ${ENGINE_SOURCES}
         tests/main-tests.cpp
         tests/ExpressionEngineTests.cpp
         tests/ParameterTests.cpp
@@ -330,13 +336,7 @@ if(ENZO_BUILD_TESTS)
         tests/PathTests.cpp
         tests/NetworkPathTests.cpp
     )
-    target_link_libraries(${TestExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
-    target_compile_definitions(${TestExec} PRIVATE UNIT_TEST)
-    target_include_directories(${TestExec} PUBLIC
-        ${ENGINE_INCLUDE_DIRECTORIES}
-        ${BOOST_INCLUDE_DIRS}
-    )
-    target_compile_definitions(${TestExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+    target_link_libraries(${TestExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
 
     # Stage the test binary next to daslib so daslang resolves its standard
     # library the same way the app does.
@@ -346,15 +346,8 @@ if(ENZO_BUILD_TESTS)
 
     # benchmarks
     add_executable(${BenchExec}
-        ${ENGINE_SOURCES}
-
         tests/Benchmarks.cpp
     )
-    target_link_libraries(${BenchExec} PRIVATE Catch2::Catch2WithMain Eigen3::Eigen Qt6::Core TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
-    target_compile_definitions(${BenchExec} PRIVATE UNIT_TEST)
-    target_include_directories(${BenchExec} PUBLIC
-        ${ENGINE_INCLUDE_DIRECTORIES}
-    )
-    target_compile_definitions(${BenchExec} PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+    target_link_libraries(${BenchExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
 endif()
 
