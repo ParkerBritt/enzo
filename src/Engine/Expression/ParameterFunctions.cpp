@@ -34,12 +34,14 @@ std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* 
 
 // Parameter functions exposed to daslang expressions
 
-// Returns another parameter's value by path, e.g. prm("grid_1.tx"). Falls back
-// to zero when nothing resolves the path.
-floatT prm(const char* path, das::Context* dasContext)
+// Returns one component of another parameter by path, e.g. prm("grid_1.t", 1)
+// for the second component of a vector. The index defaults to 0, so
+// prm("grid_1.tx") reads the first component. Falls back to zero when nothing
+// resolves the path.
+floatT prm(const char* path, int32_t index, das::Context* dasContext)
 {
     auto parameter = parameterAt(path, dasContext);
-    return parameter ? parameter->evalFloat() : 0;
+    return parameter ? parameter->evalFloat(static_cast<unsigned int>(index)) : 0;
 }
 
 } // namespace
@@ -61,7 +63,8 @@ class ParameterModule : public das::Module
             das::SideEffects::modifyExternal,
             "enzo::expr::prm"
         )
-            ->args({"path", "context"});
+            ->args({"path", "index", "context"})
+            ->arg_init(1, new das::ExprConstInt(0));
     }
 };
 

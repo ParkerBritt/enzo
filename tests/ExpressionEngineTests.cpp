@@ -65,6 +65,46 @@ TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")
     REQUIRE(translate->evalFloat() == 7.0f);
 }
 
+TEST_CASE_METHOD(NMReset, "Prm reads a chosen component of a vector parameter")
+{
+    auto& nm = nt::nm();
+
+    // The source holds a distinct value in each component of its translate
+    nt::OpId source = nm.createOperator(transformOpInfo());
+    auto sourceTranslate = nm.getGeoOperator(source).getParameter("translate").lock();
+    sourceTranslate->setFloat(1.0f, 0);
+    sourceTranslate->setFloat(2.0f, 1);
+    sourceTranslate->setFloat(3.0f, 2);
+
+    // The reader pulls the second and third components by index
+    nt::OpId reader = nm.createOperator(transformOpInfo());
+    auto translate = nm.getGeoOperator(reader).getParameter("translate").lock();
+
+    translate->setExpression("prm(\"transform_1.translate\", 1)");
+    REQUIRE(translate->evalFloat() == 2.0f);
+
+    translate->setExpression("prm(\"transform_1.translate\", 2)");
+    REQUIRE(translate->evalFloat() == 3.0f);
+}
+
+TEST_CASE_METHOD(NMReset, "Prm without an index reads the first component")
+{
+    auto& nm = nt::nm();
+
+    // The source holds different values across its translate components
+    nt::OpId source = nm.createOperator(transformOpInfo());
+    auto sourceTranslate = nm.getGeoOperator(source).getParameter("translate").lock();
+    sourceTranslate->setFloat(1.0f, 0);
+    sourceTranslate->setFloat(2.0f, 1);
+
+    // Omitting the index reads the same component as passing 0
+    nt::OpId reader = nm.createOperator(transformOpInfo());
+    auto translate = nm.getGeoOperator(reader).getParameter("translate").lock();
+    translate->setExpression("prm(\"transform_1.translate\")");
+
+    REQUIRE(translate->evalFloat() == 1.0f);
+}
+
 TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions read it")
 {
     auto& nm = nt::nm();
