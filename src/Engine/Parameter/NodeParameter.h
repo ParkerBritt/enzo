@@ -13,6 +13,10 @@ class NodeParameter : public Parameter
   protected:
     void onFloatSet_(const PrmValues& before) override;
 
+    /// @brief Builds the context an expression runs from, e.g. what node the
+    /// parameter belongs to.
+    std::unique_ptr<expr::ExpressionContext> makeExpressionContext_() const override;
+
   private:
     void addUndo_(PrmValues before);
 

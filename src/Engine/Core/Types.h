@@ -136,6 +136,9 @@ namespace nt {
  */
 using OpId = uint64_t;
 
+/// @brief The id that names no operator, since real ids start at 1.
+constexpr OpId nullOp = 0;
+
 enum class SocketIOType
 {
     Input,

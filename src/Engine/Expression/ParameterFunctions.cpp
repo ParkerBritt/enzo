@@ -1,5 +1,8 @@
 #include "Engine/Expression/DasContext.h"
 #include "Engine/Expression/ExpressionContext.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NetworkPath.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include "daScript/ast/ast_interop.h"
 
 // The daslang module that exposes parameter functions to expressions. These
@@ -11,21 +14,24 @@ namespace enzo::expr {
 
 namespace {
 
-// Reads the evaluation world off the daslang context daslang hands us, null
-// when an expression runs with no context behind it.
-const ExpressionContext* contextOf(das::Context* dasContext)
+// Returns the parameter a path points at, resolved relative to the node the
+// running expression belongs to. daslang hands us that node on the context.
+// Empty when there is no context or the path matches nothing.
+std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* dasContext)
 {
-    return static_cast<DasContext*>(dasContext)->expressionContext;
+    const ExpressionContext* context = static_cast<DasContext*>(dasContext)->expressionContext;
+    if (!context) return nullptr;
+    return nt::nm().findParameter(NetworkPath(path ? path : ""), context->currentOp()).lock();
 }
 
-// Returns another parameter's value by path, e.g. prm("grid_1/tx"). Falls back
+// Parameter functions exposed to daslang expressions
+
+// Returns another parameter's value by path, e.g. prm("grid_1.tx"). Falls back
 // to zero when nothing resolves the path.
 floatT prm(const char* path, das::Context* dasContext)
 {
-    const ExpressionContext* context = contextOf(dasContext);
-    floatT result = 0;
-    if (context) context->evalFloat(path ? path : "", result);
-    return result;
+    auto parameter = parameterAt(path, dasContext);
+    return parameter ? parameter->evalFloat() : 0;
 }
 
 } // namespace
@@ -41,9 +47,13 @@ class ParameterModule : public das::Module
         // prm reads external mutable state, so it must not be folded as a
         // constant across repeated calls.
         das::addExtern<DAS_BIND_FUN(prm)>(
-            *this, lib, "prm", das::SideEffects::modifyExternal, "enzo::expr::prm"
+            *this,
+            lib,
+            "prm",
+            das::SideEffects::modifyExternal,
+            "enzo::expr::prm"
         )
-            ->args({"path"});
+            ->args({"path", "context"});
     }
 };
 

@@ -31,6 +31,7 @@ set(ENGINE_SOURCES
     src/Engine/NetworkGraph/NetworkGraph.cpp
     src/Engine/Expression/DasRuntime.cpp
     src/Engine/Expression/ExpressionEngine.cpp
+    src/Engine/Expression/ParameterFunctions.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -165,6 +166,14 @@ set(DAS_DASLIB_DIR "${DASLANG_DIR}/daslib")
 
 # Dev builds stage into build/enzo so the layout mirrors the installed package.
 set(ENZO_DEV_STAGE_DIR "${CMAKE_BINARY_DIR}/enzo")
+
+# daslang is built without RTTI, so the files that subclass its types match it.
+# Otherwise their typeinfo references daslang symbols that were never emitted.
+set_source_files_properties(
+    src/Engine/Expression/DasRuntime.cpp
+    src/Engine/Expression/ParameterFunctions.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-rtti"
+)
 
 
 
