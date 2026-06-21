@@ -23,7 +23,6 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget*
             range.getMaxFlag() == prm::RangeFlag::LOCKED,
             0.0
         );
-        slider->setValue(parameterShared->evalFloat(vectorIndex));
         contentLayout_->addWidget(slider);
         sliders_.push_back(slider);
 
@@ -43,6 +42,8 @@ enzo::ui::XYZParm::XYZParm(std::weak_ptr<prm::NodeParameter> parameter, QWidget*
             }
         );
     }
+
+    syncFromParameter();
 
     valueChangedConnection_ =
         parameterShared->valueChanged.connect([this]() { syncFromParameter(); });
