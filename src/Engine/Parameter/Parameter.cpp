@@ -88,9 +88,8 @@ floatT prm::Parameter::evalFloat(unsigned int index, String& error) const
     {
         auto context = makeExpressionContext_();
         floatT result = vals[index];
-        expr::ExpressionEngine::instance().evalFloat(
-            *expressions_[index], context.get(), result, error
-        );
+        expr::ExpressionEngine::instance()
+            .evalFloat(*expressions_[index], context.get(), result, error);
         return clampToRange_(result, index);
     }
 
@@ -129,9 +128,8 @@ intT prm::Parameter::evalInt(unsigned int index, String& error) const
     {
         auto context = makeExpressionContext_();
         intT result = vals[index];
-        expr::ExpressionEngine::instance().evalInt(
-            *expressions_[index], context.get(), result, error
-        );
+        expr::ExpressionEngine::instance()
+            .evalInt(*expressions_[index], context.get(), result, error);
         return clampToRange_(result, index);
     }
 

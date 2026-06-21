@@ -1,6 +1,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkPath.h"
 #include "Engine/Network/OpInfo.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
@@ -145,6 +146,35 @@ nt::GeometryOperator& nt::NetworkManager::getGeoOperator(nt::OpId opId)
         );
     }
     return *it->second;
+}
+
+nt::GeometryOperator* nt::NetworkManager::findOperator(const NetworkPath& path, OpId fromOp)
+{
+    NetworkPath nodePath = path.getNode();
+
+    // An empty node path names the node the lookup starts from.
+    if (nodePath.isEmpty())
+    {
+        auto found = gopStore_.find(fromOp);
+        return found != gopStore_.end() ? found->second.get() : nullptr;
+    }
+
+    // The network is flat for now, so a node is found by matching its name.
+    const std::string name = nodePath.getName();
+    for (auto& [opId, op] : gopStore_)
+        if (op->getName() == name) return op.get();
+    return nullptr;
+}
+
+std::weak_ptr<prm::NodeParameter>
+nt::NetworkManager::findParameter(const NetworkPath& path, OpId fromOp)
+{
+    if (!path.hasParameter()) return {};
+
+    GeometryOperator* op = findOperator(path, fromOp);
+    if (!op) return {};
+
+    return op->getParameter(path.getParameter());
 }
 
 bool nt::NetworkManager::isValidOp(nt::OpId opId)

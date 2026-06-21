@@ -8,6 +8,10 @@
 #include <memory>
 #include <unordered_map>
 
+namespace enzo {
+class NetworkPath;
+}
+
 namespace enzo::nt {
 /**
  * @brief The central coordinator of the engine's node system.
@@ -210,6 +214,18 @@ class NetworkManager : public QObject
 
     /// @brief Removes a wired connection between two nodes.
     void disconnectNodes(const nt::Connection& connection);
+
+    /// @brief Resolves a node reference to its operator.
+    /// @param path A node path such as "grid_1". An empty node path resolves to @p fromOp.
+    /// @param fromOp The node a relative path resolves against, nullOp when there is none.
+    /// @return The operator, or null when no node matches the path.
+    GeometryOperator* findOperator(const NetworkPath& path, OpId fromOp = nullOp);
+
+    /// @brief Resolves a parameter reference to its parameter.
+    /// @param path A parameter path such as "grid_1.tx".
+    /// @param fromOp The node a path with no node part resolves against, nullOp when there is none.
+    /// @return The parameter, or an empty handle when nothing matches.
+    std::weak_ptr<prm::NodeParameter> findParameter(const NetworkPath& path, OpId fromOp = nullOp);
 
     /** @name Signals
      * @{

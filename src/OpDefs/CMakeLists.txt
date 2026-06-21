@@ -28,6 +28,8 @@ add_library(${libName} SHARED
     ../Engine/GeometryAlgorithms/BooleanUtils.cpp
     ../Engine/Util/UnionFind.cpp
     ../Engine/Network/NetworkManager.cpp
+    ../Engine/Core/Path.cpp
+    ../Engine/Network/NetworkPath.cpp
     ../Engine/NetworkGraph/NetworkGraph.cpp
     ../Engine/Network/UpdateLock.cpp
     ../Engine/Parameter/Template.cpp
@@ -56,6 +58,13 @@ add_library(${libName} SHARED
     GopCircle.cpp
     GopSweep.cpp
 )
+# daslang is built without RTTI, so the files that subclass its types match it.
+# Otherwise their typeinfo references daslang symbols that were never emitted.
+set_source_files_properties(
+    ../Engine/Expression/DasRuntime.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-rtti"
+)
+
 target_link_libraries(${libName} PRIVATE Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
 
 # packaging
