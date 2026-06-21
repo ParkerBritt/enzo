@@ -179,11 +179,10 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     for (const OperatorSerializable& node : network.nodes)
     {
         std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(node.typeName);
-        nt::OpId id = nm().createOperator(opInfo.value(), {node.posX, node.posY});
+        nt::OpId id = nm().createOperator(opInfo.value(), node.path, {node.posX, node.posY});
         opIds.push_back(id);
 
         auto& op = networkManager.getGeoOperator(id);
-        if (!node.path.empty()) op.setPath(node.path);
         for (const ParameterSerializable& prmModel : node.parameters)
         {
             auto weakPrm = op.getParameter(prmModel.name);

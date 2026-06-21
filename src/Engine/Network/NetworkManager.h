@@ -78,13 +78,19 @@ class NetworkManager
     /**
      * @brief Creates a new node in the network
      *
-     * @param OpInfo Data designating the properties of the node.
+     * @param opInfo Data designating the properties of the node.
+     * @param path Optional explicit path for the node. When empty an
+     *             auto generated path is used. Supplying it here ensures the
+     *             path is in place before the operatorCreated signal fires, so
+     *             observers see the final name from the start.
+     * @param position Where the node sits in the network view.
      *
      * @returns The operator ID of the newly created node
      *
      * @todo Should probably only have to pass type, now entire opInfo. Fix soon!!!
      */
-    OpId createOperator(op::OpInfo opInfo, Vector2 position = {0.f, 0.f});
+    OpId
+    createOperator(op::OpInfo opInfo, const std::string& path = "", Vector2 position = {0.f, 0.f});
 
     /** @brief Returns the operator ID for the node with its display flag set.
      * There can only be only be one operator displayed at a time.
