@@ -10,7 +10,7 @@
 namespace {
 // Inset from the widget edge to the background panel so handles can overflow it
 constexpr double padding = enzo::ui::Ramp::panelInset;
-constexpr double backgroundCornerRadius = enzo::ui::parameterBorderRadius;
+constexpr double backgroundCornerRadius = enzo::style::parameter::borderRadius;
 const QColor panelColor("#1a1a1a");
 const QColor borderColor("#383838");
 const QColor circleColor("#B1B2B5");
@@ -27,7 +27,7 @@ constexpr int hoverScaleDurationMs = 200;
 
 enzo::ui::Ramp::Ramp(QWidget* parent) : QWidget(parent)
 {
-    setFixedHeight(rampHeight);
+    setFixedHeight(enzo::style::ramp::height);
     setMouseTracking(true);
 
     // Default endpoints rising from zero to one

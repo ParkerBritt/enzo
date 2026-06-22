@@ -83,7 +83,7 @@ QSize enzo::ui::Dropdown::sizeHint() const
         widest = std::max(widest, fontMetrics().horizontalAdvance(item.text));
     }
     const int width = textPadding * 2 + widest + arrowSize + arrowMargin;
-    return {width, parameterHeight};
+    return {width, enzo::style::parameter::height};
 }
 
 void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
@@ -95,7 +95,7 @@ void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
     QRectF box = QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5);
     painter.setPen(QPen(borderColor, 1));
     painter.setBrush(backgroundColor);
-    painter.drawRoundedRect(box, parameterBorderRadius, parameterBorderRadius);
+    painter.drawRoundedRect(box, enzo::style::parameter::borderRadius, enzo::style::parameter::borderRadius);
 
     // Current selection text
     painter.setPen(textColor);

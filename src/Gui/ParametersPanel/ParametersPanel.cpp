@@ -26,7 +26,7 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     mainLayout_ = new QVBoxLayout();
     parametersLayout_ = new QVBoxLayout();
     parametersLayout_->setContentsMargins(25, 15, 15, 15);
-    parametersLayout_->setSpacing(enzo::ui::parameterGap);
+    parametersLayout_->setSpacing(enzo::style::parameter::gap);
     parametersLayout_->setAlignment(Qt::AlignTop);
     bgWidget_ = new QWidget();
     bgWidget_->setLayout(parametersLayout_);

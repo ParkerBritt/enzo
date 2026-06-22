@@ -15,7 +15,7 @@ enzo::ui::BoolIconParm::BoolIconParm(
 {
     auto parameterShared = parameter_.lock();
 
-    const int sizePx = parameterHeight;
+    const int sizePx = enzo::style::parameter::height;
     const int iconPx = sizePx * style_->scale() - 8;
 
     button_ = new QPushButton();

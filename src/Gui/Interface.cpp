@@ -55,7 +55,7 @@ EnzoUI::EnzoUI()
         padding: 2px 4px;
     }
     )")
-                            .arg(enzo::ui::fontSize));
+                            .arg(enzo::style::font::size));
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();
