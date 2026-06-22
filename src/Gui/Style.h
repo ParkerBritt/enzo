@@ -27,6 +27,7 @@
 /// role as in `borderColorSelected`.
 
 #include <QColor>
+#include <QString>
 
 namespace enzo::style {
 
@@ -35,6 +36,26 @@ inline QColor withAlpha(QColor color, int alpha)
 {
     color.setAlpha(alpha);
     return color;
+}
+
+/// Returns a copy of the color set to the given opacity from 0.0 to 1.0.
+inline QColor withOpacity(QColor color, double opacity)
+{
+    color.setAlphaF(opacity);
+    return color;
+}
+
+/// Returns the color as a CSS `rgba()` string for stylesheet injection.
+///
+/// Unlike QColor::name, this keeps the alpha channel, so translucent tokens
+/// survive the trip into a stylesheet.
+inline QString cssRgba(const QColor& color)
+{
+    return QString("rgba(%1,%2,%3,%4)")
+        .arg(color.red())
+        .arg(color.green())
+        .arg(color.blue())
+        .arg(color.alphaF());
 }
 
 /// Broad stroke tones reused across the interface.
@@ -55,6 +76,8 @@ inline const QColor textMuted = QColor("#b3b3b3");
 inline const QColor textBright = QColor("#e6e6e6");
 /// Pure white for primary marks on dark surfaces.
 inline const QColor white = QColor("#ffffff");
+/// Pure black for scrims and translucent overlays.
+inline const QColor black = QColor("#000000");
 /// Blue accent for active highlights.
 inline const QColor accentBlue = QColor("#00bfff");
 /// Soft blue for expression mode text.
@@ -171,5 +194,25 @@ namespace boolSwitch {
 inline const QColor offColor = color::border;
 inline const QColor onColor = color::textMuted;
 } // namespace boolSwitch
+
+/// Main window and tooltip chrome.
+namespace interface {
+inline const QColor textColor = withOpacity(color::white, 0.8);
+} // namespace interface
+
+/// Parameters panel chrome.
+namespace parametersPanel {
+inline const QColor placeholderColor = withOpacity(color::white, 0.5); // "No Node Selected" label
+} // namespace parametersPanel
+
+/// Viewport overlay controls.
+namespace viewportOverlay {
+inline const QColor backgroundColor = withOpacity(color::black, 0.2);
+} // namespace viewportOverlay
+
+/// Geometry spreadsheet look.
+namespace geometrySpreadsheet {
+inline const QColor selectionColor = QColor("#414141"); // prim view row highlight
+} // namespace geometrySpreadsheet
 
 } // namespace enzo::style

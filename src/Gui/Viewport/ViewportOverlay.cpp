@@ -19,7 +19,7 @@ ViewportOverlay::ViewportOverlay() : QWidget()
         QString(R"(
     QComboBox
     {
-        background: rgba(0,0,0,0.2);
+        background: %3;
         border: 1px solid %1;
         border-radius: 10px;
         padding: 3px 15px;;
@@ -32,7 +32,7 @@ ViewportOverlay::ViewportOverlay() : QWidget()
 
     QComboBox QAbstractItemView
     {
-        background-color: rgba(0,0,0,0.2);
+        background-color: %3;
         border-radius: 8px;
         border: none;
         outline: none;
@@ -54,7 +54,11 @@ ViewportOverlay::ViewportOverlay() : QWidget()
     }
 
     )")
-            .arg(enzo::style::color::divider.name(), enzo::style::color::surface.name())
+            .arg(
+                enzo::style::color::divider.name(),
+                enzo::style::color::surface.name(),
+                enzo::style::cssRgba(enzo::style::viewportOverlay::backgroundColor)
+            )
     );
     cameraDropdown_->setModel(cameraDropdownModel_);
     cameraDropdown_->setItemDelegate(new QStyledItemDelegate(cameraDropdown_));
