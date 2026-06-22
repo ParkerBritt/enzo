@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/PopupList.h"
+#include "Gui/Style.h"
 
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -22,12 +23,6 @@ constexpr qreal itemFadeMs = 300;
 constexpr qreal itemStaggerMs = 30;
 constexpr int scrollbarWidth = 3;
 constexpr int scrollbarMargin = 2;
-
-const QColor borderColor("#383838");
-const QColor backgroundColor(25, 25, 25);
-const QColor textColor("#B3B3B3");
-const QColor selectedTextColor("#E6E6E6");
-const QColor hoverColor(60, 60, 60, 153);
 
 } // namespace
 
@@ -296,14 +291,14 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
     clip.addRoundedRect(box, borderRadius, borderRadius);
     painter.setClipPath(clip);
 
-    painter.fillRect(box, backgroundColor);
+    painter.fillRect(box, enzo::style::popup::backgroundColor);
 
     // Highlight slides between rows, leaving an even gap from the scrollbar when present
     const int rightInset =
         maxScrollOffset() > 0 ? padding + scrollbarMargin + scrollbarWidth : padding;
     QRect highlight(0, static_cast<int>(highlightTop_) - scrollOffset_, width(), itemHeight);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(hoverColor);
+    painter.setBrush(enzo::style::popup::hoverColor);
     painter.drawRoundedRect(highlight.adjusted(padding, 1, -rightInset, -1), 5, 5);
 
     // Rows, translated by the scroll offset and naturally clipped to the reveal
@@ -330,7 +325,10 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
             textLeft = textPadding + iconSize + iconTextGap;
         }
 
-        painter.setPen(position == selectedPosition_ ? selectedTextColor : textColor);
+        painter.setPen(
+            position == selectedPosition_ ? enzo::style::popup::foregroundColorSelected
+                                          : enzo::style::popup::foregroundColor
+        );
         painter.drawText(
             row.adjusted(textLeft, 0, -textPadding, 0),
             Qt::AlignVCenter | Qt::AlignLeft,
@@ -343,11 +341,11 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
     // Soften the bottom edge when rows continue below the fold
     if (scrollOffset_ < maxScrollOffset())
     {
-        QColor transparentBackground = backgroundColor;
+        QColor transparentBackground = enzo::style::popup::backgroundColor;
         transparentBackground.setAlpha(0);
         QLinearGradient gradient(0, revealedHeight_ - itemHeight, 0, revealedHeight_);
         gradient.setColorAt(0.0, transparentBackground);
-        gradient.setColorAt(1.0, backgroundColor);
+        gradient.setColorAt(1.0, enzo::style::popup::backgroundColor);
         painter.setPen(Qt::NoPen);
         painter.setBrush(gradient);
         painter.drawRect(QRectF(0, revealedHeight_ - itemHeight, width(), itemHeight));
@@ -363,7 +361,7 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
         const int thumbTop =
             padding + static_cast<int>((trackHeight - thumbHeight) * scrollFraction);
         painter.setPen(Qt::NoPen);
-        painter.setBrush(borderColor);
+        painter.setBrush(enzo::style::popup::borderColor);
         painter.drawRoundedRect(
             QRect(
                 width() - scrollbarMargin - scrollbarWidth,
@@ -378,7 +376,7 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
 
     // Outline drawn last so it sits above the fill
     painter.setClipping(false);
-    painter.setPen(QPen(borderColor, 1));
+    painter.setPen(QPen(enzo::style::popup::borderColor, 1));
     painter.setBrush(Qt::NoBrush);
     painter.drawRoundedRect(box, borderRadius, borderRadius);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Gui/Style.h"
 #include <QPen>
 #include <QWidget>
 
@@ -11,5 +12,5 @@ class CornerOverlay : public QWidget
 
   protected:
     void paintEvent(QPaintEvent*) override;
-    QPen borderPen_ = QPen(QColor("#303030"));
+    QPen borderPen_ = QPen(enzo::style::color::divider);
 };

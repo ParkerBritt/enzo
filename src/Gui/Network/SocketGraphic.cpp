@@ -1,5 +1,6 @@
 #include "Gui/Network/SocketGraphic.h"
 #include "Gui/Network/NodeEdgeGraphic.h"
+#include "Gui/Style.h"
 #include "icecream.hpp"
 #include <QPropertyAnimation>
 #include <QTextDocument>
@@ -23,8 +24,8 @@ SocketGraphic::SocketGraphic(
 )
     : QGraphicsObject(parent), type_{type}, opId_{opId}, socketIndex_{socketIndex}
 {
-    brushActive_ = QBrush("white");
-    brushInactive_ = QBrush("#9f9f9f");
+    brushActive_ = QBrush(enzo::style::socket::activeColor);
+    brushInactive_ = QBrush(enzo::style::socket::inactiveColor);
     socketSize_ = 3;
     initBoundingBox();
 

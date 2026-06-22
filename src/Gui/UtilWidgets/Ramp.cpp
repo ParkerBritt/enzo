@@ -11,14 +11,6 @@ namespace {
 // Inset from the widget edge to the background panel so handles can overflow it
 constexpr double padding = enzo::ui::Ramp::panelInset;
 constexpr double backgroundCornerRadius = enzo::style::parameter::borderRadius;
-const QColor panelColor("#1a1a1a");
-const QColor borderColor("#383838");
-const QColor circleColor("#B1B2B5");
-const QColor selectedCircleColor("#ffffff");
-const QColor squareColor("#808080");
-const QColor curveStrokeColor("#B1B2B5");
-const QColor curveFillTopColor(177, 178, 181, 100);
-const QColor curveFillBottomColor(177, 178, 181, 10);
 // Hitbox scale multiplier for circle handle
 constexpr double circleHitRadiusScale = 4;
 constexpr double dragScaleTarget = 0.9;
@@ -124,8 +116,8 @@ void enzo::ui::Ramp::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     // Rounded background panel inset from the widget so points can sit on its edges
-    painter.setPen(QPen(borderColor, 1));
-    painter.setBrush(panelColor);
+    painter.setPen(QPen(enzo::style::ramp::borderColor, 1));
+    painter.setBrush(enzo::style::ramp::backgroundColor);
     painter.drawRoundedRect(backgroundRect_(), backgroundCornerRadius, backgroundCornerRadius);
 
     paintCurve_(painter);
@@ -234,14 +226,14 @@ void enzo::ui::Ramp::paintCurve_(QPainter& painter) const
     painter.setClipPath(panelClip);
 
     QLinearGradient fillGradient(0, panel.top(), 0, panel.bottom());
-    fillGradient.setColorAt(0.0, curveFillTopColor);
-    fillGradient.setColorAt(1.0, curveFillBottomColor);
+    fillGradient.setColorAt(0.0, enzo::style::ramp::curveFillTopColor);
+    fillGradient.setColorAt(1.0, enzo::style::ramp::curveFillBottomColor);
 
     painter.setPen(Qt::NoPen);
     painter.setBrush(fillGradient);
     painter.drawPath(fillPath);
 
-    painter.setPen(QPen(curveStrokeColor, 1.5));
+    painter.setPen(QPen(enzo::style::ramp::foregroundColor, 1.5));
     painter.setBrush(Qt::NoBrush);
     painter.drawPath(strokePath);
 
@@ -266,14 +258,16 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
             squareSize
         );
         painter.setPen(Qt::NoPen);
-        painter.setBrush(squareColor);
+        painter.setBrush(enzo::style::ramp::squareColor);
         painter.drawRoundedRect(squareRect, 3, 3);
 
         // Free moving circle at the control point value, ringed when selected
         const double circleCenterY = valueToY_(controlPoint.value);
         const double radius =
             pointIndex == scaledPoint_ ? circleRadius * hoverScale_ : circleRadius;
-        painter.setBrush(isSelected ? selectedCircleColor : circleColor);
+        painter.setBrush(
+            isSelected ? enzo::style::ramp::handleColorSelected : enzo::style::ramp::foregroundColor
+        );
         painter.setPen(QPen(Qt::NoPen));
         painter.drawEllipse(QPointF(centerX, circleCenterY), radius, radius);
         painter.setPen(Qt::NoPen);

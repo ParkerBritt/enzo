@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Gui/Style.h"
 #include <QColor>
 #include <QPushButton>
 #include <qtmetamacros.h>
@@ -23,8 +24,8 @@ class BoolSwitch : public QPushButton
     int handleWidth_ = 17;
     qreal switchX_ = 0;
     qreal switchXEnd_ = 0;
-    QColor switchColorOff_ = QColor("#383838");
-    QColor switchColorOn_ = QColor("#B3B3B3");
+    QColor switchColorOff_ = enzo::style::boolSwitch::offColor;
+    QColor switchColorOn_ = enzo::style::boolSwitch::onColor;
     QColor switchColor_;
 
     qreal switchX() const { return switchX_; }

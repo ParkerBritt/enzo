@@ -1,4 +1,5 @@
 #pragma once
+#include "Gui/Style.h"
 #include <QBrush>
 #include <QGraphicsItem>
 
@@ -11,9 +12,9 @@ class DisplayFlagButton : public QGraphicsItem
 
   private:
     QRectF baseRect_;
-    QColor disabledColor_ = QColor("#373737");
-    QColor enabledColor_ = QColor("#00BFFF");
-    QColor hoveredColor_ = QColor("#666666");
+    QColor disabledColor_ = enzo::style::displayFlag::disabledColor;
+    QColor enabledColor_ = enzo::style::displayFlag::enabledColor;
+    QColor hoveredColor_ = enzo::style::displayFlag::hoveredColor;
     QBrush disabledBrush_;
     QBrush enabledBrush_;
     QBrush hoveredDisabledBrush_;

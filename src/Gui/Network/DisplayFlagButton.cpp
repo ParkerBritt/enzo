@@ -13,7 +13,7 @@ DisplayFlagButton::DisplayFlagButton(QGraphicsItem* parent) : QGraphicsItem(pare
 
     disabledBrush_ = QBrush(disabledColor_);
     enabledBrush_ = QBrush(enabledColor_);
-    hoveredEnabledBrush_ = QBrush("#1391ff");
+    hoveredEnabledBrush_ = QBrush(enzo::style::displayFlag::hoveredEnabledColor);
     hoveredDisabledBrush_ = QBrush(hoveredColor_);
 }
 

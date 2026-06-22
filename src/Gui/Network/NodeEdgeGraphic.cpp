@@ -1,5 +1,6 @@
 #include "Gui/Network/NodeEdgeGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
+#include "Gui/Style.h"
 #include <QGraphicsScene>
 #include <QGraphicsSceneHoverEvent>
 #include <QTextDocument>
@@ -11,8 +12,8 @@ NodeEdgeGraphic::NodeEdgeGraphic(
     enzo::nt::Connection connection,
     QGraphicsItem* parent
 )
-    : QGraphicsItem(parent), socket1_{socket1}, socket2_{socket2}, defaultColor_{QColor("white")},
-      connection_{connection}
+    : QGraphicsItem(parent), socket1_{socket1}, socket2_{socket2},
+      defaultColor_{enzo::style::edge::defaultColor}, connection_{connection}
 {
     setAcceptHoverEvents(true);
 
@@ -32,8 +33,8 @@ NodeEdgeGraphic::NodeEdgeGraphic(
 void NodeEdgeGraphic::updateDeleteHighlightPen()
 {
     QLinearGradient gradient(pos1_, hoverPos_);
-    gradient.setColorAt(0.0, QColor(255, 74, 74, 200));
-    gradient.setColorAt(1, QColor(255, 74, 74, 50));
+    gradient.setColorAt(0.0, enzo::style::withAlpha(enzo::style::edge::flowColor, 200));
+    gradient.setColorAt(1, enzo::style::withAlpha(enzo::style::edge::flowColor, 50));
     // gradient.setColorAt(1.0, QColor(255, 74, 74, 200));
 
     deleteHighlightPen_.setBrush(QBrush(gradient));

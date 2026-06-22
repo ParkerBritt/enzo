@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/MenuBar.h"
+#include "Gui/Style.h"
 
 #include <QCursor>
 #include <QMouseEvent>
@@ -11,9 +12,6 @@ constexpr int titlePaddingX = 8;
 constexpr int titlePaddingY = 2;
 constexpr int titleSpacing = 2;
 constexpr int titleRadius = 6;
-
-const QColor textColor("#B3B3B3");
-const QColor highlightColor("#282828");
 
 } // namespace
 
@@ -99,10 +97,10 @@ void enzo::ui::MenuBar::paintEvent(QPaintEvent*)
         if (index == litIndex)
         {
             painter.setPen(Qt::NoPen);
-            painter.setBrush(highlightColor);
+            painter.setBrush(enzo::style::menuBar::highlightColor);
             painter.drawRoundedRect(title, titleRadius, titleRadius);
         }
-        painter.setPen(textColor);
+        painter.setPen(enzo::style::menuBar::foregroundColor);
         painter.drawText(title, Qt::AlignCenter, items_[index].title);
     }
 }
