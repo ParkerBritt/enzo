@@ -26,14 +26,17 @@ enzo::ui::TabMenu::TabMenu(NetworkPanel* network) : PopupList(network), network_
     searchBar_->setFrame(false);
     searchBar_->setAlignment(Qt::AlignCenter);
     searchBar_->setObjectName("TabMenuSearch");
-    searchBar_->setStyleSheet(R"(
+    searchBar_->setStyleSheet(
+        QString(R"(
     QWidget#TabMenuSearch {
-        background-color: rgb(25,25,25);
+        background-color: %1;
         padding: 3px;
         border-radius: 6px;
-        border: 1px solid #383838;
+        border: 1px solid %2;
     }
-    )");
+    )")
+            .arg(enzo::style::color::surfaceDeep.name(), enzo::style::color::border.name())
+    );
     connect(searchBar_, &QLineEdit::textChanged, this, &TabMenu::applyFilter);
 
     // Build one row per operator from the table

@@ -17,10 +17,11 @@ enzo::ui::BoolSwitch::BoolSwitch(bool initialChecked, QWidget* parent) : QPushBu
                   .BoolSwitch
                   {
                       border-radius: %1px;
-                      border: 1px solid #383838;
+                      border: 1px solid %2;
                   }
                   )")
-                      .arg(enzo::style::parameter::borderRadius));
+                      .arg(enzo::style::parameter::borderRadius)
+                      .arg(enzo::style::color::border.name()));
 
     setChecked(initialChecked);
     switchXEnd_ = fullWidth_ - handleWidth_ - 4;

@@ -32,11 +32,12 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     bgWidget_->setLayout(parametersLayout_);
 
     bgWidget_->setObjectName("ParametersPanelBg");
-    bgWidget_->setStyleSheet(R"(
+    bgWidget_->setStyleSheet(QString(R"(
         #ParametersPanelBg {
-            background-color: #282828;
+            background-color: %1;
         }
-    )");
+    )")
+                                 .arg(enzo::style::color::surface.name()));
 
     // Add scrollArea for lots of parameters.
     scrollArea_ = new QScrollArea();
@@ -44,31 +45,37 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     scrollArea_->setWidgetResizable(true);
     scrollArea_->setFrameShape(QFrame::NoFrame);
     scrollArea_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea_->setStyleSheet(R"(
+    scrollArea_->setStyleSheet(QString(R"(
         QScrollBar:vertical {
-            background: #1B1B1B;
+            background: %1;
             width: 15px;
         }
         QScrollBar::handle:vertical {
-            background: #282828;
+            background: %2;
             min-height: 50px;
             border-radius: 5px;
-            border: 1px solid #2D2D2D;
+            border: 1px solid %3;
             margin: 2px;
         }
         QScrollBar::add-page:vertical,
         QScrollBar::sub-page:vertical,
         QScrollBar::add-line:vertical,
         QScrollBar::sub-line:vertical { height: 0px; }
-    )");
+    )")
+                                   .arg(
+                                       enzo::style::color::surfaceDeep.name(),
+                                       enzo::style::color::surface.name(),
+                                       enzo::style::color::divider.name()
+                                   ));
 
     // Placeholder shown while no node is selected.
     noSelectionLabel_ = new QLabel("No Node Selected");
     noSelectionLabel_->setAlignment(Qt::AlignCenter);
-    noSelectionLabel_->setStyleSheet(R"(
-        background-color: #282828;
+    noSelectionLabel_->setStyleSheet(QString(R"(
+        background-color: %1;
         color: rgba(255, 255, 255, 50%);
-    )");
+    )")
+                                         .arg(enzo::style::color::surface.name()));
 
     mainLayout_->addWidget(scrollArea_);
     mainLayout_->addWidget(noSelectionLabel_);
