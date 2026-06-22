@@ -298,7 +298,7 @@ void enzo::ui::PopupList::paintEvent(QPaintEvent*)
         maxScrollOffset() > 0 ? padding + scrollbarMargin + scrollbarWidth : padding;
     QRect highlight(0, static_cast<int>(highlightTop_) - scrollOffset_, width(), itemHeight);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(enzo::style::popup::hoverColor);
+    painter.setBrush(enzo::style::popup::backgroundColorHovered);
     painter.drawRoundedRect(highlight.adjusted(padding, 1, -rightInset, -1), 5, 5);
 
     // Rows, translated by the scroll offset and naturally clipped to the reveal
