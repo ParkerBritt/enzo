@@ -14,7 +14,7 @@ class DisplayFlagButton : public QGraphicsItem
     QRectF baseRect_;
     QColor disabledColor_ = enzo::style::displayFlag::disabledColor;
     QColor enabledColor_ = enzo::style::displayFlag::enabledColor;
-    QColor hoveredColor_ = enzo::style::displayFlag::hoveredColor;
+    QColor hoveredColor_ = enzo::style::displayFlag::hoveredDisabledColor;
     QBrush disabledBrush_;
     QBrush enabledBrush_;
     QBrush hoveredDisabledBrush_;

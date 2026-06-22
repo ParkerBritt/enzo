@@ -78,10 +78,6 @@ inline const QColor textBright = QColor("#e6e6e6");
 inline const QColor white = QColor("#ffffff");
 /// Pure black for scrims and translucent overlays.
 inline const QColor black = QColor("#000000");
-/// Blue accent for active highlights.
-inline const QColor accentBlue = QColor("#00bfff");
-/// Soft blue for expression mode text.
-inline const QColor accentBlueSoft = QColor("#8ab4f8");
 /// Yellow used to mark the selected node.
 inline const QColor selection = QColor("#fee046");
 /// Red used for errors.
@@ -118,7 +114,7 @@ inline const QColor backgroundColor = color::surfaceDeep;
 inline const QColor borderColor = color::border;
 inline const QColor foregroundColor = color::textMuted; // curve stroke and handles
 inline const QColor handleColorSelected = color::white;
-inline const QColor squareColor = QColor("#808080");
+inline const QColor positionHandleColor = QColor("#808080");
 inline const QColor curveFillTopColor = withAlpha(color::textMuted, 100);
 inline const QColor curveFillBottomColor = withAlpha(color::textMuted, 10);
 /// Height in pixels of the curve editor.
@@ -129,17 +125,16 @@ inline constexpr int height = 80;
 namespace slider {
 inline const QColor trackColor = color::border;
 inline const QColor foregroundColor = color::textMuted;
-inline const QColor expressionColor = color::accentBlueSoft;
+inline const QColor expressionColor = QColor("#8ab4f8");
 inline const QColor expressionColorError = color::error;
 } // namespace slider
 
 /// Network node graphic look.
 namespace node {
 inline const QColor backgroundColor = color::surfaceDeep;
-inline const QColor outlineColor = QColor("#353535");
-inline const QColor outlineColorSelected = color::selection;
+inline const QColor borderColor = QColor("#353535");
+inline const QColor borderColorSelected = color::selection;
 inline const QColor foregroundColor = color::white;
-inline const QColor hoverColor = QColor("#666666");
 } // namespace node
 
 /// Node socket look.
@@ -157,8 +152,8 @@ inline const QColor flowColor = QColor("#ff4a4a");
 /// Display flag button look.
 namespace displayFlag {
 inline const QColor disabledColor = color::border;
-inline const QColor enabledColor = color::accentBlue;
-inline const QColor hoveredColor = QColor("#666666");
+inline const QColor enabledColor = QColor("#00bfff");
+inline const QColor hoveredDisabledColor = QColor("#666666");
 inline const QColor hoveredEnabledColor = QColor("#1391ff");
 } // namespace displayFlag
 
@@ -175,7 +170,7 @@ inline const QColor backgroundColor = color::surfaceDeep;
 inline const QColor borderColor = color::border;
 inline const QColor foregroundColor = color::textMuted;
 inline const QColor foregroundColorSelected = color::textBright;
-inline const QColor hoverColor = withAlpha(color::border, 153);
+inline const QColor backgroundColorHovered = withAlpha(color::border, 153);
 } // namespace popup
 
 /// Menu look.

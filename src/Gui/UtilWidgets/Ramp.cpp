@@ -258,7 +258,7 @@ void enzo::ui::Ramp::paintControlPoints_(QPainter& painter) const
             squareSize
         );
         painter.setPen(Qt::NoPen);
-        painter.setBrush(enzo::style::ramp::squareColor);
+        painter.setBrush(enzo::style::ramp::positionHandleColor);
         painter.drawRoundedRect(squareRect, 3, 3);
 
         // Free moving circle at the control point value, ringed when selected

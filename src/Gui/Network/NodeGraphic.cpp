@@ -217,11 +217,11 @@ void NodeGraphic::animateRemoval(std::function<void()> onComplete)
 
 void NodeGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    // default outline
-    QPen defaultPen = QPen(enzo::style::node::outlineColor);
+    // default border
+    QPen defaultPen = QPen(enzo::style::node::borderColor);
     defaultPen.setWidth(1);
-    // outline when selected
-    QPen selectedPen = QPen(enzo::style::node::outlineColorSelected, 0.8);
+    // border when selected
+    QPen selectedPen = QPen(enzo::style::node::borderColorSelected, 0.8);
     // set fill
     painter->setBrush(QBrush(enzo::style::node::backgroundColor));
 
