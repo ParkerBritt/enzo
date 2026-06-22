@@ -10,7 +10,7 @@ enzo::ui::StringParm::StringParm(std::weak_ptr<prm::NodeParameter> parameter, QW
     auto parameterShared = parameter_.lock();
 
     lineEdit_ = new QLineEdit();
-    lineEdit_->setFixedHeight(parameterHeight);
+    lineEdit_->setFixedHeight(enzo::style::parameter::height);
     lineEdit_->setText(QString::fromStdString(parameterShared->evalString()));
     lineEdit_->setStyleSheet(
         "QLineEdit { background: transparent; border: none; padding: 0 5px; }"

@@ -4,5 +4,5 @@
 enzo::ui::SpacerParm::SpacerParm(const prm::Template& parmTemplate, QWidget* parent)
     : Parameter(parmTemplate, parent)
 {
-    setFixedHeight(spacerHeight);
+    setFixedHeight(enzo::style::spacer::height);
 }

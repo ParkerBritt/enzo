@@ -20,7 +20,7 @@ enzo::ui::BoolSwitch::BoolSwitch(bool initialChecked, QWidget* parent) : QPushBu
                       border: 1px solid #383838;
                   }
                   )")
-                      .arg(parameterBorderRadius));
+                      .arg(enzo::style::parameter::borderRadius));
 
     setChecked(initialChecked);
     switchXEnd_ = fullWidth_ - handleWidth_ - 4;
@@ -38,7 +38,7 @@ void enzo::ui::BoolSwitch::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::NoPen);
     painter.setBrush(switchColor_);
     // The handle radius follows the frame radius with an offset tuned by eye
-    constexpr int borderRadius = parameterBorderRadius - 1;
+    constexpr int borderRadius = enzo::style::parameter::borderRadius - 1;
     constexpr int margin = 2;
     painter.drawRoundedRect(
         QRectF(

@@ -80,7 +80,7 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
                 border: 1px solid #383838;
             }
         )")
-                                          .arg(parameterBorderRadius));
+                                          .arg(enzo::style::parameter::borderRadius));
     }
     else
     {
@@ -107,7 +107,7 @@ void enzo::ui::Parameter::changeEvent(QEvent* event)
     }
 
     auto* dim = new QGraphicsOpacityEffect(this);
-    dim->setOpacity(disabledOpacity);
+    dim->setOpacity(enzo::style::parameter::disabledOpacity);
     setGraphicsEffect(dim);
 }
 

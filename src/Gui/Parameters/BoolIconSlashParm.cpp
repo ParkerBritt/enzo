@@ -127,7 +127,7 @@ BoolIconSlashParm::BoolIconSlashParm(
 {
     auto parameterShared = parameter_.lock();
 
-    const int sizePx = parameterHeight;
+    const int sizePx = enzo::style::parameter::height;
     const int iconPx = sizePx * style_->scale() - 8;
 
     QPixmap iconPixmap = IconRegistry::instance().pixmap(style_->icon(), QSize(iconPx, iconPx));

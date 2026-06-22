@@ -24,7 +24,7 @@ enzo::ui::Slider::Slider(
       clampMax_(clampMax), step_(step)
 {
     setAttribute(Qt::WA_StyledBackground, true);
-    setFixedHeight(parameterHeight);
+    setFixedHeight(enzo::style::parameter::height);
     setProperty("type", "Slider");
     setStyleSheet(QString(R"(
                   QWidget[type="Slider"]
@@ -33,7 +33,7 @@ enzo::ui::Slider::Slider(
                       border: 1px solid #383838;
                   }
                   )")
-                      .arg(parameterBorderRadius));
+                      .arg(enzo::style::parameter::borderRadius));
     notchPen_ = QPen(QColor("#383838"), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     value_ = clampAndStep_(minValue_);
 }
@@ -143,7 +143,7 @@ void enzo::ui::Slider::paintFill_(
     // Reveal the full length rounded bar through a rounded mask at the fill width
     // so the anchored left end keeps its radius and the moving right end stays round
     // The fill radius follows the frame radius with an offset tuned by eye
-    constexpr double cornerRadius = parameterBorderRadius - 1;
+    constexpr double cornerRadius = enzo::style::parameter::borderRadius - 1;
     QPainterPath fullBar;
     fullBar.addRoundedRect(trackRect, cornerRadius, cornerRadius);
     QPainterPath fillMask;
