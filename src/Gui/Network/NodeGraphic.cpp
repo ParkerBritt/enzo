@@ -5,6 +5,7 @@
 #include "Gui/Network/DisplayFlagButton.h"
 #include "Gui/Network/NodeIconGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
+#include "Gui/Style.h"
 #include <QEasingCurve>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -217,12 +218,12 @@ void NodeGraphic::animateRemoval(std::function<void()> onComplete)
 void NodeGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     // default outline
-    QPen defaultPen = QPen(QColor("#353535"));
+    QPen defaultPen = QPen(enzo::style::node::outlineColor);
     defaultPen.setWidth(1);
     // outline when selected
-    QPen selectedPen = QPen(QColor("#fee046"), 0.8);
+    QPen selectedPen = QPen(enzo::style::node::outlineColorSelected, 0.8);
     // set fill
-    painter->setBrush(QBrush(QColor("#1b1b1b")));
+    painter->setBrush(QBrush(enzo::style::node::backgroundColor));
 
     if (selected_)
         painter->setPen(selectedPen);
@@ -230,11 +231,10 @@ void NodeGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
         painter->setPen(defaultPen);
     painter->drawRoundedRect(bodyRect_, 5, 5);
 
-    painter->setPen(QPen(QColor("white")));
+    painter->setPen(QPen(enzo::style::node::foregroundColor));
 
     painter->setFont(titleFont_);
-    // painter->setPen(QPen(QColor("#d2d2d2")));
-    painter->setPen(QPen(QColor("white")));
+    painter->setPen(QPen(enzo::style::node::foregroundColor));
 
     painter->drawText(titleRect_, Qt::AlignLeft, titleText_.c_str());
 

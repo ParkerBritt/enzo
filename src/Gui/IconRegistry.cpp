@@ -1,4 +1,5 @@
 #include "Gui/IconRegistry.h"
+#include "Gui/Style.h"
 
 #include <QColor>
 #include <QDir>
@@ -20,7 +21,7 @@ QIcon makeFallbackIcon()
 
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QColor(255, 80, 80));
+    painter.setPen(enzo::style::color::error);
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(2, 2, 28, 28);
 

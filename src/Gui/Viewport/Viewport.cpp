@@ -1,4 +1,5 @@
 #include "Gui/Viewport/Viewport.h"
+#include "Gui/Style.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "Gui/Viewport/ViewportOverlay.h"
 #include <QEvent>
@@ -17,7 +18,7 @@
 
 Viewport::Viewport(QWidget* parent) : Panel(parent)
 {
-    setBorderColor(QColor("#3c3c3c"));
+    setBorderColor(enzo::style::color::border);
 
     openGLWidget_ = new ViewportGLWidget(this);
     overlay_ = new ViewportOverlay();

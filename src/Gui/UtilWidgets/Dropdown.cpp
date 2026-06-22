@@ -14,10 +14,6 @@ constexpr int arrowSize = 14;
 constexpr int arrowMargin = 8;
 constexpr int popupGap = 2;
 
-const QColor borderColor("#383838");
-const QColor backgroundColor("#202020");
-const QColor textColor("#B3B3B3");
-
 } // namespace
 
 enzo::ui::Dropdown::Dropdown(QWidget* parent) : QWidget(parent)
@@ -93,18 +89,25 @@ void enzo::ui::Dropdown::paintEvent(QPaintEvent*)
 
     // Box fill and border
     QRectF box = QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5);
-    painter.setPen(QPen(borderColor, 1));
-    painter.setBrush(backgroundColor);
-    painter.drawRoundedRect(box, enzo::style::parameter::borderRadius, enzo::style::parameter::borderRadius);
+    painter.setPen(QPen(enzo::style::dropdown::borderColor, 1));
+    painter.setBrush(enzo::style::dropdown::backgroundColor);
+    painter.drawRoundedRect(
+        box,
+        enzo::style::parameter::borderRadius,
+        enzo::style::parameter::borderRadius
+    );
 
     // Current selection text
-    painter.setPen(textColor);
+    painter.setPen(enzo::style::dropdown::foregroundColor);
     QRect textRect = rect().adjusted(textPadding, 0, -(arrowSize + arrowMargin), 0);
     painter.drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, currentText());
 
     // Indicator chevron pulled from the icon registry, rotated while the popup is open
-    const QPixmap chevron =
-        IconRegistry::instance().pixmap("chevron-down", QSize(arrowSize, arrowSize), textColor);
+    const QPixmap chevron = IconRegistry::instance().pixmap(
+        "chevron-down",
+        QSize(arrowSize, arrowSize),
+        enzo::style::dropdown::foregroundColor
+    );
     const QPointF chevronCenter(width() - arrowMargin - arrowSize / 2.0, height() / 2.0);
     painter.save();
     painter.translate(chevronCenter);

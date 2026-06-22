@@ -34,7 +34,8 @@ enzo::ui::Slider::Slider(
                   }
                   )")
                       .arg(enzo::style::parameter::borderRadius));
-    notchPen_ = QPen(QColor("#383838"), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    notchPen_ =
+        QPen(enzo::style::slider::trackColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     value_ = clampAndStep_(minValue_);
 }
 
@@ -151,7 +152,7 @@ void enzo::ui::Slider::paintFill_(
 
     painter.save();
     painter.setClipPath(fillMask);
-    painter.fillPath(fullBar, QColor("#383838"));
+    painter.fillPath(fullBar, enzo::style::slider::trackColor);
     painter.restore();
 }
 
@@ -164,13 +165,16 @@ void enzo::ui::Slider::paintValueText_(QPainter& painter) const
     // blue when it evaluates and red when it fails.
     if (!expressionText_.isEmpty())
     {
-        painter.setPen(QColor(expressionHasError_ ? "#F87171" : "#8AB4F8"));
+        painter.setPen(
+            expressionHasError_ ? enzo::style::slider::expressionColorError
+                                : enzo::style::slider::expressionColor
+        );
         painter.drawText(rect(), Qt::AlignCenter, expressionText_);
         return;
     }
 
     QString valueText = QString::number(value_, 'f', displayDigits_);
-    painter.setPen(QColor("#B3B3B3"));
+    painter.setPen(enzo::style::slider::foregroundColor);
     painter.drawText(rect(), Qt::AlignCenter, valueText);
 }
 

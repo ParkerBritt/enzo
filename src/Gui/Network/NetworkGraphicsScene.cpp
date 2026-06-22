@@ -1,4 +1,5 @@
 #include "Gui/Network/NetworkGraphicsScene.h"
+#include "Gui/Style.h"
 #include <QGraphicsScene>
 #include <QGraphicsSceneWheelEvent>
 #include <QPainterPath>
@@ -13,7 +14,7 @@ NetworkGraphicsScene::NetworkGraphicsScene() : QGraphicsScene()
 
     setSceneRect(sceneWidth_ / -2.0f, sceneHeight_ / -2.0f, sceneWidth_, sceneHeight_);
 
-    setBackgroundBrush(QColor("#282828"));
+    setBackgroundBrush(enzo::style::color::surface);
 }
 
 void NetworkGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect)
@@ -30,7 +31,7 @@ void NetworkGraphicsScene::drawBackground(QPainter* painter, const QRectF& rect)
     int left = floor(rect.left());
     int right = ceil(rect.right());
 
-    QPen gridPen(QColor("#323232"));
+    QPen gridPen(enzo::style::color::divider);
 
     painter->setPen(gridPen);
 

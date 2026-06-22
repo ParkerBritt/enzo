@@ -93,7 +93,7 @@ inline constexpr int height = 12;
 namespace ramp {
 inline const QColor backgroundColor = color::surfaceDeep;
 inline const QColor borderColor = color::border;
-inline const QColor foregroundColor = color::textMuted;        // curve stroke and handles
+inline const QColor foregroundColor = color::textMuted; // curve stroke and handles
 inline const QColor handleColorSelected = color::white;
 inline const QColor squareColor = QColor("#808080");
 inline const QColor curveFillTopColor = withAlpha(color::textMuted, 100);
@@ -121,6 +121,7 @@ inline const QColor hoverColor = QColor("#666666");
 
 /// Node socket look.
 namespace socket {
+inline const QColor activeColor = color::white;
 inline const QColor inactiveColor = QColor("#9f9f9f");
 } // namespace socket
 

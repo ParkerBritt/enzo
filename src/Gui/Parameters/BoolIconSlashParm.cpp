@@ -108,7 +108,7 @@ void SlashIconButton::paintEvent(QPaintEvent*)
         const QLineF line = slashLine(iconRect, slashProgress_);
         const float slashWidth = iconRect.width() * SLASH_WIDTH_FRACTION;
 
-        QColor slashColor("#ff4d50");
+        QColor slashColor = enzo::style::color::error;
         slashColor.setAlphaF(0.8);
         QPen slashPen(slashColor, slashWidth);
         slashPen.setCapStyle(Qt::RoundCap);

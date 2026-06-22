@@ -1,4 +1,5 @@
 #include "Gui/UtilWidgets/Menu.h"
+#include "Gui/Style.h"
 
 #include <QCoreApplication>
 #include <QKeyEvent>
@@ -22,8 +23,6 @@ constexpr int chevronInset = 10;
 // Rows get extra room beyond the text and never fall below a floor
 constexpr int textBreathingRoom = 24;
 constexpr int minMenuWidth = 168;
-
-const QColor chevronColor("#B3B3B3");
 
 } // namespace
 
@@ -248,7 +247,7 @@ void enzo::ui::Menu::paintRowDecoration(QPainter& painter, int position, const Q
     chevron.lineTo(tipX, midY);
     chevron.lineTo(tipX - chevronReach, midY + chevronReach);
 
-    QPen pen(chevronColor, 1.2);
+    QPen pen(enzo::style::menu::chevronColor, 1.2);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
     painter.setPen(pen);

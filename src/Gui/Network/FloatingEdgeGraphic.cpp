@@ -1,5 +1,6 @@
 #include "Gui/Network/FloatingEdgeGraphic.h"
 #include "Gui/Network/SocketGraphic.h"
+#include "Gui/Style.h"
 #include <QTextDocument>
 #include <algorithm>
 #include <iostream>
@@ -27,8 +28,8 @@ void FloatingEdgeGraphic::paint(
     // auto pen = QPen("white");
 
     QLinearGradient gradient(socket1_->scenePos(), floatPos_);
-    gradient.setColorAt(0.0, QColor(255, 255, 255, 255));
-    gradient.setColorAt(1.0, QColor(255, 255, 255, 50));
+    gradient.setColorAt(0.0, enzo::style::withAlpha(enzo::style::color::white, 255));
+    gradient.setColorAt(1.0, enzo::style::withAlpha(enzo::style::color::white, 50));
 
     QPen pen(QBrush(gradient), 1);
 
