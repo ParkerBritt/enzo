@@ -71,11 +71,16 @@ ParametersPanel::ParametersPanel(QWidget* parent) : Panel(parent)
     // Placeholder shown while no node is selected.
     noSelectionLabel_ = new QLabel("No Node Selected");
     noSelectionLabel_->setAlignment(Qt::AlignCenter);
-    noSelectionLabel_->setStyleSheet(QString(R"(
+    noSelectionLabel_->setStyleSheet(
+        QString(R"(
         background-color: %1;
-        color: rgba(255, 255, 255, 50%);
+        color: %2;
     )")
-                                         .arg(enzo::style::color::surface.name()));
+            .arg(
+                enzo::style::color::surface.name(),
+                enzo::style::cssRgba(enzo::style::parametersPanel::placeholderColor)
+            )
+    );
 
     mainLayout_->addWidget(scrollArea_);
     mainLayout_->addWidget(noSelectionLabel_);

@@ -88,7 +88,7 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
 
         QTreeView::item:selected
         {
-            background-color: #414141;
+            background-color: %5;
         }
         QHeaderView::section {
             background-color: %1;
@@ -100,7 +100,8 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
                                      enzo::style::color::surfaceDeep.name(),
                                      enzo::style::color::surface.name(),
                                      enzo::style::color::divider.name(),
-                                     enzo::style::color::divider.name()
+                                     enzo::style::color::divider.name(),
+                                     enzo::style::geometrySpreadsheet::selectionColor.name()
                                  ));
 
     connect(

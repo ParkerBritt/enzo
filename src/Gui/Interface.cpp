@@ -32,14 +32,15 @@ EnzoUI::EnzoUI()
     QWidget
     {
         background-color: %1;
-        color: rgba(255,255,255,0.8);
+        color: %2;
     }
     QSplitter::handle
     {
         image: none;
     }
     )")
-                      .arg(enzo::style::color::surfaceDeep.name()));
+                      .arg(enzo::style::color::surfaceDeep.name())
+                      .arg(enzo::style::cssRgba(enzo::style::interface::textColor)));
 
     qApp->setStyleSheet(
         QString(R"(
@@ -51,7 +52,7 @@ EnzoUI::EnzoUI()
     QToolTip
     {
         background-color: %2;
-        color: rgba(255,255,255,0.8);
+        color: %4;
         border: 1px solid %3;
         border-radius: 10px;
         padding: 2px 4px;
@@ -59,6 +60,7 @@ EnzoUI::EnzoUI()
     )")
             .arg(enzo::style::font::size)
             .arg(enzo::style::color::surfaceDeep.name(), enzo::style::color::divider.name())
+            .arg(enzo::style::cssRgba(enzo::style::interface::textColor))
     );
 
     viewport_ = new Viewport();
