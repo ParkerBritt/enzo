@@ -139,6 +139,15 @@ String&#160;</td><td class="memItemRight" valign="bottom"><b>evalString</b> (uns
 <tr class="memitem:a06ac785736538a2c1a92385f72e87279" id="r_a06ac785736538a2c1a92385f72e87279"><td class="memItemLeft" align="right" valign="top"><a id="a06ac785736538a2c1a92385f72e87279" name="a06ac785736538a2c1a92385f72e87279"></a>
 intT&#160;</td><td class="memItemRight" valign="bottom"><b>evalInt</b> (unsigned int index=0) const</td></tr>
 <tr class="separator:a06ac785736538a2c1a92385f72e87279"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7030426dc2914b8756de8d31e3c07910" id="r_a7030426dc2914b8756de8d31e3c07910"><td class="memItemLeft" align="right" valign="top"><a id="a7030426dc2914b8756de8d31e3c07910" name="a7030426dc2914b8756de8d31e3c07910"></a>
+floatT&#160;</td><td class="memItemRight" valign="bottom"><b>evalFloat</b> (unsigned int index, String &amp;error) const</td></tr>
+<tr class="separator:a7030426dc2914b8756de8d31e3c07910"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4befe3912957bd383825cb22674dd4b7" id="r_a4befe3912957bd383825cb22674dd4b7"><td class="memItemLeft" align="right" valign="top"><a id="a4befe3912957bd383825cb22674dd4b7" name="a4befe3912957bd383825cb22674dd4b7"></a>
+intT&#160;</td><td class="memItemRight" valign="bottom"><b>evalInt</b> (unsigned int index, String &amp;error) const</td></tr>
+<tr class="separator:a4befe3912957bd383825cb22674dd4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9faf73a46840debfb1cc390d1750add4" id="r_a9faf73a46840debfb1cc390d1750add4"><td class="memItemLeft" align="right" valign="top"><a id="a9faf73a46840debfb1cc390d1750add4" name="a9faf73a46840debfb1cc390d1750add4"></a>
+String&#160;</td><td class="memItemRight" valign="bottom"><b>evalString</b> (unsigned int index, String &amp;error) const</td></tr>
+<tr class="separator:a9faf73a46840debfb1cc390d1750add4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a6e03d2b4c9833a922249d33a57276f" id="r_a4a6e03d2b4c9833a922249d33a57276f"><td class="memItemLeft" align="right" valign="top"><a id="a4a6e03d2b4c9833a922249d33a57276f" name="a4a6e03d2b4c9833a922249d33a57276f"></a>
 std::vector&lt; floatT &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>evalFloats</b> () const</td></tr>
 <tr class="separator:a4a6e03d2b4c9833a922249d33a57276f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,6 +166,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setFloat</b> (floatT 
 <tr class="memitem:a654a223d2079106ae884d0030cbe2167" id="r_a654a223d2079106ae884d0030cbe2167"><td class="memItemLeft" align="right" valign="top"><a id="a654a223d2079106ae884d0030cbe2167" name="a654a223d2079106ae884d0030cbe2167"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setString</b> (String value, unsigned int index=0)</td></tr>
 <tr class="separator:a654a223d2079106ae884d0030cbe2167"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8acad119a8d35f4d40a3cd5511880110" id="r_a8acad119a8d35f4d40a3cd5511880110"><td class="memItemLeft" align="right" valign="top"><a id="a8acad119a8d35f4d40a3cd5511880110" name="a8acad119a8d35f4d40a3cd5511880110"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setExpression</b> (String expression, unsigned int index=0)</td></tr>
+<tr class="separator:a8acad119a8d35f4d40a3cd5511880110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ea1ae55198f33f61e17f31ad0e595b2" id="r_a8ea1ae55198f33f61e17f31ad0e595b2"><td class="memItemLeft" align="right" valign="top"><a id="a8ea1ae55198f33f61e17f31ad0e595b2" name="a8ea1ae55198f33f61e17f31ad0e595b2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clearExpression</b> (unsigned int index=0)</td></tr>
+<tr class="separator:a8ea1ae55198f33f61e17f31ad0e595b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10fed63502cefba26e472deda17bf192" id="r_a10fed63502cefba26e472deda17bf192"><td class="memItemLeft" align="right" valign="top"><a id="a10fed63502cefba26e472deda17bf192" name="a10fed63502cefba26e472deda17bf192"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasExpression</b> (unsigned int index=0) const</td></tr>
+<tr class="separator:a10fed63502cefba26e472deda17bf192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32bef5c4659fc7367fd78d216f9e8397" id="r_a32bef5c4659fc7367fd78d216f9e8397"><td class="memItemLeft" align="right" valign="top">std::optional&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32bef5c4659fc7367fd78d216f9e8397">getExpression</a> (unsigned int index=0) const</td></tr>
+<tr class="memdesc:a32bef5c4659fc7367fd78d216f9e8397"><td class="mdescLeft">&#160;</td><td class="mdescRight">The expression on a component.  <br /></td></tr>
+<tr class="separator:a32bef5c4659fc7367fd78d216f9e8397"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04c275fd4cc12771557e1ada52137937" id="r_a04c275fd4cc12771557e1ada52137937"><td class="memItemLeft" align="right" valign="top">std::optional&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04c275fd4cc12771557e1ada52137937">getExpressionError</a> (unsigned int index=0) const</td></tr>
+<tr class="memdesc:a04c275fd4cc12771557e1ada52137937"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates a component's expression and reports any failure.  <br /></td></tr>
+<tr class="separator:a04c275fd4cc12771557e1ada52137937"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5df0e4e50368991eb2d1e0084b7dcf99" id="r_a5df0e4e50368991eb2d1e0084b7dcf99"><td class="memItemLeft" align="right" valign="top"><a id="a5df0e4e50368991eb2d1e0084b7dcf99" name="a5df0e4e50368991eb2d1e0084b7dcf99"></a>
 PrmValues&#160;</td><td class="memItemRight" valign="bottom"><b>getValues</b> () const</td></tr>
 <tr class="separator:a5df0e4e50368991eb2d1e0084b7dcf99"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,6 +223,28 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onFloatSet_</
 <tr class="memitem:ae607a233cc50c452cfe4716c538a5c5f" id="r_ae607a233cc50c452cfe4716c538a5c5f"><td class="memItemLeft" align="right" valign="top"><a id="ae607a233cc50c452cfe4716c538a5c5f" name="ae607a233cc50c452cfe4716c538a5c5f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>handleValueChange_</b> ()</td></tr>
 <tr class="separator:ae607a233cc50c452cfe4716c538a5c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6cfd258be9922941449ab84cf76cbb6" id="r_ad6cfd258be9922941449ab84cf76cbb6"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6cfd258be9922941449ab84cf76cbb6">makeExpressionContext_</a> () const</td></tr>
+<tr class="memdesc:ad6cfd258be9922941449ab84cf76cbb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The world an expression on this parameter reads, e.g. for prm().  <br /></td></tr>
+<tr class="separator:ad6cfd258be9922941449ab84cf76cbb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8aef2a691483f88c02861267c9af12b" id="r_ab8aef2a691483f88c02861267c9af12b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8aef2a691483f88c02861267c9af12b">submitExpressionDependencies_</a> (const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> &amp;context, unsigned int index) const</td></tr>
+<tr class="memdesc:ab8aef2a691483f88c02861267c9af12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hands the dependencies an expression captured to the network graph.  <br /></td></tr>
+<tr class="separator:ab8aef2a691483f88c02861267c9af12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac16593ef7e7017a3ad5af12e98d8a5e3" id="r_ac16593ef7e7017a3ad5af12e98d8a5e3"><td class="memItemLeft" align="right" valign="top"><a id="ac16593ef7e7017a3ad5af12e98d8a5e3" name="ac16593ef7e7017a3ad5af12e98d8a5e3"></a>
+floatT&#160;</td><td class="memItemRight" valign="bottom"><b>clampToRange_</b> (floatT value, unsigned int index) const</td></tr>
+<tr class="memdesc:ac16593ef7e7017a3ad5af12e98d8a5e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value pulled within a component's locked range bounds. <br /></td></tr>
+<tr class="separator:ac16593ef7e7017a3ad5af12e98d8a5e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2da95fe92de6e1b19bdde09959d10d50" id="r_a2da95fe92de6e1b19bdde09959d10d50"><td class="memItemLeft" align="right" valign="top"><a id="a2da95fe92de6e1b19bdde09959d10d50" name="a2da95fe92de6e1b19bdde09959d10d50"></a>
+intT&#160;</td><td class="memItemRight" valign="bottom"><b>clampToRange_</b> (intT value, unsigned int index) const</td></tr>
+<tr class="separator:a2da95fe92de6e1b19bdde09959d10d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d85be4544da052328b410c7b3d9d6b1" id="r_a8d85be4544da052328b410c7b3d9d6b1"><td class="memItemLeft" align="right" valign="top"><a id="a8d85be4544da052328b410c7b3d9d6b1" name="a8d85be4544da052328b410c7b3d9d6b1"></a>
+floatT&#160;</td><td class="memItemRight" valign="bottom"><b>readFloatLiteral_</b> (unsigned int index) const</td></tr>
+<tr class="separator:a8d85be4544da052328b410c7b3d9d6b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e3759109a1eba2a644a3dd77b9e9ec1" id="r_a4e3759109a1eba2a644a3dd77b9e9ec1"><td class="memItemLeft" align="right" valign="top"><a id="a4e3759109a1eba2a644a3dd77b9e9ec1" name="a4e3759109a1eba2a644a3dd77b9e9ec1"></a>
+intT&#160;</td><td class="memItemRight" valign="bottom"><b>readIntLiteral_</b> (unsigned int index) const</td></tr>
+<tr class="separator:a4e3759109a1eba2a644a3dd77b9e9ec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab082a77afa09004861c87592105ac3ba" id="r_ab082a77afa09004861c87592105ac3ba"><td class="memItemLeft" align="right" valign="top"><a id="ab082a77afa09004861c87592105ac3ba" name="ab082a77afa09004861c87592105ac3ba"></a>
+String&#160;</td><td class="memItemRight" valign="bottom"><b>readStringLiteral_</b> (unsigned int index) const</td></tr>
+<tr class="separator:ab082a77afa09004861c87592105ac3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a970f11bb472c42fb67d35abd49031296" id="r_a970f11bb472c42fb67d35abd49031296"><td class="memItemLeft" align="right" valign="top"><a id="a970f11bb472c42fb67d35abd49031296" name="a970f11bb472c42fb67d35abd49031296"></a>
 std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">Parameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>buildInstance_</b> (unsigned int instanceIndex)</td></tr>
 <tr class="separator:a970f11bb472c42fb67d35abd49031296"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -211,10 +257,119 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a90e7e097d2f635775b6c3e1ba7aa90ce" id="r_a90e7e097d2f635775b6c3e1ba7aa90ce"><td class="memItemLeft" align="right" valign="top"><a id="a90e7e097d2f635775b6c3e1ba7aa90ce" name="a90e7e097d2f635775b6c3e1ba7aa90ce"></a>
 PrmValues&#160;</td><td class="memItemRight" valign="bottom"><b>values_</b></td></tr>
 <tr class="separator:a90e7e097d2f635775b6c3e1ba7aa90ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1041145bf088128a103127fb7f6a4f" id="r_a7f1041145bf088128a103127fb7f6a4f"><td class="memItemLeft" align="right" valign="top"><a id="a7f1041145bf088128a103127fb7f6a4f" name="a7f1041145bf088128a103127fb7f6a4f"></a>
+std::vector&lt; std::optional&lt; String &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>expressions_</b></td></tr>
+<tr class="separator:a7f1041145bf088128a103127fb7f6a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ad1fa4f28716767aa3dc0a02567e9f8" id="r_a8ad1fa4f28716767aa3dc0a02567e9f8"><td class="memItemLeft" align="right" valign="top"><a id="a8ad1fa4f28716767aa3dc0a02567e9f8" name="a8ad1fa4f28716767aa3dc0a02567e9f8"></a>
 std::vector&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">Parameter</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>instances_</b></td></tr>
 <tr class="separator:a8ad1fa4f28716767aa3dc0a02567e9f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a32bef5c4659fc7367fd78d216f9e8397" name="a32bef5c4659fc7367fd78d216f9e8397"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32bef5c4659fc7367fd78d216f9e8397">&#9670;&#160;</a></span>getExpression()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; String &gt; enzo::prm::Parameter::getExpression </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>index</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The expression on a component. </p>
+<dl class="section return"><dt>Returns</dt><dd>The expression when one is set, otherwise nullopt. </dd></dl>
+
+</div>
+</div>
+<a id="a04c275fd4cc12771557e1ada52137937" name="a04c275fd4cc12771557e1ada52137937"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04c275fd4cc12771557e1ada52137937">&#9670;&#160;</a></span>getExpressionError()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; String &gt; enzo::prm::Parameter::getExpressionError </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>index</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates a component's expression and reports any failure. </p>
+<p>e.g. an expression of "1 +" reports a compile error while "5 + 5" reports nothing.</p>
+<dl class="section return"><dt>Returns</dt><dd>The error text when the expression fails to compile or run, otherwise nullopt, including when the component holds no expression. </dd></dl>
+
+</div>
+</div>
+<a id="ad6cfd258be9922941449ab84cf76cbb6" name="ad6cfd258be9922941449ab84cf76cbb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6cfd258be9922941449ab84cf76cbb6">&#9670;&#160;</a></span>makeExpressionContext_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> &gt; enzo::prm::Parameter::makeExpressionContext_ </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The world an expression on this parameter reads, e.g. for prm(). </p>
+<dl class="section return"><dt>Returns</dt><dd>A context, or null when the parameter has nothing to offer such as a bare parameter with no owning node. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html#a6318c86da8b0504b53c3202172883704">enzo::prm::NodeParameter</a>.</p>
+
+</div>
+</div>
+<a id="ab8aef2a691483f88c02861267c9af12b" name="ab8aef2a691483f88c02861267c9af12b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8aef2a691483f88c02861267c9af12b">&#9670;&#160;</a></span>submitExpressionDependencies_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void enzo::prm::Parameter::submitExpressionDependencies_ </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hands the dependencies an expression captured to the network graph. </p>
+<dl class="section note"><dt>Note</dt><dd>Only a parameter with an owning node has a place to record them, so the base does nothing. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html#a4fba1a7b014332990891213e396ae2bf">enzo::prm::NodeParameter</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Parameter/<a class="el" href="Parameter_8h_source.html">Parameter.h</a></li>
 <li>src/Engine/Parameter/<b>Parameter.cpp</b></li>

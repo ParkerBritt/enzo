@@ -104,15 +104,20 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="structOperatorSerializable.html">    7</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structOperatorSerializable.html">OperatorSerializable</a></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    std::string typeName;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keywordtype">float</span> posX = 0;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    <span class="keywordtype">float</span> posY = 0;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    std::vector&lt;ParameterSerializable&gt; parameters;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt; <span class="keywordtype">void</span> serialize(Archive&amp; ar)</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        ar(CEREAL_NVP(typeName), CEREAL_NVP(posX), CEREAL_NVP(posY), CEREAL_NVP(parameters));</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>};</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    std::string path;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    <span class="keywordtype">float</span> posX = 0;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keywordtype">float</span> posY = 0;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    std::vector&lt;ParameterSerializable&gt; parameters;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt; <span class="keywordtype">void</span> serialize(Archive&amp; ar)</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        ar(CEREAL_NVP(typeName),</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>           CEREAL_NVP(path),</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>           CEREAL_NVP(posX),</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>           CEREAL_NVP(posY),</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>           CEREAL_NVP(parameters));</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    }</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>};</div>
 </div>
 <div class="ttc" id="astructOperatorSerializable_html"><div class="ttname"><a href="structOperatorSerializable.html">OperatorSerializable</a></div><div class="ttdef"><b>Definition</b> OperatorSerializable.h:8</div></div>
 </div><!-- fragment --></div><!-- contents -->

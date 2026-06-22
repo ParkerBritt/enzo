@@ -111,17 +111,17 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GeometryOpDef</b> (<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">nt::NetworkManager</a> *network, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</td></tr>
 <tr class="memdesc:aec76641fdc141c4348be62efac2fcec3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up internal state. <br /></td></tr>
 <tr class="separator:aec76641fdc141c4348be62efac2fcec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8a286880d4169cfbf348d5b9965fe3c" id="r_af8a286880d4169cfbf348d5b9965fe3c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c">cookOp</a> (<a class="el" href="classenzo_1_1op_1_1Context.html">op::Context</a> context)=0</td></tr>
-<tr class="memdesc:af8a286880d4169cfbf348d5b9965fe3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is called at runtime to create the output geometry.  <br /></td></tr>
-<tr class="separator:af8a286880d4169cfbf348d5b9965fe3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7fe1c46993419d28bca3c4cec56580f" id="r_aa7fe1c46993419d28bca3c4cec56580f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7fe1c46993419d28bca3c4cec56580f">cookOp</a> (<a class="el" href="classenzo_1_1op_1_1CookContext.html">op::CookContext</a> context)=0</td></tr>
+<tr class="memdesc:aa7fe1c46993419d28bca3c4cec56580f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is called at runtime to create the output geometry.  <br /></td></tr>
+<tr class="separator:aa7fe1c46993419d28bca3c4cec56580f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab524651f27228f205dde84d05a18cfdc" id="r_ab524651f27228f205dde84d05a18cfdc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab524651f27228f205dde84d05a18cfdc">getOutputPacket</a> (unsigned outputIndex)</td></tr>
 <tr class="memdesc:ab524651f27228f205dde84d05a18cfdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry as a shared pointer.  <br /></td></tr>
 <tr class="separator:ab524651f27228f205dde84d05a18cfdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c2dcbb16f44219223e0c71761d8b7f3" id="r_a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c2dcbb16f44219223e0c71761d8b7f3">throwError</a> (std::string error)</td></tr>
-<tr class="memdesc:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
+<tr class="memdesc:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the cook and displays an error. Use inside the <a class="el" href="#aa7fe1c46993419d28bca3c4cec56580f" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
 <tr class="separator:a6c2dcbb16f44219223e0c71761d8b7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd6d87f16d1dfd29e71940688b551ccb" id="r_abd6d87f16d1dfd29e71940688b551ccb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd6d87f16d1dfd29e71940688b551ccb">throwWarning</a> (std::string warning)</td></tr>
-<tr class="memdesc:abd6d87f16d1dfd29e71940688b551ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
+<tr class="memdesc:abd6d87f16d1dfd29e71940688b551ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#aa7fe1c46993419d28bca3c4cec56580f" title="This function is called at runtime to create the output geometry.">cookOp</a> function.  <br /></td></tr>
 <tr class="separator:abd6d87f16d1dfd29e71940688b551ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e63dbecac46ec2b2353d981f23babe2" id="r_a0e63dbecac46ec2b2353d981f23babe2"><td class="memItemLeft" align="right" valign="top"><a id="a0e63dbecac46ec2b2353d981f23babe2" name="a0e63dbecac46ec2b2353d981f23babe2"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMinInputs</b> () const</td></tr>
@@ -160,8 +160,8 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 <p>The class exposes utility functions for setting outputs and reading information about itself like the number of inputs.</p>
 <p>The most important part of this node is the virtual cookOp member function. This must be overridden to implement the node's logic when being cooked. When a node is cooked it takes the optional input geometry from the context class and outputs new geometry based on the purpose of that operator. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="af8a286880d4169cfbf348d5b9965fe3c" name="af8a286880d4169cfbf348d5b9965fe3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8a286880d4169cfbf348d5b9965fe3c">&#9670;&#160;</a></span>cookOp()</h2>
+<a id="aa7fe1c46993419d28bca3c4cec56580f" name="aa7fe1c46993419d28bca3c4cec56580f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7fe1c46993419d28bca3c4cec56580f">&#9670;&#160;</a></span>cookOp()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
         <tr>
           <td class="memname">virtual void enzo::nt::GeometryOpDef::cookOp </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classenzo_1_1op_1_1Context.html">op::Context</a></td>          <td class="paramname"><span class="paramname"><em>context</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classenzo_1_1op_1_1CookContext.html">op::CookContext</a></td>          <td class="paramname"><span class="paramname"><em>context</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -205,7 +205,7 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
 
 <p>Returns the current output geometry as a shared pointer. </p>
 <p>For use by the runtime Node Does not force a cook.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>move to friend class Node </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>move to friend class Node </dd></dl>
 
 </div>
 </div>
@@ -224,8 +224,8 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
       </table>
 </div><div class="memdoc">
 
-<p>Stops the cook and displays an error. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
+<p>Stops the cook and displays an error. Use inside the <a class="el" href="#aa7fe1c46993419d28bca3c4cec56580f" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
 
 </div>
 </div>
@@ -244,8 +244,8 @@ const <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a>&#160;<
       </table>
 </div><div class="memdoc">
 
-<p>Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#af8a286880d4169cfbf348d5b9965fe3c" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
+<p>Doesn't interupt the cook but displays a warning on the node. Use inside the <a class="el" href="#aa7fe1c46993419d28bca3c4cec56580f" title="This function is called at runtime to create the output geometry.">cookOp</a> function. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>Add visual error to GUI </dd></dl>
 
 </div>
 </div>

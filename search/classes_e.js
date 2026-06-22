@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['selection_0',['Selection',['../classenzo_1_1Selection.html',1,'enzo']]],
-  ['selectioncomponent_1',['SelectionComponent',['../classenzo_1_1SelectionComponent.html',1,'enzo']]],
-  ['serializer_2',['Serializer',['../classenzo_1_1nt_1_1Serializer.html',1,'enzo::nt']]]
+  ['ramp_0',['Ramp',['../classenzo_1_1prm_1_1Ramp.html',1,'enzo::prm']]],
+  ['range_1',['Range',['../classenzo_1_1prm_1_1Range.html',1,'enzo::prm']]]
 ];

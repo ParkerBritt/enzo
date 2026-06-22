@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['networkmanager_0',['NetworkManager',['../classenzo_1_1nt_1_1NetworkManager.html#a69ba6571d43eb6a3a331cb96126de57d',1,'enzo::nt::NetworkManager']]],
-  ['networkpath_1',['NetworkPath',['../classenzo_1_1NetworkPath.html#ab538e28376aa6174a5bf160dfd2e9d0e',1,'enzo::NetworkPath::NetworkPath()=default'],['../classenzo_1_1NetworkPath.html#ac897f8c82313ee09eb36f489bd04f93b',1,'enzo::NetworkPath::NetworkPath(const std::string &amp;path)'],['../classenzo_1_1NetworkPath.html#a98f5a76dbd07acfaf45632de394a3b4a',1,'enzo::NetworkPath::NetworkPath(const char *path)']]]
+  ['makeabsolute_0',['makeAbsolute',['../classenzo_1_1Path.html#a859e48f7370d7d2e44f7e79fddacf8a6',1,'enzo::Path']]],
+  ['makeexpressioncontext_5f_1',['makeExpressionContext_',['../classenzo_1_1prm_1_1NodeParameter.html#a6318c86da8b0504b53c3202172883704',1,'enzo::prm::NodeParameter::makeExpressionContext_()'],['../classenzo_1_1prm_1_1Parameter.html#ad6cfd258be9922941449ab84cf76cbb6',1,'enzo::prm::Parameter::makeExpressionContext_()']]],
+  ['makerelative_2',['makeRelative',['../classenzo_1_1Path.html#a31123f52bb0b90c669044193276d397a',1,'enzo::Path']]],
+  ['makerelativeto_3',['makeRelativeTo',['../classenzo_1_1Path.html#a12d48141da75161503ec7f5cdcba4527',1,'enzo::Path']]],
+  ['movenode_4',['moveNode',['../classenzo_1_1nt_1_1NetworkManager.html#a5173d8d5a1ba5531e0f47963eb24cd7f',1,'enzo::nt::NetworkManager']]]
 ];

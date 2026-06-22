@@ -103,32 +103,24 @@ $(function(){ initResizable(false); });
 <p class="interdd"></p>
 <p class="enddd">Add implicit casting between types (eg. if T is int but the parameter's <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3" title="Data types available to store attribute values in.">attr::AttributeType</a> is floatT 5.3 return 5)  </p>
 </dd>
-<dt>Class <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html">enzo::nt::GeometryConnection</a>  </dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000004"></a>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place</p>
-<p class="enddd"><a class="anchor" id="_todo000005"></a>Currently geometry connections are stored on nodes. It might make more sense to move them to a container within the network manager so they're all in the same place  </p>
-</dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#ab524651f27228f205dde84d05a18cfdc">enzo::nt::GeometryOpDef::getOutputPacket</a>  (unsigned outputIndex)</dt>
-<dd><a class="anchor" id="_todo000006"></a>move to friend class Node  </dd>
+<dd><a class="anchor" id="_todo000004"></a>move to friend class Node  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#a6c2dcbb16f44219223e0c71761d8b7f3">enzo::nt::GeometryOpDef::throwError</a>  (std::string error)</dt>
-<dd><a class="anchor" id="_todo000007"></a>Add visual error to GUI  </dd>
+<dd><a class="anchor" id="_todo000005"></a>Add visual error to GUI  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOpDef.html#abd6d87f16d1dfd29e71940688b551ccb">enzo::nt::GeometryOpDef::throwWarning</a>  (std::string warning)</dt>
-<dd><a class="anchor" id="_todo000008"></a>Add visual error to GUI  </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a50b6c3d0b425bb9a865b5e7d6f709e85">enzo::nt::GeometryOperator::getName</a>  ()</dt>
-<dd><a class="anchor" id="_todo000012"></a>implement user assignable, uniqueness checked node names  </dd>
+<dd><a class="anchor" id="_todo000006"></a>Add visual error to GUI  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#af6f0c16f4832b4f96df77f1b79cd638d">enzo::nt::GeometryOperator::getName</a>  () const</dt>
+<dd><a class="anchor" id="_todo000008"></a>implement uniqueness checked node names  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#acba3e3963217fffa42da239e08a6d6f7">enzo::nt::GeometryOperator::getOutputPacket</a>  (unsigned int outputIndex) const</dt>
-<dd><a class="anchor" id="_todo000009"></a>Add option to force cook or cook if dirty.  </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#af5977683c24063377edfb21e1aa55276">enzo::nt::GeometryOperator::removeInputConnection</a>  (unsigned int inputIndex)</dt>
-<dd><a class="anchor" id="_todo000010"></a>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes.  </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1GeometryOperator.html#a9f2e1cd930530eed3cc5000649ce9157">enzo::nt::GeometryOperator::removeOutputConnection</a>  (const <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">nt::GeometryConnection</a> *connection)</dt>
-<dd><a class="anchor" id="_todo000011"></a>remove in favor of the rewrite suggested in <a class="el" href="classenzo_1_1nt_1_1GeometryConnection.html" title="Directional edges to connect nodes.">GeometryConnection</a> todo in which connections are handled by the network manager rather than individual nodes.  </dd>
-<dt>Class <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>  </dt>
-<dd><a class="anchor" id="_todo000013"></a>remove Qobject inheritance, this is no longer needed since switching to boost signals. </dd>
-<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a7c53e703bf516be53c182e21b66ad210">enzo::nt::NetworkManager::createOperator</a>  (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo, Vector2 position={0.f, 0.f})</dt>
-<dd><a class="anchor" id="_todo000014"></a>Should probably only have to pass type, now entire opInfo. Fix soon!!!  </dd>
+<dd><a class="anchor" id="_todo000007"></a>Add option to force cook or cook if dirty.  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a9e7a9d1c2907f14e96641a1e4088bfb0">enzo::nt::NetworkManager::_reset</a>  ()</dt>
+<dd><a class="anchor" id="_todo000012"></a>Find a cleaner way to give tests a fresh manager so this doesn't pollute the public functions.  </dd>
+<dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a1c5fe262d9ab612436d039edd0f64e31">enzo::nt::NetworkManager::createOperator</a>  (<a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo, const std::string &amp;path="", Vector2 position={0.f, 0.f})</dt>
+<dd><a class="anchor" id="_todo000009"></a>Should probably only have to pass type, now entire opInfo. Fix soon!!!  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a5173d8d5a1ba5531e0f47963eb24cd7f">enzo::nt::NetworkManager::moveNode</a>  (OpId opId, Vector2 newPos, bool skipUndo=false)</dt>
-<dd><a class="anchor" id="_todo000015"></a>remove skipUndo argument in favour of a global undo RAII lock  </dd>
+<dd><a class="anchor" id="_todo000010"></a>remove skipUndo argument in favour of a global undo RAII lock  </dd>
 <dt>Member <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html#a046b809503c2115eff4b3265d2aac607">enzo::nt::NetworkManager::restoreOperator</a>  (OpId opId, <a class="el" href="structenzo_1_1op_1_1OpInfo.html">op::OpInfo</a> opInfo)</dt>
-<dd><a class="anchor" id="_todo000016"></a>maybe replace with createNodeWithId</dd>
+<dd><a class="anchor" id="_todo000011"></a>maybe replace with createNodeWithId</dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
