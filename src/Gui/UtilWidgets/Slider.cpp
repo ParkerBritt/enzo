@@ -30,10 +30,11 @@ enzo::ui::Slider::Slider(
                   QWidget[type="Slider"]
                   {
                       border-radius: %1px;
-                      border: 1px solid #383838;
+                      border: 1px solid %2;
                   }
                   )")
-                      .arg(enzo::style::parameter::borderRadius));
+                      .arg(enzo::style::parameter::borderRadius)
+                      .arg(enzo::style::color::border.name()));
     notchPen_ =
         QPen(enzo::style::slider::trackColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     value_ = clampAndStep_(minValue_);
@@ -219,14 +220,15 @@ void enzo::ui::Slider::beginEditing_()
         editor_ = new QLineEdit(this);
         editor_->setAlignment(Qt::AlignCenter);
         editor_->setFrame(false);
-        editor_->setStyleSheet(R"(
+        editor_->setStyleSheet(QString(R"(
                       QLineEdit
                       {
                           background: transparent;
                           border: none;
-                          color: #B3B3B3;
+                          color: %1;
                       }
-                      )");
+                      )")
+                                   .arg(enzo::style::color::textMuted.name()));
         connect(editor_, &QLineEdit::editingFinished, this, &Slider::commitEditing_);
     }
     editor_->setGeometry(rect());

@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Primitive.h"
+#include "Gui/Style.h"
 #include "Gui/Viewport/ViewportCamerasModel.h"
 #include <QAbstractItemView>
 #include <QComboBox>
@@ -14,11 +15,12 @@ ViewportOverlay::ViewportOverlay() : QWidget()
     cameraDropdownModel_ = new ViewportCamerasModel();
 
     cameraDropdown_ = new QComboBox(this);
-    cameraDropdown_->setStyleSheet(R"(
+    cameraDropdown_->setStyleSheet(
+        QString(R"(
     QComboBox
     {
         background: rgba(0,0,0,0.2);
-        border: 1px solid #303030;
+        border: 1px solid %1;
         border-radius: 10px;
         padding: 3px 15px;;
     }
@@ -47,11 +49,13 @@ ViewportOverlay::ViewportOverlay() : QWidget()
     QComboBox QAbstractItemView::item:selected
     {
         margin: 5px;
-        background: #282828;
+        background: %2;
         border: none;
     }
 
-    )");
+    )")
+            .arg(enzo::style::color::divider.name(), enzo::style::color::surface.name())
+    );
     cameraDropdown_->setModel(cameraDropdownModel_);
     cameraDropdown_->setItemDelegate(new QStyledItemDelegate(cameraDropdown_));
 

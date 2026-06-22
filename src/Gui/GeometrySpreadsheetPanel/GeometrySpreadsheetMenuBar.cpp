@@ -1,6 +1,7 @@
 #include "Gui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Gui/Style.h"
 #include <QButtonGroup>
 #include <QLabel>
 #include <QPaintEvent>
@@ -79,16 +80,15 @@ GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget* parent, Qt::
     buttonBg->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     constexpr int bgSizeMargin = 5;
     buttonBg->setContentsMargins(bgSizeMargin, 0, bgSizeMargin, 0);
-    buttonBg->setStyleSheet(
-        R"(
+    buttonBg->setStyleSheet(QString(R"(
         #GeoSheetMenuBarButtonBg
         {
-            background-color: #242424;
+            background-color: %1;
             border-radius: 8px;
         }
 
-    )"
-    );
+    )")
+                                .arg(enzo::style::color::surfaceDim.name()));
     QHBoxLayout* buttonBgLayout = new QHBoxLayout();
     constexpr int margin = 0;
     buttonBgLayout->setContentsMargins(margin, margin, margin, margin);
@@ -132,15 +132,14 @@ GeometrySpreadsheetMenuBar::GeometrySpreadsheetMenuBar(QWidget* parent, Qt::Wind
     mainLayout_->addStretch();
     mainLayout_->addWidget(modeSelection);
     setProperty("class", "GeometrySpreadsheetMenuBar");
-    setStyleSheet(
-        R"(
+    setStyleSheet(QString(R"(
         .GeometrySpreadsheetMenuBar,
         .GeometrySpreadsheetMenuBar *
         {
-            background-color: #1B1B1B;
+            background-color: %1;
         }
-    )"
-    );
+    )")
+                      .arg(enzo::style::color::surfaceDeep.name()));
 
     constexpr int margins = 5;
     mainLayout_->setContentsMargins(margins, margins, margins, margins);

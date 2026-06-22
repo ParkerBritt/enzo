@@ -73,14 +73,17 @@ enzo::ui::Parameter::Parameter(const prm::Template& parmTemplate, QWidget* paren
     contentWidget_->setProperty("class", "ParameterBg");
     if (parmTemplate.isBackgroundEnabled())
     {
-        contentWidget_->setStyleSheet(QString(R"(
+        contentWidget_->setStyleSheet(
+            QString(R"(
             .ParameterBg {
-                background: #1a1a1a;
+                background: %2;
                 border-radius: %1px;
-                border: 1px solid #383838;
+                border: 1px solid %3;
             }
         )")
-                                          .arg(enzo::style::parameter::borderRadius));
+                .arg(enzo::style::parameter::borderRadius)
+                .arg(enzo::style::color::surfaceDeep.name(), enzo::style::color::border.name())
+        );
     }
     else
     {

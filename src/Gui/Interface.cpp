@@ -28,19 +28,21 @@ EnzoUI::EnzoUI()
     resize(1920 * scale, 1080 * scale);
 
     // TODO: unify stylsheet
-    setStyleSheet(R"(
+    setStyleSheet(QString(R"(
     QWidget
     {
-        background-color: #1a1a1a;
+        background-color: %1;
         color: rgba(255,255,255,0.8);
     }
     QSplitter::handle
     {
         image: none;
     }
-    )");
+    )")
+                      .arg(enzo::style::color::surfaceDeep.name()));
 
-    qApp->setStyleSheet(QString(R"(
+    qApp->setStyleSheet(
+        QString(R"(
     *
     {
         font-family: Rubik;
@@ -48,14 +50,16 @@ EnzoUI::EnzoUI()
     }
     QToolTip
     {
-        background-color: #1a1a1a;
+        background-color: %2;
         color: rgba(255,255,255,0.8);
-        border: 1px solid #2a2a2a;
+        border: 1px solid %3;
         border-radius: 10px;
         padding: 2px 4px;
     }
     )")
-                            .arg(enzo::style::font::size));
+            .arg(enzo::style::font::size)
+            .arg(enzo::style::color::surfaceDeep.name(), enzo::style::color::divider.name())
+    );
 
     viewport_ = new Viewport();
     network_ = new NetworkPanel();

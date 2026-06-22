@@ -19,22 +19,22 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
     attributeView_->setRootIsDecorated(false);
     attributeView_->setAlternatingRowColors(true);
     attributeView_->setUniformRowHeights(true); // improves performance
-    attributeView_->setStyleSheet(R"(
+    attributeView_->setStyleSheet(QString(R"(
         QTreeView {
-            background-color: #282828;
-            alternate-background-color: #242424;
+            background-color: %1;
+            alternate-background-color: %2;
             paint-alternating-row-colors-for-empty-area: 1;
         }
         QTreeView QScrollBar {
-            background: #1B1B1B;
+            background: %3;
             width: 15px;
         }
         QTreeView QScrollBar::handle:vertical {
-            background: #282828;
+            background: %1;
             min-height: 50px;
             border-radius: 5px;
             border-width: 1px;
-            border-color: #2D2D2D;
+            border-color: %4;
             border-style: solid;
             margin:2px;
         }
@@ -46,11 +46,18 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
         { height: 0px; }
 
         QHeaderView::section {
-            background-color: #1B1B1B;
+            background-color: %3;
             border: none;
-            border-bottom: 1px solid #303030;
+            border-bottom: 1px solid %5;
         }
-    )");
+    )")
+                                      .arg(
+                                          enzo::style::color::surface.name(),
+                                          enzo::style::color::surfaceDim.name(),
+                                          enzo::style::color::surfaceDeep.name(),
+                                          enzo::style::color::divider.name(),
+                                          enzo::style::color::divider.name()
+                                      ));
     attributeView_->setFrameStyle(QFrame::NoFrame);
 
     model_ = new AttributeSpreadsheetModel();
@@ -58,17 +65,17 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
 
     primModel_ = new PrimitiveTreeModel(this);
     primView_->setModel(primModel_);
-    primView_->setStyleSheet(R"(
+    primView_->setStyleSheet(QString(R"(
         QTreeView QScrollBar {
-            background: #1B1B1B;
+            background: %1;
             width: 15px;
         }
         QTreeView QScrollBar::handle:vertical {
-            background: #282828;
+            background: %2;
             min-height: 50px;
             border-radius: 5px;
             border-width: 1px;
-            border-color: #2D2D2D;
+            border-color: %3;
             border-style: solid;
             margin:2px;
         }
@@ -84,11 +91,17 @@ GeometrySpreadsheetPanel::GeometrySpreadsheetPanel(QWidget* parent) : Panel(pare
             background-color: #414141;
         }
         QHeaderView::section {
-            background-color: #1B1B1B;
+            background-color: %1;
             border: none;
-            border-bottom: 1px solid #303030;
+            border-bottom: 1px solid %4;
         }
-    )");
+    )")
+                                 .arg(
+                                     enzo::style::color::surfaceDeep.name(),
+                                     enzo::style::color::surface.name(),
+                                     enzo::style::color::divider.name(),
+                                     enzo::style::color::divider.name()
+                                 ));
 
     connect(
         primView_->selectionModel(),
