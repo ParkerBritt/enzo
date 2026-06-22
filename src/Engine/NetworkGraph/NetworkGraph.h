@@ -95,9 +95,14 @@ class NetworkGraph
     ConnectionMap byTarget_;
     // Output connections keyed by the upstream node.
     ConnectionMap bySource_;
-    // Captured readers keyed by the unit they read.
+    // Captured edges are mixed granularity. The source is stored at node level
+    // since dirtying is node wide, while the reader is stored per parameter
+    // component so re-evaluating one component leaves the others intact.
+    // getDependents collapses the reader back to its node to bridge the two.
+
+    // Captured readers keyed by the node they read.
     CapturedMap capturedDependents_;
-    // Captured reads keyed by the reading unit.
+    // Captured reads keyed by the reading parameter component.
     CapturedMap capturedDependencies_;
 };
 
