@@ -1,0 +1,154 @@
+#include "LegacyGui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
+#include "LegacyGui/Style.h"
+#include <QButtonGroup>
+#include <QLabel>
+#include <QPaintEvent>
+#include <QPainter>
+#include <icecream.hpp>
+#include <qpainter.h>
+#include <qpushbutton.h>
+#include <qwidget.h>
+
+GeoSheetModeButton::GeoSheetModeButton(QWidget* parent) : QPushButton(parent)
+{
+    setFixedSize(QSize(23, 23));
+    setObjectName("GeoSheetModeButton");
+    setCheckable(true);
+    // setStyleSheet(
+    // R"(
+    //     #GeoSheetModeButton
+    //     {
+    //         background: transparent;
+    //         border: none;
+    //     }
+    //     #GeoSheetModeButton::checked
+    //     {
+    //         opacity: 50;
+    //         border: none;
+    //     }
+    // )");
+}
+
+void GeoSheetModeButton::enterEvent(QEnterEvent* event)
+{
+    hovered_ = true;
+    QPushButton::enterEvent(event);
+}
+
+void GeoSheetModeButton::leaveEvent(QEvent* event)
+{
+    hovered_ = false;
+    QPushButton::leaveEvent(event);
+}
+
+void GeoSheetModeButton::paintEvent(QPaintEvent* event)
+{
+    const QIcon buttonIcon = icon();
+
+    if (!buttonIcon.isNull())
+    {
+        QPainter painter(this);
+
+        QSize size = iconSize();
+
+        if (!isChecked())
+        {
+            painter.setOpacity(0.5);
+        }
+        if (hovered_)
+        {
+            size *= 1.1;
+        }
+
+        QPixmap pixmap = buttonIcon.pixmap(size);
+        QPoint center = rect().center() - QPoint(size.width() / 2, size.height() / 2);
+        painter.drawPixmap(center, pixmap);
+    }
+}
+
+GeoSheetMenuBarModeSelection::GeoSheetMenuBarModeSelection(QWidget* parent, Qt::WindowFlags f)
+    : QWidget(parent, f)
+{
+    mainLayout_ = new QHBoxLayout();
+    constexpr int mainMargin = 0;
+    mainLayout_->setContentsMargins(mainMargin, mainMargin, mainMargin, mainMargin);
+
+    QWidget* buttonBg = new QWidget();
+    buttonBg->setObjectName("GeoSheetMenuBarButtonBg");
+    buttonBg->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    constexpr int bgSizeMargin = 5;
+    buttonBg->setContentsMargins(bgSizeMargin, 0, bgSizeMargin, 0);
+    buttonBg->setStyleSheet(QString(R"(
+        #GeoSheetMenuBarButtonBg
+        {
+            background-color: %1;
+            border-radius: 8px;
+        }
+
+    )")
+                                .arg(enzo::style::color::surfaceDim.name()));
+    QHBoxLayout* buttonBgLayout = new QHBoxLayout();
+    constexpr int margin = 0;
+    buttonBgLayout->setContentsMargins(margin, margin, margin, margin);
+
+    modeButtonGroup_.setExclusive(true);
+
+    auto newButton = [this, &buttonBgLayout](
+                         const char* tooltip = "",
+                         const char* iconPath = ":/icons/attributePoint.svg"
+                     ) {
+        auto newButton = new GeoSheetModeButton();
+        newButton->setToolTip(tooltip);
+        newButton->setIcon(QIcon(iconPath));
+        modeButtonGroup_.addButton(newButton);
+        buttonBgLayout->addWidget(newButton);
+        return newButton;
+    };
+
+    pointButton = newButton("Point Attributes", ":/icons/attributePoint.svg");
+    vertexButton = newButton("Vertex Attributes", ":/icons/attributeVertex.svg");
+    faceButton = newButton("Face Attributes", ":/icons/attributePrimitive.svg");
+    primitiveButton = newButton("Primitive Attributes", ":/icons/attributeGlobal.svg");
+
+    pointButton->setChecked(true);
+
+    buttonBg->setLayout(buttonBgLayout);
+
+    mainLayout_->addWidget(buttonBg);
+
+    setLayout(mainLayout_);
+}
+
+GeometrySpreadsheetMenuBar::GeometrySpreadsheetMenuBar(QWidget* parent, Qt::WindowFlags f)
+    : QWidget(parent, f)
+{
+    mainLayout_ = new QHBoxLayout();
+    nodeLabel_ = new QLabel();
+    modeSelection = new GeoSheetMenuBarModeSelection();
+
+    mainLayout_->addWidget(nodeLabel_);
+    mainLayout_->addStretch();
+    mainLayout_->addWidget(modeSelection);
+    setProperty("class", "GeometrySpreadsheetMenuBar");
+    setStyleSheet(QString(R"(
+        .GeometrySpreadsheetMenuBar,
+        .GeometrySpreadsheetMenuBar *
+        {
+            background-color: %1;
+        }
+    )")
+                      .arg(enzo::style::color::surfaceDeep.name()));
+
+    constexpr int margins = 5;
+    mainLayout_->setContentsMargins(margins, margins, margins, margins);
+
+    setLayout(mainLayout_);
+}
+
+void GeometrySpreadsheetMenuBar::setNode(enzo::nt::OpId opId)
+{
+    enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(opId);
+    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(geoOp.getName()));
+}
