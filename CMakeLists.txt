@@ -207,26 +207,33 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 # QML application
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
+    src/Gui/Spreadsheet/AttributeTableModel.cpp
+    src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
+    src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
 )
 
 qt_add_qml_module(${AppExec}
     URI Enzo
     VERSION 1.0
     QML_FILES
-        src/Gui/qml/Main.qml
+        src/Gui/App.qml
+        src/Gui/Spreadsheet/Spreadsheet.qml
+        src/Gui/Spreadsheet/AttributeTable.qml
+        src/Gui/Spreadsheet/PrimitivesTree.qml
 )
 
 # Dev builds load QML from the source tree so edits reload without a rebuild.
 # Packaged builds omit this and load the module compiled into the binary.
 target_compile_definitions(${AppExec} PRIVATE
-    ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui/qml"
+    ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui"
 )
 
 set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE Qt6::Quick Qt6::QuickControls2)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2)
+target_include_directories(${AppExec} PRIVATE ${ENGINE_INCLUDE_DIRECTORIES})
 
 
 # --- packaging ---
