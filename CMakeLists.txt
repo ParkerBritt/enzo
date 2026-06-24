@@ -5,6 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 # set exec names
 set(AppExec enzoGui)
+set(LegacyAppExec enzoLegacyGui)
 set(TestExec tests)
 set(BenchExec bench)
 set(CMAKE_AUTORCC ON)
@@ -116,7 +117,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets Quick Qml QuickControls2)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -186,20 +187,46 @@ target_compile_definitions(enzoEngine PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_D
 
 
 
-qt_add_executable(${AppExec}
+# legacy widgets application
+qt_add_executable(${LegacyAppExec}
     ${GUI_SOURCES}
 )
 
-target_compile_definitions(${AppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
+target_compile_definitions(${LegacyAppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
 
 # Stage enzo/bin with daslib as its sibling so dev mirrors the package layout.
-set_target_properties(${AppExec} PROPERTIES
+set_target_properties(${LegacyAppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 
 # TODO: turn this on when ready to handle incomplete enums
-# target_compile_options(${AppExec} PRIVATE -Werror=switch)
+# target_compile_options(${LegacyAppExec} PRIVATE -Werror=switch)
+
+
+# QML application
+qt_add_executable(${AppExec}
+    src/Gui/main.cpp
+)
+
+qt_add_qml_module(${AppExec}
+    URI Enzo
+    VERSION 1.0
+    QML_FILES
+        src/Gui/qml/Main.qml
+)
+
+# Dev builds load QML from the source tree so edits reload without a rebuild.
+# Packaged builds omit this and load the module compiled into the binary.
+target_compile_definitions(${AppExec} PRIVATE
+    ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui/qml"
+)
+
+set_target_properties(${AppExec} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
+)
+
+target_link_libraries(${AppExec} PRIVATE Qt6::Quick Qt6::QuickControls2)
 
 
 # --- packaging ---
@@ -211,7 +238,7 @@ set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install director
 set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
 
 
-set_target_properties(${AppExec} PROPERTIES
+set_target_properties(${AppExec} ${LegacyAppExec} PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
 )
 
@@ -220,7 +247,7 @@ include(CPack)
 # cpack_add_component("runtimes")
 # cpack_add_component("tgz-runtimes")
 
-install(TARGETS ${AppExec} enzoEngine
+install(TARGETS ${AppExec} ${LegacyAppExec} enzoEngine
     RUNTIME DESTINATION ${ENZO_BIN_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
@@ -299,8 +326,8 @@ install(DIRECTORY ${DAS_DASLIB_DIR}
 # --- end packaging
 
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
-target_include_directories(${AppExec} PUBLIC
+target_link_libraries(${LegacyAppExec} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
+target_include_directories(${LegacyAppExec} PUBLIC
     ${ENGINE_INCLUDE_DIRECTORIES}
 )
 
