@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
+import "Spreadsheet"
 
 // Root window of the QML application.
 ApplicationWindow {
@@ -13,10 +14,9 @@ ApplicationWindow {
     title: "Enzo"
     color: "#0a0a0d"
 
-    Label {
-        anchors.centerIn: parent
-        text: "Enzo — QML shell"
-        color: "#e7e8ec"
-        font.pixelSize: 18
+    Spreadsheet {
+        anchors.fill: parent
+        anchors.margins: 7
+        viewModel: spreadsheet
     }
 }

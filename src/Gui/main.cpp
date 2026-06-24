@@ -1,39 +1,78 @@
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/OperatorTable.h"
+#include "Gui/Spreadsheet/SpreadsheetViewModel.h"
+#include <QDir>
+#include <QDirIterator>
 #include <QFileSystemWatcher>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QQuickStyle>
 #include <QUrl>
 
 namespace
 {
 
+#ifdef ENZO_QML_SOURCE_DIR
+/// @brief Returns the QML source root and every folder beneath it.
+///
+/// Feature folders each hold their own QML, so the whole tree is watched.
+QStringList qmlSourceDirs()
+{
+    const QString root = QStringLiteral(ENZO_QML_SOURCE_DIR);
+    QStringList dirs{root};
+    QDirIterator it(root, QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    while (it.hasNext())
+        dirs << it.next();
+    return dirs;
+}
+
 /// @brief Reloads the window from disk whenever a QML file changes.
 ///
-/// @note The watch follows the folder rather than its files because a save
-/// often replaces the file and drops a plain file watch.
-#ifdef ENZO_QML_SOURCE_DIR
+/// @note The watch follows folders rather than files because a save often
+/// replaces the file and drops a plain file watch.
 void installHotReload(QQmlApplicationEngine& engine, const QUrl& entry)
 {
-    const QString sourceDir = QStringLiteral(ENZO_QML_SOURCE_DIR);
-
     auto* watcher = new QFileSystemWatcher(&engine);
-    watcher->addPath(sourceDir);
+    watcher->addPaths(qmlSourceDirs());
 
-    auto reload = [&engine, entry, sourceDir, watcher]() {
+    auto reload = [&engine, entry, watcher]() {
         const QList<QObject*> previousRoots = engine.rootObjects();
         engine.clearComponentCache();
         engine.load(entry);
         for (QObject* root : previousRoots)
             root->deleteLater();
 
-        // Re-arm the watch in case the save replaced the folder contents.
-        if (!watcher->directories().contains(sourceDir))
-            watcher->addPath(sourceDir);
+        // Re-arm any folders a save may have replaced.
+        const QStringList watched = watcher->directories();
+        for (const QString& dir : qmlSourceDirs())
+            if (!watched.contains(dir))
+                watcher->addPath(dir);
     };
 
     QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, &engine, reload);
 }
 #endif
+
+} // namespace
+
+namespace
+{
+
+/// @brief Builds a one node grid network and selects it.
+///
+/// Stands in for real scene loading. Selecting the node makes the engine emit
+/// the selection signal the spreadsheet view-model listens for.
+void buildSampleNetwork()
+{
+    enzo::op::OperatorTable::initPlugins();
+
+    auto& network = enzo::nt::nm();
+    const auto gridInfo = enzo::op::OperatorTable::getOpInfo("grid");
+    const enzo::nt::OpId gridId = network.createOperator(gridInfo.value());
+    network.cookOp(gridId);
+    network.setSelectedNodes({gridId});
+}
 
 } // namespace
 
@@ -45,17 +84,23 @@ int main(int argc, char** argv)
 
     QQuickStyle::setStyle("Basic");
 
+    // The view-model subscribes before the network is built so it receives the
+    // selection signal that populates the table.
+    enzo::ui::SpreadsheetViewModel spreadsheet;
+    buildSampleNetwork();
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
 
 #ifdef ENZO_QML_SOURCE_DIR
     // Dev builds load QML straight from the source tree and reload on edit.
-    const QUrl entry = QUrl::fromLocalFile(QStringLiteral(ENZO_QML_SOURCE_DIR) + "/Main.qml");
+    const QUrl entry = QUrl::fromLocalFile(QStringLiteral(ENZO_QML_SOURCE_DIR) + "/App.qml");
     engine.addImportPath(QStringLiteral(ENZO_QML_SOURCE_DIR));
     installHotReload(engine, entry);
     engine.load(entry);
 #else
     // Release loads the module compiled into the binary.
-    engine.loadFromModule("Enzo", "Main");
+    engine.loadFromModule("Enzo", "App");
 #endif
 
     if (engine.rootObjects().isEmpty())
