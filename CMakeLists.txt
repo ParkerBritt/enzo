@@ -207,6 +207,7 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 # QML application
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
+    src/Gui/Style/Theme.cpp
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
     src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
@@ -217,15 +218,20 @@ qt_add_qml_module(${AppExec}
     VERSION 1.0
     QML_FILES
         src/Gui/App.qml
+        src/Gui/Components/Icon.qml
         src/Gui/Spreadsheet/Spreadsheet.qml
+        src/Gui/Spreadsheet/SpreadsheetHeader.qml
         src/Gui/Spreadsheet/AttributeTable.qml
         src/Gui/Spreadsheet/PrimitivesTree.qml
+        src/Gui/Spreadsheet/ModeControl.qml
 )
 
 # Dev builds load QML from the source tree so edits reload without a rebuild.
 # Packaged builds omit this and load the module compiled into the binary.
 target_compile_definitions(${AppExec} PRIVATE
     ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui"
+    ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons"
+    ENZO_DEV_FONTS_DIR="${CMAKE_SOURCE_DIR}/static/fonts"
 )
 
 set_target_properties(${AppExec} PROPERTIES

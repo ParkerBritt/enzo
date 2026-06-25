@@ -1,6 +1,7 @@
 #include "Gui/Spreadsheet/AttributeTableModel.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Primitives/Mesh.h"
 
 namespace enzo::ui
 {
@@ -38,6 +39,14 @@ void AttributeTableModel::setPrimitive(std::shared_ptr<const geo::Primitive> pri
     endResetModel();
 }
 
+void AttributeTableModel::setOwner(attr::AttributeOwner owner)
+{
+    beginResetModel();
+    owner_ = owner;
+    rebuildColumns();
+    endResetModel();
+}
+
 void AttributeTableModel::rebuildColumns()
 {
     columns_.clear();
@@ -51,11 +60,13 @@ void AttributeTableModel::rebuildColumns()
 
         const QString name = QString::fromStdString(attribute->getName());
         const unsigned int size = attribute->getTypeSize();
+        // Two and three component attributes carry x y z style axis colours.
+        const bool axial = size == 2 || size == 3;
         for (unsigned int component = 0; component < size; ++component)
         {
             columns_.push_back(
                 {static_cast<unsigned int>(attributeIndex), component,
-                 componentHeader(name, size, component)}
+                 axial ? static_cast<int>(component) : -1, componentHeader(name, size, component)}
             );
         }
     }
@@ -63,18 +74,35 @@ void AttributeTableModel::rebuildColumns()
 
 int AttributeTableModel::rowCount(const QModelIndex&) const
 {
-    if (!primitive_ || !primitive_->hasPoints()) return 0;
-    return primitive_->getNumPoints();
+    if (!primitive_) return 0;
+
+    switch (owner_)
+    {
+    case attr::AttributeOwner::POINT:
+        return primitive_->hasPoints() ? primitive_->getNumPoints() : 0;
+    case attr::AttributeOwner::VERTEX:
+    case attr::AttributeOwner::FACE:
+        if (auto mesh = std::dynamic_pointer_cast<const geo::Mesh>(primitive_))
+            return owner_ == attr::AttributeOwner::VERTEX ? mesh->getNumVerts()
+                                                          : mesh->getNumFaces();
+        return 0;
+    case attr::AttributeOwner::PRIMITIVE:
+        return 1;
+    }
+    return 0;
 }
 
 int AttributeTableModel::columnCount(const QModelIndex&) const { return columns_.size(); }
 
 QVariant AttributeTableModel::data(const QModelIndex& index, int role) const
 {
-    if (!primitive_ || role != Qt::DisplayRole) return {};
+    if (!primitive_) return {};
     if (index.column() < 0 || index.column() >= static_cast<int>(columns_.size())) return {};
 
     const Column& column = columns_[index.column()];
+    if (role == AxisRole) return column.axis;
+    if (role != Qt::DisplayRole) return {};
+
     auto attribute = primitive_->getAttributeByIndex(owner_, column.attributeIndex).lock();
     if (!attribute) return {};
 
@@ -109,6 +137,13 @@ QVariant AttributeTableModel::headerData(int section, Qt::Orientation orientatio
         return columns_[section].header;
     }
     return section;
+}
+
+QHash<int, QByteArray> AttributeTableModel::roleNames() const
+{
+    auto names = QAbstractTableModel::roleNames();
+    names[AxisRole] = "axis";
+    return names;
 }
 
 } // namespace enzo::ui
