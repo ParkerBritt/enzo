@@ -1,29 +1,42 @@
 import QtQuick
 
-// Geometry spreadsheet: a primitives tree sidebar on the left and the attribute
-// table of the selected primitive on the right.
-Item {
+// Geometry spreadsheet drawer: a header bar over a primitives tree sidebar and
+// the attribute table of the selected primitive.
+Rectangle {
     id: root
 
     required property var viewModel
 
-    PrimitivesTree {
-        id: tree
+    color: Theme.panel
+    radius: 13
+    border.color: Theme.border
+    clip: true
+
+    SpreadsheetHeader {
+        id: header
 
         anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 46
+        viewModel: root.viewModel
+    }
+
+    PrimitivesTree {
+        id: sidebar
+
+        anchors.top: header.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         width: 252
-        model: root.viewModel.primitiveTree
-        onPrimitiveSelected: index => root.viewModel.selectPrimitive(index)
+        viewModel: root.viewModel
     }
 
     AttributeTable {
-        anchors.top: parent.top
+        anchors.top: header.bottom
         anchors.bottom: parent.bottom
-        anchors.left: tree.right
+        anchors.left: sidebar.right
         anchors.right: parent.right
-        anchors.leftMargin: 7
-        model: root.viewModel.tableModel
+        viewModel: root.viewModel
     }
 }
