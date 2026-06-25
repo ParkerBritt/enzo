@@ -1,9 +1,11 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
+#include "Gui/Style/Theme.h"
 #include <QDir>
 #include <QDirIterator>
 #include <QFileSystemWatcher>
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -76,12 +78,31 @@ void buildSampleNetwork()
 
 } // namespace
 
+namespace
+{
+
+/// @brief Registers the bundled Public Sans and Inconsolata weights.
+void loadFonts()
+{
+    QDirIterator it(
+        QStringLiteral(ENZO_DEV_FONTS_DIR), {"*.ttf"}, QDir::Files, QDirIterator::Subdirectories
+    );
+    while (it.hasNext())
+        QFontDatabase::addApplicationFont(it.next());
+}
+
+} // namespace
+
 int main(int argc, char** argv)
 {
+    // Icons recolour their SVG markup through a local file XMLHttpRequest.
+    qputenv("QML_XHR_ALLOW_FILE_READ", "1");
+
     QGuiApplication app(argc, argv);
     app.setOrganizationName("Enzo");
     app.setApplicationName("Enzo");
 
+    loadFonts();
     QQuickStyle::setStyle("Basic");
 
     // The view-model subscribes before the network is built so it receives the
@@ -89,7 +110,10 @@ int main(int argc, char** argv)
     enzo::ui::SpreadsheetViewModel spreadsheet;
     buildSampleNetwork();
 
+    enzo::ui::Theme theme;
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("Theme", &theme);
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
 
 #ifdef ENZO_QML_SOURCE_DIR
