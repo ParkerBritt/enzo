@@ -8,7 +8,7 @@ Rectangle {
     required property var viewModel
 
     color: Theme.panel
-    radius: 13
+    radius: Theme.panelRadius
     border.color: Theme.border
     clip: true
 

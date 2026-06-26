@@ -53,6 +53,9 @@ Rectangle {
             font.letterSpacing: 1.4
         }
 
+        // Spacer
+        Item { width: 7; height: 1 }
+
         Row {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
