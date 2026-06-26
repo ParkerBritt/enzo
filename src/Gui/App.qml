@@ -23,12 +23,18 @@ ApplicationWindow {
         anchors.fill: parent
         orientation: Qt.Vertical
 
+        // Invisible handle that still accepts drags to resize the sections.
+        handle: Item {
+            implicitHeight: 15
+        }
+
         Item
         {
             SplitView.preferredHeight: split.height * 0.6
             Network {
                 anchors.fill: parent
                 anchors.margins: 10
+                anchors.bottomMargin: 0
             }
         }
 
@@ -38,6 +44,7 @@ ApplicationWindow {
             {
                 anchors.fill: parent
                 anchors.margins: 10
+                anchors.topMargin: 0
                 Spreadsheet {
                     viewModel: spreadsheet
                     anchors.fill: parent
