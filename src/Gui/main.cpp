@@ -98,6 +98,9 @@ int main(int argc, char** argv)
     // Icons recolour their SVG markup through a local file XMLHttpRequest.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
 
+    // Send Qt and QML debug logging to the terminal.
+    qputenv("QT_LOGGING_RULES", "default.debug=true;qml.debug=true;js.debug=true");
+
     QGuiApplication app(argc, argv);
     app.setOrganizationName("Enzo");
     app.setApplicationName("Enzo");
