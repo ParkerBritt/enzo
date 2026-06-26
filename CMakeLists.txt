@@ -219,6 +219,8 @@ qt_add_qml_module(${AppExec}
     QML_FILES
         src/Gui/App.qml
         src/Gui/Components/Icon.qml
+        src/Gui/Components/Panel.qml
+        src/Gui/Network/Network.qml
         src/Gui/Spreadsheet/Spreadsheet.qml
         src/Gui/Spreadsheet/SpreadsheetHeader.qml
         src/Gui/Spreadsheet/AttributeTable.qml
