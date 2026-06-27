@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import "../Utils.js" as Utils
 import "."
 
@@ -8,6 +9,7 @@ Rectangle {
     color: Theme.panel
     radius: Theme.panelRadius
     border.color: Theme.border
+    focus: true
     clip: true
 
     // How fast scrolling changes the zoom.
@@ -24,6 +26,11 @@ Rectangle {
     property real mouseLastX: 0
     property real mouseLastY: 0
 
+    Keys.onTabPressed: (event) => {
+        tabMenu.open()
+    }
+
+    // Pan and zoom navigations
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.MiddleButton
@@ -53,6 +60,7 @@ Rectangle {
         }
     }
 
+    // Background dots
     ShaderEffect {
         width: root.width
         height: root.height
@@ -62,6 +70,12 @@ Rectangle {
         property point pan: Qt.point(root.viewX, root.viewY)
         property size canvas: Qt.size(width, height)
         property color dotColor: Theme.networkDot
+    }
+
+    // Tab menu
+    TabMenu {
+        id: tabMenu
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     }
 
     // Canvas
