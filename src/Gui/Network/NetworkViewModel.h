@@ -39,6 +39,12 @@ class NetworkViewModel : public QObject
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
+    /// @brief Moves a node to a new graph position, pushing one undo step.
+    ///
+    /// @note Called once when a drag ends, not per frame, so the undo stack
+    /// records a single move for the whole gesture.
+    Q_INVOKABLE void moveNode(qulonglong opId, qreal x, qreal y);
+
     /// @brief Clears the selection.
     Q_INVOKABLE void clearSelection();
 
@@ -49,6 +55,7 @@ class NetworkViewModel : public QObject
     boost::signals2::scoped_connection networkClearedConnection_;
     boost::signals2::scoped_connection selectedNodesConnection_;
     boost::signals2::scoped_connection primaryNodeConnection_;
+    boost::signals2::scoped_connection nodePositionConnection_;
 };
 
 } // namespace enzo::ui
