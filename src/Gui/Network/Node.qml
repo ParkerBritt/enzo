@@ -21,6 +21,9 @@ Item {
     // Emitted on a left click, additive when a modifier extends the selection.
     signal clicked(bool additive)
 
+    // Emitted each frame of a drag with the move since the last frame.
+    signal dragMoved(real dx, real dy)
+
     // Emitted when a drag finishes, so the new position can be committed.
     signal dragReleased()
 
@@ -40,8 +43,7 @@ Item {
             root.clicked(additive);
         }
         onPositionChanged: mouse => {
-            root.x += mouse.x - dragStartX;
-            root.y += mouse.y - dragStartY;
+            root.dragMoved(mouse.x - dragStartX, mouse.y - dragStartY);
             dragged = true;
         }
         onReleased: {

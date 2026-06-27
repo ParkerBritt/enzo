@@ -5,6 +5,7 @@
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
 #include "Engine/UndoRedo/UndoStack.h"
 
+#include <QPointF>
 #include <QVariantMap>
 #include <algorithm>
 #include <memory>
@@ -109,10 +110,32 @@ void NetworkViewModel::selectNode(qulonglong opId, bool additive)
     }
 }
 
-void NetworkViewModel::moveNode(qulonglong opId, qreal x, qreal y)
+void NetworkViewModel::stageSelectionMove(qreal dx, qreal dy)
 {
-    nt::nm().moveNode(opId, {static_cast<float>(x), static_cast<float>(y)});
+    nodes_.moveSelectedBy(static_cast<float>(dx), static_cast<float>(dy));
 }
+
+void NetworkViewModel::commitSelectionMove()
+{
+    auto& network = nt::nm();
+
+    std::vector<nt::OpId> selected = network.getSelectedNodes();
+    if (selected.empty()) return;
+
+    nt::UndoTransaction transaction(network.undoStack());
+    for (nt::OpId opId : selected)
+    {
+        const QPointF position = nodes_.getPosition(opId);
+        network.moveNode(
+            opId,
+            {static_cast<float>(position.x()), static_cast<float>(position.y())}
+        );
+    }
+}
+
+void NetworkViewModel::undo() { nt::nm().undoStack().undo(); }
+
+void NetworkViewModel::redo() { nt::nm().undoStack().redo(); }
 
 void NetworkViewModel::deleteSelected()
 {

@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Types.h"
 #include <QAbstractListModel>
+#include <QPointF>
 #include <QVariant>
 #include <functional>
 #include <optional>
@@ -46,6 +47,12 @@ class NodeListModel : public QAbstractListModel
 
     /// @brief Moves the row matching @p opId to a new graph position.
     void setPosition(nt::OpId opId, float x, float y);
+
+    /// @brief Shifts every selected row by a delta, for a live group drag.
+    void moveSelectedBy(float dx, float dy);
+
+    /// @brief Returns the graph position of the row matching @p opId.
+    QPointF getPosition(nt::OpId opId) const;
 
   private:
     /// One node row, a snapshot of the operator's display data.
