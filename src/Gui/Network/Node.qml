@@ -21,22 +21,32 @@ Item {
     // Emitted on a left click, additive when a modifier extends the selection.
     signal clicked(bool additive)
 
+    // Emitted when a drag finishes, so the new position can be committed.
+    signal dragReleased()
+
     // Drag logic
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton
         property real dragStartX: 0
         property real dragStartY: 0
+        property bool dragged: false
 
         onPressed: mouse => {
             dragStartX = mouse.x;
             dragStartY = mouse.y;
+            dragged = false;
             let additive = (mouse.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)) !== 0;
             root.clicked(additive);
         }
         onPositionChanged: mouse => {
             root.x += mouse.x - dragStartX;
             root.y += mouse.y - dragStartY;
+            dragged = true;
+        }
+        onReleased: {
+            if (dragged)
+                root.dragReleased();
         }
     }
 

@@ -135,6 +135,14 @@ Rectangle {
                 selected: model.selected
                 primary: model.primary
                 onClicked: additive => network.selectNode(model.opId, additive)
+
+                // Commit the dragged position, then rebind so the engine drives
+                // the card again.
+                onDragReleased: {
+                    network.moveNode(model.opId, x, y);
+                    x = Qt.binding(() => model.x);
+                    y = Qt.binding(() => model.y);
+                }
             }
         }
     }

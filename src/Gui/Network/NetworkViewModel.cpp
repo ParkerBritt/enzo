@@ -35,6 +35,11 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
             nodes_.setPrimary(primaryId);
         });
 
+    nodePositionConnection_ =
+        network.nodePositionChanged.connect([this](nt::OpId opId, Vector2 pos) {
+            nodes_.setPosition(opId, pos.x(), pos.y());
+        });
+
     // Catches any operators that already exist before the subscriptions are live.
     nodes_.resetFromNetwork();
 }
@@ -102,6 +107,11 @@ void NetworkViewModel::selectNode(qulonglong opId, bool additive)
         network.undoStack().push(std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, opId));
         network.setPrimaryNode(opId);
     }
+}
+
+void NetworkViewModel::moveNode(qulonglong opId, qreal x, qreal y)
+{
+    nt::nm().moveNode(opId, {static_cast<float>(x), static_cast<float>(y)});
 }
 
 void NetworkViewModel::deleteSelected()
