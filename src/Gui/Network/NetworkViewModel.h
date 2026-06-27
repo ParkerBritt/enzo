@@ -39,11 +39,18 @@ class NetworkViewModel : public QObject
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
-    /// @brief Moves a node to a new graph position, pushing one undo step.
-    ///
-    /// @note Called once when a drag ends, not per frame, so the undo stack
-    /// records a single move for the whole gesture.
-    Q_INVOKABLE void moveNode(qulonglong opId, qreal x, qreal y);
+    /// @brief Moves the selected nodes in the ui, doesn't apply to engine until
+    /// committed with commitSelectionMove.
+    Q_INVOKABLE void stageSelectionMove(qreal dx, qreal dy);
+
+    /// @brief Commits the staged node positions to the engine as one undo step.
+    Q_INVOKABLE void commitSelectionMove();
+
+    /// @brief Undoes the last change.
+    Q_INVOKABLE void undo();
+
+    /// @brief Redoes the last undone change.
+    Q_INVOKABLE void redo();
 
     /// @brief Clears the selection.
     Q_INVOKABLE void clearSelection();

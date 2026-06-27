@@ -17,6 +17,15 @@ ApplicationWindow {
     title: "Enzo"
     color: "#0a0a0d"
 
+    Shortcut {
+        sequence: StandardKey.Undo
+        onActivated: network.undo()
+    }
+    Shortcut {
+        sequence: StandardKey.Redo
+        onActivated: network.redo()
+    }
+
     SplitView {
         id: split
 

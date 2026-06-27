@@ -125,6 +125,33 @@ void NodeListModel::setPosition(nt::OpId opId, float x, float y)
     Q_EMIT dataChanged(index(row), index(row), {getRole("x"), getRole("y")});
 }
 
+void NodeListModel::moveSelectedBy(float dx, float dy)
+{
+    bool moved = false;
+    for (Node& node : nodes_)
+    {
+        if (!node.selected) continue;
+        node.x += dx;
+        node.y += dy;
+        moved = true;
+    }
+    if (!moved) return;
+
+    Q_EMIT dataChanged(
+        index(0),
+        index(static_cast<int>(nodes_.size()) - 1),
+        {getRole("x"), getRole("y")}
+    );
+}
+
+QPointF NodeListModel::getPosition(nt::OpId opId) const
+{
+    const int row = rowOf(opId);
+    if (row == -1) return {};
+
+    return QPointF(nodes_[row].x, nodes_[row].y);
+}
+
 NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)
 {
     nt::GeometryOperator& op = nt::nm().getGeoOperator(opId);
