@@ -1,4 +1,6 @@
 import QtQuick
+import "../Utils.js" as Utils
+import "."
 
 Rectangle {
     id: root
@@ -41,7 +43,7 @@ Rectangle {
             let oldZoomScale = root.viewZoom;
             let newZoomScale = oldZoomScale * (1 + Math.sign(wheel.angleDelta.y) * root.zoomSpeed);
             // Clamp zoom
-            newZoomScale = Math.min(Math.max(newZoomScale, root.zoomMin), root.zoomMax);
+            newZoomScale = Utils.clamp(newZoomScale, root.zoomMin, root.zoomMax);
             let scaleFactor = newZoomScale / oldZoomScale;
 
             root.viewX = wheel.x - scaleFactor * (wheel.x - root.viewX);
@@ -76,18 +78,11 @@ Rectangle {
         ]
 
         // Demo node
+        Node {}
         Rectangle {
             width: 80
             height: 20
-            color: "red"
-            radius: 5
-            x: -40
-            y: 0
-        }
-        Rectangle {
-            width: 80
-            height: 20
-            color: "red"
+            color: Theme.panelHeader
             radius: 5
             x: 1000
             y: 1000
