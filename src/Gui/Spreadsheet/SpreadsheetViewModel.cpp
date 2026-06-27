@@ -3,8 +3,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodePacket.h"
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
 {
@@ -12,8 +11,8 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
 
     // Selecting a node carries no geometry, so the packet is pulled from the
     // newly selected node.
-    selectedNodesConnection_ = network.selectedNodesChanged.connect(
-        [this](std::vector<nt::OpId> selectedNodeIds) {
+    selectedNodesConnection_ =
+        network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
             if (selectedNodeIds.empty())
             {
                 showPacket(nullptr);
@@ -21,13 +20,13 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
             }
             const nt::OpId selected = selectedNodeIds.back();
             showPacket(nt::nm().getGeoOperator(selected).getOutputPacket(0));
-        }
-    );
+        });
 
     // A recook of the selected node delivers fresh geometry directly.
-    selectedGeoConnection_ = network.selectedGeoChanged.connect(
-        [this](std::shared_ptr<const NodePacket> packet) { showPacket(packet); }
-    );
+    selectedGeoConnection_ =
+        network.selectedGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
+            showPacket(packet);
+        });
 }
 
 QAbstractItemModel* SpreadsheetViewModel::tableModel() { return &tableModel_; }

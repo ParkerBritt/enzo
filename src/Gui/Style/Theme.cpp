@@ -1,8 +1,7 @@
 #include "Gui/Style/Theme.h"
 #include <QUrl>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 Theme::Theme(QObject* parent) : QObject(parent)
 {

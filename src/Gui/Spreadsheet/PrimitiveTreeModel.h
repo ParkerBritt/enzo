@@ -4,13 +4,11 @@
 #include <memory>
 #include <vector>
 
-namespace enzo
-{
+namespace enzo {
 class NodePacket;
 }
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 /// @brief Primitives of a packet arranged as a path based tree.
 ///
