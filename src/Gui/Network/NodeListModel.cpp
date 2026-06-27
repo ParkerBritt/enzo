@@ -16,6 +16,7 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"x", [](const Node& node) { return QVariant(node.x); }},
         {"y", [](const Node& node) { return QVariant(node.y); }},
         {"selected", [](const Node& node) { return QVariant(node.selected); }},
+        {"primary", [](const Node& node) { return QVariant(node.primary); }},
     };
     return defs;
 }
@@ -101,6 +102,16 @@ void NodeListModel::setSelection(const std::vector<nt::OpId>& selectedIds)
     }
 
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("selected")});
+}
+
+void NodeListModel::setPrimary(std::optional<nt::OpId> opId)
+{
+    if (nodes_.empty()) return;
+
+    for (Node& node : nodes_)
+        node.primary = opId.has_value() && node.opId == *opId;
+
+    Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("primary")});
 }
 
 NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)

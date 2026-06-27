@@ -7,6 +7,7 @@ enum class UndoCommandType
     DeleteNode,
     ChangeParameter,
     ChangeDisplayFlag,
+    ChangePrimaryNode,
     ChangeSelection,
     ChangeConnection,
     UndoGroup,

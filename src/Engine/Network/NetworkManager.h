@@ -129,6 +129,24 @@ class NetworkManager
      */
     void clearDisplayFlag();
 
+    /** @brief Returns the operator ID of the primary node, or nullopt when none.
+     *
+     * The primary node is the single node that drives the parameter and geometry
+     * panes. There can only be one at a time. It persists when the selection is
+     * cleared, unlike the selection itself.
+     */
+    std::optional<OpId> getPrimaryNode();
+
+    /**
+     * @brief Sets the given OpId as the primary node, releasing the previous one.
+     */
+    void setPrimaryNode(OpId opId);
+
+    /**
+     * @brief Clears the primary node so none is primary.
+     */
+    void clearPrimaryNode();
+
     /**
      * @brief Set the selection state for the given node.
      *
@@ -241,6 +259,12 @@ class NetworkManager
     // @brief A signal emitted when the selected node's geometry is changed
     boost::signals2::signal<void(std::shared_ptr<const enzo::NodePacket>)> selectedGeoChanged;
 
+    // @brief A signal emitted when the primary node changes
+    boost::signals2::signal<void(std::optional<nt::OpId>)> primaryNodeChanged;
+
+    // @brief A signal emitted when the primary node's geometry changes
+    boost::signals2::signal<void(std::shared_ptr<const enzo::NodePacket>)> primaryGeoChanged;
+
     // @brief A signal emitted when the selection of nodes changes
     boost::signals2::signal<void(std::vector<nt::OpId> selectedNodeIds)> selectedNodesChanged;
 
@@ -290,6 +314,8 @@ class NetworkManager
     enzo::nt::OpId maxOpId_ = 0;
     // operator selected for displaying in the viewport
     std::optional<OpId> displayOp_ = std::nullopt;
+    // the primary node that drives the parameter and geometry panes
+    std::optional<OpId> primaryOp_ = std::nullopt;
     // owns the network's wiring and dependencies
     nt::NetworkGraph graph_;
 
