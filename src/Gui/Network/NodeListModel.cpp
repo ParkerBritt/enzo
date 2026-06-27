@@ -114,6 +114,17 @@ void NodeListModel::setPrimary(std::optional<nt::OpId> opId)
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("primary")});
 }
 
+void NodeListModel::setPosition(nt::OpId opId, float x, float y)
+{
+    const int row = rowOf(opId);
+    if (row == -1) return;
+
+    nodes_[row].x = x;
+    nodes_[row].y = y;
+
+    Q_EMIT dataChanged(index(row), index(row), {getRole("x"), getRole("y")});
+}
+
 NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)
 {
     nt::GeometryOperator& op = nt::nm().getGeoOperator(opId);

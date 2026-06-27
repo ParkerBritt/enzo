@@ -44,6 +44,9 @@ class NodeListModel : public QAbstractListModel
     /// @brief Marks the row matching @p opId primary and the rest not.
     void setPrimary(std::optional<nt::OpId> opId);
 
+    /// @brief Moves the row matching @p opId to a new graph position.
+    void setPosition(nt::OpId opId, float x, float y);
+
   private:
     /// One node row, a snapshot of the operator's display data.
     struct Node
