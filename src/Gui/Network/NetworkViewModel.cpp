@@ -104,6 +104,19 @@ void NetworkViewModel::selectNode(qulonglong opId, bool additive)
     }
 }
 
+void NetworkViewModel::deleteSelected()
+{
+    auto& network = nt::nm();
+
+    // A copy is taken because deleting a node mutates the live selection.
+    std::vector<nt::OpId> selected = network.getSelectedNodes();
+    if (selected.empty()) return;
+
+    nt::UndoTransaction transaction(network.undoStack());
+    for (nt::OpId opId : selected)
+        network.deleteNode(opId);
+}
+
 void NetworkViewModel::clearSelection()
 {
     auto& network = nt::nm();

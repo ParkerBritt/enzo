@@ -72,10 +72,10 @@ Item {
         border.width: (root.highlighted ? 1.5 : 0.8) / root.viewZoom
     }
 
-    // A selected node swaps its drop shadow for an accent glow.
+    // The primary node swaps its drop shadow for an accent glow.
     states: State {
-        name: "selected"
-        when: root.selected
+        name: "primary"
+        when: root.primary
         PropertyChanges {
             shadow.shadowColor: Theme.accent
             shadow.shadowBlur: 0.9

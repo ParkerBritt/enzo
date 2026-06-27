@@ -40,6 +40,12 @@ Rectangle {
         tabMenu.open()
     }
 
+    Keys.onDeletePressed: network.deleteSelected()
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_Backspace)
+            network.deleteSelected();
+    }
+
     // Pan and zoom navigations
     MouseArea {
         anchors.fill: parent
