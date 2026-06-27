@@ -2,6 +2,7 @@
 
 #include "Gui/Network/NodeListModel.h"
 #include <QObject>
+#include <QVariantList>
 #include <boost/signals2/connection.hpp>
 
 namespace enzo::ui {
@@ -16,11 +17,18 @@ class NetworkViewModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractListModel* nodes READ nodes CONSTANT)
+    Q_PROPERTY(QVariantList nodeTypes READ getNodeTypes CONSTANT)
 
   public:
     explicit NetworkViewModel(QObject* parent = nullptr);
 
     QAbstractListModel* nodes();
+
+    /// @brief Returns every operator type the tab menu can create, each a {label, name} map.
+    QVariantList getNodeTypes() const;
+
+    /// @brief Creates a node of the given operator type at a network position.
+    Q_INVOKABLE void createNode(const QString& internalName, qreal x, qreal y);
 
   private:
     NodeListModel nodes_;

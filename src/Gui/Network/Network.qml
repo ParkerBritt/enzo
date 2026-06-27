@@ -30,6 +30,10 @@ Rectangle {
     property real cursorX: 0
     property real cursorY: 0
 
+    // Maps a view position to its position on the panned and zoomed canvas.
+    function toCanvasX(viewPosX) { return (viewPosX - viewX) / viewZoom; }
+    function toCanvasY(viewPosY) { return (viewPosY - viewY) / viewZoom; }
+
     Keys.onTabPressed: (event) => {
         tabMenu.x = root.cursorX;
         tabMenu.y = root.cursorY;
@@ -89,7 +93,9 @@ Rectangle {
     // Tab menu
     TabMenu {
         id: tabMenu
+        nodeTypes: network.nodeTypes
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        onNodeTypeChosen: name => network.createNode(name, root.toCanvasX(x), root.toCanvasY(y))
     }
 
     // Canvas
