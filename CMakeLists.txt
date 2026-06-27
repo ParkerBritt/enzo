@@ -211,6 +211,8 @@ qt_add_executable(${AppExec}
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
     src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
+    src/Gui/Network/NodeListModel.cpp
+    src/Gui/Network/NetworkViewModel.cpp
 )
 
 qt_add_qml_module(${AppExec}

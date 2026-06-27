@@ -3,11 +3,9 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Primitives/Mesh.h"
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-namespace
-{
+namespace {
 
 /// @brief Formats a float with a fixed number of decimals for the cell text.
 QString formatFloat(float value) { return QString::number(value, 'f', 3); }
@@ -65,8 +63,10 @@ void AttributeTableModel::rebuildColumns()
         for (unsigned int component = 0; component < size; ++component)
         {
             columns_.push_back(
-                {static_cast<unsigned int>(attributeIndex), component,
-                 axial ? static_cast<int>(component) : -1, componentHeader(name, size, component)}
+                {static_cast<unsigned int>(attributeIndex),
+                 component,
+                 axial ? static_cast<int>(component) : -1,
+                 componentHeader(name, size, component)}
             );
         }
     }

@@ -1,5 +1,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
+#include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Style/Theme.h"
 #include <QDir>
@@ -12,8 +13,7 @@
 #include <QQuickStyle>
 #include <QUrl>
 
-namespace
-{
+namespace {
 
 #ifdef ENZO_QML_SOURCE_DIR
 /// @brief Returns the QML source root and every folder beneath it.
@@ -48,8 +48,7 @@ void installHotReload(QQmlApplicationEngine& engine, const QUrl& entry)
         // Re-arm any folders a save may have replaced.
         const QStringList watched = watcher->directories();
         for (const QString& dir : qmlSourceDirs())
-            if (!watched.contains(dir))
-                watcher->addPath(dir);
+            if (!watched.contains(dir)) watcher->addPath(dir);
     };
 
     QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, &engine, reload);
@@ -58,8 +57,7 @@ void installHotReload(QQmlApplicationEngine& engine, const QUrl& entry)
 
 } // namespace
 
-namespace
-{
+namespace {
 
 /// @brief Builds a one node grid network and selects it.
 ///
@@ -70,22 +68,32 @@ void buildSampleNetwork()
     enzo::op::OperatorTable::initPlugins();
 
     auto& network = enzo::nt::nm();
-    const auto gridInfo = enzo::op::OperatorTable::getOpInfo("grid");
-    const enzo::nt::OpId gridId = network.createOperator(gridInfo.value());
+    auto create = [&](const char* type, enzo::Vector2 position) {
+        return network
+            .createOperator(enzo::op::OperatorTable::getOpInfo(type).value(), "", position);
+    };
+
+    const enzo::nt::OpId gridId = create("grid", {0.f, 0.f});
+    create("transform", {200.f, 120.f});
+    create("cube", {-180.f, 140.f});
+    create("circle", {40.f, -160.f});
+
     network.cookOp(gridId);
     network.setSelectedNodes({gridId});
 }
 
 } // namespace
 
-namespace
-{
+namespace {
 
 /// @brief Registers the bundled Public Sans and Inconsolata weights.
 void loadFonts()
 {
     QDirIterator it(
-        QStringLiteral(ENZO_DEV_FONTS_DIR), {"*.ttf"}, QDir::Files, QDirIterator::Subdirectories
+        QStringLiteral(ENZO_DEV_FONTS_DIR),
+        {"*.ttf"},
+        QDir::Files,
+        QDirIterator::Subdirectories
     );
     while (it.hasNext())
         QFontDatabase::addApplicationFont(it.next());
@@ -108,9 +116,9 @@ int main(int argc, char** argv)
     loadFonts();
     QQuickStyle::setStyle("Basic");
 
-    // The view-model subscribes before the network is built so it receives the
-    // selection signal that populates the table.
+    // The view-models bridge the engine to QML.
     enzo::ui::SpreadsheetViewModel spreadsheet;
+    enzo::ui::NetworkViewModel network;
     buildSampleNetwork();
 
     enzo::ui::Theme theme;
@@ -118,6 +126,7 @@ int main(int argc, char** argv)
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("Theme", &theme);
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
+    engine.rootContext()->setContextProperty("network", &network);
 
 #ifdef ENZO_QML_SOURCE_DIR
     // Dev builds load QML straight from the source tree and reload on edit.
@@ -130,8 +139,7 @@ int main(int argc, char** argv)
     engine.loadFromModule("Enzo", "App");
 #endif
 
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    if (engine.rootObjects().isEmpty()) return -1;
 
     return app.exec();
 }
