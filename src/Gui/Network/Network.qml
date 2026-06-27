@@ -128,13 +128,26 @@ Rectangle {
             model: network.nodes
 
             delegate: Node {
+                id: nodeDelegate
                 viewZoom: root.viewZoom
                 x: model.x
                 y: model.y
                 label: model.name
                 selected: model.selected
                 primary: model.primary
-                onClicked: additive => network.selectNode(model.opId, additive)
+
+                // Was this node already selected when the press began.
+                property bool selectedAtPress: false
+
+                onPressed: additive => {
+                    selectedAtPress = model.selected;
+                    if (!model.selected)
+                        network.selectNode(model.opId, additive);
+                }
+                onClicked: additive => {
+                    if (selectedAtPress)
+                        network.selectNode(model.opId, additive);
+                }
                 onDragMoved: (dx, dy) => network.stageSelectionMove(dx, dy)
                 onDragReleased: network.commitSelectionMove()
             }

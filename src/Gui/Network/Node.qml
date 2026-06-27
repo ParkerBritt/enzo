@@ -18,7 +18,10 @@ Item {
     // The primary and selected nodes both carry an accent outline.
     readonly property bool highlighted: selected || primary
 
-    // Emitted on a left click, additive when a modifier extends the selection.
+    // Emitted on mouse down, additive when a modifier is held.
+    signal pressed(bool additive)
+
+    // Emitted on a release that was a click rather than a drag.
     signal clicked(bool additive)
 
     // Emitted each frame of a drag with the move since the last frame.
@@ -34,13 +37,14 @@ Item {
         property real dragStartX: 0
         property real dragStartY: 0
         property bool dragged: false
+        property bool pressAdditive: false
 
         onPressed: mouse => {
             dragStartX = mouse.x;
             dragStartY = mouse.y;
             dragged = false;
-            let additive = (mouse.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)) !== 0;
-            root.clicked(additive);
+            pressAdditive = (mouse.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)) !== 0;
+            root.pressed(pressAdditive);
         }
         onPositionChanged: mouse => {
             root.dragMoved(mouse.x - dragStartX, mouse.y - dragStartY);
@@ -49,6 +53,8 @@ Item {
         onReleased: {
             if (dragged)
                 root.dragReleased();
+            else
+                root.clicked(pressAdditive);
         }
     }
 
