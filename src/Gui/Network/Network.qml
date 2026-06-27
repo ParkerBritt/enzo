@@ -51,6 +51,13 @@ Rectangle {
         }
     }
 
+    ShaderEffect {
+        width: root.width
+        height: root.height
+        fragmentShader: "qrc:/NetworkDots.frag.qsb"
+    }
+
+    // Canvas
     Item {
         transform: [
             Scale {

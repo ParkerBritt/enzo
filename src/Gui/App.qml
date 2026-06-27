@@ -28,20 +28,22 @@ ApplicationWindow {
             implicitHeight: 15
         }
 
-        Item
-        {
-            SplitView.preferredHeight: split.height * 0.6
-            Network {
+        Item {
+            SplitView.preferredHeight: Math.round(split.height * 0.6)
+
+            Panel {
                 anchors.fill: parent
                 anchors.margins: 10
                 anchors.bottomMargin: 0
+
+                Network {
+                    anchors.fill: parent
+                }
             }
         }
 
-        Item
-        {
-            Panel
-            {
+        Item {
+            Panel {
                 anchors.fill: parent
                 anchors.margins: 10
                 anchors.topMargin: 0
