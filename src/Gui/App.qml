@@ -29,7 +29,7 @@ ApplicationWindow {
         }
 
         Item {
-            SplitView.preferredHeight: Math.round(split.height * 0.6)
+            SplitView.preferredHeight: Math.round(split.height * 0.7)
 
             Panel {
                 anchors.fill: parent
