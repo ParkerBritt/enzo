@@ -8,12 +8,19 @@ Rectangle {
     border.color: Theme.border
     clip: true
 
+    // How fast scrolling changes the zoom.
+    property real zoomSpeed: 0.2
+    // How far you can zoom in. (e.g. 5x the initial scale)
+    property real zoomMax: 5
+    // How far you can zoom out. (e.g. 0.1x the initial scale)
+    property real zoomMin: 0.1
+    // Default zoom scale.
     property real viewZoom: 1
-    property real viewX: 0
-    property real viewY: 0
+
+    property real viewX: width/2
+    property real viewY: height/2
     property real mouseLastX: 0
     property real mouseLastY: 0
-    property real zoomSpeed: 0.05;
 
     MouseArea {
         anchors.fill: parent
@@ -31,21 +38,20 @@ Rectangle {
         }
 
         onWheel: wheel => {
-            let oldZoom = root.viewZoom;
-            let newZoom = oldZoom * (1 + Math.sign(wheel.angleDelta.y) * root.zoomSpeed);
-            let zoomFactor = newZoom / oldZoom;
+            let oldZoomScale = root.viewZoom;
+            let newZoomScale = oldZoomScale * (1 + Math.sign(wheel.angleDelta.y) * root.zoomSpeed);
+            // Clamp zoom
+            newZoomScale = Math.min(Math.max(newZoomScale, root.zoomMin), root.zoomMax);
+            let scaleFactor = newZoomScale / oldZoomScale;
 
-            console.log("mouse pos:", wheel.x, wheel.y);
-            root.viewX = wheel.x - zoomFactor * (wheel.x - root.viewX);
-            root.viewY = wheel.y - zoomFactor * (wheel.y - root.viewY);
+            root.viewX = wheel.x - scaleFactor * (wheel.x - root.viewX);
+            root.viewY = wheel.y - scaleFactor * (wheel.y - root.viewY);
 
-            root.viewZoom = newZoom;
+            root.viewZoom = newZoomScale;
         }
     }
 
     Item {
-        anchors.fill: parent
-
         transform: [
             Scale {
                 xScale: root.viewZoom
@@ -63,7 +69,16 @@ Rectangle {
             height: 20
             color: "red"
             radius: 5
-            anchors.centerIn: parent
+            x: -40
+            y: 0
+        }
+        Rectangle {
+            width: 80
+            height: 20
+            color: "red"
+            radius: 5
+            x: 1000
+            y: 1000
         }
     }
 }
