@@ -5,7 +5,8 @@ Item {
     id: root
 
     width: 80
-    height: 20
+    height: 25
+    property string label: "Grid"
     property real radius: 5
     property real viewZoom: 1
 
@@ -21,8 +22,8 @@ Item {
         source: dropShadowRect
         anchors.fill: dropShadowRect
         shadowEnabled: true
-        shadowBlur: 0.8
-        shadowOpacity: 0.3
+        shadowBlur: 0.4
+        shadowOpacity: 0.4
         shadowHorizontalOffset: 2
         shadowVerticalOffset: 2
     }
@@ -37,5 +38,14 @@ Item {
         border.pixelAligned: false
         border.color: "#262630"
         border.width: 0.8/root.viewZoom
+    }
+
+    Text
+    {
+        text: root.label
+        color: "white"
+        font.pointSize: 5
+        anchors.verticalCenter: parent.verticalCenter
+        x: 10
     }
 }
