@@ -1,10 +1,32 @@
 #include "Gui/Network/NodeListModel.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
+#include <algorithm>
 
 namespace enzo::ui {
 
 NodeListModel::NodeListModel(QObject* parent) : QAbstractListModel(parent) {}
+
+const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
+{
+    static const std::vector<RoleDef> defs = {
+        {"opId", [](const Node& node) { return QVariant::fromValue(node.opId); }},
+        {"name", [](const Node& node) { return QVariant(node.name); }},
+        {"type", [](const Node& node) { return QVariant(node.type); }},
+        {"x", [](const Node& node) { return QVariant(node.x); }},
+        {"y", [](const Node& node) { return QVariant(node.y); }},
+        {"selected", [](const Node& node) { return QVariant(node.selected); }},
+    };
+    return defs;
+}
+
+int NodeListModel::getRole(const QByteArray& name)
+{
+    const std::vector<RoleDef>& defs = getRoleDefs();
+    for (int index = 0; index < static_cast<int>(defs.size()); ++index)
+        if (defs[index].name == name) return Qt::UserRole + 1 + index;
+    return -1;
+}
 
 int NodeListModel::rowCount(const QModelIndex& parent) const
 {
@@ -16,33 +38,20 @@ QVariant NodeListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() >= static_cast<int>(nodes_.size())) return {};
 
-    const Node& node = nodes_[index.row()];
-    switch (role)
-    {
-    case OpIdRole:
-        return QVariant::fromValue(node.opId);
-    case NameRole:
-        return node.name;
-    case TypeRole:
-        return node.type;
-    case XRole:
-        return node.x;
-    case YRole:
-        return node.y;
-    default:
-        return {};
-    }
+    const int roleIndex = role - (Qt::UserRole + 1);
+    const std::vector<RoleDef>& defs = getRoleDefs();
+    if (roleIndex < 0 || roleIndex >= static_cast<int>(defs.size())) return {};
+
+    return defs[roleIndex].get(nodes_[index.row()]);
 }
 
 QHash<int, QByteArray> NodeListModel::roleNames() const
 {
-    return {
-        {OpIdRole, "opId"},
-        {NameRole, "name"},
-        {TypeRole, "type"},
-        {XRole, "x"},
-        {YRole, "y"},
-    };
+    QHash<int, QByteArray> names;
+    const std::vector<RoleDef>& defs = getRoleDefs();
+    for (int index = 0; index < static_cast<int>(defs.size()); ++index)
+        names.insert(Qt::UserRole + 1 + index, defs[index].name);
+    return names;
 }
 
 void NodeListModel::resetFromNetwork()
@@ -79,6 +88,19 @@ void NodeListModel::clear()
     beginResetModel();
     nodes_.clear();
     endResetModel();
+}
+
+void NodeListModel::setSelection(const std::vector<nt::OpId>& selectedIds)
+{
+    if (nodes_.empty()) return;
+
+    for (Node& node : nodes_)
+    {
+        const auto found = std::find(selectedIds.begin(), selectedIds.end(), node.opId);
+        node.selected = found != selectedIds.end();
+    }
+
+    Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("selected")});
 }
 
 NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)

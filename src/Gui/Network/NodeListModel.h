@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Types.h"
 #include <QAbstractListModel>
+#include <QVariant>
+#include <functional>
 #include <vector>
 
 namespace enzo::ui {
@@ -17,15 +19,6 @@ class NodeListModel : public QAbstractListModel
     Q_OBJECT
 
   public:
-    enum Roles
-    {
-        OpIdRole = Qt::UserRole + 1,
-        NameRole,
-        TypeRole,
-        XRole,
-        YRole,
-    };
-
     explicit NodeListModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -44,6 +37,9 @@ class NodeListModel : public QAbstractListModel
     /// @brief Removes every row.
     void clear();
 
+    /// @brief Marks the rows in @p selectedIds selected and the rest unselected.
+    void setSelection(const std::vector<nt::OpId>& selectedIds);
+
   private:
     /// One node row, a snapshot of the operator's display data.
     struct Node
@@ -53,7 +49,24 @@ class NodeListModel : public QAbstractListModel
         QString type;
         float x;
         float y;
+        bool selected = false;
     };
+
+    /// One model role paired with the field it exposes from a row.
+    struct RoleDef
+    {
+        QByteArray name;
+        std::function<QVariant(const Node&)> get;
+    };
+
+    /// @brief Returns the role table that both data and roleNames are built from.
+    ///
+    /// @note A role's int is its position in the table offset from Qt::UserRole,
+    /// so adding a field means adding one entry here and nothing else.
+    static const std::vector<RoleDef>& getRoleDefs();
+
+    /// @brief Returns the model role for a field name, or -1 when absent.
+    static int getRole(const QByteArray& name);
 
     /// @brief Reads the display data for an operator into a row.
     static Node makeNode(nt::OpId opId);

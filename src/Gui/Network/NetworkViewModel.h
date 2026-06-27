@@ -30,11 +30,21 @@ class NetworkViewModel : public QObject
     /// @brief Creates a node of the given operator type at a network position.
     Q_INVOKABLE void createNode(const QString& internalName, qreal x, qreal y);
 
+    /// @brief Selects a node, optionally adding it to the current selection.
+    ///
+    /// @param additive Toggles the node within the selection rather than
+    /// replacing it, the modifier click behaviour.
+    Q_INVOKABLE void selectNode(qulonglong opId, bool additive);
+
+    /// @brief Clears the selection.
+    Q_INVOKABLE void clearSelection();
+
   private:
     NodeListModel nodes_;
     boost::signals2::scoped_connection operatorCreatedConnection_;
     boost::signals2::scoped_connection operatorRemovedConnection_;
     boost::signals2::scoped_connection networkClearedConnection_;
+    boost::signals2::scoped_connection selectedNodesConnection_;
 };
 
 } // namespace enzo::ui
