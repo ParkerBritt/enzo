@@ -36,6 +36,9 @@ class NetworkViewModel : public QObject
     /// replacing it, the modifier click behaviour.
     Q_INVOKABLE void selectNode(qulonglong opId, bool additive);
 
+    /// @brief Deletes every selected node as one undo step.
+    Q_INVOKABLE void deleteSelected();
+
     /// @brief Clears the selection.
     Q_INVOKABLE void clearSelection();
 

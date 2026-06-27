@@ -101,6 +101,12 @@ void nt::NetworkManager::removeOperator(OpId opId, bool removeConnections)
         displayOp_.reset();
     }
 
+    // Clear primary if this was the primary node
+    if (primaryOp_.has_value() && primaryOp_.value() == opId)
+    {
+        clearPrimaryNode();
+    }
+
     // Remove from selection
     auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
     if (selIt != selectedNodes_.end())
