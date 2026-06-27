@@ -207,6 +207,26 @@ void nt::NetworkManager::clearDisplayFlag()
     displayNodeChanged(std::nullopt);
 }
 
+std::optional<nt::OpId> nt::NetworkManager::getPrimaryNode() { return primaryOp_; }
+
+void nt::NetworkManager::setPrimaryNode(OpId opId)
+{
+    primaryOp_ = opId;
+
+    cookOp(opId);
+
+    nt::GeometryOperator& primaryOp = getGeoOperator(opId);
+    primaryGeoChanged(primaryOp.getOutputPacket(0));
+    primaryNodeChanged(opId);
+}
+
+void nt::NetworkManager::clearPrimaryNode()
+{
+    primaryOp_.reset();
+    primaryGeoChanged(std::make_shared<const NodePacket>());
+    primaryNodeChanged(std::nullopt);
+}
+
 void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
 {
     if (add)
@@ -255,6 +275,16 @@ void nt::NetworkManager::update()
 
         auto& displayOp = getGeoOperator(displayOpId);
         displayGeoChanged(displayOp.getOutputPacket(0));
+    }
+
+    // cook primary node and notify the geometry pane
+    if (getPrimaryNode().has_value())
+    {
+        const OpId primaryOpId = getPrimaryNode().value();
+        cookOp(primaryOpId);
+
+        auto& primaryOp = getGeoOperator(primaryOpId);
+        primaryGeoChanged(primaryOp.getOutputPacket(0));
     }
 
     // cook selected nodes and notify spreadsheet

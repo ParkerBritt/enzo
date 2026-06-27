@@ -80,6 +80,7 @@ void buildSampleNetwork()
 
     network.cookOp(gridId);
     network.setSelectedNodes({gridId});
+    network.setPrimaryNode(gridId);
 }
 
 } // namespace

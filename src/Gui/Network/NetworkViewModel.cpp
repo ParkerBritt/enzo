@@ -1,7 +1,9 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
+#include "Engine/UndoRedo/ChangePrimaryNodeCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
+#include "Engine/UndoRedo/UndoStack.h"
 
 #include <QVariantMap>
 #include <algorithm>
@@ -26,6 +28,11 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
     selectedNodesConnection_ =
         network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
             nodes_.setSelection(selectedNodeIds);
+        });
+
+    primaryNodeConnection_ =
+        network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
+            nodes_.setPrimary(primaryId);
         });
 
     // Catches any operators that already exist before the subscriptions are live.
@@ -60,27 +67,41 @@ void NetworkViewModel::createNode(const QString& internalName, qreal x, qreal y)
 void NetworkViewModel::selectNode(qulonglong opId, bool additive)
 {
     auto& network = nt::nm();
-    std::vector<nt::OpId> prev = network.getSelectedNodes();
 
-    std::vector<nt::OpId> next;
+    std::vector<nt::OpId> prevSelection = network.getSelectedNodes();
+    std::vector<nt::OpId> nextSelection;
     if (additive)
     {
-        next = prev;
-        const auto found = std::find(next.begin(), next.end(), opId);
-        if (found != next.end())
-            next.erase(found);
+        nextSelection = prevSelection;
+        const auto found = std::find(nextSelection.begin(), nextSelection.end(), opId);
+        if (found != nextSelection.end())
+            nextSelection.erase(found);
         else
-            next.push_back(opId);
+            nextSelection.push_back(opId);
     }
     else
     {
-        next = {opId};
+        nextSelection = {opId};
     }
 
-    if (next == prev) return;
+    std::optional<nt::OpId> prevPrimary = network.getPrimaryNode();
 
-    network.undoStack().push(std::make_unique<nt::ChangeSelectionCommand>(prev, next));
-    network.setSelectedNodes(next);
+    // A click changes selection and primary together, so they undo as one unit.
+    nt::UndoTransaction transaction(network.undoStack());
+
+    if (nextSelection != prevSelection)
+    {
+        network.undoStack().push(
+            std::make_unique<nt::ChangeSelectionCommand>(prevSelection, nextSelection)
+        );
+        network.setSelectedNodes(nextSelection);
+    }
+
+    if (prevPrimary != opId)
+    {
+        network.undoStack().push(std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, opId));
+        network.setPrimaryNode(opId);
+    }
 }
 
 void NetworkViewModel::clearSelection()

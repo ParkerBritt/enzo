@@ -45,6 +45,7 @@ class NetworkViewModel : public QObject
     boost::signals2::scoped_connection operatorRemovedConnection_;
     boost::signals2::scoped_connection networkClearedConnection_;
     boost::signals2::scoped_connection selectedNodesConnection_;
+    boost::signals2::scoped_connection primaryNodeConnection_;
 };
 
 } // namespace enzo::ui

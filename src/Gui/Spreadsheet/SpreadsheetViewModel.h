@@ -67,8 +67,8 @@ class SpreadsheetViewModel : public QObject
     PrimitiveTreeModel primitiveTree_;
     std::shared_ptr<const NodePacket> packet_;
     Mode mode_ = Points;
-    boost::signals2::scoped_connection selectedNodesConnection_;
-    boost::signals2::scoped_connection selectedGeoConnection_;
+    boost::signals2::scoped_connection primaryNodeConnection_;
+    boost::signals2::scoped_connection primaryGeoConnection_;
 };
 
 } // namespace enzo::ui

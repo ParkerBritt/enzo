@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QVariant>
 #include <functional>
+#include <optional>
 #include <vector>
 
 namespace enzo::ui {
@@ -40,6 +41,9 @@ class NodeListModel : public QAbstractListModel
     /// @brief Marks the rows in @p selectedIds selected and the rest unselected.
     void setSelection(const std::vector<nt::OpId>& selectedIds);
 
+    /// @brief Marks the row matching @p opId primary and the rest not.
+    void setPrimary(std::optional<nt::OpId> opId);
+
   private:
     /// One node row, a snapshot of the operator's display data.
     struct Node
@@ -50,6 +54,7 @@ class NodeListModel : public QAbstractListModel
         float x;
         float y;
         bool selected = false;
+        bool primary = false;
     };
 
     /// One model role paired with the field it exposes from a row.

@@ -13,6 +13,10 @@ Item {
     property real radius: 5
     property real viewZoom: 1
     property bool selected: false
+    property bool primary: false
+
+    // The primary and selected nodes both carry an accent outline.
+    readonly property bool highlighted: selected || primary
 
     // Emitted on a left click, additive when a modifier extends the selection.
     signal clicked(bool additive)
@@ -64,23 +68,20 @@ Item {
         y: 0
         antialiasing: true
         border.pixelAligned: false
-        border.color: root.borderColor
-        border.width: 0.8 / root.viewZoom
+        border.color: root.highlighted ? Theme.accent : root.borderColor
+        border.width: (root.highlighted ? 1.5 : 0.8) / root.viewZoom
     }
 
-    // A selected node swaps its drop shadow for a centred violet glow and an
-    // accent border.
+    // A selected node swaps its drop shadow for an accent glow.
     states: State {
         name: "selected"
         when: root.selected
         PropertyChanges {
             shadow.shadowColor: Theme.accent
             shadow.shadowBlur: 0.9
-            shadow.shadowOpacity: 0.7
+            shadow.shadowOpacity: 0.4
             shadow.shadowHorizontalOffset: 0
             shadow.shadowVerticalOffset: 0
-            nodeShape.border.color: Theme.accent
-            nodeShape.border.width: 1.5 / root.viewZoom
         }
     }
 
