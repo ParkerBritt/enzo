@@ -7,13 +7,11 @@
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
-namespace enzo
-{
+namespace enzo {
 class NodePacket;
 }
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 /// @brief View-model backing the geometry spreadsheet.
 ///

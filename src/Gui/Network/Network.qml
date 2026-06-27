@@ -77,17 +77,15 @@ Rectangle {
             }
         ]
 
-        // Demo node
-        Node {
-            viewZoom: root.viewZoom
-        }
-        Rectangle {
-            width: 80
-            height: 20
-            color: Theme.panelHeader
-            radius: 5
-            x: 1000
-            y: 1000
+        Repeater {
+            model: network.nodes
+
+            delegate: Node {
+                viewZoom: root.viewZoom
+                x: model.x
+                y: model.y
+                label: model.name
+            }
         }
     }
 }

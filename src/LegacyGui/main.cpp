@@ -4,8 +4,8 @@
 #include <QPushButton>
 #include <QSurfaceFormat>
 
-#include "LegacyGui/Icons/Builtin.h"
 #include "Interface.h"
+#include "LegacyGui/Icons/Builtin.h"
 
 int main(int argc, char** argv)
 {

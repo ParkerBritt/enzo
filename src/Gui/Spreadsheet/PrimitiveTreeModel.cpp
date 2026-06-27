@@ -4,11 +4,9 @@
 #include "Engine/Primitives/Primitive.h"
 #include "Engine/Selection/PrimPath.h"
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-namespace
-{
+namespace {
 
 /// @brief Returns the short uppercase tag shown at the end of a primitive row.
 QString typeTag(geo::PrimType type)
