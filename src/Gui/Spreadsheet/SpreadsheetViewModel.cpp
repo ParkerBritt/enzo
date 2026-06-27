@@ -9,22 +9,21 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
 {
     auto& network = nt::nm();
 
-    // Selecting a node carries no geometry, so the packet is pulled from the
-    // newly selected node.
-    selectedNodesConnection_ =
-        network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
-            if (selectedNodeIds.empty())
+    // Switching the primary node carries no geometry, so the packet is pulled
+    // from the new primary node.
+    primaryNodeConnection_ =
+        network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
+            if (!primaryId.has_value())
             {
                 showPacket(nullptr);
                 return;
             }
-            const nt::OpId selected = selectedNodeIds.back();
-            showPacket(nt::nm().getGeoOperator(selected).getOutputPacket(0));
+            showPacket(nt::nm().getGeoOperator(*primaryId).getOutputPacket(0));
         });
 
-    // A recook of the selected node delivers fresh geometry directly.
-    selectedGeoConnection_ =
-        network.selectedGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
+    // A recook of the primary node delivers fresh geometry directly.
+    primaryGeoConnection_ =
+        network.primaryGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
             showPacket(packet);
         });
 }

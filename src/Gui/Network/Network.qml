@@ -127,6 +127,7 @@ Rectangle {
                 y: model.y
                 label: model.name
                 selected: model.selected
+                primary: model.primary
                 onClicked: additive => network.selectNode(model.opId, additive)
             }
         }
