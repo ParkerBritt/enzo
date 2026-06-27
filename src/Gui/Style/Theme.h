@@ -23,6 +23,7 @@ class Theme : public QObject
     Q_PROPERTY(QColor bsoft MEMBER bsoft_ CONSTANT)
     Q_PROPERTY(QColor field MEMBER field_ CONSTANT)
     Q_PROPERTY(QColor fline MEMBER fline_ CONSTANT)
+    Q_PROPERTY(QColor networkDot MEMBER networkDot_ CONSTANT)
     Q_PROPERTY(QColor panelHeader MEMBER panelHeader_ CONSTANT)
     Q_PROPERTY(QColor text MEMBER text_ CONSTANT)
     Q_PROPERTY(QColor label MEMBER label_ CONSTANT)
@@ -55,6 +56,7 @@ class Theme : public QObject
     QColor bsoft_{"#1d1d25"};
     QColor field_{"#0d0d11"};
     QColor fline_{"#242430"};
+    QColor networkDot_{"#1e1e26"};
     QColor panelHeader_{"#101015"};
     QColor text_{"#e7e8ec"};
     QColor label_{"#9a9aa6"};

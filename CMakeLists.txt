@@ -117,7 +117,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets Quick Qml QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets Quick Qml QuickControls2 ShaderTools)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -226,6 +226,15 @@ qt_add_qml_module(${AppExec}
         src/Gui/Spreadsheet/AttributeTable.qml
         src/Gui/Spreadsheet/PrimitivesTree.qml
         src/Gui/Spreadsheet/ModeControl.qml
+)
+
+qt6_add_shaders(${AppExec} "enzoShaders"
+    PREFIX
+    "/"
+    BASE
+    "src/Gui/Shaders"
+    FILES
+    "src/Gui/Shaders/NetworkDots.frag"
 )
 
 # Dev builds load QML from the source tree so edits reload without a rebuild.
