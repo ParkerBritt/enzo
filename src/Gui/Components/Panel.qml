@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 
 /// Rounds and clips panel contents.
-Item
-{
+Item {
     id: root
 
     property real radius: Theme.panelRadius
@@ -13,45 +12,46 @@ Item
     // Place content inside container
     default property alias content: contentContainer.data
 
-    Rectangle
-    {
+    Rectangle {
         anchors.fill: parent
         color: Theme.panel
         radius: root.radius
     }
 
-    Item
-    {
+    Item {
         id: contentContainer
         anchors.fill: parent
         anchors.margins: root.borderWidth
     }
 
     // Overlays content with rounded outline.
-    Shape
-    {
+    Shape {
         id: frame
         anchors.fill: parent
         preferredRendererType: Shape.CurveRenderer
 
         // Page background fills the corners, hiding content past the radius.
-        ShapePath
-        {
+        ShapePath {
             fillColor: Theme.bg
             strokeColor: "transparent"
             fillRule: ShapePath.OddEvenFill
-            PathRectangle { width: frame.width; height: frame.height }
-            PathRectangle { width: frame.width; height: frame.height; radius: root.radius }
+            PathRectangle {
+                width: frame.width
+                height: frame.height
+            }
+            PathRectangle {
+                width: frame.width
+                height: frame.height
+                radius: root.radius
+            }
         }
 
         // Border tracing the rounded edge.
-        ShapePath
-        {
+        ShapePath {
             fillColor: "transparent"
             strokeColor: root.borderColor
             strokeWidth: root.borderWidth
-            PathRectangle
-            {
+            PathRectangle {
                 x: root.borderWidth / 2
                 y: root.borderWidth / 2
                 width: frame.width - root.borderWidth
