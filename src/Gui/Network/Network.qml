@@ -78,7 +78,9 @@ Rectangle {
         ]
 
         // Demo node
-        Node {}
+        Node {
+            viewZoom: root.viewZoom
+        }
         Rectangle {
             width: 80
             height: 20
