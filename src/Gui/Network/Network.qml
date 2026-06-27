@@ -43,12 +43,19 @@ Rectangle {
     // Pan and zoom navigations
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.MiddleButton
+        acceptedButtons: Qt.MiddleButton | Qt.LeftButton
         hoverEnabled: true
 
         onPressed: mouse => {
             root.mouseLastX = mouse.x;
             root.mouseLastY = mouse.y;
+        }
+
+        // A left click on empty canvas clears the selection. Clicks on a node
+        // are consumed by the node, so they never reach here.
+        onClicked: mouse => {
+            if (mouse.button === Qt.LeftButton)
+                network.clearSelection();
         }
         onPositionChanged: mouse => {
             root.cursorX = mouse.x;
@@ -119,6 +126,8 @@ Rectangle {
                 x: model.x
                 y: model.y
                 label: model.name
+                selected: model.selected
+                onClicked: additive => network.selectNode(model.opId, additive)
             }
         }
     }
