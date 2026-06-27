@@ -26,7 +26,13 @@ Rectangle {
     property real mouseLastX: 0
     property real mouseLastY: 0
 
+    // Latest cursor position over the network, used to place popups.
+    property real cursorX: 0
+    property real cursorY: 0
+
     Keys.onTabPressed: (event) => {
+        tabMenu.x = root.cursorX;
+        tabMenu.y = root.cursorY;
         tabMenu.open()
     }
 
@@ -34,12 +40,20 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.MiddleButton
+        hoverEnabled: true
 
         onPressed: mouse => {
             root.mouseLastX = mouse.x;
             root.mouseLastY = mouse.y;
         }
         onPositionChanged: mouse => {
+            root.cursorX = mouse.x;
+            root.cursorY = mouse.y;
+
+            // Panning only happens while the middle button is held.
+            if (!(mouse.buttons & Qt.MiddleButton))
+                return;
+
             viewX += mouse.x - root.mouseLastX;
             viewY += mouse.y - root.mouseLastY;
             root.mouseLastX = mouse.x;
