@@ -55,6 +55,11 @@ Rectangle {
         width: root.width
         height: root.height
         fragmentShader: "qrc:/NetworkDots.frag.qsb"
+
+        property real zoom: root.viewZoom
+        property point pan: Qt.point(root.viewX, root.viewY)
+        property size canvas: Qt.size(width, height)
+        property color dotColor: Theme.networkDot
     }
 
     // Canvas
