@@ -24,7 +24,7 @@ Item {
     // Emitted on a release that was a click rather than a drag.
     signal clicked(bool additive)
 
-    // Emitted each frame of a drag with the move since the last frame.
+    // The offset between the cursor and the grab point since last frame.
     signal dragMoved(real dx, real dy)
 
     // Emitted when a drag finishes, so the new position can be committed.
