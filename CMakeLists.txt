@@ -242,6 +242,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Slider.qml
         src/Gui/Parameters/ParametersPanel.qml
         src/Gui/Parameters/ParameterRow.qml
+        src/Gui/Parameters/ParameterList.qml
         src/Gui/Parameters/FloatSlider.qml
         src/Gui/Parameters/IntSlider.qml
         src/Gui/Parameters/Toggle.qml

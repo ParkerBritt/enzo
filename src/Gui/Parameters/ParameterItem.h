@@ -30,6 +30,8 @@ class ParameterItem : public QObject
     Q_PROPERTY(QStringList options READ options CONSTANT)
     Q_PROPERTY(QStringList optionTokens READ optionTokens CONSTANT)
     Q_PROPERTY(QList<QObject*> children READ children CONSTANT)
+    Q_PROPERTY(bool horizontal READ horizontal CONSTANT)
+    Q_PROPERTY(bool labelHidden READ labelHidden CONSTANT)
     Q_PROPERTY(bool enabled READ enabled NOTIFY metaChanged)
     Q_PROPERTY(bool hidden READ hidden NOTIFY metaChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
@@ -59,6 +61,10 @@ class ParameterItem : public QObject
     QStringList options() const { return options_; }
     QStringList optionTokens() const { return optionTokens_; }
     QList<QObject*> children() const { return children_; }
+
+    /// @brief Whether a group lays its children side by side rather than stacked.
+    bool horizontal() const { return horizontal_; }
+    bool labelHidden() const { return labelHidden_; }
 
     bool enabled() const { return enabled_; }
     bool hidden() const { return hidden_; }
@@ -94,6 +100,8 @@ class ParameterItem : public QObject
     QStringList options_;
     QStringList optionTokens_;
     QList<QObject*> children_;
+    bool horizontal_ = false;
+    bool labelHidden_ = false;
 
     std::weak_ptr<prm::NodeParameter> parameter_;
     boost::signals2::scoped_connection valueSubscription_;
