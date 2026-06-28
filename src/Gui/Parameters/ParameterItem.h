@@ -18,7 +18,7 @@ namespace enzo::ui {
 class ParameterItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Type type READ type CONSTANT)
+    Q_PROPERTY(QString kind READ kind CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString tooltip READ tooltip CONSTANT)
@@ -26,28 +26,13 @@ class ParameterItem : public QObject
     Q_PROPERTY(qreal minimum READ minimum CONSTANT)
     Q_PROPERTY(qreal maximum READ maximum CONSTANT)
     Q_PROPERTY(QStringList options READ options CONSTANT)
+    Q_PROPERTY(QStringList optionTokens READ optionTokens CONSTANT)
     Q_PROPERTY(QList<QObject*> children READ children CONSTANT)
     Q_PROPERTY(bool enabled READ enabled NOTIFY metaChanged)
     Q_PROPERTY(bool hidden READ hidden NOTIFY metaChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
 
   public:
-    /// The kind of parameter, mirroring prm::Type.
-    enum Type
-    {
-        String,
-        Float,
-        Bool,
-        Xyz,
-        Int,
-        Toggle,
-        Group,
-        Dropdown,
-        Ramp,
-        Spacer,
-    };
-    Q_ENUM(Type)
-
     /// @brief Builds an item from a template and the parameter it drives.
     /// @param parameter The value source, empty for a container or spacer.
     ParameterItem(
@@ -56,7 +41,8 @@ class ParameterItem : public QObject
         QObject* parent = nullptr
     );
 
-    Type type() const { return type_; }
+    /// @brief The type as a lowercase token the QML delegate dispatches on.
+    QString kind() const { return kind_; }
     QString name() const { return name_; }
     QString label() const { return label_; }
     QString tooltip() const { return tooltip_; }
@@ -64,6 +50,7 @@ class ParameterItem : public QObject
     qreal minimum() const { return minimum_; }
     qreal maximum() const { return maximum_; }
     QStringList options() const { return options_; }
+    QStringList optionTokens() const { return optionTokens_; }
     QList<QObject*> children() const { return children_; }
 
     bool enabled() const { return enabled_; }
@@ -88,7 +75,7 @@ class ParameterItem : public QObject
     void metaChanged();
 
   private:
-    Type type_;
+    QString kind_;
     QString name_;
     QString label_;
     QString tooltip_;
@@ -96,6 +83,7 @@ class ParameterItem : public QObject
     qreal minimum_ = 0;
     qreal maximum_ = 0;
     QStringList options_;
+    QStringList optionTokens_;
     QList<QObject*> children_;
 
     std::weak_ptr<prm::NodeParameter> parameter_;

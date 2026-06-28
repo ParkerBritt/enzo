@@ -239,6 +239,17 @@ qt_add_qml_module(${AppExec}
         src/Gui/Utils.js
         src/Gui/Components/Icon.qml
         src/Gui/Components/Panel.qml
+        src/Gui/Components/Slider.qml
+        src/Gui/Parameters/ParametersPanel.qml
+        src/Gui/Parameters/ParameterRow.qml
+        src/Gui/Parameters/FloatSlider.qml
+        src/Gui/Parameters/IntSlider.qml
+        src/Gui/Parameters/Toggle.qml
+        src/Gui/Parameters/VectorField.qml
+        src/Gui/Parameters/StringField.qml
+        src/Gui/Parameters/Dropdown.qml
+        src/Gui/Parameters/Group.qml
+        src/Gui/Parameters/RampEditor.qml
         src/Gui/Network/Network.qml
         src/Gui/Network/Node.qml
         src/Gui/Network/NodeLinkController.qml
