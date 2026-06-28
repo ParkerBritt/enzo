@@ -17,6 +17,7 @@ ApplicationWindow {
     visibility: Window.Maximized
     title: "Enzo"
     color: "#0a0a0d"
+    property real marginSize: 15
 
     Shortcut {
         sequence: StandardKey.Undo
@@ -27,69 +28,68 @@ ApplicationWindow {
         onActivated: network.redo()
     }
 
-    SplitView {
-        id: split
-
+    Item
+    {
+        id: panels
         anchors.fill: parent
-        orientation: Qt.Vertical
+        anchors.margins: window.marginSize
 
-        // Invisible handle that still accepts drags to resize the sections.
-        handle: Item {
-            implicitHeight: 15
-        }
+        SplitView {
+            id: split
 
-        Item {
-            SplitView.preferredHeight: Math.round(split.height * 0.7)
+            anchors.fill: parent
+            orientation: Qt.Vertical
 
-            // Top row splits the network and the viewport side by side.
-            SplitView {
-                id: topRow
+            // Invisible handle that still accepts drags to resize the sections.
+            handle: Item {
+                implicitHeight: window.marginSize
+            }
 
-                anchors.fill: parent
-                orientation: Qt.Horizontal
+            Item {
+                SplitView.preferredHeight: Math.round(split.height * 0.7)
 
-                handle: Item {
-                    implicitWidth: 15
-                }
+                // Top row splits the network and the viewport side by side.
+                SplitView {
+                    id: topRow
 
-                Item {
-                    SplitView.preferredWidth: Math.round(topRow.width * 0.63)
+                    anchors.fill: parent
+                    orientation: Qt.Horizontal
 
-                    Panel {
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        anchors.bottomMargin: 0
-                        anchors.rightMargin: 5
+                    handle: Item {
+                        implicitWidth: window.marginSize
+                    }
 
-                        Network {
+                    Item {
+                        SplitView.preferredWidth: Math.round(topRow.width * 0.63)
+
+                        Panel {
                             anchors.fill: parent
+
+                            Network {
+                                anchors.fill: parent
+                            }
                         }
                     }
-                }
 
-                Item {
-                    Panel {
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        anchors.bottomMargin: 0
-                        anchors.leftMargin: 5
-
-                        Viewport {
+                    Item {
+                        Panel {
                             anchors.fill: parent
+
+                            Viewport {
+                                anchors.fill: parent
+                            }
                         }
                     }
                 }
             }
-        }
 
-        Item {
-            Panel {
-                anchors.fill: parent
-                anchors.margins: 10
-                anchors.topMargin: 0
-                Spreadsheet {
-                    viewModel: spreadsheet
+            Item {
+                Panel {
                     anchors.fill: parent
+                    Spreadsheet {
+                        viewModel: spreadsheet
+                        anchors.fill: parent
+                    }
                 }
             }
         }
