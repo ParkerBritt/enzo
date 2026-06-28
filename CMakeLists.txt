@@ -219,6 +219,8 @@ qt_add_executable(${AppExec}
 qt_add_qml_module(${AppExec}
     URI Enzo
     VERSION 1.0
+    SOURCES
+        src/Gui/Network/NodeLinkLayer.cpp
     QML_FILES
         src/Gui/App.qml
         src/Gui/Utils.js
@@ -256,7 +258,12 @@ set_target_properties(${AppExec} PROPERTIES
 )
 
 target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2)
-target_include_directories(${AppExec} PRIVATE ${ENGINE_INCLUDE_DIRECTORIES})
+target_include_directories(${AppExec} PRIVATE
+    ${ENGINE_INCLUDE_DIRECTORIES}
+    # Folders holding QML_ELEMENT types, whose headers the generated type
+    # registration includes by bare file name.
+    src/Gui/Network
+)
 
 
 # --- packaging ---

@@ -11,6 +11,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QSurfaceFormat>
 #include <QUrl>
 
 namespace {
@@ -74,9 +75,12 @@ void buildSampleNetwork()
     };
 
     const enzo::nt::OpId gridId = create("grid", {0.f, 0.f});
-    create("transform", {200.f, 120.f});
+    const enzo::nt::OpId transformId = create("transform", {200.f, 120.f});
     create("cube", {-180.f, 140.f});
     create("circle", {40.f, -160.f});
+
+    // Feed the grid's output into the transform so there is a wire to draw.
+    network.connectNodes(gridId, 0, transformId, 0);
 
     network.cookOp(gridId);
     network.setSelectedNodes({gridId});
@@ -109,6 +113,11 @@ int main(int argc, char** argv)
 
     // Send Qt and QML debug logging to the terminal.
     qputenv("QT_LOGGING_RULES", "default.debug=true;qml.debug=true;js.debug=true");
+
+    // Multisampling smooths the scene graph geometry, including the link curves.
+    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+    format.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(format);
 
     QGuiApplication app(argc, argv);
     app.setOrganizationName("Enzo");

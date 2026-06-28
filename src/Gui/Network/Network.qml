@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Enzo
 import "../Utils.js" as Utils
 import "."
 
@@ -123,6 +124,13 @@ Rectangle {
             }
         ]
 
+        // Links render under the nodes so a curve never paints over a card.
+        NodeLinkLayer {
+            nodes: network.nodes
+            links: network.edges
+            linkColor: Theme.nodeLinkInactive
+        }
+
         Repeater {
             model: network.nodes
 
@@ -134,6 +142,8 @@ Rectangle {
                 label: model.name
                 selected: model.selected
                 primary: model.primary
+                inputSlotCount: model.inputSlotCount
+                outputSlotCount: model.outputSlotCount
 
                 // Was this node already selected when the press began.
                 property bool selectedAtPress: false

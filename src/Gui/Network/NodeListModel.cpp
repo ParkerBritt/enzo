@@ -15,6 +15,8 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"type", [](const Node& node) { return QVariant(node.type); }},
         {"x", [](const Node& node) { return QVariant(node.x); }},
         {"y", [](const Node& node) { return QVariant(node.y); }},
+        {"inputSlotCount", [](const Node& node) { return QVariant(node.inputSlotCount); }},
+        {"outputSlotCount", [](const Node& node) { return QVariant(node.outputSlotCount); }},
         {"selected", [](const Node& node) { return QVariant(node.selected); }},
         {"primary", [](const Node& node) { return QVariant(node.primary); }},
     };
@@ -162,6 +164,8 @@ NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)
         QString::fromStdString(op.getType().getLabel()),
         position.x(),
         position.y(),
+        static_cast<int>(op.getMaxInputs()),
+        static_cast<int>(op.getMaxOutputs()),
     };
 }
 
