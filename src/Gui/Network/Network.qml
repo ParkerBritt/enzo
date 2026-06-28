@@ -35,6 +35,13 @@ Rectangle {
     function toCanvasX(viewPosX) { return (viewPosX - viewX) / viewZoom; }
     function toCanvasY(viewPosY) { return (viewPosY - viewY) / viewZoom; }
 
+    // Holds the state of the link being dragged between ports.
+    NodeLinkController {
+        id: linkController
+        layer: linkLayer
+        viewModel: network
+    }
+
     Keys.onTabPressed: (event) => {
         tabMenu.x = root.cursorX;
         tabMenu.y = root.cursorY;
@@ -113,6 +120,7 @@ Rectangle {
 
     // Canvas
     Item {
+        id: canvasItem
         transform: [
             Scale {
                 xScale: root.viewZoom
@@ -124,10 +132,14 @@ Rectangle {
             }
         ]
 
-        // Links render under the nodes so a curve never paints over a card.
+        // Committed links render under the nodes so a curve never paints over a
+        // card. This layer also answers which port sits under a dropped link.
         NodeLinkLayer {
+            id: linkLayer
             nodes: network.nodes
             links: network.edges
+            nodeWidth: Theme.nodeWidth
+            nodeHeight: Theme.nodeHeight
             linkColor: Theme.nodeLinkInactive
         }
 
@@ -137,14 +149,27 @@ Rectangle {
             delegate: Node {
                 id: nodeDelegate
                 viewZoom: root.viewZoom
-                x: model.x
-                y: model.y
+
+                // The card is inset within the node by portReach, so offset the
+                // node to keep the card itself at the model position.
+                x: model.x - portReach
+                y: model.y - portReach
+
+                // True while this node anchors either end of the link being dragged.
+                readonly property bool linkEndpoint: linkController.linking
+                    && (model.opId === linkController.originOpId || model.opId === linkController.hoverOpId)
+
+                // An endpoint node rises above the floating layer, so the link tucks
+                // under its ports while still drawing over the nodes it crosses.
+                z: linkEndpoint ? 2 : 0
                 label: model.name
                 selected: model.selected
                 primary: model.primary
                 display: model.display
                 inputSlotCount: model.inputSlotCount
                 outputSlotCount: model.outputSlotCount
+                opId: model.opId
+                canvas: canvasItem
 
                 // Was this node already selected when the press began.
                 property bool selectedAtPress: false
@@ -161,7 +186,21 @@ Rectangle {
                 onDragMoved: (dx, dy) => network.stageSelectionMove(dx, dy)
                 onDragReleased: network.commitSelectionMove()
                 onDisplayToggled: network.setDisplayNode(model.opId)
+
+                onPortPressed: (slot, isOutput, canvasPoint) => linkController.begin(model.opId, slot, isOutput, canvasPoint)
+                onPortDragMoved: canvasPoint => linkController.update(canvasPoint)
+                onPortReleased: linkController.finish()
             }
+        }
+
+        // The in-progress link renders above the nodes so it is never hidden behind
+        // a card. It reuses the link layer so it shares every link feature and style.
+        NodeLinkLayer {
+            z: 1
+            floatingActive: linkController.linking
+            floatingOutput: linkController.outputPoint
+            floatingInput: linkController.inputPoint
+            linkColor: Theme.accent
         }
     }
 }

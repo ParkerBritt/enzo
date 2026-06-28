@@ -169,6 +169,21 @@ void NetworkViewModel::deleteSelected()
         network.deleteNode(opId);
 }
 
+void NetworkViewModel::connectNodes(
+    qulonglong sourceOp,
+    int sourceOutput,
+    qulonglong targetOp,
+    int targetInput
+)
+{
+    // A node cannot feed itself.
+    if (sourceOp == targetOp) return;
+
+    // The engine pushes its own undo command and emits connectionCreated, which
+    // the edge model already listens for, so the link appears through that path.
+    nt::nm().connectNodes(sourceOp, sourceOutput, targetOp, targetInput);
+}
+
 void NetworkViewModel::setDisplayNode(qulonglong opId)
 {
     auto& network = nt::nm();
