@@ -5,8 +5,7 @@
 #include <QQuickFramebufferObject>
 #include <memory>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 /// @brief Viewport surface that draws the display geometry with OpenGL.
 ///

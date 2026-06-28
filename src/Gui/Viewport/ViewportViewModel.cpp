@@ -2,8 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodePacket.h"
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
 ViewportViewModel::ViewportViewModel(QObject* parent) : QObject(parent)
 {

@@ -111,7 +111,10 @@ QVariantMap NodeLinkLayer::portAt(QPointF canvasPoint, bool wantOutput) const
         const qreal edgeY = geometry.position.y() + (wantOutput ? nodeHeight_ : 0);
         for (int slot = 0; slot < slotCount; ++slot)
         {
-            const QPointF port(geometry.position.x() + getSlotX(slot, slotCount, nodeWidth_), edgeY);
+            const QPointF port(
+                geometry.position.x() + getSlotX(slot, slotCount, nodeWidth_),
+                edgeY
+            );
             const qreal distance = QLineF(port, canvasPoint).length();
             if (distance < nearestDistance)
             {
