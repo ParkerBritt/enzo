@@ -14,11 +14,15 @@ Item {
     property real viewZoom: 1
     property bool selected: false
     property bool primary: false
+    property bool display: false
     property int inputSlotCount: 0
     property int outputSlotCount: 0
 
     // The primary and selected nodes both carry an accent outline.
     readonly property bool highlighted: selected || primary
+
+    // Emitted when the display flag is clicked, to show this node's geometry.
+    signal displayToggled
 
     // Emitted on mouse down, additive when a modifier is held.
     signal pressed(bool additive)
@@ -30,7 +34,7 @@ Item {
     signal dragMoved(real dx, real dy)
 
     // Emitted when a drag finishes, so the new position can be committed.
-    signal dragReleased()
+    signal dragReleased
 
     // Drag logic
     MouseArea {
@@ -100,6 +104,50 @@ Item {
             shadow.shadowOpacity: 0.4
             shadow.shadowHorizontalOffset: 0
             shadow.shadowVerticalOffset: 0
+        }
+    }
+
+    // Display flag inside the right edge, marking which node feeds the viewport.
+    Rectangle {
+        id: displayTab
+
+        property real rightMargin: 3
+
+        width: 6
+        height: parent.height * 0.7
+        radius: 2
+        anchors.verticalCenter: parent.verticalCenter
+        x: root.width - rightMargin - width
+
+        // Dim at rest, the flag brightens on hover and lights up when active.
+        color: Theme.nodePort
+        opacity: 0.4
+        states: [
+            State {
+                name: "hovered"
+                when: flagMouse.containsMouse && !root.display
+                PropertyChanges {
+                    displayTab.color: Theme.displayFlag
+                    displayTab.opacity: 0.7
+                }
+            },
+            State {
+                name: "active"
+                when: root.display
+                PropertyChanges {
+                    displayTab.color: Theme.displayFlag
+                    displayTab.opacity: 1
+                }
+            }
+        ]
+        Behavior on opacity { NumberAnimation { duration: 90 } }
+
+        MouseArea {
+            id: flagMouse
+            anchors.fill: parent
+            anchors.margins: -4
+            hoverEnabled: true
+            onClicked: root.displayToggled()
         }
     }
 
