@@ -1,6 +1,7 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
+#include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangePrimaryNodeCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
 #include "Engine/UndoRedo/UndoStack.h"
@@ -34,6 +35,11 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
     primaryNodeSubscription_ =
         network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
             nodes_.setPrimary(primaryId);
+        });
+
+    displayNodeSubscription_ =
+        network.displayNodeChanged.connect([this](std::optional<nt::OpId> displayId) {
+            nodes_.setDisplay(displayId);
         });
 
     nodePositionSubscription_ =
@@ -161,6 +167,17 @@ void NetworkViewModel::deleteSelected()
     nt::UndoTransaction transaction(network.undoStack());
     for (nt::OpId opId : selected)
         network.deleteNode(opId);
+}
+
+void NetworkViewModel::setDisplayNode(qulonglong opId)
+{
+    auto& network = nt::nm();
+
+    std::optional<nt::OpId> prev = network.getDisplayOp();
+    if (prev == opId) return;
+
+    network.undoStack().push(std::make_unique<nt::ChangeDisplayFlagCommand>(prev, opId));
+    network.setDisplayOp(opId);
 }
 
 void NetworkViewModel::clearSelection()

@@ -142,6 +142,7 @@ Rectangle {
                 label: model.name
                 selected: model.selected
                 primary: model.primary
+                display: model.display
                 inputSlotCount: model.inputSlotCount
                 outputSlotCount: model.outputSlotCount
 
@@ -159,6 +160,7 @@ Rectangle {
                 }
                 onDragMoved: (dx, dy) => network.stageSelectionMove(dx, dy)
                 onDragReleased: network.commitSelectionMove()
+                onDisplayToggled: network.setDisplayNode(model.opId)
             }
         }
     }

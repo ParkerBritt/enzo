@@ -26,6 +26,7 @@ class Theme : public QObject
     Q_PROPERTY(QColor networkDot MEMBER networkDot_ CONSTANT)
     Q_PROPERTY(QColor nodePort MEMBER nodePort_ CONSTANT)
     Q_PROPERTY(QColor nodeLinkInactive MEMBER nodeLinkInactive_ CONSTANT)
+    Q_PROPERTY(QColor displayFlag MEMBER displayFlag_ CONSTANT)
     Q_PROPERTY(QColor panelHeader MEMBER panelHeader_ CONSTANT)
     Q_PROPERTY(QColor text MEMBER text_ CONSTANT)
     Q_PROPERTY(QColor label MEMBER label_ CONSTANT)
@@ -61,6 +62,7 @@ class Theme : public QObject
     QColor networkDot_{"#1e1e26"};
     QColor nodePort_{"#4a4a54"};
     QColor nodeLinkInactive_{"#3a3a46"};
+    QColor displayFlag_{"#4ea1ff"};
     QColor panelHeader_{"#101015"};
     QColor text_{"#e7e8ec"};
     QColor label_{"#9a9aa6"};

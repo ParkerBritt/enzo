@@ -43,6 +43,9 @@ class NetworkViewModel : public QObject
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
+    /// @brief Sets the given node as the one whose geometry the viewport shows.
+    Q_INVOKABLE void setDisplayNode(qulonglong opId);
+
     /// @brief Moves the selected nodes in the ui, doesn't apply to engine until
     /// committed with commitSelectionMove.
     Q_INVOKABLE void stageSelectionMove(qreal dx, qreal dy);
@@ -67,6 +70,7 @@ class NetworkViewModel : public QObject
     boost::signals2::scoped_connection networkClearedSubscription_;
     boost::signals2::scoped_connection selectedNodesSubscription_;
     boost::signals2::scoped_connection primaryNodeSubscription_;
+    boost::signals2::scoped_connection displayNodeSubscription_;
     boost::signals2::scoped_connection nodePositionSubscription_;
     boost::signals2::scoped_connection connectionCreatedSubscription_;
     boost::signals2::scoped_connection connectionRemovedSubscription_;

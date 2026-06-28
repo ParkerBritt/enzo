@@ -45,6 +45,9 @@ class NodeListModel : public QAbstractListModel
     /// @brief Marks the row matching @p opId primary and the rest not.
     void setPrimary(std::optional<nt::OpId> opId);
 
+    /// @brief Marks the row matching @p opId the display node and the rest not.
+    void setDisplay(std::optional<nt::OpId> opId);
+
     /// @brief Moves the row matching @p opId to a new graph position.
     void setPosition(nt::OpId opId, float x, float y);
 
@@ -67,6 +70,7 @@ class NodeListModel : public QAbstractListModel
         int outputSlotCount;
         bool selected = false;
         bool primary = false;
+        bool display = false;
     };
 
     /// One model role paired with the field it exposes from a row.

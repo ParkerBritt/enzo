@@ -19,6 +19,7 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"outputSlotCount", [](const Node& node) { return QVariant(node.outputSlotCount); }},
         {"selected", [](const Node& node) { return QVariant(node.selected); }},
         {"primary", [](const Node& node) { return QVariant(node.primary); }},
+        {"display", [](const Node& node) { return QVariant(node.display); }},
     };
     return defs;
 }
@@ -114,6 +115,16 @@ void NodeListModel::setPrimary(std::optional<nt::OpId> opId)
         node.primary = opId.has_value() && node.opId == *opId;
 
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("primary")});
+}
+
+void NodeListModel::setDisplay(std::optional<nt::OpId> opId)
+{
+    if (nodes_.empty()) return;
+
+    for (Node& node : nodes_)
+        node.display = opId.has_value() && node.opId == *opId;
+
+    Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("display")});
 }
 
 void NodeListModel::setPosition(nt::OpId opId, float x, float y)
