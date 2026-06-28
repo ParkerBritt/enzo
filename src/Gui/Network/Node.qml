@@ -176,7 +176,11 @@ Item {
                     }
                 }
             ]
-            Behavior on opacity { NumberAnimation { duration: 90 } }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 90
+                }
+            }
 
             MouseArea {
                 id: flagMouse
@@ -218,24 +222,27 @@ Item {
 
             // The dot grows under the cursor to invite a drag.
             scale: hit.containsMouse ? 1.5 : 1
-            Behavior on scale { NumberAnimation { duration: 90 } }
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 90
+                }
+            }
         }
 
         MouseArea {
             id: hit
             width: 18
-            height: 18
+
+            // Click hitbox sits just outside the node to prevent
+            // creating a connection when dragging the node.
+            height: root.portReach + 3
             x: -width / 2
-            y: -height / 2
+            y: portDot.isOutput ? -3 : 3 - height
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton
 
             onPressed: mouse => {
-                root.portPressed(
-                    portDot.slotIndex,
-                    portDot.isOutput,
-                    portDot.mapToItem(root.canvas, 0, 0)
-                );
+                root.portPressed(portDot.slotIndex, portDot.isOutput, portDot.mapToItem(root.canvas, 0, 0));
                 mouse.accepted = true;
             }
             onPositionChanged: mouse => {
