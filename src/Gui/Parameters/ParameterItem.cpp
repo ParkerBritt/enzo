@@ -1,4 +1,5 @@
 #include "Gui/Parameters/ParameterItem.h"
+#include "Engine/Core/Types.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
 
@@ -21,7 +22,7 @@ ParameterItem::ParameterItem(
 )
     : QObject(parent), parameter_(std::move(parameter))
 {
-    type_ = static_cast<Type>(static_cast<int>(prmTemplate.getType()));
+    kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
     name_ = QString::fromStdString(prmTemplate.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());
     tooltip_ = QString::fromStdString(prmTemplate.getTooltip());
@@ -34,7 +35,10 @@ ParameterItem::ParameterItem(
     }
 
     for (const prm::Name& option : prmTemplate.getOptions())
+    {
         options_.append(QString::fromStdString(option.getLabel()));
+        optionTokens_.append(QString::fromStdString(option.getToken()));
+    }
 
     // An undo or expression edit changes the value behind QML's back, so mirror
     // the engine parameter's own change signal out as the QML notify.
