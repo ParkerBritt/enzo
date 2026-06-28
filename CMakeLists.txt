@@ -245,8 +245,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/FloatSlider.qml
         src/Gui/Parameters/IntSlider.qml
         src/Gui/Parameters/Toggle.qml
-        src/Gui/Parameters/VectorField.qml
-        src/Gui/Parameters/StringField.qml
+        src/Gui/Parameters/VectorParameter.qml
+        src/Gui/Parameters/StringParameter.qml
         src/Gui/Parameters/Dropdown.qml
         src/Gui/Parameters/Group.qml
         src/Gui/Parameters/RampEditor.qml

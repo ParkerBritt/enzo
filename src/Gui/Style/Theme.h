@@ -18,11 +18,16 @@ class Theme : public QObject
     Q_PROPERTY(QColor bg MEMBER bg_ CONSTANT)
     Q_PROPERTY(QColor panel MEMBER panel_ CONSTANT)
     Q_PROPERTY(double panelRadius MEMBER panelRadius_ CONSTANT)
+    Q_PROPERTY(double parameterRadius MEMBER parameterRadius_ CONSTANT)
     Q_PROPERTY(QColor panel2 MEMBER panel2_ CONSTANT)
     Q_PROPERTY(QColor border MEMBER border_ CONSTANT)
     Q_PROPERTY(QColor bsoft MEMBER bsoft_ CONSTANT)
     Q_PROPERTY(QColor field MEMBER field_ CONSTANT)
     Q_PROPERTY(QColor fline MEMBER fline_ CONSTANT)
+    Q_PROPERTY(QColor parameterBg MEMBER parameterBg_ CONSTANT)
+    Q_PROPERTY(QColor parameterLine MEMBER parameterLine_ CONSTANT)
+    Q_PROPERTY(QColor spreadsheetBg MEMBER spreadsheetBg_ CONSTANT)
+    Q_PROPERTY(QColor spreadsheetLine MEMBER spreadsheetLine_ CONSTANT)
     Q_PROPERTY(QColor networkDot MEMBER networkDot_ CONSTANT)
     Q_PROPERTY(double nodeWidth MEMBER nodeWidth_ CONSTANT)
     Q_PROPERTY(double nodeHeight MEMBER nodeHeight_ CONSTANT)
@@ -56,11 +61,16 @@ class Theme : public QObject
     QColor bg_{"#0a0a0d"};
     QColor panel_{"#141418"};
     double panelRadius_{13};
+    double parameterRadius_{8};
     QColor panel2_{"#191920"};
     QColor border_{"#262630"};
     QColor bsoft_{"#1d1d25"};
     QColor field_{"#0d0d11"};
     QColor fline_{"#242430"};
+    QColor parameterBg_{field_};
+    QColor parameterLine_{fline_};
+    QColor spreadsheetBg_{field_};
+    QColor spreadsheetLine_{fline_};
     QColor networkDot_{"#1e1e26"};
     double nodeWidth_{80};
     double nodeHeight_{25};

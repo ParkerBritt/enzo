@@ -1,13 +1,13 @@
 import QtQuick
 
 Rectangle {
-    id: field
+    id: parameter
 
     required property var item
     implicitHeight: 22
-    radius: 7
-    color: Theme.field
-    border.color: Theme.fline
+    radius: Theme.parameterRadius
+    color: Theme.parameterBg
+    border.color: Theme.parameterLine
 
     TextInput {
         anchors.fill: parent
@@ -15,10 +15,10 @@ Rectangle {
         anchors.rightMargin: 8
         verticalAlignment: TextInput.AlignVCenter
         clip: true
-        text: field.item.value
+        text: parameter.item ? parameter.item.value : ""
         color: Theme.text
         font.family: Theme.fontUi
         font.pixelSize: 12
-        onEditingFinished: field.item.value = text
+        onEditingFinished: if (parameter.item) parameter.item.value = text
     }
 }

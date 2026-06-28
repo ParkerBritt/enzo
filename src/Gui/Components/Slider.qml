@@ -8,6 +8,8 @@ Item {
     property real from: 0
     property real to: 1
     property bool integer: false
+    property bool clampMin: true
+    property bool clampMax: true
     signal moved(real value)
 
     implicitHeight: 22
@@ -19,16 +21,20 @@ Item {
     Rectangle {
         id: track
         anchors.fill: parent
-        radius: 6
-        color: Theme.field
-        border.color: Theme.fline
+        radius: Theme.parameterRadius
+        color: Theme.parameterBg
+        border.color: Theme.parameterLine
 
+        // The accent fill floats inside the frame with a small inset on every
+        // side so the rounded track border stays visible around it.
         Rectangle {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width * root.fraction
-            radius: 6
+            id: fill
+            readonly property real inset: 3
+            x: fill.inset
+            y: fill.inset
+            height: parent.height - fill.inset * 2
+            width: (parent.width - fill.inset * 2) * root.fraction
+            radius: Theme.parameterRadius - fill.inset
             color: Theme.accent
         }
 
@@ -43,9 +49,12 @@ Item {
         }
     }
 
-    // Maps a press position to a value within the range.
+    // Maps a press position to a value. An unlocked end lets a drag past the
+    // track exceed the soft range, while a locked end pins the value at it.
     function emitAt(mouseX) {
-        let f = Math.max(0, Math.min(1, mouseX / width))
+        let f = mouseX / width
+        if (clampMin) f = Math.max(0, f)
+        if (clampMax) f = Math.min(1, f)
         let v = from + f * (to - from)
         root.moved(integer ? Math.round(v) : v)
     }

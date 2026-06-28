@@ -14,15 +14,15 @@ Item {
         height: 20
         radius: 10
         anchors.verticalCenter: parent.verticalCenter
-        color: root.item.value ? Theme.accent : Theme.field
-        border.color: Theme.fline
+        color: (root.item && root.item.value) ? Theme.accent : Theme.parameterBg
+        border.color: Theme.parameterLine
 
         Rectangle {
             width: 16
             height: 16
             radius: 8
             anchors.verticalCenter: parent.verticalCenter
-            x: root.item.value ? parent.width - width - 2 : 2
+            x: (root.item && root.item.value) ? parent.width - width - 2 : 2
             color: Theme.text
             Behavior on x { NumberAnimation { duration: 90 } }
         }
