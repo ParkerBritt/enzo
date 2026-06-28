@@ -213,9 +213,9 @@ Item {
         x: root.portReach + root.cardWidth * (slotIndex + 1) / (slotCount + 1)
 
         Rectangle {
-            width: 6
-            height: 6
-            radius: 3
+            width: 7
+            height: 4
+            radius: 1.5
             x: -width / 2
             y: -height / 2
             color: Theme.nodePort
