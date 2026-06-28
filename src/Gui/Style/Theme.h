@@ -19,6 +19,7 @@ class Theme : public QObject
     Q_PROPERTY(QColor panel MEMBER panel_ CONSTANT)
     Q_PROPERTY(double panelRadius MEMBER panelRadius_ CONSTANT)
     Q_PROPERTY(double parameterRadius MEMBER parameterRadius_ CONSTANT)
+    Q_PROPERTY(double parameterPanelHeight MEMBER parameterPanelHeight_ CONSTANT)
     Q_PROPERTY(QColor panel2 MEMBER panel2_ CONSTANT)
     Q_PROPERTY(QColor border MEMBER border_ CONSTANT)
     Q_PROPERTY(QColor bsoft MEMBER bsoft_ CONSTANT)
@@ -61,7 +62,8 @@ class Theme : public QObject
     QColor bg_{"#0a0a0d"};
     QColor panel_{"#141418"};
     double panelRadius_{13};
-    double parameterRadius_{8};
+    double parameterRadius_{10};
+    double parameterPanelHeight_{420};
     QColor panel2_{"#191920"};
     QColor border_{"#262630"};
     QColor bsoft_{"#1d1d25"};

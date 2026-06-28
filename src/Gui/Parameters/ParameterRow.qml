@@ -7,6 +7,11 @@ Item {
 
     required property var item
 
+    // Layout constants.
+    readonly property real labelWidth: 62
+    readonly property real controlHeight: 22
+    readonly property real columnSpacing: 8
+
     width: parent ? parent.width : 0
     visible: item && !item.hidden
     height: visible ? body.implicitHeight : 0
@@ -28,11 +33,11 @@ Item {
 
         Row {
             width: parent.width
-            spacing: 8
+            spacing: row.columnSpacing
 
             Text {
-                width: 62
-                height: 22
+                width: row.labelWidth
+                height: row.controlHeight
                 verticalAlignment: Text.AlignVCenter
                 text: row.item.label
                 color: Theme.label
@@ -42,7 +47,7 @@ Item {
             }
 
             Loader {
-                width: parent.width - 70
+                width: parent.width - row.labelWidth - row.columnSpacing
                 sourceComponent: {
                     switch (row.item.kind) {
                     case "float": return floatComp
