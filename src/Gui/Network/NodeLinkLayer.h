@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QPointF>
 #include <QQuickItem>
+#include <QVariantMap>
 #include <vector>
 
 namespace enzo::ui {
@@ -24,6 +25,11 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(QColor linkColor MEMBER linkColor_ NOTIFY linkColorChanged)
     Q_PROPERTY(qreal nodeWidth MEMBER nodeWidth_ NOTIFY nodeMetricsChanged)
     Q_PROPERTY(qreal nodeHeight MEMBER nodeHeight_ NOTIFY nodeMetricsChanged)
+
+    // The in-progress link dragged from a fixed port to the cursor.
+    Q_PROPERTY(bool floatingActive READ floatingActive WRITE setFloatingActive NOTIFY floatingChanged)
+    Q_PROPERTY(QPointF floatingOutput READ floatingOutput WRITE setFloatingOutput NOTIFY floatingChanged)
+    Q_PROPERTY(QPointF floatingInput READ floatingInput WRITE setFloatingInput NOTIFY floatingChanged)
 
   public:
     /// One node link as the two port points its curve spans.
@@ -49,11 +55,26 @@ class NodeLinkLayer : public QQuickItem
     QAbstractListModel* links() const;
     void setLinks(QAbstractListModel* model);
 
+    /// @brief Returns the port nearest a canvas point, for snapping a dropped link.
+    /// @param wantOutput Searches output ports when true, input ports when false.
+    /// @return A {opId, slot, x, y} map, empty when no port is within snapping range.
+    Q_INVOKABLE QVariantMap portAt(QPointF canvasPoint, bool wantOutput) const;
+
+    bool floatingActive() const;
+    void setFloatingActive(bool active);
+
+    QPointF floatingOutput() const;
+    void setFloatingOutput(QPointF point);
+
+    QPointF floatingInput() const;
+    void setFloatingInput(QPointF point);
+
   Q_SIGNALS:
     void nodesChanged();
     void linksChanged();
     void linkColorChanged();
     void nodeMetricsChanged();
+    void floatingChanged();
 
   protected:
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data) override;
@@ -73,6 +94,9 @@ class NodeLinkLayer : public QQuickItem
     QColor linkColor_{"#3a3a46"};
     qreal nodeWidth_ = 80;
     qreal nodeHeight_ = 25;
+    bool floatingActive_ = false;
+    QPointF floatingOutput_;
+    QPointF floatingInput_;
 };
 
 } // namespace enzo::ui
