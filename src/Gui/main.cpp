@@ -11,6 +11,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QQuickWindow>
 #include <QSurfaceFormat>
 #include <QUrl>
 
@@ -109,14 +110,22 @@ void loadFonts()
 
 int main(int argc, char** argv)
 {
+    // The viewport composites a legacy OpenGL renderer, so the scene graph runs
+    // on the OpenGL backend.
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
     // Icons recolour their SVG markup through a local file XMLHttpRequest.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
 
     // Send Qt and QML debug logging to the terminal.
     qputenv("QT_LOGGING_RULES", "default.debug=true;qml.debug=true;js.debug=true");
 
+    // The viewport renderer needs a 3.3 core context for instanced points.
     // Multisampling smooths the scene graph geometry, including the link curves.
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
     format.setSamples(4);
     QSurfaceFormat::setDefaultFormat(format);
 

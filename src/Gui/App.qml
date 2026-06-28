@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Window
 import "Spreadsheet"
 import "Network"
+import "Viewport"
 import "Components"
 
 // Root window of the QML application.
@@ -40,13 +41,43 @@ ApplicationWindow {
         Item {
             SplitView.preferredHeight: Math.round(split.height * 0.7)
 
-            Panel {
-                anchors.fill: parent
-                anchors.margins: 10
-                anchors.bottomMargin: 0
+            // Top row splits the network and the viewport side by side.
+            SplitView {
+                id: topRow
 
-                Network {
-                    anchors.fill: parent
+                anchors.fill: parent
+                orientation: Qt.Horizontal
+
+                handle: Item {
+                    implicitWidth: 15
+                }
+
+                Item {
+                    SplitView.preferredWidth: Math.round(topRow.width * 0.63)
+
+                    Panel {
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        anchors.bottomMargin: 0
+                        anchors.rightMargin: 5
+
+                        Network {
+                            anchors.fill: parent
+                        }
+                    }
+                }
+
+                Item {
+                    Panel {
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        anchors.bottomMargin: 0
+                        anchors.leftMargin: 5
+
+                        Viewport {
+                            anchors.fill: parent
+                        }
+                    }
                 }
             }
         }

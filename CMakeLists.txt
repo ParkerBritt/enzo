@@ -117,7 +117,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets Quick Qml QuickControls2 ShaderTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 ShaderTools)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -214,6 +214,15 @@ qt_add_executable(${AppExec}
     src/Gui/Network/NodeListModel.cpp
     src/Gui/Network/EdgeListModel.cpp
     src/Gui/Network/NetworkViewModel.cpp
+
+    # --- Viewport placeholder (throwaway, replaced by the Diligent rebuild).
+    # Self-contained under src/Gui/Viewport; delete this block to remove it.
+    src/Gui/Viewport/GLMesh.cpp
+    src/Gui/Viewport/GLGrid.cpp
+    src/Gui/Viewport/GLPoints.cpp
+    src/Gui/Viewport/GLCamera.cpp
+    src/Gui/Viewport/GLCameraPrim.cpp
+    # --- end viewport placeholder
 )
 
 qt_add_qml_module(${AppExec}
@@ -221,6 +230,7 @@ qt_add_qml_module(${AppExec}
     VERSION 1.0
     SOURCES
         src/Gui/Network/NodeLinkLayer.cpp
+        src/Gui/Viewport/ViewportItem.cpp
     QML_FILES
         src/Gui/App.qml
         src/Gui/Utils.js
@@ -235,6 +245,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Spreadsheet/AttributeTable.qml
         src/Gui/Spreadsheet/PrimitivesTree.qml
         src/Gui/Spreadsheet/ModeControl.qml
+        src/Gui/Viewport/Viewport.qml
 )
 
 qt6_add_shaders(${AppExec} "enzoShaders"
@@ -258,12 +269,13 @@ set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
     # registration includes by bare file name.
     src/Gui/Network
+    src/Gui/Viewport
 )
 
 
