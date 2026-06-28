@@ -1,5 +1,6 @@
 #include "Gui/Network/NodeLinkLayer.h"
 
+#include <QLineF>
 #include <QSGFlatColorMaterial>
 #include <QSGGeometry>
 #include <QSGGeometryNode>
@@ -89,6 +90,72 @@ void NodeLinkLayer::setLinks(QAbstractListModel* model)
     if (links_ == model) return;
     subscribe(links_, model);
     Q_EMIT linksChanged();
+}
+
+QVariantMap NodeLinkLayer::portAt(QPointF canvasPoint, bool wantOutput) const
+{
+    const QHash<quint64, NodeGeometry> geometries = nodeGeometries();
+
+    // A port no further than this from the cursor counts as the drop target, so a
+    // link snaps to the closest port rather than needing a precise hit.
+    constexpr qreal kPickRadius = 30;
+
+    QVariantMap nearest;
+    qreal nearestDistance = kPickRadius;
+    for (auto it = geometries.cbegin(); it != geometries.cend(); ++it)
+    {
+        const NodeGeometry& geometry = it.value();
+        const int slotCount = wantOutput ? geometry.outputSlotCount : geometry.inputSlotCount;
+
+        // Inputs sit on the top edge, outputs on the bottom edge.
+        const qreal edgeY = geometry.position.y() + (wantOutput ? nodeHeight_ : 0);
+        for (int slot = 0; slot < slotCount; ++slot)
+        {
+            const QPointF port(geometry.position.x() + getSlotX(slot, slotCount, nodeWidth_), edgeY);
+            const qreal distance = QLineF(port, canvasPoint).length();
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearest = QVariantMap{
+                    {"opId", QVariant::fromValue(it.key())},
+                    {"slot", slot},
+                    {"x", port.x()},
+                    {"y", port.y()}
+                };
+            }
+        }
+    }
+    return nearest;
+}
+
+bool NodeLinkLayer::floatingActive() const { return floatingActive_; }
+
+void NodeLinkLayer::setFloatingActive(bool active)
+{
+    if (floatingActive_ == active) return;
+    floatingActive_ = active;
+    Q_EMIT floatingChanged();
+    update();
+}
+
+QPointF NodeLinkLayer::floatingOutput() const { return floatingOutput_; }
+
+void NodeLinkLayer::setFloatingOutput(QPointF point)
+{
+    if (floatingOutput_ == point) return;
+    floatingOutput_ = point;
+    Q_EMIT floatingChanged();
+    update();
+}
+
+QPointF NodeLinkLayer::floatingInput() const { return floatingInput_; }
+
+void NodeLinkLayer::setFloatingInput(QPointF point)
+{
+    if (floatingInput_ == point) return;
+    floatingInput_ = point;
+    Q_EMIT floatingChanged();
+    update();
 }
 
 void NodeLinkLayer::subscribe(QAbstractListModel*& slot, QAbstractListModel* model)
@@ -183,8 +250,20 @@ std::vector<NodeLinkLayer::Link> NodeLinkLayer::collectLinks() const
 
 QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
-    const std::vector<Link> links = collectLinks();
+    std::vector<Link> links = collectLinks();
+
+    // The dragged link is drawn alongside the committed ones while a port drag runs.
+    if (floatingActive_) links.push_back(Link{floatingOutput_, floatingInput_});
+
     const int vertexCount = static_cast<int>(links.size()) * kVerticesPerLink;
+
+    // With nothing to draw, drop the node entirely. An empty geometry node gets
+    // culled and never revived, so a layer that starts empty would never show links.
+    if (vertexCount == 0)
+    {
+        delete oldNode;
+        return nullptr;
+    }
 
     // Build the single geometry node on first paint, reuse it after.
     auto* node = static_cast<QSGGeometryNode*>(oldNode);

@@ -24,6 +24,8 @@ class Theme : public QObject
     Q_PROPERTY(QColor field MEMBER field_ CONSTANT)
     Q_PROPERTY(QColor fline MEMBER fline_ CONSTANT)
     Q_PROPERTY(QColor networkDot MEMBER networkDot_ CONSTANT)
+    Q_PROPERTY(double nodeWidth MEMBER nodeWidth_ CONSTANT)
+    Q_PROPERTY(double nodeHeight MEMBER nodeHeight_ CONSTANT)
     Q_PROPERTY(QColor nodePort MEMBER nodePort_ CONSTANT)
     Q_PROPERTY(QColor nodeLinkInactive MEMBER nodeLinkInactive_ CONSTANT)
     Q_PROPERTY(QColor displayFlag MEMBER displayFlag_ CONSTANT)
@@ -60,6 +62,8 @@ class Theme : public QObject
     QColor field_{"#0d0d11"};
     QColor fline_{"#242430"};
     QColor networkDot_{"#1e1e26"};
+    double nodeWidth_{80};
+    double nodeHeight_{25};
     QColor nodePort_{"#4a4a54"};
     QColor nodeLinkInactive_{"#3a3a46"};
     QColor displayFlag_{"#4ea1ff"};
