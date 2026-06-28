@@ -71,6 +71,14 @@ std::vector<Connection> NetworkGraph::getOutputs(OpId source) const
     return entry->second;
 }
 
+std::vector<Connection> NetworkGraph::getConnections() const
+{
+    std::vector<Connection> connections;
+    for (const auto& [source, outgoing] : bySource_)
+        connections.insert(connections.end(), outgoing.begin(), outgoing.end());
+    return connections;
+}
+
 void NetworkGraph::setCapturedDependencies(
     const Unit& dependent,
     const std::vector<Unit>& dependencies

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Gui/Network/EdgeListModel.h"
 #include "Gui/Network/NodeListModel.h"
 #include <QObject>
 #include <QVariantList>
@@ -17,12 +18,15 @@ class NetworkViewModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractListModel* nodes READ nodes CONSTANT)
+    Q_PROPERTY(QAbstractListModel* edges READ edges CONSTANT)
     Q_PROPERTY(QVariantList nodeTypes READ getNodeTypes CONSTANT)
 
   public:
     explicit NetworkViewModel(QObject* parent = nullptr);
 
     QAbstractListModel* nodes();
+
+    QAbstractListModel* edges();
 
     /// @brief Returns every operator type the tab menu can create, each a {label, name} map.
     QVariantList getNodeTypes() const;
@@ -57,12 +61,15 @@ class NetworkViewModel : public QObject
 
   private:
     NodeListModel nodes_;
-    boost::signals2::scoped_connection operatorCreatedConnection_;
-    boost::signals2::scoped_connection operatorRemovedConnection_;
-    boost::signals2::scoped_connection networkClearedConnection_;
-    boost::signals2::scoped_connection selectedNodesConnection_;
-    boost::signals2::scoped_connection primaryNodeConnection_;
-    boost::signals2::scoped_connection nodePositionConnection_;
+    EdgeListModel edges_;
+    boost::signals2::scoped_connection operatorCreatedSubscription_;
+    boost::signals2::scoped_connection operatorRemovedSubscription_;
+    boost::signals2::scoped_connection networkClearedSubscription_;
+    boost::signals2::scoped_connection selectedNodesSubscription_;
+    boost::signals2::scoped_connection primaryNodeSubscription_;
+    boost::signals2::scoped_connection nodePositionSubscription_;
+    boost::signals2::scoped_connection connectionCreatedSubscription_;
+    boost::signals2::scoped_connection connectionRemovedSubscription_;
 };
 
 } // namespace enzo::ui

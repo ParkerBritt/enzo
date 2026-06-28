@@ -11,7 +11,7 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
 
     // Switching the primary node carries no geometry, so the packet is pulled
     // from the new primary node.
-    primaryNodeConnection_ =
+    primaryNodeSubscription_ =
         network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
             if (!primaryId.has_value())
             {
@@ -22,7 +22,7 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
         });
 
     // A recook of the primary node delivers fresh geometry directly.
-    primaryGeoConnection_ =
+    primaryGeoSubscription_ =
         network.primaryGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
             showPacket(packet);
         });
