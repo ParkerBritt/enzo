@@ -69,18 +69,9 @@ Rectangle {
             color: Theme.bsoft
         }
 
-        Column {
+        ParameterList {
             width: parent.width
-            spacing: 6
-
-            Repeater {
-                model: parameters.parameters
-                delegate: ParameterRow {
-                    required property var modelData
-                    item: modelData
-                    width: parent.width
-                }
-            }
+            model: parameters.parameters
         }
     }
 

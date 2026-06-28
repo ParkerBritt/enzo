@@ -27,6 +27,8 @@ ParameterItem::ParameterItem(
     label_ = QString::fromStdString(prmTemplate.getLabel());
     tooltip_ = QString::fromStdString(prmTemplate.getTooltip());
     vectorSize_ = static_cast<int>(prmTemplate.getSize());
+    horizontal_ = prmTemplate.getDirection() == prm::Direction::HORIZONTAL;
+    labelHidden_ = prmTemplate.isLabelHidden();
 
     if (hasRange(prmTemplate.getType()))
     {
