@@ -1,9 +1,8 @@
 import QtQuick
 
-// Tracks the link being dragged from a port to a target port. A link always runs
-// from a source output down to a target input. While dragging, one end is the
-// grabbed port and the other follows the cursor, depending on which side the drag
-// began. There is no link in progress while linking is false.
+// Tracks the link being drawn from a source output to a target input. One end
+// stays at the grabbed port, the other follows the cursor. A drag commits on
+// release, a click leaves the link trailing the cursor until a second click.
 QtObject {
     id: controller
 
@@ -13,6 +12,10 @@ QtObject {
     property var viewModel
 
     property bool linking: false
+
+    // True while a drag holds the loose end, false while it trails clicks.
+    property bool dragging: false
+
     property var originOpId
     property int originSlot: 0
     property bool fromOutput: true
@@ -31,8 +34,14 @@ QtObject {
             outputPoint = canvasPoint;
     }
 
-    // Starts a link from a grabbed port, anchoring its output or input end there.
-    function begin(opId, slot, isOutput, canvasPoint) {
+    // Grabs a port. With no link in progress this anchors a fresh link there,
+    // otherwise it places the in-progress link onto the port.
+    function grab(opId, slot, isOutput, canvasPoint) {
+        if (linking) {
+            update(canvasPoint);
+            finish();
+            return;
+        }
         originOpId = opId;
         originSlot = slot;
         fromOutput = isOutput;
@@ -40,6 +49,19 @@ QtObject {
         inputPoint = canvasPoint;
         hoverOpId = undefined;
         linking = true;
+        dragging = false;
+    }
+
+    // Drags the loose end, marking the link as held so it commits on release.
+    function drag(canvasPoint) {
+        dragging = true;
+        update(canvasPoint);
+    }
+
+    // Ends a press. A drag commits the link, a click leaves it trailing.
+    function release() {
+        if (dragging)
+            finish();
     }
 
     // Tracks the cursor, snapping the loose end onto a port on another node.
@@ -69,5 +91,13 @@ QtObject {
         }
         hoverOpId = undefined;
         linking = false;
+        dragging = false;
+    }
+
+    // Abandons the in-progress link without wiring anything.
+    function cancel() {
+        hoverOpId = undefined;
+        linking = false;
+        dragging = false;
     }
 }
