@@ -3,6 +3,7 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Style/Theme.h"
+#include "Gui/Viewport/ViewportViewModel.h"
 #include <QDir>
 #include <QDirIterator>
 #include <QFileSystemWatcher>
@@ -139,6 +140,7 @@ int main(int argc, char** argv)
     // The view-models bridge the engine to QML.
     enzo::ui::SpreadsheetViewModel spreadsheet;
     enzo::ui::NetworkViewModel network;
+    enzo::ui::ViewportViewModel viewport;
     buildSampleNetwork();
 
     enzo::ui::Theme theme;
@@ -147,6 +149,7 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("Theme", &theme);
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
     engine.rootContext()->setContextProperty("network", &network);
+    engine.rootContext()->setContextProperty("viewport", &viewport);
 
 #ifdef ENZO_QML_SOURCE_DIR
     // Dev builds load QML straight from the source tree and reload on edit.
