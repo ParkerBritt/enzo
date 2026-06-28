@@ -9,7 +9,7 @@ Column {
     spacing: 6
 
     Text {
-        text: group.item.label
+        text: group.item ? group.item.label : ""
         color: Theme.label
         font.family: Theme.fontUi
         font.pixelSize: 10
@@ -18,7 +18,7 @@ Column {
     }
 
     Repeater {
-        model: group.item.children
+        model: group.item ? group.item.children : []
         delegate: ParameterRow {
             required property var modelData
             item: modelData

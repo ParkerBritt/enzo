@@ -30,8 +30,11 @@ ParameterItem::ParameterItem(
 
     if (hasRange(prmTemplate.getType()))
     {
-        minimum_ = prmTemplate.getRange(0).getMin();
-        maximum_ = prmTemplate.getRange(0).getMax();
+        const prm::Range& range = prmTemplate.getRange(0);
+        minimum_ = range.getMin();
+        maximum_ = range.getMax();
+        minLocked_ = range.getMinFlag() == prm::RangeFlag::LOCKED;
+        maxLocked_ = range.getMaxFlag() == prm::RangeFlag::LOCKED;
     }
 
     for (const prm::Name& option : prmTemplate.getOptions())

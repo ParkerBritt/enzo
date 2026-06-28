@@ -16,14 +16,15 @@ Item {
         id: body
         width: row.width
         sourceComponent: {
+            if (!row.item) return null
             if (row.item.kind === "group") return groupComp
             if (row.item.kind === "spacer") return spacerComp
-            return fieldComp
+            return parameterComp
         }
     }
 
     Component {
-        id: fieldComp
+        id: parameterComp
 
         Row {
             width: parent.width
@@ -72,8 +73,8 @@ Item {
     Component { id: floatComp; FloatSlider { item: row.item } }
     Component { id: intComp; IntSlider { item: row.item } }
     Component { id: toggleComp; Toggle { item: row.item } }
-    Component { id: vecComp; VectorField { item: row.item } }
-    Component { id: stringComp; StringField { item: row.item } }
+    Component { id: vecComp; VectorParameter { item: row.item } }
+    Component { id: stringComp; StringParameter { item: row.item } }
     Component { id: dropComp; Dropdown { item: row.item } }
     Component { id: rampComp; RampEditor { item: row.item } }
 }
