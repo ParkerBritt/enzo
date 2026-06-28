@@ -18,34 +18,47 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
 {
     auto& network = nt::nm();
 
-    operatorCreatedConnection_ =
+    operatorCreatedSubscription_ =
         network.operatorCreated.connect([this](nt::OpId opId) { nodes_.addNode(opId); });
 
-    operatorRemovedConnection_ =
+    operatorRemovedSubscription_ =
         network.operatorRemoved.connect([this](nt::OpId opId) { nodes_.removeNode(opId); });
 
-    networkClearedConnection_ = network.networkCleared.connect([this]() { nodes_.clear(); });
+    networkClearedSubscription_ = network.networkCleared.connect([this]() { nodes_.clear(); });
 
-    selectedNodesConnection_ =
+    selectedNodesSubscription_ =
         network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
             nodes_.setSelection(selectedNodeIds);
         });
 
-    primaryNodeConnection_ =
+    primaryNodeSubscription_ =
         network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
             nodes_.setPrimary(primaryId);
         });
 
-    nodePositionConnection_ =
+    nodePositionSubscription_ =
         network.nodePositionChanged.connect([this](nt::OpId opId, Vector2 pos) {
             nodes_.setPosition(opId, pos.x(), pos.y());
         });
 
-    // Catches any operators that already exist before the subscriptions are live.
+    connectionCreatedSubscription_ =
+        network.connectionCreated.connect([this](nt::Connection connection) {
+            edges_.addEdge(connection);
+        });
+
+    connectionRemovedSubscription_ =
+        network.connectionRemoved.connect([this](nt::Connection connection) {
+            edges_.removeEdge(connection);
+        });
+
+    // Catches any graph state that already exists before the subscriptions are live.
     nodes_.resetFromNetwork();
+    edges_.resetFromNetwork();
 }
 
 QAbstractListModel* NetworkViewModel::nodes() { return &nodes_; }
+
+QAbstractListModel* NetworkViewModel::edges() { return &edges_; }
 
 QVariantList NetworkViewModel::getNodeTypes() const
 {
