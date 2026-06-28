@@ -68,7 +68,7 @@ void GLGrid::initShaderProgram()
         {
             float distance = distance(position, vec4(0.0f,0.0f,0.0f,1.0f));
             float opacity = 0.5f*remap(distance, 0, 40, 1, 0);
-            FragColor = vec4(0.30, 0.30, 0.30, opacity);
+            FragColor = vec4(0.227, 0.227, 0.275, opacity);
         };
     )";
 

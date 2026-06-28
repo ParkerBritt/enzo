@@ -217,6 +217,7 @@ qt_add_executable(${AppExec}
 
     # --- Viewport placeholder (throwaway, replaced by the Diligent rebuild).
     # Self-contained under src/Gui/Viewport; delete this block to remove it.
+    src/Gui/Viewport/ViewportViewModel.cpp
     src/Gui/Viewport/GLMesh.cpp
     src/Gui/Viewport/GLGrid.cpp
     src/Gui/Viewport/GLPoints.cpp

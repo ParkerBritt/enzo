@@ -3,8 +3,10 @@
 #include "Gui/Viewport/GLGrid.h"
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLPoints.h"
+#include "Gui/Viewport/ViewportViewModel.h"
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLFunctions_3_2_Core>
+#include <glm/geometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -45,9 +47,47 @@ const char* const kMeshFragmentShader = R"(
             FragColor = vec4(0.4, 0.4, 0.4, 1.0);
             return;
         }
+        vec3 albedo = vec3(0.66, 0.66, 0.72);
         vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
         float brightness = remap(dot(Normal, lightDir), -1.0, 1.0, 0.5, 1.0);
-        FragColor = vec4(vec3(brightness), 1.0);
+        FragColor = vec4(albedo * brightness, 1.0);
+    }
+)";
+
+/// Fills the viewport with the design radial gradient, brightest at the top
+/// centre and darkening to the corners. Drawn as one screen triangle.
+const char* const kBackgroundVertexShader = R"(
+    #version 330 core
+    out vec2 vUv;
+    void main()
+    {
+        vec2 corner = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+        vUv = corner;
+        gl_Position = vec4(corner * 2.0 - 1.0, 0.0, 1.0);
+    }
+)";
+
+const char* const kBackgroundFragmentShader = R"(
+    #version 330 core
+    in vec2 vUv;
+    out vec4 FragColor;
+    void main()
+    {
+        // Match radial-gradient(120% 100% at 50% 0%) in box relative space.
+        // The framebuffer composites flipped, so the top stop sits at uv.y 0.
+        vec2 uv = vUv;
+        float dx = (uv.x - 0.5) / 1.2;
+        float dy = uv.y;
+        float d = sqrt(dx * dx + dy * dy);
+
+        vec3 inner = vec3(0.098, 0.098, 0.125);
+        vec3 mid = vec3(0.063, 0.063, 0.082);
+        vec3 outer = vec3(0.043, 0.043, 0.059);
+
+        vec3 colour = d < 0.55
+            ? mix(inner, mid, d / 0.55)
+            : mix(mid, outer, clamp((d - 0.55) / 0.45, 0.0, 1.0));
+        FragColor = vec4(colour, 1.0);
     }
 )";
 
@@ -93,15 +133,18 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_MULTISAMPLE);
 
-        constexpr float clearValue = 0.19f;
-        glClearColor(clearValue, clearValue, clearValue, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const float aspect = size_.height() > 0
             ? float(size_.width()) / float(size_.height())
             : 1.f;
-        const glm::mat4 proj = glm::perspective(glm::radians(45.f), aspect, 0.1f, 1000.f);
+        glm::mat4 proj = glm::perspective(glm::radians(45.f), aspect, 0.1f, 1000.f);
 
+        // The scene graph composites the framebuffer flipped, so the scene is
+        // rendered flipped to land upright.
+        proj[1][1] *= -1.f;
+
+        drawBackground();
         drawGrid(proj);
         drawMesh(proj);
         drawPoints(proj);
@@ -119,11 +162,13 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         grid_ = std::make_unique<GLGrid>();
         points_ = std::make_unique<GLPoints>();
         cameraPrims_ = std::make_unique<GLCameraPrim>();
-        meshProgram_ = buildMeshProgram();
+        meshProgram_ = buildProgram(kMeshVertexShader, kMeshFragmentShader);
+        backgroundProgram_ = buildProgram(kBackgroundVertexShader, kBackgroundFragmentShader);
+        glGenVertexArrays(1, &backgroundVao_);
         initialised_ = true;
     }
 
-    GLuint buildMeshProgram()
+    GLuint buildProgram(const char* vertexSource, const char* fragmentSource)
     {
         auto compile = [this](GLenum type, const char* source) {
             GLuint shader = glCreateShader(type);
@@ -131,8 +176,8 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
             glCompileShader(shader);
             return shader;
         };
-        GLuint vertex = compile(GL_VERTEX_SHADER, kMeshVertexShader);
-        GLuint fragment = compile(GL_FRAGMENT_SHADER, kMeshFragmentShader);
+        GLuint vertex = compile(GL_VERTEX_SHADER, vertexSource);
+        GLuint fragment = compile(GL_FRAGMENT_SHADER, fragmentSource);
 
         GLuint program = glCreateProgram();
         glAttachShader(program, vertex);
@@ -141,6 +186,19 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         glDeleteShader(vertex);
         glDeleteShader(fragment);
         return program;
+    }
+
+    // Paints the radial background behind everything, leaving depth untouched.
+    void drawBackground()
+    {
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        glUseProgram(backgroundProgram_);
+        glBindVertexArray(backgroundVao_);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
     }
 
     void drawGrid(const glm::mat4& proj)
@@ -207,6 +265,8 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     QSize size_;
     GLCamera camera_;
     GLuint meshProgram_ = 0;
+    GLuint backgroundProgram_ = 0;
+    GLuint backgroundVao_ = 0;
     std::unique_ptr<GLMesh> mesh_;
     std::unique_ptr<GLGrid> grid_;
     std::unique_ptr<GLPoints> points_;
@@ -222,6 +282,21 @@ QQuickFramebufferObject::Renderer* ViewportItem::createRenderer() const
     return new ViewportRenderer;
 }
 
+void ViewportItem::setViewModel(ViewportViewModel* viewModel)
+{
+    if (viewModel_ == viewModel) return;
+    viewModel_ = viewModel;
+
+    if (viewModel_)
+    {
+        connect(viewModel_, &ViewportViewModel::geometryChanged, this, [this]() {
+            setGeometry(viewModel_->currentGeometry());
+        });
+        setGeometry(viewModel_->currentGeometry());
+    }
+    Q_EMIT viewModelChanged();
+}
+
 std::shared_ptr<const enzo::NodePacket> ViewportItem::takePendingGeometry()
 {
     return std::move(pendingGeometry_);
@@ -230,6 +305,31 @@ std::shared_ptr<const enzo::NodePacket> ViewportItem::takePendingGeometry()
 void ViewportItem::setGeometry(std::shared_ptr<const enzo::NodePacket> packet)
 {
     pendingGeometry_ = std::move(packet);
+    update();
+}
+
+void ViewportItem::orbit(qreal dx, qreal dy)
+{
+    constexpr float speed = 0.01f;
+    camera_.rotateAroundCenter(float(-dx) * speed, glm::vec3(0.f, 1.f, 0.f));
+    camera_.rotateAroundCenter(float(-dy) * speed, camera_.getRight());
+    update();
+}
+
+void ViewportItem::pan(qreal dx, qreal dy)
+{
+    // Pan speed tracks distance so the scene tracks the cursor at any zoom.
+    const float speed = 0.0015f * glm::max(glm::length(camera_.getPos()), 1.f);
+    const glm::vec3 offset =
+        camera_.getRight() * float(-dx) * speed + camera_.getUp() * float(-dy) * speed;
+    camera_.movePos(offset.x, offset.y, offset.z);
+    camera_.changeCenter(offset.x, offset.y, offset.z);
+    update();
+}
+
+void ViewportItem::zoom(qreal amount)
+{
+    camera_.changeRadius(float(amount) * 0.1f * glm::max(glm::length(camera_.getPos()), 1.f));
     update();
 }
 
