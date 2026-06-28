@@ -14,8 +14,8 @@ Rectangle {
     implicitWidth: chips.width + 6
     implicitHeight: 27
     radius: 9
-    color: Theme.field
-    border.color: Theme.fline
+    color: Theme.spreadsheetBg
+    border.color: Theme.spreadsheetLine
 
     Row {
         id: chips

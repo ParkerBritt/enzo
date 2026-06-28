@@ -5,9 +5,9 @@ Rectangle {
     required property var item
 
     implicitHeight: 40
-    radius: 6
-    color: Theme.field
-    border.color: Theme.fline
+    radius: Theme.parameterRadius
+    color: Theme.parameterBg
+    border.color: Theme.parameterLine
 
     Text {
         anchors.centerIn: parent

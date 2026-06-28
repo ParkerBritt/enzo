@@ -5,7 +5,7 @@ ComboBox {
     required property var item
 
     implicitHeight: 24
-    model: item.options
-    currentIndex: item.optionTokens.indexOf(item.value)
+    model: item ? item.options : []
+    currentIndex: item ? item.optionTokens.indexOf(item.value) : -1
     onActivated: (i) => item.value = item.optionTokens[i]
 }

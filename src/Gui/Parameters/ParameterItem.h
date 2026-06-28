@@ -25,6 +25,8 @@ class ParameterItem : public QObject
     Q_PROPERTY(int vectorSize READ vectorSize CONSTANT)
     Q_PROPERTY(qreal minimum READ minimum CONSTANT)
     Q_PROPERTY(qreal maximum READ maximum CONSTANT)
+    Q_PROPERTY(bool minLocked READ minLocked CONSTANT)
+    Q_PROPERTY(bool maxLocked READ maxLocked CONSTANT)
     Q_PROPERTY(QStringList options READ options CONSTANT)
     Q_PROPERTY(QStringList optionTokens READ optionTokens CONSTANT)
     Q_PROPERTY(QList<QObject*> children READ children CONSTANT)
@@ -49,6 +51,11 @@ class ParameterItem : public QObject
     int vectorSize() const { return vectorSize_; }
     qreal minimum() const { return minimum_; }
     qreal maximum() const { return maximum_; }
+
+    /// @brief Whether a drag is hard clamped at the range end rather than free
+    /// to exceed a soft hint.
+    bool minLocked() const { return minLocked_; }
+    bool maxLocked() const { return maxLocked_; }
     QStringList options() const { return options_; }
     QStringList optionTokens() const { return optionTokens_; }
     QList<QObject*> children() const { return children_; }
@@ -82,6 +89,8 @@ class ParameterItem : public QObject
     int vectorSize_ = 1;
     qreal minimum_ = 0;
     qreal maximum_ = 0;
+    bool minLocked_ = false;
+    bool maxLocked_ = false;
     QStringList options_;
     QStringList optionTokens_;
     QList<QObject*> children_;

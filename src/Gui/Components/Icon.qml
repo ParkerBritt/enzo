@@ -34,12 +34,13 @@ Item {
     function reload() {
         if (root.name === "")
             return;
+        const hex = rgbHex(root.color);
         const request = new XMLHttpRequest();
         request.open("GET", Theme.iconsDir + root.name + ".svg");
         request.onreadystatechange = function () {
             if (request.readyState !== XMLHttpRequest.DONE)
                 return;
-            const svg = request.responseText.replace(/currentColor/g, root.rgbHex(root.color));
+            const svg = request.responseText.replace(/currentColor/g, hex);
             image.source = "data:image/svg+xml;utf8," + encodeURIComponent(svg);
         };
         request.send();
