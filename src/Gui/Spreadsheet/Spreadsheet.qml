@@ -7,6 +7,10 @@ Rectangle {
 
     required property var viewModel
 
+    // Layout constants.
+    readonly property real headerHeight: 46
+    readonly property real sidebarWidth: 252
+
     color: Theme.panel
     radius: Theme.panelRadius
     border.color: Theme.border
@@ -18,7 +22,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 46
+        height: root.headerHeight
         viewModel: root.viewModel
     }
 
@@ -28,7 +32,7 @@ Rectangle {
         anchors.top: header.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        width: 252
+        width: root.sidebarWidth
         viewModel: root.viewModel
     }
 
