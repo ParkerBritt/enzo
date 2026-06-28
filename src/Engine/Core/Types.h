@@ -6,6 +6,7 @@
 #pragma once
 #include <Eigen/Dense>
 #include <cstdint>
+#include <string>
 
 namespace enzo {
 
@@ -129,6 +130,36 @@ enum class ValueType
     Int,
     String
 };
+
+/// @brief The lowercase canonical name of a parameter type, e.g. "dropdown".
+inline std::string toString(Type type)
+{
+    // Using a switch to catch missing cases at compile time.
+    switch (type)
+    {
+    case Type::STRING:
+        return "string";
+    case Type::FLOAT:
+        return "float";
+    case Type::BOOL:
+        return "bool";
+    case Type::XYZ:
+        return "xyz";
+    case Type::INT:
+        return "int";
+    case Type::TOGGLE:
+        return "toggle";
+    case Type::GROUP:
+        return "group";
+    case Type::DROPDOWN:
+        return "dropdown";
+    case Type::RAMP:
+        return "ramp";
+    case Type::SPACER:
+        return "spacer";
+    }
+    return "";
+}
 } // namespace prm
 namespace nt {
 /**

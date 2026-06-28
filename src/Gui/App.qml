@@ -5,6 +5,7 @@ import QtQuick.Window
 import "Spreadsheet"
 import "Network"
 import "Viewport"
+import "Parameters"
 import "Components"
 
 // Root window of the QML application.
@@ -68,6 +69,13 @@ ApplicationWindow {
                             Network {
                                 anchors.fill: parent
                             }
+                        }
+
+                        // Parameters float over the network at its top right.
+                        ParametersPanel {
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 14
                         }
                     }
 
