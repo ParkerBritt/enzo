@@ -27,9 +27,15 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(qreal nodeHeight MEMBER nodeHeight_ NOTIFY nodeMetricsChanged)
 
     // The in-progress link dragged from a fixed port to the cursor.
-    Q_PROPERTY(bool floatingActive READ floatingActive WRITE setFloatingActive NOTIFY floatingChanged)
-    Q_PROPERTY(QPointF floatingOutput READ floatingOutput WRITE setFloatingOutput NOTIFY floatingChanged)
-    Q_PROPERTY(QPointF floatingInput READ floatingInput WRITE setFloatingInput NOTIFY floatingChanged)
+    Q_PROPERTY(
+        bool floatingActive READ floatingActive WRITE setFloatingActive NOTIFY floatingChanged
+    )
+    Q_PROPERTY(
+        QPointF floatingOutput READ floatingOutput WRITE setFloatingOutput NOTIFY floatingChanged
+    )
+    Q_PROPERTY(
+        QPointF floatingInput READ floatingInput WRITE setFloatingInput NOTIFY floatingChanged
+    )
 
   public:
     /// One node link as the two port points its curve spans.

@@ -10,11 +10,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace enzo::ui
-{
+namespace enzo::ui {
 
-namespace
-{
+namespace {
 
 /// Shades the display mesh with a single headlight, or flat grey in wireframe.
 const char* const kMeshVertexShader = R"(
@@ -135,9 +133,8 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const float aspect = size_.height() > 0
-            ? float(size_.width()) / float(size_.height())
-            : 1.f;
+        const float aspect =
+            size_.height() > 0 ? float(size_.width()) / float(size_.height()) : 1.f;
         glm::mat4 proj = glm::perspective(glm::radians(45.f), aspect, 0.1f, 1000.f);
 
         // The scene graph composites the framebuffer flipped, so the scene is
@@ -205,7 +202,10 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     {
         grid_->useProgram();
         glUniformMatrix4fv(
-            glGetUniformLocation(grid_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(proj)
+            glGetUniformLocation(grid_->shaderProgram, "uProj"),
+            1,
+            GL_FALSE,
+            glm::value_ptr(proj)
         );
         camera_.setUniform(glGetUniformLocation(grid_->shaderProgram, "uView"));
         grid_->draw();
@@ -215,7 +215,10 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     {
         glUseProgram(meshProgram_);
         glUniformMatrix4fv(
-            glGetUniformLocation(meshProgram_, "uProj"), 1, GL_FALSE, glm::value_ptr(proj)
+            glGetUniformLocation(meshProgram_, "uProj"),
+            1,
+            GL_FALSE,
+            glm::value_ptr(proj)
         );
         camera_.setUniform(glGetUniformLocation(meshProgram_, "uView"));
 
@@ -232,7 +235,10 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         points_->bind();
         points_->updatePointSize(camera_);
         glUniformMatrix4fv(
-            glGetUniformLocation(points_->shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(proj)
+            glGetUniformLocation(points_->shaderProgram, "uProj"),
+            1,
+            GL_FALSE,
+            glm::value_ptr(proj)
         );
         camera_.setUniform(glGetUniformLocation(points_->shaderProgram, "uView"));
         glUniform3fv(
