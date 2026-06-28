@@ -5,7 +5,16 @@ import "../Components"
 Rectangle {
     id: panel
 
-    width: 258
+    // Tweakable layout constants.
+    readonly property real defaultWidth: 500
+    readonly property real defaultHeight: 420
+    readonly property real minWidth: 200
+    readonly property real minHeight: 120
+    readonly property real contentMargin: 12
+    readonly property real maxHeightInset: 28
+    readonly property real gripSize: 18
+
+    width: defaultWidth
     visible: parameters.hasNode
     clip: true
     radius: Theme.panelRadius
@@ -13,19 +22,16 @@ Rectangle {
     border.color: Theme.border
     border.width: 1
 
-    readonly property real minWidth: 200
-    readonly property real minHeight: 120
-
     // Height follows the content until the user drags the resize grip, which
     // assigns an explicit size and takes over.
-    implicitHeight: layout.implicitHeight + 24
-    height: Math.min(implicitHeight, parent ? parent.height - 28 : implicitHeight)
+    implicitHeight: Math.max(defaultHeight, layout.implicitHeight + contentMargin * 2)
+    height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
     Column {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: 12
+        anchors.margins: panel.contentMargin
         spacing: 8
 
         // Header naming the node the parameters belong to.
@@ -57,7 +63,11 @@ Rectangle {
             }
         }
 
-        Rectangle { width: parent.width; height: 1; color: Theme.bsoft }
+        Rectangle {
+            width: parent.width
+            height: 1
+            color: Theme.bsoft
+        }
 
         Column {
             width: parent.width
@@ -79,8 +89,8 @@ Rectangle {
     MouseArea {
         id: grip
 
-        width: 18
-        height: 18
+        width: panel.gripSize
+        height: panel.gripSize
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         cursorShape: Qt.SizeBDiagCursor
@@ -89,16 +99,17 @@ Rectangle {
         property real startWidth
         property real startHeight
 
-        onPressed: (mouse) => {
-            origin = mapToItem(null, mouse.x, mouse.y)
-            startWidth = panel.width
-            startHeight = panel.height
+        onPressed: mouse => {
+            origin = mapToItem(null, mouse.x, mouse.y);
+            startWidth = panel.width;
+            startHeight = panel.height;
         }
-        onPositionChanged: (mouse) => {
-            if (!pressed) return
-            let here = mapToItem(null, mouse.x, mouse.y)
-            panel.width = Math.max(panel.minWidth, startWidth - (here.x - origin.x))
-            panel.height = Math.max(panel.minHeight, startHeight + (here.y - origin.y))
+        onPositionChanged: mouse => {
+            if (!pressed)
+                return;
+            let here = mapToItem(null, mouse.x, mouse.y);
+            panel.width = Math.max(panel.minWidth, startWidth - (here.x - origin.x));
+            panel.height = Math.max(panel.minHeight, startHeight + (here.y - origin.y));
         }
     }
 }
