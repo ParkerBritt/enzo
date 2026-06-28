@@ -14,6 +14,8 @@ Item {
     property real viewZoom: 1
     property bool selected: false
     property bool primary: false
+    property int inputSlotCount: 0
+    property int outputSlotCount: 0
 
     // The primary and selected nodes both carry an accent outline.
     readonly property bool highlighted: selected || primary
@@ -82,8 +84,6 @@ Item {
         anchors.fill: parent
         color: root.fillColor
         radius: root.radius
-        x: -40
-        y: 0
         antialiasing: true
         border.pixelAligned: false
         border.color: root.highlighted ? Theme.accent : root.borderColor
@@ -109,5 +109,37 @@ Item {
         font.pointSize: 5
         anchors.verticalCenter: parent.verticalCenter
         x: 10
+    }
+
+    // One port dot, centered on its slot spread evenly across the node width.
+    // The link layer draws its curves to these same points.
+    component Port: Rectangle {
+        property int slotIndex: 0
+        property int slotCount: 1
+        width: 6
+        height: 6
+        radius: 3
+        color: Theme.nodePort
+        x: root.width * (slotIndex + 1) / (slotCount + 1) - width / 2
+    }
+
+    // Input ports along the top edge, output ports along the bottom.
+    Repeater {
+        model: root.inputSlotCount
+        delegate: Port {
+            required property int index
+            slotIndex: index
+            slotCount: root.inputSlotCount
+            y: -height / 2
+        }
+    }
+    Repeater {
+        model: root.outputSlotCount
+        delegate: Port {
+            required property int index
+            slotIndex: index
+            slotCount: root.outputSlotCount
+            y: root.height - height / 2
+        }
     }
 }

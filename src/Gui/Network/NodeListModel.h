@@ -63,6 +63,8 @@ class NodeListModel : public QAbstractListModel
         QString type;
         float x;
         float y;
+        int inputSlotCount;
+        int outputSlotCount;
         bool selected = false;
         bool primary = false;
     };
