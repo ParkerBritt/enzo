@@ -39,6 +39,9 @@ class NetworkGraph
     /// @brief Returns the connections leaving @p source.
     std::vector<Connection> getOutputs(OpId source) const;
 
+    /// @brief Returns every wired connection in the graph, in no particular order.
+    std::vector<Connection> getConnections() const;
+
     /// @brief Replaces every captured dependency of one parameter at once.
     /// @note A parameter rebuilds its full reference set each time it evaluates,
     /// so its previous captured edges are dropped and the new set takes over.
