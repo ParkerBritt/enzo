@@ -51,6 +51,8 @@ Rectangle {
     Keys.onPressed: (event) => {
         if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace)
             network.deleteSelected();
+        else if (event.key === Qt.Key_Escape && linkController.linking)
+            linkController.cancel();
     }
 
     // Pan and zoom navigations
@@ -64,15 +66,23 @@ Rectangle {
             root.mouseLastY = mouse.y;
         }
 
-        // A left click on empty canvas clears the selection. Clicks on a node
-        // are consumed by the node, so they never reach here.
+        // A left click commits a snapped link, drops an unsnapped one, or clears
+        // the selection. Clicks on a node are consumed by the node.
         onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton)
+            if (mouse.button !== Qt.LeftButton)
+                return;
+            if (linkController.linking)
+                linkController.finish();
+            else
                 network.clearSelection();
         }
         onPositionChanged: mouse => {
             root.cursorX = mouse.x;
             root.cursorY = mouse.y;
+
+            // A link placed by a click trails the cursor across the canvas.
+            if (linkController.linking)
+                linkController.update(Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y)));
 
             // Panning only happens while the middle button is held.
             if (!(mouse.buttons & Qt.MiddleButton))
@@ -187,9 +197,10 @@ Rectangle {
                 onDragReleased: network.commitSelectionMove()
                 onDisplayToggled: network.setDisplayNode(model.opId)
 
-                onPortPressed: (slot, isOutput, canvasPoint) => linkController.begin(model.opId, slot, isOutput, canvasPoint)
-                onPortDragMoved: canvasPoint => linkController.update(canvasPoint)
-                onPortReleased: linkController.finish()
+                onPortPressed: (slot, isOutput, canvasPoint) => linkController.grab(model.opId, slot, isOutput, canvasPoint)
+                onPortDragMoved: canvasPoint => linkController.drag(canvasPoint)
+                onPortHovered: canvasPoint => { if (linkController.linking) linkController.update(canvasPoint); }
+                onPortReleased: linkController.release()
             }
         }
 

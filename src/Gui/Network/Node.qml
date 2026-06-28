@@ -57,6 +57,9 @@ Item {
     // Emitted as a port drag moves, carrying the cursor in canvas coordinates.
     signal portDragMoved(point canvasPoint)
 
+    // Emitted as the cursor hovers a port, so a trailing link can snap to it.
+    signal portHovered(point canvasPoint)
+
     // Emitted when a port drag is released, whether or not it found a target.
     signal portReleased
 
@@ -236,7 +239,11 @@ Item {
                 mouse.accepted = true;
             }
             onPositionChanged: mouse => {
-                root.portDragMoved(hit.mapToItem(root.canvas, mouse.x, mouse.y));
+                const canvasPoint = hit.mapToItem(root.canvas, mouse.x, mouse.y);
+                if (hit.pressed)
+                    root.portDragMoved(canvasPoint);
+                else
+                    root.portHovered(canvasPoint);
             }
             onReleased: root.portReleased()
         }
