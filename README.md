@@ -42,17 +42,29 @@
 </div>
 
 ## Dependencies
-- cmake
-- ninja
-- eigen3
-- qt6 (base & svg)
-- glm
-- catch2
-- TBB
-- boost 
-- CGAL
+```
+cmake
+ninja-build
+gcc-c++
+boost-devel
+eigen3-devel
+tbb-devel
+cgal-devel
+polyclipping2-devel
+glm-devel
+qt6-qtbase-devel
+qt6-qttools-devel
+qt6-qtsvg-devel
+qt6-qtshadertools-devel
+qt6-qtwayland-devel
+manifold-devel
+```
 
-
+### installed with daslang
+```
+flex
+bison
+```
 
 
 ## Documentation
