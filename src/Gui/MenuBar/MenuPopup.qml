@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import "../Components"
 
 // One level of menu entries floating beneath its title. Built on the shared
@@ -17,7 +18,7 @@ PopupList {
 
     canHighlight: (index) => {
         const entry = entries[index]
-        return entry && entry.enabled !== false && !entry.separator
+        return entry !== undefined && entry.enabled !== false && !entry.separator
     }
 
     onActivated: (index) => {
