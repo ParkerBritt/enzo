@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import QtQuick.Layouts
 import QtQuick.Window
 import "Spreadsheet"
@@ -7,6 +8,7 @@ import "Network"
 import "Viewport"
 import "Parameters"
 import "Components"
+import "MenuBar"
 
 // Root window of the QML application.
 ApplicationWindow {
@@ -27,6 +29,47 @@ ApplicationWindow {
     Shortcut {
         sequence: StandardKey.Redo
         onActivated: network.redo()
+    }
+
+    FileDialog {
+        id: openDialog
+        title: "Open Scene"
+        nameFilters: ["Enzo files (*.enzo)", "All files (*)"]
+        onAccepted: scene.open(selectedFile)
+    }
+    FileDialog {
+        id: saveDialog
+        title: "Save Scene As"
+        fileMode: FileDialog.SaveFile
+        defaultSuffix: "enzo"
+        nameFilters: ["Enzo files (*.enzo)", "All files (*)"]
+        onAccepted: scene.saveAs(selectedFile)
+    }
+
+    menuBar: MenuBar {
+        menus: [
+            { title: "File", entries: () => [
+                { text: "New", action: () => scene.newScene() },
+                { text: "Open…", action: () => openDialog.open() },
+                { text: "Save", action: () => scene.hasCurrentFile ? scene.save() : saveDialog.open() },
+                { text: "Save As…", action: () => saveDialog.open() },
+                { text: "Quit", action: () => Qt.quit() },
+            ] },
+            { title: "Edit", entries: () => [
+                { text: "Undo", action: () => network.undo() },
+                { text: "Redo", action: () => network.redo() },
+            ] },
+            { title: "Window", entries: () => [] },
+            { title: "Help", entries: () => [
+                { text: "Start Tutorial", action: () => placeholder.show("Tutorial") },
+                { text: "Examples…", action: () => placeholder.show("Examples") },
+                { text: "About Enzo", enabled: false },
+            ] },
+        ]
+    }
+
+    PlaceholderDialog {
+        id: placeholder
     }
 
     SplitView {

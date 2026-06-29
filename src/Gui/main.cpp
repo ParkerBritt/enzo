@@ -1,5 +1,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/OperatorTable.h"
+#include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
@@ -143,6 +144,7 @@ int main(int argc, char** argv)
     enzo::ui::NetworkViewModel network;
     enzo::ui::ViewportViewModel viewport;
     enzo::ui::ParametersViewModel parameters;
+    enzo::ui::SceneController scene;
     buildSampleNetwork();
 
     enzo::ui::Theme theme;
@@ -153,6 +155,7 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("network", &network);
     engine.rootContext()->setContextProperty("viewport", &viewport);
     engine.rootContext()->setContextProperty("parameters", &parameters);
+    engine.rootContext()->setContextProperty("scene", &scene);
 
 #ifdef ENZO_QML_SOURCE_DIR
     // Dev builds load QML straight from the source tree and reload on edit.
