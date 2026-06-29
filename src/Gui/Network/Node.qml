@@ -26,6 +26,10 @@ Item {
     property int inputSlotCount: 0
     property int outputSlotCount: 0
 
+    // While a link is being drawn the card lets presses through so the canvas can
+    // grab and drop ports that sit beneath it.
+    property bool linking: false
+
     // The slot index of the input or output port to highlight, or -1 for none.
     property int highlightedInputSlot: -1
     property int highlightedOutputSlot: -1
@@ -70,6 +74,7 @@ Item {
         // Drag logic
         MouseArea {
             anchors.fill: parent
+            enabled: !root.linking
             acceptedButtons: Qt.LeftButton
             property real dragStartX: 0
             property real dragStartY: 0

@@ -40,6 +40,10 @@ Item {
         request.onreadystatechange = function () {
             if (request.readyState !== XMLHttpRequest.DONE)
                 return;
+            if (!request.responseText) {
+                console.warn("Icon: failed to load", Theme.iconsDir + root.name + ".svg");
+                return;
+            }
             const svg = request.responseText.replace(/currentColor/g, hex);
             image.source = "data:image/svg+xml;utf8," + encodeURIComponent(svg);
         };
