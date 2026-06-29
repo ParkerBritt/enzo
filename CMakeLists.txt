@@ -124,7 +124,7 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 find_package(glm REQUIRED)
 
 # eigen (math)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 REQUIRED NO_MODULE)
 
 # tbb
 find_package(TBB REQUIRED COMPONENTS tbb)
