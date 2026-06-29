@@ -53,27 +53,56 @@ PrimitiveTreeModel::~PrimitiveTreeModel() = default;
 
 void PrimitiveTreeModel::setPacket(std::shared_ptr<const NodePacket> packet)
 {
+    std::unique_ptr<Node> rebuilt = buildTree(packet);
+
+    // A recook of the same node usually rebuilds an identical tree, so keep the
+    // existing nodes and skip the reset that would flash the sidebar. Only a
+    // changed hierarchy swaps the tree.
+    if (sameStructure(*root_, *rebuilt)) return;
+
     beginResetModel();
-    root_ = std::make_unique<Node>();
+    root_ = std::move(rebuilt);
+    endResetModel();
+}
 
-    if (packet)
+std::unique_ptr<PrimitiveTreeModel::Node>
+PrimitiveTreeModel::buildTree(const std::shared_ptr<const NodePacket>& packet)
+{
+    auto root = std::make_unique<Node>();
+    if (!packet) return root;
+
+    const int count = static_cast<int>(packet->size());
+    for (int i = 0; i < count; ++i)
     {
-        const int count = static_cast<int>(packet->size());
-        for (int i = 0; i < count; ++i)
-        {
-            const auto primitive = packet->getPrimitive(i);
-            const PrimPath path(primitive->getPath());
+        const auto primitive = packet->getPrimitive(i);
+        const PrimPath path(primitive->getPath());
 
-            Node* current = root_.get();
-            for (const auto& component : path.components())
-                current = current->childNamed(QString::fromStdString(component));
+        Node* current = root.get();
+        for (const auto& component : path.components())
+            current = current->childNamed(QString::fromStdString(component));
 
-            current->primitiveIndex = i;
-            current->typeTag = typeTag(primitive->getType());
-        }
+        current->primitiveIndex = i;
+        current->typeTag = typeTag(primitive->getType());
+    }
+    return root;
+}
+
+bool PrimitiveTreeModel::sameStructure(const Node& first, const Node& second)
+{
+    const bool sameName = first.name == second.name;
+    const bool sameTag = first.typeTag == second.typeTag;
+    const bool sameIndex = first.primitiveIndex == second.primitiveIndex;
+    const bool sameChildCount = first.children.size() == second.children.size();
+    if (!sameName || !sameTag || !sameIndex || !sameChildCount) return false;
+
+    for (size_t childIndex = 0; childIndex < first.children.size(); ++childIndex)
+    {
+        const Node& firstChild = *first.children[childIndex];
+        const Node& secondChild = *second.children[childIndex];
+        if (!sameStructure(firstChild, secondChild)) return false;
     }
 
-    endResetModel();
+    return true;
 }
 
 PrimitiveTreeModel::Node* PrimitiveTreeModel::nodeAt(const QModelIndex& index) const
