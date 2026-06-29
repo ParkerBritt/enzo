@@ -4,7 +4,7 @@ project(enzoOps1)
 
 find_package(Boost REQUIRED)
 # eigen (math)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 REQUIRED NO_MODULE)
 # manifold (boolean ops)
 find_package(manifold CONFIG REQUIRED)
 
