@@ -59,6 +59,12 @@ class PrimitiveTreeModel : public QAbstractItemModel
 
     Node* nodeAt(const QModelIndex& index) const;
 
+    /// @brief Returns the path tree for a packet's primitives.
+    static std::unique_ptr<Node> buildTree(const std::shared_ptr<const NodePacket>& packet);
+
+    /// @brief Whether two trees match in shape, names, type tags, and leaf indices.
+    static bool sameStructure(const Node& first, const Node& second);
+
     std::unique_ptr<Node> root_;
 };
 

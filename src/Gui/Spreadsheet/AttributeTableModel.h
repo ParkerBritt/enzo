@@ -49,9 +49,19 @@ class AttributeTableModel : public QAbstractTableModel
         unsigned int component;
         int axis;
         QString header;
+
+        bool operator==(const Column& other) const = default;
     };
 
-    void rebuildColumns();
+    /// @brief Returns the columns for a primitive's attributes of one owner.
+    static std::vector<Column>
+    buildColumns(const geo::Primitive* primitive, attr::AttributeOwner owner);
+
+    /// @brief Returns the row count for a primitive under one owner.
+    static int rowCountFor(const geo::Primitive* primitive, attr::AttributeOwner owner);
+
+    /// @brief Repaints every cell with the current primitive's values.
+    void refreshValues();
 
     std::shared_ptr<const geo::Primitive> primitive_;
     attr::AttributeOwner owner_ = attr::AttributeOwner::POINT;
