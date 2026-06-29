@@ -1,9 +1,21 @@
 #include "Gui/Network/NodeListModel.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Gui/Style/Theme.h"
+#include <QLineF>
 #include <algorithm>
 
 namespace enzo::ui {
+
+namespace {
+
+// How close the cursor must be to a port to grab it.
+constexpr qreal kGrabRadius = 50;
+
+// How close a dragged link must be to a port to snap onto it.
+constexpr qreal kSnapRadius = 40;
+
+} // namespace
 
 NodeListModel::NodeListModel(QObject* parent) : QAbstractListModel(parent) {}
 
@@ -163,6 +175,74 @@ QPointF NodeListModel::getPosition(nt::OpId opId) const
     if (row == -1) return {};
 
     return QPointF(nodes_[row].x, nodes_[row].y);
+}
+
+QPointF NodeListModel::getPortPosition(const Node& node, int slot, bool isOutput) const
+{
+    // Nodes store their center, so shift to the top left the ports measure from.
+    const qreal left = node.x - Theme::nodeWidth / 2;
+    const qreal top = node.y - Theme::nodeHeight / 2;
+
+    const int slotCount = isOutput ? node.outputSlotCount : node.inputSlotCount;
+    const qreal x = left + Theme::nodeWidth * (slot + 1) / (slotCount + 1);
+    const qreal y = top + (isOutput ? Theme::nodeHeight : 0);
+    return QPointF(x, y);
+}
+
+std::optional<QPointF> NodeListModel::getPortPosition(nt::OpId opId, int slot, bool isOutput) const
+{
+    const int row = rowOf(opId);
+    if (row == -1) return std::nullopt;
+
+    return getPortPosition(nodes_[row], slot, isOutput);
+}
+
+QVariantMap NodeListModel::getNearestPort(
+    QPointF canvasPoint,
+    bool searchOutputs,
+    bool searchInputs,
+    qreal pickRadius
+) const
+{
+    QVariantMap nearest;
+    qreal nearestDistance = pickRadius;
+
+    auto consider = [&](const Node& node, bool isOutput) {
+        const int slotCount = isOutput ? node.outputSlotCount : node.inputSlotCount;
+        for (int slot = 0; slot < slotCount; ++slot)
+        {
+            const QPointF port = getPortPosition(node, slot, isOutput);
+            const qreal distance = QLineF(port, canvasPoint).length();
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearest = QVariantMap{
+                    {"opId", QVariant::fromValue(node.opId)},
+                    {"slot", slot},
+                    {"isOutput", isOutput},
+                    {"x", port.x()},
+                    {"y", port.y()}
+                };
+            }
+        }
+    };
+
+    for (const Node& node : nodes_)
+    {
+        if (searchOutputs) consider(node, true);
+        if (searchInputs) consider(node, false);
+    }
+    return nearest;
+}
+
+QVariantMap NodeListModel::getGrabPort(QPointF canvasPoint) const
+{
+    return getNearestPort(canvasPoint, true, true, kGrabRadius);
+}
+
+QVariantMap NodeListModel::getSnapPort(QPointF canvasPoint, bool wantOutput) const
+{
+    return getNearestPort(canvasPoint, wantOutput, !wantOutput, kSnapRadius);
 }
 
 NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)
