@@ -31,29 +31,68 @@ AttributeTableModel::AttributeTableModel(QObject* parent) : QAbstractTableModel(
 
 void AttributeTableModel::setPrimitive(std::shared_ptr<const geo::Primitive> primitive)
 {
-    beginResetModel();
-    primitive_ = std::move(primitive);
-    rebuildColumns();
-    endResetModel();
+    std::vector<Column> newColumns = buildColumns(primitive.get(), owner_);
+    const bool sameColumns = primitive && primitive_ && newColumns == columns_;
+
+    // A changed attribute set is rare and resets the whole table. The common
+    // recook keeps the same columns, so the row count is adjusted and the cells
+    // repainted in place rather than tearing the view down, which reads as a flash.
+    if (!sameColumns)
+    {
+        beginResetModel();
+        primitive_ = std::move(primitive);
+        columns_ = std::move(newColumns);
+        endResetModel();
+        return;
+    }
+
+    const int oldRowCount = rowCount();
+    const int newRowCount = rowCountFor(primitive.get(), owner_);
+    if (newRowCount > oldRowCount)
+    {
+        beginInsertRows(QModelIndex(), oldRowCount, newRowCount - 1);
+        primitive_ = std::move(primitive);
+        endInsertRows();
+    }
+    else if (newRowCount < oldRowCount)
+    {
+        beginRemoveRows(QModelIndex(), newRowCount, oldRowCount - 1);
+        primitive_ = std::move(primitive);
+        endRemoveRows();
+    }
+    else
+    {
+        primitive_ = std::move(primitive);
+    }
+    refreshValues();
 }
 
 void AttributeTableModel::setOwner(attr::AttributeOwner owner)
 {
     beginResetModel();
     owner_ = owner;
-    rebuildColumns();
+    columns_ = buildColumns(primitive_.get(), owner_);
     endResetModel();
 }
 
-void AttributeTableModel::rebuildColumns()
+void AttributeTableModel::refreshValues()
 {
-    columns_.clear();
-    if (!primitive_) return;
+    const int rows = rowCount();
+    const int cols = columnCount();
+    if (rows == 0 || cols == 0) return;
+    Q_EMIT dataChanged(index(0, 0), index(rows - 1, cols - 1), {Qt::DisplayRole, AxisRole});
+}
 
-    const size_t attribCount = primitive_->getNumAttributes(owner_);
+std::vector<AttributeTableModel::Column>
+AttributeTableModel::buildColumns(const geo::Primitive* primitive, attr::AttributeOwner owner)
+{
+    std::vector<Column> columns;
+    if (!primitive) return columns;
+
+    const size_t attribCount = primitive->getNumAttributes(owner);
     for (size_t attributeIndex = 0; attributeIndex < attribCount; ++attributeIndex)
     {
-        auto attribute = primitive_->getAttributeByIndex(owner_, attributeIndex).lock();
+        auto attribute = primitive->getAttributeByIndex(owner, attributeIndex).lock();
         if (!attribute) continue;
 
         const QString name = QString::fromStdString(attribute->getName());
@@ -62,7 +101,7 @@ void AttributeTableModel::rebuildColumns()
         const bool axial = size == 2 || size == 3;
         for (unsigned int component = 0; component < size; ++component)
         {
-            columns_.push_back(
+            columns.push_back(
                 {static_cast<unsigned int>(attributeIndex),
                  component,
                  axial ? static_cast<int>(component) : -1,
@@ -70,26 +109,32 @@ void AttributeTableModel::rebuildColumns()
             );
         }
     }
+    return columns;
 }
 
-int AttributeTableModel::rowCount(const QModelIndex&) const
+int AttributeTableModel::rowCountFor(const geo::Primitive* primitive, attr::AttributeOwner owner)
 {
-    if (!primitive_) return 0;
+    if (!primitive) return 0;
 
-    switch (owner_)
+    switch (owner)
     {
     case attr::AttributeOwner::POINT:
-        return primitive_->hasPoints() ? primitive_->getNumPoints() : 0;
+        return primitive->hasPoints() ? primitive->getNumPoints() : 0;
     case attr::AttributeOwner::VERTEX:
     case attr::AttributeOwner::FACE:
-        if (auto mesh = std::dynamic_pointer_cast<const geo::Mesh>(primitive_))
-            return owner_ == attr::AttributeOwner::VERTEX ? mesh->getNumVerts()
-                                                          : mesh->getNumFaces();
+        if (auto mesh = dynamic_cast<const geo::Mesh*>(primitive))
+            return owner == attr::AttributeOwner::VERTEX ? mesh->getNumVerts()
+                                                         : mesh->getNumFaces();
         return 0;
     case attr::AttributeOwner::PRIMITIVE:
         return 1;
     }
     return 0;
+}
+
+int AttributeTableModel::rowCount(const QModelIndex&) const
+{
+    return rowCountFor(primitive_.get(), owner_);
 }
 
 int AttributeTableModel::columnCount(const QModelIndex&) const { return columns_.size(); }
