@@ -119,6 +119,12 @@ class NodeListModel : public QAbstractListModel
     /// at the third marks. Inputs sit on the top edge, outputs on the bottom.
     QPointF getPortPosition(const Node& node, int slot, bool isOutput) const;
 
+    /// @brief Whether a canvas point lies over any node's card.
+    ///
+    /// A press over a card is handled by the node itself, so the canvas never sees
+    /// it. A grab only reaches the canvas in the margin outside every card.
+    bool isOverNodeBody(QPointF canvasPoint) const;
+
     /// @brief Returns the nearest port within @p pickRadius across the chosen edges.
     QVariantMap getNearestPort(
         QPointF canvasPoint,

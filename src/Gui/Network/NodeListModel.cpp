@@ -3,6 +3,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Gui/Style/Theme.h"
 #include <QLineF>
+#include <QRectF>
 #include <algorithm>
 
 namespace enzo::ui {
@@ -10,10 +11,10 @@ namespace enzo::ui {
 namespace {
 
 // How close the cursor must be to a port to grab it.
-constexpr qreal kGrabRadius = 50;
+constexpr qreal kGrabRadius = 60;
 
 // How close a dragged link must be to a port to snap onto it.
-constexpr qreal kSnapRadius = 40;
+constexpr qreal kSnapRadius = 60;
 
 } // namespace
 
@@ -235,8 +236,25 @@ QVariantMap NodeListModel::getNearestPort(
     return nearest;
 }
 
+bool NodeListModel::isOverNodeBody(QPointF canvasPoint) const
+{
+    for (const Node& node : nodes_)
+    {
+        const QRectF body(
+            node.x - Theme::nodeWidth / 2,
+            node.y - Theme::nodeHeight / 2,
+            Theme::nodeWidth,
+            Theme::nodeHeight
+        );
+        if (body.contains(canvasPoint)) return true;
+    }
+    return false;
+}
+
 QVariantMap NodeListModel::getGrabPort(QPointF canvasPoint) const
 {
+    // A press over a card grabs the node, not a port, so no port is grabbable there.
+    if (isOverNodeBody(canvasPoint)) return {};
     return getNearestPort(canvasPoint, true, true, kGrabRadius);
 }
 
