@@ -216,6 +216,7 @@ qt_add_executable(${AppExec}
     src/Gui/Network/NetworkViewModel.cpp
     src/Gui/Parameters/ParameterItem.cpp
     src/Gui/Parameters/ParametersViewModel.cpp
+    src/Gui/Controllers/SceneController.cpp
 
     # --- Viewport placeholder (throwaway, replaced by the Diligent rebuild).
     # Self-contained under src/Gui/Viewport; delete this block to remove it.
@@ -240,6 +241,10 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Icon.qml
         src/Gui/Components/Panel.qml
         src/Gui/Components/Slider.qml
+        src/Gui/Components/PopupList.qml
+        src/Gui/Components/PlaceholderDialog.qml
+        src/Gui/MenuBar/MenuBar.qml
+        src/Gui/MenuBar/MenuPopup.qml
         src/Gui/Parameters/ParametersPanel.qml
         src/Gui/Parameters/ParameterRow.qml
         src/Gui/Parameters/ParameterList.qml
