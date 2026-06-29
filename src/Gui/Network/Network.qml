@@ -222,6 +222,7 @@ Rectangle {
                 display: model.display
                 inputSlotCount: model.inputSlotCount
                 outputSlotCount: model.outputSlotCount
+                linking: linkController.linking
 
                 // The highlighted port when it is one of this node's own.
                 readonly property var highlight: root.highlightedPort && root.highlightedPort.opId === model.opId ? root.highlightedPort : null
