@@ -6,9 +6,8 @@ import QtQuick
 QtObject {
     id: controller
 
-    // The link layer queried for the port under a dropped link.
-    property var layer
-    // The view-model that wires a finished link into the graph.
+    // The view-model that wires a finished link into the graph and holds the node
+    // model the loose end snaps against.
     property var viewModel
 
     property bool linking: false
@@ -67,7 +66,7 @@ QtObject {
     // Tracks the cursor, snapping the loose end onto a port on another node.
     function update(canvasPoint) {
         // An output drag looks for an input to feed, an input drag for an output.
-        const hit = layer.portAt(canvasPoint, !fromOutput);
+        const hit = viewModel.nodes.getSnapPort(canvasPoint, !fromOutput);
         if (hit.opId !== undefined && hit.opId !== originOpId) {
             hoverOpId = hit.opId;
             hoverSlot = hit.slot;

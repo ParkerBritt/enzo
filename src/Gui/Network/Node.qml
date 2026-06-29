@@ -4,16 +4,15 @@ import QtQuick.Effects
 Item {
     id: root
 
-    // The visible card size, the geometry the link layer attaches to.
-    readonly property real cardWidth: Theme.nodeWidth
-    readonly property real cardHeight: Theme.nodeHeight
+    width: Theme.nodeWidth
+    height: Theme.nodeHeight
 
-    // Ports sit on the card edges, so the root extends past the card by this much
-    // to keep each port and its hit area inside the bounds that receive mouse events.
-    readonly property real portReach: 10
+    // The node's position on the canvas, centered on the card.
+    property real modelX: 0
+    property real modelY: 0
 
-    width: cardWidth + portReach * 2
-    height: cardHeight + portReach * 2
+    x: modelX - width / 2
+    y: modelY - height / 2
 
     property color fillColor: "#1f202a"
     property color borderColor: "#333341"
@@ -27,11 +26,9 @@ Item {
     property int inputSlotCount: 0
     property int outputSlotCount: 0
 
-    // This node's operator id, so port drags can name their endpoint.
-    property var opId
-
-    // The canvas item that port positions are reported in.
-    property Item canvas
+    // The slot index of the input or output port to highlight, or -1 for none.
+    property int highlightedInputSlot: -1
+    property int highlightedOutputSlot: -1
 
     // The primary and selected nodes both carry an accent outline.
     readonly property bool highlighted: selected || primary
@@ -51,18 +48,6 @@ Item {
     // Emitted when a drag finishes, so the new position can be committed.
     signal dragReleased
 
-    // Emitted when a port drag begins, carrying the grabbed port and its canvas point.
-    signal portPressed(int slotIndex, bool isOutput, point canvasPoint)
-
-    // Emitted as a port drag moves, carrying the cursor in canvas coordinates.
-    signal portDragMoved(point canvasPoint)
-
-    // Emitted as the cursor hovers a port, so a trailing link can snap to it.
-    signal portHovered(point canvasPoint)
-
-    // Emitted when a port drag is released, whether or not it found a target.
-    signal portReleased
-
     // The primary node swaps its drop shadow for an accent glow.
     states: State {
         name: "primary"
@@ -76,14 +61,11 @@ Item {
         }
     }
 
-    // The visible node card, inset so the edge ports fall within the root bounds.
+    // The visible node card.
     Item {
         id: card
 
-        x: root.portReach
-        y: root.portReach
-        width: root.cardWidth
-        height: root.cardHeight
+        anchors.fill: parent
 
         // Drag logic
         MouseArea {
@@ -200,17 +182,17 @@ Item {
         }
     }
 
-    // One port, a draggable dot centered on its slot point along a card edge. The
-    // link layer draws its curves to these same points, and dragging from a port
-    // starts a new link.
+    // One port, a dot on its slot point along a card edge where the link layer
+    // anchors its curves. Hit testing lives on the canvas, so this is purely the
+    // visual dot and lights up only while it is the highlighted port.
     component Port: Item {
         id: portDot
 
         property int slotIndex: 0
         property int slotCount: 1
-        property bool isOutput: false
+        property bool active: false
 
-        x: root.portReach + root.cardWidth * (slotIndex + 1) / (slotCount + 1)
+        x: root.width * (slotIndex + 1) / (slotCount + 1)
 
         Rectangle {
             width: 7
@@ -218,41 +200,20 @@ Item {
             radius: 1.5
             x: -width / 2
             y: -height / 2
-            color: Theme.nodePort
 
-            // The dot grows under the cursor to invite a drag.
-            scale: hit.containsMouse ? 1.5 : 1
+            // The dot grows and brightens once it is the closest port, to invite a drag.
+            color: portDot.active ? Qt.lighter(Theme.nodePort, 1.6) : Theme.nodePort
+            scale: portDot.active ? 1.5 : 1
+            Behavior on color {
+                ColorAnimation {
+                    duration: 90
+                }
+            }
             Behavior on scale {
                 NumberAnimation {
                     duration: 90
                 }
             }
-        }
-
-        MouseArea {
-            id: hit
-            width: 18
-
-            // Click hitbox sits just outside the node to prevent
-            // creating a connection when dragging the node.
-            height: root.portReach + 3
-            x: -width / 2
-            y: portDot.isOutput ? -3 : 3 - height
-            hoverEnabled: true
-            acceptedButtons: Qt.LeftButton
-
-            onPressed: mouse => {
-                root.portPressed(portDot.slotIndex, portDot.isOutput, portDot.mapToItem(root.canvas, 0, 0));
-                mouse.accepted = true;
-            }
-            onPositionChanged: mouse => {
-                const canvasPoint = hit.mapToItem(root.canvas, mouse.x, mouse.y);
-                if (hit.pressed)
-                    root.portDragMoved(canvasPoint);
-                else
-                    root.portHovered(canvasPoint);
-            }
-            onReleased: root.portReleased()
         }
     }
 
@@ -263,7 +224,8 @@ Item {
             required property int index
             slotIndex: index
             slotCount: root.inputSlotCount
-            y: root.portReach
+            active: root.highlightedInputSlot === index
+            y: 0
         }
     }
     Repeater {
@@ -272,8 +234,8 @@ Item {
             required property int index
             slotIndex: index
             slotCount: root.outputSlotCount
-            isOutput: true
-            y: root.portReach + root.cardHeight
+            active: root.highlightedOutputSlot === index
+            y: root.height
         }
     }
 }

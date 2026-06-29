@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QPointF>
 #include <QVariant>
+#include <QVariantMap>
 #include <functional>
 #include <optional>
 #include <vector>
@@ -26,6 +27,23 @@ class NodeListModel : public QAbstractListModel
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
+
+    /// @brief Returns the port a press would grab, nearest a canvas point across both edges.
+    ///
+    /// The reach is looser than a snap so aiming roughly at a port is enough.
+    /// @return A {opId, slot, isOutput, x, y} map, empty when none is within reach.
+    Q_INVOKABLE QVariantMap getGrabPort(QPointF canvasPoint) const;
+
+    /// @brief Returns the port a dragged link would snap onto, nearest a canvas point.
+    /// @param wantOutput Searches output ports when true, input ports when false.
+    /// @return A {opId, slot, isOutput, x, y} map, empty when none is within reach.
+    Q_INVOKABLE QVariantMap getSnapPort(QPointF canvasPoint, bool wantOutput) const;
+
+    /// @brief Returns the canvas position of one port, or nothing when the op is absent.
+    ///
+    /// The op may exist in the engine yet not in this snapshot mid update, so the
+    /// link layer skips drawing an endpoint it cannot place.
+    std::optional<QPointF> getPortPosition(nt::OpId opId, int slot, bool isOutput) const;
 
     /// @brief Replaces every row with the operators currently in the network.
     void resetFromNetwork();
@@ -94,6 +112,20 @@ class NodeListModel : public QAbstractListModel
 
     /// @brief Returns the row index of an operator, or -1 when absent.
     int rowOf(nt::OpId opId) const;
+
+    /// @brief Returns the canvas position of one port on @p node.
+    ///
+    /// Ports spread evenly along an edge, so one lands at the middle and two land
+    /// at the third marks. Inputs sit on the top edge, outputs on the bottom.
+    QPointF getPortPosition(const Node& node, int slot, bool isOutput) const;
+
+    /// @brief Returns the nearest port within @p pickRadius across the chosen edges.
+    QVariantMap getNearestPort(
+        QPointF canvasPoint,
+        bool searchOutputs,
+        bool searchInputs,
+        qreal pickRadius
+    ) const;
 
     std::vector<Node> nodes_;
 };

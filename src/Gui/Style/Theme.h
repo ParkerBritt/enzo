@@ -56,6 +56,11 @@ class Theme : public QObject
     Q_PROPERTY(QString iconsDir MEMBER iconsDir_ CONSTANT)
 
   public:
+    // The node card size, read directly by the network model that places ports on
+    // edges. The nodeWidth and nodeHeight tokens derive from these.
+    static constexpr double nodeWidth = 80;
+    static constexpr double nodeHeight = 25;
+
     explicit Theme(QObject* parent = nullptr);
 
   private:
@@ -74,8 +79,8 @@ class Theme : public QObject
     QColor spreadsheetBg_{field_};
     QColor spreadsheetLine_{fline_};
     QColor networkDot_{"#1e1e26"};
-    double nodeWidth_{80};
-    double nodeHeight_{25};
+    double nodeWidth_{nodeWidth};
+    double nodeHeight_{nodeHeight};
     QColor nodePort_{"#4a4a54"};
     QColor nodeLinkInactive_{"#3a3a46"};
     QColor displayFlag_{"#4ea1ff"};
