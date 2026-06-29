@@ -204,6 +204,15 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 # target_compile_options(${LegacyAppExec} PRIVATE -Werror=switch)
 
 
+include(FetchContent)
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG        0.8.0
+)
+set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(yaml-cpp)
+
 # QML application
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
