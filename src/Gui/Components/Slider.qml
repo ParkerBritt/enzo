@@ -36,7 +36,7 @@ Item {
             height: parent.height - fill.inset * 2
             width: (parent.width - fill.inset * 2) * root.fraction
             radius: Theme.parameter.borderRadius - fill.inset
-            color: Theme.var.accent
+            color: Theme.slider.fillColor
         }
 
         Text {
