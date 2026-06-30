@@ -15,7 +15,7 @@ Item {
         height: 20
         radius: 10
         anchors.verticalCenter: parent.verticalCenter
-        color: (root.item && root.item.value) ? Theme.var.accent : Theme.parameter.backgroundColor
+        color: (root.item && root.item.value) ? Theme.toggle.onColor : Theme.parameter.backgroundColor
         border.color: Theme.parameter.lineColor
 
         Rectangle {

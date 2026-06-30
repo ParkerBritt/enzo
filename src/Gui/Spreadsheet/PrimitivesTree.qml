@@ -148,7 +148,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     name: node.isLeaf ? (node.typeTag === "CAMERA" ? "camera" : "box") : "layers"
                     size: 15
-                    color: node.selected ? Theme.var.accentBright : "#aab0ba"
+                    color: node.selected ? Theme.primitivesTree.selectedColor : "#aab0ba"
                 }
 
                 Text {

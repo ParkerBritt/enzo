@@ -80,7 +80,7 @@ Popup {
             background: Rectangle {
                 radius: 7
                 color: Theme.var.fieldSurface
-                border.color: search.activeFocus ? Theme.var.accentLine : Theme.var.fieldBorder
+                border.color: search.activeFocus ? Theme.tabMenu.focusBorderColor : Theme.var.fieldBorder
             }
 
             // Navigation keys steer the list, every other key edits the text.
@@ -104,7 +104,7 @@ Popup {
                 width: ListView.view.width
                 height: root.rowHeight
                 radius: 6
-                color: index === root.highlighted ? Theme.var.accentDim : "transparent"
+                color: index === root.highlighted ? Theme.tabMenu.highlightColor : "transparent"
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
