@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // A tinted monochrome icon loaded by name from the bundled Lucide set. The SVG
 // text is recoloured to `color` and handed to the image as a data url, so the
@@ -7,7 +8,7 @@ Item {
     id: root
 
     property string name
-    property color color: Theme.text
+    property color color: Theme.var.text
     property real size: 16
 
     implicitWidth: size

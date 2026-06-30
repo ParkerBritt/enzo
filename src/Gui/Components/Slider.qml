@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // Horizontal slider with a gradient fill and a value readout.
 Item {
@@ -21,9 +22,9 @@ Item {
     Rectangle {
         id: track
         anchors.fill: parent
-        radius: Theme.parameterRadius
-        color: Theme.parameterBg
-        border.color: Theme.parameterLine
+        radius: Theme.parameter.borderRadius
+        color: Theme.parameter.backgroundColor
+        border.color: Theme.parameter.lineColor
 
         // The accent fill floats inside the frame with a small inset on every
         // side so the rounded track border stays visible around it.
@@ -34,8 +35,8 @@ Item {
             y: fill.inset
             height: parent.height - fill.inset * 2
             width: (parent.width - fill.inset * 2) * root.fraction
-            radius: Theme.parameterRadius - fill.inset
-            color: Theme.accent
+            radius: Theme.parameter.borderRadius - fill.inset
+            color: Theme.var.accent
         }
 
         Text {
@@ -43,8 +44,8 @@ Item {
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             text: root.integer ? Math.round(root.value) : root.value.toFixed(3)
-            color: Theme.text
-            font.family: Theme.fontMono
+            color: Theme.var.text
+            font.family: Theme.var.fontMono
             font.pixelSize: 12
         }
     }

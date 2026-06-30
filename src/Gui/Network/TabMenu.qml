@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
+import Enzo
 import "../Utils.js" as Utils
 
 // Search menu that creates a node at the cursor. The search field holds focus so
@@ -51,8 +52,8 @@ Popup {
 
     Rectangle {
         id: background
-        color: Theme.panel
-        border.color: Theme.border
+        color: Theme.var.surface
+        border.color: Theme.var.border
         radius: 8
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -72,14 +73,14 @@ Popup {
             id: search
             width: parent.width
             placeholderText: "Search nodes"
-            color: Theme.text
-            placeholderTextColor: Theme.muted
-            font.family: Theme.fontUi
+            color: Theme.var.text
+            placeholderTextColor: Theme.var.textMuted
+            font.family: Theme.var.fontSans
             onTextChanged: root.refilter()
             background: Rectangle {
                 radius: 7
-                color: Theme.field
-                border.color: search.activeFocus ? Theme.accentLine : Theme.fline
+                color: Theme.var.fieldSurface
+                border.color: search.activeFocus ? Theme.var.accentLine : Theme.var.fieldBorder
             }
 
             // Navigation keys steer the list, every other key edits the text.
@@ -103,14 +104,14 @@ Popup {
                 width: ListView.view.width
                 height: root.rowHeight
                 radius: 6
-                color: index === root.highlighted ? Theme.accentDim : "transparent"
+                color: index === root.highlighted ? Theme.var.accentDim : "transparent"
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     x: 12
                     text: modelData.label
-                    color: Theme.text
-                    font.family: Theme.fontUi
+                    color: Theme.var.text
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 13
                 }
 

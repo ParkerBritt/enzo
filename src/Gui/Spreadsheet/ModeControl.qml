@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 import "../Components"
 
 // Segmented control switching the table between element classes. Each chip is
@@ -14,8 +15,8 @@ Rectangle {
     implicitWidth: chips.width + 6
     implicitHeight: 27
     radius: 9
-    color: Theme.spreadsheetBg
-    border.color: Theme.spreadsheetLine
+    color: Theme.spreadsheet.backgroundColor
+    border.color: Theme.spreadsheet.lineColor
 
     Row {
         id: chips
@@ -30,7 +31,7 @@ Rectangle {
                 id: chip
 
                 required property int index
-                readonly property string accent: Theme.modeColors[index]
+                readonly property string accent: Theme.spreadsheet.attributeOwnerColors[index]
                 readonly property bool active: root.mode === index
 
                 width: 30

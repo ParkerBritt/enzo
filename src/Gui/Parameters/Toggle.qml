@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // Left aligned switch, on when the value is non zero.
 Item {
@@ -14,8 +15,8 @@ Item {
         height: 20
         radius: 10
         anchors.verticalCenter: parent.verticalCenter
-        color: (root.item && root.item.value) ? Theme.accent : Theme.parameterBg
-        border.color: Theme.parameterLine
+        color: (root.item && root.item.value) ? Theme.var.accent : Theme.parameter.backgroundColor
+        border.color: Theme.parameter.lineColor
 
         Rectangle {
             width: 16
@@ -23,7 +24,7 @@ Item {
             radius: 8
             anchors.verticalCenter: parent.verticalCenter
             x: (root.item && root.item.value) ? parent.width - width - 2 : 2
-            color: Theme.text
+            color: Theme.var.text
             Behavior on x { NumberAnimation { duration: 90 } }
         }
 

@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 import "../Components"
 
 // Floating panel showing the primary node's parameters.
@@ -7,7 +8,7 @@ Rectangle {
 
     // Layout constants.
     readonly property real defaultWidth: 500
-    readonly property real defaultHeight: Theme.parameterPanelHeight
+    readonly property real defaultHeight: Theme.parameter.panelHeight
     readonly property real minWidth: 200
     readonly property real minHeight: 120
     readonly property real contentMargin: 12
@@ -17,9 +18,9 @@ Rectangle {
     width: defaultWidth
     visible: parameters.hasNode
     clip: true
-    radius: Theme.panelRadius
+    radius: Theme.var.panelRadius
     color: Qt.rgba(0.07, 0.07, 0.09, 0.93)
-    border.color: Theme.border
+    border.color: Theme.var.border
     border.width: 1
 
     // Height follows the content until the user drags the resize grip, which
@@ -42,21 +43,21 @@ Rectangle {
             Icon {
                 name: "sliders-horizontal"
                 size: 15
-                color: Theme.accent2
+                color: Theme.var.accentBright
                 anchors.verticalCenter: parent.verticalCenter
             }
 
             Column {
                 Text {
                     text: parameters.nodeType
-                    color: Theme.label
-                    font.family: Theme.fontUi
+                    color: Theme.var.textLabel
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 10
                 }
                 Text {
                     text: parameters.nodeName
-                    color: Theme.name
-                    font.family: Theme.fontUi
+                    color: Theme.var.textStrong
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 13
                     font.weight: Font.DemiBold
                 }
@@ -66,7 +67,7 @@ Rectangle {
         Rectangle {
             width: parent.width
             height: 1
-            color: Theme.bsoft
+            color: Theme.var.borderSoft
         }
 
         ParameterList {

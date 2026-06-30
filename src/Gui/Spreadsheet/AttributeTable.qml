@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Enzo
 import "../Components"
 
 // Attribute table of the selected primitive. Column headers and values are
@@ -11,13 +12,13 @@ Item {
     property var viewModel
     property int selectedRow: 0
 
-    readonly property string modeColor: Theme.modeColors[root.viewModel.mode]
+    readonly property string modeColor: Theme.spreadsheet.attributeOwnerColors[root.viewModel.mode]
     readonly property var modeIcons: ["grip", "spline", "triangle", "pentagon"]
 
     function axisColor(axis, light) {
-        if (axis === 0) return light ? Theme.axisXLight : Theme.axisX;
-        if (axis === 1) return light ? Theme.axisYLight : Theme.axisY;
-        if (axis === 2) return light ? Theme.axisZLight : Theme.axisZ;
+        if (axis === 0) return light ? Theme.var.axisXLight : Theme.var.axisX;
+        if (axis === 1) return light ? Theme.var.axisYLight : Theme.var.axisY;
+        if (axis === 2) return light ? Theme.var.axisZLight : Theme.var.axisZ;
         return "#8a8b94";
     }
     function headerAxis(text) {
@@ -37,13 +38,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         height: 32
-        color: Theme.panelHeader
+        color: Theme.var.surfaceHeader
 
         Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width
             height: 1
-            color: Theme.bsoft
+            color: Theme.var.borderSoft
         }
 
         Text {
@@ -54,7 +55,7 @@ Item {
             rightPadding: 14
             text: "#"
             color: "#5a5a64"
-            font.family: Theme.fontMono
+            font.family: Theme.var.fontMono
             font.pixelSize: 10
             font.weight: Font.DemiBold
         }
@@ -79,7 +80,7 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     text: display
                     color: root.axisColor(root.headerAxis(display), false)
-                    font.family: Theme.fontMono
+                    font.family: Theme.var.fontMono
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
                     font.letterSpacing: 0.4
@@ -109,7 +110,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 text: display
                 color: "#5a5a64"
-                font.family: Theme.fontMono
+                font.family: Theme.var.fontMono
                 font.pixelSize: 12
             }
         }
@@ -157,7 +158,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 text: cell.display
                 color: root.axisColor(cell.axis, true)
-                font.family: Theme.fontMono
+                font.family: Theme.var.fontMono
                 font.pixelSize: 12
             }
 
@@ -175,13 +176,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         height: 30
-        color: Theme.panelHeader
+        color: Theme.var.surfaceHeader
 
         Rectangle {
             anchors.top: parent.top
             width: parent.width
             height: 1
-            color: Theme.bsoft
+            color: Theme.var.borderSoft
         }
 
         Row {
@@ -199,16 +200,16 @@ Item {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.viewModel.elementCount
-                color: Theme.name
-                font.family: Theme.fontMono
+                color: Theme.var.textStrong
+                font.family: Theme.var.fontMono
                 font.pixelSize: 11
                 font.weight: Font.DemiBold
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.viewModel.elementNoun
-                color: Theme.muted
-                font.family: Theme.fontMono
+                color: Theme.var.textMuted
+                font.family: Theme.var.fontMono
                 font.pixelSize: 11
             }
         }
@@ -235,7 +236,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         text: stat.modelData.label
                         color: "#5a5a64"
-                        font.family: Theme.fontUi
+                        font.family: Theme.var.fontSans
                         font.pixelSize: 8
                         font.weight: Font.DemiBold
                         font.letterSpacing: 0.5
@@ -244,7 +245,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         text: stat.modelData.value
                         color: stat.modelData.color
-                        font.family: Theme.fontMono
+                        font.family: Theme.var.fontMono
                         font.pixelSize: 11
                     }
                 }
