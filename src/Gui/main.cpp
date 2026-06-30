@@ -100,7 +100,7 @@ namespace {
 void loadFonts()
 {
     QDirIterator it(
-        QStringLiteral(ENZO_DEV_FONTS_DIR),
+        QStringLiteral(ENZO_DEV_STATIC_DIR "/fonts"),
         {"*.ttf"},
         QDir::Files,
         QDirIterator::Subdirectories

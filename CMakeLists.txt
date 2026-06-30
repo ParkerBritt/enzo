@@ -217,6 +217,7 @@ FetchContent_MakeAvailable(yaml-cpp)
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
     src/Gui/Style/Theme.cpp
+    src/Gui/Style/ThemeLoader.cpp
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
     src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
@@ -290,15 +291,14 @@ qt6_add_shaders(${AppExec} "enzoShaders"
 # Packaged builds omit this and load the module compiled into the binary.
 target_compile_definitions(${AppExec} PRIVATE
     ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui"
-    ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons"
-    ENZO_DEV_FONTS_DIR="${CMAKE_SOURCE_DIR}/static/fonts"
+    ENZO_DEV_STATIC_DIR="${CMAKE_SOURCE_DIR}/static"
 )
 
 set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL yaml-cpp::yaml-cpp)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
@@ -455,5 +455,16 @@ if(ENZO_BUILD_TESTS)
         tests/Benchmarks.cpp
     )
     target_link_libraries(${BenchExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
+
+    # GUI unit tests, Qt and yaml-cpp only, no engine
+    add_executable(enzoGuiTests
+        tests/gui/ThemeLoaderTests.cpp
+        src/Gui/Style/ThemeLoader.cpp
+    )
+    target_link_libraries(enzoGuiTests PRIVATE Qt6::Gui yaml-cpp::yaml-cpp Catch2::Catch2WithMain)
+    target_include_directories(enzoGuiTests PRIVATE src)
+    target_compile_definitions(enzoGuiTests PRIVATE
+        ENZO_DEV_STATIC_DIR="${CMAKE_SOURCE_DIR}/static"
+    )
 endif()
 
