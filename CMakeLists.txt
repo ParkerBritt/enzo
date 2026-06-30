@@ -216,7 +216,6 @@ FetchContent_MakeAvailable(yaml-cpp)
 # QML application
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
-    src/Gui/Style/Theme.cpp
     src/Gui/Style/ThemeLoader.cpp
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
@@ -243,6 +242,7 @@ qt_add_qml_module(${AppExec}
     URI Enzo
     VERSION 1.0
     SOURCES
+        src/Gui/Style/Theme.cpp
         src/Gui/Network/NodeLinkLayer.cpp
         src/Gui/Viewport/ViewportItem.cpp
     QML_FILES
@@ -303,6 +303,7 @@ target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
     # registration includes by bare file name.
+    src/Gui/Style
     src/Gui/Network
     src/Gui/Viewport
 )
