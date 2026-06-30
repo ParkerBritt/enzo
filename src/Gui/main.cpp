@@ -4,7 +4,6 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
-#include "Gui/Style/Theme.h"
 #include "Gui/Viewport/ViewportViewModel.h"
 #include <QDir>
 #include <QDirIterator>
@@ -147,10 +146,7 @@ int main(int argc, char** argv)
     enzo::ui::SceneController scene;
     buildSampleNetwork();
 
-    enzo::ui::Theme theme;
-
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("Theme", &theme);
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
     engine.rootContext()->setContextProperty("network", &network);
     engine.rootContext()->setContextProperty("viewport", &viewport);

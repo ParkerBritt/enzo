@@ -1,7 +1,6 @@
 #include "Gui/Network/NodeListModel.h"
 #include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Gui/Style/Theme.h"
 #include <QLineF>
 #include <QRectF>
 #include <algorithm>
@@ -15,6 +14,10 @@ constexpr qreal kGrabRadius = 60;
 
 // How close a dragged link must be to a port to snap onto it.
 constexpr qreal kSnapRadius = 60;
+
+// The node dimensions.
+constexpr qreal kNodeWidth = 80;
+constexpr qreal kNodeHeight = 25;
 
 } // namespace
 
@@ -181,12 +184,12 @@ QPointF NodeListModel::getPosition(nt::OpId opId) const
 QPointF NodeListModel::getPortPosition(const Node& node, int slot, bool isOutput) const
 {
     // Nodes store their center, so shift to the top left the ports measure from.
-    const qreal left = node.x - Theme::nodeWidth / 2;
-    const qreal top = node.y - Theme::nodeHeight / 2;
+    const qreal left = node.x - kNodeWidth / 2;
+    const qreal top = node.y - kNodeHeight / 2;
 
     const int slotCount = isOutput ? node.outputSlotCount : node.inputSlotCount;
-    const qreal x = left + Theme::nodeWidth * (slot + 1) / (slotCount + 1);
-    const qreal y = top + (isOutput ? Theme::nodeHeight : 0);
+    const qreal x = left + kNodeWidth * (slot + 1) / (slotCount + 1);
+    const qreal y = top + (isOutput ? kNodeHeight : 0);
     return QPointF(x, y);
 }
 
@@ -240,12 +243,8 @@ bool NodeListModel::isOverNodeBody(QPointF canvasPoint) const
 {
     for (const Node& node : nodes_)
     {
-        const QRectF body(
-            node.x - Theme::nodeWidth / 2,
-            node.y - Theme::nodeHeight / 2,
-            Theme::nodeWidth,
-            Theme::nodeHeight
-        );
+        const QRectF
+            body(node.x - kNodeWidth / 2, node.y - kNodeHeight / 2, kNodeWidth, kNodeHeight);
         if (body.contains(canvasPoint)) return true;
     }
     return false;
