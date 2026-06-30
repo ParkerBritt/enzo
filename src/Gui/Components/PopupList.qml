@@ -97,7 +97,7 @@ Popup {
             width: parent.width
             height: root.rowHeight
             radius: 6
-            color: Theme.var.accentDim
+            color: Theme.popup.highlightColor
             y: root.highlightedIndex * root.rowHeight
             visible: root.highlightedIndex >= 0 && root.canHighlight(root.highlightedIndex)
             Behavior on y { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }

@@ -67,3 +67,14 @@ components:
     lineColor:       $fieldBorder
     borderRadius:    10
     panelHeight:     420
+  slider:
+    fillColor: $accent
+  toggle:
+    onColor: $accent
+  popup:
+    highlightColor: $accentDim
+  primitivesTree:
+    selectedColor: $accentBright
+  tabMenu:
+    highlightColor:   $accentDim
+    focusBorderColor: $accentLine
