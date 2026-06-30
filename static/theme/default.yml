@@ -47,8 +47,6 @@ components:
   network:
     dotColor: "#1e1e26"
   node:
-    width:            80
-    height:           25
     portColor:        "#4a4a54"
     displayFlagColor: "#4ea1ff"
   nodeLink:

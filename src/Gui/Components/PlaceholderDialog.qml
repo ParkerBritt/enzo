@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
+import Enzo
 
 // Reusable stand-in for a feature that is not built yet. A caller sets the heading
 // and opens it to show a centered card naming the feature.
@@ -25,9 +26,9 @@ Popup {
     Overlay.modal: Rectangle { color: "#80000000" }
 
     background: Rectangle {
-        radius: Theme.panelRadius
-        color: Theme.panel
-        border.color: Theme.border
+        radius: Theme.var.panelRadius
+        color: Theme.var.surface
+        border.color: Theme.var.border
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
@@ -47,15 +48,15 @@ Popup {
         Icon {
             name: "construction"
             size: 26
-            color: Theme.accent2
+            color: Theme.var.accentBright
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
             width: parent.width - parent.leftPadding - parent.rightPadding
             text: root.heading
-            color: Theme.name
-            font.family: Theme.fontUi
+            color: Theme.var.textStrong
+            font.family: Theme.var.fontSans
             font.pixelSize: 15
             font.weight: Font.DemiBold
             horizontalAlignment: Text.AlignHCenter
@@ -64,8 +65,8 @@ Popup {
         Text {
             width: parent.width - parent.leftPadding - parent.rightPadding
             text: "Coming soon."
-            color: Theme.muted
-            font.family: Theme.fontUi
+            color: Theme.var.textMuted
+            font.family: Theme.var.fontSans
             font.pixelSize: 12
             horizontalAlignment: Text.AlignHCenter
         }
@@ -75,14 +76,14 @@ Popup {
             width: 96
             height: 28
             radius: 7
-            color: closeArea.containsMouse ? Theme.accent : Theme.bsoft
-            border.color: Theme.border
+            color: closeArea.containsMouse ? Theme.var.accent : Theme.var.borderSoft
+            border.color: Theme.var.border
 
             Text {
                 anchors.centerIn: parent
                 text: "Got it"
-                color: Theme.text
-                font.family: Theme.fontUi
+                color: Theme.var.text
+                font.family: Theme.var.fontSans
                 font.pixelSize: 12
             }
 

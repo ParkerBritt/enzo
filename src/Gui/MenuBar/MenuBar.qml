@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // Horizontal bar of menu titles backed by the shared menu popup. Pressing a title
 // opens its menu beneath it and pressing it again closes. While a menu is open,
@@ -28,7 +29,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Theme.menuBar
+        color: Theme.menu.barColor
     }
 
     Row {
@@ -51,14 +52,14 @@ Item {
                 width: label.implicitWidth + 18
                 height: 22
                 radius: 6
-                color: open || hover.hovered ? Theme.bsoft : "transparent"
+                color: open || hover.hovered ? Theme.var.borderSoft : "transparent"
 
                 Text {
                     id: label
                     anchors.centerIn: parent
                     text: title.modelData.title
-                    color: Theme.text
-                    font.family: Theme.fontUi
+                    color: Theme.var.text
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 12
                 }
 

@@ -20,6 +20,8 @@ class NetworkViewModel : public QObject
     Q_PROPERTY(QAbstractListModel* nodes READ nodes CONSTANT)
     Q_PROPERTY(QAbstractListModel* edges READ edges CONSTANT)
     Q_PROPERTY(QVariantList nodeTypes READ getNodeTypes CONSTANT)
+    Q_PROPERTY(qreal nodeWidth READ getNodeWidth CONSTANT)
+    Q_PROPERTY(qreal nodeHeight READ getNodeHeight CONSTANT)
 
   public:
     explicit NetworkViewModel(QObject* parent = nullptr);
@@ -27,6 +29,12 @@ class NetworkViewModel : public QObject
     QAbstractListModel* nodes();
 
     QAbstractListModel* edges();
+
+    /// @brief Returns the node card width.
+    qreal getNodeWidth() const;
+
+    /// @brief Returns the node card height.
+    qreal getNodeHeight() const;
 
     /// @brief Returns every operator type the tab menu can create, each a {label, name} map.
     QVariantList getNodeTypes() const;

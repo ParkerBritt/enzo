@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // A group of parameters, stacked in a column or laid out in a row.
 Column {
@@ -18,8 +19,8 @@ Column {
     Text {
         visible: group.item && !group.item.labelHidden
         text: group.item ? group.item.label : ""
-        color: Theme.label
-        font.family: Theme.fontUi
+        color: Theme.var.textLabel
+        font.family: Theme.var.fontSans
         font.pixelSize: 10
         font.weight: Font.Bold
         font.capitalization: Font.AllUppercase

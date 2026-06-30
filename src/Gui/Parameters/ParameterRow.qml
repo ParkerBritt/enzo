@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // One parameter, picking the control for its kind. Groups and spacers span the
 // full width, every other kind sits beside its label.
@@ -34,7 +35,7 @@ Item {
     TextMetrics {
         id: labelMetrics
         text: row.hasLabel ? row.item.label : ""
-        font.family: Theme.fontUi
+        font.family: Theme.var.fontSans
         font.pixelSize: row.labelFontSize
     }
 
@@ -76,8 +77,8 @@ Item {
                 height: row.controlHeight
                 verticalAlignment: Text.AlignVCenter
                 text: row.item.label
-                color: Theme.label
-                font.family: Theme.fontUi
+                color: Theme.var.textLabel
+                font.family: Theme.var.fontSans
                 font.pixelSize: row.labelFontSize
                 elide: Text.ElideRight
             }

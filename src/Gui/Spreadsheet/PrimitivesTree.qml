@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Enzo
 import "../Components"
 
 // Sidebar listing the primitives of the selected node as a path tree. Tapping a
@@ -10,13 +11,13 @@ Rectangle {
     property var viewModel
     property int selectedIndex: 0
 
-    color: Theme.panelHeader
+    color: Theme.var.surfaceHeader
 
     Rectangle {
         anchors.right: parent.right
         width: 1
         height: parent.height
-        color: Theme.bsoft
+        color: Theme.var.borderSoft
     }
 
     // Section title and primitive count.
@@ -32,7 +33,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width
             height: 1
-            color: Theme.bsoft
+            color: Theme.var.borderSoft
         }
 
         Text {
@@ -40,8 +41,8 @@ Rectangle {
             anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
             text: "PRIMITIVES"
-            color: Theme.muted
-            font.family: Theme.fontUi
+            color: Theme.var.textMuted
+            font.family: Theme.var.fontSans
             font.pixelSize: 10
             font.weight: Font.Bold
             font.letterSpacing: 1
@@ -55,14 +56,14 @@ Rectangle {
 
             Text {
                 text: root.viewModel.primitiveCount
-                color: Theme.name
-                font.family: Theme.fontMono
+                color: Theme.var.textStrong
+                font.family: Theme.var.fontMono
                 font.pixelSize: 11
             }
             Text {
                 text: "prims"
-                color: Theme.label
-                font.family: Theme.fontMono
+                color: Theme.var.textLabel
+                font.family: Theme.var.fontMono
                 font.pixelSize: 11
             }
         }
@@ -147,14 +148,14 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     name: node.isLeaf ? (node.typeTag === "CAMERA" ? "camera" : "box") : "layers"
                     size: 15
-                    color: node.selected ? Theme.accent2 : "#aab0ba"
+                    color: node.selected ? Theme.var.accentBright : "#aab0ba"
                 }
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: node.name
-                    color: node.selected ? Theme.name : "#d2d3d9"
-                    font.family: Theme.fontUi
+                    color: node.selected ? Theme.var.textStrong : "#d2d3d9"
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 12
                 }
             }
@@ -167,7 +168,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignRight
                 text: node.tag
                 color: node.selected ? "#b9a3f5" : "#6c6c76"
-                font.family: Theme.fontMono
+                font.family: Theme.var.fontMono
                 font.pixelSize: 8
                 font.weight: Font.Bold
                 font.letterSpacing: 0.6

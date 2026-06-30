@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Enzo
 import "../Components"
 
 // One level of menu entries floating beneath its title. Built on the shared
@@ -46,8 +47,8 @@ PopupList {
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 text: modelData.text || ""
-                color: row.disabled ? Theme.muted : Theme.text
-                font.family: Theme.fontUi
+                color: row.disabled ? Theme.var.textMuted : Theme.var.text
+                font.family: Theme.var.fontSans
                 font.pixelSize: 12
                 elide: Text.ElideRight
             }

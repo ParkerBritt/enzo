@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 
 // Geometry spreadsheet drawer: a header bar over a primitives tree sidebar and
 // the attribute table of the selected primitive.
@@ -11,9 +12,9 @@ Rectangle {
     readonly property real headerHeight: 46
     readonly property real sidebarWidth: 252
 
-    color: Theme.panel
-    radius: Theme.panelRadius
-    border.color: Theme.border
+    color: Theme.var.surface
+    radius: Theme.var.panelRadius
+    border.color: Theme.var.border
     clip: true
 
     SpreadsheetHeader {

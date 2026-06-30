@@ -66,6 +66,10 @@ QAbstractListModel* NetworkViewModel::nodes() { return &nodes_; }
 
 QAbstractListModel* NetworkViewModel::edges() { return &edges_; }
 
+qreal NetworkViewModel::getNodeWidth() const { return NodeListModel::nodeWidth; }
+
+qreal NetworkViewModel::getNodeHeight() const { return NodeListModel::nodeHeight; }
+
 QVariantList NetworkViewModel::getNodeTypes() const
 {
     QVariantList list;
