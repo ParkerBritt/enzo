@@ -1,0 +1,71 @@
+# Default Enzo theme. Ships with the program and defines every token, so a sparse
+# user theme.yml can override any single value and fall back to the rest.
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#0a0a0d"
+  fieldSurface:  "#0d0d11"
+  surfaceHeader: "#101015"
+  surface:       "#141418"
+  surfaceRaised: "#191920"
+
+  # Borders
+  borderSoft:  "#1d1d25"
+  fieldBorder: "#242430"
+  border:      "#262630"
+
+  # Text, brightest to dimmest
+  textStrong: "#f6f6f9"
+  text:       "#e7e8ec"
+  textLabel:  "#9a9aa6"
+  textMuted:  "#63636d"
+
+  # Fonts
+  fontSans: "Public Sans"
+  fontMono: "Inconsolata"
+
+  # Accent
+  accent:       "#8b5cf6"
+  accentBright: "#a78bfa"
+  accentDim:    $accent @ 0.15
+  accentLine:   $accent @ 0.45
+
+  # Axes
+  axisX:      "#f5685f"
+  axisY:      "#46c98a"
+  axisZ:      "#4ea1ff"
+  axisXLight: "#f1857d"
+  axisYLight: "#7fd3a6"
+  axisZLight: "#7fb4f2"
+
+  # Shape
+  panelRadius: 13
+
+components:
+  menu:
+    barColor: "#0e0e12"
+  network:
+    dotColor: "#1e1e26"
+  node:
+    width:            80
+    height:           25
+    portColor:        "#4a4a54"
+    displayFlagColor: "#4ea1ff"
+  nodeLink:
+    inactiveColor: "#3a3a46"
+    activeColor:   $accent
+  spreadsheet:
+    backgroundColor: $fieldSurface
+    lineColor:       $fieldBorder
+    # Colours per attribute owner, indexed Points Vertices Faces Primitive Node
+    attributeOwnerColors:
+      - "#4ea1ff"
+      - "#f0a93b"
+      - "#46c98a"
+      - "#f5685f"
+      - "#b69bf2"
+  parameter:
+    backgroundColor: $fieldSurface
+    lineColor:       $fieldBorder
+    borderRadius:    10
+    panelHeight:     420
