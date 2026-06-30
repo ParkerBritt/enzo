@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Effects
+import Enzo
 
 Item {
     id: root
 
-    width: Theme.nodeWidth
-    height: Theme.nodeHeight
+    width: network.nodeWidth
+    height: network.nodeHeight
 
     // The node's position on the canvas, centered on the card.
     property real modelX: 0
@@ -57,7 +58,7 @@ Item {
         name: "primary"
         when: root.primary
         PropertyChanges {
-            shadow.shadowColor: Theme.accent
+            shadow.shadowColor: Theme.var.accent
             shadow.shadowBlur: 0.9
             shadow.shadowOpacity: 0.4
             shadow.shadowHorizontalOffset: 0
@@ -126,7 +127,7 @@ Item {
             radius: root.radius
             antialiasing: true
             border.pixelAligned: false
-            border.color: root.highlighted ? Theme.accent : root.borderColor
+            border.color: root.highlighted ? Theme.var.accent : root.borderColor
             border.width: (root.highlighted ? 1.5 : 0.8) / root.viewZoom
         }
 
@@ -143,14 +144,14 @@ Item {
             x: parent.width - rightMargin - width
 
             // Dim at rest, the flag brightens on hover and lights up when active.
-            color: Theme.nodePort
+            color: Theme.node.portColor
             opacity: 0.4
             states: [
                 State {
                     name: "hovered"
                     when: flagMouse.containsMouse && !root.display
                     PropertyChanges {
-                        displayTab.color: Theme.displayFlag
+                        displayTab.color: Theme.node.displayFlagColor
                         displayTab.opacity: 0.7
                     }
                 },
@@ -158,7 +159,7 @@ Item {
                     name: "active"
                     when: root.display
                     PropertyChanges {
-                        displayTab.color: Theme.displayFlag
+                        displayTab.color: Theme.node.displayFlagColor
                         displayTab.opacity: 1
                     }
                 }
@@ -207,7 +208,7 @@ Item {
             y: -height / 2
 
             // The dot grows and brightens once it is the closest port, to invite a drag.
-            color: portDot.active ? Qt.lighter(Theme.nodePort, 1.6) : Theme.nodePort
+            color: portDot.active ? Qt.lighter(Theme.node.portColor, 1.6) : Theme.node.portColor
             scale: portDot.active ? 1.5 : 1
             Behavior on color {
                 ColorAnimation {

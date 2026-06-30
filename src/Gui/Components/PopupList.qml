@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
+import Enzo
 import "../Utils.js" as Utils
 
 // Animated floating list shared by the menus and the parameter pickers. Owns the
@@ -69,8 +70,8 @@ Popup {
 
     background: Rectangle {
         radius: 8
-        color: Theme.panel
-        border.color: Theme.border
+        color: Theme.var.surface
+        border.color: Theme.var.border
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
@@ -96,7 +97,7 @@ Popup {
             width: parent.width
             height: root.rowHeight
             radius: 6
-            color: Theme.accentDim
+            color: Theme.var.accentDim
             y: root.highlightedIndex * root.rowHeight
             visible: root.highlightedIndex >= 0 && root.canHighlight(root.highlightedIndex)
             Behavior on y { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }

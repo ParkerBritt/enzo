@@ -7,9 +7,9 @@ import "."
 Rectangle {
     id: root
 
-    color: Theme.panel
-    radius: Theme.panelRadius
-    border.color: Theme.border
+    color: Theme.var.surface
+    radius: Theme.var.panelRadius
+    border.color: Theme.var.border
     focus: true
     clip: true
 
@@ -168,7 +168,7 @@ Rectangle {
         property real zoom: root.viewZoom
         property point pan: Qt.point(root.viewX, root.viewY)
         property size canvas: Qt.size(width, height)
-        property color dotColor: Theme.networkDot
+        property color dotColor: Theme.network.dotColor
     }
 
     // Tab menu
@@ -197,7 +197,7 @@ Rectangle {
         NodeLinkLayer {
             nodes: network.nodes
             links: network.edges
-            linkColor: Theme.nodeLinkInactive
+            linkColor: Theme.nodeLink.inactiveColor
         }
 
         Repeater {
@@ -254,7 +254,7 @@ Rectangle {
             floatingActive: linkController.linking
             floatingOutput: linkController.outputPoint
             floatingInput: linkController.inputPoint
-            linkColor: Theme.accent
+            linkColor: Theme.var.accent
         }
     }
 }

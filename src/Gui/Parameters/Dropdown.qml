@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Enzo
 import "../Components"
 
 // Picks one option, storing its token as the value.
@@ -45,9 +46,9 @@ Item {
         id: box
 
         anchors.fill: parent
-        radius: Theme.parameterRadius
-        color: Theme.parameterBg
-        border.color: Theme.parameterLine
+        radius: Theme.parameter.borderRadius
+        color: Theme.parameter.backgroundColor
+        border.color: Theme.parameter.lineColor
 
         Text {
             anchors.left: parent.left
@@ -56,8 +57,8 @@ Item {
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
             text: root.currentText
-            color: Theme.text
-            font.family: Theme.fontUi
+            color: Theme.var.text
+            font.family: Theme.var.fontSans
             font.pixelSize: 12
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -68,7 +69,7 @@ Item {
 
             name: "chevron-down"
             size: 14
-            color: Theme.muted
+            color: Theme.var.textMuted
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
@@ -123,8 +124,8 @@ Item {
             Rectangle {
                 width: column.width
                 height: 22
-                radius: Theme.parameterRadius
-                color: Theme.bsoft
+                radius: Theme.parameter.borderRadius
+                color: Theme.var.borderSoft
                 y: root.activeIndex * 22
                 visible: root.activeIndex >= 0
                 Behavior on y { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
@@ -152,8 +153,8 @@ Item {
                             anchors.rightMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                             text: modelData
-                            color: (active || index === root.currentIndex) ? Theme.text : Theme.label
-                            font.family: Theme.fontUi
+                            color: (active || index === root.currentIndex) ? Theme.var.text : Theme.var.textLabel
+                            font.family: Theme.var.fontSans
                             font.pixelSize: 12
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
@@ -169,9 +170,9 @@ Item {
         }
 
         background: Rectangle {
-            radius: Theme.parameterRadius
-            color: Theme.parameterBg
-            border.color: Theme.parameterLine
+            radius: Theme.parameter.borderRadius
+            color: Theme.parameter.backgroundColor
+            border.color: Theme.parameter.lineColor
         }
 
         enter: Transition {

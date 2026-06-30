@@ -1,20 +1,21 @@
 import QtQuick
 import QtQuick.Shapes
+import Enzo
 
 /// Rounds and clips panel contents.
 Item {
     id: root
 
-    property real radius: Theme.panelRadius
+    property real radius: Theme.var.panelRadius
     property real borderWidth: 1
-    property color borderColor: Theme.border
+    property color borderColor: Theme.var.border
 
     // Place content inside container
     default property alias content: contentContainer.data
 
     Rectangle {
         anchors.fill: parent
-        color: Theme.panel
+        color: Theme.var.surface
         radius: root.radius
     }
 
@@ -32,7 +33,7 @@ Item {
 
         // Page background fills the corners, hiding content past the radius.
         ShapePath {
-            fillColor: Theme.bg
+            fillColor: Theme.var.background
             strokeColor: "transparent"
             fillRule: ShapePath.OddEvenFill
             PathRectangle {

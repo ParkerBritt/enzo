@@ -1,4 +1,5 @@
 import QtQuick
+import Enzo
 import "../Components"
 
 // Top bar of the spreadsheet drawer: title, breadcrumb path, component mode
@@ -9,14 +10,14 @@ Rectangle {
     property var viewModel
     readonly property var path: ["obj", "characters", "tommy", "geo", "scatter_setup", "scatter1"]
 
-    color: Theme.panelHeader
+    color: Theme.var.surfaceHeader
 
     function pathColor(index)
     {
         if (index === 0)
             return "#6a6a74"
         if (index === path.length -1)
-            return Theme.accent2
+            return Theme.var.accentBright
         return "#aaaab2"
     }
 
@@ -24,7 +25,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         width: parent.width
         height: 1
-        color: Theme.bsoft
+        color: Theme.var.borderSoft
     }
 
     // Title, breadcrumb.
@@ -40,14 +41,14 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             name: "table"
             size: 15
-            color: Theme.accent2
+            color: Theme.var.accentBright
         }
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: "SPREADSHEET"
-            color: Theme.label
-            font.family: Theme.fontUi
+            color: Theme.var.textLabel
+            font.family: Theme.var.fontSans
             font.pixelSize: 10
             font.weight: Font.Bold
             font.letterSpacing: 1.4
@@ -73,13 +74,13 @@ Rectangle {
                     Text {
                         text: "/"
                         color: "#39394a"
-                        font.family: Theme.fontMono
+                        font.family: Theme.var.fontMono
                         font.pixelSize: 11
                     }
                     Text {
                         text: crumb.modelData
                         color: pathColor(crumb.index)
-                        font.family: Theme.fontMono
+                        font.family: Theme.var.fontMono
                         font.pixelSize: 11
                     }
                 }
@@ -108,13 +109,13 @@ Rectangle {
             height: 27
             radius: 7
             color: "transparent"
-            border.color: Theme.border
+            border.color: Theme.var.border
 
             Icon {
                 anchors.centerIn: parent
                 name: "search"
                 size: 14
-                color: Theme.label
+                color: Theme.var.textLabel
             }
         }
 
@@ -123,7 +124,7 @@ Rectangle {
             width: collapse.width + 22
             height: 27
             radius: 7
-            color: Theme.accentDim
+            color: Theme.var.accentDim
 
             Row {
                 id: collapse
@@ -134,8 +135,8 @@ Rectangle {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Collapse"
-                    color: Theme.accent2
-                    font.family: Theme.fontUi
+                    color: Theme.var.accentBright
+                    font.family: Theme.var.fontSans
                     font.pixelSize: 11
                     font.weight: Font.Medium
                 }
@@ -143,7 +144,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     name: "chevron-down"
                     size: 13
-                    color: Theme.accent2
+                    color: Theme.var.accentBright
                 }
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
@@ -155,7 +156,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "S"
                     color: Qt.rgba(0.655, 0.545, 0.98, 0.55)
-                    font.family: Theme.fontMono
+                    font.family: Theme.var.fontMono
                     font.pixelSize: 10
                 }
             }
