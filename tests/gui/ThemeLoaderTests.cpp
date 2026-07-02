@@ -157,6 +157,6 @@ TEST_CASE("The shipped default theme resolves")
     const auto tokens = ThemeLoader::loadFromFile(QStringLiteral(ENZO_DEV_STATIC_DIR "/theme/default.yml"));
 
     REQUIRE(tokens.value("var.accent").value<QColor>() == QColor("#8b5cf6"));
-    REQUIRE(tokens.value("node.width").toInt() == 80);
+    REQUIRE(tokens.value("node.bodyColor").value<QColor>() == QColor("#1f202a"));
     REQUIRE(tokens.value("spreadsheet.attributeOwnerColors").toList().size() == 5);
 }

@@ -15,8 +15,8 @@ Item {
     x: modelX - width / 2
     y: modelY - height / 2
 
-    property color fillColor: "#1f202a"
-    property color borderColor: "#333341"
+    property color fillColor: Theme.node.bodyColor
+    property color borderColor: Theme.node.borderColor
 
     property string label: "Grid"
     property real radius: 5
@@ -181,7 +181,7 @@ Item {
 
         Text {
             text: root.label
-            color: "white"
+            color: Theme.var.textStrong
             font.pointSize: 5
             anchors.verticalCenter: parent.verticalCenter
             x: 10

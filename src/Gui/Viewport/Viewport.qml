@@ -10,6 +10,10 @@ Item {
 
         anchors.fill: parent
         viewModel: viewport
+        backgroundColor: Theme.viewport.backgroundColor
+        gradientCenter: Theme.viewport.gradientCenter
+        gradientEdge: Theme.viewport.gradientEdge
+        geometryColor: Theme.viewport.geometryColor
     }
 
     // Left drag orbits, middle drag pans, horizontal right drag and wheel dolly.
