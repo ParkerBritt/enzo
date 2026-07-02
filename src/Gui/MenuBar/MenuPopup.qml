@@ -6,12 +6,21 @@ import "../Components"
 // One level of menu entries floating beneath its title. Built on the shared
 // PopupList so its reveal, highlight and keyboard travel match the other popups.
 //
-// An entry is a plain object { text, action, enabled, separator }. A leaf carries
-// an action run on choice. Icons and submenu children land in a later pass.
+// An entry is a plain object { text, action, enabled, separator, children }. A
+// leaf carries an action run on choice, while children open a nested level of
+// the same popup beside the row.
 PopupList {
     id: list
 
     property var entries: []
+
+    // Row whose children are open as a nested level, or -1 when none.
+    readonly property int submenuIndex:
+        entries[highlightedIndex]?.children ? highlightedIndex : -1
+
+    // Fires when a leaf is chosen at any depth so every level closes.
+    signal leafChosen()
+    onLeafChosen: list.close()
 
     model: entries
     rowHeight: 26
@@ -24,8 +33,23 @@ PopupList {
 
     onActivated: (index) => {
         const entry = entries[index]
-        if (entry && entry.action) entry.action()
-        list.close()
+        if (entry.children) return
+        if (entry.action) entry.action()
+        list.leafChosen()
+    }
+
+    // A component cannot instantiate itself directly, so the nested level loads on demand.
+    Loader {
+        active: list.submenuIndex >= 0
+        source: "MenuPopup.qml"
+        onLoaded: {
+            item.parent = list.contentItem
+            item.x = Qt.binding(() => list.contentItem.width + list.padding)
+            item.y = Qt.binding(() => list.submenuIndex * list.rowHeight - list.padding)
+            item.entries = Qt.binding(() => list.entries[list.submenuIndex]?.children ?? [])
+            item.leafChosen.connect(list.leafChosen)
+            item.open()
+        }
     }
 
     delegate: Component {
@@ -51,6 +75,18 @@ PopupList {
                 font.family: Theme.var.fontSans
                 font.pixelSize: 12
                 elide: Text.ElideRight
+            }
+
+            // Arrow marking a row that opens a nested level.
+            Text {
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                visible: row.modelData.children !== undefined
+                text: "›"
+                color: Theme.var.textMuted
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
             }
         }
     }
