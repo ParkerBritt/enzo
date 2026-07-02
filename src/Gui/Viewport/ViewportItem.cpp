@@ -33,6 +33,7 @@ const char* const kMeshFragmentShader = R"(
     #version 330 core
     in vec3 Normal;
     uniform bool uWireframe;
+    uniform vec3 uGeometry;
     out vec4 FragColor;
     float remap(float value, float inMin, float inMax, float outMin, float outMax)
     {
@@ -45,15 +46,15 @@ const char* const kMeshFragmentShader = R"(
             FragColor = vec4(0.4, 0.4, 0.4, 1.0);
             return;
         }
-        vec3 albedo = vec3(0.66, 0.66, 0.72);
         vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
         float brightness = remap(dot(Normal, lightDir), -1.0, 1.0, 0.5, 1.0);
-        FragColor = vec4(albedo * brightness, 1.0);
+        FragColor = vec4(uGeometry * brightness, 1.0);
     }
 )";
 
-/// Fills the viewport with the design radial gradient, brightest at the top
-/// centre and darkening to the corners. Drawn as one screen triangle.
+/// Fills the viewport with a radial gradient running from a bright centre
+/// through a base colour out to a dark edge, all supplied by the theme. Drawn
+/// as one screen triangle.
 const char* const kBackgroundVertexShader = R"(
     #version 330 core
     out vec2 vUv;
@@ -68,6 +69,9 @@ const char* const kBackgroundVertexShader = R"(
 const char* const kBackgroundFragmentShader = R"(
     #version 330 core
     in vec2 vUv;
+    uniform vec3 uCenter;
+    uniform vec3 uBase;
+    uniform vec3 uEdge;
     out vec4 FragColor;
     void main()
     {
@@ -78,13 +82,9 @@ const char* const kBackgroundFragmentShader = R"(
         float dy = uv.y;
         float d = sqrt(dx * dx + dy * dy);
 
-        vec3 inner = vec3(0.098, 0.098, 0.125);
-        vec3 mid = vec3(0.063, 0.063, 0.082);
-        vec3 outer = vec3(0.043, 0.043, 0.059);
-
         vec3 colour = d < 0.55
-            ? mix(inner, mid, d / 0.55)
-            : mix(mid, outer, clamp((d - 0.55) / 0.45, 0.0, 1.0));
+            ? mix(uCenter, uBase, d / 0.55)
+            : mix(uBase, uEdge, clamp((d - 0.55) / 0.45, 0.0, 1.0));
         FragColor = vec4(colour, 1.0);
     }
 )";
@@ -102,6 +102,10 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         auto* viewport = static_cast<ViewportItem*>(item);
         camera_ = viewport->getCamera();
         size_ = viewport->size().toSize();
+        backgroundColor_ = viewport->backgroundColor();
+        gradientCenter_ = viewport->gradientCenter();
+        gradientEdge_ = viewport->gradientEdge();
+        geometryColor_ = viewport->geometryColor();
 
         if (auto packet = viewport->takePendingGeometry())
         {
@@ -191,6 +195,19 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
         glUseProgram(backgroundProgram_);
+
+        auto setColour = [this](const char* name, const QColor& colour) {
+            glUniform3f(
+                glGetUniformLocation(backgroundProgram_, name),
+                colour.redF(),
+                colour.greenF(),
+                colour.blueF()
+            );
+        };
+        setColour("uCenter", gradientCenter_);
+        setColour("uBase", backgroundColor_);
+        setColour("uEdge", gradientEdge_);
+
         glBindVertexArray(backgroundVao_);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
@@ -221,6 +238,12 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
             glm::value_ptr(proj)
         );
         camera_.setUniform(glGetUniformLocation(meshProgram_, "uView"));
+        glUniform3f(
+            glGetUniformLocation(meshProgram_, "uGeometry"),
+            geometryColor_.redF(),
+            geometryColor_.greenF(),
+            geometryColor_.blueF()
+        );
 
         const GLint wireLoc = glGetUniformLocation(meshProgram_, "uWireframe");
         glUniform1i(wireLoc, 0);
@@ -270,6 +293,10 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     bool initialised_ = false;
     QSize size_;
     GLCamera camera_;
+    QColor backgroundColor_;
+    QColor gradientCenter_;
+    QColor gradientEdge_;
+    QColor geometryColor_;
     GLuint meshProgram_ = 0;
     GLuint backgroundProgram_ = 0;
     GLuint backgroundVao_ = 0;
@@ -301,6 +328,38 @@ void ViewportItem::setViewModel(ViewportViewModel* viewModel)
         setGeometry(viewModel_->currentGeometry());
     }
     Q_EMIT viewModelChanged();
+}
+
+void ViewportItem::setBackgroundColor(const QColor& colour)
+{
+    if (backgroundColor_ == colour) return;
+    backgroundColor_ = colour;
+    update();
+    Q_EMIT backgroundColorChanged();
+}
+
+void ViewportItem::setGeometryColor(const QColor& colour)
+{
+    if (geometryColor_ == colour) return;
+    geometryColor_ = colour;
+    update();
+    Q_EMIT geometryColorChanged();
+}
+
+void ViewportItem::setGradientCenter(const QColor& colour)
+{
+    if (gradientCenter_ == colour) return;
+    gradientCenter_ = colour;
+    update();
+    Q_EMIT gradientCenterChanged();
+}
+
+void ViewportItem::setGradientEdge(const QColor& colour)
+{
+    if (gradientEdge_ == colour) return;
+    gradientEdge_ = colour;
+    update();
+    Q_EMIT gradientEdgeChanged();
 }
 
 std::shared_ptr<const enzo::NodePacket> ViewportItem::takePendingGeometry()
