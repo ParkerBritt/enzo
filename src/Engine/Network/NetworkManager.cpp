@@ -324,8 +324,9 @@ void nt::NetworkManager::clear()
     graph_.clear();
     selectedNodes_.clear();
     maxOpId_ = 0;
-    displayOp_.reset();
     undoStack_.clear();
+    clearDisplayFlag();
+    clearPrimaryNode();
     selectedNodesChanged(selectedNodes_);
     networkCleared();
 }

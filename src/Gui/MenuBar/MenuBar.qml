@@ -1,12 +1,9 @@
 import QtQuick
 import Enzo
 
-// Horizontal bar of menu titles backed by the shared menu popup. Pressing a title
-// opens its menu beneath it and pressing it again closes. While a menu is open,
-// moving onto another title switches to it like a native menu bar.
+// Horizontal top bar menu.
 //
-// Each menu is { title, entries } where entries is a function returning the row
-// list, rebuilt every time the menu opens.
+// Each menu is { title, entries } where entries is a function returning the row list.
 Item {
     id: bar
 
@@ -18,14 +15,18 @@ Item {
     property int openIndex: -1
 
     function openMenu(index) {
-        if (index === openIndex) return
+        if (index === openIndex)
+            return;
         // A title with nothing to show leaves the bar closed.
-        const entries = bar.menus[index].entries
-        if (entries && entries().length === 0) return
-        openIndex = index
+        const entries = bar.menus[index].entries;
+        if (entries && entries().length === 0)
+            return;
+        openIndex = index;
     }
 
-    function closeMenu() { openIndex = -1 }
+    function closeMenu() {
+        openIndex = -1;
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -65,7 +66,8 @@ Item {
 
                 HoverHandler {
                     id: hover
-                    onHoveredChanged: if (hovered && bar.openIndex >= 0 && !title.open) bar.openMenu(index)
+                    onHoveredChanged: if (hovered && bar.openIndex >= 0 && !title.open)
+                        bar.openMenu(index)
                 }
                 TapHandler {
                     onTapped: title.open ? bar.closeMenu() : bar.openMenu(index)
@@ -77,7 +79,8 @@ Item {
                     id: popup
                     y: title.height + 4
                     entries: title.modelData.entries ? title.modelData.entries() : []
-                    onClosed: if (bar.openIndex === title.index) bar.closeMenu()
+                    onClosed: if (bar.openIndex === title.index)
+                        bar.closeMenu()
                 }
             }
         }

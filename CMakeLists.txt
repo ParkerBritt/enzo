@@ -253,6 +253,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
         src/Gui/Components/PlaceholderDialog.qml
+        src/Gui/MenuBar/AppMenuBar.qml
         src/Gui/MenuBar/MenuBar.qml
         src/Gui/MenuBar/MenuPopup.qml
         src/Gui/Parameters/ParametersPanel.qml

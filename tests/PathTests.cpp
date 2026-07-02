@@ -1,6 +1,6 @@
 
-#include <catch2/catch_test_macros.hpp>
 #include "Engine/Core/Path.h"
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("pathValidation")
 {
@@ -66,7 +66,7 @@ TEST_CASE("pathgetters")
     REQUIRE(basicPathPrefixes[0].getString() == "/abs");
     REQUIRE(relPathPrefixes[0].getString() == "rel");
 
-    //path parents
+    // path parents
     REQUIRE(basicPath.getParent().getString() == "/abs/path/to");
     REQUIRE(relPath.getParent().getString() == "rel");
 }
@@ -86,7 +86,7 @@ TEST_CASE("pathManipulation")
     // incrementing names
     Path mesh = "/geo/mesh";
     Path leaf = "mesh/leaf11";
-    
+
     REQUIRE(mesh.increment() == "/geo/mesh1");
     REQUIRE(leaf.increment() == "mesh/leaf12");
 

@@ -1,6 +1,6 @@
 
-#include <catch2/catch_test_macros.hpp>
 #include "Engine/Network/NetworkPath.h"
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("A network path accepts both node and parameter references")
 {
