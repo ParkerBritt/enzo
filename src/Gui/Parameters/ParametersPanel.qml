@@ -19,7 +19,7 @@ Rectangle {
     visible: parameters.hasNode
     clip: true
     radius: Theme.var.panelRadius
-    color: Qt.rgba(0.07, 0.07, 0.09, 0.93)
+    color: Theme.parameter.panelColor
     border.color: Theme.var.border
     border.width: 1
 

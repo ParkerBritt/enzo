@@ -1,6 +1,7 @@
 #include "Gui/Style/Theme.h"
 #include "Gui/Style/ThemeLoader.h"
 
+#include <QCoreApplication>
 #include <QStandardPaths>
 #include <QUrl>
 
@@ -14,8 +15,10 @@ QString defaultThemePath() { return QStringLiteral(ENZO_DEV_STATIC_DIR "/theme/d
 
 QString userThemePath()
 {
-    const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    return dir.isEmpty() ? QString() : dir + QStringLiteral("/theme.yml");
+    // TODO: extract config path
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+    if (dir.isEmpty()) return QString();
+    return dir + QChar(u'/') + QCoreApplication::applicationName() + QStringLiteral("/theme.yml");
 }
 
 QString iconsDir()

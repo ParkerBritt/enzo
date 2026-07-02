@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import QtQuick.Window
+import Enzo
 import "Spreadsheet"
 import "Network"
 import "Viewport"
@@ -19,7 +20,7 @@ ApplicationWindow {
     visible: true
     visibility: Window.Maximized
     title: "Enzo"
-    color: "#0a0a0d"
+    color: Theme.var.background
     property real marginSize: 15
 
     Shortcut {

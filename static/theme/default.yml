@@ -29,6 +29,7 @@ variables:
   accentBright: "#a78bfa"
   accentDim:    $accent @ 0.15
   accentLine:   $accent @ 0.45
+  parameter: "#7850ab"
 
   # Axes
   axisX:      "#f5685f"
@@ -47,6 +48,8 @@ components:
   network:
     dotColor: "#1e1e26"
   node:
+    bodyColor:        "#1f202a"
+    borderColor:      "#333341"
     portColor:        "#4a4a54"
     displayFlagColor: "#4ea1ff"
   nodeLink:
@@ -63,14 +66,17 @@ components:
       - "#f5685f"
       - "#b69bf2"
   parameter:
+    # The floating panel container, translucent over the network behind it.
+    panelColor:      $surface @ 0.93
+    # The inset fields inside it, such as sliders and text boxes.
     backgroundColor: $fieldSurface
     lineColor:       $fieldBorder
     borderRadius:    10
     panelHeight:     420
   slider:
-    fillColor: $accent
+    fillColor: $parameter
   toggle:
-    onColor: $accent
+    onColor: $parameter
   popup:
     highlightColor: $accentDim
   primitivesTree:
@@ -78,3 +84,11 @@ components:
   tabMenu:
     highlightColor:   $accentDim
     focusBorderColor: $accentLine
+  viewport:
+    # The radial background gradient, from its bright centre through the base
+    # colour out to the dark edge.
+    backgroundColor: "#101015"
+    gradientCenter:  "#191920"
+    gradientEdge:    "#0b0b0f"
+    # Flat shading colour of the display geometry.
+    geometryColor:   "#a8a8b8"
