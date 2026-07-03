@@ -23,7 +23,7 @@ Rectangle {
     property real viewZoom: 1
 
     // How near a canvas click must fall to a link to cut it.
-    property real linkCutRadius: 8
+    property real linkCutRadius: 20
 
     property real viewX: width / 2
     property real viewY: height / 2
@@ -135,6 +135,7 @@ Rectangle {
                 const link = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
                 if (link >= 0)
                     network.removeLink(link);
+                committedLinks.hoveredLink = -1;
                 return;
             }
 
@@ -152,6 +153,8 @@ Rectangle {
             }
         }
 
+        onExited: committedLinks.hoveredLink = -1
+
         onPositionChanged: mouse => {
             root.cursorX = mouse.x;
             root.cursorY = mouse.y;
@@ -164,6 +167,9 @@ Rectangle {
                     network.removeLink(link);
                 cutLast = canvasPoint;
             }
+
+            // While Ctrl is held, highlight the link the cursor would cut.
+            committedLinks.hoveredLink = (mouse.modifiers & Qt.ControlModifier) ? committedLinks.linkAt(canvasPoint, root.linkCutRadius) : -1;
 
             // A held drag pulls the link, a click placed link trails the cursor.
             if (draggingLink)
@@ -235,6 +241,7 @@ Rectangle {
             nodes: network.nodes
             links: network.edges
             linkColor: Theme.nodeLink.inactiveColor
+            cutColor: Theme.nodeLink.cutColor
         }
 
         Repeater {
