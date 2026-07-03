@@ -20,7 +20,7 @@ ApplicationWindow {
     visibility: Window.Maximized
     title: "Enzo"
     color: Theme.var.background
-    property real marginSize: 15
+    property real marginSize: 8
 
     Shortcut {
         sequence: StandardKey.Undo
