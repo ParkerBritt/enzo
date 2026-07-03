@@ -25,7 +25,10 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
     operatorRemovedSubscription_ =
         network.operatorRemoved.connect([this](nt::OpId opId) { nodes_.removeNode(opId); });
 
-    networkClearedSubscription_ = network.networkCleared.connect([this]() { nodes_.clear(); });
+    networkClearedSubscription_ = network.networkCleared.connect([this]() {
+        nodes_.clear();
+        edges_.clear();
+    });
 
     selectedNodesSubscription_ =
         network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
