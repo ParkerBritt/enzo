@@ -55,6 +55,9 @@ class NetworkViewModel : public QObject
     Q_INVOKABLE void
     connectNodes(qulonglong sourceOp, int sourceOutput, qulonglong targetOp, int targetInput);
 
+    /// @brief Removes the link at an index in the link model.
+    Q_INVOKABLE void removeLink(int linkIndex);
+
     /// @brief Sets the given node as the one whose geometry the viewport shows.
     Q_INVOKABLE void setDisplayNode(qulonglong opId);
 

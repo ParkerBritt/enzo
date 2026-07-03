@@ -22,6 +22,9 @@ Rectangle {
     // Default zoom scale.
     property real viewZoom: 1
 
+    // How near a canvas click must fall to a link to cut it.
+    property real linkCutRadius: 8
+
     property real viewX: width / 2
     property real viewY: height / 2
     property real mouseLastX: 0
@@ -88,14 +91,28 @@ Rectangle {
         // read as a click that would finish the link.
         property bool grabbedOnPress: false
 
+        // True while a Ctrl drag is cutting across links.
+        property bool cutting: false
+        // The last canvas point a cutting drag passed through.
+        property point cutLast
+
         onPressed: mouse => {
             root.mouseLastX = mouse.x;
             root.mouseLastY = mouse.y;
             grabbedOnPress = false;
+            cutting = false;
             if (mouse.button !== Qt.LeftButton)
                 return;
 
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
+
+            // Ctrl turns the left button into a link cutter.
+            if (mouse.modifiers & Qt.ControlModifier) {
+                cutting = true;
+                cutLast = canvasPoint;
+                return;
+            }
+
             const port = network.nodes.getGrabPort(canvasPoint);
             if (port.opId === undefined)
                 return;
@@ -111,6 +128,16 @@ Rectangle {
         onClicked: mouse => {
             if (mouse.button !== Qt.LeftButton || grabbedOnPress)
                 return;
+
+            // A Ctrl click cuts the link under the cursor.
+            if (mouse.modifiers & Qt.ControlModifier) {
+                const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
+                const link = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
+                if (link >= 0)
+                    network.removeLink(link);
+                return;
+            }
+
             if (linkController.linking)
                 linkController.finish();
             else
@@ -118,6 +145,7 @@ Rectangle {
         }
 
         onReleased: {
+            cutting = false;
             if (draggingLink) {
                 linkController.release();
                 draggingLink = false;
@@ -128,6 +156,14 @@ Rectangle {
             root.cursorX = mouse.x;
             root.cursorY = mouse.y;
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
+
+            // A Ctrl drag cuts every link its path sweeps across.
+            if (cutting) {
+                const link = committedLinks.linkCrossing(cutLast, canvasPoint);
+                if (link >= 0)
+                    network.removeLink(link);
+                cutLast = canvasPoint;
+            }
 
             // A held drag pulls the link, a click placed link trails the cursor.
             if (draggingLink)
@@ -195,6 +231,7 @@ Rectangle {
 
         // Committed links render under the nodes so a curve never paints over a card.
         NodeLinkLayer {
+            id: committedLinks
             nodes: network.nodes
             links: network.edges
             linkColor: Theme.nodeLink.inactiveColor

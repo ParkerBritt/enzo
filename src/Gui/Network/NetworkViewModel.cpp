@@ -191,6 +191,12 @@ void NetworkViewModel::connectNodes(
     nt::nm().connectNodes(sourceOp, sourceOutput, targetOp, targetInput);
 }
 
+void NetworkViewModel::removeLink(int linkIndex)
+{
+    // The engine emits connectionRemoved, which the edge model already listens for.
+    if (auto connection = edges_.connectionAt(linkIndex)) nt::nm().disconnectNodes(*connection);
+}
+
 void NetworkViewModel::setDisplayNode(qulonglong opId)
 {
     auto& network = nt::nm();

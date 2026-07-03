@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QVariant>
 #include <functional>
+#include <optional>
 #include <vector>
 
 namespace enzo::ui {
@@ -36,6 +37,9 @@ class EdgeListModel : public QAbstractListModel
 
     /// @brief Removes every row.
     void clear();
+
+    /// @brief Returns the connection at a row, or nothing when the row is out of range.
+    std::optional<nt::Connection> connectionAt(int row) const;
 
   private:
     /// One model role paired with the field it exposes from a connection.

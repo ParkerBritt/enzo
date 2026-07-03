@@ -40,23 +40,73 @@ QPointF cubicBezier(
     return a * start + b * control1 + c * control2 + d * end;
 }
 
-/// @brief Writes one link's bezier into the geometry as line pairs from @p vertex.
-void tessellateLink(QSGGeometry::Point2D* vertices, int& vertex, const NodeLinkLayer::Link& link)
+/// @brief Returns the points sampled along one link's bezier from output to input.
+std::vector<QPointF> samplePolyline(const NodeLinkLayer::Link& link)
 {
     // Pull the controls vertically so the curve leaves and enters straight.
     const qreal slack = std::max<qreal>(36, std::abs(link.input.y() - link.output.y()) * 0.5);
     const QPointF control1(link.output.x(), link.output.y() + slack);
     const QPointF control2(link.input.x(), link.input.y() - slack);
 
-    QPointF previous = link.output;
+    std::vector<QPointF> points;
+    points.reserve(kSegmentsPerLink + 1);
+    points.push_back(link.output);
     for (int segment = 1; segment <= kSegmentsPerLink; ++segment)
     {
         const qreal t = static_cast<qreal>(segment) / kSegmentsPerLink;
-        const QPointF current = cubicBezier(link.output, control1, control2, link.input, t);
-        vertices[vertex++].set(previous.x(), previous.y());
-        vertices[vertex++].set(current.x(), current.y());
-        previous = current;
+        points.push_back(cubicBezier(link.output, control1, control2, link.input, t));
     }
+    return points;
+}
+
+/// @brief Writes one link's bezier into the geometry as line pairs from @p vertex.
+void tessellateLink(QSGGeometry::Point2D* vertices, int& vertex, const NodeLinkLayer::Link& link)
+{
+    const std::vector<QPointF> points = samplePolyline(link);
+    for (std::size_t i = 1; i < points.size(); ++i)
+    {
+        vertices[vertex++].set(points[i - 1].x(), points[i - 1].y());
+        vertices[vertex++].set(points[i].x(), points[i].y());
+    }
+}
+
+/// @brief Returns the distance from a point to the nearest position on one segment.
+qreal distanceToSegment(
+    const QPointF& point,
+    const QPointF& segmentStart,
+    const QPointF& segmentEnd
+)
+{
+    const QPointF along = segmentEnd - segmentStart;
+    const qreal lengthSquared = along.x() * along.x() + along.y() * along.y();
+    qreal t = 0;
+    if (lengthSquared > 0)
+    {
+        const QPointF toPoint = point - segmentStart;
+        t = std::clamp(
+            (toPoint.x() * along.x() + toPoint.y() * along.y()) / lengthSquared,
+            0.0,
+            1.0
+        );
+    }
+    const QPointF offset = point - (segmentStart + t * along);
+    return std::hypot(offset.x(), offset.y());
+}
+
+/// @brief Returns which side of line @p a to @p b the point @p c lies on.
+qreal orientation(const QPointF& a, const QPointF& b, const QPointF& c)
+{
+    return (b.x() - a.x()) * (c.y() - a.y()) - (b.y() - a.y()) * (c.x() - a.x());
+}
+
+/// @brief Whether segment @p p1 to @p p2 crosses segment @p q1 to @p q2.
+bool segmentsIntersect(const QPointF& p1, const QPointF& p2, const QPointF& q1, const QPointF& q2)
+{
+    const qreal d1 = orientation(q1, q2, p1);
+    const qreal d2 = orientation(q1, q2, p2);
+    const qreal d3 = orientation(p1, p2, q1);
+    const qreal d4 = orientation(p1, p2, q2);
+    return ((d1 > 0) != (d2 > 0)) && ((d3 > 0) != (d4 > 0));
 }
 
 } // namespace
@@ -163,9 +213,40 @@ std::vector<NodeLinkLayer::Link> NodeLinkLayer::collectLinks() const
         const std::optional<QPointF> input = nodes_->getPortPosition(targetOp, targetInput, false);
         if (!output || !input) continue;
 
-        links.push_back(Link{*output, *input});
+        links.push_back(Link{*output, *input, row});
     }
     return links;
+}
+
+int NodeLinkLayer::linkAt(QPointF canvasPoint, qreal radius) const
+{
+    int nearestLink = -1;
+    qreal nearestDistance = radius;
+    for (const Link& link : collectLinks())
+    {
+        const std::vector<QPointF> points = samplePolyline(link);
+        for (std::size_t i = 1; i < points.size(); ++i)
+        {
+            const qreal distance = distanceToSegment(canvasPoint, points[i - 1], points[i]);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestLink = link.linkIndex;
+            }
+        }
+    }
+    return nearestLink;
+}
+
+int NodeLinkLayer::linkCrossing(QPointF from, QPointF to) const
+{
+    for (const Link& link : collectLinks())
+    {
+        const std::vector<QPointF> points = samplePolyline(link);
+        for (std::size_t i = 1; i < points.size(); ++i)
+            if (segmentsIntersect(from, to, points[i - 1], points[i])) return link.linkIndex;
+    }
+    return -1;
 }
 
 QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
