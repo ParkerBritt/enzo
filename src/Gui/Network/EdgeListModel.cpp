@@ -84,6 +84,12 @@ void EdgeListModel::clear()
     endResetModel();
 }
 
+std::optional<nt::Connection> EdgeListModel::connectionAt(int index) const
+{
+    if (index < 0 || index >= static_cast<int>(edges_.size())) return std::nullopt;
+    return edges_[index];
+}
+
 int EdgeListModel::rowOf(const nt::Connection& connection) const
 {
     for (int row = 0; row < static_cast<int>(edges_.size()); ++row)

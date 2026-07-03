@@ -35,14 +35,24 @@ class NodeLinkLayer : public QQuickItem
     )
 
   public:
-    /// One node link as the two port points its curve spans.
+    /// One node link as the two port points its curve spans and its index in the link model.
     struct Link
     {
         QPointF output;
         QPointF input;
+        int linkIndex = -1;
     };
 
     explicit NodeLinkLayer(QQuickItem* parent = nullptr);
+
+    /// @brief Returns the index of the link whose curve passes within @p radius of a point, or -1.
+    Q_INVOKABLE int linkAt(QPointF canvasPoint, qreal radius) const;
+
+    /// @brief Returns the index of the link whose curve a drag between two points crosses, or -1.
+    ///
+    /// Guards against a fast drag skipping between frames so a flick across a link
+    /// still catches it.
+    Q_INVOKABLE int linkCrossing(QPointF from, QPointF to) const;
 
     NodeListModel* nodes() const;
     void setNodes(NodeListModel* model);
