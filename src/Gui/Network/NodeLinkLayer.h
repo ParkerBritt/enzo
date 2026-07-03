@@ -23,6 +23,10 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(QAbstractListModel* links READ links WRITE setLinks NOTIFY linksChanged)
     Q_PROPERTY(QColor linkColor MEMBER linkColor_ NOTIFY linkColorChanged)
 
+    // The link to draw highlighted as the cut target, -1 when none is hovered.
+    Q_PROPERTY(int hoveredLink READ hoveredLink WRITE setHoveredLink NOTIFY hoveredLinkChanged)
+    Q_PROPERTY(QColor cutColor MEMBER cutColor_ NOTIFY cutColorChanged)
+
     // The in-progress link dragged from a fixed port to the cursor.
     Q_PROPERTY(
         bool floatingActive READ floatingActive WRITE setFloatingActive NOTIFY floatingChanged
@@ -60,6 +64,9 @@ class NodeLinkLayer : public QQuickItem
     QAbstractListModel* links() const;
     void setLinks(QAbstractListModel* model);
 
+    int hoveredLink() const;
+    void setHoveredLink(int linkIndex);
+
     bool floatingActive() const;
     void setFloatingActive(bool active);
 
@@ -73,6 +80,8 @@ class NodeLinkLayer : public QQuickItem
     void nodesChanged();
     void linksChanged();
     void linkColorChanged();
+    void hoveredLinkChanged();
+    void cutColorChanged();
     void floatingChanged();
 
   protected:
@@ -87,7 +96,9 @@ class NodeLinkLayer : public QQuickItem
 
     NodeListModel* nodes_ = nullptr;
     QAbstractListModel* links_ = nullptr;
-    QColor linkColor_{"#3a3a46"};
+    QColor linkColor_;
+    QColor cutColor_;
+    int hoveredLink_ = -1;
     bool floatingActive_ = false;
     QPointF floatingOutput_;
     QPointF floatingInput_;

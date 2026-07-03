@@ -55,6 +55,7 @@ components:
   nodeLink:
     inactiveColor: "#3a3a46"
     activeColor:   $accent
+    cutColor:      "#f5685f"
   spreadsheet:
     backgroundColor: $fieldSurface
     lineColor:       $fieldBorder

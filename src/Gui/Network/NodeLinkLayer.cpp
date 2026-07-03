@@ -15,6 +15,10 @@ constexpr int kSegmentsPerLink = 24;
 // Two vertices per segment since the geometry draws disconnected line pairs.
 constexpr int kVerticesPerLink = kSegmentsPerLink * 2;
 
+// Stroke widths for a normal link and for the one hovered as a cut target.
+constexpr float kLinkWidth = 2;
+constexpr float kCutWidth = 4;
+
 /// @brief Returns the role number a model exposes under @p name, or -1 when absent.
 int findRole(const QHash<int, QByteArray>& roles, const QByteArray& name)
 {
@@ -109,6 +113,46 @@ bool segmentsIntersect(const QPointF& p1, const QPointF& p2, const QPointF& q1, 
     return ((d1 > 0) != (d2 > 0)) && ((d3 > 0) != (d4 > 0));
 }
 
+/// @brief Writes a link's bezier, color, and width into an existing geometry node.
+void updateLinkNode(
+    QSGGeometryNode* node,
+    const NodeLinkLayer::Link& link,
+    const QColor& color,
+    float width
+)
+{
+    QSGGeometry* geometry = node->geometry();
+    geometry->setLineWidth(width);
+    QSGGeometry::Point2D* vertices = geometry->vertexDataAsPoint2D();
+    int vertex = 0;
+    tessellateLink(vertices, vertex, link);
+    geometry->markVertexDataDirty();
+    node->markDirty(QSGNode::DirtyGeometry);
+
+    auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
+    if (material->color() != color)
+    {
+        material->setColor(color);
+        node->markDirty(QSGNode::DirtyMaterial);
+    }
+}
+
+/// @brief Returns a geometry node drawing one link's bezier in a color and width.
+QSGGeometryNode* buildLinkNode(const NodeLinkLayer::Link& link, const QColor& color, float width)
+{
+    auto* geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), kVerticesPerLink);
+    geometry->setDrawingMode(QSGGeometry::DrawLines);
+
+    auto* node = new QSGGeometryNode;
+    node->setGeometry(geometry);
+    node->setFlag(QSGNode::OwnsGeometry);
+    node->setMaterial(new QSGFlatColorMaterial);
+    node->setFlag(QSGNode::OwnsMaterial);
+
+    updateLinkNode(node, link, color, width);
+    return node;
+}
+
 } // namespace
 
 NodeLinkLayer::NodeLinkLayer(QQuickItem* parent) : QQuickItem(parent)
@@ -142,6 +186,16 @@ void NodeLinkLayer::setLinks(QAbstractListModel* model)
 
     update();
     Q_EMIT linksChanged();
+}
+
+int NodeLinkLayer::hoveredLink() const { return hoveredLink_; }
+
+void NodeLinkLayer::setHoveredLink(int linkIndex)
+{
+    if (hoveredLink_ == linkIndex) return;
+    hoveredLink_ = linkIndex;
+    Q_EMIT hoveredLinkChanged();
+    update();
 }
 
 bool NodeLinkLayer::floatingActive() const { return floatingActive_; }
@@ -256,54 +310,37 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     // The dragged link is drawn alongside the committed ones while a port drag runs.
     if (floatingActive_) links.push_back(Link{floatingOutput_, floatingInput_});
 
-    const int vertexCount = static_cast<int>(links.size()) * kVerticesPerLink;
+    auto* root = oldNode ? oldNode : new QSGNode;
 
-    // With nothing to draw, drop the node entirely. An empty geometry node gets
-    // culled and never revived, so a layer that starts empty would never show links.
-    if (vertexCount == 0)
+    // Give every link its own node, reusing the ones from the last paint in order.
+    QSGNode* child = root->firstChild();
+    for (const Link& link : links)
     {
-        delete oldNode;
-        return nullptr;
-    }
+        const bool hovered = hoveredLink_ >= 0 && link.linkIndex == hoveredLink_;
+        const QColor& color = hovered ? cutColor_ : linkColor_;
+        const float width = hovered ? kCutWidth : kLinkWidth;
 
-    // Build the single geometry node on first paint, reuse it after.
-    auto* node = static_cast<QSGGeometryNode*>(oldNode);
-    if (!node)
-    {
-        auto* geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount);
-        geometry->setDrawingMode(QSGGeometry::DrawLines);
-        geometry->setLineWidth(2);
-
-        auto* material = new QSGFlatColorMaterial;
-        material->setColor(linkColor_);
-
-        node = new QSGGeometryNode;
-        node->setGeometry(geometry);
-        node->setFlag(QSGNode::OwnsGeometry);
-        node->setMaterial(material);
-        node->setFlag(QSGNode::OwnsMaterial);
-    }
-    else
-    {
-        node->geometry()->allocate(vertexCount);
-
-        auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
-        if (material->color() != linkColor_)
+        if (child)
         {
-            material->setColor(linkColor_);
-            node->markDirty(QSGNode::DirtyMaterial);
+            updateLinkNode(static_cast<QSGGeometryNode*>(child), link, color, width);
+            child = child->nextSibling();
+        }
+        else
+        {
+            root->appendChildNode(buildLinkNode(link, color, width));
         }
     }
 
-    // Lay every link's bezier into the geometry back to back.
-    QSGGeometry::Point2D* vertices = node->geometry()->vertexDataAsPoint2D();
-    int vertex = 0;
-    for (const Link& link : links)
-        tessellateLink(vertices, vertex, link);
+    // Drop the nodes left over when the link count shrinks.
+    while (child)
+    {
+        QSGNode* next = child->nextSibling();
+        root->removeChildNode(child);
+        delete child;
+        child = next;
+    }
 
-    node->geometry()->markVertexDataDirty();
-    node->markDirty(QSGNode::DirtyGeometry);
-    return node;
+    return root;
 }
 
 } // namespace enzo::ui
