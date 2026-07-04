@@ -92,6 +92,12 @@ Rectangle {
         acceptedButtons: Qt.MiddleButton | Qt.LeftButton
         hoverEnabled: true
 
+        // True while the cursor rests on a link a press would pick up.
+        property bool overRedirect: false
+        cursorShape: draggingLink ? Qt.ClosedHandCursor
+                     : overRedirect ? Qt.PointingHandCursor
+                     : Qt.ArrowCursor
+
         // True while a left drag is pulling a link out of a grabbed port.
         property bool draggingLink: false
 
@@ -164,7 +170,7 @@ Rectangle {
             if (mouse.modifiers & Qt.ControlModifier) {
                 const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
                 root.cutLink(committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex, canvasPoint);
-                committedLinks.hoveredLink = -1;
+                committedLinks.setHover(-1, NodeLinkLayer.None);
                 return;
             }
 
@@ -182,7 +188,10 @@ Rectangle {
             }
         }
 
-        onExited: committedLinks.hoveredLink = -1
+        onExited: {
+            committedLinks.setHover(-1, NodeLinkLayer.None);
+            overRedirect = false;
+        }
 
         onPositionChanged: mouse => {
             root.cursorX = mouse.x;
@@ -195,8 +204,17 @@ Rectangle {
                 cutLast = canvasPoint;
             }
 
-            // While Ctrl is held, highlight the link the cursor would cut.
-            committedLinks.hoveredLink = (mouse.modifiers & Qt.ControlModifier) ? committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex : -1;
+            // The hover preview mirrors what a press at this point would do.
+            overRedirect = false;
+            if (mouse.modifiers & Qt.ControlModifier) {
+                committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex, NodeLinkLayer.Cut);
+            } else if (draggingLink || linkController.linking || network.nodes.isOverNodeBody(canvasPoint) || network.nodes.getGrabPort(canvasPoint).opId !== undefined) {
+                committedLinks.setHover(-1, NodeLinkLayer.None);
+            } else {
+                const hit = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
+                committedLinks.setHover(hit.linkIndex, NodeLinkLayer.Redirect, hit.atOutputEnd === true);
+                overRedirect = hit.linkIndex >= 0;
+            }
 
             // A held drag pulls the link, a click placed link trails the cursor.
             if (draggingLink)
@@ -269,6 +287,7 @@ Rectangle {
             links: network.edges
             linkColor: Theme.nodeLink.inactiveColor
             cutColor: Theme.nodeLink.cutColor
+            redirectColor: Theme.nodeLink.redirectColor
         }
 
         Repeater {
@@ -325,7 +344,7 @@ Rectangle {
             floatingActive: linkController.linking
             floatingOutput: linkController.outputPoint
             floatingInput: linkController.inputPoint
-            linkColor: Theme.var.accent
+            linkColor: Theme.nodeLink.activeColor
         }
     }
 }
