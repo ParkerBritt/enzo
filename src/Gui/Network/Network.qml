@@ -22,8 +22,8 @@ Rectangle {
     // Default zoom scale.
     property real viewZoom: 1
 
-    // How near a canvas click must fall to a link to cut it.
-    property real linkCutRadius: 20
+    // How near the cursor must fall to a link to cut, pick up, or hover it.
+    property real linkHitRadius: 20
 
     property real viewX: width / 2
     property real viewY: height / 2
@@ -143,7 +143,7 @@ Rectangle {
         // Detaches the pressed end of the link under the cursor and hands it to
         // the link controller so the drag can rewire it onto another port.
         function pickUpLink(canvasPoint) {
-            const hit = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
+            const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
             if (hit.linkIndex < 0)
                 return;
 
@@ -169,7 +169,7 @@ Rectangle {
             // A Ctrl click cuts the link under the cursor.
             if (mouse.modifiers & Qt.ControlModifier) {
                 const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
-                root.cutLink(committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex, canvasPoint);
+                root.cutLink(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, canvasPoint);
                 committedLinks.setHover(-1, NodeLinkLayer.None);
                 return;
             }
@@ -207,11 +207,11 @@ Rectangle {
             // The hover preview mirrors what a press at this point would do.
             overRedirect = false;
             if (mouse.modifiers & Qt.ControlModifier) {
-                committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex, NodeLinkLayer.Cut);
+                committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, NodeLinkLayer.Cut);
             } else if (draggingLink || linkController.linking || network.nodes.isOverNodeBody(canvasPoint) || network.nodes.getGrabPort(canvasPoint).opId !== undefined) {
                 committedLinks.setHover(-1, NodeLinkLayer.None);
             } else {
-                const hit = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
+                const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
                 committedLinks.setHover(hit.linkIndex, NodeLinkLayer.Redirect, hit.atOutputEnd === true);
                 overRedirect = hit.linkIndex >= 0;
             }
