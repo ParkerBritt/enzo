@@ -13,12 +13,10 @@ namespace {
 // How many straight segments approximate each bezier link.
 constexpr int kSegmentsPerLink = 24;
 
-// Two vertices per segment since the geometry draws disconnected line pairs.
-constexpr int kVerticesPerLink = kSegmentsPerLink * 2;
-
-// Stroke widths for a normal link and for the one hovered as a cut target.
-constexpr float kLinkWidth = 2;
-constexpr float kCutWidth = 4;
+// Stroke widths for a normal link, a hovered cut target, and a rewire pickup preview.
+constexpr float kLinkWidth = 1;
+constexpr float kCutWidth = 1;
+constexpr float kRedirectWidth = 2;
 
 // How long a cut link takes to dissolve, and how soft the dissolving edge is.
 constexpr qreal kFadeMs = 150;
@@ -107,21 +105,19 @@ bool segmentsIntersect(const QPointF& p1, const QPointF& p2, const QPointF& q1, 
     return ((d1 > 0) != (d2 > 0)) && ((d3 > 0) != (d4 > 0));
 }
 
-/// @brief Writes a link's bezier, color, and width into an existing geometry node.
+/// @brief Writes a polyline stroke with a color and width into an existing geometry node.
 ///
 /// @note A fading link passes its cut point and a progress in [0, 1] so the vertex
-/// alpha dissolves outward from the cut. A negative progress draws fully opaque.
+/// alpha dissolves outward from the cut. A negative progress skips the dissolve.
 void updateLinkNode(
     QSGGeometryNode* node,
-    const NodeLinkLayer::Link& link,
+    const std::vector<QPointF>& points,
     const QColor& color,
     float width,
     const QPointF& cutPoint,
     qreal progress
 )
 {
-    const std::vector<QPointF> points = samplePolyline(link);
-
     // Distance of each sampled point from the cut, with the far end normalized to one.
     std::vector<qreal> distances(points.size(), 0);
     qreal maxDistance = 1;
@@ -133,42 +129,51 @@ void updateLinkNode(
             maxDistance = std::max(maxDistance, distances[i]);
         }
 
+    // The stroke is a triangle strip extruding each point sideways along its normal,
+    // since the scene graph backends ignore line widths other than one.
     QSGGeometry* geometry = node->geometry();
-    geometry->setLineWidth(width);
+    geometry->allocate(static_cast<int>(points.size()) * 2);
     QSGGeometry::ColoredPoint2D* vertices = geometry->vertexDataAsColoredPoint2D();
     int vertex = 0;
-    auto writeVertex = [&](std::size_t point) {
+    const qreal halfWidth = width / 2;
+    for (std::size_t i = 0; i < points.size(); ++i)
+    {
+        // The normal at a point is perpendicular to the chord between its neighbors.
+        const QPointF ahead = points[std::min(i + 1, points.size() - 1)];
+        const QPointF behind = points[i > 0 ? i - 1 : 0];
+        const QPointF chord = ahead - behind;
+        const qreal chordLength = std::hypot(chord.x(), chord.y());
+        const QPointF normal = chordLength > 0
+                                   ? QPointF(-chord.y() / chordLength, chord.x() / chordLength)
+                                   : QPointF(1, 0);
+
         // Points nearest the cut clear first, the dissolve reaching the ends as progress grows.
-        const qreal alpha =
+        const qreal fade =
             progress < 0
                 ? 1.0
-                : std::clamp((distances[point] / maxDistance - progress) / kFadeSoftness, 0.0, 1.0);
+                : std::clamp((distances[i] / maxDistance - progress) / kFadeSoftness, 0.0, 1.0);
+        const qreal alpha = color.alphaF() * fade;
         // The vertex color material expects color premultiplied by alpha.
         const auto premultiply = [&](int channel) { return static_cast<uchar>(channel * alpha); };
-        vertices[vertex++].set(
-            points[point].x(),
-            points[point].y(),
-            premultiply(color.red()),
-            premultiply(color.green()),
-            premultiply(color.blue()),
-            static_cast<uchar>(alpha * 255)
-        );
-    };
-    for (std::size_t i = 1; i < points.size(); ++i)
-    {
-        writeVertex(i - 1);
-        writeVertex(i);
+        for (const qreal side : {-halfWidth, halfWidth})
+            vertices[vertex++].set(
+                points[i].x() + normal.x() * side,
+                points[i].y() + normal.y() * side,
+                premultiply(color.red()),
+                premultiply(color.green()),
+                premultiply(color.blue()),
+                static_cast<uchar>(alpha * 255)
+            );
     }
     geometry->markVertexDataDirty();
     node->markDirty(QSGNode::DirtyGeometry);
 }
 
-/// @brief Returns an empty geometry node sized and wired to draw one link.
+/// @brief Returns an empty geometry node wired to draw one polyline stroke.
 QSGGeometryNode* buildLinkNode()
 {
-    auto* geometry =
-        new QSGGeometry(QSGGeometry::defaultAttributes_ColoredPoint2D(), kVerticesPerLink);
-    geometry->setDrawingMode(QSGGeometry::DrawLines);
+    auto* geometry = new QSGGeometry(QSGGeometry::defaultAttributes_ColoredPoint2D(), 0);
+    geometry->setDrawingMode(QSGGeometry::DrawTriangleStrip);
 
     auto* node = new QSGGeometryNode;
     node->setGeometry(geometry);
@@ -223,13 +228,13 @@ void NodeLinkLayer::setLinks(QAbstractListModel* model)
     Q_EMIT linksChanged();
 }
 
-int NodeLinkLayer::hoveredLink() const { return hoveredLink_; }
-
-void NodeLinkLayer::setHoveredLink(int linkIndex)
+void NodeLinkLayer::setHover(int linkIndex, LinkHover kind, bool atOutputEnd)
 {
-    if (hoveredLink_ == linkIndex) return;
-    hoveredLink_ = linkIndex;
-    Q_EMIT hoveredLinkChanged();
+    if (linkIndex < 0) kind = LinkHover::None;
+    if (hoverLink_ == linkIndex && hoverKind_ == kind && hoverAtOutputEnd_ == atOutputEnd) return;
+    hoverLink_ = linkIndex;
+    hoverKind_ = kind;
+    hoverAtOutputEnd_ = atOutputEnd;
     update();
 }
 
@@ -388,15 +393,33 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 
     for (const Link& link : links)
     {
-        const bool hovered = hoveredLink_ >= 0 && link.linkIndex == hoveredLink_;
-        const QColor& color = hovered ? cutColor_ : linkColor_;
-        const float width = hovered ? kCutWidth : kLinkWidth;
-        updateLinkNode(claimNode(), link, color, width, QPointF(), -1);
+        const bool cutHovered = hoverKind_ == LinkHover::Cut && link.linkIndex == hoverLink_;
+        const QColor& color = cutHovered ? cutColor_ : linkColor_;
+        const float width = cutHovered ? kCutWidth : kLinkWidth;
+        updateLinkNode(claimNode(), samplePolyline(link), color, width, QPointF(), -1);
+
+        // The half a press would pick up draws tinted over the hovered link.
+        if (hoverKind_ == LinkHover::Redirect && link.linkIndex == hoverLink_)
+        {
+            const std::vector<QPointF> points = samplePolyline(link);
+            const auto middle = points.begin() + points.size() / 2;
+            const std::vector<QPointF> half = hoverAtOutputEnd_
+                                                  ? std::vector<QPointF>(points.begin(), middle + 1)
+                                                  : std::vector<QPointF>(middle, points.end());
+            updateLinkNode(claimNode(), half, redirectColor_, kRedirectWidth, QPointF(), -1);
+        }
     }
 
     // Dissolving cut links come last so they draw on top of the live ones.
     for (const FadingLink& fade : fadingLinks_)
-        updateLinkNode(claimNode(), fade.link, cutColor_, kLinkWidth, fade.cutPoint, fade.progress);
+        updateLinkNode(
+            claimNode(),
+            samplePolyline(fade.link),
+            cutColor_,
+            kLinkWidth,
+            fade.cutPoint,
+            fade.progress
+        );
 
     // Drop the nodes left over when the drawn count shrinks.
     while (child)

@@ -25,9 +25,9 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(QAbstractListModel* links READ links WRITE setLinks NOTIFY linksChanged)
     Q_PROPERTY(QColor linkColor MEMBER linkColor_ NOTIFY linkColorChanged)
 
-    // The link to draw highlighted as the cut target, -1 when none is hovered.
-    Q_PROPERTY(int hoveredLink READ hoveredLink WRITE setHoveredLink NOTIFY hoveredLinkChanged)
+    // Colors for the cut and rewire pickup hover previews.
     Q_PROPERTY(QColor cutColor MEMBER cutColor_ NOTIFY cutColorChanged)
+    Q_PROPERTY(QColor redirectColor MEMBER redirectColor_ NOTIFY redirectColorChanged)
 
     // The in-progress link dragged from a fixed port to the cursor.
     Q_PROPERTY(
@@ -41,6 +41,15 @@ class NodeLinkLayer : public QQuickItem
     )
 
   public:
+    /// What hovering the link under the cursor previews.
+    enum class LinkHover
+    {
+        None,
+        Cut,
+        Redirect
+    };
+    Q_ENUM(LinkHover)
+
     /// One node link as the two port points its curve spans and its index in the link model.
     struct Link
     {
@@ -65,14 +74,15 @@ class NodeLinkLayer : public QQuickItem
     /// @brief Starts a fade of the link at an index, dissolving outward from a cut point.
     Q_INVOKABLE void fadeLink(int linkIndex, QPointF cutPoint);
 
+    /// @brief Sets which link the cursor hovers and what the hover previews.
+    /// @note A redirect hover names the end a press would pick up via @p atOutputEnd.
+    Q_INVOKABLE void setHover(int linkIndex, LinkHover kind, bool atOutputEnd = false);
+
     NodeListModel* nodes() const;
     void setNodes(NodeListModel* model);
 
     QAbstractListModel* links() const;
     void setLinks(QAbstractListModel* model);
-
-    int hoveredLink() const;
-    void setHoveredLink(int linkIndex);
 
     bool floatingActive() const;
     void setFloatingActive(bool active);
@@ -87,8 +97,8 @@ class NodeLinkLayer : public QQuickItem
     void nodesChanged();
     void linksChanged();
     void linkColorChanged();
-    void hoveredLinkChanged();
     void cutColorChanged();
+    void redirectColorChanged();
     void floatingChanged();
 
   protected:
@@ -113,7 +123,10 @@ class NodeLinkLayer : public QQuickItem
     QAbstractListModel* links_ = nullptr;
     QColor linkColor_;
     QColor cutColor_;
-    int hoveredLink_ = -1;
+    QColor redirectColor_;
+    int hoverLink_ = -1;
+    LinkHover hoverKind_ = LinkHover::None;
+    bool hoverAtOutputEnd_ = false;
     bool floatingActive_ = false;
     QPointF floatingOutput_;
     QPointF floatingInput_;
