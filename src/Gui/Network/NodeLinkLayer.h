@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QPointF>
 #include <QQuickItem>
+#include <QTimer>
+#include <QVariantMap>
 #include <vector>
 
 namespace enzo::ui {
@@ -49,14 +51,19 @@ class NodeLinkLayer : public QQuickItem
 
     explicit NodeLinkLayer(QQuickItem* parent = nullptr);
 
-    /// @brief Returns the index of the link whose curve passes within @p radius of a point, or -1.
-    Q_INVOKABLE int linkAt(QPointF canvasPoint, qreal radius) const;
+    /// @brief Returns the link whose curve passes within @p radius of a point.
+    /// @return A {linkIndex, atOutputEnd, anchorX, anchorY} map, with a linkIndex
+    /// of -1 when no link is within reach.
+    Q_INVOKABLE QVariantMap linkAt(QPointF canvasPoint, qreal radius) const;
 
     /// @brief Returns the index of the link whose curve a drag between two points crosses, or -1.
     ///
     /// Guards against a fast drag skipping between frames so a flick across a link
     /// still catches it.
     Q_INVOKABLE int linkCrossing(QPointF from, QPointF to) const;
+
+    /// @brief Starts a fade of the link at an index, dissolving outward from a cut point.
+    Q_INVOKABLE void fadeLink(int linkIndex, QPointF cutPoint);
 
     NodeListModel* nodes() const;
     void setNodes(NodeListModel* model);
@@ -94,6 +101,14 @@ class NodeLinkLayer : public QQuickItem
     /// @brief Resolves each link row into the two port points its curve spans.
     std::vector<Link> collectLinks() const;
 
+    /// A cut link kept briefly to animate its dissolve from the point it was cut.
+    struct FadingLink
+    {
+        Link link;
+        QPointF cutPoint;
+        qreal progress = 0;
+    };
+
     NodeListModel* nodes_ = nullptr;
     QAbstractListModel* links_ = nullptr;
     QColor linkColor_;
@@ -102,6 +117,9 @@ class NodeLinkLayer : public QQuickItem
     bool floatingActive_ = false;
     QPointF floatingOutput_;
     QPointF floatingInput_;
+
+    std::vector<FadingLink> fadingLinks_;
+    QTimer fadeTimer_;
 };
 
 } // namespace enzo::ui

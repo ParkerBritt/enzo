@@ -58,6 +58,14 @@ Rectangle {
         return port.opId === undefined ? null : port;
     }
 
+    // Removes a link, dissolving it outward from the cut point.
+    function cutLink(linkIndex, canvasPoint) {
+        if (linkIndex < 0)
+            return;
+        committedLinks.fadeLink(linkIndex, canvasPoint);
+        network.removeLink(linkIndex);
+    }
+
     // Holds the state of the link being dragged between ports.
     NodeLinkController {
         id: linkController
@@ -114,12 +122,35 @@ Rectangle {
             }
 
             const port = network.nodes.getGrabPort(canvasPoint);
-            if (port.opId === undefined)
+            if (port.opId !== undefined) {
+                linkController.grab(port.opId, port.slot, port.isOutput, Qt.point(port.x, port.y));
+                grabbedOnPress = true;
+                draggingLink = linkController.linking;
+                return;
+            }
+
+            // Away from every port, a press on a link picks it up by its nearer end.
+            if (!linkController.linking)
+                pickUpLink(canvasPoint);
+        }
+
+        // Detaches the pressed end of the link under the cursor and hands it to
+        // the link controller so the drag can rewire it onto another port.
+        function pickUpLink(canvasPoint) {
+            const hit = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
+            if (hit.linkIndex < 0)
                 return;
 
-            linkController.grab(port.opId, port.slot, port.isOutput, Qt.point(port.x, port.y));
+            const ends = network.getLinkEndpoints(hit.linkIndex);
+            network.removeLink(hit.linkIndex);
+            const anchor = Qt.point(hit.anchorX, hit.anchorY);
+            if (hit.atOutputEnd)
+                linkController.grab(ends.targetOp, ends.targetInput, false, anchor);
+            else
+                linkController.grab(ends.sourceOp, ends.sourceOutput, true, anchor);
+            linkController.drag(canvasPoint);
             grabbedOnPress = true;
-            draggingLink = linkController.linking;
+            draggingLink = true;
         }
 
         // A left click commits a snapped link, drops an unsnapped one, or clears
@@ -132,9 +163,7 @@ Rectangle {
             // A Ctrl click cuts the link under the cursor.
             if (mouse.modifiers & Qt.ControlModifier) {
                 const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
-                const link = committedLinks.linkAt(canvasPoint, root.linkCutRadius);
-                if (link >= 0)
-                    network.removeLink(link);
+                root.cutLink(committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex, canvasPoint);
                 committedLinks.hoveredLink = -1;
                 return;
             }
@@ -162,14 +191,12 @@ Rectangle {
 
             // A Ctrl drag cuts every link its path sweeps across.
             if (cutting) {
-                const link = committedLinks.linkCrossing(cutLast, canvasPoint);
-                if (link >= 0)
-                    network.removeLink(link);
+                root.cutLink(committedLinks.linkCrossing(cutLast, canvasPoint), canvasPoint);
                 cutLast = canvasPoint;
             }
 
             // While Ctrl is held, highlight the link the cursor would cut.
-            committedLinks.hoveredLink = (mouse.modifiers & Qt.ControlModifier) ? committedLinks.linkAt(canvasPoint, root.linkCutRadius) : -1;
+            committedLinks.hoveredLink = (mouse.modifiers & Qt.ControlModifier) ? committedLinks.linkAt(canvasPoint, root.linkCutRadius).linkIndex : -1;
 
             // A held drag pulls the link, a click placed link trails the cursor.
             if (draggingLink)

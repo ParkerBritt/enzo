@@ -197,6 +197,18 @@ void NetworkViewModel::removeLink(int linkIndex)
     if (auto connection = edges_.connectionAt(linkIndex)) nt::nm().disconnectNodes(*connection);
 }
 
+QVariantMap NetworkViewModel::getLinkEndpoints(int linkIndex) const
+{
+    const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
+    if (!connection) return {};
+    return {
+        {"sourceOp", static_cast<qulonglong>(connection->sourceOp)},
+        {"sourceOutput", static_cast<int>(connection->sourceOutput)},
+        {"targetOp", static_cast<qulonglong>(connection->targetOp)},
+        {"targetInput", static_cast<int>(connection->targetInput)},
+    };
+}
+
 void NetworkViewModel::setDisplayNode(qulonglong opId)
 {
     auto& network = nt::nm();
