@@ -4,6 +4,7 @@
 #include "Gui/Network/NodeListModel.h"
 #include <QObject>
 #include <QVariantList>
+#include <QVariantMap>
 #include <boost/signals2/connection.hpp>
 
 namespace enzo::ui {
@@ -57,6 +58,11 @@ class NetworkViewModel : public QObject
 
     /// @brief Removes the link at an index in the link model.
     Q_INVOKABLE void removeLink(int linkIndex);
+
+    /// @brief Returns the ports the link at an index connects.
+    /// @return A {sourceOp, sourceOutput, targetOp, targetInput} map, empty when
+    /// the index is out of range.
+    Q_INVOKABLE QVariantMap getLinkEndpoints(int linkIndex) const;
 
     /// @brief Sets the given node as the one whose geometry the viewport shows.
     Q_INVOKABLE void setDisplayNode(qulonglong opId);

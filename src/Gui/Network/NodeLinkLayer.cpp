@@ -1,9 +1,10 @@
 #include "Gui/Network/NodeLinkLayer.h"
 
 #include <QHash>
-#include <QSGFlatColorMaterial>
 #include <QSGGeometry>
 #include <QSGGeometryNode>
+#include <QSGVertexColorMaterial>
+#include <algorithm>
 
 namespace enzo::ui {
 
@@ -18,6 +19,10 @@ constexpr int kVerticesPerLink = kSegmentsPerLink * 2;
 // Stroke widths for a normal link and for the one hovered as a cut target.
 constexpr float kLinkWidth = 2;
 constexpr float kCutWidth = 4;
+
+// How long a cut link takes to dissolve, and how soft the dissolving edge is.
+constexpr qreal kFadeMs = 150;
+constexpr qreal kFadeSoftness = 0.2;
 
 /// @brief Returns the role number a model exposes under @p name, or -1 when absent.
 int findRole(const QHash<int, QByteArray>& roles, const QByteArray& name)
@@ -63,17 +68,6 @@ std::vector<QPointF> samplePolyline(const NodeLinkLayer::Link& link)
     return points;
 }
 
-/// @brief Writes one link's bezier into the geometry as line pairs from @p vertex.
-void tessellateLink(QSGGeometry::Point2D* vertices, int& vertex, const NodeLinkLayer::Link& link)
-{
-    const std::vector<QPointF> points = samplePolyline(link);
-    for (std::size_t i = 1; i < points.size(); ++i)
-    {
-        vertices[vertex++].set(points[i - 1].x(), points[i - 1].y());
-        vertices[vertex++].set(points[i].x(), points[i].y());
-    }
-}
-
 /// @brief Returns the distance from a point to the nearest position on one segment.
 qreal distanceToSegment(
     const QPointF& point,
@@ -114,42 +108,73 @@ bool segmentsIntersect(const QPointF& p1, const QPointF& p2, const QPointF& q1, 
 }
 
 /// @brief Writes a link's bezier, color, and width into an existing geometry node.
+///
+/// @note A fading link passes its cut point and a progress in [0, 1] so the vertex
+/// alpha dissolves outward from the cut. A negative progress draws fully opaque.
 void updateLinkNode(
     QSGGeometryNode* node,
     const NodeLinkLayer::Link& link,
     const QColor& color,
-    float width
+    float width,
+    const QPointF& cutPoint,
+    qreal progress
 )
 {
+    const std::vector<QPointF> points = samplePolyline(link);
+
+    // Distance of each sampled point from the cut, with the far end normalized to one.
+    std::vector<qreal> distances(points.size(), 0);
+    qreal maxDistance = 1;
+    if (progress >= 0)
+        for (std::size_t i = 0; i < points.size(); ++i)
+        {
+            const QPointF offset = points[i] - cutPoint;
+            distances[i] = std::hypot(offset.x(), offset.y());
+            maxDistance = std::max(maxDistance, distances[i]);
+        }
+
     QSGGeometry* geometry = node->geometry();
     geometry->setLineWidth(width);
-    QSGGeometry::Point2D* vertices = geometry->vertexDataAsPoint2D();
+    QSGGeometry::ColoredPoint2D* vertices = geometry->vertexDataAsColoredPoint2D();
     int vertex = 0;
-    tessellateLink(vertices, vertex, link);
+    auto writeVertex = [&](std::size_t point) {
+        // Points nearest the cut clear first, the dissolve reaching the ends as progress grows.
+        const qreal alpha =
+            progress < 0
+                ? 1.0
+                : std::clamp((distances[point] / maxDistance - progress) / kFadeSoftness, 0.0, 1.0);
+        // The vertex color material expects color premultiplied by alpha.
+        const auto premultiply = [&](int channel) { return static_cast<uchar>(channel * alpha); };
+        vertices[vertex++].set(
+            points[point].x(),
+            points[point].y(),
+            premultiply(color.red()),
+            premultiply(color.green()),
+            premultiply(color.blue()),
+            static_cast<uchar>(alpha * 255)
+        );
+    };
+    for (std::size_t i = 1; i < points.size(); ++i)
+    {
+        writeVertex(i - 1);
+        writeVertex(i);
+    }
     geometry->markVertexDataDirty();
     node->markDirty(QSGNode::DirtyGeometry);
-
-    auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
-    if (material->color() != color)
-    {
-        material->setColor(color);
-        node->markDirty(QSGNode::DirtyMaterial);
-    }
 }
 
-/// @brief Returns a geometry node drawing one link's bezier in a color and width.
-QSGGeometryNode* buildLinkNode(const NodeLinkLayer::Link& link, const QColor& color, float width)
+/// @brief Returns an empty geometry node sized and wired to draw one link.
+QSGGeometryNode* buildLinkNode()
 {
-    auto* geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), kVerticesPerLink);
+    auto* geometry =
+        new QSGGeometry(QSGGeometry::defaultAttributes_ColoredPoint2D(), kVerticesPerLink);
     geometry->setDrawingMode(QSGGeometry::DrawLines);
 
     auto* node = new QSGGeometryNode;
     node->setGeometry(geometry);
     node->setFlag(QSGNode::OwnsGeometry);
-    node->setMaterial(new QSGFlatColorMaterial);
+    node->setMaterial(new QSGVertexColorMaterial);
     node->setFlag(QSGNode::OwnsMaterial);
-
-    updateLinkNode(node, link, color, width);
     return node;
 }
 
@@ -158,6 +183,16 @@ QSGGeometryNode* buildLinkNode(const NodeLinkLayer::Link& link, const QColor& co
 NodeLinkLayer::NodeLinkLayer(QQuickItem* parent) : QQuickItem(parent)
 {
     setFlag(ItemHasContents, true);
+
+    // Advance every dissolving cut link, dropping the ones that have finished.
+    fadeTimer_.setInterval(16);
+    connect(&fadeTimer_, &QTimer::timeout, this, [this] {
+        for (FadingLink& fade : fadingLinks_)
+            fade.progress += fadeTimer_.interval() / kFadeMs;
+        std::erase_if(fadingLinks_, [](const FadingLink& fade) { return fade.progress >= 1; });
+        if (fadingLinks_.empty()) fadeTimer_.stop();
+        update();
+    });
 }
 
 NodeListModel* NodeLinkLayer::nodes() const { return nodes_; }
@@ -272,9 +307,9 @@ std::vector<NodeLinkLayer::Link> NodeLinkLayer::collectLinks() const
     return links;
 }
 
-int NodeLinkLayer::linkAt(QPointF canvasPoint, qreal radius) const
+QVariantMap NodeLinkLayer::linkAt(QPointF canvasPoint, qreal radius) const
 {
-    int nearestLink = -1;
+    std::optional<Link> nearest;
     qreal nearestDistance = radius;
     for (const Link& link : collectLinks())
     {
@@ -285,11 +320,24 @@ int NodeLinkLayer::linkAt(QPointF canvasPoint, qreal radius) const
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;
-                nearestLink = link.linkIndex;
+                nearest = link;
             }
         }
     }
-    return nearestLink;
+    if (!nearest) return {{"linkIndex", -1}};
+
+    // The end nearer the point comes loose in a pickup while the other stays anchored.
+    const QPointF toOutput = canvasPoint - nearest->output;
+    const QPointF toInput = canvasPoint - nearest->input;
+    const bool atOutputEnd =
+        std::hypot(toOutput.x(), toOutput.y()) < std::hypot(toInput.x(), toInput.y());
+    const QPointF anchored = atOutputEnd ? nearest->input : nearest->output;
+    return {
+        {"linkIndex", nearest->linkIndex},
+        {"atOutputEnd", atOutputEnd},
+        {"anchorX", anchored.x()},
+        {"anchorY", anchored.y()},
+    };
 }
 
 int NodeLinkLayer::linkCrossing(QPointF from, QPointF to) const
@@ -303,6 +351,18 @@ int NodeLinkLayer::linkCrossing(QPointF from, QPointF to) const
     return -1;
 }
 
+void NodeLinkLayer::fadeLink(int linkIndex, QPointF cutPoint)
+{
+    for (const Link& link : collectLinks())
+    {
+        if (link.linkIndex != linkIndex) continue;
+        fadingLinks_.push_back(FadingLink{link, cutPoint, 0});
+        if (!fadeTimer_.isActive()) fadeTimer_.start();
+        update();
+        return;
+    }
+}
+
 QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     std::vector<Link> links = collectLinks();
@@ -310,28 +370,35 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     // The dragged link is drawn alongside the committed ones while a port drag runs.
     if (floatingActive_) links.push_back(Link{floatingOutput_, floatingInput_});
 
-    auto* root = oldNode ? oldNode : new QSGNode;
+    QSGNode* root = oldNode ? oldNode : new QSGNode;
 
-    // Give every link its own node, reusing the ones from the last paint in order.
+    // Every drawn link gets its own child node, reused from the last paint in order.
     QSGNode* child = root->firstChild();
+    auto claimNode = [&]() -> QSGGeometryNode* {
+        if (child)
+        {
+            auto* claimed = static_cast<QSGGeometryNode*>(child);
+            child = child->nextSibling();
+            return claimed;
+        }
+        auto* built = buildLinkNode();
+        root->appendChildNode(built);
+        return built;
+    };
+
     for (const Link& link : links)
     {
         const bool hovered = hoveredLink_ >= 0 && link.linkIndex == hoveredLink_;
         const QColor& color = hovered ? cutColor_ : linkColor_;
         const float width = hovered ? kCutWidth : kLinkWidth;
-
-        if (child)
-        {
-            updateLinkNode(static_cast<QSGGeometryNode*>(child), link, color, width);
-            child = child->nextSibling();
-        }
-        else
-        {
-            root->appendChildNode(buildLinkNode(link, color, width));
-        }
+        updateLinkNode(claimNode(), link, color, width, QPointF(), -1);
     }
 
-    // Drop the nodes left over when the link count shrinks.
+    // Dissolving cut links come last so they draw on top of the live ones.
+    for (const FadingLink& fade : fadingLinks_)
+        updateLinkNode(claimNode(), fade.link, cutColor_, kLinkWidth, fade.cutPoint, fade.progress);
+
+    // Drop the nodes left over when the drawn count shrinks.
     while (child)
     {
         QSGNode* next = child->nextSibling();
