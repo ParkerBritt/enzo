@@ -77,6 +77,13 @@ components:
     panelHeight:     420
   slider:
     fillColor: $parameter
+  ramp:
+    plotColor:     $fieldSurface
+    lineColor:     $fieldBorder
+    curveColor:    $accentBright
+    fillColor:     $accent @ 0.25
+    pointColor:    "#8a8a94"
+    selectedColor: $accentBright
   toggle:
     onColor: $parameter
   popup:

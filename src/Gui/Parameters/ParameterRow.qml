@@ -16,8 +16,12 @@ Item {
     // Column width for the label, assigned by the list.
     property real labelColumnWidth: 0
 
+    // Kinds the row adds no side label for, either because the control draws its
+    // own or because it has none.
+    readonly property var unlabeledKinds: ["group", "ramp", "spacer"]
+
     // Whether this row shows a label beside its control.
-    readonly property bool hasLabel: item && item.kind !== "group" && item.kind !== "spacer" && !item.hidden && !item.labelHidden
+    readonly property bool hasLabel: item && !unlabeledKinds.includes(item.kind) && !item.hidden && !item.labelHidden
 
     // Width this row wants for its label, 0 when it shows none. A group reports
     // its nested rows so the column can span them.

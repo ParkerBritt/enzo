@@ -1,3 +1,6 @@
+#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/OperatorTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Ramp.h"
 #include <catch2/catch_approx.hpp>
@@ -124,6 +127,38 @@ TEST_CASE("B spline sampling matches a pinned golden curve")
         const floatT position = sampleIndex / 20.0f;
         REQUIRE(ramp.sample(position) == Catch::Approx(golden[sampleIndex]).margin(1e-3));
     }
+}
+
+TEST_CASE("A new ramp parameter defaults to an identity ramp")
+{
+    using namespace enzo::prm;
+    Parameter parameter(Template(Type::RAMP, Name("amplitude", "Amplitude"), Default(2)));
+
+    REQUIRE(parameter.getInstanceCount() == 2);
+    REQUIRE(parameter.getInstanceField(0, "position")->evalFloat() == 0);
+    REQUIRE(parameter.getInstanceField(0, "value")->evalFloat() == 0);
+    REQUIRE(parameter.getInstanceField(1, "position")->evalFloat() == 1);
+    REQUIRE(parameter.getInstanceField(1, "value")->evalFloat() == 1);
+}
+
+TEST_CASE("An operator's ramp parameter defaults to an identity ramp")
+{
+    using namespace enzo::prm;
+    enzo::op::OperatorTable::initPlugins();
+    auto& nm = enzo::nt::nm();
+    nm._reset();
+
+    const auto opId = nm.createOperator(enzo::op::OperatorTable::getOpInfo("sineWave").value());
+    auto parameter = nm.getGeoOperator(opId).getParameter("amplitude").lock();
+    REQUIRE(parameter);
+
+    REQUIRE(parameter->getInstanceCount() == 2);
+    REQUIRE(parameter->getInstanceField(0, "position")->evalFloat() == 0);
+    REQUIRE(parameter->getInstanceField(0, "value")->evalFloat() == 0);
+    REQUIRE(parameter->getInstanceField(1, "position")->evalFloat() == 1);
+    REQUIRE(parameter->getInstanceField(1, "value")->evalFloat() == 1);
+
+    nm._reset();
 }
 
 TEST_CASE("A ramp snapshot sorts the control points by position")

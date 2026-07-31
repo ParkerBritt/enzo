@@ -20,7 +20,7 @@ struct OperatorTableInit
     OperatorTableInit() { enzo::op::OperatorTable::initPlugins(); }
 };
 static OperatorTableInit _operatorTableInit;
-auto testOpInfo = enzo::op::OperatorTable::getOpInfo("house").value();
+auto testOpInfo = enzo::op::OperatorTable::getOpInfo("cube").value();
 
 TEST_CASE_METHOD(NMReset, "Network Manager")
 {
