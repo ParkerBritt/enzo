@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Engine/Serializer/ParameterSerializable.h"
 #include <QList>
 #include <QObject>
 #include <QStringList>
 #include <QVariant>
+#include <QVariantList>
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
@@ -73,9 +75,16 @@ class ParameterItem : public QObject
     void setValue(const QVariant& value) { setValueAt(0, value); }
 
     /// @brief Reads one component of a vector parameter such as an XYZ axis.
+    /// @note A multiparm reads as a list of instance maps keyed by field name.
     Q_INVOKABLE QVariant valueAt(int index) const;
     /// @brief Writes one component of a vector parameter.
+    /// @note A multiparm writes from a list of instance maps keyed by field name.
     Q_INVOKABLE void setValueAt(int index, const QVariant& value);
+
+    /// @brief Snapshots the parameter ahead of a gesture such as a handle drag.
+    Q_INVOKABLE void beginEdit();
+    /// @brief Pushes one undo step covering everything since beginEdit.
+    Q_INVOKABLE void commitEdit();
 
     /// @brief Adopts a child item, used to assemble a GROUP's contents.
     void addChild(ParameterItem* child) { children_.append(child); }
@@ -105,6 +114,7 @@ class ParameterItem : public QObject
 
     std::weak_ptr<prm::NodeParameter> parameter_;
     boost::signals2::scoped_connection valueSubscription_;
+    ParameterSerializable snapshotBeforeEdit_;
 
     bool enabled_ = true;
     bool hidden_ = false;

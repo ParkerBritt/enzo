@@ -244,11 +244,13 @@ qt_add_qml_module(${AppExec}
     SOURCES
         src/Gui/Style/Theme.cpp
         src/Gui/Network/NodeLinkLayer.cpp
+        src/Gui/Parameters/RampCurveItem.cpp
         src/Gui/Viewport/ViewportItem.cpp
     QML_FILES
         src/Gui/App.qml
         src/Gui/Utils.js
         src/Gui/Components/Icon.qml
+        src/Gui/Components/IconButton.qml
         src/Gui/Components/Panel.qml
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
@@ -306,6 +308,7 @@ target_include_directories(${AppExec} PRIVATE
     # registration includes by bare file name.
     src/Gui/Style
     src/Gui/Network
+    src/Gui/Parameters
     src/Gui/Viewport
 )
 
