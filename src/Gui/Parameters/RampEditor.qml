@@ -19,6 +19,15 @@ Column {
     // Preset curve shapes. Choosing one is not wired up yet.
     readonly property var presetLabels: ["Linear Ramp", "Ease In", "Ease Out", "Bell Curve"]
 
+    // Interpolation modes, in the order the engine declares them.
+    readonly property var interpTokens: ["constant", "linear", "bspline"]
+    readonly property var interpLabels: ["Constant", "Linear", "B Spline"]
+
+    readonly property var selectedPoint: points[selectedIndex]
+
+    readonly property real fieldHeight: 22
+    readonly property real fieldGap: 8
+
     // Point indices in position order, since instances are stored unsorted.
     readonly property var pointOrder: [...points.keys()].sort((a, b) => points[a].position - points[b].position)
 
@@ -50,6 +59,27 @@ Column {
         item.commitEdit();
     }
 
+    // Writes one field of the selected point, leaving the undo step open.
+    function editSelected(field, amount) {
+        const edited = points;
+        edited[selectedIndex][field] = amount;
+        item.value = edited;
+    }
+
+    function setSelectedInterp(token) {
+        item.beginEdit();
+        editSelected("interp", token);
+        item.commitEdit();
+    }
+
+    function applyInterpToAll(token) {
+        commitPoints(points.map(point => ({
+                    position: point.position,
+                    value: point.value,
+                    interp: token
+                })));
+    }
+
     function handleCenter(point) {
         return Qt.point(plotInset + point.position * curve.width, plotInset + (1 - point.value) * curve.height);
     }
@@ -75,6 +105,27 @@ Column {
         moved[selectedIndex].position = clamp((x - plotInset) / curve.width);
         moved[selectedIndex].value = clamp(1 - (y - plotInset) / curve.height);
         item.value = moved;
+    }
+
+    // Drops a point under the cursor, inheriting the interp of the segment it lands in.
+    function addPointAt(x, y) {
+        const clamp = v => Math.max(0, Math.min(1, v));
+        const position = clamp((x - plotInset) / curve.width);
+        const value = clamp(1 - (y - plotInset) / curve.height);
+
+        let left = null;
+        for (const point of points)
+            if (point.position <= position && (!left || point.position > left.position))
+                left = point;
+
+        const added = points;
+        added.push({
+            position: position,
+            value: value,
+            interp: left ? left.interp : "linear"
+        });
+        item.value = added;
+        selectedIndex = added.length - 1;
     }
 
     // Splits the segment beside the selected point and selects the new point.
@@ -247,12 +298,14 @@ Column {
 
             onPressed: mouse => {
                 plot.forceActiveFocus();
-                const hit = root.handleAt(mouse.x, mouse.y);
-                if (hit < 0)
-                    return;
-                root.selectedIndex = hit;
-                dragging = true;
                 root.item.beginEdit();
+
+                const hit = root.handleAt(mouse.x, mouse.y);
+                if (hit >= 0)
+                    root.selectedIndex = hit;
+                else
+                    root.addPointAt(mouse.x, mouse.y);
+                dragging = true;
             }
             onPositionChanged: mouse => {
                 if (dragging)
@@ -261,8 +314,6 @@ Column {
                     hoveredIndex = root.handleAt(mouse.x, mouse.y);
             }
             onReleased: {
-                if (!dragging)
-                    return;
                 dragging = false;
                 root.item.commitEdit();
             }
@@ -293,6 +344,87 @@ Column {
                         duration: 90
                     }
                 }
+            }
+        }
+    }
+
+    // Fields for the selected point
+    Row {
+        width: root.width
+        spacing: root.fieldGap
+
+        readonly property real fieldWidth: (width - 2 * spacing) / 3
+
+        Column {
+            width: parent.fieldWidth
+            spacing: 6
+
+            Text {
+                height: root.fieldHeight
+                verticalAlignment: Text.AlignVCenter
+                text: "Position"
+                color: Theme.var.textLabel
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
+            }
+
+            Slider {
+                width: parent.width
+                height: root.fieldHeight
+                value: root.selectedPoint ? root.selectedPoint.position : 0
+                onPressed: root.item.beginEdit()
+                onMoved: amount => root.editSelected("position", amount)
+                onReleased: root.item.commitEdit()
+            }
+        }
+
+        Column {
+            width: parent.fieldWidth
+            spacing: 6
+
+            Text {
+                height: root.fieldHeight
+                verticalAlignment: Text.AlignVCenter
+                text: "Value"
+                color: Theme.var.textLabel
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
+            }
+
+            Slider {
+                width: parent.width
+                height: root.fieldHeight
+                value: root.selectedPoint ? root.selectedPoint.value : 0
+                onPressed: root.item.beginEdit()
+                onMoved: amount => root.editSelected("value", amount)
+                onReleased: root.item.commitEdit()
+            }
+        }
+
+        Column {
+            width: parent.fieldWidth
+            spacing: 6
+
+            Text {
+                height: root.fieldHeight
+                verticalAlignment: Text.AlignVCenter
+                text: "Interpolation"
+                color: Theme.var.textLabel
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
+            }
+
+            Dropdown {
+                width: parent.width
+                height: root.fieldHeight
+                labels: root.interpLabels
+                currentIndex: root.selectedPoint ? root.interpTokens.indexOf(root.selectedPoint.interp) : -1
+                opensUpward: true
+                listWidth: 200
+                rowActionLabel: "Set All"
+                rowActionIcon: "check-check"
+                onActivated: index => root.setSelectedInterp(root.interpTokens[index])
+                onRowActionActivated: index => root.applyInterpToAll(root.interpTokens[index])
             }
         }
     }

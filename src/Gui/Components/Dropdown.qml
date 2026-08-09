@@ -27,7 +27,12 @@ Item {
     // Width of the list, which may exceed the trigger's.
     property real listWidth: Math.max(width, 150)
 
+    // Second action every row offers, revealed under the cursor.
+    property string rowActionLabel: ""
+    property string rowActionIcon: ""
+
     signal activated(int index)
+    signal rowActionActivated(int index)
 
     readonly property string currentLabel:
         (currentIndex >= 0 && currentIndex < labels.length) ? labels[currentIndex] : ""
@@ -130,21 +135,84 @@ Item {
             close()
         }
 
-        delegate: Text {
+        delegate: Item {
+            id: row
+
             required property int index
             required property var modelData
 
+            readonly property bool underCursor: index === list.highlightedIndex
+
             width: list.availableWidth
             height: list.rowHeight
-            leftPadding: 10
-            rightPadding: 10
-            text: modelData
-            color: index === root.currentIndex ? Theme.var.text : Theme.var.textLabel
-            font.family: Theme.var.fontSans
-            font.pixelSize: 12
-            font.weight: Font.Medium
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+
+            Text {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: rowAction.visible ? rowAction.width + 14 : 10
+                text: row.modelData
+                color: row.index === root.currentIndex ? Theme.var.text : Theme.var.textLabel
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
+                font.weight: Font.Medium
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            Rectangle {
+                id: rowAction
+
+                visible: root.rowActionLabel !== ""
+                opacity: row.underCursor ? 1 : 0
+                anchors.right: parent.right
+                anchors.rightMargin: 6
+                anchors.verticalCenter: parent.verticalCenter
+                width: actionBody.width + 14
+                height: 22
+                radius: 7
+                color: actionMouse.containsMouse ? Theme.var.accentLine : Theme.var.accentDim
+                border.color: Theme.var.accentLine
+
+                Behavior on opacity {
+                    NumberAnimation { duration: 120 }
+                }
+
+                Row {
+                    id: actionBody
+
+                    anchors.centerIn: parent
+                    spacing: 5
+
+                    Icon {
+                        visible: root.rowActionIcon !== ""
+                        name: root.rowActionIcon
+                        size: 12
+                        color: Theme.var.accentBright
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Text {
+                        text: root.rowActionLabel
+                        color: Theme.var.text
+                        font.family: Theme.var.fontSans
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                MouseArea {
+                    id: actionMouse
+
+                    anchors.fill: parent
+                    enabled: row.underCursor
+                    hoverEnabled: true
+                    onClicked: {
+                        root.rowActionActivated(row.index)
+                        list.close()
+                    }
+                }
+            }
         }
     }
 }
