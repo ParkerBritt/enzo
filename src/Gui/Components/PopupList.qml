@@ -103,8 +103,10 @@ Popup {
             Behavior on y { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }
         }
 
+        // Above the cursor area below, so a delegate can carry its own button.
         Column {
             width: parent.width
+            z: 1
             Repeater {
                 model: root.model
                 delegate: root.delegate

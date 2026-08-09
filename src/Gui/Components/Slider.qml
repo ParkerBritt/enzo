@@ -13,6 +13,9 @@ Item {
     property bool clampMax: true
     signal moved(real value)
 
+    signal pressed
+    signal released
+
     implicitHeight: 22
 
     readonly property real fraction: to > from
@@ -62,7 +65,8 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onPressed: (mouse) => root.emitAt(mouse.x)
+        onPressed: (mouse) => { root.pressed(); root.emitAt(mouse.x) }
         onPositionChanged: (mouse) => { if (pressed) root.emitAt(mouse.x) }
+        onReleased: root.released()
     }
 }
