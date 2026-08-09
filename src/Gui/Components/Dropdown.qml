@@ -170,8 +170,7 @@ Item {
                 width: actionBody.width + 14
                 height: 22
                 radius: 7
-                color: actionMouse.containsMouse ? Theme.var.accentLine : Theme.var.accentDim
-                border.color: Theme.var.accentLine
+                color: actionMouse.containsMouse ? Theme.var.accentLine : Qt.rgba(Theme.parameter.backgroundColor.r, Theme.parameter.backgroundColor.g, Theme.parameter.backgroundColor.b, 0.6)
 
                 Behavior on opacity {
                     NumberAnimation { duration: 120 }
