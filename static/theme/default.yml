@@ -31,6 +31,9 @@ variables:
   accentLine:   $accent @ 0.45
   parameter: "#7850ab"
 
+  # Destructive actions, such as deleting a point
+  danger: "#c98d92"
+
   # Axes
   axisX:      "#f5685f"
   axisY:      "#46c98a"
@@ -77,6 +80,13 @@ components:
     panelHeight:     420
   slider:
     fillColor: $parameter
+  iconButton:
+    # Surfaces per button variant, at rest and under the cursor.
+    plainHoverColor:  $borderSoft
+    fieldColor:       $fieldSurface
+    fieldHoverColor:  $surfaceRaised
+    accentColor:      $accent
+    accentHoverColor: $accentBright
   ramp:
     plotColor:     $fieldSurface
     lineColor:     $fieldBorder

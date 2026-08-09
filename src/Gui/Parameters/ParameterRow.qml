@@ -151,7 +151,7 @@ Item {
     }
     Component {
         id: dropComp
-        Dropdown {
+        DropdownParameter {
             item: row.item
         }
     }

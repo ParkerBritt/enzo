@@ -254,6 +254,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Panel.qml
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
+        src/Gui/Components/Dropdown.qml
+        src/Gui/Components/Stepper.qml
         src/Gui/Components/PlaceholderDialog.qml
         src/Gui/MenuBar/AppMenuBar.qml
         src/Gui/MenuBar/MenuBar.qml
@@ -266,7 +268,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/Toggle.qml
         src/Gui/Parameters/VectorParameter.qml
         src/Gui/Parameters/StringParameter.qml
-        src/Gui/Parameters/Dropdown.qml
+        src/Gui/Parameters/DropdownParameter.qml
         src/Gui/Parameters/Group.qml
         src/Gui/Parameters/RampEditor.qml
         src/Gui/Network/Network.qml
