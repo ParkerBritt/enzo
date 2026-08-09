@@ -1,25 +1,54 @@
 import QtQuick
 import Enzo
 
-// Small square icon button with a hover tint.
+// Square icon button, styled plain, field, or accent by its variant.
 Rectangle {
     id: root
 
+    property string variant: "plain"
     property alias name: icon.name
+    property alias iconSize: icon.size
+    property color iconColor: Theme.var.textLabel
+
+    // Surfaces set by the variant states below.
+    property color surfaceColor: "transparent"
+    property color hoverColor: Theme.iconButton.plainHoverColor
+
     signal clicked()
 
-    width: 22
-    height: 22
-    radius: 5
-    color: mouse.containsMouse ? Theme.var.borderSoft : "transparent"
+    width: 30
+    height: 30
+    radius: Theme.parameter.borderRadius
+    color: mouse.containsMouse ? root.hoverColor : root.surfaceColor
+    border.color: root.variant === "field" ? Theme.parameter.lineColor : "transparent"
     opacity: enabled ? 1 : 0.35
+
+    states: [
+        State {
+            name: "field"
+            when: root.variant === "field"
+            PropertyChanges {
+                root.surfaceColor: Theme.iconButton.fieldColor
+                root.hoverColor: Theme.iconButton.fieldHoverColor
+            }
+        },
+        State {
+            name: "accent"
+            when: root.variant === "accent"
+            PropertyChanges {
+                root.surfaceColor: Theme.iconButton.accentColor
+                root.hoverColor: Theme.iconButton.accentHoverColor
+                root.iconColor: Theme.var.textStrong
+            }
+        }
+    ]
 
     Icon {
         id: icon
 
         anchors.centerIn: parent
-        size: 14
-        color: Theme.var.textLabel
+        size: 13
+        color: root.iconColor
     }
 
     MouseArea {
