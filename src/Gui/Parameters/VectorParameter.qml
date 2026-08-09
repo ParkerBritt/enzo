@@ -1,5 +1,7 @@
 import QtQuick
+import Enzo
 import "../Components"
+import "../Style"
 
 // One slider per component of a vector parameter.
 Row {
@@ -16,7 +18,7 @@ Row {
             required property int index
 
             width: (vec.width - vec.spacing * (vec.count - 1)) / vec.count
-            implicitHeight: 22
+            implicitHeight: Constants.parameterHeight
             from: vec.item ? vec.item.minimum : 0
             to: vec.item ? vec.item.maximum : 1
             clampMin: vec.item ? vec.item.minLocked : true

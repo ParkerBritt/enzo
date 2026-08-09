@@ -1,11 +1,12 @@
 import QtQuick
 import Enzo
+import "../Style"
 
 Rectangle {
     id: parameter
 
     required property var item
-    implicitHeight: 22
+    implicitHeight: Constants.parameterHeight
     radius: Theme.parameter.borderRadius
     color: Theme.parameter.backgroundColor
     border.color: Theme.parameter.lineColor

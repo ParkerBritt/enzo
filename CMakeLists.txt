@@ -238,6 +238,11 @@ qt_add_executable(${AppExec}
     # --- end viewport placeholder
 )
 
+# Register Constants.qml as a singleton
+set_source_files_properties(src/Gui/Style/Constants.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(${AppExec}
     URI Enzo
     VERSION 1.0
@@ -249,6 +254,7 @@ qt_add_qml_module(${AppExec}
     QML_FILES
         src/Gui/App.qml
         src/Gui/Utils.js
+        src/Gui/Style/Constants.qml
         src/Gui/Components/Icon.qml
         src/Gui/Components/IconButton.qml
         src/Gui/Components/Panel.qml
@@ -281,6 +287,9 @@ qt_add_qml_module(${AppExec}
         src/Gui/Spreadsheet/PrimitivesTree.qml
         src/Gui/Spreadsheet/ModeControl.qml
         src/Gui/Viewport/Viewport.qml
+    RESOURCES
+        # Declares Constants.qml a singleton for the directory import.
+        src/Gui/Style/qmldir
 )
 
 qt6_add_shaders(${AppExec} "enzoShaders"
