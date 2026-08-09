@@ -1,12 +1,13 @@
 import QtQuick
 import Enzo
+import "../Style"
 
 // Left aligned switch, on when the value is non zero.
 Item {
     id: root
 
     required property var item
-    implicitHeight: 22
+    implicitHeight: Constants.parameterHeight
 
     Rectangle {
         id: switchTrack

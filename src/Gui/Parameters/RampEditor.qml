@@ -1,6 +1,7 @@
 import QtQuick
 import Enzo
 import "../Components"
+import "../Style"
 
 // Curve editor for a ramp parameter.
 Column {
@@ -25,7 +26,7 @@ Column {
 
     readonly property var selectedPoint: points[selectedIndex]
 
-    readonly property real fieldHeight: 22
+    readonly property real fieldHeight: Constants.parameterHeight
     readonly property real fieldGap: 8
 
     // Point indices in position order, since instances are stored unsorted.

@@ -1,9 +1,11 @@
+import Enzo
 import "../Components"
+import "../Style"
 
 Slider {
     required property var item
 
-    implicitHeight: 22
+    implicitHeight: Constants.parameterHeight
     from: item ? item.minimum : 0
     to: item ? item.maximum : 1
     clampMin: item ? item.minLocked : true

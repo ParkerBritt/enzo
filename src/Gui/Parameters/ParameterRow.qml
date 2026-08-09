@@ -1,5 +1,6 @@
 import QtQuick
 import Enzo
+import "../Style"
 
 // One parameter, picking the control for its kind. Groups and spacers span the
 // full width, every other kind sits beside its label.
@@ -7,7 +8,7 @@ Item {
     id: row
 
     // Layout constants.
-    readonly property real controlHeight: 22
+    readonly property real parameterHeight: Constants.parameterHeight
     readonly property real labelGap: 25
     readonly property real labelFontSize: 12
 
@@ -78,7 +79,7 @@ Item {
             Text {
                 visible: row.hasLabel
                 width: row.hasLabel ? row.labelColumnWidth : 0
-                height: row.controlHeight
+                height: row.parameterHeight
                 verticalAlignment: Text.AlignVCenter
                 text: row.item.label
                 color: Theme.var.textLabel

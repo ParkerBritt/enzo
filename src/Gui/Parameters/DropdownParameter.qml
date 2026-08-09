@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Enzo
 import "../Components"
+import "../Style"
 
 // Picks one option, storing its token as the value.
 Item {
@@ -9,7 +10,7 @@ Item {
 
     required property var item
 
-    implicitHeight: 22
+    implicitHeight: Constants.parameterHeight
 
     readonly property var options: item ? item.options : []
     readonly property var tokens: item ? item.optionTokens : []
@@ -27,7 +28,7 @@ Item {
     function rowAt(px, py) {
         if (!popup.visible || px < 0 || px > width) return -1
         const localY = py - (popup.y + popup.padding)
-        const index = Math.floor(localY / 22)
+        const index = Math.floor(localY / Constants.parameterHeight)
         return (localY >= 0 && index < options.length) ? index : -1
     }
 
@@ -123,10 +124,10 @@ Item {
 
             Rectangle {
                 width: column.width
-                height: 22
+                height: Constants.parameterHeight
                 radius: Theme.parameter.borderRadius
                 color: Theme.var.borderSoft
-                y: root.activeIndex * 22
+                y: root.activeIndex * Constants.parameterHeight
                 visible: root.activeIndex >= 0
                 Behavior on y { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
             }
@@ -143,7 +144,7 @@ Item {
                         readonly property bool active: index === root.activeIndex
 
                         width: column.width
-                        height: 22
+                        height: Constants.parameterHeight
                         color: "transparent"
 
                         Text {

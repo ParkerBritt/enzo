@@ -1,5 +1,6 @@
 import QtQuick
 import Enzo
+import "../Style"
 
 // Horizontal slider with a gradient fill and a value readout.
 Item {
@@ -16,7 +17,7 @@ Item {
     signal pressed
     signal released
 
-    implicitHeight: 22
+    implicitHeight: Constants.parameterHeight
 
     readonly property real fraction: to > from
         ? Math.max(0, Math.min(1, (value - from) / (to - from)))
