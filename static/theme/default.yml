@@ -98,6 +98,11 @@ components:
     onColor: $parameter
   popup:
     highlightColor: $accentDim
+  tooltip:
+    backgroundColor: $surfaceRaised
+    borderColor:     $border
+    textColor:       $text
+    delay:           500
   primitivesTree:
     selectedColor: $accentBright
   tabMenu:

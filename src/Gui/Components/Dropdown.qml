@@ -19,6 +19,8 @@ Item {
     // Icon standing in for the trigger text.
     property string icon: ""
 
+    property string tooltip: ""
+
     // Whether the list unrolls above the trigger, for a picker near a panel floor.
     property bool opensUpward: false
 
@@ -61,6 +63,7 @@ Item {
         visible: root.icon !== ""
         variant: "field"
         name: root.icon
+        tooltip: root.tooltip
         onClicked: root.toggle()
     }
 
@@ -100,8 +103,16 @@ Item {
         }
 
         MouseArea {
+            id: labelMouse
+
             anchors.fill: parent
+            hoverEnabled: true
             onClicked: root.toggle()
+        }
+
+        Tooltip {
+            text: root.tooltip
+            visible: root.tooltip !== "" && labelMouse.containsMouse
         }
     }
 

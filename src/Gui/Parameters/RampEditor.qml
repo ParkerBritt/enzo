@@ -172,15 +172,18 @@ Column {
             Dropdown {
                 icon: "swatch-book"
                 labels: root.presetLabels
+                tooltip: "Presets"
             }
             IconButton {
                 variant: "field"
                 name: "flip-horizontal-2"
+                tooltip: "Flip Horizontal"
                 onClicked: root.flipHorizontal()
             }
             IconButton {
                 variant: "field"
                 name: "flip-vertical-2"
+                tooltip: "Flip Vertical"
                 onClicked: root.flipVertical()
             }
             Rectangle {
@@ -192,12 +195,14 @@ Column {
             IconButton {
                 variant: "accent"
                 name: "plus"
+                tooltip: "Add Point"
                 onClicked: root.addPoint()
             }
             IconButton {
                 variant: "field"
                 name: "trash-2"
                 iconColor: Theme.var.danger
+                tooltip: "Delete Point"
                 enabled: root.points.length > 2
                 onClicked: root.deleteSelected()
             }

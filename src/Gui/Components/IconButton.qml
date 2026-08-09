@@ -9,6 +9,7 @@ Rectangle {
     property alias name: icon.name
     property alias iconSize: icon.size
     property color iconColor: Theme.var.textLabel
+    property string tooltip: ""
 
     // Surfaces set by the variant states below.
     property color surfaceColor: "transparent"
@@ -57,5 +58,10 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: root.clicked()
+    }
+
+    Tooltip {
+        text: root.tooltip
+        visible: root.tooltip !== "" && mouse.containsMouse
     }
 }
