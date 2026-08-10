@@ -12,13 +12,12 @@ Rectangle {
 
     color: Theme.var.surfaceHeader
 
-    function pathColor(index)
-    {
+    function pathColor(index) {
         if (index === 0)
-            return "#6a6a74"
-        if (index === path.length -1)
-            return Theme.var.accentBright
-        return "#aaaab2"
+            return "#6a6a74";
+        if (index === path.length - 1)
+            return Theme.var.accentBright;
+        return "#aaaab2";
     }
 
     Rectangle {
@@ -55,7 +54,10 @@ Rectangle {
         }
 
         // Spacer
-        Item { width: 7; height: 1 }
+        Item {
+            width: 7
+            height: 1
+        }
 
         Row {
             anchors.verticalCenter: parent.verticalCenter
@@ -104,6 +106,8 @@ Rectangle {
         }
 
         Rectangle {
+            id: searchButton
+
             anchors.verticalCenter: parent.verticalCenter
             width: 27
             height: 27
@@ -117,9 +121,20 @@ Rectangle {
                 size: 14
                 color: Theme.var.textLabel
             }
+
+            HoverHandler {
+                id: searchHover
+            }
+
+            Tooltip {
+                text: "Search"
+                visible: searchHover.hovered
+            }
         }
 
         Rectangle {
+            id: collapseButton
+
             anchors.verticalCenter: parent.verticalCenter
             width: collapse.width + 22
             height: 27
@@ -132,33 +147,21 @@ Rectangle {
                 anchors.centerIn: parent
                 spacing: 7
 
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Collapse"
-                    color: Theme.var.accentBright
-                    font.family: Theme.var.fontSans
-                    font.pixelSize: 11
-                    font.weight: Font.Medium
-                }
                 Icon {
                     anchors.verticalCenter: parent.verticalCenter
                     name: "chevron-down"
                     size: 13
                     color: Theme.var.accentBright
                 }
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 1
-                    height: 11
-                    color: Qt.rgba(0.655, 0.545, 0.98, 0.25)
-                }
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "S"
-                    color: Qt.rgba(0.655, 0.545, 0.98, 0.55)
-                    font.family: Theme.var.fontMono
-                    font.pixelSize: 10
-                }
+            }
+
+            HoverHandler {
+                id: collapseHover
+            }
+
+            Tooltip {
+                text: "Collapse"
+                visible: collapseHover.hovered
             }
         }
     }
