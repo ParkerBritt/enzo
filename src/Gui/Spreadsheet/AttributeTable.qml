@@ -13,7 +13,7 @@ Item {
     property int selectedRow: 0
 
     readonly property string modeColor: Theme.spreadsheet.attributeOwnerColors[root.viewModel.mode]
-    readonly property var modeIcons: ["grip", "spline", "triangle", "pentagon"]
+    readonly property var modeIcons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
 
     function axisColor(axis, light) {
         if (axis === 0) return light ? Theme.var.axisXLight : Theme.var.axisX;
@@ -195,7 +195,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 name: root.modeIcons[root.viewModel.mode]
                 size: 13
-                color: root.modeColor
+                color: "#ffffff"
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter

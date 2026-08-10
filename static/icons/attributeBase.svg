@@ -17,7 +17,7 @@
    xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
      id="namedview1"
      pagecolor="#505050"
-     bordercolor="#ffffff"
+     bordercolor="currentColor"
      borderopacity="1"
      inkscape:showpageshadow="0"
      inkscape:pageopacity="0"
@@ -60,7 +60,7 @@
        x="-151.1331"
        y="-209.24828"
        style="display:none" /><rect
-       style="fill:#383737;fill-opacity:1;stroke:#ffffff;stroke-width:34.3796;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="fill:#383737;fill-opacity:1;stroke:currentColor;stroke-width:34.3796;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect1"
        width="224.87762"
        height="224.87762"
@@ -68,7 +68,7 @@
        y="162.07153"
        transform="matrix(0.89498054,-0.44610518,0.89498054,0.44610518,0,0)" /><path
        id="rect17"
-       style="fill:#383737;fill-opacity:1;stroke:#ffffff;stroke-width:20.473;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="fill:#383737;fill-opacity:1;stroke:currentColor;stroke-width:20.473;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        d="M 256.01101,187.57032 396.59899,117.71666 V 291.54634 L 256.01101,362.4189 Z m -0.022,0 -140.58798,-69.85366 V 291.54634 L 255.989,362.4189 Z"
        sodipodi:nodetypes="ccccc"
        inkscape:path-effect="#path-effect17"

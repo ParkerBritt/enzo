@@ -3,14 +3,15 @@ import Enzo
 import "../Components"
 
 // Segmented control switching the table between element classes. Each chip is
-// an icon, tinted with its mode colour when active.
+// an icon that brightens from gray to white when its class is active.
 Rectangle {
     id: root
 
     property int mode: 0
     signal modePicked(int mode)
 
-    readonly property var icons: ["grip", "spline", "triangle", "pentagon"]
+    readonly property var icons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
+    readonly property var labels: ["Points", "Vertices", "Faces", "Primitives"]
 
     implicitWidth: chips.width + 6
     implicitHeight: 27
@@ -31,23 +32,31 @@ Rectangle {
                 id: chip
 
                 required property int index
-                readonly property string accent: Theme.spreadsheet.attributeOwnerColors[index]
                 readonly property bool active: root.mode === index
 
                 width: 30
                 height: 21
                 radius: 5
-                color: active ? ("#29" + accent.slice(1)) : "transparent"
+                color: active ? "#1fffffff" : "transparent"
 
                 Icon {
                     anchors.centerIn: parent
                     name: root.icons[chip.index]
                     size: 15
-                    color: chip.active ? chip.accent : "#74747e"
+                    color: chip.active ? "#ffffff" : "#75757e"
+                }
+
+                HoverHandler {
+                    id: hover
                 }
 
                 TapHandler {
                     onTapped: root.modePicked(chip.index)
+                }
+
+                Tooltip {
+                    text: root.labels[chip.index]
+                    visible: hover.hovered
                 }
             }
         }
