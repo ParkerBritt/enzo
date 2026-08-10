@@ -8,7 +8,7 @@ Rectangle {
     id: root
 
     property var viewModel
-    readonly property var path: ["obj", "characters", "tommy", "geo", "scatter_setup", "scatter1"]
+    readonly property var path: root.viewModel.nodePath
 
     color: Theme.var.surfaceHeader
 

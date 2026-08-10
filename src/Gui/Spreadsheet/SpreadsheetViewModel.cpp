@@ -15,10 +15,17 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
         network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
             if (!primaryId.has_value())
             {
+                nodePath_.clear();
+                Q_EMIT nodePathChanged();
                 showPacket(nullptr);
                 return;
             }
-            showPacket(nt::nm().getGeoOperator(*primaryId).getOutputPacket(0));
+            auto& op = nt::nm().getGeoOperator(*primaryId);
+            nodePath_.clear();
+            for (const auto& component : op.getPath().split())
+                nodePath_.append(QString::fromStdString(component));
+            Q_EMIT nodePathChanged();
+            showPacket(op.getOutputPacket(0));
         });
 
     // A recook of the primary node delivers fresh geometry directly.
