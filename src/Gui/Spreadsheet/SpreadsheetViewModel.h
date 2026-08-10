@@ -4,6 +4,7 @@
 #include "Gui/Spreadsheet/PrimitiveTreeModel.h"
 #include <QAbstractItemModel>
 #include <QObject>
+#include <QStringList>
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
@@ -27,6 +28,7 @@ class SpreadsheetViewModel : public QObject
     Q_PROPERTY(int primitiveCount READ primitiveCount NOTIFY geometryChanged)
     Q_PROPERTY(int elementCount READ elementCount NOTIFY tableChanged)
     Q_PROPERTY(QString elementNoun READ elementNoun NOTIFY modeChanged)
+    Q_PROPERTY(QStringList nodePath READ nodePath NOTIFY nodePathChanged)
 
   public:
     /// The element class the table shows, ordered to match `attr::AttributeOwner`.
@@ -50,6 +52,7 @@ class SpreadsheetViewModel : public QObject
     int primitiveCount() const;
     int elementCount() const;
     QString elementNoun() const;
+    QStringList nodePath() const { return nodePath_; }
 
     /// @brief Shows the attributes of the primitive at @p index in the table.
     Q_INVOKABLE void selectPrimitive(int index);
@@ -58,6 +61,7 @@ class SpreadsheetViewModel : public QObject
     void modeChanged();
     void geometryChanged();
     void tableChanged();
+    void nodePathChanged();
 
   private:
     /// @brief Rebuilds the tree from a packet and shows its first primitive.
@@ -67,6 +71,7 @@ class SpreadsheetViewModel : public QObject
     PrimitiveTreeModel primitiveTree_;
     std::shared_ptr<const NodePacket> packet_;
     Mode mode_ = Points;
+    QStringList nodePath_;
     boost::signals2::scoped_connection primaryNodeSubscription_;
     boost::signals2::scoped_connection primaryGeoSubscription_;
 };
