@@ -34,25 +34,38 @@ Item {
     signal activated(int index)
     signal rowActionActivated(int index)
 
-    readonly property string currentLabel:
-        (currentIndex >= 0 && currentIndex < labels.length) ? labels[currentIndex] : ""
+    readonly property string currentLabel: (currentIndex >= 0 && currentIndex < labels.length) ? labels[currentIndex] : ""
 
     // Room for the widest choice, so the trigger holds still as it changes.
     readonly property real widestLabelWidth: {
-        let widest = 0
+        let widest = 0;
         for (const label of labels)
-            widest = Math.max(widest, metrics.advanceWidth(label))
-        return widest
+            widest = Math.max(widest, metrics.advanceWidth(label));
+        return widest;
     }
 
     implicitWidth: icon !== "" ? implicitHeight : Math.ceil(widestLabelWidth) + 40
     implicitHeight: 30
 
-    function toggle() {
-        if (list.visible)
-            list.close()
-        else
-            list.open()
+    // Returns the row under a point given in this item's coordinates, or -1 when
+    // the point misses the open list.
+    function rowAt(px, py) {
+        if (!list.visible)
+            return -1;
+
+        // An upward list unrolls past the cursor, so a point still on the trigger
+        // names no row.
+        if (px >= 0 && px <= width && py >= 0 && py <= height)
+            return -1;
+
+        const localX = px - list.x - list.padding;
+        const localY = py - list.y - list.padding;
+        return (localX >= 0 && localX <= list.availableWidth) ? list.rowAt(localY) : -1;
+    }
+
+    function choose(index) {
+        root.activated(index);
+        list.close();
     }
 
     FontMetrics {
@@ -69,7 +82,6 @@ Item {
         variant: "field"
         name: root.icon
         tooltip: root.tooltip
-        onClicked: root.toggle()
     }
 
     Rectangle {
@@ -104,20 +116,42 @@ Item {
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             rotation: list.visible ? 180 : 0
-            Behavior on rotation { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+            Behavior on rotation {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
+            }
         }
 
-        MouseArea {
-            id: labelMouse
-
-            anchors.fill: parent
-            hoverEnabled: true
-            onClicked: root.toggle()
+        HoverHandler {
+            id: labelHover
         }
 
         Tooltip {
             text: root.tooltip
-            visible: root.tooltip !== "" && labelMouse.containsMouse
+            visible: root.tooltip !== "" && labelHover.hovered
+        }
+    }
+
+    // One area over whichever trigger is showing, opening the list on a press and
+    // carrying that press onto a row. Hover belongs to the trigger beneath.
+    MouseArea {
+        anchors.fill: parent
+
+        // A press on an open list already closed it on the way past.
+        onPressed: if (!list.visible)
+            list.open()
+
+        onPositionChanged: mouse => {
+            const index = root.rowAt(mouse.x, mouse.y);
+            if (index >= 0)
+                list.highlightedIndex = index;
+        }
+        onReleased: mouse => {
+            const index = root.rowAt(mouse.x, mouse.y);
+            if (index >= 0)
+                root.choose(index);
         }
     }
 
@@ -129,11 +163,11 @@ Item {
         implicitWidth: root.listWidth
         rowHeight: 30
         model: root.labels
-        highlightedIndex: root.currentIndex
-        onActivated: (index) => {
-            root.activated(index)
-            close()
-        }
+
+        // The list opens on the current choice, then the highlight follows the cursor.
+        onAboutToShow: highlightedIndex = root.currentIndex
+
+        onActivated: index => root.choose(index)
 
         delegate: Item {
             id: row
@@ -149,7 +183,7 @@ Item {
             Text {
                 anchors.fill: parent
                 anchors.leftMargin: 10
-                anchors.rightMargin: rowAction.visible ? rowAction.width + 14 : 10
+                anchors.rightMargin: (rowAction.visible ? rowAction.width + 14 : 10) + (selectionDot.visible ? 14 : 0)
                 text: row.modelData
                 color: row.index === root.currentIndex ? Theme.var.text : Theme.var.textLabel
                 font.family: Theme.var.fontSans
@@ -157,6 +191,19 @@ Item {
                 font.weight: Font.Medium
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
+            }
+
+            Rectangle {
+                id: selectionDot
+
+                visible: row.index === root.currentIndex
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                width: 7
+                height: 7
+                radius: 3.5
+                color: Theme.var.accentBright
             }
 
             Rectangle {
@@ -170,10 +217,13 @@ Item {
                 width: actionBody.width + 14
                 height: 22
                 radius: 7
-                color: actionMouse.containsMouse ? Theme.var.accentLine : Qt.rgba(Theme.parameter.backgroundColor.r, Theme.parameter.backgroundColor.g, Theme.parameter.backgroundColor.b, 0.6)
+                // Opaque, so the fill hides the selection dot beneath it.
+                color: actionMouse.containsMouse ? Theme.var.accent : Theme.parameter.backgroundColor
 
                 Behavior on opacity {
-                    NumberAnimation { duration: 120 }
+                    NumberAnimation {
+                        duration: 120
+                    }
                 }
 
                 Row {
@@ -207,8 +257,8 @@ Item {
                     enabled: row.underCursor
                     hoverEnabled: true
                     onClicked: {
-                        root.rowActionActivated(row.index)
-                        list.close()
+                        root.rowActionActivated(row.index);
+                        list.close();
                     }
                 }
             }
