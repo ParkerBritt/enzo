@@ -24,6 +24,9 @@ Row {
             clampMin: vec.item ? vec.item.minLocked : true
             clampMax: vec.item ? vec.item.maxLocked : true
             value: vec.item ? vec.item.valueAt(index) : 0
+            hasExpression: vec.item ? vec.item.hasExpressionAt(index) : false
+            expressionText: vec.item ? vec.item.expressionAt(index) : ""
+            expressionInvalid: vec.item ? vec.item.expressionErrorAt(index).length > 0 : false
             onPressed: if (vec.item) vec.item.beginEdit()
             onMoved: (v) => { if (vec.item) vec.item.setValueAt(index, v) }
             onReleased: if (vec.item) vec.item.commitEdit()
@@ -34,10 +37,15 @@ Row {
                 vec.item.commitEdit()
             }
 
-            // valueAt is a call, so an external edit is mirrored in by hand.
+            // valueAt/expressionAt are calls, so an external edit is mirrored in by hand.
             Connections {
                 target: vec.item
-                function onValueChanged() { value = vec.item.valueAt(index) }
+                function onValueChanged() {
+                    value = vec.item.valueAt(index)
+                    hasExpression = vec.item.hasExpressionAt(index)
+                    expressionText = vec.item.expressionAt(index)
+                    expressionInvalid = vec.item.expressionErrorAt(index).length > 0
+                }
             }
         }
     }

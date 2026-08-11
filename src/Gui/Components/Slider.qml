@@ -13,6 +13,13 @@ Item {
     property bool clampMin: true
     property bool clampMax: true
     property bool editing: false
+
+    // A component driven by a formula instead of a literal shows as a pill in
+    // place of the usual track and fill.
+    property bool hasExpression: false
+    property string expressionText: ""
+    property bool expressionInvalid: false
+
     signal moved(real value)
     signal expressionEntered(string expression)
 
@@ -21,68 +28,74 @@ Item {
 
     implicitHeight: Constants.parameterHeight
 
-    readonly property real fraction: to > from
-        ? Math.max(0, Math.min(1, (value - from) / (to - from)))
-        : 0
+    readonly property real fraction: to > from ? Math.max(0, Math.min(1, (value - from) / (to - from))) : 0
+
+    readonly property string displayValue: root.integer ? Math.round(root.value).toString() : root.value.toFixed(3)
 
     // Tracks the unrounded value through a drag so sub-integer pixel deltas
     // still accumulate instead of getting rounded away on every step.
     property real dragValue: 0
 
     function beginDrag() {
-        dragValue = value
+        dragValue = value;
     }
 
     function applyDelta(pixelDelta) {
-        dragValue += (pixelDelta / width) * (to - from)
-        if (clampMin) dragValue = Math.max(from, dragValue)
-        if (clampMax) dragValue = Math.min(to, dragValue)
-        root.moved(integer ? Math.round(dragValue) : dragValue)
+        dragValue += (pixelDelta / width) * (to - from);
+        if (clampMin)
+            dragValue = Math.max(from, dragValue);
+        if (clampMax)
+            dragValue = Math.min(to, dragValue);
+        root.moved(integer ? Math.round(dragValue) : dragValue);
     }
 
     function beginEdit() {
-        editField.text = root.integer ? Math.round(root.value).toString() : root.value.toFixed(3)
-        root.editing = true
-        editField.selectAll()
-        editField.forceActiveFocus()
+        editField.text = root.displayValue;
+        root.editing = true;
+        editField.selectAll();
+        editField.forceActiveFocus();
     }
 
     // A typed number commits as a value, any other text commits as an expression.
     function commitEdit() {
-        if (!root.editing) return
-        root.editing = false
-        const text = editField.text.trim()
-        if (text.length === 0) return
-
-        const parsed = Number(text)
+        if (!root.editing)
+            return;
+        root.editing = false;
+        const text = editField.text.trim();
+        if (text.length === 0)
+            return;
+        const parsed = Number(text);
         if (isNaN(parsed)) {
-            root.expressionEntered(text)
-            return
+            root.expressionEntered(text);
+            return;
         }
 
-        let v = parsed
-        if (clampMin) v = Math.max(from, v)
-        if (clampMax) v = Math.min(to, v)
-        root.pressed()
-        root.moved(integer ? Math.round(v) : v)
-        root.released()
+        let v = parsed;
+        if (clampMin)
+            v = Math.max(from, v);
+        if (clampMax)
+            v = Math.min(to, v);
+        root.pressed();
+        root.moved(integer ? Math.round(v) : v);
+        root.released();
     }
 
     function cancelEdit() {
-        root.editing = false
+        root.editing = false;
     }
 
     Rectangle {
         id: track
         anchors.fill: parent
         radius: Theme.parameter.borderRadius
-        color: Theme.parameter.backgroundColor
-        border.color: Theme.parameter.lineColor
+        color: root.hasExpression ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
+        border.color: root.hasExpression ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
 
         // The accent fill floats inside the frame with a small inset on every
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill
+            visible: !root.hasExpression
             readonly property real inset: 3
             x: fill.inset
             y: fill.inset
@@ -93,11 +106,11 @@ Item {
         }
 
         Text {
-            visible: !root.editing
+            visible: !root.editing && !root.hasExpression
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            text: root.integer ? Math.round(root.value) : root.value.toFixed(3)
+            text: root.displayValue
             color: Theme.var.text
             font.family: Theme.var.fontMono
             font.pixelSize: 12
@@ -105,7 +118,7 @@ Item {
 
         TextInput {
             id: editField
-            visible: root.editing
+            visible: root.editing && !root.hasExpression
             anchors.fill: parent
             anchors.leftMargin: 8
             anchors.rightMargin: 8
@@ -120,37 +133,105 @@ Item {
             onEditingFinished: root.commitEdit()
             Keys.onEscapePressed: root.cancelEdit()
         }
+
+        Rectangle {
+            id: fxBadge
+            visible: root.hasExpression
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            radius: 4
+            color: Theme.expression.badgeBackgroundColor
+            width: fxLabel.implicitWidth + 10
+            height: fxLabel.implicitHeight + 4
+
+            Text {
+                id: fxLabel
+                anchors.centerIn: parent
+                text: "fx"
+                font.italic: true
+                font.bold: true
+                font.family: Theme.var.fontMono
+                font.pixelSize: 9
+                color: Theme.expression.badgeColor
+            }
+        }
+
+        Rectangle {
+            id: resultChip
+            visible: root.hasExpression
+            anchors.right: parent.right
+            anchors.rightMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            radius: 5
+            color: Theme.parameter.backgroundColor
+            height: 20
+            width: resultRow.implicitWidth + 14
+
+            Row {
+                id: resultRow
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: root.expressionInvalid ? "⚠" : "="
+                    color: root.expressionInvalid ? Theme.expression.invalidResultColor : Theme.expression.resultColor
+                    font.pixelSize: 11
+                }
+                Text {
+                    text: root.displayValue
+                    color: root.expressionInvalid ? Theme.expression.invalidResultColor : Theme.expression.resultColor
+                    font.family: Theme.var.fontMono
+                    font.pixelSize: 11
+                }
+            }
+        }
+
+        Text {
+            visible: root.hasExpression
+            anchors.left: fxBadge.right
+            anchors.leftMargin: 8
+            anchors.right: resultChip.left
+            anchors.rightMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
+            elide: Text.ElideRight
+            text: root.expressionText
+            color: Theme.expression.codeColor
+            font.family: Theme.var.fontMono
+            font.pixelSize: 11
+        }
     }
 
     MouseArea {
         anchors.fill: parent
-        enabled: !root.editing
+        enabled: !root.editing && !root.hasExpression
         cursorShape: Qt.SizeHorCursor
         property point pressPos
         property real lastX
         property bool dragging: false
 
-        onPressed: (mouse) => {
-            pressPos = Qt.point(mouse.x, mouse.y)
-            lastX = mouse.x
-            dragging = false
+        onPressed: mouse => {
+            pressPos = Qt.point(mouse.x, mouse.y);
+            lastX = mouse.x;
+            dragging = false;
         }
-        onPositionChanged: (mouse) => {
+        onPositionChanged: mouse => {
             if (!dragging) {
-                if (Math.abs(mouse.x - pressPos.x) < 3) return
-                dragging = true
-                root.beginDrag()
-                root.pressed()
+                if (Math.abs(mouse.x - pressPos.x) < 3)
+                    return;
+                dragging = true;
+                root.beginDrag();
+                root.pressed();
             }
-            root.applyDelta(mouse.x - lastX)
-            lastX = mouse.x
+            root.applyDelta(mouse.x - lastX);
+            lastX = mouse.x;
         }
         onReleased: {
             if (dragging) {
-                dragging = false
-                root.released()
+                dragging = false;
+                root.released();
             } else {
-                root.beginEdit()
+                root.beginEdit();
             }
         }
     }
