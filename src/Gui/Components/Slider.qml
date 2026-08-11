@@ -14,6 +14,7 @@ Item {
     property bool clampMax: true
     property bool editing: false
     signal moved(real value)
+    signal expressionEntered(string expression)
 
     signal pressed
     signal released
@@ -46,12 +47,18 @@ Item {
         editField.forceActiveFocus()
     }
 
+    // A typed number commits as a value, any other text commits as an expression.
     function commitEdit() {
         if (!root.editing) return
         root.editing = false
         const text = editField.text.trim()
+        if (text.length === 0) return
+
         const parsed = Number(text)
-        if (text.length === 0 || isNaN(parsed)) return
+        if (isNaN(parsed)) {
+            root.expressionEntered(text)
+            return
+        }
 
         let v = parsed
         if (clampMin) v = Math.max(from, v)

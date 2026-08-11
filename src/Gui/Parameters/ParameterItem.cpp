@@ -165,6 +165,46 @@ void ParameterItem::setValueAt(int index, const QVariant& value)
     }
 }
 
+bool ParameterItem::hasExpressionAt(int index) const
+{
+    auto param = parameter_.lock();
+    return param && param->hasExpression(index);
+}
+
+QString ParameterItem::expressionAt(int index) const
+{
+    auto param = parameter_.lock();
+    if (!param) return {};
+    std::optional<String> expression = param->getExpression(index);
+    return expression ? QString::fromStdString(*expression) : QString();
+}
+
+QString ParameterItem::expressionErrorAt(int index) const
+{
+    auto param = parameter_.lock();
+    if (!param || !param->hasExpression(index)) return {};
+
+    String error;
+    switch (param->getValueType())
+    {
+    case prm::ValueType::Float:
+        param->evalFloat(index, error);
+        break;
+    case prm::ValueType::Int:
+        param->evalInt(index, error);
+        break;
+    case prm::ValueType::String:
+        param->evalString(index, error);
+        break;
+    }
+    return QString::fromStdString(error);
+}
+
+void ParameterItem::setExpressionAt(int index, const QString& expression)
+{
+    if (auto param = parameter_.lock()) param->setExpression(expression.toStdString(), index);
+}
+
 void ParameterItem::beginEdit()
 {
     if (auto param = parameter_.lock()) snapshotBeforeEdit_ = toSerializable(*param);

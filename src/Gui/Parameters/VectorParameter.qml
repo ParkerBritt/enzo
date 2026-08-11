@@ -24,7 +24,15 @@ Row {
             clampMin: vec.item ? vec.item.minLocked : true
             clampMax: vec.item ? vec.item.maxLocked : true
             value: vec.item ? vec.item.valueAt(index) : 0
+            onPressed: if (vec.item) vec.item.beginEdit()
             onMoved: (v) => { if (vec.item) vec.item.setValueAt(index, v) }
+            onReleased: if (vec.item) vec.item.commitEdit()
+            onExpressionEntered: (expr) => {
+                if (!vec.item) return
+                vec.item.beginEdit()
+                vec.item.setExpressionAt(index, expr)
+                vec.item.commitEdit()
+            }
 
             // valueAt is a call, so an external edit is mirrored in by hand.
             Connections {

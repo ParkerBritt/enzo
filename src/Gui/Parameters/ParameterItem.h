@@ -37,6 +37,9 @@ class ParameterItem : public QObject
     Q_PROPERTY(bool enabled READ enabled NOTIFY metaChanged)
     Q_PROPERTY(bool hidden READ hidden NOTIFY metaChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(bool hasExpression READ hasExpression NOTIFY valueChanged)
+    Q_PROPERTY(QString expression READ expression NOTIFY valueChanged)
+    Q_PROPERTY(QString expressionError READ expressionError NOTIFY valueChanged)
 
   public:
     /// @brief Builds an item from a template and the parameter it drives.
@@ -73,6 +76,9 @@ class ParameterItem : public QObject
 
     QVariant value() const { return valueAt(0); }
     void setValue(const QVariant& value) { setValueAt(0, value); }
+    bool hasExpression() const { return hasExpressionAt(0); }
+    QString expression() const { return expressionAt(0); }
+    QString expressionError() const { return expressionErrorAt(0); }
 
     /// @brief Reads one component of a vector parameter such as an XYZ axis.
     /// @note A multiparm reads as a list of instance maps keyed by field name.
@@ -80,6 +86,15 @@ class ParameterItem : public QObject
     /// @brief Writes one component of a vector parameter.
     /// @note A multiparm writes from a list of instance maps keyed by field name.
     Q_INVOKABLE void setValueAt(int index, const QVariant& value);
+
+    /// @brief Whether a component's value comes from an expression rather than a literal.
+    Q_INVOKABLE bool hasExpressionAt(int index) const;
+    /// @brief The raw expression source on a component, empty when it holds a literal.
+    Q_INVOKABLE QString expressionAt(int index) const;
+    /// @brief The error from a component's expression, empty when it evaluated cleanly.
+    Q_INVOKABLE QString expressionErrorAt(int index) const;
+    /// @brief Drives a component from an expression instead of a literal value.
+    Q_INVOKABLE void setExpressionAt(int index, const QString& expression);
 
     /// @brief Snapshots the parameter ahead of a gesture such as a handle drag.
     Q_INVOKABLE void beginEdit();
