@@ -2,7 +2,7 @@ import QtQuick
 import Enzo
 import "../Style"
 
-// Horizontal slider with a gradient fill and a value readout.
+// Horizontal slider that opens for typing on a click, or scrubs relative to drag distance.
 Item {
     id: root
 
@@ -12,6 +12,7 @@ Item {
     property bool integer: false
     property bool clampMin: true
     property bool clampMax: true
+    property bool editing: false
     signal moved(real value)
 
     signal pressed
@@ -22,6 +23,47 @@ Item {
     readonly property real fraction: to > from
         ? Math.max(0, Math.min(1, (value - from) / (to - from)))
         : 0
+
+    // Tracks the unrounded value through a drag so sub-integer pixel deltas
+    // still accumulate instead of getting rounded away on every step.
+    property real dragValue: 0
+
+    function beginDrag() {
+        dragValue = value
+    }
+
+    function applyDelta(pixelDelta) {
+        dragValue += (pixelDelta / width) * (to - from)
+        if (clampMin) dragValue = Math.max(from, dragValue)
+        if (clampMax) dragValue = Math.min(to, dragValue)
+        root.moved(integer ? Math.round(dragValue) : dragValue)
+    }
+
+    function beginEdit() {
+        editField.text = root.integer ? Math.round(root.value).toString() : root.value.toFixed(3)
+        root.editing = true
+        editField.selectAll()
+        editField.forceActiveFocus()
+    }
+
+    function commitEdit() {
+        if (!root.editing) return
+        root.editing = false
+        const text = editField.text.trim()
+        const parsed = Number(text)
+        if (text.length === 0 || isNaN(parsed)) return
+
+        let v = parsed
+        if (clampMin) v = Math.max(from, v)
+        if (clampMax) v = Math.min(to, v)
+        root.pressed()
+        root.moved(integer ? Math.round(v) : v)
+        root.released()
+    }
+
+    function cancelEdit() {
+        root.editing = false
+    }
 
     Rectangle {
         id: track
@@ -44,6 +86,7 @@ Item {
         }
 
         Text {
+            visible: !root.editing
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
@@ -52,22 +95,56 @@ Item {
             font.family: Theme.var.fontMono
             font.pixelSize: 12
         }
-    }
 
-    // Maps a press position to a value. An unlocked end lets a drag past the
-    // track exceed the soft range, while a locked end pins the value at it.
-    function emitAt(mouseX) {
-        let f = mouseX / width
-        if (clampMin) f = Math.max(0, f)
-        if (clampMax) f = Math.min(1, f)
-        let v = from + f * (to - from)
-        root.moved(integer ? Math.round(v) : v)
+        TextInput {
+            id: editField
+            visible: root.editing
+            anchors.fill: parent
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            verticalAlignment: TextInput.AlignVCenter
+            horizontalAlignment: TextInput.AlignHCenter
+            clip: true
+            selectByMouse: true
+            color: Theme.var.text
+            font.family: Theme.var.fontMono
+            font.pixelSize: 12
+            onAccepted: root.commitEdit()
+            onEditingFinished: root.commitEdit()
+            Keys.onEscapePressed: root.cancelEdit()
+        }
     }
 
     MouseArea {
         anchors.fill: parent
-        onPressed: (mouse) => { root.pressed(); root.emitAt(mouse.x) }
-        onPositionChanged: (mouse) => { if (pressed) root.emitAt(mouse.x) }
-        onReleased: root.released()
+        enabled: !root.editing
+        cursorShape: Qt.SizeHorCursor
+        property point pressPos
+        property real lastX
+        property bool dragging: false
+
+        onPressed: (mouse) => {
+            pressPos = Qt.point(mouse.x, mouse.y)
+            lastX = mouse.x
+            dragging = false
+        }
+        onPositionChanged: (mouse) => {
+            if (!dragging) {
+                if (Math.abs(mouse.x - pressPos.x) < 3) return
+                dragging = true
+                root.beginDrag()
+                root.pressed()
+            }
+            root.applyDelta(mouse.x - lastX)
+            lastX = mouse.x
+        }
+        onReleased: {
+            if (dragging) {
+                dragging = false
+                root.released()
+            } else {
+                root.beginEdit()
+            }
+        }
     }
 }
