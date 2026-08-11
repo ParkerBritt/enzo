@@ -194,6 +194,7 @@ Rectangle {
         }
 
         onPositionChanged: mouse => {
+            root.forceActiveFocus();
             root.cursorX = mouse.x;
             root.cursorY = mouse.y;
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));

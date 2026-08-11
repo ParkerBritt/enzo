@@ -297,7 +297,6 @@ Column {
             property int hoveredIndex: -1
 
             onPressed: mouse => {
-                plot.forceActiveFocus();
                 root.item.beginEdit();
 
                 const hit = root.handleAt(mouse.x, mouse.y);
@@ -308,6 +307,7 @@ Column {
                 dragging = true;
             }
             onPositionChanged: mouse => {
+                plot.forceActiveFocus();
                 if (dragging)
                     root.moveSelected(mouse.x, mouse.y);
                 else
