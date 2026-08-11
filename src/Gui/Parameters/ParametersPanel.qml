@@ -28,6 +28,16 @@ Rectangle {
     implicitHeight: Math.max(defaultHeight, layout.implicitHeight + contentMargin * 2)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
+    // Gives the panel keyboard focus on hover, without blocking clicks to its controls.
+    MouseArea {
+        id: panelHover
+
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: true
+        onPositionChanged: panel.forceActiveFocus()
+    }
+
     Column {
         id: layout
 
