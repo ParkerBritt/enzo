@@ -34,6 +34,11 @@ variables:
   # Destructive actions, such as deleting a point
   danger: "#c98d92"
 
+  # Feedback states
+  warning:       "#d97706"
+  warningBright: "#f59e0b"
+  success:       "#7CCF7D"
+
   # Axes
   axisX:      "#f5685f"
   axisY:      "#46c98a"
@@ -80,6 +85,20 @@ components:
     panelHeight:     420
   slider:
     fillColor: $parameter
+  expression:
+    # A component driven by a formula instead of a literal, tinted in the accent
+    backgroundColor:      $accent @ 0.06
+    borderColor:          $accent @ 0.35
+    barColor:             $accent
+    badgeColor:           $accentBright
+    badgeBackgroundColor: $accent @ 0.18
+    codeColor:            $textLabel
+    resultColor:          $success
+    # A formula that failed to evaluate, falls back to the type default
+    invalidBackgroundColor: $warning @ 0.06
+    invalidBorderColor:     $warning @ 0.35
+    invalidBarColor:        $warning
+    invalidResultColor:     $warningBright
   iconButton:
     # Surfaces per button variant, at rest and under the cursor.
     plainHoverColor:  $borderSoft
