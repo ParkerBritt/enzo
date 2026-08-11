@@ -32,6 +32,9 @@ Item {
 
     readonly property string displayValue: root.integer ? Math.round(root.value).toString() : root.value.toFixed(3)
 
+    // The pill only shows at rest, giving way to the plain text field once a click opens it for editing.
+    readonly property bool showingExpression: root.hasExpression && !root.editing
+
     // Tracks the unrounded value through a drag so sub-integer pixel deltas
     // still accumulate instead of getting rounded away on every step.
     property real dragValue: 0
@@ -50,7 +53,7 @@ Item {
     }
 
     function beginEdit() {
-        editField.text = root.displayValue;
+        editField.text = root.hasExpression ? root.expressionText : root.displayValue;
         root.editing = true;
         editField.selectAll();
         editField.forceActiveFocus();
@@ -88,14 +91,14 @@ Item {
         id: track
         anchors.fill: parent
         radius: Theme.parameter.borderRadius
-        color: root.hasExpression ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
-        border.color: root.hasExpression ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
+        color: root.showingExpression ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
+        border.color: root.showingExpression ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
 
         // The accent fill floats inside the frame with a small inset on every
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill
-            visible: !root.hasExpression
+            visible: !root.showingExpression
             readonly property real inset: 3
             x: fill.inset
             y: fill.inset
@@ -118,7 +121,7 @@ Item {
 
         TextInput {
             id: editField
-            visible: root.editing && !root.hasExpression
+            visible: root.editing
             anchors.fill: parent
             anchors.leftMargin: 8
             anchors.rightMargin: 8
@@ -136,7 +139,7 @@ Item {
 
         Rectangle {
             id: fxBadge
-            visible: root.hasExpression
+            visible: root.showingExpression
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
@@ -159,7 +162,7 @@ Item {
 
         Rectangle {
             id: resultChip
-            visible: root.hasExpression
+            visible: root.showingExpression
             anchors.right: parent.right
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
@@ -188,7 +191,7 @@ Item {
         }
 
         Text {
-            visible: root.hasExpression
+            visible: root.showingExpression
             anchors.left: fxBadge.right
             anchors.leftMargin: 8
             anchors.right: resultChip.left
@@ -204,8 +207,8 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        enabled: !root.editing && !root.hasExpression
-        cursorShape: Qt.SizeHorCursor
+        enabled: !root.editing
+        cursorShape: root.hasExpression ? Qt.PointingHandCursor : Qt.SizeHorCursor
         property point pressPos
         property real lastX
         property bool dragging: false
@@ -216,6 +219,9 @@ Item {
             dragging = false;
         }
         onPositionChanged: mouse => {
+            // A formula is edited by clicking it, not scrubbed like a plain value.
+            if (root.hasExpression)
+                return;
             if (!dragging) {
                 if (Math.abs(mouse.x - pressPos.x) < 3)
                     return;
