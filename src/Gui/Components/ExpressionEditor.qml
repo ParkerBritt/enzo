@@ -34,10 +34,23 @@ Popup {
     opacity: unrollProgress
 
     enter: Transition {
-        NumberAnimation { target: root; property: "unrollProgress"; from: 0; to: 1; duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            target: root
+            property: "unrollProgress"
+            from: 0
+            to: 1
+            duration: 300
+            easing.type: Easing.OutCubic
+        }
     }
     exit: Transition {
-        NumberAnimation { target: root; property: "unrollProgress"; to: 0; duration: 140; easing.type: Easing.InCubic }
+        NumberAnimation {
+            target: root
+            property: "unrollProgress"
+            to: 0
+            duration: 250
+            easing.type: Easing.InCubic
+        }
     }
 
     // Functions expressions can actually call, offered as one click inserts.
