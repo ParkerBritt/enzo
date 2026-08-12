@@ -24,6 +24,12 @@ Item {
     property string paramLabel: ""
     property string paramKind: ""
 
+    // This component's own identity, used to build a prm()/prmI()/prmS()
+    // reference to it when it is copied from the right-click menu.
+    property string paramNodeName: ""
+    property string paramName: ""
+    property int componentIndex: 0
+
     // Evaluates typed text for the floating editor's live preview, without committing it.
     property var evaluator: null
 
@@ -283,5 +289,24 @@ Item {
         liveValue: root.value
         onCommitted: text => root.commitText(text)
         onReverted: root.expressionReverted()
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+        onClicked: mouse => contextMenu.popup(mouse.x, mouse.y)
+    }
+
+    ParameterContextMenu {
+        id: contextMenu
+        nodeName: root.paramNodeName
+        paramName: root.paramName
+        paramLabel: root.paramLabel
+        componentIndex: root.componentIndex
+        kind: root.paramKind
+        hasExpression: root.hasExpression
+        onEditRequested: root.openEditor()
+        onRevertRequested: root.expressionReverted()
+        onPasteRequested: expr => root.expressionEntered(expr)
     }
 }

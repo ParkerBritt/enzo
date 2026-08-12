@@ -15,4 +15,9 @@ Dropdown {
     labels: item ? item.options : []
     currentIndex: tokens.indexOf(item ? item.value : "")
     onActivated: (index) => item.value = tokens[index]
+
+    ParameterContextMenuTrigger {
+        anchors.fill: parent
+        item: root.item
+    }
 }

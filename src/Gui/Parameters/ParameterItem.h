@@ -27,6 +27,7 @@ class ParameterItem : public QObject
     Q_OBJECT
     Q_PROPERTY(QString kind READ kind CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString nodeName READ nodeName CONSTANT)
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString tooltip READ tooltip CONSTANT)
     Q_PROPERTY(int vectorSize READ vectorSize CONSTANT)
@@ -59,6 +60,8 @@ class ParameterItem : public QObject
     /// @brief The type as a lowercase token the QML delegate dispatches on.
     QString kind() const { return kind_; }
     QString name() const { return name_; }
+    /// @brief The owning node's name, for a prm() reference into this parameter.
+    QString nodeName() const { return nodeName_; }
     QString label() const { return label_; }
     QString tooltip() const { return tooltip_; }
     int vectorSize() const { return vectorSize_; }
@@ -125,6 +128,7 @@ class ParameterItem : public QObject
   private:
     QString kind_;
     QString name_;
+    QString nodeName_;
     QString label_;
     QString tooltip_;
     int vectorSize_ = 1;

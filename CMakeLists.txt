@@ -238,8 +238,11 @@ qt_add_executable(${AppExec}
     # --- end viewport placeholder
 )
 
-# Register Constants.qml as a singleton
+# Register Constants.qml and ParameterClipboard.qml as singletons
 set_source_files_properties(src/Gui/Style/Constants.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+set_source_files_properties(src/Gui/Components/ParameterClipboard.qml
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE
 )
 
@@ -263,6 +266,9 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Dropdown.qml
         src/Gui/Components/Stepper.qml
         src/Gui/Components/PlaceholderDialog.qml
+        src/Gui/Components/ParameterClipboard.qml
+        src/Gui/Components/ParameterContextMenu.qml
+        src/Gui/Components/ParameterContextMenuTrigger.qml
         src/Gui/MenuBar/AppMenuBar.qml
         src/Gui/MenuBar/MenuBar.qml
         src/Gui/MenuBar/MenuPopup.qml
@@ -290,6 +296,8 @@ qt_add_qml_module(${AppExec}
     RESOURCES
         # Declares Constants.qml a singleton for the directory import.
         src/Gui/Style/qmldir
+        # Declares ParameterClipboard.qml a singleton for the directory import.
+        src/Gui/Components/qmldir
 )
 
 qt6_add_shaders(${AppExec} "enzoShaders"
