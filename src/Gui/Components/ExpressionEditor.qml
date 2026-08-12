@@ -29,6 +29,17 @@ Popup {
     implicitWidth: 300
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
+    // How much of the popup's height is currently revealed, from 0 to 1.
+    property real unrollProgress: 1
+    opacity: unrollProgress
+
+    enter: Transition {
+        NumberAnimation { target: root; property: "unrollProgress"; from: 0; to: 1; duration: 220; easing.type: Easing.OutCubic }
+    }
+    exit: Transition {
+        NumberAnimation { target: root; property: "unrollProgress"; to: 0; duration: 140; easing.type: Easing.InCubic }
+    }
+
     // Functions expressions can actually call, offered as one click inserts.
     readonly property var insertTokens: ["prm()", "prmI()", "prmS()"]
 
@@ -65,9 +76,12 @@ Popup {
         }
     }
 
+    // Height tracks unrollProgress while clip hides the rest of the column,
+    // so the panel reveals top-down at full size.
     contentItem: Item {
         implicitWidth: root.availableWidth
-        implicitHeight: column.height
+        implicitHeight: column.height * root.unrollProgress
+        clip: true
 
         Column {
             id: column
