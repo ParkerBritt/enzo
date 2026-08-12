@@ -205,6 +205,38 @@ void ParameterItem::setExpressionAt(int index, const QString& expression)
     if (auto param = parameter_.lock()) param->setExpression(expression.toStdString(), index);
 }
 
+void ParameterItem::clearExpressionAt(int index)
+{
+    if (auto param = parameter_.lock()) param->clearExpression(index);
+}
+
+QVariantMap ParameterItem::previewExpressionAt(int index, const QString& expression) const
+{
+    auto param = parameter_.lock();
+    if (!param) return {};
+
+    const String text = expression.toStdString();
+    String error;
+    QVariant value;
+    switch (param->getValueType())
+    {
+    case prm::ValueType::Float:
+        value = static_cast<double>(param->previewFloat(text, error));
+        break;
+    case prm::ValueType::Int:
+        value = static_cast<qlonglong>(param->previewInt(text, error));
+        break;
+    case prm::ValueType::String:
+        value = QString::fromStdString(param->previewString(text, error));
+        break;
+    }
+
+    QVariantMap result;
+    result["value"] = value;
+    result["invalid"] = !error.empty();
+    return result;
+}
+
 void ParameterItem::beginEdit()
 {
     if (auto param = parameter_.lock()) snapshotBeforeEdit_ = toSerializable(*param);

@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QVariant>
 #include <QVariantList>
+#include <QVariantMap>
 #include <boost/signals2/connection.hpp>
 #include <memory>
 
@@ -95,6 +96,11 @@ class ParameterItem : public QObject
     Q_INVOKABLE QString expressionErrorAt(int index) const;
     /// @brief Drives a component from an expression instead of a literal value.
     Q_INVOKABLE void setExpressionAt(int index, const QString& expression);
+    /// @brief Drops a component's expression, reverting to its underlying literal.
+    Q_INVOKABLE void clearExpressionAt(int index);
+    /// @brief Evaluates arbitrary text as a live preview, without storing it.
+    /// @return A map with value (the result) and invalid (whether it errored).
+    Q_INVOKABLE QVariantMap previewExpressionAt(int index, const QString& expression) const;
 
     /// @brief Snapshots the parameter ahead of a gesture such as a handle drag.
     Q_INVOKABLE void beginEdit();
