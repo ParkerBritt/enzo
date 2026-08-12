@@ -410,7 +410,12 @@ void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
         std::vector<nt::Unit> dependents = graph_.getDependents(nt::Unit{opId});
         for (const nt::Unit& dependent : dependents)
         {
-            getGeoOperator(dependent.opId).dirtyNode(false);
+            // Dirty dependent op
+            nt::GeometryOperator& dependentOp = getGeoOperator(dependent.opId);
+            dependentOp.dirtyNode(false);
+
+            // Dirty dependent parameter
+            if (dependent.isParameter()) dependentOp.parameterChanged(dependent.parm);
         }
 
         if (nt::UpdateLock::isUnlocked())

@@ -15,6 +15,10 @@ class NodeParameter;
 class Template;
 } // namespace enzo::prm
 
+namespace enzo::nt {
+class GeometryOperator;
+}
+
 namespace enzo::ui {
 
 /// @brief One parameter exposed to QML, bound two ways to its engine parameter.
@@ -48,6 +52,7 @@ class ParameterItem : public QObject
     ParameterItem(
         const prm::Template& prmTemplate,
         std::weak_ptr<prm::NodeParameter> parameter,
+        nt::GeometryOperator& op,
         QObject* parent = nullptr
     );
 

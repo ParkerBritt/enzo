@@ -21,6 +21,12 @@ Popup {
     // Evaluates typed text without committing it, returning {value, invalid}.
     property var evaluator: null
 
+    // The parameter's own live value. The preview below calls evaluator as a
+    // plain function, which QML can't see into, so this is read purely to
+    // give the preview binding something to react to when an upstream
+    // dependency changes it out from under an open editor.
+    property real liveValue: 0
+
     signal committed(string expression)
     signal reverted
 
@@ -57,7 +63,10 @@ Popup {
     readonly property var insertTokens: ["prm()", "prmI()", "prmS()"]
 
     // Live result of whatever text currently sits in the code field.
-    readonly property var preview: root.evaluator ? root.evaluator(codeField.text) : null
+    readonly property var preview: {
+        root.liveValue;
+        return root.evaluator ? root.evaluator(codeField.text) : null;
+    }
     readonly property bool previewInvalid: root.preview ? !!root.preview.invalid : false
     readonly property string previewText: {
         if (!root.preview)

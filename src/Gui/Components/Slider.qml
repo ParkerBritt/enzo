@@ -280,6 +280,7 @@ Item {
         paramLabel: root.paramLabel
         paramKind: root.paramKind
         evaluator: root.evaluator
+        liveValue: root.value
         onCommitted: text => root.commitText(text)
         onReverted: root.expressionReverted()
     }
