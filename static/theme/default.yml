@@ -19,6 +19,7 @@ variables:
   text:       "#e7e8ec"
   textLabel:  "#9a9aa6"
   textMuted:  "#63636d"
+  textFaint:  "#3a3a42"
 
   # Fonts
   fontSans: "Public Sans"
@@ -77,7 +78,7 @@ components:
       - "#b69bf2"
   parameter:
     # The floating panel container, translucent over the network behind it.
-    panelColor:      $surface @ 0.93
+    panelColor:      $surface
     # The inset fields inside it, such as sliders and text boxes.
     backgroundColor: $fieldSurface
     lineColor:       $fieldBorder
@@ -85,6 +86,10 @@ components:
     panelHeight:     420
   slider:
     fillColor: $parameter
+  codeEditor:
+    backgroundColor:   $background
+    gutterBorderColor: $borderSoft
+    gutterTextColor:   $textFaint
   expression:
     # A component driven by a formula instead of a literal, tinted in the accent
     backgroundColor:      $accent @ 0.06
