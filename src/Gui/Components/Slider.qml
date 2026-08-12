@@ -43,6 +43,11 @@ Item {
     // The pill only shows at rest, giving way to the plain text field once a click opens it for editing.
     readonly property bool showingExpression: root.hasExpression && !root.editing
 
+    // Typing (whether into a plain value or an existing formula) always looks
+    // like an expression box rather than a slider, since any text can turn
+    // into an expression on commit.
+    readonly property bool expressionStyled: root.showingExpression || root.editing
+
     // Tracks the unrounded value through a drag so sub-integer pixel deltas
     // still accumulate instead of getting rounded away on every step.
     property real dragValue: 0
@@ -116,14 +121,14 @@ Item {
         id: track
         anchors.fill: parent
         radius: Theme.parameter.borderRadius
-        color: root.showingExpression ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
-        border.color: root.showingExpression ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
+        color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
+        border.color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
 
         // The accent fill floats inside the frame with a small inset on every
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill
-            visible: !root.showingExpression
+            visible: !root.expressionStyled
             readonly property real inset: 3
             x: fill.inset
             y: fill.inset
