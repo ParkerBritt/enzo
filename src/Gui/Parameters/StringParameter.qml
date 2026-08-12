@@ -22,5 +22,10 @@ Rectangle {
         font.family: Theme.var.fontSans
         font.pixelSize: 12
         onEditingFinished: if (parameter.item) parameter.item.value = text
+        onAccepted: focus = false
+        Keys.onEscapePressed: {
+            text = parameter.item ? parameter.item.value : "";
+            focus = false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Enzo
+import "../Components"
 import "../Utils.js" as Utils
 import "."
 
@@ -85,9 +86,15 @@ Rectangle {
             linkController.cancel();
     }
 
+    FocusReclaimer {
+        target: root
+        area: canvasArea
+    }
+
     // Pan, zoom, and port interaction. A press near a port grabs the closest one
     // across every node, so the nearest port always wins over the topmost.
     MouseArea {
+        id: canvasArea
         anchors.fill: parent
         acceptedButtons: Qt.MiddleButton | Qt.LeftButton
         hoverEnabled: true
@@ -194,7 +201,6 @@ Rectangle {
         }
 
         onPositionChanged: mouse => {
-            root.forceActiveFocus();
             root.cursorX = mouse.x;
             root.cursorY = mouse.y;
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
