@@ -29,6 +29,9 @@ Row {
             expressionInvalid: vec.item ? vec.item.expressionErrorAt(index).length > 0 : false
             paramLabel: vec.item ? vec.item.label : ""
             paramKind: vec.item ? vec.item.kind : ""
+            paramName: vec.item ? vec.item.name : ""
+            paramNodeName: vec.item ? vec.item.nodeName : ""
+            componentIndex: index
             evaluator: (text) => vec.item ? vec.item.previewExpressionAt(index, text) : ({value: 0, invalid: false})
             onPressed: if (vec.item) vec.item.beginEdit()
             onMoved: (v) => { if (vec.item) vec.item.setValueAt(index, v) }

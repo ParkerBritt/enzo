@@ -24,6 +24,10 @@ Popup {
     // Visual height of one row.
     property int rowHeight: 26
 
+    // Height of a given row, defaulting to the uniform rowHeight. A consumer
+    // with a shorter separator row overrides this per index.
+    property var rowHeightAt: (index) => rowHeight
+
     // Component drawing a single row. The Repeater hands it index and modelData,
     // and it reads the highlight by comparing index to highlightedIndex.
     required property Component delegate
@@ -39,7 +43,19 @@ Popup {
     signal activated(int index)
 
     readonly property int count: model ? model.length : 0
-    readonly property real fullHeight: count * rowHeight + padding * 2
+    readonly property real rowsHeight: {
+        let total = 0
+        for (let i = 0; i < count; i++) total += rowHeightAt(i)
+        return total
+    }
+    readonly property real fullHeight: rowsHeight + padding * 2
+
+    // Returns the top y of a row in content coordinates, the sum of every row before it.
+    function rowTop(index) {
+        let y = 0
+        for (let i = 0; i < index; i++) y += rowHeightAt(i)
+        return y
+    }
 
     padding: 4
     focus: true
@@ -64,8 +80,13 @@ Popup {
 
     // Row under a y in content coordinates, or -1 when the point misses a row.
     function rowAt(localY) {
-        const index = Math.floor(localY / rowHeight)
-        return (index >= 0 && index < count) ? index : -1
+        let y = 0
+        for (let i = 0; i < count; i++) {
+            const h = rowHeightAt(i)
+            if (localY >= y && localY < y + h) return i
+            y += h
+        }
+        return -1
     }
 
     background: Rectangle {
@@ -83,7 +104,7 @@ Popup {
     }
 
     contentItem: Item {
-        implicitHeight: root.count * root.rowHeight
+        implicitHeight: root.rowsHeight
         focus: true
 
         Keys.onUpPressed: root.step(-1)
@@ -95,10 +116,10 @@ Popup {
         // Gliding highlight drawn behind the rows.
         Rectangle {
             width: parent.width
-            height: root.rowHeight
+            height: root.rowHeightAt(root.highlightedIndex)
             radius: 6
             color: Theme.popup.highlightColor
-            y: root.highlightedIndex * root.rowHeight
+            y: root.rowTop(root.highlightedIndex)
             visible: root.highlightedIndex >= 0 && root.canHighlight(root.highlightedIndex)
             Behavior on y { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }
         }

@@ -96,6 +96,7 @@ ParameterItem::ParameterItem(
 {
     kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
     name_ = QString::fromStdString(prmTemplate.getName());
+    nodeName_ = QString::fromStdString(op.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());
     tooltip_ = QString::fromStdString(prmTemplate.getTooltip());
     vectorSize_ = static_cast<int>(prmTemplate.getSize());

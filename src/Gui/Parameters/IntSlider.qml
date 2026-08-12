@@ -17,6 +17,8 @@ Slider {
     expressionInvalid: item ? item.expressionError.length > 0 : false
     paramLabel: item ? item.label : ""
     paramKind: item ? item.kind : ""
+    paramName: item ? item.name : ""
+    paramNodeName: item ? item.nodeName : ""
     evaluator: (text) => item ? item.previewExpressionAt(0, text) : ({value: 0, invalid: false})
     onPressed: if (item) item.beginEdit()
     onMoved: (v) => { if (item) item.value = v }

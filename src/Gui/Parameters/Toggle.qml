@@ -1,5 +1,6 @@
 import QtQuick
 import Enzo
+import "../Components"
 import "../Style"
 
 // Left aligned switch, on when the value is non zero.
@@ -32,5 +33,10 @@ Item {
         TapHandler {
             onTapped: root.item.value = root.item.value ? 0 : 1
         }
+    }
+
+    ParameterContextMenuTrigger {
+        anchors.fill: parent
+        item: root.item
     }
 }

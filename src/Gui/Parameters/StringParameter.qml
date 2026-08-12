@@ -1,5 +1,6 @@
 import QtQuick
 import Enzo
+import "../Components"
 import "../Style"
 
 Rectangle {
@@ -27,5 +28,10 @@ Rectangle {
             text = parameter.item ? parameter.item.value : "";
             focus = false;
         }
+    }
+
+    ParameterContextMenuTrigger {
+        anchors.fill: parent
+        item: parameter.item
     }
 }
