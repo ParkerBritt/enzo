@@ -20,12 +20,10 @@ Rectangle {
     clip: true
     radius: Theme.var.panelRadius
     color: Theme.parameter.panelColor
-    border.color: Theme.var.border
-    border.width: 1
 
     // Height follows the content until the user drags the resize grip, which
     // assigns an explicit size and takes over.
-    implicitHeight: Math.max(defaultHeight, layout.implicitHeight + contentMargin * 2)
+    implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + contentMargin)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
     // Gives the panel keyboard focus on hover, without blocking clicks to its controls.
@@ -38,16 +36,22 @@ Rectangle {
         onPositionChanged: panel.forceActiveFocus()
     }
 
-    Column {
-        id: layout
+    // Title strip naming the node the parameters belong to.
+    Rectangle {
+        id: header
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: headerRow.implicitHeight + panel.contentMargin * 2
+        topLeftRadius: panel.radius
+        topRightRadius: panel.radius
+        color: Theme.var.surfaceRaised
 
-        anchors.fill: parent
-        anchors.margins: panel.contentMargin
-        spacing: 8
-
-        // Header naming the node the parameters belong to.
         Row {
-            width: parent.width
+            id: headerRow
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: panel.contentMargin
             spacing: 8
 
             Icon {
@@ -73,17 +77,33 @@ Rectangle {
                 }
             }
         }
+    }
 
-        Rectangle {
-            width: parent.width
-            height: 1
-            color: Theme.var.borderSoft
-        }
+    Rectangle {
+        anchors.top: header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 1
+        color: Theme.var.borderSoft
+    }
 
-        ParameterList {
-            width: parent.width
-            model: parameters.parameters
-        }
+    ParameterList {
+        id: list
+        anchors.top: header.bottom
+        anchors.topMargin: panel.contentMargin
+        anchors.left: parent.left
+        anchors.leftMargin: panel.contentMargin
+        anchors.right: parent.right
+        anchors.rightMargin: panel.contentMargin
+        model: parameters.parameters
+    }
+
+    // Drawn last so the border isn't painted over by the header fill.
+    Rectangle {
+        anchors.fill: parent
+        radius: panel.radius
+        color: "transparent"
+        border.color: Theme.var.borderSoft
     }
 
     // Drag the bottom left corner to resize. The top right stays pinned, so the
