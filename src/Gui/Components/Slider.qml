@@ -93,10 +93,14 @@ Item {
             return;
         root.editing = false;
         root.commitText(editField.text);
+        editField.focus = false;
     }
 
     function cancelEdit() {
+        if (!root.editing)
+            return;
         root.editing = false;
+        editField.focus = false;
     }
 
     // Returns whether a point in root's coordinates falls within an item also laid out in root's space.

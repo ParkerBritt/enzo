@@ -26,14 +26,19 @@ Rectangle {
     implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + contentMargin)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
-    // Gives the panel keyboard focus on hover, without blocking clicks to its controls.
+    // Gives the panel keyboard focus on hover, without blocking clicks to its
+    // controls or stealing focus from a field being edited.
     MouseArea {
         id: panelHover
 
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
-        onPositionChanged: panel.forceActiveFocus()
+    }
+
+    FocusReclaimer {
+        target: panel
+        area: panelHover
     }
 
     // Title strip naming the node the parameters belong to.
