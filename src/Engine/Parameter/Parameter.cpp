@@ -162,6 +162,33 @@ String prm::Parameter::evalString(unsigned int index, String& error) const
     return readStringLiteral_(index);
 }
 
+floatT prm::Parameter::previewFloat(const String& expression, String& error) const
+{
+    error.clear();
+    auto context = makeExpressionContext_();
+    floatT result = 0;
+    expr::ExpressionEngine::instance().evalFloat(expression, context.get(), result, error);
+    return result;
+}
+
+intT prm::Parameter::previewInt(const String& expression, String& error) const
+{
+    error.clear();
+    auto context = makeExpressionContext_();
+    intT result = 0;
+    expr::ExpressionEngine::instance().evalInt(expression, context.get(), result, error);
+    return result;
+}
+
+String prm::Parameter::previewString(const String& expression, String& error) const
+{
+    error.clear();
+    auto context = makeExpressionContext_();
+    String result;
+    expr::ExpressionEngine::instance().evalString(expression, context.get(), result, error);
+    return result;
+}
+
 // Evaluates each component, running any expression that drives it to produce
 // the value.
 std::vector<floatT> prm::Parameter::evalFloats() const

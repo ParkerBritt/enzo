@@ -20,8 +20,16 @@ Item {
     property string expressionText: ""
     property bool expressionInvalid: false
 
+    // Named in the floating editor's header, e.g. "Density" / "float".
+    property string paramLabel: ""
+    property string paramKind: ""
+
+    // Evaluates typed text for the floating editor's live preview, without committing it.
+    property var evaluator: null
+
     signal moved(real value)
     signal expressionEntered(string expression)
+    signal expressionReverted
 
     signal pressed
     signal released
@@ -60,11 +68,8 @@ Item {
     }
 
     // A typed number commits as a value, any other text commits as an expression.
-    function commitEdit() {
-        if (!root.editing)
-            return;
-        root.editing = false;
-        const text = editField.text.trim();
+    function commitText(text) {
+        text = text.trim();
         if (text.length === 0)
             return;
         const parsed = Number(text);
@@ -83,8 +88,24 @@ Item {
         root.released();
     }
 
+    function commitEdit() {
+        if (!root.editing)
+            return;
+        root.editing = false;
+        root.commitText(editField.text);
+    }
+
     function cancelEdit() {
         root.editing = false;
+    }
+
+    // Returns whether a point in root's coordinates falls within an item also laid out in root's space.
+    function within(item, px, py) {
+        return px >= item.x && px <= item.x + item.width && py >= item.y && py <= item.y + item.height;
+    }
+
+    function openEditor() {
+        expressionEditor.openFor(root.expressionText);
     }
 
     Rectangle {
@@ -232,13 +253,25 @@ Item {
             root.applyDelta(mouse.x - lastX);
             lastX = mouse.x;
         }
-        onReleased: {
+        onReleased: mouse => {
             if (dragging) {
                 dragging = false;
                 root.released();
+            } else if (root.hasExpression && (root.within(fxBadge, mouse.x, mouse.y) || root.within(resultChip, mouse.x, mouse.y))) {
+                root.openEditor();
             } else {
                 root.beginEdit();
             }
         }
+    }
+
+    ExpressionEditor {
+        id: expressionEditor
+        y: root.height + 6
+        paramLabel: root.paramLabel
+        paramKind: root.paramKind
+        evaluator: root.evaluator
+        onCommitted: text => root.commitText(text)
+        onReverted: root.expressionReverted()
     }
 }

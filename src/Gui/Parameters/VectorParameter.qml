@@ -27,6 +27,9 @@ Row {
             hasExpression: vec.item ? vec.item.hasExpressionAt(index) : false
             expressionText: vec.item ? vec.item.expressionAt(index) : ""
             expressionInvalid: vec.item ? vec.item.expressionErrorAt(index).length > 0 : false
+            paramLabel: vec.item ? vec.item.label : ""
+            paramKind: vec.item ? vec.item.kind : ""
+            evaluator: (text) => vec.item ? vec.item.previewExpressionAt(index, text) : ({value: 0, invalid: false})
             onPressed: if (vec.item) vec.item.beginEdit()
             onMoved: (v) => { if (vec.item) vec.item.setValueAt(index, v) }
             onReleased: if (vec.item) vec.item.commitEdit()
@@ -34,6 +37,12 @@ Row {
                 if (!vec.item) return
                 vec.item.beginEdit()
                 vec.item.setExpressionAt(index, expr)
+                vec.item.commitEdit()
+            }
+            onExpressionReverted: {
+                if (!vec.item) return
+                vec.item.beginEdit()
+                vec.item.clearExpressionAt(index)
                 vec.item.commitEdit()
             }
 

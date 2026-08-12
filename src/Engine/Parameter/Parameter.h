@@ -69,6 +69,13 @@ class Parameter
     /// otherwise nullopt, including when the component holds no expression.
     std::optional<String> getExpressionError(unsigned int index = 0) const;
 
+    /// @brief Evaluates arbitrary text as an uncommitted live preview.
+    floatT previewFloat(const String& expression, String& error) const;
+    /// @brief Evaluates arbitrary text as an uncommitted live preview.
+    intT previewInt(const String& expression, String& error) const;
+    /// @brief Evaluates arbitrary text as an uncommitted live preview.
+    String previewString(const String& expression, String& error) const;
+
     PrmValues getValues() const;
     void setValues(const PrmValues& values);
 
