@@ -53,7 +53,7 @@ ParametersViewModel::buildItem(const prm::Template& prmTemplate, nt::GeometryOpe
     std::weak_ptr<prm::NodeParameter> parameter;
     if (!prmTemplate.isContainer()) parameter = op.getParameter(prmTemplate.getName());
 
-    auto* item = new ParameterItem(prmTemplate, parameter, this);
+    auto* item = new ParameterItem(prmTemplate, parameter, op, this);
     item->setMeta(
         op.isParameterEnabled(prmTemplate.getName()),
         op.isParameterHidden(prmTemplate.getName())

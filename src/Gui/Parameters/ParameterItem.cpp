@@ -1,5 +1,6 @@
 #include "Gui/Parameters/ParameterItem.h"
 #include "Engine/Core/Types.h"
+#include "Engine/Network/GeometryOperator.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
@@ -88,6 +89,7 @@ void setInstanceValues(prm::Parameter& param, const QVariantList& instances)
 ParameterItem::ParameterItem(
     const prm::Template& prmTemplate,
     std::weak_ptr<prm::NodeParameter> parameter,
+    nt::GeometryOperator& op,
     QObject* parent
 )
     : QObject(parent), parameter_(std::move(parameter))
@@ -115,10 +117,13 @@ ParameterItem::ParameterItem(
         optionTokens_.append(QString::fromStdString(option.getToken()));
     }
 
-    // An undo or expression edit changes the value behind QML's back, so mirror
-    // the engine parameter's own change signal out as the QML notify.
-    if (auto param = parameter_.lock())
-        valueSubscription_ = param->valueChanged.connect([this] { Q_EMIT valueChanged(); });
+    // An undo, direct edit, or upstream dependency can all change the value
+    // behind QML's back, and the owning node broadcasts every one of them
+    // through this signal, so mirror it out as the QML notify.
+    const std::string parmName = prmTemplate.getName();
+    valueSubscription_ = op.parameterChanged.connect([this, parmName](const std::string& name) {
+        if (name == parmName) Q_EMIT valueChanged();
+    });
 }
 
 QVariant ParameterItem::valueAt(int index) const
