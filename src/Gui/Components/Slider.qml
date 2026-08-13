@@ -78,6 +78,19 @@ Item {
         editField.forceActiveFocus();
     }
 
+    // Clamps a number to [from, to] as configured and moves to it, the shared
+    // tail of committing a typed value or pasting one.
+    function applyNumber(parsed) {
+        let v = parsed;
+        if (clampMin)
+            v = Math.max(from, v);
+        if (clampMax)
+            v = Math.min(to, v);
+        root.pressed();
+        root.moved(integer ? Math.round(v) : v);
+        root.released();
+    }
+
     // A typed number commits as a value, any other text commits as an expression.
     function commitText(text) {
         text = text.trim();
@@ -88,15 +101,15 @@ Item {
             root.expressionEntered(text);
             return;
         }
+        root.applyNumber(parsed);
+    }
 
-        let v = parsed;
-        if (clampMin)
-            v = Math.max(from, v);
-        if (clampMax)
-            v = Math.min(to, v);
-        root.pressed();
-        root.moved(integer ? Math.round(v) : v);
-        root.released();
+    // Casts a pasted value to a number, same as the engine casts a stored
+    // literal between parameter types, falling back to 0 when it doesn't
+    // parse as one (e.g. a string copied from a dropdown or text field).
+    function pasteValue(pasted) {
+        const parsed = Number(pasted);
+        root.applyNumber(isNaN(parsed) ? 0 : parsed);
     }
 
     function commitEdit() {
@@ -305,8 +318,11 @@ Item {
         componentIndex: root.componentIndex
         kind: root.paramKind
         hasExpression: root.hasExpression
+        value: root.value
+        expression: root.expressionText
         onEditRequested: root.openEditor()
         onRevertRequested: root.expressionReverted()
         onPasteRequested: expr => root.expressionEntered(expr)
+        onPasteValueRequested: v => root.pasteValue(v)
     }
 }

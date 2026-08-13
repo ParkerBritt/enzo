@@ -268,6 +268,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/PlaceholderDialog.qml
         src/Gui/Components/ParameterClipboard.qml
         src/Gui/Components/ParameterContextMenu.qml
+        src/Gui/Components/ParameterContextMenuAction.qml
+        src/Gui/Components/ParameterContextMenuRow.qml
         src/Gui/Components/ParameterContextMenuTrigger.qml
         src/Gui/MenuBar/AppMenuBar.qml
         src/Gui/MenuBar/MenuBar.qml
