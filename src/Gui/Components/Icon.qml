@@ -41,6 +41,10 @@ Item {
         request.onreadystatechange = function () {
             if (request.readyState !== XMLHttpRequest.DONE)
                 return;
+            // The icon can be destroyed (e.g. its popup closes) while this
+            // request is still in flight, which nulls out the id it closed over.
+            if (!image)
+                return;
             if (!request.responseText) {
                 console.warn("Icon: failed to load", Theme.iconsDir + root.name + ".svg");
                 return;

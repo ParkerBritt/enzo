@@ -28,6 +28,8 @@ Item {
         paramLabel: trigger.item ? trigger.item.label : ""
         kind: trigger.item ? trigger.item.kind : ""
         hasExpression: trigger.item ? trigger.item.hasExpression : false
+        value: trigger.item ? trigger.item.value : undefined
+        expression: trigger.item ? trigger.item.expression : ""
         editable: false
         onRevertRequested: {
             trigger.item.beginEdit();
@@ -37,6 +39,11 @@ Item {
         onPasteRequested: expr => {
             trigger.item.beginEdit();
             trigger.item.setExpressionAt(0, expr);
+            trigger.item.commitEdit();
+        }
+        onPasteValueRequested: v => {
+            trigger.item.beginEdit();
+            trigger.item.setValueAt(0, v);
             trigger.item.commitEdit();
         }
     }
