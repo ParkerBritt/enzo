@@ -151,6 +151,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setDisplayOp</b> (<a 
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clearDisplayFlag</b> ()</td></tr>
 <tr class="memdesc:a776c58824b2a0ad2bd28a53f5a88017a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the display flag so no node is displayed. <br /></td></tr>
 <tr class="separator:a776c58824b2a0ad2bd28a53f5a88017a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c2de79dc3632bef9df812437a6c01f1" id="r_a0c2de79dc3632bef9df812437a6c01f1"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c2de79dc3632bef9df812437a6c01f1">getPrimaryNode</a> ()</td></tr>
+<tr class="memdesc:a0c2de79dc3632bef9df812437a6c01f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the operator ID of the primary node, or nullopt when none.  <br /></td></tr>
+<tr class="separator:a0c2de79dc3632bef9df812437a6c01f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6c655a85895deb2a3630e76ca43042f" id="r_af6c655a85895deb2a3630e76ca43042f"><td class="memItemLeft" align="right" valign="top"><a id="af6c655a85895deb2a3630e76ca43042f" name="af6c655a85895deb2a3630e76ca43042f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setPrimaryNode</b> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId)</td></tr>
+<tr class="memdesc:af6c655a85895deb2a3630e76ca43042f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the given OpId as the primary node, releasing the previous one. <br /></td></tr>
+<tr class="separator:af6c655a85895deb2a3630e76ca43042f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a52fcda9c600cd68ad9bfc152afa252" id="r_a2a52fcda9c600cd68ad9bfc152afa252"><td class="memItemLeft" align="right" valign="top"><a id="a2a52fcda9c600cd68ad9bfc152afa252" name="a2a52fcda9c600cd68ad9bfc152afa252"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clearPrimaryNode</b> ()</td></tr>
+<tr class="memdesc:a2a52fcda9c600cd68ad9bfc152afa252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the primary node so none is primary. <br /></td></tr>
+<tr class="separator:a2a52fcda9c600cd68ad9bfc152afa252"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87db6e7d3bc10c86954afe54c23d9d07" id="r_a87db6e7d3bc10c86954afe54c23d9d07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87db6e7d3bc10c86954afe54c23d9d07">setSelectedNode</a> (<a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">OpId</a> opId, bool selected, bool add=false)</td></tr>
 <tr class="memdesc:a87db6e7d3bc10c86954afe54c23d9d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the selection state for the given node.  <br /></td></tr>
 <tr class="separator:a87db6e7d3bc10c86954afe54c23d9d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -224,6 +235,12 @@ boost::signals2::signal&lt; void(std::shared_ptr&lt; const <a class="el" href="c
 <tr class="memitem:a9a7394e513824a612a920efcfdc8d35c" id="r_a9a7394e513824a612a920efcfdc8d35c"><td class="memItemLeft" align="right" valign="top"><a id="a9a7394e513824a612a920efcfdc8d35c" name="a9a7394e513824a612a920efcfdc8d35c"></a>
 boost::signals2::signal&lt; void(std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>selectedGeoChanged</b></td></tr>
 <tr class="separator:a9a7394e513824a612a920efcfdc8d35c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a1828b9f51e6b5944728c1b9ece96ab" id="r_a9a1828b9f51e6b5944728c1b9ece96ab"><td class="memItemLeft" align="right" valign="top"><a id="a9a1828b9f51e6b5944728c1b9ece96ab" name="a9a1828b9f51e6b5944728c1b9ece96ab"></a>
+boost::signals2::signal&lt; void(std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>primaryNodeChanged</b></td></tr>
+<tr class="separator:a9a1828b9f51e6b5944728c1b9ece96ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a5571f8faae0bc4045ff1cf7e3cafcc" id="r_a5a5571f8faae0bc4045ff1cf7e3cafcc"><td class="memItemLeft" align="right" valign="top"><a id="a5a5571f8faae0bc4045ff1cf7e3cafcc" name="a5a5571f8faae0bc4045ff1cf7e3cafcc"></a>
+boost::signals2::signal&lt; void(std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>primaryGeoChanged</b></td></tr>
+<tr class="separator:a5a5571f8faae0bc4045ff1cf7e3cafcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a6ff46e8e823636a0a3caaf1187da33" id="r_a6a6ff46e8e823636a0a3caaf1187da33"><td class="memItemLeft" align="right" valign="top"><a id="a6a6ff46e8e823636a0a3caaf1187da33" name="a6a6ff46e8e823636a0a3caaf1187da33"></a>
 boost::signals2::signal&lt; void(std::vector&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> &gt; selectedNodeIds)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>selectedNodesChanged</b></td></tr>
 <tr class="separator:a6a6ff46e8e823636a0a3caaf1187da33"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -452,6 +469,26 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#ad40cef50cc1d
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The parameter, or an empty handle when nothing matches. </dd></dl>
+
+</div>
+</div>
+<a id="a0c2de79dc3632bef9df812437a6c01f1" name="a0c2de79dc3632bef9df812437a6c01f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c2de79dc3632bef9df812437a6c01f1">&#9670;&#160;</a></span>getPrimaryNode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="Types_8h.html#ad40cef50cc1dc0d03924b9d9346e0288">nt::OpId</a> &gt; enzo::nt::NetworkManager::getPrimaryNode </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the operator ID of the primary node, or nullopt when none. </p>
+<p>The primary node is the single node that drives the parameter and geometry panes. There can only be one at a time. It persists when the selection is cleared, unlike the selection itself. </p>
 
 </div>
 </div>
