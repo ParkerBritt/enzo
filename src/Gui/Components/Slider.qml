@@ -257,6 +257,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         enabled: !root.editing
+        z: 1
         cursorShape: root.hasExpression ? Qt.PointingHandCursor : Qt.SizeHorCursor
         property point pressPos
         property real lastX
