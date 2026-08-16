@@ -1,7 +1,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkPath.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NodeType.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
@@ -150,7 +150,8 @@ nt::Node& nt::NetworkManager::getNode(nt::NodeId nodeId)
     if (it == nodeStore_.end())
     {
         throw std::out_of_range(
-            "NodeId: " + std::to_string(nodeId) + " > max nodeId: " + std::to_string(maxNodeId_) + "\n"
+            "NodeId: " + std::to_string(nodeId) + " > max nodeId: " + std::to_string(maxNodeId_) +
+            "\n"
         );
     }
     return *it->second;

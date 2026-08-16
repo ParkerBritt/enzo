@@ -1,7 +1,7 @@
 #include "LegacyGui/Network/NetworkPanel.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
@@ -366,8 +366,8 @@ void NetworkPanel::keyPressEvent(QKeyEvent* event)
         // case(Qt::Key_G):
         // {
         //     auto nodeType = nt::NodeTypeTable::getNodeType("transform");
-        //     if(!nodeType.has_value()) {throw std::runtime_error("Couldn't find node info for: " + )}
-        //     if(
+        //     if(!nodeType.has_value()) {throw std::runtime_error("Couldn't find node info for: " +
+        //     )} if(
         //         nodeType.has_value() &&
         //         auto newNode = createNode(nodeType)
         //         )
@@ -506,16 +506,17 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent* event)
                 std::vector<enzo::nt::NodeId> prev(enzo::nt::nm().getSelectedNodes());
 
                 // Get modifiers
-                bool isCurrentlySelected = std::find(prev.begin(), prev.end(), nodeId) != prev.end();
+                bool isCurrentlySelected =
+                    std::find(prev.begin(), prev.end(), nodeId) != prev.end();
                 bool ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
 
                 if (ctrlHeld || !isCurrentlySelected)
                 {
                     // Toggle selection if ctrl held
                     // Otherwise only allow selection, not deselection
-                    std::vector<enzo::nt::NodeId> next = ctrlHeld && isCurrentlySelected
-                                                           ? std::vector<enzo::nt::NodeId>{}
-                                                           : std::vector<enzo::nt::NodeId>{nodeId};
+                    std::vector<enzo::nt::NodeId> next =
+                        ctrlHeld && isCurrentlySelected ? std::vector<enzo::nt::NodeId>{}
+                                                        : std::vector<enzo::nt::NodeId>{nodeId};
 
                     // Setup undo
                     auto cmd = std::make_unique<enzo::nt::ChangeSelectionCommand>(prev, next);

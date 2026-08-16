@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <string>

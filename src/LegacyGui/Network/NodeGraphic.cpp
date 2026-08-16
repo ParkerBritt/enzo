@@ -1,7 +1,7 @@
 #include "LegacyGui/Network/NodeGraphic.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "LegacyGui/Network/DisplayFlagButton.h"
 #include "LegacyGui/Network/NodeIconGraphic.h"
 #include "LegacyGui/Network/SocketGraphic.h"

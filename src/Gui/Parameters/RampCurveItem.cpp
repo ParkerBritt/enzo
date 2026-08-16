@@ -96,12 +96,7 @@ void updateStrokeNode(
                                    : QPointF(0, 1);
 
         for (const qreal side : {-halfWidth, halfWidth})
-            setVertex(
-                vertices[vertex++],
-                samples[i] + normal * side,
-                color,
-                color.alphaF()
-            );
+            setVertex(vertices[vertex++], samples[i] + normal * side, color, color.alphaF());
     }
     geometry->markVertexDataDirty();
     node->markDirty(QSGNode::DirtyGeometry);
@@ -177,8 +172,18 @@ QSGNode* RampCurveItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         samples[i] = QPointF(position * width(), (1 - value) * height());
     }
 
-    updateFillNode(static_cast<QSGGeometryNode*>(root->firstChild()), samples, height(), fillColor_);
-    updateStrokeNode(static_cast<QSGGeometryNode*>(root->lastChild()), samples, curveColor_, curveWidth_);
+    updateFillNode(
+        static_cast<QSGGeometryNode*>(root->firstChild()),
+        samples,
+        height(),
+        fillColor_
+    );
+    updateStrokeNode(
+        static_cast<QSGGeometryNode*>(root->lastChild()),
+        samples,
+        curveColor_,
+        curveWidth_
+    );
     return root;
 }
 

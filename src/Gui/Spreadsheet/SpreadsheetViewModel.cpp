@@ -1,6 +1,6 @@
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NodePacket.h"
 
 namespace enzo::ui {

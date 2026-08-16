@@ -153,10 +153,7 @@ std::vector<std::weak_ptr<prm::NodeParameter>> nt::Node::getParameters()
     return {parameters_.begin(), parameters_.end()};
 }
 
-const std::vector<prm::Template>& nt::Node::getTemplates() const
-{
-    return nodeType_.templates;
-}
+const std::vector<prm::Template>& nt::Node::getTemplates() const { return nodeType_.templates; }
 
 std::string nt::Node::getName() const { return path_.getName(); }
 

@@ -21,7 +21,8 @@ class ChangeParameterCommand : public UndoCommand
         ParameterSerializable before,
         ParameterSerializable after
     )
-        : nodeId_(nodeId), paramName_(paramName), before_(std::move(before)), after_(std::move(after))
+        : nodeId_(nodeId), paramName_(paramName), before_(std::move(before)),
+          after_(std::move(after))
     {
     }
 

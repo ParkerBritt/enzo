@@ -241,9 +241,11 @@ class NetworkManager
 
     /// @brief Resolves a parameter reference to its parameter.
     /// @param path A parameter path such as "grid_1.tx".
-    /// @param fromNode The node a path with no node part resolves against, nullNode when there is none.
+    /// @param fromNode The node a path with no node part resolves against, nullNode when there is
+    /// none.
     /// @return The parameter, or an empty handle when nothing matches.
-    std::weak_ptr<prm::NodeParameter> findParameter(const NetworkPath& path, NodeId fromNode = nullNode);
+    std::weak_ptr<prm::NodeParameter>
+    findParameter(const NetworkPath& path, NodeId fromNode = nullNode);
 
     /** @name Signals
      * @{

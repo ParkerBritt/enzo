@@ -93,6 +93,6 @@ class BOOST_SYMBOL_EXPORT NodeDef
 };
 
 using nodeConstructor = NodeDef* (*)(enzo::nt::NetworkManager * network,
-                                         enzo::nt::NodeType nodeType);
+                                     enzo::nt::NodeType nodeType);
 
 } // namespace enzo::nt

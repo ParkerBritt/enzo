@@ -1,8 +1,8 @@
 #include "Engine/Network/NodeDef.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include <iostream>
 #include <stdexcept>
 #include <tbb/parallel_for.h>
