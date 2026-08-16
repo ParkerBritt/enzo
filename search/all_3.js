@@ -18,15 +18,15 @@ var searchData=
   ['connect_15',['connect',['../classenzo_1_1nt_1_1NetworkGraph.html#ac47dacf27878e7a439179237d03ba7a2',1,'enzo::nt::NetworkGraph']]],
   ['connection_16',['Connection',['../structenzo_1_1nt_1_1Connection.html',1,'enzo::nt']]],
   ['connectionserializable_17',['ConnectionSerializable',['../structConnectionSerializable.html',1,'']]],
-  ['connectnodes_18',['connectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#a08f1b402e95f75d4aaebba8a2b7b50c6',1,'enzo::nt::NetworkManager']]],
-  ['cookcontext_19',['CookContext',['../classenzo_1_1op_1_1CookContext.html',1,'enzo::op']]],
-  ['cookop_20',['cookOp',['../classenzo_1_1nt_1_1GeometryOpDef.html#aa7fe1c46993419d28bca3c4cec56580f',1,'enzo::nt::GeometryOpDef::cookOp()'],['../classenzo_1_1nt_1_1GeometryOperator.html#a596c2c39e15a5f3981adc7b4eda3d964',1,'enzo::nt::GeometryOperator::cookOp()'],['../classenzo_1_1nt_1_1NetworkManager.html#a9e7d23338f93ae7c795f66029cbe9be4',1,'enzo::nt::NetworkManager::cookOp()']]],
+  ['connectnodes_18',['connectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af91834ebedabd29c46231ae35eff879e',1,'enzo::nt::NetworkManager']]],
+  ['cook_19',['cook',['../classenzo_1_1nt_1_1NetworkManager.html#a2df671a62df60d8df53c0bed27c460cd',1,'enzo::nt::NetworkManager::cook()'],['../classenzo_1_1nt_1_1Node.html#a8dc13b71c07a1fe6049789422a93189d',1,'enzo::nt::Node::cook()'],['../classenzo_1_1nt_1_1NodeDef.html#a79fcfc2b0871c18c52e7221973a3d050',1,'enzo::nt::NodeDef::cook()']]],
+  ['cookcontext_20',['CookContext',['../classenzo_1_1nt_1_1CookContext.html',1,'enzo::nt']]],
   ['createfacegroup_21',['createFaceGroup',['../classenzo_1_1geo_1_1Mesh.html#ae93ba17be0397a40da83fa3c3ce541d6',1,'enzo::geo::Mesh']]],
   ['creategroup_22',['createGroup',['../classenzo_1_1geo_1_1Primitive.html#a87edbc57ed5616a1ba342311cf4b35e6',1,'enzo::geo::Primitive']]],
-  ['createnodecommand_23',['CreateNodeCommand',['../classenzo_1_1nt_1_1CreateNodeCommand.html',1,'enzo::nt']]],
-  ['createoperator_24',['createOperator',['../classenzo_1_1nt_1_1NetworkManager.html#a1c5fe262d9ab612436d039edd0f64e31',1,'enzo::nt::NetworkManager']]],
+  ['createnode_23',['createNode',['../classenzo_1_1nt_1_1NetworkManager.html#a77287a07aca654059ae9ddca3b495c47',1,'enzo::nt::NetworkManager']]],
+  ['createnodecommand_24',['CreateNodeCommand',['../classenzo_1_1nt_1_1CreateNodeCommand.html',1,'enzo::nt']]],
   ['createpointgroup_25',['createPointGroup',['../classenzo_1_1geo_1_1Primitive.html#ae0358ab001a1b4718175bd132ddc4c3b',1,'enzo::geo::Primitive']]],
   ['createprimitivegroup_26',['createPrimitiveGroup',['../classenzo_1_1geo_1_1Primitive.html#a279f43beae9983e6c7c80b65bbcc85ce',1,'enzo::geo::Primitive']]],
   ['createvertexgroup_27',['createVertexGroup',['../classenzo_1_1geo_1_1Mesh.html#aa9768b0fdb4fcbf738e3ab99ceb6e45e',1,'enzo::geo::Mesh']]],
-  ['currentop_28',['currentOp',['../classenzo_1_1expr_1_1ExpressionContext.html#ac702330c6fbf8d8814d7036a8f7409a4',1,'enzo::expr::ExpressionContext']]]
+  ['currentnode_28',['currentNode',['../classenzo_1_1expr_1_1ExpressionContext.html#af9376c02ce76d1d790d745bc7e8881eb',1,'enzo::expr::ExpressionContext']]]
 ];

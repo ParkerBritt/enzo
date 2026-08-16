@@ -1,8 +1,8 @@
 var searchData=
 [
   ['template_0',['Template',['../classenzo_1_1prm_1_1Template.html',1,'enzo::prm']]],
-  ['throwerror_1',['throwError',['../classenzo_1_1nt_1_1GeometryOpDef.html#a6c2dcbb16f44219223e0c71761d8b7f3',1,'enzo::nt::GeometryOpDef']]],
-  ['throwwarning_2',['throwWarning',['../classenzo_1_1nt_1_1GeometryOpDef.html#abd6d87f16d1dfd29e71940688b551ccb',1,'enzo::nt::GeometryOpDef']]],
+  ['throwerror_1',['throwError',['../classenzo_1_1nt_1_1NodeDef.html#a6682543455347845832c59073318bc86',1,'enzo::nt::NodeDef']]],
+  ['throwwarning_2',['throwWarning',['../classenzo_1_1nt_1_1NodeDef.html#a1658d806d7ec49a241bf573a5570ae24',1,'enzo::nt::NodeDef']]],
   ['todo_20list_3',['Todo List',['../todo.html',1,'']]],
   ['tostring_4',['toString',['../Types_8h.html#aa747b7a013ecc2df775727846306bb4b',1,'enzo::prm']]],
   ['tovector_5',['toVector',['../structenzo_1_1geo_1_1Mesh_1_1FaceOffsets.html#ab2b349378647b66048c354ac2b976e73',1,'enzo::geo::Mesh::FaceOffsets']]],

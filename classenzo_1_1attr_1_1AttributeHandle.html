@@ -155,7 +155,7 @@ class enzo::attr::AttributeHandle&lt; T &gt;</div><p>Read write accessor for <a 
   </dd>
 </dl>
 <p>An <a class="el" href="classenzo_1_1attr_1_1Attribute.html" title="Containers for geometry data.">Attribute</a> Handle is a typed view into an attribute’s storage. It binds at construction to a concrete type and exposes operations like reserving capacity, appending values, and reading/writing by index. Because the handle uses templating, most misuse is caught at compile time, and runtime guards raise errors if an attribute/handle type combination isn’t accounted for. In the future implicit casting can be added for convenience. Handles don’t own data, they just reference the attribute’s storage.</p>
-<p>There is also a read-only handle variant that provides the same typed accessors without mutation. This is useful when an operator needs to inspect data but must not modify it, when the engine exposes attributes to user code with limited permissions, or when implementing const member functions that require attribute access.</p>
+<p>There is also a read-only handle variant that provides the same typed accessors without mutation. This is useful when a node needs to inspect data but must not modify it, when the engine exposes attributes to user code with limited permissions, or when implementing const member functions that require attribute access.</p>
 <p>Together, attributes define the schema and storage, while handles provide the typed access that nodes and tools use to operate on data directly. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab3dde5cfe4d9c8764eaa3d6036d95f40" name="ab3dde5cfe4d9c8764eaa3d6036d95f40"></a>
