@@ -1,6 +1,6 @@
 #include "LegacyGui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "LegacyGui/Style.h"
 #include <QButtonGroup>
 #include <QLabel>

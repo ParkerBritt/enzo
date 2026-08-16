@@ -1,6 +1,6 @@
 #include "Gui/Parameters/ParametersViewModel.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Parameter/Template.h"
 #include "Gui/Parameters/ParameterItem.h"
 
@@ -47,8 +47,7 @@ void ParametersViewModel::rebuild()
     Q_EMIT parametersChanged();
 }
 
-ParameterItem*
-ParametersViewModel::buildItem(const prm::Template& prmTemplate, nt::Node& node)
+ParameterItem* ParametersViewModel::buildItem(const prm::Template& prmTemplate, nt::Node& node)
 {
     std::weak_ptr<prm::NodeParameter> parameter;
     if (!prmTemplate.isContainer()) parameter = node.getParameter(prmTemplate.getName());

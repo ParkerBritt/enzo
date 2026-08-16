@@ -8,7 +8,7 @@ struct NodeType;
 class NodeDef;
 class NetworkManager;
 
-using nodeConstructor = NodeDef* (*)(NetworkManager* network, NodeType nodeType);
+using nodeConstructor = NodeDef* (*)(NetworkManager * network, NodeType nodeType);
 
 struct NodeType
 {

@@ -303,8 +303,10 @@ std::vector<NodeLinkLayer::Link> NodeLinkLayer::collectLinks() const
 
         // The curve leaves the source's output and enters the target's input. A link
         // whose nodes are not both in the snapshot yet has no points to draw.
-        const std::optional<QPointF> output = nodes_->getPortPosition(sourceNode, sourceOutput, true);
-        const std::optional<QPointF> input = nodes_->getPortPosition(targetNode, targetInput, false);
+        const std::optional<QPointF> output =
+            nodes_->getPortPosition(sourceNode, sourceOutput, true);
+        const std::optional<QPointF> input =
+            nodes_->getPortPosition(targetNode, targetInput, false);
         if (!output || !input) continue;
 
         links.push_back(Link{*output, *input, row});

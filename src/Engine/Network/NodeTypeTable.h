@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Network/NodeDef.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NodeDef.h"
 #include "Engine/Network/NodeType.h"
 #include "Engine/Parameter/Template.h"
 #include <boost/config.hpp>

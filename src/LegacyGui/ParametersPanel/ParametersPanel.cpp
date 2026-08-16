@@ -1,7 +1,7 @@
 #include "LegacyGui/ParametersPanel/ParametersPanel.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Parameter/Template.h"
 #include "LegacyGui/Parameters/BoolParm.h"
 #include "LegacyGui/Parameters/DropdownParm.h"

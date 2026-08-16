@@ -73,8 +73,7 @@ void buildSampleNetwork()
 
     auto& network = enzo::nt::nm();
     auto create = [&](const char* type, enzo::Vector2 position) {
-        return network
-            .createNode(enzo::nt::NodeTypeTable::getNodeType(type).value(), "", position);
+        return network.createNode(enzo::nt::NodeTypeTable::getNodeType(type).value(), "", position);
     };
 
     const enzo::nt::NodeId gridId = create("grid", {0.f, 0.f});

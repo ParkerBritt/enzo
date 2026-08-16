@@ -1,7 +1,7 @@
 #include "Gui/Parameters/ParameterItem.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
@@ -256,12 +256,14 @@ void ParameterItem::commitEdit()
     ParameterSerializable after = toSerializable(*param);
     if (after == snapshotBeforeEdit_) return;
 
-    nt::nm().undoStack().push(std::make_unique<nt::ChangeParameterCommand>(
-        param->getNodeId(),
-        param->getName(),
-        snapshotBeforeEdit_,
-        after
-    ));
+    nt::nm().undoStack().push(
+        std::make_unique<nt::ChangeParameterCommand>(
+            param->getNodeId(),
+            param->getName(),
+            snapshotBeforeEdit_,
+            after
+        )
+    );
 }
 
 void ParameterItem::setMeta(bool enabled, bool hidden)

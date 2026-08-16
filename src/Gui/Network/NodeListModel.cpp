@@ -1,6 +1,6 @@
 #include "Gui/Network/NodeListModel.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include <QLineF>
 #include <QRectF>
 #include <algorithm>
@@ -189,7 +189,8 @@ QPointF NodeListModel::getPortPosition(const Node& node, int slot, bool isOutput
     return QPointF(x, y);
 }
 
-std::optional<QPointF> NodeListModel::getPortPosition(nt::NodeId nodeId, int slot, bool isOutput) const
+std::optional<QPointF>
+NodeListModel::getPortPosition(nt::NodeId nodeId, int slot, bool isOutput) const
 {
     const int row = rowOf(nodeId);
     if (row == -1) return std::nullopt;
