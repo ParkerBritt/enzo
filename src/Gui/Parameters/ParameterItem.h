@@ -16,7 +16,7 @@ class Template;
 } // namespace enzo::prm
 
 namespace enzo::nt {
-class GeometryOperator;
+class Node;
 }
 
 namespace enzo::ui {
@@ -53,7 +53,7 @@ class ParameterItem : public QObject
     ParameterItem(
         const prm::Template& prmTemplate,
         std::weak_ptr<prm::NodeParameter> parameter,
-        nt::GeometryOperator& op,
+        nt::Node& node,
         QObject* parent = nullptr
     );
 

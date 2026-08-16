@@ -54,7 +54,7 @@ void enzo::ui::StringParm::onEditingFinished()
     if (auto parameterShared = parameter_.lock())
     {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(),
+            parameterShared->getNodeId(),
             parameterShared->getName(),
             valueBeforeEdit_,
             parameterShared->getValues()

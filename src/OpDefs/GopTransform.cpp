@@ -5,12 +5,12 @@
 #include <Eigen/src/Geometry/AngleAxis.h>
 #include <Eigen/src/Geometry/Transform.h>
 
-GopTransform::GopTransform(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopTransform::GopTransform(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopTransform::cookOp(enzo::op::CookContext context)
+void GopTransform::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

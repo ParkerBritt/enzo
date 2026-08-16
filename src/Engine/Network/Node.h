@@ -1,39 +1,39 @@
 #pragma once
 #include "Engine/Core/Path.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOpDef.h"
+#include "Engine/Network/NodeDef.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/NodeType.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include <memory>
 
 namespace enzo::nt {
 /**
- * @class GeometryOperator
+ * @class Node
  * @brief The unique runtime representation of a node
  */
-class GeometryOperator
+class Node
 {
   public:
     /**
      * @brief Constructs a new node
      *
-     * @param opId the operator id assigned to this node. For most situations
+     * @param nodeId the node id assigned to this node. For most situations
      * this should be set by the nt::NetworkManager
-     * @param opInfo The data class informing the node what its properties
+     * @param nodeType The data class informing the node what its properties
      * are that set it apart from other nodes. This is what makes a grid
      * node different to a transform node.
      */
-    GeometryOperator(enzo::nt::OpId opId, op::OpInfo opInfo);
-    virtual ~GeometryOperator() = default;
+    Node(enzo::nt::NodeId nodeId, nt::NodeType nodeType);
+    virtual ~Node() = default;
     /// @brief Deleted copy constructor to avoid accidental copies.
-    GeometryOperator(const GeometryOperator&) = delete;
+    Node(const Node&) = delete;
     /// @brief Deleted copy assignment operator to avoid accidental copies.
-    GeometryOperator& operator=(const GeometryOperator&) = delete;
+    Node& operator=(const Node&) = delete;
 
-    /// @brief Computes the output geometry based on the [cookOp](@ref nt::GeometryOpDef::cookOp)
-    /// definition in nt::GeometryOpDef. This is set by the @p opInfo constructor parameter
-    void cookOp(op::CookContext context);
+    /// @brief Computes the output geometry based on the [cook](@ref nt::NodeDef::cook)
+    /// definition in nt::NodeDef. This is set by the @p nodeType constructor parameter
+    void cook(nt::CookContext context);
 
     /**
      * @brief Returns the current output geometry.
@@ -70,7 +70,7 @@ class GeometryOperator
      *
      * The name is the leaf of the node's path, not stored separately. Unlike the type name it is
      * per node and is intended to be user assignable.
-     * @note The starting name is synthesized from the type name and op id as a placeholder.
+     * @note The starting name is synthesized from the type name and node id as a placeholder.
      * @todo implement uniqueness checked node names
      */
     std::string getName() const;
@@ -88,7 +88,7 @@ class GeometryOperator
      * name and label. Use getType().getName() for the internal type name (eg.
      * "copy_to_points") and getType().getLabel() for the display label (eg. "Copy To Points").
      */
-    const op::OpInfo& getType() const;
+    const nt::NodeType& getType() const;
 
     /**
      * @brief Marks the outputed geometry as outdated and notifies the network
@@ -119,7 +119,7 @@ class GeometryOperator
 
     /// @brief A signal emitted when the node is dirtied. This will usually notify the
     /// NetworkManager
-    boost::signals2::signal<void(nt::OpId opId, bool dirtyDescendents)> nodeDirtied;
+    boost::signals2::signal<void(nt::NodeId nodeId, bool dirtyDescendents)> nodeDirtied;
 
     /// @brief A signal emitted when one parameter's value changes, carrying its name.
     boost::signals2::signal<void(const std::string& parmName)> parameterChanged;
@@ -135,9 +135,9 @@ class GeometryOperator
     void onParameterChanged(const std::string& parmName);
 
     std::vector<std::shared_ptr<prm::NodeParameter>> parameters_;
-    std::unique_ptr<enzo::nt::GeometryOpDef> opDef_;
-    enzo::nt::OpId opId_;
-    enzo::op::OpInfo opInfo_;
+    std::unique_ptr<enzo::nt::NodeDef> nodeDef_;
+    enzo::nt::NodeId nodeId_;
+    enzo::nt::NodeType nodeType_;
     // Full path locating this node within the network, its leaf is the node name
     Path path_;
     Vector2 position_{0.f, 0.f};

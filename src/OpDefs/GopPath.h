@@ -1,15 +1,15 @@
 #pragma once
-#include "Engine/Network/GeometryOpDef.h"
+#include "Engine/Network/NodeDef.h"
 #include "Engine/Parameter/Template.h"
 
-class GopPath : public enzo::nt::GeometryOpDef
+class GopPath : public enzo::nt::NodeDef
 {
   public:
-    GopPath(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo);
-    virtual void cookOp(enzo::op::CookContext context);
-    static enzo::nt::GeometryOpDef* ctor(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
+    GopPath(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType);
+    virtual void cook(enzo::nt::CookContext context);
+    static enzo::nt::NodeDef* ctor(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
     {
-        return new GopPath(network, opInfo);
+        return new GopPath(network, nodeType);
     }
 
     static BOOST_SYMBOL_EXPORT std::vector<enzo::prm::Template> parameterList();

@@ -1,5 +1,5 @@
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
@@ -69,26 +69,26 @@ namespace {
 /// the selection signal the spreadsheet view-model listens for.
 void buildSampleNetwork()
 {
-    enzo::op::OperatorTable::initPlugins();
+    enzo::nt::NodeTypeTable::initPlugins();
 
     auto& network = enzo::nt::nm();
     auto create = [&](const char* type, enzo::Vector2 position) {
         return network
-            .createOperator(enzo::op::OperatorTable::getOpInfo(type).value(), "", position);
+            .createNode(enzo::nt::NodeTypeTable::getNodeType(type).value(), "", position);
     };
 
-    const enzo::nt::OpId gridId = create("grid", {0.f, 0.f});
-    const enzo::nt::OpId transformId = create("transform", {200.f, 120.f});
+    const enzo::nt::NodeId gridId = create("grid", {0.f, 0.f});
+    const enzo::nt::NodeId transformId = create("transform", {200.f, 120.f});
     create("cube", {-180.f, 140.f});
     create("circle", {40.f, -160.f});
 
     // Feed the grid's output into the transform so there is a wire to draw.
     network.connectNodes(gridId, 0, transformId, 0);
 
-    network.cookOp(gridId);
+    network.cook(gridId);
     network.setSelectedNodes({gridId});
     network.setPrimaryNode(gridId);
-    network.setDisplayOp(gridId);
+    network.setDisplayNode(gridId);
 }
 
 } // namespace

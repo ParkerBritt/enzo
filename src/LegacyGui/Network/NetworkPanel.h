@@ -34,8 +34,8 @@ class NetworkPanel : public Panel
         MOUSE_DOWN_NODE,
         MOVING_NODE
     };
-    void createNode(enzo::op::OpInfo opInfo);
-    void onOperatorCreated(enzo::nt::OpId opId);
+    void createNode(enzo::nt::NodeType nodeType);
+    void onNodeCreated(enzo::nt::NodeId nodeId);
     void onConnectionCreated(enzo::nt::Connection connection);
     void onConnectionRemoved(enzo::nt::Connection connection);
     void clearNetwork();
@@ -45,7 +45,7 @@ class NetworkPanel : public Panel
     NetworkGraphicsScene* scene_;
     NetworkGraphicsView* view_;
 
-    std::unordered_map<enzo::nt::OpId, NodeGraphic*> nodeStore_;
+    std::unordered_map<enzo::nt::NodeId, NodeGraphic*> nodeStore_;
     std::unordered_map<enzo::nt::Connection, NodeEdgeGraphic*> edgeStore_;
 
     FloatingEdgeGraphic* floatingEdge_ = nullptr;

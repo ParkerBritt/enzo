@@ -1,5 +1,5 @@
-#include "Engine/Network/OpInfo.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeType.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "GopGeometryImport.h"
 #include "GopHouse.h"
 #include "GopOceanSurface.h"
@@ -20,10 +20,10 @@
 #include <boost/dll.hpp>
 
 extern "C" {
-BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
+BOOST_SYMBOL_EXPORT void newNodeLibrary(enzo::nt::addNodeTypePtr addNodeType)
 {
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "transform",
             "Transform",
             &GopTransform::ctor,
@@ -33,8 +33,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "merge",
             "Merge",
             &GopMerge::ctor,
@@ -44,8 +44,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "geometryImport",
             "Geometry Import",
             &GopGeometryImport::ctor,
@@ -55,8 +55,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "grid",
             "Grid",
             &GopGrid::ctor,
@@ -66,8 +66,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "sineWave",
             "Sine Wave",
             &GopSineWave::ctor,
@@ -77,8 +77,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "oceanSurface",
             "Ocean Surface",
             &GopOceanSurface::ctor,
@@ -88,8 +88,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "path",
             "Path",
             &GopPath::ctor,
@@ -99,8 +99,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "camera",
             "Camera",
             &GopCamera::ctor,
@@ -110,8 +110,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "copyToPoints",
             "Copy To Points",
             &GopCopyToPoints::ctor,
@@ -121,8 +121,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "delete",
             "Delete",
             &GopDelete::ctor,
@@ -132,8 +132,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "cube",
             "Cube",
             &GopCube::ctor,
@@ -143,8 +143,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "extrude",
             "Extrude",
             &GopExtrude::ctor,
@@ -154,8 +154,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "boolean",
             "Boolean",
             &GopBoolean::ctor,
@@ -165,8 +165,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "circle",
             "Circle",
             &GopCircle::ctor,
@@ -176,8 +176,8 @@ BOOST_SYMBOL_EXPORT void newSopOperator(enzo::op::addOperatorPtr addOperator)
             1,
         }
     );
-    addOperator(
-        enzo::op::OpInfo{
+    addNodeType(
+        enzo::nt::NodeType{
             "sweep",
             "Sweep",
             &GopSweep::ctor,

@@ -1,8 +1,8 @@
 #include "LegacyGui/Network/NetworkPanel.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
 #include "LegacyGui/Network/DisplayFlagButton.h"
@@ -44,16 +44,16 @@ NetworkPanel::NetworkPanel(QWidget* parent) : Panel(parent)
     mainLayout_->addWidget(view_);
 
     // Node position changed
-    enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::OpId opId, enzo::Vector2 pos) {
-        if (auto it = nodeStore_.find(opId); it != nodeStore_.end())
+    enzo::nt::nm().nodePositionChanged.connect([this](enzo::nt::NodeId nodeId, enzo::Vector2 pos) {
+        if (auto it = nodeStore_.find(nodeId); it != nodeStore_.end())
         {
             it->second->setPos(pos.x(), pos.y());
         }
     });
 
-    // Operators removed
-    enzo::nt::nm().operatorRemoved.connect([this](enzo::nt::OpId opId) {
-        if (auto it = nodeStore_.find(opId); it != nodeStore_.end())
+    // Nodes removed
+    enzo::nt::nm().nodeRemoved.connect([this](enzo::nt::NodeId nodeId) {
+        if (auto it = nodeStore_.find(nodeId); it != nodeStore_.end())
         {
             NodeGraphic* node = it->second;
             nodeStore_.erase(it);
@@ -66,21 +66,21 @@ NetworkPanel::NetworkPanel(QWidget* parent) : Panel(parent)
     });
 
     // Display nodes changed
-    enzo::nt::nm().displayNodeChanged.connect([this](std::optional<enzo::nt::OpId> opId) {
+    enzo::nt::nm().displayNodeChanged.connect([this](std::optional<enzo::nt::NodeId> nodeId) {
         for (auto& [id, node] : nodeStore_)
         {
-            node->setDisplayFlag(opId.has_value() && id == *opId);
+            node->setDisplayFlag(nodeId.has_value() && id == *nodeId);
         }
     });
 
     // Selected nodes changed
-    enzo::nt::nm().selectedNodesChanged.connect([this](std::vector<enzo::nt::OpId> selectedIds) {
+    enzo::nt::nm().selectedNodesChanged.connect([this](std::vector<enzo::nt::NodeId> selectedIds) {
         // TODO: potentially slow iterating through every node
         for (auto& [id, node] : nodeStore_)
         {
             node->setSelected(false);
         }
-        for (enzo::nt::OpId id : selectedIds)
+        for (enzo::nt::NodeId id : selectedIds)
         {
             if (auto it = nodeStore_.find(id); it != nodeStore_.end())
             {
@@ -161,7 +161,7 @@ void NetworkPanel::socketClicked(SocketGraphic* socket, QMouseEvent* event)
     // clicked second socket
     // connect to opposite type
     else if (socket->getIO() != startSocket_->getIO() &&
-             startSocket_->getOpId() != socket->getOpId())
+             startSocket_->getNodeId() != socket->getNodeId())
     {
 
         // order sockets in relation to data flow
@@ -172,15 +172,15 @@ void NetworkPanel::socketClicked(SocketGraphic* socket, QMouseEvent* event)
         auto outputNodeSocket =
             startSocket_->getIO() == enzo::nt::SocketIOType::Input ? startSocket_ : socket;
 
-        nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(outputNodeSocket->getOpId());
+        nt::Node& node = enzo::nt::nm().getNode(outputNodeSocket->getNodeId());
 
-        std::cout << "CONNECTING opid: " << inputNodeSocket->getOpId() << " -> "
-                  << outputNodeSocket->getOpId() << "\n";
+        std::cout << "CONNECTING opid: " << inputNodeSocket->getNodeId() << " -> "
+                  << outputNodeSocket->getNodeId() << "\n";
 
         nt::nm().connectNodes(
-            inputNodeSocket->getOpId(),
+            inputNodeSocket->getNodeId(),
             inputNodeSocket->getIndex(),
-            outputNodeSocket->getOpId(),
+            outputNodeSocket->getNodeId(),
             outputNodeSocket->getIndex()
         );
 
@@ -246,7 +246,7 @@ void NetworkPanel::mouseMoved(QMouseEvent* event)
             );
             hoverSocket && hoverSocket != startSocket_ &&
             hoverSocket->getIO() != startSocket_->getIO() &&
-            hoverSocket->getOpId() != startSocket_->getOpId()
+            hoverSocket->getNodeId() != startSocket_->getNodeId()
 
         )
         {
@@ -357,19 +357,19 @@ void NetworkPanel::keyPressEvent(QKeyEvent* event)
     case (Qt::Key_Backspace):
     {
         auto selectedIds = enzo::nt::nm().getSelectedNodes();
-        for (auto opId : selectedIds)
+        for (auto nodeId : selectedIds)
         {
-            enzo::nt::nm().deleteNode(opId);
+            enzo::nt::nm().deleteNode(nodeId);
         }
         break;
     }
         // case(Qt::Key_G):
         // {
-        //     auto opInfo = op::OperatorTable::getOpInfo("transform");
-        //     if(!opInfo.has_value()) {throw std::runtime_error("Couldn't find op info for: " + )}
+        //     auto nodeType = nt::NodeTypeTable::getNodeType("transform");
+        //     if(!nodeType.has_value()) {throw std::runtime_error("Couldn't find node info for: " + )}
         //     if(
-        //         opInfo.has_value() &&
-        //         auto newNode = createNode(opInfo)
+        //         nodeType.has_value() &&
+        //         auto newNode = createNode(nodeType)
         //         )
         //     {
         //         newNode->setPos(viewPos);
@@ -379,7 +379,7 @@ void NetworkPanel::keyPressEvent(QKeyEvent* event)
         // }
         // case(Qt::Key_F):
         // {
-        //     if(auto newNode = createNode(op::OperatorTable::getOpInfo("house")))
+        //     if(auto newNode = createNode(nt::NodeTypeTable::getNodeType("house")))
         //     {
         //         newNode->setPos(viewPos);
         //     }
@@ -389,11 +389,11 @@ void NetworkPanel::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void NetworkPanel::createNode(op::OpInfo opInfo)
+void NetworkPanel::createNode(nt::NodeType nodeType)
 {
     QPointF cursorPos = view_->mapToScene(mapFromGlobal(QCursor::pos()));
-    enzo::nt::nm().createOperator(
-        opInfo,
+    enzo::nt::nm().createNode(
+        nodeType,
         "",
         {static_cast<float>(cursorPos.x()), static_cast<float>(cursorPos.y())}
     );
@@ -409,24 +409,24 @@ void NetworkPanel::clearNetwork()
     state_ = State::DEFAULT;
 }
 
-void NetworkPanel::onOperatorCreated(enzo::nt::OpId opId)
+void NetworkPanel::onNodeCreated(enzo::nt::NodeId nodeId)
 {
-    auto& op = enzo::nt::nm().getGeoOperator(opId);
-    auto pos = op.getPosition();
+    auto& node = enzo::nt::nm().getNode(nodeId);
+    auto pos = node.getPosition();
 
-    NodeGraphic* newNode = new NodeGraphic(opId);
+    NodeGraphic* newNode = new NodeGraphic(nodeId);
     newNode->setPos(pos.x(), pos.y());
 
     scene_->addItem(newNode);
-    nodeStore_.emplace(opId, newNode);
+    nodeStore_.emplace(nodeId, newNode);
 
     newNode->animatePlacement();
 }
 
 void NetworkPanel::onConnectionCreated(enzo::nt::Connection connection)
 {
-    NodeGraphic* sourceNode = nodeStore_.at(connection.sourceOp);
-    NodeGraphic* targetNode = nodeStore_.at(connection.targetOp);
+    NodeGraphic* sourceNode = nodeStore_.at(connection.sourceNode);
+    NodeGraphic* targetNode = nodeStore_.at(connection.targetNode);
 
     SocketGraphic* sourceSocket = sourceNode->getOutput(connection.sourceOutput);
     SocketGraphic* targetSocket = targetNode->getInput(connection.targetInput);
@@ -486,13 +486,13 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent* event)
         {
             NodeGraphic* clickedNode =
                 static_cast<NodeGraphic*>(itemOfType<NodeGraphic>(hoverItems));
-            enzo::nt::OpId opId = clickedNode->getOpId();
+            enzo::nt::NodeId nodeId = clickedNode->getNodeId();
             auto cmd = std::make_unique<enzo::nt::ChangeDisplayFlagCommand>(
-                enzo::nt::nm().getDisplayOp(),
-                opId
+                enzo::nt::nm().getDisplayNode(),
+                nodeId
             );
             enzo::nt::nm().undoStack().push(std::move(cmd));
-            enzo::nt::nm().setDisplayOp(opId);
+            enzo::nt::nm().setDisplayNode(nodeId);
         }
         if (state_ == State::MOUSE_DOWN_NODE)
         {
@@ -502,20 +502,20 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent* event)
             {
                 // Get selected nodes
                 NodeGraphic* node = static_cast<NodeGraphic*>(clickedNode);
-                enzo::nt::OpId opId = node->getOpId();
-                std::vector<enzo::nt::OpId> prev(enzo::nt::nm().getSelectedNodes());
+                enzo::nt::NodeId nodeId = node->getNodeId();
+                std::vector<enzo::nt::NodeId> prev(enzo::nt::nm().getSelectedNodes());
 
                 // Get modifiers
-                bool isCurrentlySelected = std::find(prev.begin(), prev.end(), opId) != prev.end();
+                bool isCurrentlySelected = std::find(prev.begin(), prev.end(), nodeId) != prev.end();
                 bool ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
 
                 if (ctrlHeld || !isCurrentlySelected)
                 {
                     // Toggle selection if ctrl held
                     // Otherwise only allow selection, not deselection
-                    std::vector<enzo::nt::OpId> next = ctrlHeld && isCurrentlySelected
-                                                           ? std::vector<enzo::nt::OpId>{}
-                                                           : std::vector<enzo::nt::OpId>{opId};
+                    std::vector<enzo::nt::NodeId> next = ctrlHeld && isCurrentlySelected
+                                                           ? std::vector<enzo::nt::NodeId>{}
+                                                           : std::vector<enzo::nt::NodeId>{nodeId};
 
                     // Setup undo
                     auto cmd = std::make_unique<enzo::nt::ChangeSelectionCommand>(prev, next);
@@ -535,7 +535,7 @@ void NetworkPanel::mouseReleaseEvent(QMouseEvent* event)
                 auto* node = static_cast<NodeGraphic*>(item);
                 QPointF p = node->pos();
                 enzo::nt::nm().moveNode(
-                    node->getOpId(),
+                    node->getNodeId(),
                     {static_cast<float>(p.x()), static_cast<float>(p.y())}
                 );
             }

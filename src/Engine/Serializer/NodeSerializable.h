@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-struct OperatorSerializable
+struct NodeSerializable
 {
     std::string typeName;
     std::string path;

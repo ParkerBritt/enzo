@@ -24,7 +24,7 @@ class AttributeSpreadsheetModel : public QAbstractListModel
     void initBuffers();
 
   private:
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
     std::shared_ptr<const enzo::geo::Primitive> primitive_;
     std::vector<unsigned int> attribSizes_;
     std::vector<unsigned int> sectionAttribMap_;

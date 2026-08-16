@@ -15,14 +15,14 @@ QtObject {
     // True while a drag holds the loose end, false while it trails clicks.
     property bool dragging: false
 
-    property var originOpId
+    property var originNodeId
     property int originSlot: 0
     property bool fromOutput: true
     property point outputPoint
     property point inputPoint
 
     // The port the loose end is currently snapped to, undefined when it is free.
-    property var hoverOpId
+    property var hoverNodeId
     property int hoverSlot: 0
 
     // Moves the loose end of the in-progress link to a canvas point.
@@ -35,18 +35,18 @@ QtObject {
 
     // Grabs a port. With no link in progress this anchors a fresh link there,
     // otherwise it places the in-progress link onto the port.
-    function grab(opId, slot, isOutput, canvasPoint) {
+    function grab(nodeId, slot, isOutput, canvasPoint) {
         if (linking) {
             update(canvasPoint);
             finish();
             return;
         }
-        originOpId = opId;
+        originNodeId = nodeId;
         originSlot = slot;
         fromOutput = isOutput;
         outputPoint = canvasPoint;
         inputPoint = canvasPoint;
-        hoverOpId = undefined;
+        hoverNodeId = undefined;
         linking = true;
         dragging = false;
     }
@@ -67,12 +67,12 @@ QtObject {
     function update(canvasPoint) {
         // An output drag looks for an input to feed, an input drag for an output.
         const hit = viewModel.nodes.getSnapPort(canvasPoint, !fromOutput);
-        if (hit.opId !== undefined && hit.opId !== originOpId) {
-            hoverOpId = hit.opId;
+        if (hit.nodeId !== undefined && hit.nodeId !== originNodeId) {
+            hoverNodeId = hit.nodeId;
             hoverSlot = hit.slot;
             setLooseEnd(Qt.point(hit.x, hit.y));
         } else {
-            hoverOpId = undefined;
+            hoverNodeId = undefined;
             setLooseEnd(canvasPoint);
         }
     }
@@ -82,20 +82,20 @@ QtObject {
         if (!linking)
             return;
 
-        if (hoverOpId !== undefined) {
+        if (hoverNodeId !== undefined) {
             if (fromOutput)
-                viewModel.connectNodes(originOpId, originSlot, hoverOpId, hoverSlot);
+                viewModel.connectNodes(originNodeId, originSlot, hoverNodeId, hoverSlot);
             else
-                viewModel.connectNodes(hoverOpId, hoverSlot, originOpId, originSlot);
+                viewModel.connectNodes(hoverNodeId, hoverSlot, originNodeId, originSlot);
         }
-        hoverOpId = undefined;
+        hoverNodeId = undefined;
         linking = false;
         dragging = false;
     }
 
     // Abandons the in-progress link without wiring anything.
     function cancel() {
-        hoverOpId = undefined;
+        hoverNodeId = undefined;
         linking = false;
         dragging = false;
     }

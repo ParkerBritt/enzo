@@ -112,24 +112,24 @@ void EnzoUI::connectSignals()
 
     // Selection changed
     enzo::nt::nm().selectedNodesChanged.connect(
-        [this](std::vector<enzo::nt::OpId> selectedNodeIds) {
+        [this](std::vector<enzo::nt::NodeId> selectedNodeIds) {
             if (selectedNodeIds.empty())
             {
                 parametersPanel_->clearParameters();
                 geometrySpreadsheetPanel_->clear();
                 return;
             }
-            enzo::nt::OpId selectedId = selectedNodeIds.back();
+            enzo::nt::NodeId selectedId = selectedNodeIds.back();
             parametersPanel_->selectionChanged(selectedId);
             geometrySpreadsheetPanel_->setNode(selectedId);
-            auto packet = enzo::nt::nm().getGeoOperator(selectedId).getOutputPacket(0);
+            auto packet = enzo::nt::nm().getNode(selectedId).getOutputPacket(0);
             geometrySpreadsheetPanel_->packetChanged(packet);
         }
     );
 
-    // Operator created
-    enzo::nt::nm().operatorCreated.connect([this](enzo::nt::OpId opId) {
-        network_->onOperatorCreated(opId);
+    // Node created
+    enzo::nt::nm().nodeCreated.connect([this](enzo::nt::NodeId nodeId) {
+        network_->onNodeCreated(nodeId);
     });
 
     // Connection created

@@ -1,6 +1,6 @@
 #include "LegacyGui/Network/NodeGraphic.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "LegacyGui/Network/DisplayFlagButton.h"
 #include "LegacyGui/Network/NodeIconGraphic.h"
@@ -27,14 +27,14 @@ constexpr int removalDurationMs = 80;
 
 } // namespace
 
-NodeGraphic::NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent)
-    : QGraphicsObject(parent), opId_{id}
+NodeGraphic::NodeGraphic(enzo::nt::NodeId id, QGraphicsItem* parent)
+    : QGraphicsObject(parent), nodeId_{id}
 {
     socketSize_ = 3;
     titlePadding_ = 1;
-    enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(id);
-    titleText_ = geoOp.getName();
-    subTitleText_ = geoOp.getType().getLabel();
+    enzo::nt::Node& node = enzo::nt::nm().getNode(id);
+    titleText_ = node.getName();
+    subTitleText_ = node.getType().getLabel();
     constexpr int height = 27;
     constexpr int width = 100;
     bodyRect_ = QRect(-width * 0.5f, -height * 0.5f, width, height);
@@ -102,22 +102,22 @@ void NodeGraphic::initFlagButtons()
 #include <icecream.hpp>
 void NodeGraphic::initSockets()
 {
-    enzo::nt::GeometryOperator& op = enzo::nt::nm().getGeoOperator(opId_);
+    enzo::nt::Node& node = enzo::nt::nm().getNode(nodeId_);
     IC();
-    for (int i = 0, max = op.getMaxInputs(); i < max; ++i)
+    for (int i = 0, max = node.getMaxInputs(); i < max; ++i)
     {
         IC();
         std::cout << "CREATING INPUT SOCKET!\n";
-        auto* socketInput = new SocketGraphic(enzo::nt::SocketIOType::Input, opId_, i, this);
+        auto* socketInput = new SocketGraphic(enzo::nt::SocketIOType::Input, nodeId_, i, this);
         socketInput->setPos(getSocketPosition(i, enzo::nt::SocketIOType::Input));
         inputs_.push_back(socketInput);
     }
 
-    for (int i = 0, max = op.getMaxOutputs(); i < max; ++i)
+    for (int i = 0, max = node.getMaxOutputs(); i < max; ++i)
     {
         IC();
         std::cout << "CREATING OUTPUT SOCKET!\n";
-        auto* socketOutput = new SocketGraphic(enzo::nt::SocketIOType::Output, opId_, i, this);
+        auto* socketOutput = new SocketGraphic(enzo::nt::SocketIOType::Output, nodeId_, i, this);
         socketOutput->setPos(getSocketPosition(i, enzo::nt::SocketIOType::Output));
         outputs_.push_back(socketOutput);
     }
@@ -272,9 +272,9 @@ void NodeGraphic::updatePositions()
 
 QPointF NodeGraphic::getSocketPosition(int socketIndex, enzo::nt::SocketIOType socketType)
 {
-    enzo::nt::GeometryOperator& op = enzo::nt::nm().getGeoOperator(opId_);
+    enzo::nt::Node& node = enzo::nt::nm().getNode(nodeId_);
     int maxSocketNumber =
-        socketType == enzo::nt::SocketIOType::Input ? op.getMaxInputs() : op.getMaxOutputs();
+        socketType == enzo::nt::SocketIOType::Input ? node.getMaxInputs() : node.getMaxOutputs();
     float socketSpread = socketSize_ * 1.5 * maxSocketNumber;
 
     float xPos, yPos;
@@ -291,7 +291,7 @@ QPointF NodeGraphic::getSocketScenePosition(int socketIndex, enzo::nt::SocketIOT
     return this->pos() + getSocketPosition(socketIndex, socketType);
 }
 
-enzo::nt::OpId NodeGraphic::getOpId() const { return opId_; }
+enzo::nt::NodeId NodeGraphic::getNodeId() const { return nodeId_; }
 
 void NodeGraphic::setDisplayFlag(bool state) { displayFlagButton_->setEnabled(state); }
 

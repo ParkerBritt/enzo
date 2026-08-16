@@ -18,9 +18,9 @@ namespace enzo::nt {
  */
 struct Connection
 {
-    OpId sourceOp = 0;
+    NodeId sourceNode = 0;
     unsigned int sourceOutput = 0;
-    OpId targetOp = 0;
+    NodeId targetNode = 0;
     unsigned int targetInput = 0;
 
     bool operator==(const Connection& other) const = default;
@@ -34,9 +34,9 @@ template <> struct std::hash<enzo::nt::Connection>
     std::size_t operator()(const enzo::nt::Connection& connection) const noexcept
     {
         std::size_t seed = 0;
-        boost::hash_combine(seed, connection.sourceOp);
+        boost::hash_combine(seed, connection.sourceNode);
         boost::hash_combine(seed, connection.sourceOutput);
-        boost::hash_combine(seed, connection.targetOp);
+        boost::hash_combine(seed, connection.targetNode);
         boost::hash_combine(seed, connection.targetInput);
         return seed;
     }

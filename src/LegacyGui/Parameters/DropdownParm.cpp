@@ -38,7 +38,7 @@ void enzo::ui::DropdownParm::onSelect()
         auto before = parameterShared->getValues();
         parameterShared->setString(dropdown_->currentData().toStdString());
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(),
+            parameterShared->getNodeId(),
             parameterShared->getName(),
             before,
             parameterShared->getValues()

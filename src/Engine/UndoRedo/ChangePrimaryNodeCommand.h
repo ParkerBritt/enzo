@@ -10,13 +10,13 @@ namespace enzo::nt {
 class ChangePrimaryNodeCommand : public UndoCommand
 {
   public:
-    ChangePrimaryNodeCommand(std::optional<OpId> prev, OpId next) : prev_(prev), next_(next) {}
+    ChangePrimaryNodeCommand(std::optional<NodeId> prev, NodeId next) : prev_(prev), next_(next) {}
 
     void undo() override
     {
         if (prev_.has_value())
         {
-            if (!nm().isValidOp(*prev_)) return;
+            if (!nm().isValidNode(*prev_)) return;
             nm().setPrimaryNode(*prev_);
         }
         else
@@ -27,15 +27,15 @@ class ChangePrimaryNodeCommand : public UndoCommand
 
     void redo() override
     {
-        if (!nm().isValidOp(next_)) return;
+        if (!nm().isValidNode(next_)) return;
         nm().setPrimaryNode(next_);
     }
 
     UndoCommandType type() const override { return UndoCommandType::ChangePrimaryNode; }
 
   private:
-    std::optional<OpId> prev_;
-    OpId next_;
+    std::optional<NodeId> prev_;
+    NodeId next_;
 };
 
 } // namespace enzo::nt

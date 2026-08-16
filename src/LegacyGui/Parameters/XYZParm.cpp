@@ -104,7 +104,7 @@ void enzo::ui::XYZParm::onReleased()
     if (auto parameterShared = parameter_.lock())
     {
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(),
+            parameterShared->getNodeId(),
             parameterShared->getName(),
             valueBeforeDrag_,
             parameterShared->getValues()

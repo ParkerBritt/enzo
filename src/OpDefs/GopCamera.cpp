@@ -4,12 +4,12 @@
 #include "Engine/Primitives/Camera.h"
 #include <cmath>
 
-GopCamera::GopCamera(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopCamera::GopCamera(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopCamera::cookOp(enzo::op::CookContext context)
+void GopCamera::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

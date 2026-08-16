@@ -1,5 +1,5 @@
 #include "LegacyGui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "LegacyGui/Style.h"
 #include <QButtonGroup>
@@ -147,8 +147,8 @@ GeometrySpreadsheetMenuBar::GeometrySpreadsheetMenuBar(QWidget* parent, Qt::Wind
     setLayout(mainLayout_);
 }
 
-void GeometrySpreadsheetMenuBar::setNode(enzo::nt::OpId opId)
+void GeometrySpreadsheetMenuBar::setNode(enzo::nt::NodeId nodeId)
 {
-    enzo::nt::GeometryOperator& geoOp = enzo::nt::nm().getGeoOperator(opId);
-    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(geoOp.getName()));
+    enzo::nt::Node& node = enzo::nt::nm().getNode(nodeId);
+    nodeLabel_->setText("<b>Node: </b>" + QString::fromStdString(node.getName()));
 }

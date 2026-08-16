@@ -202,7 +202,7 @@ void enzo::ui::RampParm::commitEdit()
     if (after == snapshotBeforeEdit_) return;
 
     auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-        parameterShared->getOpId(),
+        parameterShared->getNodeId(),
         parameterShared->getName(),
         snapshotBeforeEdit_,
         after

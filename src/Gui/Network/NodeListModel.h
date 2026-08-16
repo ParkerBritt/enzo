@@ -13,7 +13,7 @@ namespace enzo::ui {
 
 /// @brief Nodes of the network as a flat list for QML to repeat over.
 ///
-/// Each row is one operator carrying its identity, name, type label, and graph
+/// Each row is one node carrying its identity, name, type label, and graph
 /// position. The model holds no engine state of its own. The network view-model
 /// drives it from the engine signals, so a row only ever changes in response to
 /// the engine, never from QML directly.
@@ -35,12 +35,12 @@ class NodeListModel : public QAbstractListModel
     /// @brief Returns the port a press would grab, nearest a canvas point across both edges.
     ///
     /// The reach is looser than a snap so aiming roughly at a port is enough.
-    /// @return A {opId, slot, isOutput, x, y} map, empty when none is within reach.
+    /// @return A {nodeId, slot, isOutput, x, y} map, empty when none is within reach.
     Q_INVOKABLE QVariantMap getGrabPort(QPointF canvasPoint) const;
 
     /// @brief Returns the port a dragged link would snap onto, nearest a canvas point.
     /// @param wantOutput Searches output ports when true, input ports when false.
-    /// @return A {opId, slot, isOutput, x, y} map, empty when none is within reach.
+    /// @return A {nodeId, slot, isOutput, x, y} map, empty when none is within reach.
     Q_INVOKABLE QVariantMap getSnapPort(QPointF canvasPoint, bool wantOutput) const;
 
     /// @brief Whether a canvas point lies over any node's card.
@@ -49,47 +49,47 @@ class NodeListModel : public QAbstractListModel
     /// it. A grab only reaches the canvas in the margin outside every card.
     Q_INVOKABLE bool isOverNodeBody(QPointF canvasPoint) const;
 
-    /// @brief Returns the canvas position of one port, or nothing when the op is absent.
+    /// @brief Returns the canvas position of one port, or nothing when the node is absent.
     ///
-    /// The op may exist in the engine yet not in this snapshot mid update, so the
+    /// The node may exist in the engine yet not in this snapshot mid update, so the
     /// link layer skips drawing an endpoint it cannot place.
-    std::optional<QPointF> getPortPosition(nt::OpId opId, int slot, bool isOutput) const;
+    std::optional<QPointF> getPortPosition(nt::NodeId nodeId, int slot, bool isOutput) const;
 
-    /// @brief Replaces every row with the operators currently in the network.
+    /// @brief Replaces every row with the nodes currently in the network.
     void resetFromNetwork();
 
-    /// @brief Appends a row for the operator with the given id.
-    void addNode(nt::OpId opId);
+    /// @brief Appends a row for the node with the given id.
+    void addNode(nt::NodeId nodeId);
 
-    /// @brief Removes the row for the operator with the given id.
-    void removeNode(nt::OpId opId);
+    /// @brief Removes the row for the node with the given id.
+    void removeNode(nt::NodeId nodeId);
 
     /// @brief Removes every row.
     void clear();
 
     /// @brief Marks the rows in @p selectedIds selected and the rest unselected.
-    void setSelection(const std::vector<nt::OpId>& selectedIds);
+    void setSelection(const std::vector<nt::NodeId>& selectedIds);
 
-    /// @brief Marks the row matching @p opId primary and the rest not.
-    void setPrimary(std::optional<nt::OpId> opId);
+    /// @brief Marks the row matching @p nodeId primary and the rest not.
+    void setPrimary(std::optional<nt::NodeId> nodeId);
 
-    /// @brief Marks the row matching @p opId the display node and the rest not.
-    void setDisplay(std::optional<nt::OpId> opId);
+    /// @brief Marks the row matching @p nodeId the display node and the rest not.
+    void setDisplay(std::optional<nt::NodeId> nodeId);
 
-    /// @brief Moves the row matching @p opId to a new graph position.
-    void setPosition(nt::OpId opId, float x, float y);
+    /// @brief Moves the row matching @p nodeId to a new graph position.
+    void setPosition(nt::NodeId nodeId, float x, float y);
 
     /// @brief Shifts every selected row by a delta, for a live group drag.
     void moveSelectedBy(float dx, float dy);
 
-    /// @brief Returns the graph position of the row matching @p opId.
-    QPointF getPosition(nt::OpId opId) const;
+    /// @brief Returns the graph position of the row matching @p nodeId.
+    QPointF getPosition(nt::NodeId nodeId) const;
 
   private:
-    /// One node row, a snapshot of the operator's display data.
+    /// One node row, a snapshot of the node's display data.
     struct Node
     {
-        nt::OpId opId;
+        nt::NodeId nodeId;
         QString name;
         QString type;
         float x;
@@ -117,11 +117,11 @@ class NodeListModel : public QAbstractListModel
     /// @brief Returns the model role for a field name, or -1 when absent.
     static int getRole(const QByteArray& name);
 
-    /// @brief Reads the display data for an operator into a row.
-    static Node makeNode(nt::OpId opId);
+    /// @brief Reads the display data for a node into a row.
+    static Node makeNode(nt::NodeId nodeId);
 
-    /// @brief Returns the row index of an operator, or -1 when absent.
-    int rowOf(nt::OpId opId) const;
+    /// @brief Returns the row index of a node, or -1 when absent.
+    int rowOf(nt::NodeId nodeId) const;
 
     /// @brief Returns the canvas position of one port on @p node.
     ///

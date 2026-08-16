@@ -10,7 +10,7 @@ namespace enzo::nt {
 class ChangeSelectionCommand : public UndoCommand
 {
   public:
-    ChangeSelectionCommand(std::vector<OpId> prev, std::vector<OpId> next)
+    ChangeSelectionCommand(std::vector<NodeId> prev, std::vector<NodeId> next)
         : prev_(std::move(prev)), next_(std::move(next))
     {
     }
@@ -21,8 +21,8 @@ class ChangeSelectionCommand : public UndoCommand
     UndoCommandType type() const override { return UndoCommandType::ChangeSelection; }
 
   private:
-    std::vector<OpId> prev_;
-    std::vector<OpId> next_;
+    std::vector<NodeId> prev_;
+    std::vector<NodeId> next_;
 };
 
 } // namespace enzo::nt

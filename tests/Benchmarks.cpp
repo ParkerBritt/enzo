@@ -1,7 +1,7 @@
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Ramp.h"
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -15,12 +15,12 @@ struct NMReset
 };
 
 // TODO: fix this init monstrosity
-struct OperatorTableInit
+struct NodeTypeTableInit
 {
-    OperatorTableInit() { enzo::op::OperatorTable::initPlugins(); }
+    NodeTypeTableInit() { enzo::nt::NodeTypeTable::initPlugins(); }
 };
-static OperatorTableInit _operatorTableInit;
-auto testOpInfo = enzo::op::OperatorTable::getOpInfo("cube").value();
+static NodeTypeTableInit _nodeTypeTableInit;
+auto testNodeType = enzo::nt::NodeTypeTable::getNodeType("cube").value();
 
 TEST_CASE_METHOD(NMReset, "Network Manager")
 {
@@ -28,32 +28,32 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
 
     auto& nm = nt::nm();
 
-    nt::OpId startOp = nm.createOperator(testOpInfo);
-    nt::OpId prevOp = startOp;
-    std::vector<nt::OpId> prevOps;
+    nt::NodeId startNode = nm.createNode(testNodeType);
+    nt::NodeId prevNode = startNode;
+    std::vector<nt::NodeId> prevNodes;
 
     for (int k = 0; k < 10; k++)
     {
         for (int i = 0; i < 4; ++i)
         {
-            nt::OpId newOp = nm.createOperator(testOpInfo);
-            prevOps.push_back(newOp);
-            nt::nm().connectNodes(newOp, i, prevOp, 0);
+            nt::NodeId newNode = nm.createNode(testNodeType);
+            prevNodes.push_back(newNode);
+            nt::nm().connectNodes(newNode, i, prevNode, 0);
         }
         for (int j = 0; j < 10; j++)
         {
-            std::vector<nt::OpId> prevOpsBuffer = prevOps;
-            for (int i = 0; i < size(prevOpsBuffer); ++i)
+            std::vector<nt::NodeId> prevNodesBuffer = prevNodes;
+            for (int i = 0; i < size(prevNodesBuffer); ++i)
             {
-                prevOps.clear();
-                nt::OpId newOp = nm.createOperator(testOpInfo);
-                prevOps.push_back(newOp);
-                nt::nm().connectNodes(newOp, 0, prevOpsBuffer[i], 0);
+                prevNodes.clear();
+                nt::NodeId newNode = nm.createNode(testNodeType);
+                prevNodes.push_back(newNode);
+                nt::nm().connectNodes(newNode, 0, prevNodesBuffer[i], 0);
             }
         }
     }
 
-    BENCHMARK("Cook 100 Ops") { nm.setDisplayOp(startOp); };
+    BENCHMARK("Cook 100 Nodes") { nm.setDisplayNode(startNode); };
 }
 
 TEST_CASE("Ramp sampling")

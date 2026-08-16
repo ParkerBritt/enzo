@@ -16,7 +16,7 @@ bool contains(const std::vector<nt::Unit>& units, const nt::Unit& target)
 }
 
 // A connection from one node's first output into another node's given input slot.
-nt::Connection wire(nt::OpId source, nt::OpId target, unsigned int targetInput = 0)
+nt::Connection wire(nt::NodeId source, nt::NodeId target, unsigned int targetInput = 0)
 {
     return nt::Connection{source, 0, target, targetInput};
 }
@@ -66,8 +66,8 @@ TEST_CASE("Cook order places a dependency before the node that reads it")
     graph.connect(wire(1, 2));
     graph.connect(wire(2, 3));
 
-    std::vector<nt::OpId> order = graph.getCookOrder(3);
-    REQUIRE(order == std::vector<nt::OpId>{1, 2, 3});
+    std::vector<nt::NodeId> order = graph.getCookOrder(3);
+    REQUIRE(order == std::vector<nt::NodeId>{1, 2, 3});
 }
 
 TEST_CASE("Cook order cooks a shared dependency once")
@@ -79,7 +79,7 @@ TEST_CASE("Cook order cooks a shared dependency once")
     graph.connect(wire(2, 4, 0));
     graph.connect(wire(3, 4, 1));
 
-    std::vector<nt::OpId> order = graph.getCookOrder(4);
+    std::vector<nt::NodeId> order = graph.getCookOrder(4);
     REQUIRE(order.size() == 4);
     REQUIRE(order.front() == 1);
     REQUIRE(order.back() == 4);
@@ -100,7 +100,7 @@ TEST_CASE("Disconnecting drops the dependency")
     graph.connect(wire(1, 2));
     graph.disconnect(wire(1, 2));
 
-    REQUIRE(graph.getCookOrder(2) == std::vector<nt::OpId>{2});
+    REQUIRE(graph.getCookOrder(2) == std::vector<nt::NodeId>{2});
 }
 
 TEST_CASE("A node's inputs come back ordered by input slot")
@@ -112,9 +112,9 @@ TEST_CASE("A node's inputs come back ordered by input slot")
     std::vector<nt::Connection> inputs = graph.getInputs(9);
     REQUIRE(inputs.size() == 2);
     REQUIRE(inputs[0].targetInput == 0);
-    REQUIRE(inputs[0].sourceOp == 6);
+    REQUIRE(inputs[0].sourceNode == 6);
     REQUIRE(inputs[1].targetInput == 1);
-    REQUIRE(inputs[1].sourceOp == 5);
+    REQUIRE(inputs[1].sourceNode == 5);
 }
 
 TEST_CASE("A node's outputs list every connection leaving it")
@@ -136,7 +136,7 @@ TEST_CASE("Two connections between the same pair survive removing one")
     graph.disconnect(wire(1, 2, 0));
 
     // The second connection still keeps 1 ahead of 2.
-    REQUIRE(graph.getCookOrder(2) == std::vector<nt::OpId>{1, 2});
+    REQUIRE(graph.getCookOrder(2) == std::vector<nt::NodeId>{1, 2});
 }
 
 TEST_CASE("Dependents reach every node downstream of a change")
@@ -178,6 +178,6 @@ TEST_CASE("Removing a node forgets its edges")
     graph.removeNode(2);
 
     // Node 2 no longer sits between 1 and 3.
-    REQUIRE(graph.getCookOrder(3) == std::vector<nt::OpId>{3});
+    REQUIRE(graph.getCookOrder(3) == std::vector<nt::NodeId>{3});
     REQUIRE(graph.getDependents(nt::Unit{1}).empty());
 }

@@ -3,12 +3,12 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 
-GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopBoolean::GopBoolean(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopBoolean::cookOp(enzo::op::CookContext context)
+void GopBoolean::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

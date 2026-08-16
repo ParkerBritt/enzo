@@ -30,14 +30,14 @@ class NetworkGraph
     void disconnect(const Connection& connection);
 
     /// @brief Returns the connections feeding @p target, ordered by input slot.
-    std::vector<Connection> getInputs(OpId target) const;
+    std::vector<Connection> getInputs(NodeId target) const;
 
     /// @brief Returns the connection on one input slot of @p target, if any.
     /// @note An input slot holds at most one connection.
-    std::optional<Connection> getInputConnection(OpId target, unsigned int inputSlot) const;
+    std::optional<Connection> getInputConnection(NodeId target, unsigned int inputSlot) const;
 
     /// @brief Returns the connections leaving @p source.
-    std::vector<Connection> getOutputs(OpId source) const;
+    std::vector<Connection> getOutputs(NodeId source) const;
 
     /// @brief Returns every wired connection in the graph, in no particular order.
     std::vector<Connection> getConnections() const;
@@ -48,14 +48,14 @@ class NetworkGraph
     void setCapturedDependencies(const Unit& dependent, const std::vector<Unit>& dependencies);
 
     /// @brief Removes every connection and captured edge touching the node.
-    void removeNode(OpId opId);
+    void removeNode(NodeId nodeId);
 
     /// @brief Empties the graph.
     void clear();
 
     /// @brief Returns the nodes to cook before @p target, in cook order.
     /// @note Considers wired connections only. Reports a cycle rather than looping.
-    std::vector<OpId> getCookOrder(OpId target) const;
+    std::vector<NodeId> getCookOrder(NodeId target) const;
 
     /// @brief Returns everything that depends on @p changed, directly or through
     /// a chain.
@@ -63,17 +63,17 @@ class NetworkGraph
     std::vector<Unit> getDependents(const Unit& changed) const;
 
   private:
-    using ConnectionMap = std::unordered_map<OpId, std::vector<Connection>>;
+    using ConnectionMap = std::unordered_map<NodeId, std::vector<Connection>>;
     using CapturedMap = std::unordered_map<Unit, std::vector<Unit>>;
 
     /// @brief Erases one matching connection from a single node's list.
-    static void eraseConnection_(ConnectionMap& side, OpId key, const Connection& connection);
+    static void eraseConnection_(ConnectionMap& side, NodeId key, const Connection& connection);
 
     /// @brief Drops every connection that names the node, on a single side.
-    static void eraseConnectionsTouching_(ConnectionMap& side, OpId opId);
+    static void eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId);
 
     /// @brief Drops every captured edge that names the node, on a single map.
-    static void eraseCapturedTouching_(CapturedMap& map, OpId opId);
+    static void eraseCapturedTouching_(CapturedMap& map, NodeId nodeId);
 
     /// @brief Removes @p value from the list stored under @p key.
     static void eraseUnit_(CapturedMap& map, const Unit& key, const Unit& value);
@@ -86,12 +86,12 @@ class NetworkGraph
         std::vector<Unit>& pending
     );
 
-    /// @brief Adds @p opId to @p opOrder after its wired dependencies.
+    /// @brief Adds @p nodeId to @p nodeOrder after its wired dependencies.
     void addToCookOrder_(
-        OpId opId,
-        std::vector<OpId>& opOrder,
-        std::unordered_set<OpId>& addedOps,
-        std::unordered_set<OpId>& opsBeingAdded
+        NodeId nodeId,
+        std::vector<NodeId>& nodeOrder,
+        std::unordered_set<NodeId>& addedNodes,
+        std::unordered_set<NodeId>& nodesBeingAdded
     ) const;
 
     // Input connections keyed by the downstream node.

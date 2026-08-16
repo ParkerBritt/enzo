@@ -6,12 +6,12 @@
 #include <string>
 #include <unordered_map>
 
-GopCopyToPoints::GopCopyToPoints(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopCopyToPoints::GopCopyToPoints(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopCopyToPoints::cookOp(enzo::op::CookContext context)
+void GopCopyToPoints::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

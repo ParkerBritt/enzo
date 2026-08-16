@@ -19,7 +19,7 @@ class GeometrySpreadsheetPanel : public Panel
   public Q_SLOTS:
     void packetChanged(std::shared_ptr<const enzo::NodePacket> packet);
     void clear();
-    void setNode(enzo::nt::OpId opId);
+    void setNode(enzo::nt::NodeId nodeId);
 
   private:
     QVBoxLayout* mainLayout_;

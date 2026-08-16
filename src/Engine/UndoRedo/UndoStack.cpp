@@ -36,7 +36,7 @@ void UndoStack::endGroup()
 
 // TODO: Currently the other undo commands (MoveNodeCommand, DeleteNodeCommand, etc.) work
 // around creating recursive undo states by calling lower-level functions directly (e.g.
-// setPosition instead of moveNode, removeOperator instead of deleteNode). This is
+// setPosition instead of moveNode, removeNode instead of deleteNode). This is
 // inconsistent with ChangeConnectionCommand which relies on the UndoDisabler block-all
 // in undo()/redo() below. The other commands should probably be updated to use the same
 // pattern so users don't get tripped up by the inconsistency.

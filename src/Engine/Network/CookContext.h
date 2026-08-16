@@ -11,10 +11,10 @@ namespace enzo::prm {
 class Ramp;
 }
 
-namespace enzo::op {
+namespace enzo::nt {
 /**
  * @class CookContext
- * @brief Provides network context for the cookOp function.
+ * @brief Provides network context for the cook function.
  *
  * The cook context is the handle a node holds while it cooks. It provides important runtime context
  * about the network, allowing querying parameters, reading input geometry, and in the future
@@ -23,7 +23,7 @@ namespace enzo::op {
 class CookContext
 {
   public:
-    CookContext(enzo::nt::OpId opId, enzo::nt::NetworkManager& networkManager);
+    CookContext(enzo::nt::NodeId nodeId, enzo::nt::NetworkManager& networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
@@ -49,7 +49,7 @@ class CookContext
     enzo::prm::Ramp evalParmRamp(std::string_view parmName) const;
 
   private:
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
     enzo::nt::NetworkManager& networkManager_;
 };
-} // namespace enzo::op
+} // namespace enzo::nt

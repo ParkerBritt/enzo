@@ -1,6 +1,6 @@
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/NodeType.h"
 #include <boost/dll/import.hpp>
 #include <boost/dll/runtime_symbol_info.hpp>
 #include <boost/filesystem/file_status.hpp>
@@ -12,22 +12,22 @@
 
 namespace enzo {
 
-void op::OperatorTable::addOperator(op::OpInfo info)
+void nt::NodeTypeTable::addNodeType(nt::NodeType nodeType)
 {
-    std::cout << "OPERATOR TABLE ADDED\n";
-    std::cout << "adding operator: " << info.displayName << "\n";
+    std::cout << "NODE TYPE TABLE ADDED\n";
+    std::cout << "adding node type: " << nodeType.displayName << "\n";
 
-    for (const prm::Template& templateEntry : info.templates)
+    for (const prm::Template& templateEntry : nodeType.templates)
     {
         std::cout << "name: " << templateEntry.getName() << "\n";
     }
 
-    opInfoStore_.push_back(info);
+    nodeTypeStore_.push_back(nodeType);
 }
 
-nt::opConstructor op::OperatorTable::getOpConstructor(std::string name)
+nt::nodeConstructor nt::NodeTypeTable::getNodeConstructor(std::string name)
 {
-    for (auto it = opInfoStore_.begin(); it != opInfoStore_.end(); ++it)
+    for (auto it = nodeTypeStore_.begin(); it != nodeTypeStore_.end(); ++it)
     {
         if (it->internalName == name)
         {
@@ -37,9 +37,9 @@ nt::opConstructor op::OperatorTable::getOpConstructor(std::string name)
     return nullptr;
 }
 
-const std::optional<op::OpInfo> op::OperatorTable::getOpInfo(std::string name)
+const std::optional<nt::NodeType> nt::NodeTypeTable::getNodeType(std::string name)
 {
-    for (auto it = opInfoStore_.begin(); it != opInfoStore_.end(); ++it)
+    for (auto it = nodeTypeStore_.begin(); it != nodeTypeStore_.end(); ++it)
     {
         if (it->internalName == name)
         {
@@ -49,9 +49,9 @@ const std::optional<op::OpInfo> op::OperatorTable::getOpInfo(std::string name)
     return std::nullopt;
 }
 
-std::vector<op::OpInfo> op::OperatorTable::getData() { return opInfoStore_; }
+std::vector<nt::NodeType> nt::NodeTypeTable::getData() { return nodeTypeStore_; }
 
-boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecoratedLibName)
+boost::filesystem::path nt::NodeTypeTable::findPlugin(const std::string& undecoratedLibName)
 {
 
     const auto libName = boost::dll::shared_library::decorate(undecoratedLibName);
@@ -94,24 +94,24 @@ boost::filesystem::path op::OperatorTable::findPlugin(const std::string& undecor
     throw std::runtime_error("Couldn't find plugin: " + libName.string());
 }
 
-void op::OperatorTable::initPlugins()
+void nt::NodeTypeTable::initPlugins()
 {
     static bool pluginsLoaded = false;
     if (pluginsLoaded) return;
 
-    using InitPluginFn = void(op::addOperatorPtr);
+    using InitPluginFn = void(nt::addNodeTypePtr);
 
     const auto so = findPlugin("enzoOps1");
     // Held open for the life of the program to avoid unloading in the wrong
     // order. Freed by OS.
     static auto& lib = *new boost::dll::shared_library(so, boost::dll::load_mode::default_mode);
 
-    auto initPlugin = lib.get<InitPluginFn>("newSopOperator");
-    initPlugin(op::OperatorTable::addOperator);
+    auto initPlugin = lib.get<InitPluginFn>("newNodeLibrary");
+    initPlugin(nt::NodeTypeTable::addNodeType);
 
     pluginsLoaded = true;
 }
 
-std::vector<op::OpInfo> op::OperatorTable::opInfoStore_;
+std::vector<nt::NodeType> nt::NodeTypeTable::nodeTypeStore_;
 
 } // namespace enzo

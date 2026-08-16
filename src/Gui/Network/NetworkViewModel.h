@@ -37,35 +37,35 @@ class NetworkViewModel : public QObject
     /// @brief Returns the node card height.
     qreal getNodeHeight() const;
 
-    /// @brief Returns every operator type the tab menu can create, each a {label, name} map.
+    /// @brief Returns every node type the tab menu can create, each a {label, name} map.
     QVariantList getNodeTypes() const;
 
-    /// @brief Creates a node of the given operator type at a network position.
+    /// @brief Creates a node of the given node type at a network position.
     Q_INVOKABLE void createNode(const QString& internalName, qreal x, qreal y);
 
     /// @brief Selects a node, optionally adding it to the current selection.
     ///
     /// @param additive Toggles the node within the selection rather than
     /// replacing it, the modifier click behaviour.
-    Q_INVOKABLE void selectNode(qulonglong opId, bool additive);
+    Q_INVOKABLE void selectNode(qulonglong nodeId, bool additive);
 
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
     /// @brief Wires a source node's output slot into a target node's input slot.
     Q_INVOKABLE void
-    connectNodes(qulonglong sourceOp, int sourceOutput, qulonglong targetOp, int targetInput);
+    connectNodes(qulonglong sourceNode, int sourceOutput, qulonglong targetNode, int targetInput);
 
     /// @brief Removes the link at an index in the link model.
     Q_INVOKABLE void removeLink(int linkIndex);
 
     /// @brief Returns the ports the link at an index connects.
-    /// @return A {sourceOp, sourceOutput, targetOp, targetInput} map, empty when
+    /// @return A {sourceNode, sourceOutput, targetNode, targetInput} map, empty when
     /// the index is out of range.
     Q_INVOKABLE QVariantMap getLinkEndpoints(int linkIndex) const;
 
     /// @brief Sets the given node as the one whose geometry the viewport shows.
-    Q_INVOKABLE void setDisplayNode(qulonglong opId);
+    Q_INVOKABLE void setDisplayNode(qulonglong nodeId);
 
     /// @brief Moves the selected nodes in the ui, doesn't apply to engine until
     /// committed with commitSelectionMove.
@@ -86,8 +86,8 @@ class NetworkViewModel : public QObject
   private:
     NodeListModel nodes_;
     EdgeListModel edges_;
-    boost::signals2::scoped_connection operatorCreatedSubscription_;
-    boost::signals2::scoped_connection operatorRemovedSubscription_;
+    boost::signals2::scoped_connection nodeCreatedSubscription_;
+    boost::signals2::scoped_connection nodeRemovedSubscription_;
     boost::signals2::scoped_connection networkClearedSubscription_;
     boost::signals2::scoped_connection selectedNodesSubscription_;
     boost::signals2::scoped_connection primaryNodeSubscription_;

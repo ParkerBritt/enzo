@@ -1,4 +1,4 @@
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QPushButton>
@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     QSurfaceFormat::setDefaultFormat(format);
 
     // init plugins
-    enzo::op::OperatorTable::initPlugins();
+    enzo::nt::NodeTypeTable::initPlugins();
 
     QApplication app(argc, argv);
     app.setOrganizationName("Enzo");

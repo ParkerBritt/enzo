@@ -7,7 +7,7 @@
 #include <optional>
 
 namespace enzo::nt {
-class GeometryOperator;
+class Node;
 }
 namespace enzo::prm {
 class Template;
@@ -34,7 +34,7 @@ class ParametersViewModel : public QObject
     explicit ParametersViewModel(QObject* parent = nullptr);
 
     QList<QObject*> parameters() const { return topLevel_; }
-    bool hasNode() const { return opId_.has_value(); }
+    bool hasNode() const { return nodeId_.has_value(); }
     QString nodeName() const { return nodeName_; }
     QString nodeType() const { return nodeType_; }
 
@@ -43,21 +43,21 @@ class ParametersViewModel : public QObject
 
   private:
     /// @brief Switches the panel to a node, or clears it when none.
-    void showOperator(std::optional<nt::OpId> opId);
+    void showNode(std::optional<nt::NodeId> nodeId);
 
-    /// @brief Rebuilds the item tree from the current operator.
+    /// @brief Rebuilds the item tree from the current node.
     void rebuild();
 
     /// @brief Re-reads every item's enabled and hidden state.
     void refreshConditions();
 
     /// @brief Builds an item for a template and recurses into a group.
-    ParameterItem* buildItem(const prm::Template& prmTemplate, nt::GeometryOperator& op);
+    ParameterItem* buildItem(const prm::Template& prmTemplate, nt::Node& node);
 
     /// @brief Drops every item and resets the header.
     void clear();
 
-    std::optional<nt::OpId> opId_;
+    std::optional<nt::NodeId> nodeId_;
     // The top level items QML iterates, and a flat list of every item used to
     // refresh conditions. Both hold the same objects, all parented to this.
     QList<QObject*> topLevel_;

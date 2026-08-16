@@ -47,16 +47,16 @@ Rectangle {
     // drawn this is its snap target, otherwise the port nearest the idle cursor.
     readonly property var highlightedPort: {
         if (linkController.linking) {
-            if (linkController.hoverOpId === undefined)
+            if (linkController.hoverNodeId === undefined)
                 return null;
             return {
-                opId: linkController.hoverOpId,
+                nodeId: linkController.hoverNodeId,
                 slot: linkController.hoverSlot,
                 isOutput: !linkController.fromOutput
             };
         }
         const port = network.nodes.getGrabPort(Qt.point(toCanvasX(cursorX), toCanvasY(cursorY)));
-        return port.opId === undefined ? null : port;
+        return port.nodeId === undefined ? null : port;
     }
 
     // Removes a link, dissolving it outward from the cut point.
@@ -135,8 +135,8 @@ Rectangle {
             }
 
             const port = network.nodes.getGrabPort(canvasPoint);
-            if (port.opId !== undefined) {
-                linkController.grab(port.opId, port.slot, port.isOutput, Qt.point(port.x, port.y));
+            if (port.nodeId !== undefined) {
+                linkController.grab(port.nodeId, port.slot, port.isOutput, Qt.point(port.x, port.y));
                 grabbedOnPress = true;
                 draggingLink = linkController.linking;
                 return;
@@ -158,9 +158,9 @@ Rectangle {
             network.removeLink(hit.linkIndex);
             const anchor = Qt.point(hit.anchorX, hit.anchorY);
             if (hit.atOutputEnd)
-                linkController.grab(ends.targetOp, ends.targetInput, false, anchor);
+                linkController.grab(ends.targetNode, ends.targetInput, false, anchor);
             else
-                linkController.grab(ends.sourceOp, ends.sourceOutput, true, anchor);
+                linkController.grab(ends.sourceNode, ends.sourceOutput, true, anchor);
             linkController.drag(canvasPoint);
             grabbedOnPress = true;
             draggingLink = true;
@@ -215,7 +215,7 @@ Rectangle {
             overRedirect = false;
             if (mouse.modifiers & Qt.ControlModifier) {
                 committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, NodeLinkLayer.Cut);
-            } else if (draggingLink || linkController.linking || network.nodes.isOverNodeBody(canvasPoint) || network.nodes.getGrabPort(canvasPoint).opId !== undefined) {
+            } else if (draggingLink || linkController.linking || network.nodes.isOverNodeBody(canvasPoint) || network.nodes.getGrabPort(canvasPoint).nodeId !== undefined) {
                 committedLinks.setHover(-1, NodeLinkLayer.None);
             } else {
                 const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
@@ -308,7 +308,7 @@ Rectangle {
                 modelY: model.y
 
                 // True while this node anchors either end of the link being dragged.
-                readonly property bool linkEndpoint: linkController.linking && (model.opId === linkController.originOpId || model.opId === linkController.hoverOpId)
+                readonly property bool linkEndpoint: linkController.linking && (model.nodeId === linkController.originNodeId || model.nodeId === linkController.hoverNodeId)
 
                 // An endpoint node rises above the floating layer, so the link tucks
                 // under its ports while still drawing over the nodes it crosses.
@@ -322,7 +322,7 @@ Rectangle {
                 linking: linkController.linking
 
                 // The highlighted port when it is one of this node's own.
-                readonly property var highlight: root.highlightedPort && root.highlightedPort.opId === model.opId ? root.highlightedPort : null
+                readonly property var highlight: root.highlightedPort && root.highlightedPort.nodeId === model.nodeId ? root.highlightedPort : null
                 highlightedInputSlot: highlight && !highlight.isOutput ? highlight.slot : -1
                 highlightedOutputSlot: highlight && highlight.isOutput ? highlight.slot : -1
 
@@ -332,15 +332,15 @@ Rectangle {
                 onPressed: additive => {
                     selectedAtPress = model.selected;
                     if (!model.selected)
-                        network.selectNode(model.opId, additive);
+                        network.selectNode(model.nodeId, additive);
                 }
                 onClicked: additive => {
                     if (selectedAtPress)
-                        network.selectNode(model.opId, additive);
+                        network.selectNode(model.nodeId, additive);
                 }
                 onDragMoved: (dx, dy) => network.stageSelectionMove(dx, dy)
                 onDragReleased: network.commitSelectionMove()
-                onDisplayToggled: network.setDisplayNode(model.opId)
+                onDisplayToggled: network.setDisplayNode(model.nodeId)
             }
         }
 

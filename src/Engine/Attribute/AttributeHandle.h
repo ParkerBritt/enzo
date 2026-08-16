@@ -31,7 +31,7 @@ namespace enzo::attr {
  * they just reference the attribute’s storage.
  *
  * There is also a read-only handle variant that provides the same
- * typed accessors without mutation. This is useful when an operator
+ * typed accessors without mutation. This is useful when a node
  * needs to inspect data but must not modify it, when the engine exposes
  * attributes to user code with limited permissions, or when implementing
  * const member functions that require attribute access.

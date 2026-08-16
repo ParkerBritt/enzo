@@ -53,7 +53,7 @@ void enzo::ui::BoolIconParm::onToggle(bool checked)
         auto before = parameterShared->getValues();
         parameterShared->setInt(checked);
         auto cmd = std::make_unique<enzo::nt::ChangeParameterCommand>(
-            parameterShared->getOpId(),
+            parameterShared->getNodeId(),
             parameterShared->getName(),
             before,
             parameterShared->getValues()

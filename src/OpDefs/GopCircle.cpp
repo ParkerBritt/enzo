@@ -8,12 +8,12 @@
 #include <numbers>
 #include <vector>
 
-GopCircle::GopCircle(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopCircle::GopCircle(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopCircle::cookOp(enzo::op::CookContext context)
+void GopCircle::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

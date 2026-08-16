@@ -16,23 +16,23 @@ class ChangeParameterCommand : public UndoCommand
 {
   public:
     ChangeParameterCommand(
-        enzo::nt::OpId opId,
+        enzo::nt::NodeId nodeId,
         std::string paramName,
         ParameterSerializable before,
         ParameterSerializable after
     )
-        : opId_(opId), paramName_(paramName), before_(std::move(before)), after_(std::move(after))
+        : nodeId_(nodeId), paramName_(paramName), before_(std::move(before)), after_(std::move(after))
     {
     }
 
     // Flat parameters hand over their value vectors and the snapshot is built here.
     ChangeParameterCommand(
-        enzo::nt::OpId opId,
+        enzo::nt::NodeId nodeId,
         std::string paramName,
         const enzo::prm::PrmValues& before,
         const enzo::prm::PrmValues& after
     )
-        : opId_(opId), paramName_(paramName), before_(toSerializable(paramName, before)),
+        : nodeId_(nodeId), paramName_(paramName), before_(toSerializable(paramName, before)),
           after_(toSerializable(paramName, after))
     {
     }
@@ -45,19 +45,19 @@ class ChangeParameterCommand : public UndoCommand
   private:
     void restore_(const ParameterSerializable& snapshot)
     {
-        IC(opId_, paramName_);
-        if (!nm().isValidOp(opId_))
+        IC(nodeId_, paramName_);
+        if (!nm().isValidNode(nodeId_))
         {
-            IC("ChangeParameterCommand — operator not found", opId_);
+            IC("ChangeParameterCommand — node not found", nodeId_);
             return;
         }
-        if (auto prm = nm().getGeoOperator(opId_).getParameter(paramName_).lock())
+        if (auto prm = nm().getNode(nodeId_).getParameter(paramName_).lock())
             applySerializable(*prm, snapshot);
         else
-            IC("ChangeParameterCommand — parameter not found", opId_, paramName_);
+            IC("ChangeParameterCommand — parameter not found", nodeId_, paramName_);
     }
 
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
     std::string paramName_;
     ParameterSerializable before_;
     ParameterSerializable after_;

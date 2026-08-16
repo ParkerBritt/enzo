@@ -18,7 +18,7 @@ class SocketGraphic : public QGraphicsObject
 
     SocketGraphic(
         enzo::nt::SocketIOType type,
-        enzo::nt::OpId opId,
+        enzo::nt::NodeId nodeId,
         unsigned int socketIndex,
         QGraphicsItem* parent = nullptr
     );
@@ -27,7 +27,7 @@ class SocketGraphic : public QGraphicsObject
     void removeEdge(NodeEdgeGraphic* edge);
     void posChanged(QPointF pos);
     QPainterPath shape() const override;
-    enzo::nt::OpId getOpId() const;
+    enzo::nt::NodeId getNodeId() const;
 
     unsigned int getIndex() const;
     void setHover(bool state);
@@ -42,7 +42,7 @@ class SocketGraphic : public QGraphicsObject
     std::unordered_set<NodeEdgeGraphic*> edges_;
     qreal paddingScale_ = 20;
     QRectF boundRect_;
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
     QPropertyAnimation* scaleAnim_;
 
     void initBoundingBox();

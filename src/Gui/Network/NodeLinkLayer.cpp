@@ -285,26 +285,26 @@ std::vector<NodeLinkLayer::Link> NodeLinkLayer::collectLinks() const
     if (!nodes_ || !links_) return links;
 
     const QHash<int, QByteArray> roles = links_->roleNames();
-    const int sourceOpRole = findRole(roles, "sourceOp");
+    const int sourceNodeRole = findRole(roles, "sourceNode");
     const int sourceOutputRole = findRole(roles, "sourceOutput");
-    const int targetOpRole = findRole(roles, "targetOp");
+    const int targetNodeRole = findRole(roles, "targetNode");
     const int targetInputRole = findRole(roles, "targetInput");
-    if (sourceOpRole < 0 || sourceOutputRole < 0 || targetOpRole < 0 || targetInputRole < 0)
+    if (sourceNodeRole < 0 || sourceOutputRole < 0 || targetNodeRole < 0 || targetInputRole < 0)
         return links;
 
     const int rows = links_->rowCount();
     for (int row = 0; row < rows; ++row)
     {
         const QModelIndex index = links_->index(row, 0);
-        const quint64 sourceOp = links_->data(index, sourceOpRole).toULongLong();
-        const quint64 targetOp = links_->data(index, targetOpRole).toULongLong();
+        const quint64 sourceNode = links_->data(index, sourceNodeRole).toULongLong();
+        const quint64 targetNode = links_->data(index, targetNodeRole).toULongLong();
         const int sourceOutput = links_->data(index, sourceOutputRole).toInt();
         const int targetInput = links_->data(index, targetInputRole).toInt();
 
         // The curve leaves the source's output and enters the target's input. A link
         // whose nodes are not both in the snapshot yet has no points to draw.
-        const std::optional<QPointF> output = nodes_->getPortPosition(sourceOp, sourceOutput, true);
-        const std::optional<QPointF> input = nodes_->getPortPosition(targetOp, targetInput, false);
+        const std::optional<QPointF> output = nodes_->getPortPosition(sourceNode, sourceOutput, true);
+        const std::optional<QPointF> input = nodes_->getPortPosition(targetNode, targetInput, false);
         if (!output || !input) continue;
 
         links.push_back(Link{*output, *input, row});

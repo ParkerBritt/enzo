@@ -18,11 +18,11 @@ constexpr qreal hoverScale = 1.2;
 
 SocketGraphic::SocketGraphic(
     enzo::nt::SocketIOType type,
-    enzo::nt::OpId opId,
+    enzo::nt::NodeId nodeId,
     unsigned int socketIndex,
     QGraphicsItem* parent
 )
-    : QGraphicsObject(parent), type_{type}, opId_{opId}, socketIndex_{socketIndex}
+    : QGraphicsObject(parent), type_{type}, nodeId_{nodeId}, socketIndex_{socketIndex}
 {
     brushActive_ = QBrush(enzo::style::socket::activeColor);
     brushInactive_ = QBrush(enzo::style::socket::inactiveColor);
@@ -94,7 +94,7 @@ void SocketGraphic::posChanged(QPointF pos)
     }
 }
 
-enzo::nt::OpId SocketGraphic::getOpId() const { return opId_; }
+enzo::nt::NodeId SocketGraphic::getNodeId() const { return nodeId_; }
 
 QRectF SocketGraphic::boundingRect() const { return boundRect_; }
 

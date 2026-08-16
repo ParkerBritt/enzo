@@ -1,6 +1,6 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/ChangeDisplayFlagCommand.h"
 #include "Engine/UndoRedo/ChangePrimaryNodeCommand.h"
 #include "Engine/UndoRedo/ChangeSelectionCommand.h"
@@ -19,11 +19,11 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
 {
     auto& network = nt::nm();
 
-    operatorCreatedSubscription_ =
-        network.operatorCreated.connect([this](nt::OpId opId) { nodes_.addNode(opId); });
+    nodeCreatedSubscription_ =
+        network.nodeCreated.connect([this](nt::NodeId nodeId) { nodes_.addNode(nodeId); });
 
-    operatorRemovedSubscription_ =
-        network.operatorRemoved.connect([this](nt::OpId opId) { nodes_.removeNode(opId); });
+    nodeRemovedSubscription_ =
+        network.nodeRemoved.connect([this](nt::NodeId nodeId) { nodes_.removeNode(nodeId); });
 
     networkClearedSubscription_ = network.networkCleared.connect([this]() {
         nodes_.clear();
@@ -31,23 +31,23 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
     });
 
     selectedNodesSubscription_ =
-        network.selectedNodesChanged.connect([this](std::vector<nt::OpId> selectedNodeIds) {
+        network.selectedNodesChanged.connect([this](std::vector<nt::NodeId> selectedNodeIds) {
             nodes_.setSelection(selectedNodeIds);
         });
 
     primaryNodeSubscription_ =
-        network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
+        network.primaryNodeChanged.connect([this](std::optional<nt::NodeId> primaryId) {
             nodes_.setPrimary(primaryId);
         });
 
     displayNodeSubscription_ =
-        network.displayNodeChanged.connect([this](std::optional<nt::OpId> displayId) {
+        network.displayNodeChanged.connect([this](std::optional<nt::NodeId> displayId) {
             nodes_.setDisplay(displayId);
         });
 
     nodePositionSubscription_ =
-        network.nodePositionChanged.connect([this](nt::OpId opId, Vector2 pos) {
-            nodes_.setPosition(opId, pos.x(), pos.y());
+        network.nodePositionChanged.connect([this](nt::NodeId nodeId, Vector2 pos) {
+            nodes_.setPosition(nodeId, pos.x(), pos.y());
         });
 
     connectionCreatedSubscription_ =
@@ -76,7 +76,7 @@ qreal NetworkViewModel::getNodeHeight() const { return NodeListModel::nodeHeight
 QVariantList NetworkViewModel::getNodeTypes() const
 {
     QVariantList list;
-    for (const op::OpInfo& info : op::OperatorTable::getData())
+    for (const nt::NodeType& info : nt::NodeTypeTable::getData())
     {
         QVariantMap entry;
         entry["label"] = QString::fromStdString(info.displayName);
@@ -88,35 +88,35 @@ QVariantList NetworkViewModel::getNodeTypes() const
 
 void NetworkViewModel::createNode(const QString& internalName, qreal x, qreal y)
 {
-    std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(internalName.toStdString());
-    if (!opInfo.has_value())
+    std::optional<nt::NodeType> nodeType = nt::NodeTypeTable::getNodeType(internalName.toStdString());
+    if (!nodeType.has_value())
     {
-        throw std::runtime_error("Couldn't find op info for: " + internalName.toStdString());
+        throw std::runtime_error("Couldn't find node info for: " + internalName.toStdString());
     }
-    nt::nm().createOperator(opInfo.value(), "", {static_cast<float>(x), static_cast<float>(y)});
+    nt::nm().createNode(nodeType.value(), "", {static_cast<float>(x), static_cast<float>(y)});
 }
 
-void NetworkViewModel::selectNode(qulonglong opId, bool additive)
+void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)
 {
     auto& network = nt::nm();
 
-    std::vector<nt::OpId> prevSelection = network.getSelectedNodes();
-    std::vector<nt::OpId> nextSelection;
+    std::vector<nt::NodeId> prevSelection = network.getSelectedNodes();
+    std::vector<nt::NodeId> nextSelection;
     if (additive)
     {
         nextSelection = prevSelection;
-        const auto found = std::find(nextSelection.begin(), nextSelection.end(), opId);
+        const auto found = std::find(nextSelection.begin(), nextSelection.end(), nodeId);
         if (found != nextSelection.end())
             nextSelection.erase(found);
         else
-            nextSelection.push_back(opId);
+            nextSelection.push_back(nodeId);
     }
     else
     {
-        nextSelection = {opId};
+        nextSelection = {nodeId};
     }
 
-    std::optional<nt::OpId> prevPrimary = network.getPrimaryNode();
+    std::optional<nt::NodeId> prevPrimary = network.getPrimaryNode();
 
     // A click changes selection and primary together, so they undo as one unit.
     nt::UndoTransaction transaction(network.undoStack());
@@ -129,10 +129,10 @@ void NetworkViewModel::selectNode(qulonglong opId, bool additive)
         network.setSelectedNodes(nextSelection);
     }
 
-    if (prevPrimary != opId)
+    if (prevPrimary != nodeId)
     {
-        network.undoStack().push(std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, opId));
-        network.setPrimaryNode(opId);
+        network.undoStack().push(std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, nodeId));
+        network.setPrimaryNode(nodeId);
     }
 }
 
@@ -145,15 +145,15 @@ void NetworkViewModel::commitSelectionMove()
 {
     auto& network = nt::nm();
 
-    std::vector<nt::OpId> selected = network.getSelectedNodes();
+    std::vector<nt::NodeId> selected = network.getSelectedNodes();
     if (selected.empty()) return;
 
     nt::UndoTransaction transaction(network.undoStack());
-    for (nt::OpId opId : selected)
+    for (nt::NodeId nodeId : selected)
     {
-        const QPointF position = nodes_.getPosition(opId);
+        const QPointF position = nodes_.getPosition(nodeId);
         network.moveNode(
-            opId,
+            nodeId,
             {static_cast<float>(position.x()), static_cast<float>(position.y())}
         );
     }
@@ -168,27 +168,27 @@ void NetworkViewModel::deleteSelected()
     auto& network = nt::nm();
 
     // A copy is taken because deleting a node mutates the live selection.
-    std::vector<nt::OpId> selected = network.getSelectedNodes();
+    std::vector<nt::NodeId> selected = network.getSelectedNodes();
     if (selected.empty()) return;
 
     nt::UndoTransaction transaction(network.undoStack());
-    for (nt::OpId opId : selected)
-        network.deleteNode(opId);
+    for (nt::NodeId nodeId : selected)
+        network.deleteNode(nodeId);
 }
 
 void NetworkViewModel::connectNodes(
-    qulonglong sourceOp,
+    qulonglong sourceNode,
     int sourceOutput,
-    qulonglong targetOp,
+    qulonglong targetNode,
     int targetInput
 )
 {
     // A node cannot feed itself.
-    if (sourceOp == targetOp) return;
+    if (sourceNode == targetNode) return;
 
     // The engine pushes its own undo command and emits connectionCreated, which
     // the edge model already listens for, so the link appears through that path.
-    nt::nm().connectNodes(sourceOp, sourceOutput, targetOp, targetInput);
+    nt::nm().connectNodes(sourceNode, sourceOutput, targetNode, targetInput);
 }
 
 void NetworkViewModel::removeLink(int linkIndex)
@@ -202,32 +202,32 @@ QVariantMap NetworkViewModel::getLinkEndpoints(int linkIndex) const
     const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
     if (!connection) return {};
     return {
-        {"sourceOp", static_cast<qulonglong>(connection->sourceOp)},
+        {"sourceNode", static_cast<qulonglong>(connection->sourceNode)},
         {"sourceOutput", static_cast<int>(connection->sourceOutput)},
-        {"targetOp", static_cast<qulonglong>(connection->targetOp)},
+        {"targetNode", static_cast<qulonglong>(connection->targetNode)},
         {"targetInput", static_cast<int>(connection->targetInput)},
     };
 }
 
-void NetworkViewModel::setDisplayNode(qulonglong opId)
+void NetworkViewModel::setDisplayNode(qulonglong nodeId)
 {
     auto& network = nt::nm();
 
-    std::optional<nt::OpId> prev = network.getDisplayOp();
-    if (prev == opId) return;
+    std::optional<nt::NodeId> prev = network.getDisplayNode();
+    if (prev == nodeId) return;
 
-    network.undoStack().push(std::make_unique<nt::ChangeDisplayFlagCommand>(prev, opId));
-    network.setDisplayOp(opId);
+    network.undoStack().push(std::make_unique<nt::ChangeDisplayFlagCommand>(prev, nodeId));
+    network.setDisplayNode(nodeId);
 }
 
 void NetworkViewModel::clearSelection()
 {
     auto& network = nt::nm();
-    std::vector<nt::OpId> prev = network.getSelectedNodes();
+    std::vector<nt::NodeId> prev = network.getSelectedNodes();
     if (prev.empty()) return;
 
     network.undoStack().push(
-        std::make_unique<nt::ChangeSelectionCommand>(prev, std::vector<nt::OpId>{})
+        std::make_unique<nt::ChangeSelectionCommand>(prev, std::vector<nt::NodeId>{})
     );
     network.setSelectedNodes({});
 }

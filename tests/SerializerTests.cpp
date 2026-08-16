@@ -1,6 +1,6 @@
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/Serializer/Serializer.h"
@@ -28,11 +28,11 @@ struct NMReset
     ~NMReset() { enzo::nt::nm()._reset(); }
 };
 
-struct OperatorTableInit
+struct NodeTypeTableInit
 {
-    OperatorTableInit() { enzo::op::OperatorTable::initPlugins(); }
+    NodeTypeTableInit() { enzo::nt::NodeTypeTable::initPlugins(); }
 };
-static OperatorTableInit _operatorTableInit;
+static NodeTypeTableInit _nodeTypeTableInit;
 
 } // namespace
 
@@ -129,13 +129,13 @@ TEST_CASE("Applying a ramp model reconciles a mismatched instance count")
 TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 {
     auto& nm = nt::nm();
-    auto gridInfo = op::OperatorTable::getOpInfo("grid").value();
+    auto gridInfo = nt::NodeTypeTable::getNodeType("grid").value();
 
-    nt::OpId grid = nm.createOperator(gridInfo);
+    nt::NodeId grid = nm.createNode(gridInfo);
     // Use a path the placeholder would never regenerate so the test fails if the
     // path is not actually serialized
     const std::string savedPath = "/my_renamed_grid";
-    nm.getGeoOperator(grid).setPath(savedPath);
+    nm.getNode(grid).setPath(savedPath);
 
     const std::string path = "/tmp/enzo_serializer_path_roundtrip.json";
     nt::Serializer serializer;
@@ -144,19 +144,19 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
     nm._reset();
     serializer.load(nm, path);
 
-    REQUIRE(nm.operators().size() == 1);
-    for (auto [opId, op] : nm.operators())
-        REQUIRE(op.getPath().getString() == savedPath);
+    REQUIRE(nm.nodes().size() == 1);
+    for (auto [nodeId, node] : nm.nodes())
+        REQUIRE(node.getPath().getString() == savedPath);
 }
 
 TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 {
     auto& nm = nt::nm();
-    auto gridInfo = op::OperatorTable::getOpInfo("grid").value();
-    auto transformInfo = op::OperatorTable::getOpInfo("transform").value();
+    auto gridInfo = nt::NodeTypeTable::getNodeType("grid").value();
+    auto transformInfo = nt::NodeTypeTable::getNodeType("transform").value();
 
-    nt::OpId grid = nm.createOperator(gridInfo);
-    nt::OpId transform = nm.createOperator(transformInfo);
+    nt::NodeId grid = nm.createNode(gridInfo);
+    nt::NodeId transform = nm.createNode(transformInfo);
     nt::nm().connectNodes(grid, 0, transform, 0);
 
     const std::string path = "/tmp/enzo_serializer_roundtrip.json";
@@ -167,12 +167,12 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
     serializer.load(nm, path);
 
     // Find the reloaded nodes by type since load assigns fresh ids
-    std::optional<nt::OpId> loadedGrid;
-    std::optional<nt::OpId> loadedTransform;
-    for (auto [opId, op] : nm.operators())
+    std::optional<nt::NodeId> loadedGrid;
+    std::optional<nt::NodeId> loadedTransform;
+    for (auto [nodeId, node] : nm.nodes())
     {
-        if (op.getType().getName() == "grid") loadedGrid = opId;
-        if (op.getType().getName() == "transform") loadedTransform = opId;
+        if (node.getType().getName() == "grid") loadedGrid = nodeId;
+        if (node.getType().getName() == "transform") loadedTransform = nodeId;
     }
     REQUIRE(loadedGrid.has_value());
     REQUIRE(loadedTransform.has_value());
@@ -180,5 +180,5 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
     // The transform reads its single input from the grid
     std::vector<nt::Connection> inputs = nm.graph().getInputs(loadedTransform.value());
     REQUIRE(inputs.size() == 1);
-    REQUIRE(inputs[0].sourceOp == loadedGrid.value());
+    REQUIRE(inputs[0].sourceNode == loadedGrid.value());
 }

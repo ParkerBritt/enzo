@@ -1,8 +1,8 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkPath.h"
-#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/NodeType.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include "Engine/UndoRedo/CreateNodeCommand.h"
@@ -16,46 +16,46 @@
 
 namespace enzo {
 
-nt::OpId
-nt::NetworkManager::createOperator(op::OpInfo opInfo, const std::string& path, Vector2 position)
+nt::NodeId
+nt::NetworkManager::createNode(nt::NodeType nodeType, const std::string& path, Vector2 position)
 {
 
-    OpId opId = ++maxOpId_;
-    std::string typeName = opInfo.internalName;
+    NodeId nodeId = ++maxNodeId_;
+    std::string typeName = nodeType.internalName;
 
-    std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(maxOpId_, opInfo);
-    newOp->setPosition(position);
-    if (!path.empty()) newOp->setPath(path);
-    newOp->nodeDirtied.connect([this](nt::OpId opId, bool dirtyDependents) {
-        onNodeDirtied(opId, dirtyDependents);
+    std::unique_ptr<Node> newNode = std::make_unique<Node>(maxNodeId_, nodeType);
+    newNode->setPosition(position);
+    if (!path.empty()) newNode->setPath(path);
+    newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
+        onNodeDirtied(nodeId, dirtyDependents);
     });
-    gopStore_.emplace(opId, std::move(newOp));
+    nodeStore_.emplace(nodeId, std::move(newNode));
 
-    operatorCreated(opId);
+    nodeCreated(nodeId);
 
-    auto cmd = std::make_unique<CreateNodeCommand>(opId);
+    auto cmd = std::make_unique<CreateNodeCommand>(nodeId);
     undoStack_.push(std::move(cmd));
 
-    return opId;
+    return nodeId;
 }
 
-void nt::NetworkManager::moveNode(OpId opId, Vector2 newPos, bool skipUndo)
+void nt::NetworkManager::moveNode(NodeId nodeId, Vector2 newPos, bool skipUndo)
 {
-    Vector2 oldPos = getGeoOperator(opId).getPosition();
-    getGeoOperator(opId).setPosition(newPos);
+    Vector2 oldPos = getNode(nodeId).getPosition();
+    getNode(nodeId).setPosition(newPos);
 
     if (!skipUndo)
     {
-        auto cmd = std::make_unique<MoveNodeCommand>(opId, oldPos, newPos);
+        auto cmd = std::make_unique<MoveNodeCommand>(nodeId, oldPos, newPos);
         undoStack_.push(std::move(cmd));
     }
 
-    nodePositionChanged(opId, newPos);
+    nodePositionChanged(nodeId, newPos);
 }
 
-void nt::NetworkManager::deleteNode(OpId opId)
+void nt::NetworkManager::deleteNode(NodeId nodeId)
 {
-    if (!isValidOp(opId)) return;
+    if (!isValidNode(nodeId)) return;
 
     auto updateLock = lockUpdates();
 
@@ -63,76 +63,76 @@ void nt::NetworkManager::deleteNode(OpId opId)
     UndoTransaction transaction(undoStack_);
 
     // Disconnect first so the reconnects replay after the node is restored on undo
-    disconnectOperator(opId);
+    disconnectNode(nodeId);
 
     // Record and remove the bare node last
-    auto cmd = std::make_unique<DeleteNodeCommand>(opId);
+    auto cmd = std::make_unique<DeleteNodeCommand>(nodeId);
     undoStack_.push(std::move(cmd));
-    removeOperator(opId, false);
+    removeNode(nodeId, false);
 }
 
-void nt::NetworkManager::restoreOperator(OpId opId, op::OpInfo opInfo)
+void nt::NetworkManager::restoreNode(NodeId nodeId, nt::NodeType nodeType)
 {
-    std::unique_ptr<GeometryOperator> newOp = std::make_unique<GeometryOperator>(opId, opInfo);
-    newOp->nodeDirtied.connect([this](nt::OpId opId, bool dirtyDependents) {
-        onNodeDirtied(opId, dirtyDependents);
+    std::unique_ptr<Node> newNode = std::make_unique<Node>(nodeId, nodeType);
+    newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
+        onNodeDirtied(nodeId, dirtyDependents);
     });
-    gopStore_.emplace(opId, std::move(newOp));
+    nodeStore_.emplace(nodeId, std::move(newNode));
 
-    if (opId > maxOpId_) maxOpId_ = opId;
+    if (nodeId > maxNodeId_) maxNodeId_ = nodeId;
 
-    operatorCreated(opId);
+    nodeCreated(nodeId);
 }
 
-void nt::NetworkManager::removeOperator(OpId opId, bool removeConnections)
+void nt::NetworkManager::removeNode(NodeId nodeId, bool removeConnections)
 {
-    if (!isValidOp(opId)) return;
+    if (!isValidNode(nodeId)) return;
 
     auto updateLock = lockUpdates();
 
     if (removeConnections)
     {
-        disconnectOperator(opId);
+        disconnectNode(nodeId);
     }
 
     // Clear display if this was the display node
-    if (displayOp_.has_value() && displayOp_.value() == opId)
+    if (displayNode_.has_value() && displayNode_.value() == nodeId)
     {
-        displayOp_.reset();
+        displayNode_.reset();
     }
 
     // Clear primary if this was the primary node
-    if (primaryOp_.has_value() && primaryOp_.value() == opId)
+    if (primaryNode_.has_value() && primaryNode_.value() == nodeId)
     {
         clearPrimaryNode();
     }
 
     // Remove from selection
-    auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
+    auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), nodeId);
     if (selIt != selectedNodes_.end())
     {
         selectedNodes_.erase(selIt);
         selectedNodesChanged(selectedNodes_);
     }
 
-    // Signal before erasing so listeners can still query the operator
-    operatorRemoved(opId);
+    // Signal before erasing so listeners can still query the node
+    nodeRemoved(nodeId);
 
-    graph_.removeNode(opId);
-    gopStore_.erase(opId);
+    graph_.removeNode(nodeId);
+    nodeStore_.erase(nodeId);
 }
 
-void nt::NetworkManager::disconnectOperator(OpId opId)
+void nt::NetworkManager::disconnectNode(NodeId nodeId)
 {
-    if (!isValidOp(opId)) return;
+    if (!isValidNode(nodeId)) return;
 
     // getInputs and getOutputs return copies, so disconnecting while iterating is safe
-    for (const nt::Connection& connection : graph_.getInputs(opId))
+    for (const nt::Connection& connection : graph_.getInputs(nodeId))
     {
         disconnectNodes(connection);
     }
 
-    for (const nt::Connection& connection : graph_.getOutputs(opId))
+    for (const nt::Connection& connection : graph_.getOutputs(nodeId))
     {
         disconnectNodes(connection);
     }
@@ -144,106 +144,106 @@ nt::NetworkManager& nt::NetworkManager::getInstance()
     return instance;
 }
 
-nt::GeometryOperator& nt::NetworkManager::getGeoOperator(nt::OpId opId)
+nt::Node& nt::NetworkManager::getNode(nt::NodeId nodeId)
 {
-    auto it = gopStore_.find(opId);
-    if (it == gopStore_.end())
+    auto it = nodeStore_.find(nodeId);
+    if (it == nodeStore_.end())
     {
         throw std::out_of_range(
-            "OpId: " + std::to_string(opId) + " > max opId: " + std::to_string(maxOpId_) + "\n"
+            "NodeId: " + std::to_string(nodeId) + " > max nodeId: " + std::to_string(maxNodeId_) + "\n"
         );
     }
     return *it->second;
 }
 
-nt::GeometryOperator* nt::NetworkManager::findOperator(const NetworkPath& path, OpId fromOp)
+nt::Node* nt::NetworkManager::findNode(const NetworkPath& path, NodeId fromNode)
 {
     NetworkPath nodePath = path.getNode();
 
     // An empty node path names the node the lookup starts from.
     if (nodePath.isEmpty())
     {
-        auto found = gopStore_.find(fromOp);
-        return found != gopStore_.end() ? found->second.get() : nullptr;
+        auto found = nodeStore_.find(fromNode);
+        return found != nodeStore_.end() ? found->second.get() : nullptr;
     }
 
     // The network is flat for now, so a node is found by matching its name.
     const std::string name = nodePath.getName();
-    for (auto& [opId, op] : gopStore_)
-        if (op->getName() == name) return op.get();
+    for (auto& [nodeId, node] : nodeStore_)
+        if (node->getName() == name) return node.get();
     return nullptr;
 }
 
 std::weak_ptr<prm::NodeParameter>
-nt::NetworkManager::findParameter(const NetworkPath& path, OpId fromOp)
+nt::NetworkManager::findParameter(const NetworkPath& path, NodeId fromNode)
 {
     if (!path.hasParameter()) return {};
 
-    GeometryOperator* op = findOperator(path, fromOp);
-    if (!op) return {};
+    Node* node = findNode(path, fromNode);
+    if (!node) return {};
 
-    return op->getParameter(path.getParameter());
+    return node->getParameter(path.getParameter());
 }
 
-bool nt::NetworkManager::isValidOp(nt::OpId opId)
+bool nt::NetworkManager::isValidNode(nt::NodeId nodeId)
 {
-    auto it = gopStore_.find(opId);
-    if (it == gopStore_.end() || it->second == nullptr)
+    auto it = nodeStore_.find(nodeId);
+    if (it == nodeStore_.end() || it->second == nullptr)
     {
         return false;
     }
     return true;
 }
 
-void nt::NetworkManager::setDisplayOp(OpId opId)
+void nt::NetworkManager::setDisplayNode(NodeId nodeId)
 {
-    displayOp_ = opId;
+    displayNode_ = nodeId;
 
-    cookOp(opId);
+    cook(nodeId);
 
-    nt::GeometryOperator& displayOp = getGeoOperator(opId);
-    displayGeoChanged(displayOp.getOutputPacket(0));
-    displayNodeChanged(opId);
+    nt::Node& displayNode = getNode(nodeId);
+    displayGeoChanged(displayNode.getOutputPacket(0));
+    displayNodeChanged(nodeId);
 }
 
 void nt::NetworkManager::clearDisplayFlag()
 {
-    displayOp_.reset();
+    displayNode_.reset();
     displayGeoChanged(std::make_shared<const NodePacket>());
     displayNodeChanged(std::nullopt);
 }
 
-std::optional<nt::OpId> nt::NetworkManager::getPrimaryNode() { return primaryOp_; }
+std::optional<nt::NodeId> nt::NetworkManager::getPrimaryNode() { return primaryNode_; }
 
-void nt::NetworkManager::setPrimaryNode(OpId opId)
+void nt::NetworkManager::setPrimaryNode(NodeId nodeId)
 {
-    primaryOp_ = opId;
+    primaryNode_ = nodeId;
 
-    cookOp(opId);
+    cook(nodeId);
 
-    nt::GeometryOperator& primaryOp = getGeoOperator(opId);
-    primaryGeoChanged(primaryOp.getOutputPacket(0));
-    primaryNodeChanged(opId);
+    nt::Node& primaryNode = getNode(nodeId);
+    primaryGeoChanged(primaryNode.getOutputPacket(0));
+    primaryNodeChanged(nodeId);
 }
 
 void nt::NetworkManager::clearPrimaryNode()
 {
-    primaryOp_.reset();
+    primaryNode_.reset();
     primaryGeoChanged(std::make_shared<const NodePacket>());
     primaryNodeChanged(std::nullopt);
 }
 
-void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
+void nt::NetworkManager::setSelectedNode(NodeId nodeId, bool selected, bool add)
 {
     if (add)
     {
-        auto idIter = std::find(selectedNodes_.begin(), selectedNodes_.end(), opId);
+        auto idIter = std::find(selectedNodes_.begin(), selectedNodes_.end(), nodeId);
         if (selected)
         {
             // skip if value is already in selected nodes
             if (idIter != selectedNodes_.end()) return;
-            selectedNodes_.push_back(opId);
-            cookOp(opId);
+            selectedNodes_.push_back(nodeId);
+            cook(nodeId);
         }
         else
         {
@@ -257,8 +257,8 @@ void nt::NetworkManager::setSelectedNode(OpId opId, bool selected, bool add)
         if (selected)
         {
             selectedNodes_.clear();
-            selectedNodes_.push_back(opId);
-            cookOp(opId);
+            selectedNodes_.push_back(nodeId);
+            cook(nodeId);
         }
         else
         {
@@ -272,47 +272,47 @@ nt::UpdateLock nt::NetworkManager::lockUpdates() { return UpdateLock(); }
 
 void nt::NetworkManager::update()
 {
-    // cook display op
-    if (getDisplayOp().has_value())
+    // cook display node
+    if (getDisplayNode().has_value())
     {
 
-        const OpId displayOpId = getDisplayOp().value();
-        cookOp(displayOpId);
+        const NodeId displayNodeId = getDisplayNode().value();
+        cook(displayNodeId);
 
-        auto& displayOp = getGeoOperator(displayOpId);
-        displayGeoChanged(displayOp.getOutputPacket(0));
+        auto& displayNode = getNode(displayNodeId);
+        displayGeoChanged(displayNode.getOutputPacket(0));
     }
 
     // cook primary node and notify the geometry pane
     if (getPrimaryNode().has_value())
     {
-        const OpId primaryOpId = getPrimaryNode().value();
-        cookOp(primaryOpId);
+        const NodeId primaryNodeId = getPrimaryNode().value();
+        cook(primaryNodeId);
 
-        auto& primaryOp = getGeoOperator(primaryOpId);
-        primaryGeoChanged(primaryOp.getOutputPacket(0));
+        auto& primaryNode = getNode(primaryNodeId);
+        primaryGeoChanged(primaryNode.getOutputPacket(0));
     }
 
     // cook selected nodes and notify spreadsheet
-    for (OpId selectedId : selectedNodes_)
+    for (NodeId selectedId : selectedNodes_)
     {
-        cookOp(selectedId);
-        auto& selectedOp = getGeoOperator(selectedId);
-        selectedGeoChanged(selectedOp.getOutputPacket(0));
+        cook(selectedId);
+        auto& selectedNode = getNode(selectedId);
+        selectedGeoChanged(selectedNode.getOutputPacket(0));
     }
 }
 
-const std::vector<nt::OpId>& nt::NetworkManager::getSelectedNodes() { return selectedNodes_; }
+const std::vector<nt::NodeId>& nt::NetworkManager::getSelectedNodes() { return selectedNodes_; }
 
-void nt::NetworkManager::setSelectedNodes(std::vector<nt::OpId> opIds)
+void nt::NetworkManager::setSelectedNodes(std::vector<nt::NodeId> nodeIds)
 {
     selectedNodes_.clear();
-    for (OpId opId : opIds)
+    for (NodeId nodeId : nodeIds)
     {
-        if (isValidOp(opId))
+        if (isValidNode(nodeId))
         {
-            selectedNodes_.push_back(opId);
-            cookOp(opId);
+            selectedNodes_.push_back(nodeId);
+            cook(nodeId);
         }
     }
     selectedNodesChanged(selectedNodes_);
@@ -320,10 +320,10 @@ void nt::NetworkManager::setSelectedNodes(std::vector<nt::OpId> opIds)
 
 void nt::NetworkManager::clear()
 {
-    gopStore_.clear();
+    nodeStore_.clear();
     graph_.clear();
     selectedNodes_.clear();
-    maxOpId_ = 0;
+    maxNodeId_ = 0;
     undoStack_.clear();
     clearDisplayFlag();
     clearPrimaryNode();
@@ -331,46 +331,46 @@ void nt::NetworkManager::clear()
     networkCleared();
 }
 
-void nt::NetworkManager::cookOp(nt::OpId opId)
+void nt::NetworkManager::cook(nt::NodeId nodeId)
 {
-    std::vector<nt::OpId> cookOrder = graph_.getCookOrder(opId);
+    std::vector<nt::NodeId> cookOrder = graph_.getCookOrder(nodeId);
 
-    for (nt::OpId cookOpId : cookOrder)
+    for (nt::NodeId cookNodeId : cookOrder)
     {
-        nt::GeometryOperator& op = getGeoOperator(cookOpId);
-        if (op.isDirty())
+        nt::Node& node = getNode(cookNodeId);
+        if (node.isDirty())
         {
-            op::CookContext context(cookOpId, nt::nm());
-            op.cookOp(context);
+            nt::CookContext context(cookNodeId, nt::nm());
+            node.cook(context);
         }
     }
 }
 
 nt::Connection nt::NetworkManager::connectNodes(
-    OpId inputOpId,
+    NodeId inputNodeId,
     unsigned int inputIndex,
-    OpId outputOpId,
+    NodeId outputNodeId,
     unsigned int outputIndex
 )
 {
     auto updateLock = lockUpdates();
 
-    nt::Connection connection{inputOpId, inputIndex, outputOpId, outputIndex};
+    nt::Connection connection{inputNodeId, inputIndex, outputNodeId, outputIndex};
 
     // An input slot holds one connection, so replace whatever was there
-    if (auto existing = graph_.getInputConnection(outputOpId, outputIndex))
+    if (auto existing = graph_.getInputConnection(outputNodeId, outputIndex))
     {
         disconnectNodes(*existing);
     }
 
     graph_.connect(connection);
-    getGeoOperator(outputOpId).dirtyNode();
+    getNode(outputNodeId).dirtyNode();
     connectionCreated(connection);
 
     auto cmd = std::make_unique<ChangeConnectionCommand>(
-        inputOpId,
+        inputNodeId,
         inputIndex,
-        outputOpId,
+        outputNodeId,
         outputIndex,
         ChangeConnectionCommand::Action::Connect
     );
@@ -382,9 +382,9 @@ nt::Connection nt::NetworkManager::connectNodes(
 void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
 {
     auto cmd = std::make_unique<ChangeConnectionCommand>(
-        connection.sourceOp,
+        connection.sourceNode,
         connection.sourceOutput,
-        connection.targetOp,
+        connection.targetNode,
         connection.targetInput,
         ChangeConnectionCommand::Action::Disconnect
     );
@@ -393,29 +393,29 @@ void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
     graph_.disconnect(connection);
 
     // Only the downstream node goes stale, its input changed
-    if (isValidOp(connection.targetOp))
+    if (isValidNode(connection.targetNode))
     {
-        getGeoOperator(connection.targetOp).dirtyNode();
+        getNode(connection.targetNode).dirtyNode();
     }
 
     connectionRemoved(connection);
 }
 
-std::optional<nt::OpId> nt::NetworkManager::getDisplayOp() { return displayOp_; }
+std::optional<nt::NodeId> nt::NetworkManager::getDisplayNode() { return displayNode_; }
 
-void nt::NetworkManager::onNodeDirtied(nt::OpId opId, bool dirtyDependents)
+void nt::NetworkManager::onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents)
 {
     if (dirtyDependents)
     {
-        std::vector<nt::Unit> dependents = graph_.getDependents(nt::Unit{opId});
+        std::vector<nt::Unit> dependents = graph_.getDependents(nt::Unit{nodeId});
         for (const nt::Unit& dependent : dependents)
         {
-            // Dirty dependent op
-            nt::GeometryOperator& dependentOp = getGeoOperator(dependent.opId);
-            dependentOp.dirtyNode(false);
+            // Dirty dependent node
+            nt::Node& dependentNode = getNode(dependent.nodeId);
+            dependentNode.dirtyNode(false);
 
             // Dirty dependent parameter
-            if (dependent.isParameter()) dependentOp.parameterChanged(dependent.parm);
+            if (dependent.isParameter()) dependentNode.parameterChanged(dependent.parm);
         }
 
         if (nt::UpdateLock::isUnlocked())
@@ -429,13 +429,13 @@ void nt::NetworkManager::_reset()
 {
     std::cout << "resetting network manager\n";
 
-    gopStore_.clear();
+    nodeStore_.clear();
     graph_.clear();
-    maxOpId_ = 0;
-    displayOp_.reset();
+    maxNodeId_ = 0;
+    displayNode_.reset();
 }
 
-// std::unordered_map<nt::OpId, std::unique_ptr<nt::GeometryOperator>>
-// nt::NetworkManager::gopStore_;
+// std::unordered_map<nt::NodeId, std::unique_ptr<nt::Node>>
+// nt::NetworkManager::nodeStore_;
 
 } // namespace enzo

@@ -1,5 +1,5 @@
 #include "Gui/Parameters/ParametersViewModel.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/Template.h"
 #include "Gui/Parameters/ParameterItem.h"
@@ -9,23 +9,23 @@ namespace enzo::ui {
 ParametersViewModel::ParametersViewModel(QObject* parent) : QObject(parent)
 {
     primaryNodeSubscription_ =
-        nt::nm().primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
-            showOperator(primaryId);
+        nt::nm().primaryNodeChanged.connect([this](std::optional<nt::NodeId> primaryId) {
+            showNode(primaryId);
         });
 }
 
-void ParametersViewModel::showOperator(std::optional<nt::OpId> opId)
+void ParametersViewModel::showNode(std::optional<nt::NodeId> nodeId)
 {
-    opId_ = opId;
+    nodeId_ = nodeId;
 
     // A disable or hide condition reads sibling values, so a parameter edit can
-    // flip another's state. Follow the new operator's change signal to refresh.
+    // flip another's state. Follow the new node's change signal to refresh.
     parameterChangedSubscription_.disconnect();
-    if (opId_)
+    if (nodeId_)
     {
-        nt::GeometryOperator& op = nt::nm().getGeoOperator(*opId_);
+        nt::Node& node = nt::nm().getNode(*nodeId_);
         parameterChangedSubscription_ =
-            op.parameterChanged.connect([this](const std::string&) { refreshConditions(); });
+            node.parameterChanged.connect([this](const std::string&) { refreshConditions(); });
     }
 
     rebuild();
@@ -35,46 +35,46 @@ void ParametersViewModel::rebuild()
 {
     clear();
 
-    if (opId_)
+    if (nodeId_)
     {
-        nt::GeometryOperator& op = nt::nm().getGeoOperator(*opId_);
-        nodeName_ = QString::fromStdString(op.getName());
-        nodeType_ = QString::fromStdString(op.getType().getLabel());
-        for (const prm::Template& prmTemplate : op.getTemplates())
-            topLevel_.append(buildItem(prmTemplate, op));
+        nt::Node& node = nt::nm().getNode(*nodeId_);
+        nodeName_ = QString::fromStdString(node.getName());
+        nodeType_ = QString::fromStdString(node.getType().getLabel());
+        for (const prm::Template& prmTemplate : node.getTemplates())
+            topLevel_.append(buildItem(prmTemplate, node));
     }
 
     Q_EMIT parametersChanged();
 }
 
 ParameterItem*
-ParametersViewModel::buildItem(const prm::Template& prmTemplate, nt::GeometryOperator& op)
+ParametersViewModel::buildItem(const prm::Template& prmTemplate, nt::Node& node)
 {
     std::weak_ptr<prm::NodeParameter> parameter;
-    if (!prmTemplate.isContainer()) parameter = op.getParameter(prmTemplate.getName());
+    if (!prmTemplate.isContainer()) parameter = node.getParameter(prmTemplate.getName());
 
-    auto* item = new ParameterItem(prmTemplate, parameter, op, this);
+    auto* item = new ParameterItem(prmTemplate, parameter, node, this);
     item->setMeta(
-        op.isParameterEnabled(prmTemplate.getName()),
-        op.isParameterHidden(prmTemplate.getName())
+        node.isParameterEnabled(prmTemplate.getName()),
+        node.isParameterHidden(prmTemplate.getName())
     );
     allItems_.append(item);
 
     if (prmTemplate.isContainer())
         for (const prm::Template& child : prmTemplate.getChildren())
-            item->addChild(buildItem(child, op));
+            item->addChild(buildItem(child, node));
 
     return item;
 }
 
 void ParametersViewModel::refreshConditions()
 {
-    if (!opId_) return;
-    nt::GeometryOperator& op = nt::nm().getGeoOperator(*opId_);
+    if (!nodeId_) return;
+    nt::Node& node = nt::nm().getNode(*nodeId_);
     for (ParameterItem* item : allItems_)
     {
         std::string name = item->name().toStdString();
-        item->setMeta(op.isParameterEnabled(name), op.isParameterHidden(name));
+        item->setMeta(node.isParameterEnabled(name), node.isParameterHidden(name));
     }
 }
 

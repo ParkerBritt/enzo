@@ -1,4 +1,4 @@
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/CookContext.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
@@ -43,15 +43,15 @@ std::optional<ParameterComparison> parseParameterComparison(const std::string& t
 
 } // namespace
 
-nt::GeometryOperator::GeometryOperator(nt::OpId opId, op::OpInfo opInfo)
-    : opId_{opId}, opInfo_{opInfo}, opDef_(opInfo.ctorFunc(&nt::nm(), opInfo)),
-      path_{"/" + opInfo.internalName + "_" + std::to_string(opId)}
+nt::Node::Node(nt::NodeId nodeId, nt::NodeType nodeType)
+    : nodeId_{nodeId}, nodeType_{nodeType}, nodeDef_(nodeType.ctorFunc(&nt::nm(), nodeType)),
+      path_{"/" + nodeType.internalName + "_" + std::to_string(nodeId)}
 {
 
     initParameters();
 }
 
-void nt::GeometryOperator::initParameters()
+void nt::Node::initParameters()
 {
     // Extract parameters from groups
     std::function<void(const prm::Template&)> visit = [&](const prm::Template& templateEntry) {
@@ -62,7 +62,7 @@ void nt::GeometryOperator::initParameters()
             return;
         }
 
-        auto parameter = std::make_shared<prm::NodeParameter>(templateEntry, opId_);
+        auto parameter = std::make_shared<prm::NodeParameter>(templateEntry, nodeId_);
         parameter->valueChanged.connect([this, name = templateEntry.getName()]() {
             onParameterChanged(name);
         });
@@ -70,41 +70,41 @@ void nt::GeometryOperator::initParameters()
         parameters_.push_back(parameter);
     };
 
-    for (const prm::Template& templateEntry : opInfo_.templates)
+    for (const prm::Template& templateEntry : nodeType_.templates)
         visit(templateEntry);
 }
 
-void nt::GeometryOperator::dirtyNode(bool dirtyDescendents)
+void nt::Node::dirtyNode(bool dirtyDescendents)
 {
-    std::cout << "Dirtying op: " << opId_ << "\n";
+    std::cout << "Dirtying node: " << nodeId_ << "\n";
     dirty_ = true;
-    nodeDirtied(opId_, dirtyDescendents);
+    nodeDirtied(nodeId_, dirtyDescendents);
 }
 
-void nt::GeometryOperator::onParameterChanged(const std::string& parmName)
+void nt::Node::onParameterChanged(const std::string& parmName)
 {
     parameterChanged(parmName);
     dirtyNode();
 }
 
-bool nt::GeometryOperator::isDirty() { return dirty_; }
+bool nt::Node::isDirty() { return dirty_; }
 
-void nt::GeometryOperator::cookOp(op::CookContext context)
+void nt::Node::cook(nt::CookContext context)
 {
-    std::cout << "Cooking op: " << opId_ << "\n";
+    std::cout << "Cooking node: " << nodeId_ << "\n";
     if (dirty_)
     {
-        opDef_->cookOp(context);
+        nodeDef_->cook(context);
         dirty_ = false;
     }
 }
 
-std::shared_ptr<const NodePacket> nt::GeometryOperator::getOutputPacket(unsigned outputIndex) const
+std::shared_ptr<const NodePacket> nt::Node::getOutputPacket(unsigned outputIndex) const
 {
-    return opDef_->getOutputPacket(outputIndex);
+    return nodeDef_->getOutputPacket(outputIndex);
 }
 
-std::weak_ptr<prm::NodeParameter> nt::GeometryOperator::getParameter(std::string_view parameterName)
+std::weak_ptr<prm::NodeParameter> nt::Node::getParameter(std::string_view parameterName)
 {
     for (auto parm : parameters_)
     {
@@ -116,7 +116,7 @@ std::weak_ptr<prm::NodeParameter> nt::GeometryOperator::getParameter(std::string
     return std::weak_ptr<prm::NodeParameter>();
 }
 
-bool nt::GeometryOperator::isComparisonTrue(const std::string& conditionText)
+bool nt::Node::isComparisonTrue(const std::string& conditionText)
 {
     const std::optional<ParameterComparison> comparison = parseParameterComparison(conditionText);
     if (!comparison) return false;
@@ -128,7 +128,7 @@ bool nt::GeometryOperator::isComparisonTrue(const std::string& conditionText)
     return comparison->isMet(controller.lock()->evalInt());
 }
 
-bool nt::GeometryOperator::isParameterEnabled(std::string_view parmName)
+bool nt::Node::isParameterEnabled(std::string_view parmName)
 {
     // An unknown parameter is treated as enabled.
     auto parameter = getParameter(parmName);
@@ -138,7 +138,7 @@ bool nt::GeometryOperator::isParameterEnabled(std::string_view parmName)
     return !isComparisonTrue(parameter.lock()->getTemplate().getDisableCondition());
 }
 
-bool nt::GeometryOperator::isParameterHidden(std::string_view parmName)
+bool nt::Node::isParameterHidden(std::string_view parmName)
 {
     // An unknown parameter is treated as shown.
     auto parameter = getParameter(parmName);
@@ -148,21 +148,21 @@ bool nt::GeometryOperator::isParameterHidden(std::string_view parmName)
     return isComparisonTrue(parameter.lock()->getTemplate().getHideCondition());
 }
 
-std::vector<std::weak_ptr<prm::NodeParameter>> nt::GeometryOperator::getParameters()
+std::vector<std::weak_ptr<prm::NodeParameter>> nt::Node::getParameters()
 {
     return {parameters_.begin(), parameters_.end()};
 }
 
-const std::vector<prm::Template>& nt::GeometryOperator::getTemplates() const
+const std::vector<prm::Template>& nt::Node::getTemplates() const
 {
-    return opInfo_.templates;
+    return nodeType_.templates;
 }
 
-std::string nt::GeometryOperator::getName() const { return path_.getName(); }
+std::string nt::Node::getName() const { return path_.getName(); }
 
-const op::OpInfo& nt::GeometryOperator::getType() const { return opInfo_; }
+const nt::NodeType& nt::Node::getType() const { return nodeType_; }
 
-// std::optional<nt::OpId> nt::GeometryOperator::getInput(unsigned int inputNumber) const
+// std::optional<nt::NodeId> nt::Node::getInput(unsigned int inputNumber) const
 // {
 //     if(inputNumber>=maxInputs_)
 //     {
@@ -171,7 +171,7 @@ const op::OpInfo& nt::GeometryOperator::getType() const { return opInfo_; }
 //     return inputIds_.at(inputNumber);
 // }
 
-// std::optional<nt::OpId> nt::GeometryOperator::getOutput(unsigned int outputNumber) const
+// std::optional<nt::NodeId> nt::Node::getOutput(unsigned int outputNumber) const
 // {
 //     if(outputNumber>=maxOutputs_)
 //     {
@@ -180,8 +180,8 @@ const op::OpInfo& nt::GeometryOperator::getType() const { return opInfo_; }
 //     return outputIds_.at(outputNumber);
 // }
 
-unsigned int nt::GeometryOperator::getMaxInputs() const { return opDef_->getMaxInputs(); }
-unsigned int nt::GeometryOperator::getMaxOutputs() const { return opDef_->getMaxOutputs(); }
-unsigned int nt::GeometryOperator::getMinInputs() const { return opDef_->getMinInputs(); }
+unsigned int nt::Node::getMaxInputs() const { return nodeDef_->getMaxInputs(); }
+unsigned int nt::Node::getMaxOutputs() const { return nodeDef_->getMaxOutputs(); }
+unsigned int nt::Node::getMinInputs() const { return nodeDef_->getMinInputs(); }
 
 } // namespace enzo

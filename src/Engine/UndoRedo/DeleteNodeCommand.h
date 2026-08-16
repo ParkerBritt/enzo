@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <string>
 #include <vector>
@@ -20,15 +20,15 @@ class DeleteNodeCommand : public UndoCommand
     };
 
   public:
-    DeleteNodeCommand(OpId opId) : opId_(opId)
+    DeleteNodeCommand(NodeId nodeId) : nodeId_(nodeId)
     {
-        GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ = op.getType().getName();
-        position_ = op.getPosition();
+        Node& node = nm().getNode(nodeId_);
+        typeName_ = node.getType().getName();
+        position_ = node.getPosition();
 
         // Save parms
         savedParms_ = std::vector<SavedParameter>();
-        for (auto weakPrm : op.getParameters())
+        for (auto weakPrm : node.getParameters())
         {
             if (auto prm = weakPrm.lock())
             {
@@ -39,31 +39,31 @@ class DeleteNodeCommand : public UndoCommand
 
     void undo() override
     {
-        // Restore operator
-        auto opInfo = op::OperatorTable::getOpInfo(typeName_);
-        nm().restoreOperator(opId_, opInfo.value());
+        // Restore node
+        auto nodeType = nt::NodeTypeTable::getNodeType(typeName_);
+        nm().restoreNode(nodeId_, nodeType.value());
 
-        GeometryOperator& op = nm().getGeoOperator(opId_);
+        Node& node = nm().getNode(nodeId_);
 
         // Restore position
-        nm().moveNode(opId_, position_, true);
+        nm().moveNode(nodeId_, position_, true);
 
         // Restore parms
         for (const auto& saved : savedParms_)
         {
-            if (auto prm = op.getParameter(saved.name).lock())
+            if (auto prm = node.getParameter(saved.name).lock())
             {
                 prm->setValues(saved.values);
             }
         }
     }
 
-    void redo() override { nm().removeOperator(opId_, false); }
+    void redo() override { nm().removeNode(nodeId_, false); }
 
     UndoCommandType type() const override { return UndoCommandType::DeleteNode; }
 
   private:
-    OpId opId_;
+    NodeId nodeId_;
     std::string typeName_;
     Vector2 position_;
     std::vector<SavedParameter> savedParms_;

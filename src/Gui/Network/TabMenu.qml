@@ -10,9 +10,9 @@ import "../Utils.js" as Utils
 Popup {
     id: root
 
-    // Every operator type to choose from, each a {label, name} map.
+    // Every node type to choose from, each a {label, name} map.
     property var nodeTypes: []
-    // Emitted with the chosen operator's internal name.
+    // Emitted with the chosen node's internal name.
     signal nodeTypeChosen(string name)
 
     width: 300
@@ -20,7 +20,7 @@ Popup {
     focus: true
     background: background
 
-    // Operators matching the current query and the row under the highlight.
+    // Nodes matching the current query and the row under the highlight.
     property var matches: []
     property int highlighted: 0
     readonly property int rowHeight: 28

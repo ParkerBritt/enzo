@@ -1,6 +1,6 @@
 #include "LegacyGui/ParametersPanel/ParametersPanel.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/Template.h"
 #include "LegacyGui/Parameters/BoolParm.h"
@@ -104,7 +104,7 @@ void ParametersPanel::clearParameters()
 
 enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
     const enzo::prm::Template& templateEntry,
-    enzo::nt::GeometryOperator& displayOp,
+    enzo::nt::Node& displayNode,
     std::vector<enzo::ui::Parameter*>& leafWidgets,
     int& maxLeftPadding
 )
@@ -117,7 +117,7 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
         for (const prm::Template& child : templateEntry.getChildren())
         {
             ui::Parameter* childWidget =
-                buildTemplateWidget(child, displayOp, leafWidgets, maxLeftPadding);
+                buildTemplateWidget(child, displayNode, leafWidgets, maxLeftPadding);
             if (childWidget) groupWidget->addChild(childWidget);
         }
         // Groups participate in left-padding alignment so their labels line up with leaf labels.
@@ -127,7 +127,7 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
         return groupWidget;
     }
 
-    auto parameter = displayOp.getParameter(templateEntry.getName());
+    auto parameter = displayNode.getParameter(templateEntry.getName());
     if (parameter.expired()) return nullptr;
 
     ui::Parameter* leafWidget = nullptr;
@@ -170,7 +170,7 @@ enzo::ui::Parameter* ParametersPanel::buildTemplateWidget(
     return leafWidget;
 }
 
-void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
+void ParametersPanel::selectionChanged(enzo::nt::NodeId nodeId)
 {
     using namespace enzo;
     enzo::nt::NetworkManager& nm = enzo::nt::nm();
@@ -180,8 +180,8 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     leafWidgets_.clear();
     clearParameters();
 
-    enzo::nt::GeometryOperator& displayOp = nm.getGeoOperator(opId);
-    const std::vector<prm::Template>& templates = displayOp.getTemplates();
+    enzo::nt::Node& displayNode = nm.getNode(nodeId);
+    const std::vector<prm::Template>& templates = displayNode.getTemplates();
 
     int maxLeftPadding = 0;
 
@@ -190,7 +190,7 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
     for (const prm::Template& templateEntry : templates)
     {
         enzo::ui::Parameter* widget =
-            buildTemplateWidget(templateEntry, displayOp, leafWidgets_, maxLeftPadding);
+            buildTemplateWidget(templateEntry, displayNode, leafWidgets_, maxLeftPadding);
         if (widget) topWidgets.push_back(widget);
     }
 
@@ -202,21 +202,21 @@ void ParametersPanel::selectionChanged(enzo::nt::OpId opId)
         parametersLayout_->addWidget(widget);
 
     // Paint the initial enabled state, then follow parameter changes for this node.
-    refreshEnabledStates(displayOp);
+    refreshEnabledStates(displayNode);
     parameterChangedConnection_ =
-        displayOp.parameterChanged.connect([this, opId](const std::string&) {
-            refreshEnabledStates(enzo::nt::nm().getGeoOperator(opId));
+        displayNode.parameterChanged.connect([this, nodeId](const std::string&) {
+            refreshEnabledStates(enzo::nt::nm().getNode(nodeId));
         });
 
     noSelectionLabel_->hide();
     scrollArea_->show();
 }
 
-void ParametersPanel::refreshEnabledStates(enzo::nt::GeometryOperator& op)
+void ParametersPanel::refreshEnabledStates(enzo::nt::Node& node)
 {
     for (enzo::ui::Parameter* leaf : leafWidgets_)
     {
-        leaf->setVisible(!op.isParameterHidden(leaf->getName()));
-        leaf->setEnabled(op.isParameterEnabled(leaf->getName()));
+        leaf->setVisible(!node.isParameterHidden(leaf->getName()));
+        leaf->setEnabled(node.isParameterEnabled(leaf->getName()));
     }
 }

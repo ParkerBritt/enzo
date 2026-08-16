@@ -1,5 +1,5 @@
 #include "LegacyGui/Network/TabMenu.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "LegacyGui/Network/NetworkPanel.h"
 
 #include <QApplication>
@@ -39,8 +39,8 @@ enzo::ui::TabMenu::TabMenu(NetworkPanel* network) : PopupList(network), network_
     );
     connect(searchBar_, &QLineEdit::textChanged, this, &TabMenu::applyFilter);
 
-    // Build one row per operator from the table
-    for (const op::OpInfo& tableItem : op::OperatorTable::getData())
+    // Build one row per node from the table
+    for (const nt::NodeType& tableItem : nt::NodeTypeTable::getData())
     {
         Item item;
         item.icon = QIcon(":/node-icons/grid.svg");
@@ -86,12 +86,12 @@ void enzo::ui::TabMenu::applyFilter(const QString& text)
 
 void enzo::ui::TabMenu::createNode(const std::string& nodeName)
 {
-    std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(nodeName);
-    if (!opInfo.has_value())
+    std::optional<nt::NodeType> nodeType = nt::NodeTypeTable::getNodeType(nodeName);
+    if (!nodeType.has_value())
     {
-        throw std::runtime_error("Couldn't find op info for: " + nodeName);
+        throw std::runtime_error("Couldn't find node info for: " + nodeName);
     }
-    network_->createNode(opInfo.value());
+    network_->createNode(nodeType.value());
 }
 
 void enzo::ui::TabMenu::keyPressEvent(QKeyEvent* event)
