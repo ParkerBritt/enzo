@@ -8,9 +8,9 @@ EdgeListModel::EdgeListModel(QObject* parent) : QAbstractListModel(parent) {}
 const std::vector<EdgeListModel::RoleDef>& EdgeListModel::getRoleDefs()
 {
     static const std::vector<RoleDef> defs = {
-        {"sourceOp", [](const nt::Connection& edge) { return QVariant::fromValue(edge.sourceOp); }},
+        {"sourceNode", [](const nt::Connection& edge) { return QVariant::fromValue(edge.sourceNode); }},
         {"sourceOutput", [](const nt::Connection& edge) { return QVariant(edge.sourceOutput); }},
-        {"targetOp", [](const nt::Connection& edge) { return QVariant::fromValue(edge.targetOp); }},
+        {"targetNode", [](const nt::Connection& edge) { return QVariant::fromValue(edge.targetNode); }},
         {"targetInput", [](const nt::Connection& edge) { return QVariant(edge.targetInput); }},
     };
     return defs;

@@ -11,12 +11,12 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
-GopSineWave::GopSineWave(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopSineWave::GopSineWave(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopSineWave::cookOp(enzo::op::CookContext context)
+void GopSineWave::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

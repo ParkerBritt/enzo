@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace enzo::nt {
-class GeometryOperator;
+class Node;
 }
 namespace enzo::prm {
 class Template;
@@ -25,19 +25,19 @@ class ParametersPanel : public Panel
   public:
     ParametersPanel(QWidget* parent = nullptr);
   public Q_SLOTS:
-    void selectionChanged(enzo::nt::OpId opId);
+    void selectionChanged(enzo::nt::NodeId nodeId);
     void clearParameters();
 
   private:
     enzo::ui::Parameter* buildTemplateWidget(
         const enzo::prm::Template& templateEntry,
-        enzo::nt::GeometryOperator& displayOp,
+        enzo::nt::Node& displayNode,
         std::vector<enzo::ui::Parameter*>& leafWidgets,
         int& maxLeftPadding
     );
 
     /// @brief Greys out each leaf whose disableWhen condition currently holds.
-    void refreshEnabledStates(enzo::nt::GeometryOperator& op);
+    void refreshEnabledStates(enzo::nt::Node& node);
 
     QVBoxLayout* mainLayout_;
     QVBoxLayout* parametersLayout_;

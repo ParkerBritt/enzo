@@ -14,12 +14,12 @@ class NodeGraphic : public QGraphicsObject
     Q_OBJECT
 
   public:
-    NodeGraphic(enzo::nt::OpId id, QGraphicsItem* parent = nullptr);
+    NodeGraphic(enzo::nt::NodeId id, QGraphicsItem* parent = nullptr);
     QRectF boundingRect() const override;
 
     SocketGraphic* getInput(int indx) const;
     SocketGraphic* getOutput(int indx) const;
-    enzo::nt::OpId getOpId() const;
+    enzo::nt::NodeId getNodeId() const;
     QPointF getSocketPosition(int socketIndex, enzo::nt::SocketIOType socketType);
     QPointF getSocketScenePosition(int socketIndex, enzo::nt::SocketIOType socketType);
     QRectF getBodyRect();
@@ -40,7 +40,7 @@ class NodeGraphic : public QGraphicsObject
     void initIcon();
     void initFonts();
 
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
     std::vector<SocketGraphic*> inputs_;
     std::vector<SocketGraphic*> outputs_;
 

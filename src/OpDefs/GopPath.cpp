@@ -1,12 +1,12 @@
 #include "OpDefs/GopPath.h"
 #include "Engine/Core/Types.h"
 
-GopPath::GopPath(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopPath::GopPath(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopPath::cookOp(enzo::op::CookContext context)
+void GopPath::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

@@ -1,7 +1,7 @@
-#include "Engine/Network/GeometryOpDef.h"
+#include "Engine/Network/NodeDef.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include <iostream>
 #include <stdexcept>
@@ -9,13 +9,13 @@
 
 namespace enzo {
 
-bool nt::GeometryOpDef::outputRequested(unsigned int outputIndex)
+bool nt::NodeDef::outputRequested(unsigned int outputIndex)
 {
     // TODO: implement
     return true;
 }
 
-void nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, NodePacket packet)
+void nt::NodeDef::setOutputPacket(unsigned int outputIndex, NodePacket packet)
 {
     if (outputIndex > getMaxOutputs())
     {
@@ -31,24 +31,24 @@ void nt::GeometryOpDef::setOutputPacket(unsigned int outputIndex, NodePacket pac
     outputPackets_[outputIndex] = std::make_shared<const NodePacket>(std::move(packet));
 }
 
-void nt::GeometryOpDef::throwError(std::string error)
+void nt::NodeDef::throwError(std::string error)
 {
     std::cerr << "NODE EXCEPTION: " << error << "\n";
 }
 
-void nt::GeometryOpDef::throwWarning(std::string warning)
+void nt::NodeDef::throwWarning(std::string warning)
 {
     std::cerr << "NODE WARNING: " << warning << "\n";
 }
 
-unsigned int nt::GeometryOpDef::getMinInputs() const { return opInfo_.minInputs; }
+unsigned int nt::NodeDef::getMinInputs() const { return nodeType_.minInputs; }
 
-unsigned int nt::GeometryOpDef::getMaxInputs() const { return opInfo_.maxInputs; }
+unsigned int nt::NodeDef::getMaxInputs() const { return nodeType_.maxInputs; }
 
-unsigned int nt::GeometryOpDef::getMaxOutputs() const { return opInfo_.maxOutputs; }
+unsigned int nt::NodeDef::getMaxOutputs() const { return nodeType_.maxOutputs; }
 
-nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
-    : opInfo_{opInfo}, network_{network}
+nt::NodeDef::NodeDef(nt::NetworkManager* network, nt::NodeType nodeType)
+    : nodeType_{nodeType}, network_{network}
 {
     // Initialize each slot with an empty packet so consumers never see null.
     outputPackets_.resize(getMaxOutputs());
@@ -58,7 +58,7 @@ nt::GeometryOpDef::GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo)
     }
 }
 
-std::shared_ptr<const NodePacket> nt::GeometryOpDef::getOutputPacket(unsigned outputIndex)
+std::shared_ptr<const NodePacket> nt::NodeDef::getOutputPacket(unsigned outputIndex)
 {
     if (outputIndex > getMaxOutputs())
     {

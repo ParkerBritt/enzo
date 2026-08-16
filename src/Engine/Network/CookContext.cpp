@@ -8,34 +8,34 @@
 
 namespace enzo {
 
-op::CookContext::CookContext(nt::OpId opId, nt::NetworkManager& networkManager)
-    : opId_{opId}, networkManager_(networkManager)
+nt::CookContext::CookContext(nt::NodeId nodeId, nt::NetworkManager& networkManager)
+    : nodeId_{nodeId}, networkManager_(networkManager)
 {
 }
 
-NodePacket op::CookContext::cloneInputPacket(unsigned int inputIndex)
+NodePacket nt::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
-    auto inputConnection = networkManager_.graph().getInputConnection(opId_, inputIndex);
+    auto inputConnection = networkManager_.graph().getInputConnection(nodeId_, inputIndex);
     if (!inputConnection)
     {
         return NodePacket();
     }
-    const nt::OpId sourceOpId = inputConnection->sourceOp;
-    const nt::GeometryOperator& sourceOp = networkManager_.getGeoOperator(sourceOpId);
-    networkManager_.cookOp(sourceOpId);
-    return sourceOp.getOutputPacket(inputConnection->sourceOutput)->deepCopy();
+    const nt::NodeId sourceNodeId = inputConnection->sourceNode;
+    const nt::Node& sourceNode = networkManager_.getNode(sourceNodeId);
+    networkManager_.cook(sourceNodeId);
+    return sourceNode.getOutputPacket(inputConnection->sourceOutput)->deepCopy();
 }
 
-bool op::CookContext::hasInput(unsigned int inputIndex)
+bool nt::CookContext::hasInput(unsigned int inputIndex)
 {
-    return networkManager_.graph().getInputConnection(opId_, inputIndex).has_value();
+    return networkManager_.graph().getInputConnection(nodeId_, inputIndex).has_value();
 }
 
 // TODO: cache value
-floatT op::CookContext::evalParmFloat(std::string_view parmName, const unsigned int index) const
+floatT nt::CookContext::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -48,10 +48,10 @@ floatT op::CookContext::evalParmFloat(std::string_view parmName, const unsigned 
 }
 
 // TODO: cache value
-intT op::CookContext::evalParmInt(std::string_view parmName, const unsigned int index) const
+intT nt::CookContext::evalParmInt(std::string_view parmName, const unsigned int index) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -64,10 +64,10 @@ intT op::CookContext::evalParmInt(std::string_view parmName, const unsigned int 
 }
 
 // TODO: cache value
-boolT op::CookContext::evalParmBool(std::string_view parmName, const unsigned int index) const
+boolT nt::CookContext::evalParmBool(std::string_view parmName, const unsigned int index) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -80,10 +80,10 @@ boolT op::CookContext::evalParmBool(std::string_view parmName, const unsigned in
 }
 
 // TODO: cache value
-String op::CookContext::evalParmString(std::string_view parmName, const unsigned int index) const
+String nt::CookContext::evalParmString(std::string_view parmName, const unsigned int index) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -95,10 +95,10 @@ String op::CookContext::evalParmString(std::string_view parmName, const unsigned
     }
 }
 
-prm::Ramp op::CookContext::evalParmRamp(std::string_view parmName) const
+prm::Ramp nt::CookContext::evalParmRamp(std::string_view parmName) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -110,10 +110,10 @@ prm::Ramp op::CookContext::evalParmRamp(std::string_view parmName) const
     }
 }
 
-std::vector<floatT> op::CookContext::evalParmFloats(std::string_view parmName) const
+std::vector<floatT> nt::CookContext::evalParmFloats(std::string_view parmName) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -125,7 +125,7 @@ std::vector<floatT> op::CookContext::evalParmFloats(std::string_view parmName) c
     }
 }
 
-Vector2 op::CookContext::evalParmVector2(std::string_view parmName) const
+Vector2 nt::CookContext::evalParmVector2(std::string_view parmName) const
 {
     std::vector<floatT> components = evalParmFloats(parmName);
     Vector2 result = Vector2::Zero();
@@ -137,7 +137,7 @@ Vector2 op::CookContext::evalParmVector2(std::string_view parmName) const
     return result;
 }
 
-Vector3 op::CookContext::evalParmVector3(std::string_view parmName) const
+Vector3 nt::CookContext::evalParmVector3(std::string_view parmName) const
 {
     std::vector<floatT> components = evalParmFloats(parmName);
     Vector3 result = Vector3::Zero();
@@ -149,10 +149,10 @@ Vector3 op::CookContext::evalParmVector3(std::string_view parmName) const
     return result;
 }
 
-std::vector<intT> op::CookContext::evalParmInts(std::string_view parmName) const
+std::vector<intT> nt::CookContext::evalParmInts(std::string_view parmName) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {
@@ -164,10 +164,10 @@ std::vector<intT> op::CookContext::evalParmInts(std::string_view parmName) const
     }
 }
 
-std::vector<String> op::CookContext::evalParmStrings(std::string_view parmName) const
+std::vector<String> nt::CookContext::evalParmStrings(std::string_view parmName) const
 {
-    nt::GeometryOperator& selfOp = networkManager_.getGeoOperator(opId_);
-    std::weak_ptr<prm::NodeParameter> parameter = selfOp.getParameter(parmName);
+    nt::Node& selfNode = networkManager_.getNode(nodeId_);
+    std::weak_ptr<prm::NodeParameter> parameter = selfNode.getParameter(parmName);
 
     if (auto sharedParm = parameter.lock())
     {

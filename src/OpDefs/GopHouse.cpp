@@ -2,12 +2,12 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include <tbb/parallel_for.h>
 
-GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GOP_house::GOP_house(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GOP_house::cookOp(enzo::op::CookContext context)
+void GOP_house::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
     // std::cout << "COOKING\n";

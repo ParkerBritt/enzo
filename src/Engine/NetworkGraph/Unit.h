@@ -8,7 +8,7 @@
 namespace enzo::nt {
 
 /**
- * @brief A point in the network graph, either an operator output or a parameter.
+ * @brief A point in the network graph, either a node output or a parameter.
  *
  * An empty parm names the node's cooked output itself, while a filled parm
  * narrows the unit to one parameter component within the node.
@@ -18,7 +18,7 @@ namespace enzo::nt {
  */
 struct Unit
 {
-    OpId opId = 0;
+    NodeId nodeId = 0;
     std::string parm;
     unsigned int index = 0;
 
@@ -39,7 +39,7 @@ template <> struct std::hash<enzo::nt::Unit>
     std::size_t operator()(const enzo::nt::Unit& unit) const noexcept
     {
         std::size_t seed = 0;
-        boost::hash_combine(seed, unit.opId);
+        boost::hash_combine(seed, unit.nodeId);
         boost::hash_combine(seed, unit.parm);
         boost::hash_combine(seed, unit.index);
         return seed;

@@ -5,12 +5,12 @@
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/Geometry>
 
-GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopCube::GopCube(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopCube::cookOp(enzo::op::CookContext context)
+void GopCube::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

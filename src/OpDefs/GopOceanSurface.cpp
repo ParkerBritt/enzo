@@ -9,12 +9,12 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
-GopOceanSurface::GopOceanSurface(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopOceanSurface::GopOceanSurface(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopOceanSurface::cookOp(enzo::op::CookContext context)
+void GopOceanSurface::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

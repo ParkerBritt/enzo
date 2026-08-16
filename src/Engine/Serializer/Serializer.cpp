@@ -1,6 +1,6 @@
 #include "Engine/Serializer/Serializer.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/NetworkSerializable.h"
 #include "Engine/Serializer/ParameterSerializable.h"
@@ -119,40 +119,40 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
 
     NetworkSerializable networkModel;
 
-    auto ops = networkManager.operators();
+    auto nodes = networkManager.nodes();
 
-    // Build OpId -> index mapping and serialize nodes
-    std::unordered_map<nt::OpId, unsigned int> opIdToIndex;
+    // Build NodeId -> index mapping and serialize nodes
+    std::unordered_map<nt::NodeId, unsigned int> nodeIdToIndex;
     unsigned int index = 0;
-    networkModel.nodes.reserve(ops.size());
+    networkModel.nodes.reserve(nodes.size());
 
-    for (auto [opId, op] : ops)
+    for (auto [nodeId, node] : nodes)
     {
-        opIdToIndex[opId] = index++;
+        nodeIdToIndex[nodeId] = index++;
 
-        OperatorSerializable opModel;
-        opModel.typeName = op.getType().getName();
-        opModel.path = op.getPath().getString();
-        opModel.posX = op.getPosition().x();
-        opModel.posY = op.getPosition().y();
+        NodeSerializable nodeModel;
+        nodeModel.typeName = node.getType().getName();
+        nodeModel.path = node.getPath().getString();
+        nodeModel.posX = node.getPosition().x();
+        nodeModel.posY = node.getPosition().y();
 
-        for (auto weakPrm : op.getParameters())
+        for (auto weakPrm : node.getParameters())
         {
-            if (auto prm = weakPrm.lock()) opModel.parameters.push_back(toSerializable(*prm));
+            if (auto prm = weakPrm.lock()) nodeModel.parameters.push_back(toSerializable(*prm));
         }
 
-        networkModel.nodes.push_back(opModel);
+        networkModel.nodes.push_back(nodeModel);
     }
 
     // Serialize connections (collect from output side to avoid duplicates)
-    for (auto [opId, op] : ops)
+    for (auto [nodeId, node] : nodes)
     {
-        for (const nt::Connection& conn : networkManager.graph().getOutputs(opId))
+        for (const nt::Connection& conn : networkManager.graph().getOutputs(nodeId))
         {
             ConnectionSerializable connModel;
-            connModel.inputNodeIndex = opIdToIndex[conn.sourceOp];
+            connModel.inputNodeIndex = nodeIdToIndex[conn.sourceNode];
             connModel.inputSocketIndex = conn.sourceOutput;
-            connModel.outputNodeIndex = opIdToIndex[conn.targetOp];
+            connModel.outputNodeIndex = nodeIdToIndex[conn.targetNode];
             connModel.outputSocketIndex = conn.targetInput;
             networkModel.connections.push_back(connModel);
         }
@@ -172,20 +172,21 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     NetworkSerializable network;
     load(network);
 
-    // Create operators and track their new OpIds by index
-    std::vector<nt::OpId> opIds;
-    opIds.reserve(network.nodes.size());
+    // Create nodes and track their new NodeIds by index
+    std::vector<nt::NodeId> nodeIds;
+    nodeIds.reserve(network.nodes.size());
 
-    for (const OperatorSerializable& node : network.nodes)
+    for (const NodeSerializable& nodeModel : network.nodes)
     {
-        std::optional<op::OpInfo> opInfo = op::OperatorTable::getOpInfo(node.typeName);
-        nt::OpId id = nm().createOperator(opInfo.value(), node.path, {node.posX, node.posY});
-        opIds.push_back(id);
+        std::optional<nt::NodeType> nodeType = nt::NodeTypeTable::getNodeType(nodeModel.typeName);
+        nt::NodeId id =
+            nm().createNode(nodeType.value(), nodeModel.path, {nodeModel.posX, nodeModel.posY});
+        nodeIds.push_back(id);
 
-        auto& op = networkManager.getGeoOperator(id);
-        for (const ParameterSerializable& prmModel : node.parameters)
+        auto& node = networkManager.getNode(id);
+        for (const ParameterSerializable& prmModel : nodeModel.parameters)
         {
-            auto weakPrm = op.getParameter(prmModel.name);
+            auto weakPrm = node.getParameter(prmModel.name);
             if (auto prm = weakPrm.lock()) applySerializable(*prm, prmModel);
         }
     }
@@ -194,9 +195,9 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     for (const ConnectionSerializable& conn : network.connections)
     {
         nm().connectNodes(
-            opIds[conn.inputNodeIndex],
+            nodeIds[conn.inputNodeIndex],
             conn.inputSocketIndex,
-            opIds[conn.outputNodeIndex],
+            nodeIds[conn.outputNodeIndex],
             conn.outputSocketIndex
         );
     }

@@ -1,6 +1,6 @@
 #include "Gui/Parameters/ParameterItem.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
@@ -89,14 +89,14 @@ void setInstanceValues(prm::Parameter& param, const QVariantList& instances)
 ParameterItem::ParameterItem(
     const prm::Template& prmTemplate,
     std::weak_ptr<prm::NodeParameter> parameter,
-    nt::GeometryOperator& op,
+    nt::Node& node,
     QObject* parent
 )
     : QObject(parent), parameter_(std::move(parameter))
 {
     kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
     name_ = QString::fromStdString(prmTemplate.getName());
-    nodeName_ = QString::fromStdString(op.getName());
+    nodeName_ = QString::fromStdString(node.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());
     tooltip_ = QString::fromStdString(prmTemplate.getTooltip());
     vectorSize_ = static_cast<int>(prmTemplate.getSize());
@@ -122,7 +122,7 @@ ParameterItem::ParameterItem(
     // behind QML's back, and the owning node broadcasts every one of them
     // through this signal, so mirror it out as the QML notify.
     const std::string parmName = prmTemplate.getName();
-    valueSubscription_ = op.parameterChanged.connect([this, parmName](const std::string& name) {
+    valueSubscription_ = node.parameterChanged.connect([this, parmName](const std::string& name) {
         if (name == parmName) Q_EMIT valueChanged();
     });
 }
@@ -257,7 +257,7 @@ void ParameterItem::commitEdit()
     if (after == snapshotBeforeEdit_) return;
 
     nt::nm().undoStack().push(std::make_unique<nt::ChangeParameterCommand>(
-        param->getOpId(),
+        param->getNodeId(),
         param->getName(),
         snapshotBeforeEdit_,
         after

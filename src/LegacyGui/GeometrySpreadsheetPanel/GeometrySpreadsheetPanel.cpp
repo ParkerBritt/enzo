@@ -148,7 +148,7 @@ void GeometrySpreadsheetPanel::clear()
     primModel_->clear();
 }
 
-void GeometrySpreadsheetPanel::setNode(enzo::nt::OpId opId) { menuBar_->setNode(opId); }
+void GeometrySpreadsheetPanel::setNode(enzo::nt::NodeId nodeId) { menuBar_->setNode(nodeId); }
 
 void GeometrySpreadsheetPanel::packetChanged(std::shared_ptr<const enzo::NodePacket> packet)
 {

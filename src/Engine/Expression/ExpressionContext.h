@@ -20,10 +20,10 @@ namespace enzo::expr {
 class ExpressionContext
 {
   public:
-    explicit ExpressionContext(nt::OpId currentOp) : currentOp_(currentOp) {}
+    explicit ExpressionContext(nt::NodeId currentNode) : currentNode_(currentNode) {}
 
     /// @brief The node a relative parameter path resolves against.
-    nt::OpId currentOp() const { return currentOp_; }
+    nt::NodeId currentNode() const { return currentNode_; }
 
     /// @brief Notes a parameter the expression read, so it becomes a dependency.
     void recordExpressionDependency(const nt::Unit& dependency) const
@@ -38,7 +38,7 @@ class ExpressionContext
     }
 
   private:
-    nt::OpId currentOp_;
+    nt::NodeId currentNode_;
 
     // Filled as prm() and friends resolve, so const reads can still accumulate.
     mutable std::vector<nt::Unit> expressionDependencies_;

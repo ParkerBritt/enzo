@@ -100,7 +100,7 @@ TEST_CASE("pathManipulation")
     REQUIRE(absPath.makeRelativeTo(anchor) == "leaf");
 }
 
-TEST_CASE("operators")
+TEST_CASE("nodes")
 {
     using namespace enzo;
 

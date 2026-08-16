@@ -27,12 +27,12 @@ std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* 
     if (!context) dasContext->throw_error("parameter functions need a node to resolve against");
 
     const char* safePath = path ? path : "";
-    auto parameter = nt::nm().findParameter(NetworkPath(safePath), context->currentOp()).lock();
+    auto parameter = nt::nm().findParameter(NetworkPath(safePath), context->currentNode()).lock();
     if (!parameter) dasContext->throw_error_ex("no parameter matches path '%s'", safePath);
 
     // Reading a parameter makes its node a dependency, so the expression recooks
     // when that node changes.
-    context->recordExpressionDependency(nt::Unit{parameter->getOpId()});
+    context->recordExpressionDependency(nt::Unit{parameter->getNodeId()});
 
     return parameter;
 }

@@ -2,7 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/CookContext.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/NodeType.h"
 #include <boost/config.hpp>
 #include <memory>
 #include <vector>
@@ -16,28 +16,28 @@ namespace enzo::nt {
 class NetworkManager;
 
 /**
- * @brief Abstract class used to create new operators.
+ * @brief Abstract class used to create new nodes.
  *
- * The operator definition is a base class from which new geometry operators
+ * The node definition is a base class from which new geometry nodes
  * are inherited from. It provides and abstracted interface, to read and
  * write data about itself and the context it is being computed.
  *
  * The class exposes utility functions for setting outputs and reading information
  * about itself like the number of inputs.
  *
- * The most important part of this node is the virtual cookOp member function.
+ * The most important part of this node is the virtual cook member function.
  * This must be overridden to implement the node's logic when being cooked.
  * When a node is cooked it takes the optional input geometry from the context
- * class and outputs new geometry based on the purpose of that operator.
+ * class and outputs new geometry based on the purpose of that node.
  */
-class BOOST_SYMBOL_EXPORT GeometryOpDef
+class BOOST_SYMBOL_EXPORT NodeDef
 {
   public:
     /**
      * @brief Sets up internal state
      */
-    GeometryOpDef(nt::NetworkManager* network, op::OpInfo opInfo);
-    virtual ~GeometryOpDef() {};
+    NodeDef(nt::NetworkManager* network, nt::NodeType nodeType);
+    virtual ~NodeDef() {};
 
     /**
      * @brief This function is called at runtime to create the output geometry
@@ -46,7 +46,7 @@ class BOOST_SYMBOL_EXPORT GeometryOpDef
      * the end of a successful cook. Any outputs that are not set will output
      * an emtpy geometry object.
      */
-    virtual void cookOp(op::CookContext context) = 0;
+    virtual void cook(nt::CookContext context) = 0;
 
     /**
      * @brief Returns the current output geometry as a shared pointer.
@@ -59,40 +59,40 @@ class BOOST_SYMBOL_EXPORT GeometryOpDef
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned outputIndex);
 
     /**
-     * @brief Stops the cook and displays an error. Use inside the #cookOp function.
+     * @brief Stops the cook and displays an error. Use inside the #cook function.
      * @todo Add visual error to GUI
      */
     void throwError(std::string error);
 
     /**
-     * @brief Doesn't interupt the cook but displays a warning on the node. Use inside the #cookOp
+     * @brief Doesn't interupt the cook but displays a warning on the node. Use inside the #cook
      * function.
      * @todo Add visual error to GUI
      */
     void throwWarning(std::string warning);
 
     /// @brief Returns the minimum number of input connections required for the node to function.
-    /// Set by op::OpInfo when registering the operator.
+    /// Set by nt::NodeType when registering the node.
     unsigned int getMinInputs() const;
     /// @brief Returns the maximum number of input connections accepted by the node. Set by
-    /// op::OpInfo when registering the operator.
+    /// nt::NodeType when registering the node.
     unsigned int getMaxInputs() const;
-    /// @brief Returns the number of available outputs the node provides. Set by op::OpInfo when
-    /// registering the operator.
+    /// @brief Returns the number of available outputs the node provides. Set by nt::NodeType when
+    /// registering the node.
     unsigned int getMaxOutputs() const;
 
   private:
     std::vector<std::shared_ptr<const enzo::NodePacket>> outputPackets_;
 
   protected:
-    const op::OpInfo opInfo_;
+    const nt::NodeType nodeType_;
     nt::NetworkManager* network_;
     bool outputRequested(unsigned int outputIndex);
     // TODO: std::move geometry instead of copying
     void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
 };
 
-using opConstructor = GeometryOpDef* (*)(enzo::nt::NetworkManager * network,
-                                         enzo::op::OpInfo opInfo);
+using nodeConstructor = NodeDef* (*)(enzo::nt::NetworkManager * network,
+                                         enzo::nt::NodeType nodeType);
 
 } // namespace enzo::nt

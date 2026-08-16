@@ -4,12 +4,12 @@
 #include <string>
 #include <unordered_map>
 
-GopMerge::GopMerge(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopMerge::GopMerge(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopMerge::cookOp(enzo::op::CookContext context)
+void GopMerge::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

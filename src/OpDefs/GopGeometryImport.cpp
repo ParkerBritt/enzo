@@ -7,12 +7,12 @@
 #include <string>
 #include <tbb/parallel_for.h>
 
-GopGeometryImport::GopGeometryImport(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopGeometryImport::GopGeometryImport(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopGeometryImport::cookOp(enzo::op::CookContext context)
+void GopGeometryImport::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

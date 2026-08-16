@@ -1,6 +1,6 @@
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Ramp.h"
 #include <catch2/catch_approx.hpp>
@@ -141,15 +141,15 @@ TEST_CASE("A new ramp parameter defaults to an identity ramp")
     REQUIRE(parameter.getInstanceField(1, "value")->evalFloat() == 1);
 }
 
-TEST_CASE("An operator's ramp parameter defaults to an identity ramp")
+TEST_CASE("A node's ramp parameter defaults to an identity ramp")
 {
     using namespace enzo::prm;
-    enzo::op::OperatorTable::initPlugins();
+    enzo::nt::NodeTypeTable::initPlugins();
     auto& nm = enzo::nt::nm();
     nm._reset();
 
-    const auto opId = nm.createOperator(enzo::op::OperatorTable::getOpInfo("sineWave").value());
-    auto parameter = nm.getGeoOperator(opId).getParameter("amplitude").lock();
+    const auto nodeId = nm.createNode(enzo::nt::NodeTypeTable::getNodeType("sineWave").value());
+    auto parameter = nm.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(parameter);
 
     REQUIRE(parameter->getInstanceCount() == 2);

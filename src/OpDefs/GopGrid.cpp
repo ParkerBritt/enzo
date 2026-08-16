@@ -9,12 +9,12 @@
 #include <string>
 #include <tbb/parallel_for.h>
 
-GopGrid::GopGrid(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopGrid::GopGrid(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopGrid::cookOp(enzo::op::CookContext context)
+void GopGrid::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

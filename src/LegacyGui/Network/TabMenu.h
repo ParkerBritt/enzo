@@ -9,10 +9,10 @@ class NetworkPanel;
 namespace enzo::ui {
 
 /**
- * @brief Search menu that creates a node in the network from the operator table.
+ * @brief Search menu that creates a node in the network from the node table.
  *
  * The menu opens at the cursor with a search field above the list and filters the
- * operators as the user types.
+ * nodes as the user types.
  */
 class TabMenu : public PopupList
 {

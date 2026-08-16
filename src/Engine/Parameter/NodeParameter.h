@@ -7,8 +7,8 @@ namespace enzo::prm {
 class NodeParameter : public Parameter
 {
   public:
-    NodeParameter(Template prmTemplate, enzo::nt::OpId opId);
-    enzo::nt::OpId getOpId() const { return opId_; }
+    NodeParameter(Template prmTemplate, enzo::nt::NodeId nodeId);
+    enzo::nt::NodeId getNodeId() const { return nodeId_; }
 
   protected:
     void onFloatSet_(const PrmValues& before) override;
@@ -27,6 +27,6 @@ class NodeParameter : public Parameter
   private:
     void addUndo_(PrmValues before);
 
-    enzo::nt::OpId opId_;
+    enzo::nt::NodeId nodeId_;
 };
 } // namespace enzo::prm

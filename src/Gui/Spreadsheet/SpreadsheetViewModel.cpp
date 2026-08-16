@@ -1,5 +1,5 @@
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodePacket.h"
 
@@ -12,7 +12,7 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
     // Switching the primary node carries no geometry, so the packet is pulled
     // from the new primary node.
     primaryNodeSubscription_ =
-        network.primaryNodeChanged.connect([this](std::optional<nt::OpId> primaryId) {
+        network.primaryNodeChanged.connect([this](std::optional<nt::NodeId> primaryId) {
             if (!primaryId.has_value())
             {
                 nodePath_.clear();
@@ -20,12 +20,12 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
                 showPacket(nullptr);
                 return;
             }
-            auto& op = nt::nm().getGeoOperator(*primaryId);
+            auto& node = nt::nm().getNode(*primaryId);
             nodePath_.clear();
-            for (const auto& component : op.getPath().split())
+            for (const auto& component : node.getPath().split())
                 nodePath_.append(QString::fromStdString(component));
             Q_EMIT nodePathChanged();
-            showPacket(op.getOutputPacket(0));
+            showPacket(node.getOutputPacket(0));
         });
 
     // A recook of the primary node delivers fresh geometry directly.

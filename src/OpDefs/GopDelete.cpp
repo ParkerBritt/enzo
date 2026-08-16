@@ -12,12 +12,12 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
-GopDelete::GopDelete(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopDelete::GopDelete(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopDelete::cookOp(enzo::op::CookContext context)
+void GopDelete::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

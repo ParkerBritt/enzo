@@ -10,14 +10,14 @@ namespace enzo::nt {
 class ChangeDisplayFlagCommand : public UndoCommand
 {
   public:
-    ChangeDisplayFlagCommand(std::optional<OpId> prev, OpId next) : prev_(prev), next_(next) {}
+    ChangeDisplayFlagCommand(std::optional<NodeId> prev, NodeId next) : prev_(prev), next_(next) {}
 
     void undo() override
     {
         if (prev_.has_value())
         {
-            if (!nm().isValidOp(*prev_)) return;
-            nm().setDisplayOp(*prev_);
+            if (!nm().isValidNode(*prev_)) return;
+            nm().setDisplayNode(*prev_);
         }
         else
         {
@@ -27,15 +27,15 @@ class ChangeDisplayFlagCommand : public UndoCommand
 
     void redo() override
     {
-        if (!nm().isValidOp(next_)) return;
-        nm().setDisplayOp(next_);
+        if (!nm().isValidNode(next_)) return;
+        nm().setDisplayNode(next_);
     }
 
     UndoCommandType type() const override { return UndoCommandType::ChangeDisplayFlag; }
 
   private:
-    std::optional<OpId> prev_;
-    OpId next_;
+    std::optional<NodeId> prev_;
+    NodeId next_;
 };
 
 } // namespace enzo::nt

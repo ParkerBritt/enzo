@@ -1,5 +1,5 @@
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include <boost/dll/import.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>

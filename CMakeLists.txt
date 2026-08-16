@@ -25,9 +25,9 @@ set(ENGINE_SOURCES
     src/Engine/Core/Path.cpp
     src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
-    src/Engine/Network/GeometryOperator.cpp
-    src/Engine/Network/GeometryOpDef.cpp
-    src/Engine/Network/OperatorTable.cpp
+    src/Engine/Network/Node.cpp
+    src/Engine/Network/NodeDef.cpp
+    src/Engine/Network/NodeTypeTable.cpp
     src/Engine/Network/CookContext.cpp
     src/Engine/NetworkGraph/NetworkGraph.cpp
     src/Engine/Expression/DasRuntime.cpp
@@ -460,7 +460,7 @@ if(ENZO_BUILD_TESTS)
         tests/RampTests.cpp
         tests/SerializerTests.cpp
         tests/UndoTests.cpp
-        tests/OperatorTests.cpp
+        tests/AttributeTests.cpp
         tests/NetworkTests.cpp
         tests/SelectionTests.cpp
         tests/MeshTests.cpp

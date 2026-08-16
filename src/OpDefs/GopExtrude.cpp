@@ -388,12 +388,12 @@ void extrude(
     }
 }
 
-GopExtrude::GopExtrude(enzo::nt::NetworkManager* network, enzo::op::OpInfo opInfo)
-    : GeometryOpDef(network, opInfo)
+GopExtrude::GopExtrude(enzo::nt::NetworkManager* network, enzo::nt::NodeType nodeType)
+    : NodeDef(network, nodeType)
 {
 }
 
-void GopExtrude::cookOp(enzo::op::CookContext context)
+void GopExtrude::cook(enzo::nt::CookContext context)
 {
     using namespace enzo;
 

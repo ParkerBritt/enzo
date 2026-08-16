@@ -1,6 +1,6 @@
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
@@ -14,7 +14,7 @@ struct PluginsAndReset
 {
     PluginsAndReset()
     {
-        op::OperatorTable::initPlugins();
+        nt::NodeTypeTable::initPlugins();
         nt::nm()._reset();
     }
     ~PluginsAndReset() { nt::nm()._reset(); }
@@ -25,9 +25,9 @@ struct PluginsAndReset
 TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 {
     auto& networkManager = nt::nm();
-    nt::OpId opId = networkManager.createOperator(op::OperatorTable::getOpInfo("sineWave").value());
+    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::getNodeType("sineWave").value());
 
-    auto amplitude = networkManager.getGeoOperator(opId).getParameter("amplitude").lock();
+    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);
 
     // The default amplitude ramp is a linear zero to one curve.
@@ -37,7 +37,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
     amplitude->getInstanceField(0, "value")->setFloat(0.7f);
     ParameterSerializable after = toSerializable(*amplitude);
 
-    nt::ChangeParameterCommand command(opId, "amplitude", before, after);
+    nt::ChangeParameterCommand command(nodeId, "amplitude", before, after);
 
     command.undo();
     REQUIRE(amplitude->getInstanceField(0, "value")->evalFloat() == 0);
@@ -49,9 +49,9 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
 {
     auto& networkManager = nt::nm();
-    nt::OpId opId = networkManager.createOperator(op::OperatorTable::getOpInfo("sineWave").value());
+    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::getNodeType("sineWave").value());
 
-    auto amplitude = networkManager.getGeoOperator(opId).getParameter("amplitude").lock();
+    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);
 
     ParameterSerializable before = toSerializable(*amplitude);
@@ -59,7 +59,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
     amplitude->getInstanceField(2, "position")->setFloat(0.5f);
     ParameterSerializable after = toSerializable(*amplitude);
 
-    nt::ChangeParameterCommand command(opId, "amplitude", before, after);
+    nt::ChangeParameterCommand command(nodeId, "amplitude", before, after);
 
     command.undo();
     REQUIRE(amplitude->getInstanceCount() == 2);

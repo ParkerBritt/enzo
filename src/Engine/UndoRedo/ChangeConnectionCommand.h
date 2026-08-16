@@ -16,13 +16,13 @@ class ChangeConnectionCommand : public UndoCommand
     };
 
     ChangeConnectionCommand(
-        OpId inputOpId,
+        NodeId inputNodeId,
         unsigned int inputIndex,
-        OpId outputOpId,
+        NodeId outputNodeId,
         unsigned int outputIndex,
         Action action
     )
-        : inputOpId_(inputOpId), inputIndex_(inputIndex), outputOpId_(outputOpId),
+        : inputNodeId_(inputNodeId), inputIndex_(inputIndex), outputNodeId_(outputNodeId),
           outputIndex_(outputIndex), action_(action)
     {
     }
@@ -46,16 +46,16 @@ class ChangeConnectionCommand : public UndoCommand
     UndoCommandType type() const override { return UndoCommandType::ChangeConnection; }
 
   private:
-    void connect() { nm().connectNodes(inputOpId_, inputIndex_, outputOpId_, outputIndex_); }
+    void connect() { nm().connectNodes(inputNodeId_, inputIndex_, outputNodeId_, outputIndex_); }
 
     void disconnect()
     {
-        nm().disconnectNodes({inputOpId_, inputIndex_, outputOpId_, outputIndex_});
+        nm().disconnectNodes({inputNodeId_, inputIndex_, outputNodeId_, outputIndex_});
     }
 
-    OpId inputOpId_;
+    NodeId inputNodeId_;
     unsigned int inputIndex_;
-    OpId outputOpId_;
+    NodeId outputNodeId_;
     unsigned int outputIndex_;
     Action action_;
 };

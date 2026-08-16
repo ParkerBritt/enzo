@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Types.h"
-#include "Engine/Network/OpInfo.h"
+#include "Engine/Network/NodeType.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QWidget>
@@ -43,7 +43,7 @@ class GeometrySpreadsheetMenuBar : public QWidget
   public:
     GeometrySpreadsheetMenuBar(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     GeoSheetMenuBarModeSelection* modeSelection;
-    void setNode(enzo::nt::OpId opId);
+    void setNode(enzo::nt::NodeId nodeId);
 
   private:
     QHBoxLayout* mainLayout_;

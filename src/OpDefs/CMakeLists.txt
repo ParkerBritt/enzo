@@ -5,7 +5,7 @@ project(enzoOps1)
 find_package(Boost REQUIRED)
 # eigen (math)
 find_package (Eigen3 REQUIRED NO_MODULE)
-# manifold (boolean ops)
+# manifold (boolean nodes)
 find_package(manifold CONFIG REQUIRED)
 
 set(libName enzoOps1)

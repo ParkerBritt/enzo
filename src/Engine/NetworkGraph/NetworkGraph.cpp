@@ -7,17 +7,17 @@ namespace enzo::nt {
 
 void NetworkGraph::connect(const Connection& connection)
 {
-    byTarget_[connection.targetOp].push_back(connection);
-    bySource_[connection.sourceOp].push_back(connection);
+    byTarget_[connection.targetNode].push_back(connection);
+    bySource_[connection.sourceNode].push_back(connection);
 }
 
 void NetworkGraph::disconnect(const Connection& connection)
 {
-    eraseConnection_(byTarget_, connection.targetOp, connection);
-    eraseConnection_(bySource_, connection.sourceOp, connection);
+    eraseConnection_(byTarget_, connection.targetNode, connection);
+    eraseConnection_(bySource_, connection.sourceNode, connection);
 }
 
-void NetworkGraph::eraseConnection_(ConnectionMap& side, OpId key, const Connection& connection)
+void NetworkGraph::eraseConnection_(ConnectionMap& side, NodeId key, const Connection& connection)
 {
     auto entry = side.find(key);
     if (entry == side.end()) return;
@@ -42,7 +42,7 @@ bool orderByInputSlot(const Connection& first, const Connection& second)
 }
 } // namespace
 
-std::vector<Connection> NetworkGraph::getInputs(OpId target) const
+std::vector<Connection> NetworkGraph::getInputs(NodeId target) const
 {
     auto entry = byTarget_.find(target);
     if (entry == byTarget_.end()) return {};
@@ -53,7 +53,7 @@ std::vector<Connection> NetworkGraph::getInputs(OpId target) const
 }
 
 std::optional<Connection>
-NetworkGraph::getInputConnection(OpId target, unsigned int inputSlot) const
+NetworkGraph::getInputConnection(NodeId target, unsigned int inputSlot) const
 {
     auto entry = byTarget_.find(target);
     if (entry == byTarget_.end()) return std::nullopt;
@@ -64,7 +64,7 @@ NetworkGraph::getInputConnection(OpId target, unsigned int inputSlot) const
     return std::nullopt;
 }
 
-std::vector<Connection> NetworkGraph::getOutputs(OpId source) const
+std::vector<Connection> NetworkGraph::getOutputs(NodeId source) const
 {
     auto entry = bySource_.find(source);
     if (entry == bySource_.end()) return {};
@@ -119,20 +119,20 @@ void NetworkGraph::eraseUnit_(CapturedMap& map, const Unit& key, const Unit& val
     if (units.empty()) map.erase(entry);
 }
 
-void NetworkGraph::removeNode(OpId opId)
+void NetworkGraph::removeNode(NodeId nodeId)
 {
-    eraseConnectionsTouching_(byTarget_, opId);
-    eraseConnectionsTouching_(bySource_, opId);
-    eraseCapturedTouching_(capturedDependents_, opId);
-    eraseCapturedTouching_(capturedDependencies_, opId);
+    eraseConnectionsTouching_(byTarget_, nodeId);
+    eraseConnectionsTouching_(bySource_, nodeId);
+    eraseCapturedTouching_(capturedDependents_, nodeId);
+    eraseCapturedTouching_(capturedDependencies_, nodeId);
 }
 
-void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, OpId opId)
+void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId)
 {
     for (auto entry = side.begin(); entry != side.end();)
     {
         // Drop the whole list when it belongs to the node
-        if (entry->first == opId)
+        if (entry->first == nodeId)
         {
             entry = side.erase(entry);
             continue;
@@ -141,7 +141,7 @@ void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, OpId opId)
         // Otherwise keep only the connections that do not name the node
         std::vector<Connection> kept;
         for (const Connection& connection : entry->second)
-            if (connection.sourceOp != opId && connection.targetOp != opId)
+            if (connection.sourceNode != nodeId && connection.targetNode != nodeId)
                 kept.push_back(connection);
 
         if (kept.empty())
@@ -156,12 +156,12 @@ void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, OpId opId)
     }
 }
 
-void NetworkGraph::eraseCapturedTouching_(CapturedMap& map, OpId opId)
+void NetworkGraph::eraseCapturedTouching_(CapturedMap& map, NodeId nodeId)
 {
     for (auto entry = map.begin(); entry != map.end();)
     {
         // Drop the whole list when its unit belongs to the node
-        if (entry->first.opId == opId)
+        if (entry->first.nodeId == nodeId)
         {
             entry = map.erase(entry);
             continue;
@@ -170,7 +170,7 @@ void NetworkGraph::eraseCapturedTouching_(CapturedMap& map, OpId opId)
         // Otherwise keep only the units that do not belong to the node
         std::vector<Unit> kept;
         for (const Unit& unit : entry->second)
-            if (unit.opId != opId) kept.push_back(unit);
+            if (unit.nodeId != nodeId) kept.push_back(unit);
 
         if (kept.empty())
         {
@@ -192,41 +192,41 @@ void NetworkGraph::clear()
     capturedDependencies_.clear();
 }
 
-std::vector<OpId> NetworkGraph::getCookOrder(OpId target) const
+std::vector<NodeId> NetworkGraph::getCookOrder(NodeId target) const
 {
-    std::vector<OpId> opOrder;
-    std::unordered_set<OpId> addedOps;
-    std::unordered_set<OpId> opsBeingAdded;
+    std::vector<NodeId> nodeOrder;
+    std::unordered_set<NodeId> addedNodes;
+    std::unordered_set<NodeId> nodesBeingAdded;
 
-    addToCookOrder_(target, opOrder, addedOps, opsBeingAdded);
-    return opOrder;
+    addToCookOrder_(target, nodeOrder, addedNodes, nodesBeingAdded);
+    return nodeOrder;
 }
 
 void NetworkGraph::addToCookOrder_(
-    OpId opId,
-    std::vector<OpId>& opOrder,
-    std::unordered_set<OpId>& addedOps,
-    std::unordered_set<OpId>& opsBeingAdded
+    NodeId nodeId,
+    std::vector<NodeId>& nodeOrder,
+    std::unordered_set<NodeId>& addedNodes,
+    std::unordered_set<NodeId>& nodesBeingAdded
 ) const
 {
     // Already placed
-    if (addedOps.count(opId)) return;
+    if (addedNodes.count(nodeId)) return;
 
     // Reaching a node still being added means it depends on itself
-    if (opsBeingAdded.count(opId))
-        throw std::runtime_error("Dependency cycle through node " + std::to_string(opId));
-    opsBeingAdded.insert(opId);
+    if (nodesBeingAdded.count(nodeId))
+        throw std::runtime_error("Dependency cycle through node " + std::to_string(nodeId));
+    nodesBeingAdded.insert(nodeId);
 
     // Place every node feeding an input ahead of this one
-    auto entry = byTarget_.find(opId);
+    auto entry = byTarget_.find(nodeId);
     if (entry != byTarget_.end())
         for (const Connection& connection : entry->second)
-            addToCookOrder_(connection.sourceOp, opOrder, addedOps, opsBeingAdded);
+            addToCookOrder_(connection.sourceNode, nodeOrder, addedNodes, nodesBeingAdded);
 
     // Then place this node after them
-    opsBeingAdded.erase(opId);
-    addedOps.insert(opId);
-    opOrder.push_back(opId);
+    nodesBeingAdded.erase(nodeId);
+    addedNodes.insert(nodeId);
+    nodeOrder.push_back(nodeId);
 }
 
 std::vector<Unit> NetworkGraph::getDependents(const Unit& changed) const
@@ -244,13 +244,13 @@ std::vector<Unit> NetworkGraph::getDependents(const Unit& changed) const
         pending.pop_back();
 
         // Wired readers are the nodes fed by this node's outputs
-        auto outputs = bySource_.find(unit.opId);
+        auto outputs = bySource_.find(unit.nodeId);
         if (outputs != bySource_.end())
             for (const Connection& connection : outputs->second)
-                addDependent_(Unit{connection.targetOp}, dependents, seen, pending);
+                addDependent_(Unit{connection.targetNode}, dependents, seen, pending);
 
         // Captured readers are the units whose expressions read this node
-        auto captured = capturedDependents_.find(Unit{unit.opId});
+        auto captured = capturedDependents_.find(Unit{unit.nodeId});
         if (captured != capturedDependents_.end())
             for (const Unit& reader : captured->second)
                 addDependent_(reader, dependents, seen, pending);

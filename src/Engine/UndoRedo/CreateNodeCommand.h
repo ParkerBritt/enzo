@@ -2,7 +2,7 @@
 
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/OperatorTable.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/UndoRedo/UndoCommand.h"
 #include <icecream.hpp>
 #include <string>
@@ -13,32 +13,32 @@ namespace enzo::nt {
 class CreateNodeCommand : public UndoCommand
 {
   public:
-    CreateNodeCommand(OpId opId) : opId_(opId) {}
+    CreateNodeCommand(NodeId nodeId) : nodeId_(nodeId) {}
 
     void undo() override
     {
-        GeometryOperator& op = nm().getGeoOperator(opId_);
-        typeName_ = op.getType().getName();
-        position_ = op.getPosition();
+        Node& node = nm().getNode(nodeId_);
+        typeName_ = node.getType().getName();
+        position_ = node.getPosition();
 
-        nm().removeOperator(opId_, false);
+        nm().removeNode(nodeId_, false);
     }
 
     void redo() override
     {
-        // Restore operator
-        auto opInfo = op::OperatorTable::getOpInfo(typeName_);
-        nm().restoreOperator(opId_, opInfo.value());
+        // Restore node
+        auto nodeType = nt::NodeTypeTable::getNodeType(typeName_);
+        nm().restoreNode(nodeId_, nodeType.value());
 
         // Restore position
-        GeometryOperator& op = nm().getGeoOperator(opId_);
-        nm().moveNode(opId_, position_, true);
+        Node& node = nm().getNode(nodeId_);
+        nm().moveNode(nodeId_, position_, true);
     }
 
     UndoCommandType type() const override { return UndoCommandType::CreateNode; }
 
   private:
-    OpId opId_;
+    NodeId nodeId_;
     std::string typeName_;
     Vector2 position_;
 };

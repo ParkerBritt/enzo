@@ -1,5 +1,5 @@
 #include "Gui/Network/NodeListModel.h"
-#include "Engine/Network/GeometryOperator.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
 #include <QLineF>
 #include <QRectF>
@@ -22,7 +22,7 @@ NodeListModel::NodeListModel(QObject* parent) : QAbstractListModel(parent) {}
 const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
 {
     static const std::vector<RoleDef> defs = {
-        {"opId", [](const Node& node) { return QVariant::fromValue(node.opId); }},
+        {"nodeId", [](const Node& node) { return QVariant::fromValue(node.nodeId); }},
         {"name", [](const Node& node) { return QVariant(node.name); }},
         {"type", [](const Node& node) { return QVariant(node.type); }},
         {"x", [](const Node& node) { return QVariant(node.x); }},
@@ -74,24 +74,24 @@ void NodeListModel::resetFromNetwork()
 {
     beginResetModel();
     nodes_.clear();
-    for (auto [opId, op] : nt::nm().operators())
-        nodes_.push_back(makeNode(opId));
+    for (auto [nodeId, node] : nt::nm().nodes())
+        nodes_.push_back(makeNode(nodeId));
     endResetModel();
 }
 
-void NodeListModel::addNode(nt::OpId opId)
+void NodeListModel::addNode(nt::NodeId nodeId)
 {
-    if (rowOf(opId) != -1) return;
+    if (rowOf(nodeId) != -1) return;
 
     const int row = static_cast<int>(nodes_.size());
     beginInsertRows(QModelIndex(), row, row);
-    nodes_.push_back(makeNode(opId));
+    nodes_.push_back(makeNode(nodeId));
     endInsertRows();
 }
 
-void NodeListModel::removeNode(nt::OpId opId)
+void NodeListModel::removeNode(nt::NodeId nodeId)
 {
-    const int row = rowOf(opId);
+    const int row = rowOf(nodeId);
     if (row == -1) return;
 
     beginRemoveRows(QModelIndex(), row, row);
@@ -106,42 +106,42 @@ void NodeListModel::clear()
     endResetModel();
 }
 
-void NodeListModel::setSelection(const std::vector<nt::OpId>& selectedIds)
+void NodeListModel::setSelection(const std::vector<nt::NodeId>& selectedIds)
 {
     if (nodes_.empty()) return;
 
     for (Node& node : nodes_)
     {
-        const auto found = std::find(selectedIds.begin(), selectedIds.end(), node.opId);
+        const auto found = std::find(selectedIds.begin(), selectedIds.end(), node.nodeId);
         node.selected = found != selectedIds.end();
     }
 
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("selected")});
 }
 
-void NodeListModel::setPrimary(std::optional<nt::OpId> opId)
+void NodeListModel::setPrimary(std::optional<nt::NodeId> nodeId)
 {
     if (nodes_.empty()) return;
 
     for (Node& node : nodes_)
-        node.primary = opId.has_value() && node.opId == *opId;
+        node.primary = nodeId.has_value() && node.nodeId == *nodeId;
 
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("primary")});
 }
 
-void NodeListModel::setDisplay(std::optional<nt::OpId> opId)
+void NodeListModel::setDisplay(std::optional<nt::NodeId> nodeId)
 {
     if (nodes_.empty()) return;
 
     for (Node& node : nodes_)
-        node.display = opId.has_value() && node.opId == *opId;
+        node.display = nodeId.has_value() && node.nodeId == *nodeId;
 
     Q_EMIT dataChanged(index(0), index(static_cast<int>(nodes_.size()) - 1), {getRole("display")});
 }
 
-void NodeListModel::setPosition(nt::OpId opId, float x, float y)
+void NodeListModel::setPosition(nt::NodeId nodeId, float x, float y)
 {
-    const int row = rowOf(opId);
+    const int row = rowOf(nodeId);
     if (row == -1) return;
 
     nodes_[row].x = x;
@@ -169,9 +169,9 @@ void NodeListModel::moveSelectedBy(float dx, float dy)
     );
 }
 
-QPointF NodeListModel::getPosition(nt::OpId opId) const
+QPointF NodeListModel::getPosition(nt::NodeId nodeId) const
 {
-    const int row = rowOf(opId);
+    const int row = rowOf(nodeId);
     if (row == -1) return {};
 
     return QPointF(nodes_[row].x, nodes_[row].y);
@@ -189,9 +189,9 @@ QPointF NodeListModel::getPortPosition(const Node& node, int slot, bool isOutput
     return QPointF(x, y);
 }
 
-std::optional<QPointF> NodeListModel::getPortPosition(nt::OpId opId, int slot, bool isOutput) const
+std::optional<QPointF> NodeListModel::getPortPosition(nt::NodeId nodeId, int slot, bool isOutput) const
 {
-    const int row = rowOf(opId);
+    const int row = rowOf(nodeId);
     if (row == -1) return std::nullopt;
 
     return getPortPosition(nodes_[row], slot, isOutput);
@@ -217,7 +217,7 @@ QVariantMap NodeListModel::getNearestPort(
             {
                 nearestDistance = distance;
                 nearest = QVariantMap{
-                    {"opId", QVariant::fromValue(node.opId)},
+                    {"nodeId", QVariant::fromValue(node.nodeId)},
                     {"slot", slot},
                     {"isOutput", isOutput},
                     {"x", port.x()},
@@ -257,25 +257,25 @@ QVariantMap NodeListModel::getSnapPort(QPointF canvasPoint, bool wantOutput) con
     return getNearestPort(canvasPoint, wantOutput, !wantOutput, kSnapRadius);
 }
 
-NodeListModel::Node NodeListModel::makeNode(nt::OpId opId)
+NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
 {
-    nt::GeometryOperator& op = nt::nm().getGeoOperator(opId);
-    const Vector2 position = op.getPosition();
+    nt::Node& node = nt::nm().getNode(nodeId);
+    const Vector2 position = node.getPosition();
     return Node{
-        opId,
-        QString::fromStdString(op.getName()),
-        QString::fromStdString(op.getType().getLabel()),
+        nodeId,
+        QString::fromStdString(node.getName()),
+        QString::fromStdString(node.getType().getLabel()),
         position.x(),
         position.y(),
-        static_cast<int>(op.getMaxInputs()),
-        static_cast<int>(op.getMaxOutputs()),
+        static_cast<int>(node.getMaxInputs()),
+        static_cast<int>(node.getMaxOutputs()),
     };
 }
 
-int NodeListModel::rowOf(nt::OpId opId) const
+int NodeListModel::rowOf(nt::NodeId nodeId) const
 {
     for (int row = 0; row < static_cast<int>(nodes_.size()); ++row)
-        if (nodes_[row].opId == opId) return row;
+        if (nodes_[row].nodeId == nodeId) return row;
     return -1;
 }
 

@@ -6,8 +6,8 @@
 
 namespace enzo {
 
-prm::NodeParameter::NodeParameter(Template prmTemplate, nt::OpId opId)
-    : Parameter{std::move(prmTemplate)}, opId_{opId}
+prm::NodeParameter::NodeParameter(Template prmTemplate, nt::NodeId nodeId)
+    : Parameter{std::move(prmTemplate)}, nodeId_{nodeId}
 {
 }
 
@@ -15,7 +15,7 @@ void prm::NodeParameter::onFloatSet_(const PrmValues& before) { addUndo_(before)
 
 std::unique_ptr<expr::ExpressionContext> prm::NodeParameter::makeExpressionContext_() const
 {
-    return std::make_unique<expr::ExpressionContext>(opId_);
+    return std::make_unique<expr::ExpressionContext>(nodeId_);
 }
 
 void prm::NodeParameter::submitExpressionDependencies_(
@@ -24,14 +24,14 @@ void prm::NodeParameter::submitExpressionDependencies_(
 ) const
 {
     nt::nm().graph().setCapturedDependencies(
-        nt::Unit{opId_, getName(), index},
+        nt::Unit{nodeId_, getName(), index},
         context.getExpressionDependencies()
     );
 }
 
 void prm::NodeParameter::addUndo_(prm::PrmValues before)
 {
-    auto cmd = std::make_unique<nt::ChangeParameterCommand>(opId_, getName(), before, values_);
+    auto cmd = std::make_unique<nt::ChangeParameterCommand>(nodeId_, getName(), before, values_);
     nt::nm().undoStack().push(std::move(cmd));
 }
 
