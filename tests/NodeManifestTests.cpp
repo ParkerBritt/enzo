@@ -15,6 +15,7 @@ namespace {
 const std::string kMinimalManifest = R"(
 version: 1
 name: circle
+namespace: enzo
 implementation:
   kind: cpp
   library: enzoOps
@@ -34,6 +35,7 @@ TEST_CASE("A minimal manifest gives the node its name and implementation")
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kMinimalManifest);
 
     REQUIRE(manifest.getNodeType().getName() == "circle");
+    REQUIRE(manifest.getNodeType().getFullName() == "enzo::circle");
     REQUIRE(manifest.getImplementation().kind == "cpp");
     REQUIRE(manifest.getImplementation().library == "enzoOps");
 }
@@ -57,6 +59,7 @@ TEST_CASE("A named constructor is kept as written")
     const std::string yaml = R"(
 version: 1
 name: hexagon
+namespace: enzo
 implementation:
   kind: cpp
   library: enzoOps
@@ -72,6 +75,7 @@ TEST_CASE("Input and output counts are read from the manifest")
     const std::string yaml = R"(
 version: 1
 name: sweep
+namespace: enzo
 inputs:
   min: 1
   max: 2
@@ -337,11 +341,24 @@ implementation:
     REQUIRE_THROWS_AS(nt::NodeManifest::loadFromString(yaml), std::runtime_error);
 }
 
+TEST_CASE("A manifest with no namespace is rejected")
+{
+    const std::string yaml = R"(
+version: 1
+name: circle
+implementation:
+  kind: cpp
+  library: enzoOps
+)";
+    REQUIRE_THROWS_AS(nt::NodeManifest::loadFromString(yaml), std::runtime_error);
+}
+
 TEST_CASE("A manifest with no implementation is rejected")
 {
     const std::string yaml = R"(
 version: 1
 name: circle
+namespace: enzo
 )";
     REQUIRE_THROWS_AS(nt::NodeManifest::loadFromString(yaml), std::runtime_error);
 }
@@ -351,6 +368,7 @@ TEST_CASE("An implementation kind that is not built yet is rejected")
     const std::string yaml = R"(
 version: 1
 name: torus
+namespace: enzo
 implementation:
   kind: compound
   network: network.enzo

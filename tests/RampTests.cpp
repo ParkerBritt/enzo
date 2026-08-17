@@ -149,7 +149,7 @@ TEST_CASE("A node's ramp parameter defaults to an identity ramp")
     auto& nm = enzo::nt::nm();
     nm._reset();
 
-    const auto nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("sineWave"));
+    const auto nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
     auto parameter = nm.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(parameter);
 

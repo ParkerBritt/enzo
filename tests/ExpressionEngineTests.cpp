@@ -47,19 +47,19 @@ struct NMReset
 static const nt::NodeType& transformNodeType()
 {
     nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("transform");
+    return nt::NodeTypeTable::requireNodeType("enzo::transform");
 }
 
 static const nt::NodeType& gridNodeType()
 {
     nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("grid");
+    return nt::NodeTypeTable::requireNodeType("enzo::grid");
 }
 
 static const nt::NodeType& pathNodeType()
 {
     nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("path");
+    return nt::NodeTypeTable::requireNodeType("enzo::path");
 }
 
 TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")

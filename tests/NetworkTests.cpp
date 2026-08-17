@@ -20,8 +20,9 @@ struct NodeTypeTableInit
     NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
 };
 static NodeTypeTableInit _nodeTypeTableInit;
-const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("grid");
-const enzo::nt::NodeType& transformNodeType = enzo::nt::NodeTypeTable::requireNodeType("transform");
+const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
+const enzo::nt::NodeType& transformNodeType =
+    enzo::nt::NodeTypeTable::requireNodeType("enzo::transform");
 
 TEST_CASE_METHOD(NMReset, "network fixture separation start")
 {

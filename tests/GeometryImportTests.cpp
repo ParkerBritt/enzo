@@ -46,7 +46,8 @@ std::shared_ptr<const geo::Mesh> importMesh(const std::filesystem::path& file, f
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId nodeId = nm.createNode(nt::NodeTypeTable::requireNodeType("geometryImport"));
+    const nt::NodeId nodeId =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::geometryImport"));
     nt::Node& node = nm.getNode(nodeId);
     node.getParameter("filePath").lock()->setString(file.string());
     node.getParameter("size").lock()->setFloat(size);
@@ -126,7 +127,8 @@ TEST_CASE_METHOD(NMReset, "An unset file path imports nothing")
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId nodeId = nm.createNode(nt::NodeTypeTable::requireNodeType("geometryImport"));
+    const nt::NodeId nodeId =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::geometryImport"));
     nm.cook(nodeId);
 
     REQUIRE(nm.getNode(nodeId).getOutputPacket(0)->size() == 1);

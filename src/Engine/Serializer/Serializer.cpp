@@ -131,7 +131,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
         nodeIdToIndex[nodeId] = index++;
 
         NodeSerializable nodeModel;
-        nodeModel.typeName = node.getType().getName();
+        nodeModel.typeName = node.getType().getFullName();
         nodeModel.path = node.getPath().getString();
         nodeModel.posX = node.getPosition().x();
         nodeModel.posY = node.getPosition().y();

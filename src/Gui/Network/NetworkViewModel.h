@@ -41,7 +41,7 @@ class NetworkViewModel : public QObject
     QVariantList getNodeTypes() const;
 
     /// @brief Creates a node of the given node type at a network position.
-    Q_INVOKABLE void createNode(const QString& internalName, qreal x, qreal y);
+    Q_INVOKABLE void createNode(const QString& fullName, qreal x, qreal y);
 
     /// @brief Selects a node, optionally adding it to the current selection.
     ///
