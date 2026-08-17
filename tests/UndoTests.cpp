@@ -26,7 +26,8 @@ struct PluginsAndReset
 TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::requireNodeType("sineWave"));
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
 
     auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);
@@ -50,7 +51,8 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::requireNodeType("sineWave"));
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
 
     auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);

@@ -223,8 +223,8 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
 
     NodeType& nodeType = manifest.nodeType_;
     nodeType.internalName = requireString(document, "name", "node manifest");
+    nodeType.typeNamespace = requireString(document, "namespace", "node manifest");
     nodeType.displayName = readString(document, "label", nodeType.internalName);
-    nodeType.typeNamespace = readString(document, "namespace");
     nodeType.templates = readParameters(document["parameters"]);
     nodeType.tags = readTags(document["tags"]);
     nodeType.iconPath = readString(document, "icon");

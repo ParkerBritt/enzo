@@ -23,7 +23,7 @@ class DeleteNodeCommand : public UndoCommand
     DeleteNodeCommand(NodeId nodeId) : nodeId_(nodeId)
     {
         Node& node = nm().getNode(nodeId_);
-        typeName_ = node.getType().getName();
+        typeName_ = node.getType().getFullName();
         position_ = node.getPosition();
 
         // Save parms

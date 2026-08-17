@@ -37,8 +37,9 @@ TEST_CASE_METHOD(NMReset, "Rotate is read in degrees")
     auto& nm = nt::nm();
 
     // A grid feeding a transform that turns a quarter circle about Y
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("grid"));
-    const nt::NodeId transform = nm.createNode(nt::NodeTypeTable::requireNodeType("transform"));
+    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    const nt::NodeId transform =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
     nm.connectNodes(grid, 0, transform, 0);
 
     nm.getNode(transform).getParameter("rotate").lock()->setFloat(90.f, 1);

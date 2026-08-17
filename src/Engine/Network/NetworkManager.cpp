@@ -24,7 +24,6 @@ nt::NodeId nt::NetworkManager::createNode(
 {
 
     NodeId nodeId = ++maxNodeId_;
-    std::string typeName = nodeType.internalName;
 
     std::unique_ptr<Node> newNode = std::make_unique<Node>(maxNodeId_, nodeType);
     newNode->setPosition(position);

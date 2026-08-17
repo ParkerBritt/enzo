@@ -80,15 +80,15 @@ QVariantList NetworkViewModel::getNodeTypes() const
     {
         QVariantMap entry;
         entry["label"] = QString::fromStdString(info.displayName);
-        entry["name"] = QString::fromStdString(info.internalName);
+        entry["name"] = QString::fromStdString(info.getFullName());
         list.append(entry);
     }
     return list;
 }
 
-void NetworkViewModel::createNode(const QString& internalName, qreal x, qreal y)
+void NetworkViewModel::createNode(const QString& fullName, qreal x, qreal y)
 {
-    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(internalName.toStdString());
+    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
     nt::nm().createNode(nodeType, "", {static_cast<float>(x), static_cast<float>(y)});
 }
 

@@ -9,17 +9,17 @@ const NodeType& NodeTypeTable::addNodeType(NodeType nodeType)
     return nodeTypeStore_.back();
 }
 
-const NodeType* NodeTypeTable::getNodeType(const std::string& name)
+const NodeType* NodeTypeTable::getNodeType(const std::string& fullName)
 {
     for (const NodeType& nodeType : nodeTypeStore_)
-        if (nodeType.internalName == name) return &nodeType;
+        if (nodeType.getFullName() == fullName) return &nodeType;
     return nullptr;
 }
 
-const NodeType& NodeTypeTable::requireNodeType(const std::string& name)
+const NodeType& NodeTypeTable::requireNodeType(const std::string& fullName)
 {
-    const NodeType* nodeType = getNodeType(name);
-    if (!nodeType) throw std::runtime_error("Couldn't find node type: " + name);
+    const NodeType* nodeType = getNodeType(fullName);
+    if (!nodeType) throw std::runtime_error("Couldn't find node type: " + fullName);
     return *nodeType;
 }
 

@@ -23,16 +23,17 @@ using nodeConstructor = NodeImpl* (*)(Node&, CookContext&);
 struct NodeType
 {
     std::string internalName;
+
+    /// @brief The namespace the node was published under, such as "enzo".
+    /// @note Two authors may both publish a "circle" as long as their namespaces differ.
+    std::string typeNamespace;
+
     std::string displayName;
     nodeConstructor ctorFunc = nullptr;
     std::vector<enzo::prm::Template> templates;
     unsigned int minInputs = 0;
     unsigned int maxInputs = 1;
     unsigned int maxOutputs = 1;
-
-    /// @brief The namespace the node was published under, such as "enzo".
-    /// @note Nothing reads this until full type names reach saved scenes.
-    std::string typeNamespace;
 
     /// @brief The words the tab menu searches on, such as "curve" or "primitive".
     std::vector<std::string> tags;
@@ -49,6 +50,9 @@ struct NodeType
     /// @brief Returns the internal type name shared by all nodes of this type (eg.
     /// "copy_to_points")
     const std::string& getName() const { return internalName; }
+    /// @brief Returns the name that uniquely identifies this type (eg. "enzo::copy_to_points")
+    /// @note This is the form saved scenes store and the form lookups take.
+    std::string getFullName() const { return typeNamespace + "::" + internalName; }
     /// @brief Returns the human readable type label shown in the UI (eg. "Copy To Points")
     const std::string& getLabel() const { return displayName; }
 

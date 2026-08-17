@@ -21,7 +21,7 @@ struct NodeTypeTableInit
     NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
 };
 static NodeTypeTableInit _nodeTypeTableInit;
-const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("cube");
+const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::cube");
 
 TEST_CASE_METHOD(NMReset, "Network Manager")
 {

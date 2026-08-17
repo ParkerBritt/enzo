@@ -20,14 +20,14 @@ class BOOST_SYMBOL_EXPORT NodeTypeTable
     /// @brief Takes ownership of a node type and returns the stored copy.
     static const NodeType& addNodeType(NodeType nodeType);
 
-    /// @brief Returns the type registered under an internal name.
+    /// @brief Returns the type registered under a full name, such as "enzo::grid".
     /// @return The type, or nullptr when nothing carries that name.
-    static const NodeType* getNodeType(const std::string& name);
+    static const NodeType* getNodeType(const std::string& fullName);
 
-    /// @brief Returns the type registered under an internal name, for callers that cannot go on
+    /// @brief Returns the type registered under a full name, for callers that cannot go on
     /// without it.
     /// @note Throws std::runtime_error when nothing carries that name.
-    static const NodeType& requireNodeType(const std::string& name);
+    static const NodeType& requireNodeType(const std::string& fullName);
 
     /// @brief Returns every registered type, in the order they were added.
     static const std::deque<NodeType>& getData();

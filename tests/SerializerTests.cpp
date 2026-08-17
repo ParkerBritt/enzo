@@ -130,7 +130,7 @@ TEST_CASE("Applying a ramp model reconciles a mismatched instance count")
 TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 {
     auto& nm = nt::nm();
-    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("grid");
+    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("enzo::grid");
 
     nt::NodeId grid = nm.createNode(gridInfo);
     // Use a path the placeholder would never regenerate so the test fails if the
@@ -153,8 +153,8 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 {
     auto& nm = nt::nm();
-    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("grid");
-    const nt::NodeType& transformInfo = nt::NodeTypeTable::requireNodeType("transform");
+    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("enzo::grid");
+    const nt::NodeType& transformInfo = nt::NodeTypeTable::requireNodeType("enzo::transform");
 
     nt::NodeId grid = nm.createNode(gridInfo);
     nt::NodeId transform = nm.createNode(transformInfo);

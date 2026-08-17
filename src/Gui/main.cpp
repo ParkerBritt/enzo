@@ -73,14 +73,14 @@ void buildSampleNetwork()
     enzo::nt::NodeLoader::loadNodes();
 
     auto& network = enzo::nt::nm();
-    auto create = [&](const char* type, enzo::Vector2 position) {
-        return network.createNode(enzo::nt::NodeTypeTable::requireNodeType(type), "", position);
+    auto create = [&](const char* fullName, enzo::Vector2 position) {
+        return network.createNode(enzo::nt::NodeTypeTable::requireNodeType(fullName), "", position);
     };
 
-    const enzo::nt::NodeId gridId = create("grid", {0.f, 0.f});
-    const enzo::nt::NodeId transformId = create("transform", {200.f, 120.f});
-    create("cube", {-180.f, 140.f});
-    create("circle", {40.f, -160.f});
+    const enzo::nt::NodeId gridId = create("enzo::grid", {0.f, 0.f});
+    const enzo::nt::NodeId transformId = create("enzo::transform", {200.f, 120.f});
+    create("enzo::cube", {-180.f, 140.f});
+    create("enzo::circle", {40.f, -160.f});
 
     // Feed the grid's output into the transform so there is a wire to draw.
     network.connectNodes(gridId, 0, transformId, 0);

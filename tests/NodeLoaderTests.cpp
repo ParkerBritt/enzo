@@ -34,7 +34,8 @@ TEST_CASE("Every shipped node loads and resolves its implementation")
     {
         INFO("node " << name);
 
-        const nt::NodeType* nodeType = nt::NodeTypeTable::getNodeType(name);
+        // Every shipped node is published under the enzo namespace.
+        const nt::NodeType* nodeType = nt::NodeTypeTable::getNodeType("enzo::" + name);
         REQUIRE(nodeType != nullptr);
         REQUIRE(nodeType->ctorFunc != nullptr);
         REQUIRE(nodeType->folder.filename() == name);

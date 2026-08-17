@@ -18,7 +18,7 @@ class CreateNodeCommand : public UndoCommand
     void undo() override
     {
         Node& node = nm().getNode(nodeId_);
-        typeName_ = node.getType().getName();
+        typeName_ = node.getType().getFullName();
         position_ = node.getPosition();
 
         nm().removeNode(nodeId_, false);
