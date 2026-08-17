@@ -1,6 +1,7 @@
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -16,12 +17,11 @@ struct NMReset
 // TODO: fix this init monstrosity
 struct NodeTypeTableInit
 {
-    NodeTypeTableInit() { enzo::nt::NodeTypeTable::initPlugins(); }
+    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
 };
 static NodeTypeTableInit _nodeTypeTableInit;
-auto testNodeTypeOptional = enzo::nt::NodeTypeTable::getNodeType("grid");
-auto testNodeType = testNodeTypeOptional.value();
-auto transformNodeType = enzo::nt::NodeTypeTable::getNodeType("transform").value();
+const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("grid");
+const enzo::nt::NodeType& transformNodeType = enzo::nt::NodeTypeTable::requireNodeType("transform");
 
 TEST_CASE_METHOD(NMReset, "network fixture separation start")
 {

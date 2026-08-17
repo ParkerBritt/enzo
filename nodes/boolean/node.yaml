@@ -1,0 +1,26 @@
+version: 1
+
+name: boolean
+namespace: enzo
+label: Boolean
+tags: [boolean, combine, polygon]
+
+inputs:
+  min: 2
+  max: 2
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: boolean
+
+parameters:
+  - name: operation
+    label: Operation
+    type: dropdown
+    default: union
+    options:
+      - {value: union, label: Union}
+      - {value: intersect, label: Intersect}
+      - {value: subtract, label: Subtract}

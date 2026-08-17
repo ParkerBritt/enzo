@@ -1,0 +1,26 @@
+version: 1
+
+name: geometryImport
+namespace: enzo
+label: Geometry Import
+tags: [import, file, primitive]
+
+inputs:
+  min: 0
+  max: 0
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: geometryImport
+
+parameters:
+  - name: filePath
+    label: File Path
+    type: string
+
+  - name: size
+    label: Size
+    type: float
+    default: 1

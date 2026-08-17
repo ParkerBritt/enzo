@@ -1,5 +1,6 @@
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
@@ -30,7 +31,7 @@ struct NMReset
 
 struct NodeTypeTableInit
 {
-    NodeTypeTableInit() { enzo::nt::NodeTypeTable::initPlugins(); }
+    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
 };
 static NodeTypeTableInit _nodeTypeTableInit;
 
@@ -129,7 +130,7 @@ TEST_CASE("Applying a ramp model reconciles a mismatched instance count")
 TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 {
     auto& nm = nt::nm();
-    auto gridInfo = nt::NodeTypeTable::getNodeType("grid").value();
+    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("grid");
 
     nt::NodeId grid = nm.createNode(gridInfo);
     // Use a path the placeholder would never regenerate so the test fails if the
@@ -152,8 +153,8 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 {
     auto& nm = nt::nm();
-    auto gridInfo = nt::NodeTypeTable::getNodeType("grid").value();
-    auto transformInfo = nt::NodeTypeTable::getNodeType("transform").value();
+    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("grid");
+    const nt::NodeType& transformInfo = nt::NodeTypeTable::requireNodeType("transform");
 
     nt::NodeId grid = nm.createNode(gridInfo);
     nt::NodeId transform = nm.createNode(transformInfo);

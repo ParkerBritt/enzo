@@ -1,0 +1,18 @@
+version: 1
+
+name: merge
+namespace: enzo
+label: Merge
+tags: [utility, combine]
+
+inputs:
+  min: 2
+  max: 2
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: merge
+
+parameters: []

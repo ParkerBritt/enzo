@@ -1,14 +1,16 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/CookContext.h"
-#include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NodeImpl.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
+#include "Engine/Primitives/Primitive.h"
 #include "icecream.hpp"
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 
 namespace enzo {
 
@@ -43,10 +45,14 @@ std::optional<ParameterComparison> parseParameterComparison(const std::string& t
 
 } // namespace
 
-nt::Node::Node(nt::NodeId nodeId, nt::NodeType nodeType)
-    : nodeId_{nodeId}, nodeType_{nodeType}, nodeDef_(nodeType.ctorFunc(&nt::nm(), nodeType)),
+nt::Node::Node(nt::NodeId nodeId, const nt::NodeType& nodeType)
+    : nodeId_{nodeId}, nodeType_{nodeType},
       path_{"/" + nodeType.internalName + "_" + std::to_string(nodeId)}
 {
+    // Start every slot on an empty packet so consumers never see null.
+    outputPackets_.resize(getMaxOutputs());
+    for (auto& slot : outputPackets_)
+        slot = std::make_shared<const NodePacket>();
 
     initParameters();
 }
@@ -89,19 +95,48 @@ void nt::Node::onParameterChanged(const std::string& parmName)
 
 bool nt::Node::isDirty() { return dirty_; }
 
-void nt::Node::cook(nt::CookContext context)
+void nt::Node::cook(nt::CookContext& context)
 {
     std::cout << "Cooking node: " << nodeId_ << "\n";
-    if (dirty_)
-    {
-        nodeDef_->cook(context);
-        dirty_ = false;
-    }
+    if (!dirty_) return;
+
+    // The implementation lives only as long as the cook, so nothing it holds
+    // can survive into the next one.
+    const std::unique_ptr<nt::NodeImpl> implementation(nodeType_.ctorFunc(*this, context));
+    implementation->cook();
+    dirty_ = false;
 }
 
 std::shared_ptr<const NodePacket> nt::Node::getOutputPacket(unsigned outputIndex) const
 {
-    return nodeDef_->getOutputPacket(outputIndex);
+    if (outputIndex >= getMaxOutputs())
+    {
+        throw std::runtime_error("Cannot get output packet at an index past the node's outputs");
+    }
+
+    return outputPackets_.at(outputIndex);
+}
+
+void nt::Node::setOutputPacket(unsigned int outputIndex, NodePacket packet)
+{
+    if (outputIndex >= getMaxOutputs())
+    {
+        throw std::runtime_error("Cannot set output packet at an index past the node's outputs");
+    }
+
+    // Defragment every primitive so downstream consumers see contiguous offsets.
+    for (auto& prim : packet.getPrimitives())
+    {
+        if (prim) prim->defragment();
+    }
+
+    outputPackets_[outputIndex] = std::make_shared<const NodePacket>(std::move(packet));
+}
+
+bool nt::Node::outputRequested(unsigned int outputIndex) const
+{
+    // TODO: implement
+    return true;
 }
 
 std::weak_ptr<prm::NodeParameter> nt::Node::getParameter(std::string_view parameterName)
@@ -177,8 +212,8 @@ const nt::NodeType& nt::Node::getType() const { return nodeType_; }
 //     return outputIds_.at(outputNumber);
 // }
 
-unsigned int nt::Node::getMaxInputs() const { return nodeDef_->getMaxInputs(); }
-unsigned int nt::Node::getMaxOutputs() const { return nodeDef_->getMaxOutputs(); }
-unsigned int nt::Node::getMinInputs() const { return nodeDef_->getMinInputs(); }
+unsigned int nt::Node::getMaxInputs() const { return nodeType_.maxInputs; }
+unsigned int nt::Node::getMaxOutputs() const { return nodeType_.maxOutputs; }
+unsigned int nt::Node::getMinInputs() const { return nodeType_.minInputs; }
 
 } // namespace enzo

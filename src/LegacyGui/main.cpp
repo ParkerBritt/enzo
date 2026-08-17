@@ -1,3 +1,4 @@
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include <QApplication>
 #include <QFontDatabase>
@@ -17,8 +18,7 @@ int main(int argc, char** argv)
     format.setSamples(4);
     QSurfaceFormat::setDefaultFormat(format);
 
-    // init plugins
-    enzo::nt::NodeTypeTable::initPlugins();
+    enzo::nt::NodeLoader::loadNodes();
 
     QApplication app(argc, argv);
     app.setOrganizationName("Enzo");

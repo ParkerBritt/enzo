@@ -1,0 +1,174 @@
+version: 1
+
+name: extrude
+namespace: enzo
+label: Extrude
+tags: [polygon, surface, modelling]
+
+inputs:
+  min: 1
+  max: 1
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: extrude
+
+parameters:
+  - name: selection
+    label: Selection
+    type: string
+    tooltip: The faces to extrude. Accepts a face selection or a group name.
+
+  - name: connected
+    label: Connected
+    type: bool
+    default: true
+    tooltip: >
+      Treat adjacent selected faces as a single piece with no interior edges.
+      Turn this off to extrude each face in isolation.
+
+  - name: distance
+    label: Distance
+    type: float
+    default: 1
+    range: {min: -10, max: 10}
+    tooltip: >
+      How far to pull out the extrusion. You can use a negative number to push
+      the extrusion in the opposite direction of the normals.
+
+  - name: inset
+    label: Inset
+    type: float
+    default: 0
+    range: {min: -5, max: 5}
+    tooltip: >
+      Expands or dilates the extrusion front. This has no effect when
+      extruding edges.
+
+  - name: frontRow
+    label: Front
+    type: group
+    direction: horizontal
+    tooltip: Controls for the front output and group.
+    parameters:
+      - name: frontOutput
+        label: Front Output
+        type: bool
+        default: true
+        labelHidden: true
+        tooltip: >
+          Generate polygons for the extrusion front. Turn this off if you only want the sides.
+
+      - name: frontGroup
+        label: Front Group
+        type: group
+        direction: horizontal
+        background: true
+        labelHidden: true
+        tooltip: >
+          Enter the name to put the polygons of the extrusion front in this group. You can use this group name in later nodes to easily target just the front polygons.
+        parameters:
+          - name: frontGroupEnabled
+            label: Front Group
+            type: bool
+            labelHidden: true
+            tooltip: >
+              Create a face group with the polygons of the extrusionfront in this group. You can use this group in later nodes to easily target just the front polygons.
+            style:
+              kind: boolIconSlash
+              icon: squares-subtract
+
+          - name: frontGroupName
+            label: Name
+            type: string
+            default: extrudeFront
+            labelHidden: true
+            background: false
+            tooltip: >
+              Enter the name to put the polygons of the extrusion front in this group. You can use this group name in later nodes to easily target just the front polygons.
+
+  - name: sideRow
+    label: Side
+    type: group
+    direction: horizontal
+    tooltip: Controls for the side output and group.
+    parameters:
+      - name: sideOutput
+        label: Side Output
+        type: bool
+        default: true
+        labelHidden: true
+        tooltip: >
+          Generate polygons for the sides of the extrusion. If you turn this off, the node is essentially a copy and translate of the selected edges/faces.
+
+      - name: sideGroup
+        label: Side Group
+        type: group
+        direction: horizontal
+        background: true
+        labelHidden: true
+        tooltip: >
+          Enter the name to put the polygons of the extrusion sides in this group. You can use this group name in later nodes to easily target just the side polygons.
+        parameters:
+          - name: sideGroupEnabled
+            label: Side Group
+            type: bool
+            labelHidden: true
+            tooltip: >
+              Create a face group with the polygons of the extrusion sides in this group. You can use this group in later nodes to easily target just the side polygons.
+            style:
+              kind: boolIconSlash
+              icon: squares-subtract
+
+          - name: sideGroupName
+            label: Name
+            type: string
+            default: extrudeSide
+            labelHidden: true
+            background: false
+            tooltip: >
+              Enter the name to put the polygons of the extrusion sides in this group. You can use this group name in later nodes to easily target just the side polygons.
+
+  - name: backRow
+    label: Back
+    type: group
+    direction: horizontal
+    tooltip: Controls for the back output and group.
+    parameters:
+      - name: backOutput
+        label: Back Output
+        type: bool
+        default: false
+        labelHidden: true
+        tooltip: >
+          Turn this off to delete the original extruded polygons.
+
+      - name: backGroup
+        label: Back Group
+        type: group
+        direction: horizontal
+        background: true
+        labelHidden: true
+        tooltip: >
+          Enter the name to put the original extruded polygons in this group. You can use this group name in later nodes to easily target just the back polygons.
+        parameters:
+          - name: backGroupEnabled
+            label: Back Group
+            type: bool
+            labelHidden: true
+            tooltip: >
+              Create a face group with the original extruded polygons in this group. You can use this group in later nodes to easily target just the back polygons.
+            style:
+              kind: boolIconSlash
+              icon: squares-subtract
+
+          - name: backGroupName
+            label: Name
+            type: string
+            default: extrudeBack
+            labelHidden: true
+            background: false
+            tooltip: >
+              Enter the name to put the original extruded polygons in this group. You can use this group name in later nodes to easily target just the back polygons.

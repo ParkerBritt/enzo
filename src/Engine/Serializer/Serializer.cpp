@@ -178,9 +178,8 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
 
     for (const NodeSerializable& nodeModel : network.nodes)
     {
-        std::optional<nt::NodeType> nodeType = nt::NodeTypeTable::getNodeType(nodeModel.typeName);
-        nt::NodeId id =
-            nm().createNode(nodeType.value(), nodeModel.path, {nodeModel.posX, nodeModel.posY});
+        const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(nodeModel.typeName);
+        nt::NodeId id = nm().createNode(nodeType, nodeModel.path, {nodeModel.posX, nodeModel.posY});
         nodeIds.push_back(id);
 
         auto& node = networkManager.getNode(id);

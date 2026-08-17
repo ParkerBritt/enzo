@@ -1,0 +1,29 @@
+version: 1
+
+name: delete
+namespace: enzo
+label: Delete
+tags: [delete, group, selection]
+
+inputs:
+  min: 1
+  max: 1
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: delete
+
+parameters:
+  - name: selection
+    label: Selection
+    type: string
+
+  - name: invert
+    label: Invert Selection
+    type: bool
+
+  - name: keep_points
+    label: Keep Points
+    type: bool

@@ -1,0 +1,43 @@
+version: 1
+
+name: cube
+namespace: enzo
+label: Cube
+tags: [primitive, surface, polygon]
+
+inputs:
+  min: 0
+  max: 0
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: cube
+
+parameters:
+  - name: size
+    label: Size
+    type: xyz
+    size: 3
+    default: 1
+    range: {min: 0, max: 100}
+
+  - name: center
+    label: Center
+    type: xyz
+    size: 3
+    default: 0
+
+  - name: rotate
+    label: Rotation
+    type: xyz
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+
+  - name: uniformScale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}

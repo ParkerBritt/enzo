@@ -13,7 +13,8 @@ set(CMAKE_AUTORCC ON)
 # setup project
 project(enzo)
 
-set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
+set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/nodes/")
+set(ENZO_DEV_NODES_DIR "${CMAKE_SOURCE_DIR}/nodes")
 
 set(ENGINE_SOURCES
     src/Engine/Attribute/Attribute.cpp
@@ -26,7 +27,8 @@ set(ENGINE_SOURCES
     src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/Node.cpp
-    src/Engine/Network/NodeDef.cpp
+    src/Engine/Network/NodeImpl.cpp
+    src/Engine/Network/NodeLoader.cpp
     src/Engine/Network/NodeManifest.cpp
     src/Engine/Network/NodeTypeTable.cpp
     src/Engine/Network/CookContext.cpp
@@ -194,7 +196,10 @@ set_source_files_properties(
 add_library(enzoEngine SHARED ${ENGINE_SOURCES})
 target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript yaml-cpp::yaml-cpp)
 target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
-target_compile_definitions(enzoEngine PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
+target_compile_definitions(enzoEngine PRIVATE
+    ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}"
+    ENZO_DEV_NODES_DIR="${ENZO_DEV_NODES_DIR}"
+)
 
 
 
@@ -343,6 +348,7 @@ set(CPACK_GENERATOR "RPM;TGZ")
 
 set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
 set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
+set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
 
 
 set_target_properties(${AppExec} ${LegacyAppExec} PROPERTIES
@@ -439,7 +445,7 @@ target_include_directories(${LegacyAppExec} PUBLIC
 )
 
 # compile nodes
-add_subdirectory(src/OpDefs)
+add_subdirectory(nodes)
 
 # tests
 option(ENZO_BUILD_TESTS "Build tests and benchmarks" ON)
@@ -470,9 +476,11 @@ if(ENZO_BUILD_TESTS)
         tests/PathTests.cpp
         tests/NetworkPathTests.cpp
         tests/NodeManifestTests.cpp
+        tests/NodeLoaderTests.cpp
+        tests/GeometryImportTests.cpp
+        tests/TransformNodeTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
-    target_compile_definitions(${TestExec} PRIVATE ENZO_NODES_DIR="${CMAKE_SOURCE_DIR}/nodes")
 
     # Stage the test binary next to daslib so daslang resolves its standard
     # library the same way the app does.

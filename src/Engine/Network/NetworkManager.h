@@ -85,12 +85,15 @@ class NetworkManager
      *             observers see the final name from the start.
      * @param position Where the node sits in the network view.
      *
-     * @returns The node ID of the newly created node
+     * @return The node ID of the newly created node
      *
-     * @todo Should probably only have to pass type, now entire nodeType. Fix soon!!!
+     * @todo Take the type name rather than the whole node type.
      */
-    NodeId
-    createNode(nt::NodeType nodeType, const std::string& path = "", Vector2 position = {0.f, 0.f});
+    NodeId createNode(
+        const nt::NodeType& nodeType,
+        const std::string& path = "",
+        Vector2 position = {0.f, 0.f}
+    );
 
     /** @brief Returns the node ID for the node with its display flag set.
      * There can only be only be one node displayed at a time.
@@ -204,7 +207,7 @@ class NetworkManager
      * @param nodeType The node type to restore.
      * @param position The position to restore the node at.
      */
-    void restoreNode(NodeId nodeId, nt::NodeType nodeType);
+    void restoreNode(NodeId nodeId, const nt::NodeType& nodeType);
 
     /**
      * @brief Clears all nodes and resets the network to its initial state.

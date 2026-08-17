@@ -224,7 +224,11 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     NodeType& nodeType = manifest.nodeType_;
     nodeType.internalName = requireString(document, "name", "node manifest");
     nodeType.displayName = readString(document, "label", nodeType.internalName);
+    nodeType.typeNamespace = readString(document, "namespace");
     nodeType.templates = readParameters(document["parameters"]);
+    nodeType.tags = readTags(document["tags"]);
+    nodeType.iconPath = readString(document, "icon");
+    nodeType.docsPath = readString(document, "docs");
 
     // Counts left out of the manifest keep the one input one output shape a
     // NodeType starts with.
@@ -235,9 +239,6 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
 
     manifest.implementation_ =
         readImplementation(document["implementation"], nodeType.internalName);
-    manifest.tags_ = readTags(document["tags"]);
-    manifest.iconPath_ = readString(document, "icon");
-    manifest.docsPath_ = readString(document, "docs");
 
     return manifest;
 }

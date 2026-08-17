@@ -1,3 +1,4 @@
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeManifest.h"
 #include "Engine/Parameter/Style.h"
 #include <catch2/catch_approx.hpp>
@@ -97,11 +98,12 @@ TEST_CASE("Missing counts leave a node with one input and one output")
     REQUIRE(nodeType.maxOutputs == 1);
 }
 
-TEST_CASE("Tags, icon and docs are read from the manifest")
+TEST_CASE("Namespace, tags, icon and docs are read from the manifest")
 {
     const std::string yaml = R"(
 version: 1
 name: circle
+namespace: enzo
 tags: [primitive, curve]
 icon: icon.svg
 docs: docs.md
@@ -110,10 +112,12 @@ implementation:
   library: enzoOps
 )";
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(yaml);
+    const nt::NodeType& nodeType = manifest.getNodeType();
 
-    REQUIRE(manifest.getTags() == std::vector<std::string>{"primitive", "curve"});
-    REQUIRE(manifest.getIconPath() == "icon.svg");
-    REQUIRE(manifest.getDocsPath() == "docs.md");
+    REQUIRE(nodeType.typeNamespace == "enzo");
+    REQUIRE(nodeType.tags == std::vector<std::string>{"primitive", "curve"});
+    REQUIRE(nodeType.iconPath == "icon.svg");
+    REQUIRE(nodeType.docsPath == "docs.md");
 }
 
 TEST_CASE("A parameter carries its label, default and range")
@@ -383,7 +387,7 @@ TEST_CASE("A missing manifest file is reported by its path")
 
 TEST_CASE("The sweep manifest parses into its node type")
 {
-    const std::filesystem::path path = std::filesystem::path(ENZO_NODES_DIR) / "sweep/node.yaml";
+    const std::filesystem::path path = nt::NodeLoader::getNodesDirectory() / "sweep/node.yaml";
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromFile(path);
     const nt::NodeType& nodeType = manifest.getNodeType();
 
@@ -393,7 +397,7 @@ TEST_CASE("The sweep manifest parses into its node type")
     REQUIRE(nodeType.maxInputs == 2);
     REQUIRE(manifest.getImplementation().library == "enzoOps");
 
-    // The parameters match the order and shape GopSweep::parameterList builds.
+    // The parameters, in the order the node's interface is built from.
     REQUIRE(nodeType.templates.size() == 9);
     REQUIRE(nodeType.templates.at(0).getName() == "profileShape");
     REQUIRE(nodeType.templates.at(0).getDefault().getString() == "round");

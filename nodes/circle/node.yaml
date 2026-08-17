@@ -1,0 +1,88 @@
+version: 1
+
+name: circle
+namespace: enzo
+label: Circle
+tags: [primitive, curve, 2d]
+
+inputs:
+  min: 0
+  max: 0
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: circle
+
+parameters:
+  - name: orientation
+    label: Orientation
+    type: dropdown
+    default: zx
+    options:
+      - {value: xy, label: XY Plane}
+      - {value: yz, label: YZ Plane}
+      - {value: zx, label: ZX Plane}
+
+  - name: center
+    label: Center
+    type: xyz
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+
+  - name: rotate
+    label: Rotate
+    type: xyz
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+
+  - name: spacer1
+    type: spacer
+
+  - name: uniform_scale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: radius
+    label: Radius
+    type: xyz
+    size: 2
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: spacer2
+    type: spacer
+
+  - name: divisions
+    label: Divisions
+    type: int
+    default: 10
+    range: {min: 1, max: 100, minLocked: true}
+
+  - name: arc_group
+    label: Arc
+    type: group
+    background: false
+    parameters:
+      - name: arc
+        label: Arc Type
+        type: dropdown
+        labelHidden: true
+        options:
+          - {value: closed, label: Closed}
+          - {value: open_arc, label: Open Arc}
+          - {value: closed_arc, label: Closed Arc}
+          - {value: sliced_arc, label: Sliced Arc}
+
+      - name: arc_angles
+        label: Arc Angles
+        type: xyz
+        size: 2
+        default: [0, 360]
+        labelHidden: true
+        range: {min: 0, max: 360, minLocked: true}
