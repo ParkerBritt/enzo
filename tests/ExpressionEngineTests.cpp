@@ -1,6 +1,7 @@
 #include "Engine/Expression/ExpressionEngine.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include <catch2/catch_test_macros.hpp>
@@ -43,22 +44,22 @@ struct NMReset
     ~NMReset() { nt::nm()._reset(); }
 };
 
-static nt::NodeType transformNodeType()
+static const nt::NodeType& transformNodeType()
 {
-    nt::NodeTypeTable::initPlugins();
-    return nt::NodeTypeTable::getNodeType("transform").value();
+    nt::NodeLoader::loadNodes();
+    return nt::NodeTypeTable::requireNodeType("transform");
 }
 
-static nt::NodeType gridNodeType()
+static const nt::NodeType& gridNodeType()
 {
-    nt::NodeTypeTable::initPlugins();
-    return nt::NodeTypeTable::getNodeType("grid").value();
+    nt::NodeLoader::loadNodes();
+    return nt::NodeTypeTable::requireNodeType("grid");
 }
 
-static nt::NodeType pathNodeType()
+static const nt::NodeType& pathNodeType()
 {
-    nt::NodeTypeTable::initPlugins();
-    return nt::NodeTypeTable::getNodeType("path").value();
+    nt::NodeLoader::loadNodes();
+    return nt::NodeTypeTable::requireNodeType("path");
 }
 
 TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")

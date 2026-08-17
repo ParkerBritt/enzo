@@ -1,4 +1,5 @@
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
@@ -69,11 +70,11 @@ namespace {
 /// the selection signal the spreadsheet view-model listens for.
 void buildSampleNetwork()
 {
-    enzo::nt::NodeTypeTable::initPlugins();
+    enzo::nt::NodeLoader::loadNodes();
 
     auto& network = enzo::nt::nm();
     auto create = [&](const char* type, enzo::Vector2 position) {
-        return network.createNode(enzo::nt::NodeTypeTable::getNodeType(type).value(), "", position);
+        return network.createNode(enzo::nt::NodeTypeTable::requireNodeType(type), "", position);
     };
 
     const enzo::nt::NodeId gridId = create("grid", {0.f, 0.f});

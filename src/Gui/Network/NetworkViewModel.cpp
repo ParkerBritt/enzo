@@ -88,13 +88,8 @@ QVariantList NetworkViewModel::getNodeTypes() const
 
 void NetworkViewModel::createNode(const QString& internalName, qreal x, qreal y)
 {
-    std::optional<nt::NodeType> nodeType =
-        nt::NodeTypeTable::getNodeType(internalName.toStdString());
-    if (!nodeType.has_value())
-    {
-        throw std::runtime_error("Couldn't find node info for: " + internalName.toStdString());
-    }
-    nt::nm().createNode(nodeType.value(), "", {static_cast<float>(x), static_cast<float>(y)});
+    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(internalName.toStdString());
+    nt::nm().createNode(nodeType, "", {static_cast<float>(x), static_cast<float>(y)});
 }
 
 void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)

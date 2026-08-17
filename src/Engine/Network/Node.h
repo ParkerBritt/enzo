@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Core/Path.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Network/NodeDef.h"
+#include "Engine/Network/CookContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Network/NodeType.h"
 #include "Engine/Parameter/NodeParameter.h"
@@ -24,16 +24,16 @@ class Node
      * are that set it apart from other nodes. This is what makes a grid
      * node different to a transform node.
      */
-    Node(enzo::nt::NodeId nodeId, nt::NodeType nodeType);
+    Node(enzo::nt::NodeId nodeId, const nt::NodeType& nodeType);
     virtual ~Node() = default;
     /// @brief Deleted copy constructor to avoid accidental copies.
     Node(const Node&) = delete;
     /// @brief Deleted copy assignment operator to avoid accidental copies.
     Node& operator=(const Node&) = delete;
 
-    /// @brief Computes the output geometry based on the [cook](@ref nt::NodeDef::cook)
-    /// definition in nt::NodeDef. This is set by the @p nodeType constructor parameter
-    void cook(nt::CookContext context);
+    /// @brief Builds the node's implementation and runs its cook, filling the output packets.
+    /// @note Does nothing while the node is clean.
+    void cook(nt::CookContext& context);
 
     /**
      * @brief Returns the current output geometry.
@@ -43,6 +43,13 @@ class Node
      * @todo Add option to force cook or cook if dirty.
      */
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
+
+    /// @brief Stores finished geometry against one of the node's outputs.
+    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
+
+    /// @brief Returns whether anything downstream is asking for one of the node's outputs.
+    /// @todo Always true until dirtiness is tracked per output.
+    bool outputRequested(unsigned int outputIndex) const;
 
     /// @brief Returns all parameters belonging to this node.
     std::vector<std::weak_ptr<prm::NodeParameter>> getParameters();
@@ -135,9 +142,9 @@ class Node
     void onParameterChanged(const std::string& parmName);
 
     std::vector<std::shared_ptr<prm::NodeParameter>> parameters_;
-    std::unique_ptr<enzo::nt::NodeDef> nodeDef_;
+    std::vector<std::shared_ptr<const enzo::NodePacket>> outputPackets_;
     enzo::nt::NodeId nodeId_;
-    enzo::nt::NodeType nodeType_;
+    const enzo::nt::NodeType& nodeType_;
     // Full path locating this node within the network, its leaf is the node name
     Path path_;
     Vector2 position_{0.f, 0.f};

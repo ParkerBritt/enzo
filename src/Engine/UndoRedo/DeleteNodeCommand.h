@@ -40,8 +40,7 @@ class DeleteNodeCommand : public UndoCommand
     void undo() override
     {
         // Restore node
-        auto nodeType = nt::NodeTypeTable::getNodeType(typeName_);
-        nm().restoreNode(nodeId_, nodeType.value());
+        nm().restoreNode(nodeId_, nt::NodeTypeTable::requireNodeType(typeName_));
 
         Node& node = nm().getNode(nodeId_);
 

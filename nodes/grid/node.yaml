@@ -1,0 +1,36 @@
+version: 1
+
+name: grid
+namespace: enzo
+label: Grid
+tags: [primitive, surface, polygon]
+
+inputs:
+  min: 0
+  max: 0
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: grid
+
+parameters:
+  - name: size
+    label: Size
+    type: xyz
+    size: 2
+    default: 10
+    range: {min: 0, max: 100}
+
+  - name: rows
+    label: Rows
+    type: int
+    default: 10
+    range: {min: 1, max: 100, minLocked: true}
+
+  - name: columns
+    label: Columns
+    type: int
+    default: 10
+    range: {min: 1, max: 100, minLocked: true}

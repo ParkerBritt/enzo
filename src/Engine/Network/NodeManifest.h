@@ -50,26 +50,14 @@ class NodeManifest
     /// @note Throws std::runtime_error when the file is missing or malformed.
     static NodeManifest loadFromFile(const std::filesystem::path& path);
 
-    /// @brief Returns the node type this manifest describes, with no constructor filled in yet.
+    /// @brief Returns the node type this manifest describes, with no constructor or folder
+    /// filled in yet.
     const NodeType& getNodeType() const { return nodeType_; }
     const NodeImplementation& getImplementation() const { return implementation_; }
-
-    /// @brief Returns the words the tab menu searches on, such as "curve" or "primitive".
-    const std::vector<std::string>& getTags() const { return tags_; }
-
-    /// @brief Returns the icon file relative to the node folder, empty when the node ships none.
-    const std::string& getIconPath() const { return iconPath_; }
-
-    /// @brief Returns the documentation file relative to the node folder, empty when there is
-    /// none.
-    const std::string& getDocsPath() const { return docsPath_; }
 
   private:
     NodeType nodeType_;
     NodeImplementation implementation_;
-    std::vector<std::string> tags_;
-    std::string iconPath_;
-    std::string docsPath_;
 };
 
 } // namespace enzo::nt

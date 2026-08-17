@@ -1,5 +1,6 @@
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Parameter/Ramp.h"
@@ -144,11 +145,11 @@ TEST_CASE("A new ramp parameter defaults to an identity ramp")
 TEST_CASE("A node's ramp parameter defaults to an identity ramp")
 {
     using namespace enzo::prm;
-    enzo::nt::NodeTypeTable::initPlugins();
+    enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
     nm._reset();
 
-    const auto nodeId = nm.createNode(enzo::nt::NodeTypeTable::getNodeType("sineWave").value());
+    const auto nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("sineWave"));
     auto parameter = nm.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(parameter);
 

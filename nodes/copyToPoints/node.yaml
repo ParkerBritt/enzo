@@ -1,0 +1,18 @@
+version: 1
+
+name: copyToPoints
+namespace: enzo
+label: Copy To Points
+tags: [copy, instance, scatter]
+
+inputs:
+  min: 2
+  max: 2
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: copyToPoints
+
+parameters: []

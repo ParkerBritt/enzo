@@ -86,12 +86,7 @@ void enzo::ui::TabMenu::applyFilter(const QString& text)
 
 void enzo::ui::TabMenu::createNode(const std::string& nodeName)
 {
-    std::optional<nt::NodeType> nodeType = nt::NodeTypeTable::getNodeType(nodeName);
-    if (!nodeType.has_value())
-    {
-        throw std::runtime_error("Couldn't find node info for: " + nodeName);
-    }
-    network_->createNode(nodeType.value());
+    network_->createNode(nt::NodeTypeTable::requireNodeType(nodeName));
 }
 
 void enzo::ui::TabMenu::keyPressEvent(QKeyEvent* event)

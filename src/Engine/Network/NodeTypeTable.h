@@ -1,27 +1,41 @@
 #pragma once
 
-#include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/NodeDef.h"
 #include "Engine/Network/NodeType.h"
-#include "Engine/Parameter/Template.h"
 #include <boost/config.hpp>
-#include <boost/filesystem.hpp>
+#include <deque>
+#include <string>
 
 namespace enzo::nt {
 
+/**
+ * @brief The sole owner of every node type the application knows about.
+ *
+ * The nt::NodeLoader fills the table at startup and nodes hold references into
+ * it, so a type exists once no matter how many nodes are built from it. Entries
+ * are never removed, which is what keeps those references valid.
+ */
 class BOOST_SYMBOL_EXPORT NodeTypeTable
 {
   public:
-    static void addNodeType(enzo::nt::NodeType nodeType);
-    static nt::nodeConstructor getNodeConstructor(std::string name);
-    static const std::optional<nt::NodeType> getNodeType(std::string name);
-    static std::vector<NodeType> getData();
-    static boost::filesystem::path findPlugin(const std::string& undecoratedLibName);
-    // TODO: move to better spot (maybe engine class)
-    static void initPlugins();
+    /// @brief Takes ownership of a node type and returns the stored copy.
+    static const NodeType& addNodeType(NodeType nodeType);
+
+    /// @brief Returns the type registered under an internal name.
+    /// @return The type, or nullptr when nothing carries that name.
+    static const NodeType* getNodeType(const std::string& name);
+
+    /// @brief Returns the type registered under an internal name, for callers that cannot go on
+    /// without it.
+    /// @note Throws std::runtime_error when nothing carries that name.
+    static const NodeType& requireNodeType(const std::string& name);
+
+    /// @brief Returns every registered type, in the order they were added.
+    static const std::deque<NodeType>& getData();
 
   private:
-    static std::vector<NodeType> nodeTypeStore_;
+    // A deque rather than a vector so growing the table never moves the types
+    // nodes hold references to.
+    static std::deque<NodeType> nodeTypeStore_;
 };
-using addNodeTypePtr = void (*)(NodeType);
+
 } // namespace enzo::nt

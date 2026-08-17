@@ -1,5 +1,6 @@
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
@@ -14,7 +15,7 @@ struct PluginsAndReset
 {
     PluginsAndReset()
     {
-        nt::NodeTypeTable::initPlugins();
+        nt::NodeLoader::loadNodes();
         nt::nm()._reset();
     }
     ~PluginsAndReset() { nt::nm()._reset(); }
@@ -25,7 +26,7 @@ struct PluginsAndReset
 TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::getNodeType("sineWave").value());
+    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::requireNodeType("sineWave"));
 
     auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);
@@ -49,7 +50,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::getNodeType("sineWave").value());
+    nt::NodeId nodeId = networkManager.createNode(nt::NodeTypeTable::requireNodeType("sineWave"));
 
     auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
     REQUIRE(amplitude);

@@ -1,6 +1,7 @@
 #include "Engine/Core/Types.h"
-#include "Engine/Network/Node.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
+#include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Ramp.h"
 #include <catch2/benchmark/catch_benchmark.hpp>
@@ -17,10 +18,10 @@ struct NMReset
 // TODO: fix this init monstrosity
 struct NodeTypeTableInit
 {
-    NodeTypeTableInit() { enzo::nt::NodeTypeTable::initPlugins(); }
+    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
 };
 static NodeTypeTableInit _nodeTypeTableInit;
-auto testNodeType = enzo::nt::NodeTypeTable::getNodeType("cube").value();
+const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("cube");
 
 TEST_CASE_METHOD(NMReset, "Network Manager")
 {

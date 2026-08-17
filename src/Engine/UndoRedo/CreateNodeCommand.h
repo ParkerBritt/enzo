@@ -27,8 +27,7 @@ class CreateNodeCommand : public UndoCommand
     void redo() override
     {
         // Restore node
-        auto nodeType = nt::NodeTypeTable::getNodeType(typeName_);
-        nm().restoreNode(nodeId_, nodeType.value());
+        nm().restoreNode(nodeId_, nt::NodeTypeTable::requireNodeType(typeName_));
 
         // Restore position
         Node& node = nm().getNode(nodeId_);

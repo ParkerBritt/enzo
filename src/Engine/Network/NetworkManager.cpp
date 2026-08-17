@@ -16,8 +16,11 @@
 
 namespace enzo {
 
-nt::NodeId
-nt::NetworkManager::createNode(nt::NodeType nodeType, const std::string& path, Vector2 position)
+nt::NodeId nt::NetworkManager::createNode(
+    const nt::NodeType& nodeType,
+    const std::string& path,
+    Vector2 position
+)
 {
 
     NodeId nodeId = ++maxNodeId_;
@@ -71,7 +74,7 @@ void nt::NetworkManager::deleteNode(NodeId nodeId)
     removeNode(nodeId, false);
 }
 
-void nt::NetworkManager::restoreNode(NodeId nodeId, nt::NodeType nodeType)
+void nt::NetworkManager::restoreNode(NodeId nodeId, const nt::NodeType& nodeType)
 {
     std::unique_ptr<Node> newNode = std::make_unique<Node>(nodeId, nodeType);
     newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {

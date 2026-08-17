@@ -1,0 +1,30 @@
+version: 1
+
+name: camera
+namespace: enzo
+label: Camera
+tags: [primitive, camera, scene]
+
+inputs:
+  min: 0
+  max: 0
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: camera
+
+parameters:
+  - name: transform
+    label: Transform
+    type: xyz
+    size: 3
+    default: 0
+
+  - name: rotate
+    label: Rotate
+    type: xyz
+    size: 3
+    default: 0
+    range: {min: 0, max: 360}
