@@ -227,30 +227,7 @@ const prm::Template& prm::Parameter::getTemplate() { return template_; }
 
 prm::Type prm::Parameter::getType() const { return template_.getType(); }
 
-prm::ValueType prm::Parameter::getValueType() const
-{
-    switch (getType())
-    {
-    case prm::Type::FLOAT:
-    case prm::Type::XYZ:
-        return prm::ValueType::Float;
-    case prm::Type::INT:
-    case prm::Type::BOOL:
-    case prm::Type::TOGGLE:
-    // Multiparm parameters (like ramp) use integers to represent their instance
-    // count and store the actual data in their instances.
-    case prm::Type::RAMP:
-    // Spacers are purely visual and store an int nobody reads.
-    case prm::Type::SPACER:
-        return prm::ValueType::Int;
-    case prm::Type::STRING:
-    case prm::Type::DROPDOWN:
-        return prm::ValueType::String;
-    case prm::Type::GROUP:
-        return prm::ValueType::Float;
-    }
-    return prm::ValueType::Float;
-}
+prm::ValueType prm::Parameter::getValueType() const { return prm::toValueType(getType()); }
 
 void prm::Parameter::setInt(intT value, unsigned int index)
 {

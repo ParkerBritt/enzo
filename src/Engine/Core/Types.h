@@ -5,7 +5,9 @@
 
 #pragma once
 #include <Eigen/Dense>
+#include <array>
 #include <cstdint>
+#include <optional>
 #include <string>
 
 namespace enzo {
@@ -121,8 +123,8 @@ enum class Direction
 /**
  * @brief Which kind of value a parameter stores.
  *
- * Every prm::Type maps to one of these. Parameter::getValueType is the one place
- * that mapping lives and the rest of the value handling switches on this tag.
+ * Every prm::Type maps to one of these through toValueType, and the rest of the
+ * value handling switches on this tag.
  */
 enum class ValueType
 {
@@ -159,6 +161,55 @@ inline std::string toString(Type type)
         return "spacer";
     }
     return "";
+}
+
+/// @brief Every parameter type, in declaration order.
+inline constexpr std::array kAllTypes = {
+    Type::STRING,
+    Type::FLOAT,
+    Type::BOOL,
+    Type::XYZ,
+    Type::INT,
+    Type::TOGGLE,
+    Type::GROUP,
+    Type::DROPDOWN,
+    Type::RAMP,
+    Type::SPACER
+};
+
+/// @brief Returns the parameter type a canonical name stands for, e.g. "dropdown".
+/// @return The type, or nullopt when no type carries that name.
+inline std::optional<Type> toType(const std::string& name)
+{
+    for (Type type : kAllTypes)
+        if (toString(type) == name) return type;
+    return std::nullopt;
+}
+
+/// @brief Returns the kind of value a parameter of this type stores.
+inline ValueType toValueType(Type type)
+{
+    switch (type)
+    {
+    case Type::FLOAT:
+    case Type::XYZ:
+        return ValueType::Float;
+    case Type::INT:
+    case Type::BOOL:
+    case Type::TOGGLE:
+    // Multiparm parameters (like ramp) use integers to represent their instance
+    // count and store the actual data in their instances.
+    case Type::RAMP:
+    // Spacers are purely visual and store an int nobody reads.
+    case Type::SPACER:
+        return ValueType::Int;
+    case Type::STRING:
+    case Type::DROPDOWN:
+        return ValueType::String;
+    case Type::GROUP:
+        return ValueType::Float;
+    }
+    return ValueType::Float;
 }
 } // namespace prm
 namespace nt {

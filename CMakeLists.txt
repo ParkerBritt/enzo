@@ -27,6 +27,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/Node.cpp
     src/Engine/Network/NodeDef.cpp
+    src/Engine/Network/NodeManifest.cpp
     src/Engine/Network/NodeTypeTable.cpp
     src/Engine/Network/CookContext.cpp
     src/Engine/NetworkGraph/NetworkGraph.cpp
@@ -138,6 +139,16 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 # manifold (boolean ops)
 find_package(manifold CONFIG REQUIRED)
 
+# yaml-cpp (node manifests and themes)
+include(FetchContent)
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG        0.8.0
+)
+set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(yaml-cpp)
+
 # daslang (das scripting language), built from the vendored submodule
 set(DASLANG_DIR "${CMAKE_SOURCE_DIR}/extern/daslang")
 
@@ -181,7 +192,7 @@ set_source_files_properties(
 # the whole process shares one engine and one set of its singletons. The engine
 # loads the plugins at runtime rather than linking them.
 add_library(enzoEngine SHARED ${ENGINE_SOURCES})
-target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
+target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript yaml-cpp::yaml-cpp)
 target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
 target_compile_definitions(enzoEngine PRIVATE ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}")
 
@@ -203,15 +214,6 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 # TODO: turn this on when ready to handle incomplete enums
 # target_compile_options(${LegacyAppExec} PRIVATE -Werror=switch)
 
-
-include(FetchContent)
-FetchContent_Declare(
-  yaml-cpp
-  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-  GIT_TAG        0.8.0
-)
-set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(yaml-cpp)
 
 # QML application
 qt_add_executable(${AppExec}
@@ -322,7 +324,7 @@ set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL yaml-cpp::yaml-cpp)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
@@ -467,8 +469,10 @@ if(ENZO_BUILD_TESTS)
         tests/BooleanUtilsTests.cpp
         tests/PathTests.cpp
         tests/NetworkPathTests.cpp
+        tests/NodeManifestTests.cpp
     )
     target_link_libraries(${TestExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
+    target_compile_definitions(${TestExec} PRIVATE ENZO_NODES_DIR="${CMAKE_SOURCE_DIR}/nodes")
 
     # Stage the test binary next to daslib so daslang resolves its standard
     # library the same way the app does.

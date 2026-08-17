@@ -1,0 +1,125 @@
+version: 1
+
+name: sweep
+namespace: enzo
+label: Sweep
+tags: [curve, surface, polygon]
+
+inputs:
+  min: 1
+  max: 2
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: sweep
+
+parameters:
+  - name: profileShape
+    label: Profile Shape
+    type: dropdown
+    default: round
+    options:
+      - {value: input, label: Second Input}
+      - {value: round, label: Round}
+      - {value: square, label: Square}
+      - {value: ribbon, label: Ribbon}
+
+  - name: profileScale
+    label: Profile Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: roundColumns
+    label: Columns
+    type: int
+    default: 12
+    range: {min: 3, max: 64, minLocked: true}
+    hideCondition: profileShape != 1
+
+  - name: squareColumns
+    label: Columns
+    type: int
+    default: 1
+    range: {min: 1, max: 64, minLocked: true}
+    hideCondition: profileShape != 2
+
+  - name: ribbonColumns
+    label: Columns
+    type: int
+    default: 2
+    range: {min: 2, max: 64, minLocked: true}
+    hideCondition: profileShape != 3
+
+  - name: endCapRow
+    label: End Cap
+    type: group
+    direction: horizontal
+    tooltip: Controls for closing the open ends of the swept tube and grouping the caps.
+    parameters:
+      - name: endCapType
+        label: Cap Type
+        type: dropdown
+        default: none
+        labelHidden: true
+        tooltip: >
+          How to close the open ends of the swept tube. None leaves the ends open,
+          Single Polygon fills each end with one face.
+        options:
+          - {value: none, label: None}
+          - {value: single, label: Single Polygon}
+
+      - name: endCapGroup
+        label: Cap Group
+        type: group
+        direction: horizontal
+        background: true
+        labelHidden: true
+        hideCondition: endCapType == 0
+        tooltip: >
+          Enter the name to put the end cap polygons in this group. You can use this
+          group name in later nodes to easily target just the cap polygons.
+        parameters:
+          - name: endCapGroupEnabled
+            label: Cap Group
+            type: bool
+            labelHidden: true
+            tooltip: >
+              Create a face group with the end cap polygons in this group. You can use
+              this group in later nodes to easily target just the cap polygons.
+            style:
+              kind: boolIconSlash
+              icon: squares-subtract
+
+          - name: endCapGroupName
+            label: Cap Name
+            type: string
+            default: sweepCap
+            labelHidden: true
+            background: false
+            tooltip: >
+              Enter the name to put the end cap polygons in this group. You can use this
+              group name in later nodes to easily target just the cap polygons.
+
+  - name: stretchTurns
+    label: Stretch Around Turns
+    type: bool
+    default: true
+    tooltip: >
+      Widen the profile where the curve bends so the tube keeps its thickness around
+      turns instead of pinching.
+
+  - name: applyScale
+    label: Apply Scale
+    type: bool
+    default: false
+
+  - name: scaleRamp
+    label: Scale Ramp
+    type: ramp
+    default: 2
+    disableCondition: applyScale == 0
+    instanceDefaults:
+      value: [1, 1]
