@@ -170,20 +170,13 @@ class NetworkManager
 
     /**
      * @brief Deletes a node, pushing an undo command.
+     *
+     * @note A node holding a scope takes the nodes living inside it along, and the whole
+     * removal undoes as one step.
+     *
      * @param nodeId The node to delete.
      */
     void deleteNode(NodeId nodeId);
-
-    /**
-     * @brief Removes a node from the network.
-     *
-     * @note During a delete the connections are owned by their own undo commands, so callers
-     * driving an undo or redo pass @p removeConnections as false to remove only the bare node.
-     *
-     * @param nodeId The node to remove.
-     * @param removeConnections When true the node's connections are removed first.
-     */
-    void removeNode(NodeId nodeId, bool removeConnections = true);
 
     /**
      * @brief Creates a node with an identity the caller dictates rather than one picked here.
@@ -191,6 +184,8 @@ class NetworkManager
      * Every node enters the network here. createNode picks a free id and name and calls this,
      * while undo brings a deleted node back with the id and path it had, since expressions
      * reference nodes by name and a node returning under a new name would break them.
+     *
+     * @note Throws std::out_of_range when no scope sits at the path's parent.
      *
      * @note Only the node itself is created, not the parameter values or connections it had.
      * The undo commands restore those around this call.

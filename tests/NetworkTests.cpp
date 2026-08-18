@@ -25,14 +25,14 @@ const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeTyp
 const enzo::nt::NodeType& transformNodeType =
     enzo::nt::NodeTypeTable::requireNodeType("enzo::transform");
 
-// A node type that holds a scope. It lives here rather than in the node type table, which
-// the loader test expects to hold only the shipped node types.
-const enzo::nt::NodeType containerNodeType = [] {
+// A node type that holds a scope. No shipped node has one, so the tests declare their own
+// and register it in the table, where undo looks up the type of a restored node.
+const enzo::nt::NodeType& containerNodeType = enzo::nt::NodeTypeTable::addNodeType([] {
     enzo::nt::NodeType nodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
     nodeType.internalName = "container";
     nodeType.childScopeType = "geometry";
     return nodeType;
-}();
+}());
 
 TEST_CASE_METHOD(NMReset, "network fixture separation start")
 {
@@ -336,4 +336,66 @@ TEST_CASE_METHOD(NMReset, "Deleting a node that holds a scope takes its contents
     REQUIRE(nm.getScope(Path("/container1")) == nullptr);
     REQUIRE(nm.getScope(Path("/container1/container1")) == nullptr);
     REQUIRE(nm.getChildNodeIds(Path("/")).empty());
+}
+
+TEST_CASE_METHOD(NMReset, "Undoing a delete brings the node back with its position and wiring")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+    nm.undoStack().clear();
+
+    nt::NodeId upstream = nm.createNode(testNodeType);
+    nt::NodeId downstream = nm.createNode(transformNodeType, Path("/"), "", {5.f, 7.f});
+    nm.connectNodes(upstream, 0, downstream, 0);
+
+    nm.deleteNode(downstream);
+    REQUIRE_FALSE(nm.isValidNode(downstream));
+
+    // The node returns under the id and name it had, so expressions naming it still resolve
+    nm.undoStack().undo();
+    REQUIRE(nm.isValidNode(downstream));
+    REQUIRE(nm.getNode(downstream).getPath() == "/transform1");
+    REQUIRE(nm.getNode(downstream).getPosition().x() == 5.f);
+    REQUIRE(nm.getNode(downstream).getPosition().y() == 7.f);
+    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
+
+    // Redo takes it away again, and the stack is still good for another round trip
+    nm.undoStack().redo();
+    REQUIRE_FALSE(nm.isValidNode(downstream));
+
+    nm.undoStack().undo();
+    REQUIRE(nm.isValidNode(downstream));
+    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
+}
+
+TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes living in it")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+    nm.undoStack().clear();
+
+    nt::NodeId container = nm.createNode(containerNodeType);
+    nt::NodeId inner = nm.createNode(testNodeType, Path("/container1"));
+    nt::NodeId deeper = nm.createNode(transformNodeType, Path("/container1"), "", {2.f, 3.f});
+    nm.connectNodes(inner, 0, deeper, 0);
+
+    nm.deleteNode(container);
+    REQUIRE(nm.getChildNodeIds(Path("/")).empty());
+
+    // The container comes back first, so its contents have a scope to return to
+    nm.undoStack().undo();
+    REQUIRE(nm.isValidNode(container));
+    REQUIRE(nm.getScope(Path("/container1")) != nullptr);
+    REQUIRE(nm.isValidNode(inner));
+    REQUIRE(nm.isValidNode(deeper));
+    REQUIRE(nm.getChildNodeIds(Path("/container1")).size() == 2);
+    REQUIRE(nm.getNode(deeper).getPosition().x() == 2.f);
+    REQUIRE(nm.graph().getInputConnection(deeper, 0).has_value());
+
+    // Redo empties it out again at every depth
+    nm.undoStack().redo();
+    REQUIRE_FALSE(nm.isValidNode(container));
+    REQUIRE_FALSE(nm.isValidNode(inner));
+    REQUIRE_FALSE(nm.isValidNode(deeper));
+    REQUIRE(nm.getScope(Path("/container1")) == nullptr);
 }

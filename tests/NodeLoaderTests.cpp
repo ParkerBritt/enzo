@@ -50,5 +50,18 @@ TEST_CASE("Loading twice leaves one entry per node")
     nt::NodeLoader::loadNodes();
 
     REQUIRE(nt::NodeTypeTable::getData().size() == loadedCount);
-    REQUIRE(loadedCount == shippedNodeNames().size());
+
+    // Other tests register their own node types in the shared table, so a shipped node is
+    // checked for a single entry by name
+    for (const std::string& name : shippedNodeNames())
+    {
+        INFO("node " << name);
+
+        const std::string fullName = "enzo::" + name;
+        size_t entryCount = 0;
+        for (const nt::NodeType& nodeType : nt::NodeTypeTable::getData())
+            if (nodeType.getFullName() == fullName) entryCount++;
+
+        REQUIRE(entryCount == 1);
+    }
 }

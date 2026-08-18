@@ -61,12 +61,13 @@ class Network
     /// @note Nodes deeper inside a nested scope are not included.
     std::vector<NodeId> getChildNodeIds(const Path& scope);
 
-    /// @brief Takes ownership of a node and opens the scope it holds.
-    void addNode(NodeId nodeId, std::unique_ptr<Node> node);
+    /// @brief Builds a node, stores it, and opens the child scope its type declares.
+    /// @return The stored node.
+    Node& createNode(NodeId nodeId, const NodeType& nodeType, const Path& path);
 
-    /// @brief Removes a node, the scope it held, and its wiring.
+    /// @brief Drops a node, the scope it held, and its wiring.
     /// @note The nodes living inside that scope are not dropped with it.
-    void eraseNode(NodeId nodeId);
+    void deleteNode(NodeId nodeId);
 
     /// @brief Returns an id no node has used yet.
     NodeId reserveNodeId() { return ++maxNodeId_; }
@@ -84,8 +85,8 @@ class Network
 
   private:
     // A scope exists only because a node holds it, so it opens and closes with that node
-    void addScope(const Path& path, const std::string& scopeType);
-    void eraseScope(const Path& path);
+    void createScope(const Path& path, const std::string& scopeType);
+    void deleteScope(const Path& path);
 
     // Every node, flat, with nesting carried in their paths
     NodeStore nodes_;
