@@ -24,6 +24,9 @@ size_t NetworkPath::parameterDelimiter(std::string_view pathString)
     size_t lastSlash = pathString.rfind('/');
     size_t searchStart = (lastSlash == std::string_view::npos) ? 0 : lastSlash + 1;
 
+    // A final ".." steps up to a parent rather than naming a parameter
+    if (pathString.substr(searchStart) == "..") return std::string_view::npos;
+
     return pathString.find('.', searchStart);
 }
 

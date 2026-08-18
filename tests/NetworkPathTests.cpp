@@ -61,3 +61,18 @@ TEST_CASE("A network path strips its parameter to recover the node")
     // A node path returns an equivalent copy of itself
     REQUIRE(node.getNode() == "/geo/mesh");
 }
+
+TEST_CASE("A network path reads a trailing parent step as a node")
+{
+    using namespace enzo;
+
+    REQUIRE(NetworkPath("..").isValid());
+    REQUIRE(!NetworkPath("..").hasParameter());
+    REQUIRE(NetworkPath("../..").getNode() == "../..");
+
+    // A parameter on a stepped up path still splits normally
+    NetworkPath parameter = "../mesh.tx";
+    REQUIRE(parameter.hasParameter());
+    REQUIRE(parameter.getParameter() == "tx");
+    REQUIRE(parameter.getNode() == "../mesh");
+}
