@@ -58,7 +58,7 @@ void enzo::ui::SceneController::saveAs(const QUrl& fileUrl)
 
 void enzo::ui::SceneController::writeTo(const QString& filePath)
 {
-    enzo::nt::Serializer().save(enzo::nt::nm(), filePath.toStdString());
+    enzo::nt::Serializer().save(enzo::nt::nm().network(), filePath.toStdString());
     currentFilePath_ = filePath;
     Q_EMIT currentFileChanged();
     rememberRecent(filePath);

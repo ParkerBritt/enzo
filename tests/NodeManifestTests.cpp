@@ -124,6 +124,23 @@ implementation:
     REQUIRE(nodeType.docsPath == "docs.md");
 }
 
+TEST_CASE("A node declares the scope it holds inside it")
+{
+    const nt::NodeManifest manifest =
+        nt::NodeManifest::loadFromString(kMinimalManifest + "childScopeType: geometry\n");
+
+    REQUIRE(manifest.getNodeType().hasChildScope());
+    REQUIRE(manifest.getNodeType().childScopeType == "geometry");
+}
+
+TEST_CASE("A node holds no scope unless its manifest names one")
+{
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kMinimalManifest);
+
+    REQUIRE_FALSE(manifest.getNodeType().hasChildScope());
+    REQUIRE(manifest.getNodeType().childScopeType.empty());
+}
+
 TEST_CASE("A parameter carries its label, default and range")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(

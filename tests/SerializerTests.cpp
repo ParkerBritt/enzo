@@ -140,7 +140,7 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 
     const std::string path = "/tmp/enzo_serializer_path_roundtrip.json";
     nt::Serializer serializer;
-    serializer.save(nm, path);
+    serializer.save(nm.network(), path);
 
     nm._reset();
     serializer.load(nm, path);
@@ -162,7 +162,7 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 
     const std::string path = "/tmp/enzo_serializer_roundtrip.json";
     nt::Serializer serializer;
-    serializer.save(nm, path);
+    serializer.save(nm.network(), path);
 
     nm._reset();
     serializer.load(nm, path);

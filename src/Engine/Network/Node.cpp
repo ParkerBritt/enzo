@@ -45,9 +45,8 @@ std::optional<ParameterComparison> parseParameterComparison(const std::string& t
 
 } // namespace
 
-nt::Node::Node(nt::NodeId nodeId, const nt::NodeType& nodeType)
-    : nodeId_{nodeId}, nodeType_{nodeType},
-      path_{"/" + nodeType.internalName + "_" + std::to_string(nodeId)}
+nt::Node::Node(nt::NodeId nodeId, const nt::NodeType& nodeType, const Path& path)
+    : nodeId_{nodeId}, nodeType_{nodeType}, path_{path}
 {
     // Start every slot on an empty packet so consumers never see null.
     outputPackets_.resize(getMaxOutputs());

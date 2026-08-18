@@ -5,11 +5,13 @@
 #include "Engine/Serializer/NetworkSerializable.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/UndoRedo/UndoDisabler.h"
+#include <algorithm>
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/string.hpp>
 #include <fstream>
 #include <iostream>
+#include <numeric>
 #include <unordered_map>
 
 ParameterSerializable toSerializable(enzo::prm::Parameter& parameter)
@@ -111,7 +113,7 @@ void applySerializable(enzo::prm::Parameter& parameter, const ParameterSerializa
 
 namespace enzo::nt {
 
-void Serializer::save(NetworkManager& networkManager, std::string filePath)
+void Serializer::save(Network& network, std::string filePath)
 {
     std::cout << "serializing\n";
     std::ofstream file(filePath);
@@ -119,7 +121,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
 
     NetworkSerializable networkModel;
 
-    auto nodes = networkManager.nodes();
+    auto nodes = network.nodes();
 
     // Build NodeId -> index mapping and serialize nodes
     std::unordered_map<nt::NodeId, unsigned int> nodeIdToIndex;
@@ -147,7 +149,7 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
     // Serialize connections (collect from output side to avoid duplicates)
     for (auto [nodeId, node] : nodes)
     {
-        for (const nt::Connection& conn : networkManager.graph().getOutputs(nodeId))
+        for (const nt::Connection& conn : network.graph().getOutputs(nodeId))
         {
             ConnectionSerializable connModel;
             connModel.inputNodeIndex = nodeIdToIndex[conn.sourceNode];
@@ -169,18 +171,38 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     std::ifstream file(filePath);
     cereal::JSONInputArchive load(file);
 
-    NetworkSerializable network;
-    load(network);
+    NetworkSerializable networkModel;
+    load(networkModel);
+
+    // A node is created inside its parent's scope, so the node holding a scope has to
+    // exist before the nodes living in it. Sorting by path depth gets that in one pass.
+    std::vector<unsigned int> creationOrder(networkModel.nodes.size());
+    std::iota(creationOrder.begin(), creationOrder.end(), 0u);
+    std::sort(
+        creationOrder.begin(),
+        creationOrder.end(),
+        [&networkModel](unsigned int leftIndex, unsigned int rightIndex) {
+            const std::size_t leftDepth = Path(networkModel.nodes[leftIndex].path).split().size();
+            const std::size_t rightDepth = Path(networkModel.nodes[rightIndex].path).split().size();
+            return leftDepth < rightDepth;
+        }
+    );
 
     // Create nodes and track their new NodeIds by index
-    std::vector<nt::NodeId> nodeIds;
-    nodeIds.reserve(network.nodes.size());
+    std::vector<nt::NodeId> nodeIds(networkModel.nodes.size());
 
-    for (const NodeSerializable& nodeModel : network.nodes)
+    for (unsigned int nodeIndex : creationOrder)
     {
+        const NodeSerializable& nodeModel = networkModel.nodes[nodeIndex];
         const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(nodeModel.typeName);
-        nt::NodeId id = nm().createNode(nodeType, nodeModel.path, {nodeModel.posX, nodeModel.posY});
-        nodeIds.push_back(id);
+        const Path savedPath(nodeModel.path);
+        nt::NodeId id = nm().createNode(
+            nodeType,
+            savedPath.getParent(),
+            savedPath.getName(),
+            {nodeModel.posX, nodeModel.posY}
+        );
+        nodeIds[nodeIndex] = id;
 
         auto& node = networkManager.getNode(id);
         for (const ParameterSerializable& prmModel : nodeModel.parameters)
@@ -191,7 +213,7 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
     }
 
     // Recreate connections
-    for (const ConnectionSerializable& conn : network.connections)
+    for (const ConnectionSerializable& conn : networkModel.connections)
     {
         nm().connectNodes(
             nodeIds[conn.inputNodeIndex],

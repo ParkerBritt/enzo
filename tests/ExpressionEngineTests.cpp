@@ -73,7 +73,7 @@ TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")
     // A second node reads the source's translate through a path expression
     nt::NodeId reader = nm.createNode(transformNodeType());
     auto translate = nm.getNode(reader).getParameter("translate").lock();
-    translate->setExpression("prm(\"transform_1.translate\")");
+    translate->setExpression("prm(\"transform1.translate\")");
 
     REQUIRE(translate->evalFloat() == 7.0f);
 }
@@ -93,10 +93,10 @@ TEST_CASE_METHOD(NMReset, "Prm reads a chosen component of a vector parameter")
     nt::NodeId reader = nm.createNode(transformNodeType());
     auto translate = nm.getNode(reader).getParameter("translate").lock();
 
-    translate->setExpression("prm(\"transform_1.translate\", 1)");
+    translate->setExpression("prm(\"transform1.translate\", 1)");
     REQUIRE(translate->evalFloat() == 2.0f);
 
-    translate->setExpression("prm(\"transform_1.translate\", 2)");
+    translate->setExpression("prm(\"transform1.translate\", 2)");
     REQUIRE(translate->evalFloat() == 3.0f);
 }
 
@@ -113,7 +113,7 @@ TEST_CASE_METHOD(NMReset, "Prm without an index reads the first component")
     // Omitting the index reads the same component as passing 0
     nt::NodeId reader = nm.createNode(transformNodeType());
     auto translate = nm.getNode(reader).getParameter("translate").lock();
-    translate->setExpression("prm(\"transform_1.translate\")");
+    translate->setExpression("prm(\"transform1.translate\")");
 
     REQUIRE(translate->evalFloat() == 1.0f);
 }
@@ -129,7 +129,7 @@ TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions 
     // The reader pulls the source's translate through an expression
     nt::NodeId reader = nm.createNode(transformNodeType());
     auto translate = nm.getNode(reader).getParameter("translate").lock();
-    translate->setExpression("prm(\"transform_1.translate\")");
+    translate->setExpression("prm(\"transform1.translate\")");
 
     // Evaluating once records the captured dependency, then cooking clears the
     // reader so the later source change is what dirties it
@@ -168,7 +168,7 @@ TEST_CASE_METHOD(NMReset, "PrmI reads another node's integer parameter")
     // A second node reads the source's rows through a path expression
     nt::NodeId reader = nm.createNode(gridNodeType());
     auto rows = nm.getNode(reader).getParameter("rows").lock();
-    rows->setExpression("prmI(\"grid_1.rows\")");
+    rows->setExpression("prmI(\"grid1.rows\")");
 
     REQUIRE(rows->evalInt() == 5);
 }
@@ -184,7 +184,7 @@ TEST_CASE_METHOD(NMReset, "PrmS reads another node's string parameter")
     // A second node reads the source's path through a path expression
     nt::NodeId reader = nm.createNode(pathNodeType());
     auto path = nm.getNode(reader).getParameter("path").lock();
-    path->setExpression("prmS(\"path_1.path\")");
+    path->setExpression("prmS(\"path1.path\")");
 
     REQUIRE(path->evalString() == "hello");
 }

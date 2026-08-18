@@ -89,7 +89,7 @@ QVariantList NetworkViewModel::getNodeTypes() const
 void NetworkViewModel::createNode(const QString& fullName, qreal x, qreal y)
 {
     const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
-    nt::nm().createNode(nodeType, "", {static_cast<float>(x), static_cast<float>(y)});
+    nt::nm().createNode(nodeType, Path("/"), "", {static_cast<float>(x), static_cast<float>(y)});
 }
 
 void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)

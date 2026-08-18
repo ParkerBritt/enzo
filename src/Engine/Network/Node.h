@@ -23,8 +23,10 @@ class Node
      * @param nodeType The data class informing the node what its properties
      * are that set it apart from other nodes. This is what makes a grid
      * node different to a transform node.
+     * @param path The full path locating the node, whose leaf is the node name.
+     * The nt::NetworkManager picks a path that is free within its parent.
      */
-    Node(enzo::nt::NodeId nodeId, const nt::NodeType& nodeType);
+    Node(enzo::nt::NodeId nodeId, const nt::NodeType& nodeType, const Path& path);
     virtual ~Node() = default;
     /// @brief Deleted copy constructor to avoid accidental copies.
     Node(const Node&) = delete;
@@ -72,13 +74,12 @@ class Node
     const std::vector<prm::Template>& getTemplates() const;
 
     /**
-     * @brief Returns the runtime name uniquely identifying this node within its scope (eg.
-     * "my_node_05")
+     * @brief Returns the runtime name uniquely identifying this node among its siblings (eg.
+     * "grid1")
      *
      * The name is the leaf of the node's path, not stored separately. Unlike the type name it is
-     * per node and is intended to be user assignable.
-     * @note The starting name is synthesized from the type name and node id as a placeholder.
-     * @todo implement uniqueness checked node names
+     * per node and is intended to be user assignable. Only nodes sharing a parent have to differ,
+     * so the same name can appear once in every scope.
      */
     std::string getName() const;
 

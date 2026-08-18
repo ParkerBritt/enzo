@@ -18,22 +18,21 @@ namespace enzo {
 
 nt::NodeId nt::NetworkManager::createNode(
     const nt::NodeType& nodeType,
-    const std::string& path,
+    const Path& parent,
+    const std::string& name,
     Vector2 position
 )
 {
+    if (!getScope(parent))
+        throw std::out_of_range("no scope at " + parent.getString() + " to create a node in\n");
 
-    NodeId nodeId = ++maxNodeId_;
+    // An unnamed node is numbered from its type name, so the first grid becomes "grid1"
+    Path path = parent.append(Path(name.empty() ? nodeType.internalName + "1" : name));
+    while (getNodeAtPath(path))
+        path = path.increment();
 
-    std::unique_ptr<Node> newNode = std::make_unique<Node>(maxNodeId_, nodeType);
-    newNode->setPosition(position);
-    if (!path.empty()) newNode->setPath(path);
-    newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
-        onNodeDirtied(nodeId, dirtyDependents);
-    });
-    nodeStore_.emplace(nodeId, std::move(newNode));
-
-    nodeCreated(nodeId);
+    NodeId nodeId = network_.reserveNodeId();
+    createNodeWithId(nodeId, nodeType, path, position);
 
     auto cmd = std::make_unique<CreateNodeCommand>(nodeId);
     undoStack_.push(std::move(cmd));
@@ -64,6 +63,11 @@ void nt::NetworkManager::deleteNode(NodeId nodeId)
     // Group the disconnects and the node removal into one atomic undo unit
     UndoTransaction transaction(undoStack_);
 
+    // A node holding a scope takes its contents with it. Children are recorded first
+    // so undo brings the container back before the nodes that live inside it.
+    for (NodeId child : getChildNodeIds(getNode(nodeId).getPath()))
+        deleteNode(child);
+
     // Disconnect first so the reconnects replay after the node is restored on undo
     disconnectNode(nodeId);
 
@@ -73,15 +77,19 @@ void nt::NetworkManager::deleteNode(NodeId nodeId)
     removeNode(nodeId, false);
 }
 
-void nt::NetworkManager::restoreNode(NodeId nodeId, const nt::NodeType& nodeType)
+void nt::NetworkManager::createNodeWithId(
+    NodeId nodeId,
+    const nt::NodeType& nodeType,
+    const Path& path,
+    Vector2 position
+)
 {
-    std::unique_ptr<Node> newNode = std::make_unique<Node>(nodeId, nodeType);
+    std::unique_ptr<Node> newNode = std::make_unique<Node>(nodeId, nodeType, path);
+    newNode->setPosition(position);
     newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
         onNodeDirtied(nodeId, dirtyDependents);
     });
-    nodeStore_.emplace(nodeId, std::move(newNode));
-
-    if (nodeId > maxNodeId_) maxNodeId_ = nodeId;
+    network_.addNode(nodeId, std::move(newNode));
 
     nodeCreated(nodeId);
 }
@@ -120,8 +128,7 @@ void nt::NetworkManager::removeNode(NodeId nodeId, bool removeConnections)
     // Signal before erasing so listeners can still query the node
     nodeRemoved(nodeId);
 
-    graph_.removeNode(nodeId);
-    nodeStore_.erase(nodeId);
+    network_.eraseNode(nodeId);
 }
 
 void nt::NetworkManager::disconnectNode(NodeId nodeId)
@@ -129,12 +136,12 @@ void nt::NetworkManager::disconnectNode(NodeId nodeId)
     if (!isValidNode(nodeId)) return;
 
     // getInputs and getOutputs return copies, so disconnecting while iterating is safe
-    for (const nt::Connection& connection : graph_.getInputs(nodeId))
+    for (const nt::Connection& connection : graph().getInputs(nodeId))
     {
         disconnectNodes(connection);
     }
 
-    for (const nt::Connection& connection : graph_.getOutputs(nodeId))
+    for (const nt::Connection& connection : graph().getOutputs(nodeId))
     {
         disconnectNodes(connection);
     }
@@ -146,35 +153,19 @@ nt::NetworkManager& nt::NetworkManager::getInstance()
     return instance;
 }
 
-nt::Node& nt::NetworkManager::getNode(nt::NodeId nodeId)
-{
-    auto it = nodeStore_.find(nodeId);
-    if (it == nodeStore_.end())
-    {
-        throw std::out_of_range(
-            "NodeId: " + std::to_string(nodeId) + " > max nodeId: " + std::to_string(maxNodeId_) +
-            "\n"
-        );
-    }
-    return *it->second;
-}
+nt::Node& nt::NetworkManager::getNode(nt::NodeId nodeId) { return network_.getNode(nodeId); }
 
 nt::Node* nt::NetworkManager::findNode(const NetworkPath& path, NodeId fromNode)
 {
     NetworkPath nodePath = path.getNode();
 
     // An empty node path names the node the lookup starts from.
-    if (nodePath.isEmpty())
-    {
-        auto found = nodeStore_.find(fromNode);
-        return found != nodeStore_.end() ? found->second.get() : nullptr;
-    }
+    if (nodePath.isEmpty()) return isValidNode(fromNode) ? &getNode(fromNode) : nullptr;
 
-    // The network is flat for now, so a node is found by matching its name.
-    const std::string name = nodePath.getName();
-    for (auto& [nodeId, node] : nodeStore_)
-        if (node->getName() == name) return node.get();
-    return nullptr;
+    // A relative path is read from the scope holding the asking node
+    Path anchor = isValidNode(fromNode) ? getNode(fromNode).getPath().getParent() : Path("/");
+
+    return getNodeAtPath(nodePath.makeAbsoluteFrom(anchor));
 }
 
 std::weak_ptr<prm::NodeParameter>
@@ -188,15 +179,7 @@ nt::NetworkManager::findParameter(const NetworkPath& path, NodeId fromNode)
     return node->getParameter(path.getParameter());
 }
 
-bool nt::NetworkManager::isValidNode(nt::NodeId nodeId)
-{
-    auto it = nodeStore_.find(nodeId);
-    if (it == nodeStore_.end() || it->second == nullptr)
-    {
-        return false;
-    }
-    return true;
-}
+bool nt::NetworkManager::isValidNode(nt::NodeId nodeId) { return network_.isValidNode(nodeId); }
 
 void nt::NetworkManager::setDisplayNode(NodeId nodeId)
 {
@@ -323,10 +306,8 @@ void nt::NetworkManager::setSelectedNodes(std::vector<nt::NodeId> nodeIds)
 
 void nt::NetworkManager::clear()
 {
-    nodeStore_.clear();
-    graph_.clear();
+    network_.clear();
     selectedNodes_.clear();
-    maxNodeId_ = 0;
     undoStack_.clear();
     clearDisplayFlag();
     clearPrimaryNode();
@@ -336,7 +317,7 @@ void nt::NetworkManager::clear()
 
 void nt::NetworkManager::cook(nt::NodeId nodeId)
 {
-    std::vector<nt::NodeId> cookOrder = graph_.getCookOrder(nodeId);
+    std::vector<nt::NodeId> cookOrder = graph().getCookOrder(nodeId);
 
     for (nt::NodeId cookNodeId : cookOrder)
     {
@@ -361,12 +342,12 @@ nt::Connection nt::NetworkManager::connectNodes(
     nt::Connection connection{inputNodeId, inputIndex, outputNodeId, outputIndex};
 
     // An input slot holds one connection, so replace whatever was there
-    if (auto existing = graph_.getInputConnection(outputNodeId, outputIndex))
+    if (auto existing = graph().getInputConnection(outputNodeId, outputIndex))
     {
         disconnectNodes(*existing);
     }
 
-    graph_.connect(connection);
+    graph().connect(connection);
     getNode(outputNodeId).dirtyNode();
     connectionCreated(connection);
 
@@ -393,7 +374,7 @@ void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
     );
     undoStack_.push(std::move(cmd));
 
-    graph_.disconnect(connection);
+    graph().disconnect(connection);
 
     // Only the downstream node goes stale, its input changed
     if (isValidNode(connection.targetNode))
@@ -410,7 +391,7 @@ void nt::NetworkManager::onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents)
 {
     if (dirtyDependents)
     {
-        std::vector<nt::Unit> dependents = graph_.getDependents(nt::Unit{nodeId});
+        std::vector<nt::Unit> dependents = graph().getDependents(nt::Unit{nodeId});
         for (const nt::Unit& dependent : dependents)
         {
             // Dirty dependent node
@@ -432,13 +413,8 @@ void nt::NetworkManager::_reset()
 {
     std::cout << "resetting network manager\n";
 
-    nodeStore_.clear();
-    graph_.clear();
-    maxNodeId_ = 0;
+    network_.clear();
     displayNode_.reset();
 }
-
-// std::unordered_map<nt::NodeId, std::unique_ptr<nt::Node>>
-// nt::NetworkManager::nodeStore_;
 
 } // namespace enzo
