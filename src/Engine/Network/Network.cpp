@@ -40,23 +40,23 @@ std::vector<nt::NodeId> nt::Network::getChildNodeIds(const Path& scope)
     return children;
 }
 
-void nt::Network::addNode(nt::NodeId nodeId, std::unique_ptr<Node> node)
+nt::Node& nt::Network::createNode(nt::NodeId nodeId, const nt::NodeType& nodeType, const Path& path)
 {
-    const nt::NodeType& nodeType = node->getType();
-    if (nodeType.hasChildScope()) addScope(node->getPath(), nodeType.childScopeType);
+    if (nodeType.hasChildScope()) createScope(path, nodeType.childScopeType);
 
-    nodes_.emplace(nodeId, std::move(node));
+    std::unique_ptr<Node>& storedNode = nodes_[nodeId];
+    storedNode = std::make_unique<Node>(nodeId, nodeType, path);
 
     if (nodeId > maxNodeId_) maxNodeId_ = nodeId;
+
+    return *storedNode;
 }
 
-void nt::Network::eraseNode(nt::NodeId nodeId)
+void nt::Network::deleteNode(nt::NodeId nodeId)
 {
     if (!isValidNode(nodeId)) return;
 
-    // Delete scope if it has one
-    eraseScope(getNode(nodeId).getPath());
-
+    deleteScope(getNode(nodeId).getPath());
     graph_.removeNode(nodeId);
     nodes_.erase(nodeId);
 }
@@ -67,12 +67,12 @@ nt::Scope* nt::Network::getScope(const Path& path)
     return found != scopes_.end() ? &found->second : nullptr;
 }
 
-void nt::Network::addScope(const Path& path, const std::string& scopeType)
+void nt::Network::createScope(const Path& path, const std::string& scopeType)
 {
     scopes_.emplace(path.getString(), Scope(path, scopeType));
 }
 
-void nt::Network::eraseScope(const Path& path) { scopes_.erase(path.getString()); }
+void nt::Network::deleteScope(const Path& path) { scopes_.erase(path.getString()); }
 
 void nt::Network::clear()
 {
@@ -82,7 +82,7 @@ void nt::Network::clear()
     maxNodeId_ = 0;
 
     // The root is where top level nodes live, so a network always has one
-    addScope(Path("/"), "geometry");
+    createScope(Path("/"), "geometry");
 }
 
 } // namespace enzo

@@ -22,7 +22,7 @@ class CreateNodeCommand : public UndoCommand
         path_ = node.getPath();
         position_ = node.getPosition();
 
-        nm().removeNode(nodeId_, false);
+        nm().deleteNode(nodeId_);
     }
 
     void redo() override

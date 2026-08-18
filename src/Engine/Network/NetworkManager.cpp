@@ -23,9 +23,6 @@ nt::NodeId nt::NetworkManager::createNode(
     Vector2 position
 )
 {
-    if (!getScope(parent))
-        throw std::out_of_range("no scope at " + parent.getString() + " to create a node in\n");
-
     // An unnamed node is numbered from its type name, so the first grid becomes "grid1"
     Path path = parent.append(Path(name.empty() ? nodeType.internalName + "1" : name));
     while (getNodeAtPath(path))
@@ -33,9 +30,6 @@ nt::NodeId nt::NetworkManager::createNode(
 
     NodeId nodeId = network_.reserveNodeId();
     createNodeWithId(nodeId, nodeType, path, position);
-
-    auto cmd = std::make_unique<CreateNodeCommand>(nodeId);
-    undoStack_.push(std::move(cmd));
 
     return nodeId;
 }
@@ -60,7 +54,7 @@ void nt::NetworkManager::deleteNode(NodeId nodeId)
 
     auto updateLock = lockUpdates();
 
-    // Group the disconnects and the node removal into one atomic undo unit
+    // Group everything this delete touches into one atomic undo unit
     UndoTransaction transaction(undoStack_);
 
     // A node holding a scope takes its contents with it. Children are recorded first
@@ -71,10 +65,18 @@ void nt::NetworkManager::deleteNode(NodeId nodeId)
     // Disconnect first so the reconnects replay after the node is restored on undo
     disconnectNode(nodeId);
 
-    // Record and remove the bare node last
     auto cmd = std::make_unique<DeleteNodeCommand>(nodeId);
     undoStack_.push(std::move(cmd));
-    removeNode(nodeId, false);
+
+    // Release the display, primary, and selection state pointing at this node
+    if (displayNode_ == nodeId) clearDisplayFlag();
+    if (primaryNode_ == nodeId) clearPrimaryNode();
+    setSelectedNode(nodeId, false, true);
+
+    // Signal before erasing so listeners can still query the node
+    nodeRemoved(nodeId);
+
+    network_.deleteNode(nodeId);
 }
 
 void nt::NetworkManager::createNodeWithId(
@@ -84,51 +86,20 @@ void nt::NetworkManager::createNodeWithId(
     Vector2 position
 )
 {
-    std::unique_ptr<Node> newNode = std::make_unique<Node>(nodeId, nodeType, path);
-    newNode->setPosition(position);
-    newNode->nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
+    const Path scope = path.getParent();
+    if (!getScope(scope))
+        throw std::out_of_range("no scope at " + scope.getString() + " to create a node in\n");
+
+    Node& node = network_.createNode(nodeId, nodeType, path);
+    node.setPosition(position);
+    node.nodeDirtied.connect([this](nt::NodeId nodeId, bool dirtyDependents) {
         onNodeDirtied(nodeId, dirtyDependents);
     });
-    network_.addNode(nodeId, std::move(newNode));
+
+    auto cmd = std::make_unique<CreateNodeCommand>(nodeId);
+    undoStack_.push(std::move(cmd));
 
     nodeCreated(nodeId);
-}
-
-void nt::NetworkManager::removeNode(NodeId nodeId, bool removeConnections)
-{
-    if (!isValidNode(nodeId)) return;
-
-    auto updateLock = lockUpdates();
-
-    if (removeConnections)
-    {
-        disconnectNode(nodeId);
-    }
-
-    // Clear display if this was the display node
-    if (displayNode_.has_value() && displayNode_.value() == nodeId)
-    {
-        displayNode_.reset();
-    }
-
-    // Clear primary if this was the primary node
-    if (primaryNode_.has_value() && primaryNode_.value() == nodeId)
-    {
-        clearPrimaryNode();
-    }
-
-    // Remove from selection
-    auto selIt = std::find(selectedNodes_.begin(), selectedNodes_.end(), nodeId);
-    if (selIt != selectedNodes_.end())
-    {
-        selectedNodes_.erase(selIt);
-        selectedNodesChanged(selectedNodes_);
-    }
-
-    // Signal before erasing so listeners can still query the node
-    nodeRemoved(nodeId);
-
-    network_.eraseNode(nodeId);
 }
 
 void nt::NetworkManager::disconnectNode(NodeId nodeId)
