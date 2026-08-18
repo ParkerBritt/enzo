@@ -1,11 +1,13 @@
 #pragma once
 #include "Engine/Core/Types.h"
+#include "Engine/Network/Network.h"
 #include "Engine/Network/Node.h"
+#include "Engine/Network/Scope.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
 #include "Engine/UndoRedo/UndoStack.h"
-#include <memory>
-#include <unordered_map>
+#include <optional>
+#include <vector>
 
 namespace enzo {
 class NetworkPath;
@@ -15,59 +17,24 @@ namespace enzo::nt {
 /**
  * @brief The central coordinator of the engine's node system.
  *
- * The network manager is the central coordinator of the engine’s node system.
- * It manages the lifecycle of nodes, including their creation, storage,
- * and validation, while also tracking dependencies between them. Acting
- * as a singleton, it ensures that all parts of the engine work with a single
- * consistent view of the network, providing global access. Beyond just storing
- * nodes, it also controls cooking and traversing dependency graphs,
- * ensuring that updates flow correctly through the network when nodes change.
+ * The manager owns one nt::Network and drives everything that happens to it. The
+ * network holds the nodes, the wiring, and the scopes, while the manager owns the
+ * lifecycle around them, so creating and deleting nodes, cooking, undo, selection,
+ * and the signals the interface listens to.
+ *
+ * Keeping the network a plain value means it can be handed straight to something
+ * that only needs to read it, such as the serializer.
+ *
+ * @note A singleton, so every part of the engine works against one network.
  */
 class NetworkManager
 {
   public:
-    /// @brief Iterable range over nodes, yields {NodeId, Node&} pairs.
-    class NodeRange
-    {
-        using Map = std::unordered_map<NodeId, std::unique_ptr<Node>>;
-        Map& map_;
-
-      public:
-        class Iterator
-        {
-            Map::iterator it_;
-
-          public:
-            using value_type = std::pair<const NodeId, Node&>;
-            using reference = value_type;
-            using difference_type = std::ptrdiff_t;
-            using iterator_category = std::forward_iterator_tag;
-
-            Iterator(Map::iterator it) : it_(it) {}
-            reference operator*() const { return {it_->first, *it_->second}; }
-            Iterator& operator++()
-            {
-                ++it_;
-                return *this;
-            }
-            Iterator operator++(int)
-            {
-                Iterator tmp = *this;
-                ++it_;
-                return tmp;
-            }
-            bool operator==(const Iterator& other) const { return it_ == other.it_; }
-            bool operator!=(const Iterator& other) const { return it_ != other.it_; }
-        };
-
-        NodeRange(Map& map) : map_(map) {}
-        Iterator begin() { return Iterator(map_.begin()); }
-        Iterator end() { return Iterator(map_.end()); }
-        std::size_t size() const { return map_.size(); }
-    };
+    /// @brief Returns the network holding every node, its wiring, and its scopes.
+    nt::Network& network() { return network_; }
 
     /// @brief Returns an iterable range over all nodes in the network.
-    NodeRange nodes() { return NodeRange(nodeStore_); }
+    auto nodes() { return network_.nodes(); }
 
     /// @brief Deleted the copy constructor for singleton.
     NetworkManager(const NetworkManager& obj) = delete;
@@ -76,13 +43,19 @@ class NetworkManager
     static NetworkManager& getInstance();
 
     /**
-     * @brief Creates a new node in the network
+     * @brief Creates a new node inside a scope.
+     *
+     * A node left unnamed takes the type name followed by the first free number, so the
+     * first grid placed in a scope becomes "grid1" and the next becomes "grid2". Only
+     * siblings have to differ, so each scope numbers its own nodes.
+     *
+     * @note The name is in place before the nodeCreated signal fires, so observers see the
+     * final name from the start.
      *
      * @param nodeType Data designating the properties of the node.
-     * @param path Optional explicit path for the node. When empty an
-     *             auto generated path is used. Supplying it here ensures the
-     *             path is in place before the nodeCreated signal fires, so
-     *             observers see the final name from the start.
+     * @param parent The scope to create the node inside. The root holds the top level nodes.
+     * @param name The name to give the node. Left empty a free one is picked, and a name
+     * already taken by a sibling has a number appended until it is free.
      * @param position Where the node sits in the network view.
      *
      * @return The node ID of the newly created node
@@ -91,9 +64,25 @@ class NetworkManager
      */
     NodeId createNode(
         const nt::NodeType& nodeType,
-        const std::string& path = "",
+        const Path& parent = Path("/"),
+        const std::string& name = "",
         Vector2 position = {0.f, 0.f}
     );
+
+    /// @brief Returns the node at an exact path, or null when no node is there.
+    /// @note Takes a resolved absolute path. findNode resolves a reference into one.
+    Node* getNodeAtPath(const Path& path) { return network_.getNodeAtPath(path); }
+
+    /// @brief Returns the scope at a path, or null when no scope sits there.
+    /// @note The root scope always exists, so getScope("/") never returns null.
+    Scope* getScope(const Path& path) { return network_.getScope(path); }
+
+    /// @brief Returns the ids of the nodes living directly inside a scope, in no particular order.
+    /// @note Nodes deeper inside a nested scope are not included.
+    std::vector<NodeId> getChildNodeIds(const Path& scope)
+    {
+        return network_.getChildNodeIds(scope);
+    }
 
     /** @brief Returns the node ID for the node with its display flag set.
      * There can only be only be one node displayed at a time.
@@ -197,17 +186,26 @@ class NetworkManager
     void removeNode(NodeId nodeId, bool removeConnections = true);
 
     /**
-     * @brief Restores a previously removed node with a specific NodeId.
+     * @brief Creates a node with an identity the caller dictates rather than one picked here.
      *
-     * @note This does not restore the state the node was in, only creates a new node with the given
-     * id.
-     * @todo maybe replace with createNodeWithId
+     * Every node enters the network here. createNode picks a free id and name and calls this,
+     * while undo brings a deleted node back with the id and path it had, since expressions
+     * reference nodes by name and a node returning under a new name would break them.
      *
-     * @param nodeId The node ID to restore.
-     * @param nodeType The node type to restore.
-     * @param position The position to restore the node at.
+     * @note Only the node itself is created, not the parameter values or connections it had.
+     * The undo commands restore those around this call.
+     *
+     * @param nodeId The node ID to give the node.
+     * @param nodeType The type of node to create.
+     * @param path The path to place the node at, whose leaf is the node name.
+     * @param position Where the node sits in the network view.
      */
-    void restoreNode(NodeId nodeId, const nt::NodeType& nodeType);
+    void createNodeWithId(
+        NodeId nodeId,
+        const nt::NodeType& nodeType,
+        const Path& path,
+        Vector2 position
+    );
 
     /**
      * @brief Clears all nodes and resets the network to its initial state.
@@ -221,7 +219,7 @@ class NetworkManager
     void cook(enzo::nt::NodeId nodeId);
 
     /// @brief Returns the graph that owns the network's wiring and dependencies.
-    nt::NetworkGraph& graph() { return graph_; }
+    nt::NetworkGraph& graph() { return network_.graph(); }
 
     /// @brief Wires one node's output into another node's input.
     /// @return The connection that was created.
@@ -236,14 +234,21 @@ class NetworkManager
     /// @brief Removes a wired connection between two nodes.
     void disconnectNodes(const nt::Connection& connection);
 
-    /// @brief Resolves a node reference to its node.
-    /// @param path A node path such as "grid_1". An empty node path resolves to @p fromNode.
-    /// @param fromNode The node a relative path resolves against, nullNode when there is none.
-    /// @return The node, or null when no node matches the path.
+    /**
+     * @brief Resolves a node reference to its node.
+     *
+     * A relative path is read from the scope holding @p fromNode, so a bare name finds a
+     * sibling and ".." steps out to the scope above.
+     *
+     * @param path A node path such as "grid1", "../grid1", or "/grid1". An empty node path
+     * resolves to @p fromNode itself.
+     * @param fromNode The node a relative path resolves against, nullNode when there is none.
+     * @return The node, or null when no node matches the path.
+     */
     Node* findNode(const NetworkPath& path, NodeId fromNode = nullNode);
 
     /// @brief Resolves a parameter reference to its parameter.
-    /// @param path A parameter path such as "grid_1.tx".
+    /// @param path A parameter path such as "grid1.tx".
     /// @param fromNode The node a path with no node part resolves against, nullNode when there is
     /// none.
     /// @return The parameter, or an empty handle when nothing matches.
@@ -312,17 +317,13 @@ class NetworkManager
     void onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents);
 
     // variables
-    // store for geometry nodes
+    // every node, its wiring, and the scopes they live in
+    nt::Network network_;
     std::vector<enzo::nt::NodeId> selectedNodes_;
-    std::unordered_map<enzo::nt::NodeId, std::unique_ptr<enzo::nt::Node>> nodeStore_;
-    // the highest node id currently stored
-    enzo::nt::NodeId maxNodeId_ = 0;
     // node selected for displaying in the viewport
     std::optional<NodeId> displayNode_ = std::nullopt;
     // the primary node that drives the parameter and geometry panes
     std::optional<NodeId> primaryNode_ = std::nullopt;
-    // owns the network's wiring and dependencies
-    nt::NetworkGraph graph_;
 
     UndoStack undoStack_;
 };

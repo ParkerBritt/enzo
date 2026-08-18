@@ -5,7 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 # set exec names
 set(AppExec enzoGui)
-set(LegacyAppExec enzoLegacyGui)
 set(TestExec tests)
 set(BenchExec bench)
 set(CMAKE_AUTORCC ON)
@@ -24,6 +23,7 @@ set(ENGINE_SOURCES
     src/Engine/Primitives/Camera.cpp
     src/Engine/Selection/PrimPath.cpp
     src/Engine/Core/Path.cpp
+    src/Engine/Network/Network.cpp
     src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/Node.cpp
@@ -56,62 +56,6 @@ set(ENGINE_SOURCES
     src/Engine/Util/UnionFind.cpp
 )
 
-set(GUI_SOURCES
-    static/resources.qrc
-    src/LegacyGui/main.cpp
-    src/LegacyGui/Interface.cpp
-    src/LegacyGui/IconRegistry.cpp
-    src/LegacyGui/Icons/Builtin.cpp
-    src/LegacyGui/UtilWidgets/Splitter.cpp
-    src/LegacyGui/UtilWidgets/BoolSwitch.cpp
-    src/LegacyGui/UtilWidgets/Slider.cpp
-    src/LegacyGui/UtilWidgets/Ramp.cpp
-    src/LegacyGui/UtilWidgets/PopupList.cpp
-    src/LegacyGui/UtilWidgets/Menu.cpp
-    src/LegacyGui/UtilWidgets/MenuBar.cpp
-    src/LegacyGui/UtilWidgets/Dropdown.cpp
-    src/LegacyGui/UtilWidgets/IconButton.cpp
-    src/LegacyGui/GeometrySpreadsheetPanel/GeometrySpreadsheetPanel.cpp
-    src/LegacyGui/GeometrySpreadsheetPanel/GeometrySpreadsheetMenuBar.cpp
-    src/LegacyGui/GeometrySpreadsheetPanel/AttributeSpreadsheetModel.cpp
-    src/LegacyGui/GeometrySpreadsheetPanel/PrimitiveTreeModel.cpp
-    src/LegacyGui/GeometrySpreadsheetPanel/PrimitiveTreeItem.cpp
-    src/LegacyGui/Viewport/Viewport.cpp
-    src/LegacyGui/Viewport/ViewportGLWidget.cpp
-    src/LegacyGui/Viewport/GLCamera.cpp
-    src/LegacyGui/Viewport/GLMesh.cpp
-    src/LegacyGui/Viewport/GLGrid.cpp
-    src/LegacyGui/Viewport/GLPoints.cpp
-    src/LegacyGui/Viewport/GLCameraPrim.cpp
-    src/LegacyGui/Viewport/ViewportOverlay.cpp
-    src/LegacyGui/Network/NetworkGraphicsView.cpp
-    src/LegacyGui/Network/NetworkGraphicsScene.cpp
-    src/LegacyGui/Network/NetworkPanel.cpp
-    src/LegacyGui/Network/NodeGraphic.cpp
-    src/LegacyGui/Network/SocketGraphic.cpp
-    src/LegacyGui/Network/NodeEdgeGraphic.cpp
-    src/LegacyGui/Network/FloatingEdgeGraphic.cpp
-    src/LegacyGui/Network/DisplayFlagButton.cpp
-    src/LegacyGui/Network/NodeIconGraphic.cpp
-    src/LegacyGui/Network/TabMenu.cpp
-    src/LegacyGui/ParametersPanel/ParametersPanel.cpp
-    src/LegacyGui/Parameters/Parameter.cpp
-    src/LegacyGui/Parameters/FloatSliderParm.cpp
-    src/LegacyGui/Parameters/IntSliderParm.cpp
-    src/LegacyGui/Parameters/BoolSwitchParm.cpp
-    src/LegacyGui/Parameters/BoolIconParm.cpp
-    src/LegacyGui/Parameters/BoolIconSlashParm.cpp
-    src/LegacyGui/Parameters/BoolParm.cpp
-    src/LegacyGui/Parameters/XYZParm.cpp
-    src/LegacyGui/Parameters/RampParm.cpp
-    src/LegacyGui/Parameters/StringParm.cpp
-    src/LegacyGui/Parameters/DropdownParm.cpp
-    src/LegacyGui/Parameters/GroupParm.cpp
-    src/LegacyGui/Parameters/SpacerParm.cpp
-    src/LegacyGui/HeaderBar/HeaderBar.cpp
-    src/LegacyGui/Panels/Panel.cpp
-    src/LegacyGui/Panels/CornerOverlay.cpp
-)
 set(ENGINE_INCLUDE_DIRECTORIES
     src
     extern/icecream-cpp/include
@@ -181,6 +125,10 @@ set(DAS_DASLIB_DIR "${DASLANG_DIR}/daslib")
 # Dev builds stage into build/enzo so the layout mirrors the installed package.
 set(ENZO_DEV_STAGE_DIR "${CMAKE_BINARY_DIR}/enzo")
 
+# daslib sits beside the staged bin directory so daslang resolves its standard
+# library the same way it does from an install.
+file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
+
 # daslang is built without RTTI, so the files that subclass its types match it.
 # Otherwise their typeinfo references daslang symbols that were never emitted.
 set_source_files_properties(
@@ -203,21 +151,6 @@ target_compile_definitions(enzoEngine PRIVATE
 
 
 
-# legacy widgets application
-qt_add_executable(${LegacyAppExec}
-    ${GUI_SOURCES}
-)
-
-target_compile_definitions(${LegacyAppExec} PRIVATE ENZO_DEV_ICONS_DIR="${CMAKE_SOURCE_DIR}/static/icons")
-
-# Stage enzo/bin with daslib as its sibling so dev mirrors the package layout.
-set_target_properties(${LegacyAppExec} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
-)
-file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
-
-# TODO: turn this on when ready to handle incomplete enums
-# target_compile_options(${LegacyAppExec} PRIVATE -Werror=switch)
 
 
 # QML application
@@ -352,7 +285,7 @@ set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directo
 set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
 
 
-set_target_properties(${AppExec} ${LegacyAppExec} PROPERTIES
+set_target_properties(${AppExec} PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
 )
 
@@ -361,7 +294,7 @@ include(CPack)
 # cpack_add_component("runtimes")
 # cpack_add_component("tgz-runtimes")
 
-install(TARGETS ${AppExec} ${LegacyAppExec} enzoEngine
+install(TARGETS ${AppExec} enzoEngine
     RUNTIME DESTINATION ${ENZO_BIN_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
@@ -440,10 +373,6 @@ install(DIRECTORY ${DAS_DASLIB_DIR}
 # --- end packaging
 
 
-target_link_libraries(${LegacyAppExec} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript)
-target_include_directories(${LegacyAppExec} PUBLIC
-    ${ENGINE_INCLUDE_DIRECTORIES}
-)
 
 # compile nodes
 add_subdirectory(nodes)

@@ -229,6 +229,7 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     nodeType.tags = readTags(document["tags"]);
     nodeType.iconPath = readString(document, "icon");
     nodeType.docsPath = readString(document, "docs");
+    nodeType.childScopeType = readString(document, "childScopeType");
 
     // Counts left out of the manifest keep the one input one output shape a
     // NodeType starts with.

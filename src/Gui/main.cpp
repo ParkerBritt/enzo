@@ -74,7 +74,12 @@ void buildSampleNetwork()
 
     auto& network = enzo::nt::nm();
     auto create = [&](const char* fullName, enzo::Vector2 position) {
-        return network.createNode(enzo::nt::NodeTypeTable::requireNodeType(fullName), "", position);
+        return network.createNode(
+            enzo::nt::NodeTypeTable::requireNodeType(fullName),
+            enzo::Path("/"),
+            "",
+            position
+        );
     };
 
     const enzo::nt::NodeId gridId = create("enzo::grid", {0.f, 0.f});

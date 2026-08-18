@@ -24,6 +24,7 @@ class DeleteNodeCommand : public UndoCommand
     {
         Node& node = nm().getNode(nodeId_);
         typeName_ = node.getType().getFullName();
+        path_ = node.getPath();
         position_ = node.getPosition();
 
         // Save parms
@@ -40,12 +41,14 @@ class DeleteNodeCommand : public UndoCommand
     void undo() override
     {
         // Restore node
-        nm().restoreNode(nodeId_, nt::NodeTypeTable::requireNodeType(typeName_));
+        nm().createNodeWithId(
+            nodeId_,
+            nt::NodeTypeTable::requireNodeType(typeName_),
+            path_,
+            position_
+        );
 
         Node& node = nm().getNode(nodeId_);
-
-        // Restore position
-        nm().moveNode(nodeId_, position_, true);
 
         // Restore parms
         for (const auto& saved : savedParms_)
@@ -64,6 +67,7 @@ class DeleteNodeCommand : public UndoCommand
   private:
     NodeId nodeId_;
     std::string typeName_;
+    Path path_;
     Vector2 position_;
     std::vector<SavedParameter> savedParms_;
 };

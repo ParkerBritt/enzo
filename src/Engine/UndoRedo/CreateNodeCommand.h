@@ -19,6 +19,7 @@ class CreateNodeCommand : public UndoCommand
     {
         Node& node = nm().getNode(nodeId_);
         typeName_ = node.getType().getFullName();
+        path_ = node.getPath();
         position_ = node.getPosition();
 
         nm().removeNode(nodeId_, false);
@@ -26,12 +27,12 @@ class CreateNodeCommand : public UndoCommand
 
     void redo() override
     {
-        // Restore node
-        nm().restoreNode(nodeId_, nt::NodeTypeTable::requireNodeType(typeName_));
-
-        // Restore position
-        Node& node = nm().getNode(nodeId_);
-        nm().moveNode(nodeId_, position_, true);
+        nm().createNodeWithId(
+            nodeId_,
+            nt::NodeTypeTable::requireNodeType(typeName_),
+            path_,
+            position_
+        );
     }
 
     UndoCommandType type() const override { return UndoCommandType::CreateNode; }
@@ -39,6 +40,7 @@ class CreateNodeCommand : public UndoCommand
   private:
     NodeId nodeId_;
     std::string typeName_;
+    Path path_;
     Vector2 position_;
 };
 
