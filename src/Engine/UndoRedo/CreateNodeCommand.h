@@ -14,7 +14,7 @@ class CreateNodeCommand : public UndoCommand
 
     void undo() override
     {
-        snapshot_ = NodeSnapshot::capture(nodeId_);
+        snapshot_ = NodeSnapshot::capture(nm().getNode(nodeId_));
         nm().deleteNode(nodeId_);
     }
 

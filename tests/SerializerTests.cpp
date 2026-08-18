@@ -35,6 +35,15 @@ struct NodeTypeTableInit
 };
 static NodeTypeTableInit _nodeTypeTableInit;
 
+// A node type that holds a scope. No shipped node has one, so the nested round trip
+// declares its own and registers it in the table, where load looks the type up by name.
+const enzo::nt::NodeType& scopedNodeType = enzo::nt::NodeTypeTable::addNodeType([] {
+    enzo::nt::NodeType nodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
+    nodeType.internalName = "scopedContainer";
+    nodeType.childScopeType = "geometry";
+    return nodeType;
+}());
+
 } // namespace
 
 TEST_CASE("A flat parameter round trips through the serializable model")
@@ -182,4 +191,25 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
     std::vector<nt::Connection> inputs = nm.graph().getInputs(loadedTransform.value());
     REQUIRE(inputs.size() == 1);
     REQUIRE(inputs[0].sourceNode == loadedGrid.value());
+}
+
+TEST_CASE_METHOD(NMReset, "A node inside a scope round trips through save and load")
+{
+    auto& nm = nt::nm();
+
+    nt::NodeId container = nm.createNode(scopedNodeType);
+    const Path containerPath = nm.getNode(container).getPath();
+    nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"), containerPath);
+
+    const std::string path = "/tmp/enzo_serializer_scope_roundtrip.json";
+    nt::Serializer serializer;
+    serializer.save(nm.network(), path);
+
+    nm._reset();
+    serializer.load(nm, path);
+
+    // The container has to come back before the node living in it, or there is no
+    // scope to place that node in.
+    REQUIRE(nm.getScope(containerPath) != nullptr);
+    REQUIRE(nm.getChildNodeIds(containerPath).size() == 1);
 }

@@ -1,11 +1,11 @@
+#include "Engine/Network/NodeSnapshot.h"
 #include "Engine/Serializer/ConnectionSerializable.h"
-#include "Engine/Serializer/NodeSerializable.h"
 #include <cereal/types/vector.hpp>
 #include <vector>
 
 struct NetworkSerializable
 {
-    std::vector<NodeSerializable> nodes;
+    std::vector<enzo::nt::NodeSnapshot> nodes;
     std::vector<ConnectionSerializable> connections;
 
     template <class Archive> void serialize(Archive& ar)
