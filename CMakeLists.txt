@@ -27,6 +27,7 @@ set(ENGINE_SOURCES
     src/Engine/Network/NetworkPath.cpp
     src/Engine/Network/NodePacket.cpp
     src/Engine/Network/Node.cpp
+    src/Engine/Network/NodeSnapshot.cpp
     src/Engine/Network/NodeImpl.cpp
     src/Engine/Network/NodeLoader.cpp
     src/Engine/Network/NodeManifest.cpp
