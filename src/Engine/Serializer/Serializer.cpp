@@ -1,5 +1,6 @@
 #include "Engine/Serializer/Serializer.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NodeSnapshot.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/NetworkSerializable.h"
@@ -131,19 +132,7 @@ void Serializer::save(Network& network, std::string filePath)
     for (auto [nodeId, node] : nodes)
     {
         nodeIdToIndex[nodeId] = index++;
-
-        NodeSerializable nodeModel;
-        nodeModel.typeName = node.getType().getFullName();
-        nodeModel.path = node.getPath().getString();
-        nodeModel.posX = node.getPosition().x();
-        nodeModel.posY = node.getPosition().y();
-
-        for (auto weakPrm : node.getParameters())
-        {
-            if (auto prm = weakPrm.lock()) nodeModel.parameters.push_back(toSerializable(*prm));
-        }
-
-        networkModel.nodes.push_back(nodeModel);
+        networkModel.nodes.push_back(NodeSnapshot::capture(node));
     }
 
     // Serialize connections (collect from output side to avoid duplicates)
@@ -182,8 +171,8 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
         creationOrder.begin(),
         creationOrder.end(),
         [&networkModel](unsigned int leftIndex, unsigned int rightIndex) {
-            const std::size_t leftDepth = Path(networkModel.nodes[leftIndex].path).split().size();
-            const std::size_t rightDepth = Path(networkModel.nodes[rightIndex].path).split().size();
+            const std::size_t leftDepth = networkModel.nodes[leftIndex].getPath().split().size();
+            const std::size_t rightDepth = networkModel.nodes[rightIndex].getPath().split().size();
             return leftDepth < rightDepth;
         }
     );
@@ -193,23 +182,9 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
 
     for (unsigned int nodeIndex : creationOrder)
     {
-        const NodeSerializable& nodeModel = networkModel.nodes[nodeIndex];
-        const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(nodeModel.typeName);
-        const Path savedPath(nodeModel.path);
-        nt::NodeId id = nm().createNode(
-            nodeType,
-            savedPath.getParent(),
-            savedPath.getName(),
-            {nodeModel.posX, nodeModel.posY}
-        );
-        nodeIds[nodeIndex] = id;
-
-        auto& node = networkManager.getNode(id);
-        for (const ParameterSerializable& prmModel : nodeModel.parameters)
-        {
-            auto weakPrm = node.getParameter(prmModel.name);
-            if (auto prm = weakPrm.lock()) applySerializable(*prm, prmModel);
-        }
+        nt::NodeId nodeId = networkManager.network().reserveNodeId();
+        networkModel.nodes[nodeIndex].restore(nodeId);
+        nodeIds[nodeIndex] = nodeId;
     }
 
     // Recreate connections

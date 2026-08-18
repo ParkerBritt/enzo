@@ -71,3 +71,48 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
     REQUIRE(amplitude->getInstanceCount() == 3);
     REQUIRE(amplitude->getInstanceField(2, "position")->evalFloat() == 0.5f);
 }
+
+TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores a parameter expression")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+
+    auto frequency = networkManager.getNode(nodeId).getParameter("frequency").lock();
+    REQUIRE(frequency);
+
+    frequency->setExpression("2 + 3");
+    REQUIRE(frequency->evalFloat() == 5);
+
+    networkManager.deleteNode(nodeId);
+    networkManager.undoStack().undo();
+
+    // The node returns under the id it had, so the same handle finds it again.
+    auto restored = networkManager.getNode(nodeId).getParameter("frequency").lock();
+    REQUIRE(restored);
+    REQUIRE(restored->getExpression() == "2 + 3");
+    REQUIRE(restored->evalFloat() == 5);
+}
+
+TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores added ramp control points")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+
+    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
+    REQUIRE(amplitude);
+
+    // A third control point, one past the linear zero to one default.
+    amplitude->addInstance();
+    amplitude->getInstanceField(2, "position")->setFloat(0.5f);
+    REQUIRE(amplitude->getInstanceCount() == 3);
+
+    networkManager.deleteNode(nodeId);
+    networkManager.undoStack().undo();
+
+    auto restored = networkManager.getNode(nodeId).getParameter("amplitude").lock();
+    REQUIRE(restored);
+    REQUIRE(restored->getInstanceCount() == 3);
+    REQUIRE(restored->getInstanceField(2, "position")->evalFloat() == 0.5f);
+}

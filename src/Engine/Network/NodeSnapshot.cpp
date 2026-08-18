@@ -5,10 +5,8 @@
 
 namespace enzo {
 
-nt::NodeSnapshot nt::NodeSnapshot::capture(nt::NodeId nodeId)
+nt::NodeSnapshot nt::NodeSnapshot::capture(nt::Node& node)
 {
-    Node& node = nm().getNode(nodeId);
-
     NodeSnapshot snapshot;
     snapshot.typeName_ = node.getType().getFullName();
     snapshot.path_ = node.getPath();

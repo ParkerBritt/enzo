@@ -10,7 +10,10 @@ namespace enzo::nt {
 class DeleteNodeCommand : public UndoCommand
 {
   public:
-    DeleteNodeCommand(NodeId nodeId) : nodeId_(nodeId), snapshot_(NodeSnapshot::capture(nodeId)) {}
+    DeleteNodeCommand(NodeId nodeId)
+        : nodeId_(nodeId), snapshot_(NodeSnapshot::capture(nm().getNode(nodeId)))
+    {
+    }
 
     void undo() override { snapshot_.restore(nodeId_); }
 
