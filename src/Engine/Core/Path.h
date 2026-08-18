@@ -38,14 +38,16 @@ class Path
     /**
      * @brief Runs every validation check and returns true if the path is fully valid.
      *
-     * A path is valid when it is non empty and every component is a valid name.
-     * The root path "/" is also valid.
+     * A path is valid when it is non empty and every component is either a valid
+     * name or the ".." step that walks up to a parent. The root path "/" is also
+     * valid.
      *
      * Examples
-     *   "/geo/mesh_01" valid
-     *   "geo/mesh"     valid relative path
-     *   "/geo//mesh"   invalid empty component
-     *   "/geo/me!sh"   invalid illegal character
+     *   "/assets/mesh_01" valid
+     *   "assets/mesh"     valid relative path
+     *   "../mesh"         valid step up to a sibling
+     *   "/assets//mesh"   invalid empty component
+     *   "/assets/me!sh"   invalid illegal character
      *
      * @see isValidName for the per component character rules.
      */
@@ -84,6 +86,9 @@ class Path
      * @see isValidName for the per component character rules.
      */
     static bool isValidFormatting(const std::string& pathString);
+
+    /// @brief Checks whether a single path component is a name or the ".." parent step.
+    static bool isValidComponent(const std::string& component);
 
     /**
      * @brief Checks the given name to make sure it fits the alphanumeric guidelines.
@@ -144,6 +149,26 @@ class Path
      * @returns A Path object of the new relative path.
      */
     Path makeRelativeTo(const Path& anchor) const;
+
+    /**
+     * @brief Returns the absolute path this one names when read from an anchor.
+     *
+     * A relative path joins onto the anchor and an absolute path ignores it. Either
+     * way every ".." step is collapsed, so the result names a location directly.
+     *
+     * E.g. against the anchor "/assets/component"
+     *   "mesh"              becomes "/assets/component/mesh"
+     *   "../mesh"           becomes "/assets/mesh"
+     *   "/assets/mesh"      stays   "/assets/mesh"
+     *
+     * @note A ".." at the root has nowhere to go and stays at the root.
+     *
+     * @param anchor The absolute path a relative path is read from.
+     *
+     * @returns The resolved absolute path, or an empty Path when the anchor cannot
+     * anchor a relative path because it is not itself absolute.
+     */
+    Path makeAbsoluteFrom(const Path& anchor) const;
 
     /**
      * @brief Checks if the Path has any additional prefixes.

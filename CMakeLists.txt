@@ -272,6 +272,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/PopupList.qml
         src/Gui/Components/Dropdown.qml
         src/Gui/Components/Stepper.qml
+        src/Gui/Components/Tooltip.qml
         src/Gui/Components/PlaceholderDialog.qml
         src/Gui/Components/ParameterClipboard.qml
         src/Gui/Components/ParameterContextMenu.qml

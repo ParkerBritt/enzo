@@ -83,6 +83,10 @@ TEST_CASE("pathManipulation")
     REQUIRE(appendedPath.getString() == "/abs/path/to/object/subcomponent/leaf");
     REQUIRE(basicPath.append("subcomponent").getString() == "/abs/path/to/object/subcomponent");
 
+    // The root carries its own delimiter so appending to it does not double up
+    REQUIRE(Path("/").append("leaf").getString() == "/leaf");
+    REQUIRE(Path("/").append("branch/leaf").getString() == "/branch/leaf");
+
     // incrementing names
     Path mesh = "/geo/mesh";
     Path leaf = "mesh/leaf11";
@@ -110,4 +114,51 @@ TEST_CASE("nodes")
 
     REQUIRE(pathA == pathB);
     REQUIRE(pathA != pathC);
+}
+
+TEST_CASE("A parent step is a valid path component")
+{
+    using namespace enzo;
+
+    REQUIRE(Path("../mesh").isValid());
+    REQUIRE(Path("/assets/../mesh").isValid());
+    REQUIRE(Path("..").isValid());
+
+    // The step is only valid as a whole component, never as part of a name
+    REQUIRE(!Path("/assets/..mesh").isValid());
+    REQUIRE(!Path("/assets/mesh..").isValid());
+
+    // A name still rejects the step, so a node can never be called ".."
+    REQUIRE(!Path::isValidName(".."));
+    REQUIRE(Path::isValidComponent(".."));
+}
+
+TEST_CASE("A path resolves to an absolute location against an anchor")
+{
+    using namespace enzo;
+
+    Path anchor = "/assets/component";
+
+    // A relative path joins onto the anchor
+    REQUIRE(Path("mesh").makeAbsoluteFrom(anchor) == "/assets/component/mesh");
+    REQUIRE(Path("inner/mesh").makeAbsoluteFrom(anchor) == "/assets/component/inner/mesh");
+
+    // A parent step walks back up before the rest of the path is applied
+    REQUIRE(Path("../mesh").makeAbsoluteFrom(anchor) == "/assets/mesh");
+    REQUIRE(Path("../../mesh").makeAbsoluteFrom(anchor) == "/mesh");
+    REQUIRE(Path("..").makeAbsoluteFrom(anchor) == "/assets");
+
+    // An absolute path ignores the anchor but still collapses its own steps
+    REQUIRE(Path("/assets/mesh").makeAbsoluteFrom(anchor) == "/assets/mesh");
+    REQUIRE(Path("/assets/component/../mesh").makeAbsoluteFrom(anchor) == "/assets/mesh");
+
+    // An empty path names the anchor itself
+    REQUIRE(Path().makeAbsoluteFrom(anchor) == "/assets/component");
+
+    // Stepping past the root has nowhere to go and stays at the root
+    REQUIRE(Path("../../../../mesh").makeAbsoluteFrom(anchor) == "/mesh");
+    REQUIRE(Path("..").makeAbsoluteFrom(Path("/")) == "/");
+
+    // A relative anchor cannot anchor anything
+    REQUIRE(Path("mesh").makeAbsoluteFrom(Path("assets")).isEmpty());
 }

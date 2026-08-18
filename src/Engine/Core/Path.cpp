@@ -54,6 +54,11 @@ bool enzo::Path::isValidName(const std::string& name)
     return true;
 }
 
+bool enzo::Path::isValidComponent(const std::string& component)
+{
+    return component == ".." || isValidName(component);
+}
+
 bool enzo::Path::isValidFormatting(const std::string& pathString)
 {
     if (pathString.empty()) return false;
@@ -74,7 +79,7 @@ bool enzo::Path::isValidFormatting(const std::string& pathString)
         size_t slashPos = remaining.find('/');
         std::string_view pathComponent = remaining.substr(0, slashPos);
 
-        if (!isValidName(std::string(pathComponent))) return false;
+        if (!isValidComponent(std::string(pathComponent))) return false;
 
         if (slashPos == std::string_view::npos) break;
 
@@ -164,6 +169,9 @@ enzo::Path enzo::Path::append(const enzo::Path& path) const
     // Drop the appended path's root delimiter so it joins as a relative segment
     std::string appendedPath = path.isAbsolute() ? path.getString().substr(1) : path.getString();
 
+    // The root already ends in the delimiter, so joining adds nothing
+    if (isRoot()) return enzo::Path("/" + appendedPath);
+
     return enzo::Path(path_ + "/" + appendedPath);
 }
 
@@ -214,6 +222,28 @@ enzo::Path enzo::Path::makeRelativeTo(const enzo::Path& anchor) const
     std::string relative = path_.substr(anchorStr.size());
 
     return enzo::Path(relative);
+}
+
+enzo::Path enzo::Path::makeAbsoluteFrom(const enzo::Path& anchor) const
+{
+    // An absolute path already names its location and only needs its steps collapsed
+    Path joined = isAbsolute() ? *this : anchor.append(*this);
+
+    if (!joined.isAbsolute()) return Path();
+
+    std::vector<std::string> resolved;
+    for (const std::string& component : joined.split())
+    {
+        if (component != "..")
+            resolved.push_back(component);
+        else if (!resolved.empty())
+            resolved.pop_back();
+    }
+
+    std::string absolutePath;
+    for (const std::string& component : resolved) absolutePath += "/" + component;
+
+    return absolutePath.empty() ? Path("/") : Path(absolutePath);
 }
 
 bool enzo::Path::hasPrefix(const Path& prefix) const

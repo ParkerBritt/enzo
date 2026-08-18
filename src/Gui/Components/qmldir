@@ -1,1 +1,2 @@
 singleton ParameterClipboard ParameterClipboard.qml
+Tooltip Tooltip.qml
