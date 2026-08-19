@@ -85,4 +85,28 @@ void nt::Network::clear()
     createScope(Path("/"), "geometry");
 }
 
+nt::Node* nt::Network::findNode(const NetworkPath& path, NodeId fromNode)
+{
+    NetworkPath nodePath = path.getNode();
+
+    // An empty node path names the node the lookup starts from.
+    if (nodePath.isEmpty()) return isValidNode(fromNode) ? &getNode(fromNode) : nullptr;
+
+    // A relative path is read from the scope holding the asking node
+    Path anchor = isValidNode(fromNode) ? getNode(fromNode).getPath().getParent() : Path("/");
+
+    return getNodeAtPath(nodePath.makeAbsoluteFrom(anchor));
+}
+
+std::weak_ptr<prm::NodeParameter>
+nt::Network::findParameter(const NetworkPath& path, NodeId fromNode)
+{
+    if (!path.hasParameter()) return {};
+
+    Node* node = findNode(path, fromNode);
+    if (!node) return {};
+
+    return node->getParameter(path.getParameter());
+}
+
 } // namespace enzo

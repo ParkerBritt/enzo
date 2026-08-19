@@ -229,26 +229,20 @@ class NetworkManager
     /// @brief Removes a wired connection between two nodes.
     void disconnectNodes(const nt::Connection& connection);
 
-    /**
-     * @brief Resolves a node reference to its node.
-     *
-     * A relative path is read from the scope holding @p fromNode, so a bare name finds a
-     * sibling and ".." steps out to the scope above.
-     *
-     * @param path A node path such as "grid1", "../grid1", or "/grid1". An empty node path
-     * resolves to @p fromNode itself.
-     * @param fromNode The node a relative path resolves against, nullNode when there is none.
-     * @return The node, or null when no node matches the path.
-     */
-    Node* findNode(const NetworkPath& path, NodeId fromNode = nullNode);
+    /// @brief Resolves a node reference such as "grid1" or "../grid1" to its node.
+    /// @note A relative path is read from the scope holding @p fromNode.
+    Node* findNode(const NetworkPath& path, NodeId fromNode = nullNode)
+    {
+        return network_.findNode(path, fromNode);
+    }
 
-    /// @brief Resolves a parameter reference to its parameter.
-    /// @param path A parameter path such as "grid1.tx".
-    /// @param fromNode The node a path with no node part resolves against, nullNode when there is
-    /// none.
-    /// @return The parameter, or an empty handle when nothing matches.
+    /// @brief Resolves a parameter reference such as "grid1.tx" to its parameter.
+    /// @note A path with no node part resolves against @p fromNode.
     std::weak_ptr<prm::NodeParameter>
-    findParameter(const NetworkPath& path, NodeId fromNode = nullNode);
+    findParameter(const NetworkPath& path, NodeId fromNode = nullNode)
+    {
+        return network_.findParameter(path, fromNode);
+    }
 
     /** @name Signals
      * @{
