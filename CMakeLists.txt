@@ -410,8 +410,12 @@ if(ENZO_BUILD_TESTS)
         tests/NodeLoaderTests.cpp
         tests/GeometryImportTests.cpp
         tests/TransformNodeTests.cpp
+        tests/ParameterItemTests.cpp
+        src/Gui/Parameters/ParameterItem.cpp
     )
-    target_link_libraries(${TestExec} PRIVATE enzoEngine Catch2::Catch2WithMain)
+    set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
+    target_link_libraries(${TestExec} PRIVATE enzoEngine Qt6::Core Catch2::Catch2WithMain)
+    target_include_directories(${TestExec} PRIVATE src)
 
     # Stage the test binary next to daslib so daslang resolves its standard
     # library the same way the app does.

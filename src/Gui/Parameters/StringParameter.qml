@@ -22,7 +22,12 @@ Rectangle {
         color: Theme.var.text
         font.family: Theme.var.fontSans
         font.pixelSize: 12
-        onEditingFinished: if (parameter.item) parameter.item.value = text
+        onEditingFinished: {
+            if (!parameter.item) return;
+            parameter.item.beginEdit();
+            parameter.item.value = text;
+            parameter.item.commitEdit();
+        }
         onAccepted: focus = false
         Keys.onEscapePressed: {
             text = parameter.item ? parameter.item.value : "";

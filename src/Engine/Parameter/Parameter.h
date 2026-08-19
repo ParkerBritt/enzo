@@ -94,7 +94,6 @@ class Parameter
     boost::signals2::signal<void()> valueChanged;
 
   protected:
-    virtual void onFloatSet_(const PrmValues& before) {}
     void handleValueChange_();
 
     /// @brief The world an expression on this parameter reads, e.g. for prm().
