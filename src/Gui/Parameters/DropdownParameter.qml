@@ -14,7 +14,11 @@ Dropdown {
 
     labels: item ? item.options : []
     currentIndex: tokens.indexOf(item ? item.value : "")
-    onActivated: (index) => item.value = tokens[index]
+    onActivated: (index) => {
+        item.beginEdit();
+        item.value = tokens[index];
+        item.commitEdit();
+    }
 
     ParameterContextMenuTrigger {
         anchors.fill: parent

@@ -261,11 +261,8 @@ void prm::Parameter::setFloat(floatT value, unsigned int index)
         throw std::out_of_range(
             "Cannot access index: " + std::to_string(index) + " for parameter: " + getName()
         );
-    PrmValues before = vals;
     vals[index] = value;
     expressions_[index].reset();
-
-    onFloatSet_(before);
     handleValueChange_();
 }
 

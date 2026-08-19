@@ -11,8 +11,6 @@ class NodeParameter : public Parameter
     enzo::nt::NodeId getNodeId() const { return nodeId_; }
 
   protected:
-    void onFloatSet_(const PrmValues& before) override;
-
     /// @brief Builds the context an expression runs from, e.g. what node the
     /// parameter belongs to.
     std::unique_ptr<expr::ExpressionContext> makeExpressionContext_() const override;
@@ -25,8 +23,6 @@ class NodeParameter : public Parameter
     ) const override;
 
   private:
-    void addUndo_(PrmValues before);
-
     enzo::nt::NodeId nodeId_;
 };
 } // namespace enzo::prm

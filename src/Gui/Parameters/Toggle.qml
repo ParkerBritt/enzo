@@ -31,7 +31,11 @@ Item {
         }
 
         TapHandler {
-            onTapped: root.item.value = root.item.value ? 0 : 1
+            onTapped: {
+                root.item.beginEdit();
+                root.item.value = root.item.value ? 0 : 1;
+                root.item.commitEdit();
+            }
         }
     }
 
