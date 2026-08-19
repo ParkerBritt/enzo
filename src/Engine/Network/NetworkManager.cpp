@@ -126,30 +126,6 @@ nt::NetworkManager& nt::NetworkManager::getInstance()
 
 nt::Node& nt::NetworkManager::getNode(nt::NodeId nodeId) { return network_.getNode(nodeId); }
 
-nt::Node* nt::NetworkManager::findNode(const NetworkPath& path, NodeId fromNode)
-{
-    NetworkPath nodePath = path.getNode();
-
-    // An empty node path names the node the lookup starts from.
-    if (nodePath.isEmpty()) return isValidNode(fromNode) ? &getNode(fromNode) : nullptr;
-
-    // A relative path is read from the scope holding the asking node
-    Path anchor = isValidNode(fromNode) ? getNode(fromNode).getPath().getParent() : Path("/");
-
-    return getNodeAtPath(nodePath.makeAbsoluteFrom(anchor));
-}
-
-std::weak_ptr<prm::NodeParameter>
-nt::NetworkManager::findParameter(const NetworkPath& path, NodeId fromNode)
-{
-    if (!path.hasParameter()) return {};
-
-    Node* node = findNode(path, fromNode);
-    if (!node) return {};
-
-    return node->getParameter(path.getParameter());
-}
-
 bool nt::NetworkManager::isValidNode(nt::NodeId nodeId) { return network_.isValidNode(nodeId); }
 
 void nt::NetworkManager::setDisplayNode(NodeId nodeId)

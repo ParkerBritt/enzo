@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core/Types.h"
+#include "Engine/Network/NetworkPath.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/Scope.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
@@ -71,6 +72,27 @@ class Network
 
     /// @brief Returns an id no node has used yet.
     NodeId reserveNodeId() { return ++maxNodeId_; }
+
+    /**
+     * @brief Resolves a node reference to its node.
+     *
+     * A relative path is read from the scope holding @p fromNode, so a bare name finds a
+     * sibling and ".." steps out to the scope above.
+     *
+     * @param path A node path such as "grid1", "../grid1", or "/grid1". An empty node path
+     * resolves to @p fromNode itself.
+     * @param fromNode The node a relative path resolves against, nullNode when there is none.
+     * @return The node, or null when no node matches the path.
+     */
+    Node* findNode(const NetworkPath& path, NodeId fromNode = nullNode);
+
+    /// @brief Resolves a parameter reference to its parameter.
+    /// @param path A parameter path such as "grid1.tx".
+    /// @param fromNode The node a path with no node part resolves against, nullNode when there is
+    /// none.
+    /// @return The parameter, or an empty handle when nothing matches.
+    std::weak_ptr<prm::NodeParameter>
+    findParameter(const NetworkPath& path, NodeId fromNode = nullNode);
     /** @} */
 
     /// @brief Returns the scope at a path, or null when no scope sits there.
