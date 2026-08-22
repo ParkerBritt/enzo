@@ -271,10 +271,16 @@ void nt::NetworkManager::cook(nt::NodeId nodeId)
         nt::Node& node = getNode(cookNodeId);
         if (node.isDirty())
         {
-            nt::CookContext context(cookNodeId, nt::nm());
+            nt::CookContext context(cookNodeId, *this);
             node.cook(context);
         }
     }
+}
+
+NodePacket nt::NetworkManager::cookOutput(nt::NodeId nodeId, unsigned int outputIndex)
+{
+    cook(nodeId);
+    return getNode(nodeId).getOutputPacket(outputIndex)->deepCopy();
 }
 
 nt::Connection nt::NetworkManager::connectNodes(

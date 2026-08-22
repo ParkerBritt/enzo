@@ -213,6 +213,17 @@ class NetworkManager
      */
     void cook(enzo::nt::NodeId nodeId);
 
+    /**
+     * @brief Returns a copy of one of a node's outputs.
+     *
+     * Naming the node directly reaches geometry that no connection leads to, such as an
+     * output node sitting inside a container's child scope.
+     *
+     * @note The node cooks first, so the geometry is never stale.
+     * @return A copy the caller owns, so later cooks of the node leave it untouched.
+     */
+    enzo::NodePacket cookOutput(enzo::nt::NodeId nodeId, unsigned int outputIndex);
+
     /// @brief Returns the graph that owns the network's wiring and dependencies.
     nt::NetworkGraph& graph() { return network_.graph(); }
 
