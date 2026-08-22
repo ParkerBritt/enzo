@@ -20,10 +20,7 @@ NodePacket nt::CookContext::cloneInputPacket(unsigned int inputIndex)
     {
         return NodePacket();
     }
-    const nt::NodeId sourceNodeId = inputConnection->sourceNode;
-    const nt::Node& sourceNode = networkManager_.getNode(sourceNodeId);
-    networkManager_.cook(sourceNodeId);
-    return sourceNode.getOutputPacket(inputConnection->sourceOutput)->deepCopy();
+    return networkManager_.cookOutput(inputConnection->sourceNode, inputConnection->sourceOutput);
 }
 
 bool nt::CookContext::hasInput(unsigned int inputIndex)
