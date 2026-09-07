@@ -92,7 +92,6 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classenzo_1_1nt_1_1NetworkManager-members.html">List of all members</a>  </div>
@@ -105,25 +104,32 @@ $(function(){ initResizable(false); });
 
 <p><code>#include &lt;<a class="el" href="NetworkManager_8h_source.html">NetworkManager.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange.html">NodeRange</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterable range over nodes, yields {NodeId, <a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">Node</a>&amp;} pairs.  <a href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4a2814fb7161ea83f0ffba384a3417a4" id="r_a4a2814fb7161ea83f0ffba384a3417a4"><td class="memItemLeft" align="right" valign="top"><a id="a4a2814fb7161ea83f0ffba384a3417a4" name="a4a2814fb7161ea83f0ffba384a3417a4"></a>
-<a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange.html">NodeRange</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nodes</b> ()</td></tr>
-<tr class="memdesc:a4a2814fb7161ea83f0ffba384a3417a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterable range over all nodes in the network. <br /></td></tr>
-<tr class="separator:a4a2814fb7161ea83f0ffba384a3417a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acba612c4d72025c43d0fa2e69f6ccbd5" id="r_acba612c4d72025c43d0fa2e69f6ccbd5"><td class="memItemLeft" align="right" valign="top"><a id="acba612c4d72025c43d0fa2e69f6ccbd5" name="acba612c4d72025c43d0fa2e69f6ccbd5"></a>
+<a class="el" href="classenzo_1_1nt_1_1Network.html">nt::Network</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>network</b> ()</td></tr>
+<tr class="memdesc:acba612c4d72025c43d0fa2e69f6ccbd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the network holding every node, its wiring, and its scopes. <br /></td></tr>
+<tr class="separator:acba612c4d72025c43d0fa2e69f6ccbd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15fe3a2c1f774ee64873ee4d7dcf229d" id="r_a15fe3a2c1f774ee64873ee4d7dcf229d"><td class="memItemLeft" align="right" valign="top"><a id="a15fe3a2c1f774ee64873ee4d7dcf229d" name="a15fe3a2c1f774ee64873ee4d7dcf229d"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>nodes</b> ()</td></tr>
+<tr class="memdesc:a15fe3a2c1f774ee64873ee4d7dcf229d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterable range over all nodes in the network. <br /></td></tr>
+<tr class="separator:a15fe3a2c1f774ee64873ee4d7dcf229d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69ba6571d43eb6a3a331cb96126de57d" id="r_a69ba6571d43eb6a3a331cb96126de57d"><td class="memItemLeft" align="right" valign="top"><a id="a69ba6571d43eb6a3a331cb96126de57d" name="a69ba6571d43eb6a3a331cb96126de57d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>NetworkManager</b> (const <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;obj)=delete</td></tr>
 <tr class="memdesc:a69ba6571d43eb6a3a331cb96126de57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted the copy constructor for singleton. <br /></td></tr>
 <tr class="separator:a69ba6571d43eb6a3a331cb96126de57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77287a07aca654059ae9ddca3b495c47" id="r_a77287a07aca654059ae9ddca3b495c47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77287a07aca654059ae9ddca3b495c47">createNode</a> (<a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> nodeType, const std::string &amp;path=&quot;&quot;, Vector2 position={0.f, 0.f})</td></tr>
-<tr class="memdesc:a77287a07aca654059ae9ddca3b495c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node in the network.  <br /></td></tr>
-<tr class="separator:a77287a07aca654059ae9ddca3b495c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ec491b50ad7c1aea9d1384df63e2fbf" id="r_a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ec491b50ad7c1aea9d1384df63e2fbf">createNode</a> (const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;nodeType, const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;parent=<a class="el" href="classenzo_1_1Path.html">Path</a>(&quot;/&quot;), const std::string &amp;name=&quot;&quot;, Vector2 position={0.f, 0.f})</td></tr>
+<tr class="memdesc:a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node inside a scope.  <br /></td></tr>
+<tr class="separator:a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39a60cfc2a94b4ad8fada19b6c15ca4d" id="r_a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39a60cfc2a94b4ad8fada19b6c15ca4d">getNodeAtPath</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;path)</td></tr>
+<tr class="memdesc:a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node at an exact path, or null when no node is there.  <br /></td></tr>
+<tr class="separator:a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab574df7c3f60cbff540153cd42ab9190" id="r_ab574df7c3f60cbff540153cd42ab9190"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Scope.html">Scope</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab574df7c3f60cbff540153cd42ab9190">getScope</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;path)</td></tr>
+<tr class="memdesc:ab574df7c3f60cbff540153cd42ab9190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the scope at a path, or null when no scope sits there.  <br /></td></tr>
+<tr class="separator:ab574df7c3f60cbff540153cd42ab9190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef35928c14af56c9342e02dd0e44c85d" id="r_aef35928c14af56c9342e02dd0e44c85d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef35928c14af56c9342e02dd0e44c85d">getChildNodeIds</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;scope)</td></tr>
+<tr class="memdesc:aef35928c14af56c9342e02dd0e44c85d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the ids of the nodes living directly inside a scope, in no particular order.  <br /></td></tr>
+<tr class="separator:aef35928c14af56c9342e02dd0e44c85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef45eebe254da1ce70d0b5a13e66b649" id="r_aef45eebe254da1ce70d0b5a13e66b649"><td class="memItemLeft" align="right" valign="top"><a id="aef45eebe254da1ce70d0b5a13e66b649" name="aef45eebe254da1ce70d0b5a13e66b649"></a>
 std::optional&lt; <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getDisplayNode</b> ()</td></tr>
 <tr class="memdesc:aef45eebe254da1ce70d0b5a13e66b649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node ID for the node with its display flag set. There can only be only be one node displayed at a time. Return value is nullopt if no node is set to display. <br /></td></tr>
@@ -179,12 +185,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setSelectedNodes</b> 
 <tr class="memitem:a97f7c246b46806e91d317cf4eeafc09c" id="r_a97f7c246b46806e91d317cf4eeafc09c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97f7c246b46806e91d317cf4eeafc09c">deleteNode</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId)</td></tr>
 <tr class="memdesc:a97f7c246b46806e91d317cf4eeafc09c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes a node, pushing an undo command.  <br /></td></tr>
 <tr class="separator:a97f7c246b46806e91d317cf4eeafc09c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a898e0cb07a1badf7e4c8e42cb6b22ef9" id="r_a898e0cb07a1badf7e4c8e42cb6b22ef9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a898e0cb07a1badf7e4c8e42cb6b22ef9">removeNode</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId, bool removeConnections=true)</td></tr>
-<tr class="memdesc:a898e0cb07a1badf7e4c8e42cb6b22ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a node from the network.  <br /></td></tr>
-<tr class="separator:a898e0cb07a1badf7e4c8e42cb6b22ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31dd2eaba5c96bd67c142dd44fd5d048" id="r_a31dd2eaba5c96bd67c142dd44fd5d048"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31dd2eaba5c96bd67c142dd44fd5d048">restoreNode</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId, <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> nodeType)</td></tr>
-<tr class="memdesc:a31dd2eaba5c96bd67c142dd44fd5d048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores a previously removed node with a specific NodeId.  <br /></td></tr>
-<tr class="separator:a31dd2eaba5c96bd67c142dd44fd5d048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7cee9ee6653e1b4c577af2d036ddf42" id="r_aa7cee9ee6653e1b4c577af2d036ddf42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7cee9ee6653e1b4c577af2d036ddf42">createNodeWithId</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId, const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;nodeType, const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;path, Vector2 position)</td></tr>
+<tr class="memdesc:aa7cee9ee6653e1b4c577af2d036ddf42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a node with an identity the caller dictates rather than one picked here.  <br /></td></tr>
+<tr class="separator:aa7cee9ee6653e1b4c577af2d036ddf42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad17a838982d5004c16d31700dd74a908" id="r_ad17a838982d5004c16d31700dd74a908"><td class="memItemLeft" align="right" valign="top"><a id="ad17a838982d5004c16d31700dd74a908" name="ad17a838982d5004c16d31700dd74a908"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="memdesc:ad17a838982d5004c16d31700dd74a908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all nodes and resets the network to its initial state. <br /></td></tr>
@@ -192,6 +195,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 <tr class="memitem:a2df671a62df60d8df53c0bed27c460cd" id="r_a2df671a62df60d8df53c0bed27c460cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2df671a62df60d8df53c0bed27c460cd">cook</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId)</td></tr>
 <tr class="memdesc:a2df671a62df60d8df53c0bed27c460cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks the given node.  <br /></td></tr>
 <tr class="separator:a2df671a62df60d8df53c0bed27c460cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a694b54104642d1085960f61f5e32c2ee" id="r_a694b54104642d1085960f61f5e32c2ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a694b54104642d1085960f61f5e32c2ee">cookOutput</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId, unsigned int outputIndex)</td></tr>
+<tr class="memdesc:a694b54104642d1085960f61f5e32c2ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy of one of a node's outputs.  <br /></td></tr>
+<tr class="separator:a694b54104642d1085960f61f5e32c2ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5480672d5e68e00d81c6af4cb2e08d4" id="r_ae5480672d5e68e00d81c6af4cb2e08d4"><td class="memItemLeft" align="right" valign="top"><a id="ae5480672d5e68e00d81c6af4cb2e08d4" name="ae5480672d5e68e00d81c6af4cb2e08d4"></a>
 <a class="el" href="classenzo_1_1nt_1_1NetworkGraph.html">nt::NetworkGraph</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>graph</b> ()</td></tr>
 <tr class="memdesc:ae5480672d5e68e00d81c6af4cb2e08d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the graph that owns the network's wiring and dependencies. <br /></td></tr>
@@ -203,11 +209,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 void&#160;</td><td class="memItemRight" valign="bottom"><b>disconnectNodes</b> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;connection)</td></tr>
 <tr class="memdesc:a9ee0120a53b7e3dec885444904c0ecb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a wired connection between two nodes. <br /></td></tr>
 <tr class="separator:a9ee0120a53b7e3dec885444904c0ecb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18bd1f950093e404647d7907a852896e" id="r_a18bd1f950093e404647d7907a852896e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18bd1f950093e404647d7907a852896e">findNode</a> (const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;path, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> fromNode=<a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a>)</td></tr>
-<tr class="memdesc:a18bd1f950093e404647d7907a852896e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a node reference to its node.  <br /></td></tr>
-<tr class="separator:a18bd1f950093e404647d7907a852896e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a103e727d922cbca7a930a51c5cc2f445" id="r_a103e727d922cbca7a930a51c5cc2f445"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a103e727d922cbca7a930a51c5cc2f445">findNode</a> (const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;path, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> fromNode=<a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a>)</td></tr>
+<tr class="memdesc:a103e727d922cbca7a930a51c5cc2f445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a node reference such as "grid1" or "../grid1" to its node.  <br /></td></tr>
+<tr class="separator:a103e727d922cbca7a930a51c5cc2f445"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedb1092aeb72e082879846f0a0da5633" id="r_aedb1092aeb72e082879846f0a0da5633"><td class="memItemLeft" align="right" valign="top">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedb1092aeb72e082879846f0a0da5633">findParameter</a> (const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;path, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> fromNode=<a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a>)</td></tr>
-<tr class="memdesc:aedb1092aeb72e082879846f0a0da5633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a parameter reference to its parameter.  <br /></td></tr>
+<tr class="memdesc:aedb1092aeb72e082879846f0a0da5633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a parameter reference such as "grid1.tx" to its parameter.  <br /></td></tr>
 <tr class="separator:aedb1092aeb72e082879846f0a0da5633"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3ef9c17a7e86055e05739c19d5472a3" id="r_ac3ef9c17a7e86055e05739c19d5472a3"><td class="memItemLeft" align="right" valign="top"><a id="ac3ef9c17a7e86055e05739c19d5472a3" name="ac3ef9c17a7e86055e05739c19d5472a3"></a>
 <a class="el" href="classenzo_1_1nt_1_1UndoStack.html">UndoStack</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>undoStack</b> ()</td></tr>
@@ -265,7 +271,9 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The central coordinator of the engine's node system. </p>
-<p>The network manager is the central coordinator of the engine’s node system. It manages the lifecycle of nodes, including their creation, storage, and validation, while also tracking dependencies between them. Acting as a singleton, it ensures that all parts of the engine work with a single consistent view of the network, providing global access. Beyond just storing nodes, it also controls cooking and traversing dependency graphs, ensuring that updates flow correctly through the network when nodes change. </p>
+<p>The manager owns one <a class="el" href="classenzo_1_1nt_1_1Network.html" title="Every node in a scene, their wiring, and the scopes they live in.">nt::Network</a> and drives everything that happens to it. The network holds the nodes, the wiring, and the scopes, while the manager owns the lifecycle around them, so creating and deleting nodes, cooking, undo, selection, and the signals the interface listens to.</p>
+<p>Keeping the network a plain value means it can be handed straight to something that only needs to read it, such as the serializer.</p>
+<dl class="section note"><dt>Note</dt><dd>A singleton, so every part of the engine works against one network. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9e7a9d1c2907f14e96641a1e4088bfb0" name="a9e7a9d1c2907f14e96641a1e4088bfb0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e7a9d1c2907f14e96641a1e4088bfb0">&#9670;&#160;</a></span>_reset()</h2>
@@ -283,7 +291,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 </div><div class="memdoc">
 
 <p>For use in unit tests, resets the state of the node. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo</a></b></dt><dd>Find a cleaner way to give tests a fresh manager so this doesn't pollute the public functions. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>Find a cleaner way to give tests a fresh manager so this doesn't pollute the public functions. </dd></dl>
 
 </div>
 </div>
@@ -347,8 +355,34 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 
 </div>
 </div>
-<a id="a77287a07aca654059ae9ddca3b495c47" name="a77287a07aca654059ae9ddca3b495c47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77287a07aca654059ae9ddca3b495c47">&#9670;&#160;</a></span>createNode()</h2>
+<a id="a694b54104642d1085960f61f5e32c2ee" name="a694b54104642d1085960f61f5e32c2ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a694b54104642d1085960f61f5e32c2ee">&#9670;&#160;</a></span>cookOutput()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> enzo::nt::NetworkManager::cookOutput </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a copy of one of a node's outputs. </p>
+<p>Naming the node directly reaches geometry that no connection leads to, such as an output node sitting inside a container's child scope.</p>
+<dl class="section note"><dt>Note</dt><dd>The node cooks first, so the geometry is never stale. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A copy the caller owns, so later cooks of the node leave it untouched. </dd></dl>
+
+</div>
+</div>
+<a id="a9ec491b50ad7c1aea9d1384df63e2fbf" name="a9ec491b50ad7c1aea9d1384df63e2fbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ec491b50ad7c1aea9d1384df63e2fbf">&#9670;&#160;</a></span>createNode()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -356,12 +390,17 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
         <tr>
           <td class="memname"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">nt::NodeId</a> enzo::nt::NetworkManager::createNode </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a></td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>parent</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="classenzo_1_1Path.html">Path</a>(&quot;/&quot;)</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -371,17 +410,66 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
       </table>
 </div><div class="memdoc">
 
-<p>Creates a new node in the network. </p>
+<p>Creates a new node inside a scope. </p>
+<p>A node left unnamed takes the type name followed by the first free number, so the first grid placed in a scope becomes "grid1" and the next becomes "grid2". Only siblings have to differ, so each scope numbers its own nodes.</p>
+<dl class="section note"><dt>Note</dt><dd>The name is in place before the nodeCreated signal fires, so observers see the final name from the start.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nodeType</td><td>Data designating the properties of the node. </td></tr>
-    <tr><td class="paramname">path</td><td>Optional explicit path for the node. When empty an auto generated path is used. Supplying it here ensures the path is in place before the nodeCreated signal fires, so observers see the final name from the start. </td></tr>
+    <tr><td class="paramname">parent</td><td>The scope to create the node inside. The root holds the top level nodes. </td></tr>
+    <tr><td class="paramname">name</td><td>The name to give the node. Left empty a free one is picked, and a name already taken by a sibling has a number appended until it is free. </td></tr>
     <tr><td class="paramname">position</td><td>Where the node sits in the network view.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The node ID of the newly created node</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>Should probably only have to pass type, now entire nodeType. Fix soon!!! </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>Take the type name rather than the whole node type. </dd></dl>
+
+</div>
+</div>
+<a id="aa7cee9ee6653e1b4c577af2d036ddf42" name="aa7cee9ee6653e1b4c577af2d036ddf42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7cee9ee6653e1b4c577af2d036ddf42">&#9670;&#160;</a></span>createNodeWithId()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::createNodeWithId </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Vector2</td>          <td class="paramname"><span class="paramname"><em>position</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a node with an identity the caller dictates rather than one picked here. </p>
+<p>Every node enters the network here. createNode picks a free id and name and calls this, while undo brings a deleted node back with the id and path it had, since expressions reference nodes by name and a node returning under a new name would break them.</p>
+<dl class="section note"><dt>Note</dt><dd>Throws std::out_of_range when no scope sits at the path's parent.</dd>
+<dd>
+Only the node itself is created, not the parameter values or connections it had. The undo commands restore those around this call.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>The node ID to give the node. </td></tr>
+    <tr><td class="paramname">nodeType</td><td>The type of node to create. </td></tr>
+    <tr><td class="paramname">path</td><td>The path to place the node at, whose leaf is the node name. </td></tr>
+    <tr><td class="paramname">position</td><td>Where the node sits in the network view. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -401,6 +489,7 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 </div><div class="memdoc">
 
 <p>Deletes a node, pushing an undo command. </p>
+<dl class="section note"><dt>Note</dt><dd>A node holding a scope takes the nodes living inside it along, and the whole removal undoes as one step.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nodeId</td><td>The node to delete. </td></tr>
@@ -410,14 +499,17 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 
 </div>
 </div>
-<a id="a18bd1f950093e404647d7907a852896e" name="a18bd1f950093e404647d7907a852896e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18bd1f950093e404647d7907a852896e">&#9670;&#160;</a></span>findNode()</h2>
+<a id="a103e727d922cbca7a930a51c5cc2f445" name="a103e727d922cbca7a930a51c5cc2f445"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a103e727d922cbca7a930a51c5cc2f445">&#9670;&#160;</a></span>findNode()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1nt_1_1Node.html">nt::Node</a> * enzo::nt::NetworkManager::findNode </td>
+          <td class="memname"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> * enzo::nt::NetworkManager::findNode </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>, </td>
         </tr>
@@ -427,17 +519,15 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
           <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>fromNode</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Resolves a node reference to its node. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">path</td><td>A node path such as "grid_1". An empty node path resolves to <code>fromNode</code>. </td></tr>
-    <tr><td class="paramname">fromNode</td><td>The node a relative path resolves against, nullNode when there is none. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The node, or null when no node matches the path. </dd></dl>
+<p>Resolves a node reference such as "grid1" or "../grid1" to its node. </p>
+<dl class="section note"><dt>Note</dt><dd>A relative path is read from the scope holding <code>fromNode</code>. </dd></dl>
 
 </div>
 </div>
@@ -446,6 +536,9 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; enzo::nt::NetworkManager::findParameter </td>
@@ -458,17 +551,71 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
           <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>fromNode</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Resolves a parameter reference to its parameter. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">path</td><td>A parameter path such as "grid_1.tx". </td></tr>
-    <tr><td class="paramname">fromNode</td><td>The node a path with no node part resolves against, nullNode when there is none. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The parameter, or an empty handle when nothing matches. </dd></dl>
+<p>Resolves a parameter reference such as "grid1.tx" to its parameter. </p>
+<dl class="section note"><dt>Note</dt><dd>A path with no node part resolves against <code>fromNode</code>. </dd></dl>
+
+</div>
+</div>
+<a id="aef35928c14af56c9342e02dd0e44c85d" name="aef35928c14af56c9342e02dd0e44c85d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef35928c14af56c9342e02dd0e44c85d">&#9670;&#160;</a></span>getChildNodeIds()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> &gt; enzo::nt::NetworkManager::getChildNodeIds </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>scope</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the ids of the nodes living directly inside a scope, in no particular order. </p>
+<dl class="section note"><dt>Note</dt><dd>Nodes deeper inside a nested scope are not included. </dd></dl>
+
+</div>
+</div>
+<a id="a39a60cfc2a94b4ad8fada19b6c15ca4d" name="a39a60cfc2a94b4ad8fada19b6c15ca4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39a60cfc2a94b4ad8fada19b6c15ca4d">&#9670;&#160;</a></span>getNodeAtPath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> * enzo::nt::NetworkManager::getNodeAtPath </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the node at an exact path, or null when no node is there. </p>
+<dl class="section note"><dt>Note</dt><dd>Takes a resolved absolute path. findNode resolves a reference into one. </dd></dl>
 
 </div>
 </div>
@@ -489,6 +636,34 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 
 <p>Returns the node ID of the primary node, or nullopt when none. </p>
 <p>The primary node is the single node that drives the parameter and geometry panes. There can only be one at a time. It persists when the selection is cleared, unlike the selection itself. </p>
+
+</div>
+</div>
+<a id="ab574df7c3f60cbff540153cd42ab9190" name="ab574df7c3f60cbff540153cd42ab9190"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab574df7c3f60cbff540153cd42ab9190">&#9670;&#160;</a></span>getScope()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1nt_1_1Scope.html">Scope</a> * enzo::nt::NetworkManager::getScope </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the scope at a path, or null when no scope sits there. </p>
+<dl class="section note"><dt>Note</dt><dd>The root scope always exists, so getScope("/") never returns null. </dd></dl>
 
 </div>
 </div>
@@ -550,70 +725,6 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
   </dd>
 </dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo</a></b></dt><dd>remove skipUndo argument in favour of a global undo RAII lock </dd></dl>
-
-</div>
-</div>
-<a id="a898e0cb07a1badf7e4c8e42cb6b22ef9" name="a898e0cb07a1badf7e4c8e42cb6b22ef9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a898e0cb07a1badf7e4c8e42cb6b22ef9">&#9670;&#160;</a></span>removeNode()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void enzo::nt::NetworkManager::removeNode </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>removeConnections</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Removes a node from the network. </p>
-<dl class="section note"><dt>Note</dt><dd>During a delete the connections are owned by their own undo commands, so callers driving an undo or redo pass <code>removeConnections</code> as false to remove only the bare node.</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nodeId</td><td>The node to remove. </td></tr>
-    <tr><td class="paramname">removeConnections</td><td>When true the node's connections are removed first. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a31dd2eaba5c96bd67c142dd44fd5d048" name="a31dd2eaba5c96bd67c142dd44fd5d048"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31dd2eaba5c96bd67c142dd44fd5d048">&#9670;&#160;</a></span>restoreNode()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void enzo::nt::NetworkManager::restoreNode </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a></td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Restores a previously removed node with a specific NodeId. </p>
-<dl class="section note"><dt>Note</dt><dd>This does not restore the state the node was in, only creates a new node with the given id. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>maybe replace with createNodeWithId</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nodeId</td><td>The node ID to restore. </td></tr>
-    <tr><td class="paramname">nodeType</td><td>The node type to restore. </td></tr>
-    <tr><td class="paramname">position</td><td>The position to restore the node at. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

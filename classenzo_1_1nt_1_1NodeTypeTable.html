@@ -97,28 +97,89 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::nt::NodeTypeTable Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>The sole owner of every node type the application knows about.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="NodeTypeTable_8h_source.html">NodeTypeTable.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a0cb387d72e9f62b13638891787ba6ff7" id="r_a0cb387d72e9f62b13638891787ba6ff7"><td class="memItemLeft" align="right" valign="top"><a id="a0cb387d72e9f62b13638891787ba6ff7" name="a0cb387d72e9f62b13638891787ba6ff7"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>addNodeType</b> (<a class="el" href="structenzo_1_1nt_1_1NodeType.html">enzo::nt::NodeType</a> nodeType)</td></tr>
-<tr class="separator:a0cb387d72e9f62b13638891787ba6ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae955155abcbec1a238d913db20cc0665" id="r_ae955155abcbec1a238d913db20cc0665"><td class="memItemLeft" align="right" valign="top"><a id="ae955155abcbec1a238d913db20cc0665" name="ae955155abcbec1a238d913db20cc0665"></a>
-static nt::nodeConstructor&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeConstructor</b> (std::string name)</td></tr>
-<tr class="separator:ae955155abcbec1a238d913db20cc0665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00842010c1aa8f89ea05e84cbe01fc16" id="r_a00842010c1aa8f89ea05e84cbe01fc16"><td class="memItemLeft" align="right" valign="top"><a id="a00842010c1aa8f89ea05e84cbe01fc16" name="a00842010c1aa8f89ea05e84cbe01fc16"></a>
-static const std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeType</b> (std::string name)</td></tr>
-<tr class="separator:a00842010c1aa8f89ea05e84cbe01fc16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a179f97757d59473ee82df450486fd418" id="r_a179f97757d59473ee82df450486fd418"><td class="memItemLeft" align="right" valign="top"><a id="a179f97757d59473ee82df450486fd418" name="a179f97757d59473ee82df450486fd418"></a>
-static std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> ()</td></tr>
-<tr class="separator:a179f97757d59473ee82df450486fd418"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a9041ed5a2ec70a7616cba4ab43635a" id="r_a0a9041ed5a2ec70a7616cba4ab43635a"><td class="memItemLeft" align="right" valign="top"><a id="a0a9041ed5a2ec70a7616cba4ab43635a" name="a0a9041ed5a2ec70a7616cba4ab43635a"></a>
-static boost::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>findPlugin</b> (const std::string &amp;undecoratedLibName)</td></tr>
-<tr class="separator:a0a9041ed5a2ec70a7616cba4ab43635a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5321e28c186c455f23cdcf59c1df7096" id="r_a5321e28c186c455f23cdcf59c1df7096"><td class="memItemLeft" align="right" valign="top"><a id="a5321e28c186c455f23cdcf59c1df7096" name="a5321e28c186c455f23cdcf59c1df7096"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>initPlugins</b> ()</td></tr>
-<tr class="separator:a5321e28c186c455f23cdcf59c1df7096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fd56787271c50a8bae93d609c4494c3" id="r_a4fd56787271c50a8bae93d609c4494c3"><td class="memItemLeft" align="right" valign="top"><a id="a4fd56787271c50a8bae93d609c4494c3" name="a4fd56787271c50a8bae93d609c4494c3"></a>
+static const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>addNodeType</b> (<a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> nodeType)</td></tr>
+<tr class="memdesc:a4fd56787271c50a8bae93d609c4494c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes ownership of a node type and returns the stored copy. <br /></td></tr>
+<tr class="separator:a4fd56787271c50a8bae93d609c4494c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af77b68cfa6afc52c0a871b80fdc486d6" id="r_af77b68cfa6afc52c0a871b80fdc486d6"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af77b68cfa6afc52c0a871b80fdc486d6">getNodeType</a> (const std::string &amp;fullName)</td></tr>
+<tr class="memdesc:af77b68cfa6afc52c0a871b80fdc486d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type registered under a full name, such as "enzo::grid".  <br /></td></tr>
+<tr class="separator:af77b68cfa6afc52c0a871b80fdc486d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61bd9e6448c96c5f5f40e9291856b433" id="r_a61bd9e6448c96c5f5f40e9291856b433"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61bd9e6448c96c5f5f40e9291856b433">requireNodeType</a> (const std::string &amp;fullName)</td></tr>
+<tr class="memdesc:a61bd9e6448c96c5f5f40e9291856b433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type registered under a full name, for callers that cannot go on without it.  <br /></td></tr>
+<tr class="separator:a61bd9e6448c96c5f5f40e9291856b433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad112069fa1689cbb662e363cb0c051fd" id="r_ad112069fa1689cbb662e363cb0c051fd"><td class="memItemLeft" align="right" valign="top"><a id="ad112069fa1689cbb662e363cb0c051fd" name="ad112069fa1689cbb662e363cb0c051fd"></a>
+static const std::deque&lt; <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> ()</td></tr>
+<tr class="memdesc:ad112069fa1689cbb662e363cb0c051fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every registered type, in the order they were added. <br /></td></tr>
+<tr class="separator:ad112069fa1689cbb662e363cb0c051fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The sole owner of every node type the application knows about. </p>
+<p>The <a class="el" href="classenzo_1_1nt_1_1NodeLoader.html" title="The startup pass that fills the node type table from the node folders on disk.">nt::NodeLoader</a> fills the table at startup and nodes hold references into it, so a type exists once no matter how many nodes are built from it. Entries are never removed, which is what keeps those references valid. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="af77b68cfa6afc52c0a871b80fdc486d6" name="af77b68cfa6afc52c0a871b80fdc486d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af77b68cfa6afc52c0a871b80fdc486d6">&#9670;&#160;</a></span>getNodeType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> * enzo::nt::NodeTypeTable::getNodeType </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fullName</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the type registered under a full name, such as "enzo::grid". </p>
+<dl class="section return"><dt>Returns</dt><dd>The type, or nullptr when nothing carries that name. </dd></dl>
+
+</div>
+</div>
+<a id="a61bd9e6448c96c5f5f40e9291856b433" name="a61bd9e6448c96c5f5f40e9291856b433"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61bd9e6448c96c5f5f40e9291856b433">&#9670;&#160;</a></span>requireNodeType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp; enzo::nt::NodeTypeTable::requireNodeType </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fullName</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the type registered under a full name, for callers that cannot go on without it. </p>
+<dl class="section note"><dt>Note</dt><dd>Throws std::runtime_error when nothing carries that name. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Network/<a class="el" href="NodeTypeTable_8h_source.html">NodeTypeTable.h</a></li>
 <li>src/Engine/Network/<b>NodeTypeTable.cpp</b></li>

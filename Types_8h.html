@@ -103,7 +103,9 @@ $(function(){ initResizable(false); });
 <p>Basic attribute, parameter, and node types for Enzo.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;Eigen/Dense&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 </div>
 <p><a href="Types_8h_source.html">Go to the source code of this file.</a></p>
@@ -231,9 +233,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (Tr
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toString</b> (Type type)</td></tr>
 <tr class="memdesc:aa747b7a013ecc2df775727846306bb4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lowercase canonical name of a parameter type, e.g. "dropdown". <br /></td></tr>
 <tr class="separator:aa747b7a013ecc2df775727846306bb4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee1c0fcff4b265e7ca4e8ee24795fee8" id="r_aee1c0fcff4b265e7ca4e8ee24795fee8"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee1c0fcff4b265e7ca4e8ee24795fee8">enzo::prm::toType</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:aee1c0fcff4b265e7ca4e8ee24795fee8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parameter type a canonical name stands for, e.g. "dropdown".  <br /></td></tr>
+<tr class="separator:aee1c0fcff4b265e7ca4e8ee24795fee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a354280b56bee0c17f37514110b8d76dc" id="r_a354280b56bee0c17f37514110b8d76dc"><td class="memItemLeft" align="right" valign="top"><a id="a354280b56bee0c17f37514110b8d76dc" name="a354280b56bee0c17f37514110b8d76dc"></a>
+<a class="el" href="#adde04662eb0d43a49d07351fd9439686">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toValueType</b> (Type type)</td></tr>
+<tr class="memdesc:a354280b56bee0c17f37514110b8d76dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the kind of value a parameter of this type stores. <br /></td></tr>
+<tr class="separator:a354280b56bee0c17f37514110b8d76dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:aab198ecae889a43d6ee5dd19bd9dac0b" id="r_aab198ecae889a43d6ee5dd19bd9dac0b"><td class="memItemLeft" align="right" valign="top">constexpr std::array&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab198ecae889a43d6ee5dd19bd9dac0b">enzo::prm::kAllTypes</a></td></tr>
+<tr class="memdesc:aab198ecae889a43d6ee5dd19bd9dac0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every parameter type, in declaration order.  <br /></td></tr>
+<tr class="separator:aab198ecae889a43d6ee5dd19bd9dac0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4a6ad74de0b595a395881a047a2c2c0" id="r_aa4a6ad74de0b595a395881a047a2c2c0"><td class="memItemLeft" align="right" valign="top"><a id="aa4a6ad74de0b595a395881a047a2c2c0" name="aa4a6ad74de0b595a395881a047a2c2c0"></a>
 constexpr <a class="el" href="#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::nt::nullNode</b> = 0</td></tr>
 <tr class="memdesc:aa4a6ad74de0b595a395881a047a2c2c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The id that names no node, since real ids start at 1. <br /></td></tr>
@@ -328,7 +340,73 @@ constexpr <a class="el" href="#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#16
 </div><div class="memdoc">
 
 <p>Which kind of value a parameter stores. </p>
-<p>Every prm::Type maps to one of these. Parameter::getValueType is the one place that mapping lives and the rest of the value handling switches on this tag. </p>
+<p>Every prm::Type maps to one of these through toValueType, and the rest of the value handling switches on this tag. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="aee1c0fcff4b265e7ca4e8ee24795fee8" name="aee1c0fcff4b265e7ca4e8ee24795fee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee1c0fcff4b265e7ca4e8ee24795fee8">&#9670;&#160;</a></span>toType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Type &gt; enzo::prm::toType </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the parameter type a canonical name stands for, e.g. "dropdown". </p>
+<dl class="section return"><dt>Returns</dt><dd>The type, or nullopt when no type carries that name. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="aab198ecae889a43d6ee5dd19bd9dac0b" name="aab198ecae889a43d6ee5dd19bd9dac0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab198ecae889a43d6ee5dd19bd9dac0b">&#9670;&#160;</a></span>kAllTypes</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array enzo::prm::kAllTypes</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    Type::STRING,</div>
+<div class="line">    Type::FLOAT,</div>
+<div class="line">    Type::BOOL,</div>
+<div class="line">    Type::XYZ,</div>
+<div class="line">    Type::INT,</div>
+<div class="line">    Type::TOGGLE,</div>
+<div class="line">    Type::GROUP,</div>
+<div class="line">    Type::DROPDOWN,</div>
+<div class="line">    Type::RAMP,</div>
+<div class="line">    Type::SPACER</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>Every parameter type, in declaration order. </p>
 
 </div>
 </div>

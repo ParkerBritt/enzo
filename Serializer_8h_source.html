@@ -102,14 +102,18 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno"><a class="line" href="classenzo_1_1nt_1_1Serializer.html">    5</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1nt_1_1Serializer.html">Serializer</a></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    <span class="keywordtype">void</span> save(<a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a>&amp; networkManager, std::string filePath);</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="keywordtype">void</span> load(<a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a>&amp; networkManager, std::string filePath);</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>};</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classenzo_1_1nt_1_1Serializer.html#a06cc18429d232dd5abeb082982baa9f7">save</a>(<a class="code hl_class" href="classenzo_1_1nt_1_1Network.html">Network</a>&amp; network, std::string filePath);</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classenzo_1_1nt_1_1Serializer.html#a6cccf75f044018cc8ad66de3d70f9d2e">load</a>(<a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a>&amp; networkManager, std::string filePath);</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>};</div>
 </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>} <span class="comment">// namespace enzo::nt</span></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a></div><div class="ttdoc">The central coordinator of the engine's node system.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:27</div></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>} <span class="comment">// namespace enzo::nt</span></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a></div><div class="ttdoc">The central coordinator of the engine's node system.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:31</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1Network_html"><div class="ttname"><a href="classenzo_1_1nt_1_1Network.html">enzo::nt::Network</a></div><div class="ttdoc">Every node in a scene, their wiring, and the scopes they live in.</div><div class="ttdef"><b>Definition</b> Network.h:30</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1Serializer_html"><div class="ttname"><a href="classenzo_1_1nt_1_1Serializer.html">enzo::nt::Serializer</a></div><div class="ttdef"><b>Definition</b> Serializer.h:6</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1Serializer_html_a06cc18429d232dd5abeb082982baa9f7"><div class="ttname"><a href="classenzo_1_1nt_1_1Serializer.html#a06cc18429d232dd5abeb082982baa9f7">enzo::nt::Serializer::save</a></div><div class="ttdeci">void save(Network &amp;network, std::string filePath)</div><div class="ttdoc">Writes a network out to a file.</div><div class="ttdef"><b>Definition</b> Serializer.cpp:117</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1Serializer_html_a6cccf75f044018cc8ad66de3d70f9d2e"><div class="ttname"><a href="classenzo_1_1nt_1_1Serializer.html#a6cccf75f044018cc8ad66de3d70f9d2e">enzo::nt::Serializer::load</a></div><div class="ttdeci">void load(NetworkManager &amp;networkManager, std::string filePath)</div><div class="ttdoc">Reads a file into the network, replacing whatever was there.</div><div class="ttdef"><b>Definition</b> Serializer.cpp:155</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

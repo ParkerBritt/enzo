@@ -100,13 +100,39 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1ffafc90f1533cba911e429c08fb2bb4" id="r_a1ffafc90f1533cba911e429c08fb2bb4"><td class="memItemLeft" align="right" valign="top"><a id="a1ffafc90f1533cba911e429c08fb2bb4" name="a1ffafc90f1533cba911e429c08fb2bb4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>save</b> (<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;networkManager, std::string filePath)</td></tr>
-<tr class="separator:a1ffafc90f1533cba911e429c08fb2bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cccf75f044018cc8ad66de3d70f9d2e" id="r_a6cccf75f044018cc8ad66de3d70f9d2e"><td class="memItemLeft" align="right" valign="top"><a id="a6cccf75f044018cc8ad66de3d70f9d2e" name="a6cccf75f044018cc8ad66de3d70f9d2e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>load</b> (<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;networkManager, std::string filePath)</td></tr>
+<tr class="memitem:a06cc18429d232dd5abeb082982baa9f7" id="r_a06cc18429d232dd5abeb082982baa9f7"><td class="memItemLeft" align="right" valign="top"><a id="a06cc18429d232dd5abeb082982baa9f7" name="a06cc18429d232dd5abeb082982baa9f7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>save</b> (<a class="el" href="classenzo_1_1nt_1_1Network.html">Network</a> &amp;network, std::string filePath)</td></tr>
+<tr class="memdesc:a06cc18429d232dd5abeb082982baa9f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a network out to a file. <br /></td></tr>
+<tr class="separator:a06cc18429d232dd5abeb082982baa9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cccf75f044018cc8ad66de3d70f9d2e" id="r_a6cccf75f044018cc8ad66de3d70f9d2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cccf75f044018cc8ad66de3d70f9d2e">load</a> (<a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;networkManager, std::string filePath)</td></tr>
+<tr class="memdesc:a6cccf75f044018cc8ad66de3d70f9d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a file into the network, replacing whatever was there.  <br /></td></tr>
 <tr class="separator:a6cccf75f044018cc8ad66de3d70f9d2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6cccf75f044018cc8ad66de3d70f9d2e" name="a6cccf75f044018cc8ad66de3d70f9d2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cccf75f044018cc8ad66de3d70f9d2e">&#9670;&#160;</a></span>load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::Serializer::load </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>networkManager</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>filePath</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads a file into the network, replacing whatever was there. </p>
+<dl class="section note"><dt>Note</dt><dd>Loading creates nodes, which runs through undo, cooking, and the signals the interface listens to, so it goes through the manager rather than the network alone. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Serializer/<a class="el" href="Serializer_8h_source.html">Serializer.h</a></li>
 <li>src/Engine/Serializer/<b>Serializer.cpp</b></li>

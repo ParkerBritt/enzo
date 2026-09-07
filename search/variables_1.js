@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parameterchanged_0',['parameterChanged',['../classenzo_1_1nt_1_1Node.html#ae2b94c535b1161f3ab7c8cd969eb4137',1,'enzo::nt::Node']]]
+  ['docspath_0',['docsPath',['../structenzo_1_1nt_1_1NodeType.html#a662866f5b9dacf5648f8d811f8997fd6',1,'enzo::nt::NodeType']]]
 ];

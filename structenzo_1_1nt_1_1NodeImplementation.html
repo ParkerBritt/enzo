@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::nt::NetworkManager::NodeRange Class Reference</title>
+<title>Enzo: enzo::nt::NodeImplementation Struct Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,48 +86,40 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a></li><li class="navelem"><a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange.html">NodeRange</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>nt</b></li><li class="navelem"><a class="el" href="structenzo_1_1nt_1_1NodeImplementation.html">NodeImplementation</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::nt::NetworkManager::NodeRange Class Reference</div></div>
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="structenzo_1_1nt_1_1NodeImplementation-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::nt::NodeImplementation Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Iterable range over nodes, yields {NodeId, <a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">Node</a>&amp;} pairs.  
+<p>Where a node's behaviour comes from.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="NetworkManager_8h_source.html">NetworkManager.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="NodeManifest_8h_source.html">NodeManifest.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange_1_1Iterator.html">Iterator</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:af15a73a45800230f1d7318612380f409" id="r_af15a73a45800230f1d7318612380f409"><td class="memItemLeft" align="right" valign="top"><a id="af15a73a45800230f1d7318612380f409" name="af15a73a45800230f1d7318612380f409"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeRange</b> (Map &amp;map)</td></tr>
-<tr class="separator:af15a73a45800230f1d7318612380f409"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5fc5baa9dc9c8635abd692bbfa1769ac" id="r_a5fc5baa9dc9c8635abd692bbfa1769ac"><td class="memItemLeft" align="right" valign="top"><a id="a5fc5baa9dc9c8635abd692bbfa1769ac" name="a5fc5baa9dc9c8635abd692bbfa1769ac"></a>
-<a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange_1_1Iterator.html">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> ()</td></tr>
-<tr class="separator:a5fc5baa9dc9c8635abd692bbfa1769ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad06a50be3d25fbbbf9d2832c517c6ed6" id="r_ad06a50be3d25fbbbf9d2832c517c6ed6"><td class="memItemLeft" align="right" valign="top"><a id="ad06a50be3d25fbbbf9d2832c517c6ed6" name="ad06a50be3d25fbbbf9d2832c517c6ed6"></a>
-<a class="el" href="classenzo_1_1nt_1_1NetworkManager_1_1NodeRange_1_1Iterator.html">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</td></tr>
-<tr class="separator:ad06a50be3d25fbbbf9d2832c517c6ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac860c6bd70083bc5cf1e3acfab535a77" id="r_ac860c6bd70083bc5cf1e3acfab535a77"><td class="memItemLeft" align="right" valign="top"><a id="ac860c6bd70083bc5cf1e3acfab535a77" name="ac860c6bd70083bc5cf1e3acfab535a77"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
-<tr class="separator:ac860c6bd70083bc5cf1e3acfab535a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a6d655efac1a0b5d6fd693cd45bbb1ea4" id="r_a6d655efac1a0b5d6fd693cd45bbb1ea4"><td class="memItemLeft" align="right" valign="top"><a id="a6d655efac1a0b5d6fd693cd45bbb1ea4" name="a6d655efac1a0b5d6fd693cd45bbb1ea4"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>kind</b></td></tr>
+<tr class="separator:a6d655efac1a0b5d6fd693cd45bbb1ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d0af9ca2ab0e178591950c1ee0e7f47" id="r_a3d0af9ca2ab0e178591950c1ee0e7f47"><td class="memItemLeft" align="right" valign="top"><a id="a3d0af9ca2ab0e178591950c1ee0e7f47" name="a3d0af9ca2ab0e178591950c1ee0e7f47"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>library</b></td></tr>
+<tr class="separator:a3d0af9ca2ab0e178591950c1ee0e7f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd7ab31afe2f8f32146989755f2387f9" id="r_abd7ab31afe2f8f32146989755f2387f9"><td class="memItemLeft" align="right" valign="top"><a id="abd7ab31afe2f8f32146989755f2387f9" name="abd7ab31afe2f8f32146989755f2387f9"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>constructor</b></td></tr>
+<tr class="separator:abd7ab31afe2f8f32146989755f2387f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Iterable range over nodes, yields {NodeId, <a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">Node</a>&amp;} pairs. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Engine/Network/<a class="el" href="NetworkManager_8h_source.html">NetworkManager.h</a></li>
+<div class="textblock"><p>Where a node's behaviour comes from. </p>
+<p>The manifest only names the pieces. Finding the library on disk and pulling the constructor out of it happens later, so a manifest still parses when the binary it points at is missing. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Engine/Network/<a class="el" href="NodeManifest_8h_source.html">NodeManifest.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

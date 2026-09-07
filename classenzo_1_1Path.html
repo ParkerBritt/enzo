@@ -181,6 +181,9 @@ const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 <tr class="memitem:a12d48141da75161503ec7f5cdcba4527" id="r_a12d48141da75161503ec7f5cdcba4527"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12d48141da75161503ec7f5cdcba4527">makeRelativeTo</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;anchor) const</td></tr>
 <tr class="memdesc:a12d48141da75161503ec7f5cdcba4527"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a path relative to a given anchor path.  <br /></td></tr>
 <tr class="separator:a12d48141da75161503ec7f5cdcba4527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af132d52f0091b102d3d8e21d6e82cd4a" id="r_af132d52f0091b102d3d8e21d6e82cd4a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1Path.html">Path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af132d52f0091b102d3d8e21d6e82cd4a">makeAbsoluteFrom</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;anchor) const</td></tr>
+<tr class="memdesc:af132d52f0091b102d3d8e21d6e82cd4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the absolute path this one names when read from an anchor.  <br /></td></tr>
+<tr class="separator:af132d52f0091b102d3d8e21d6e82cd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a514432b8ef3825bbc53e80010dc91aba" id="r_a514432b8ef3825bbc53e80010dc91aba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514432b8ef3825bbc53e80010dc91aba">hasPrefix</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;prefix) const</td></tr>
 <tr class="memdesc:a514432b8ef3825bbc53e80010dc91aba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> has any additional prefixes.  <br /></td></tr>
 <tr class="separator:a514432b8ef3825bbc53e80010dc91aba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,6 +207,10 @@ static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>strip</
 <tr class="memitem:add273166f07dcbb0de6f87cf19726ff5" id="r_add273166f07dcbb0de6f87cf19726ff5"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add273166f07dcbb0de6f87cf19726ff5">isValidFormatting</a> (const std::string &amp;pathString)</td></tr>
 <tr class="memdesc:add273166f07dcbb0de6f87cf19726ff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the path to make sure it fits the alphanumeric guidelines.  <br /></td></tr>
 <tr class="separator:add273166f07dcbb0de6f87cf19726ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac79d1a1d4f08f220834616e37ed5cf26" id="r_ac79d1a1d4f08f220834616e37ed5cf26"><td class="memItemLeft" align="right" valign="top"><a id="ac79d1a1d4f08f220834616e37ed5cf26" name="ac79d1a1d4f08f220834616e37ed5cf26"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isValidComponent</b> (const std::string &amp;component)</td></tr>
+<tr class="memdesc:ac79d1a1d4f08f220834616e37ed5cf26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a single path component is a name or the ".." parent step. <br /></td></tr>
+<tr class="separator:ac79d1a1d4f08f220834616e37ed5cf26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f1dc9079c22cf25f999058b114f7e4d" id="r_a5f1dc9079c22cf25f999058b114f7e4d"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f1dc9079c22cf25f999058b114f7e4d">isValidName</a> (const std::string &amp;name)</td></tr>
 <tr class="memdesc:a5f1dc9079c22cf25f999058b114f7e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the given name to make sure it fits the alphanumeric guidelines.  <br /></td></tr>
 <tr class="separator:a5f1dc9079c22cf25f999058b114f7e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -343,8 +350,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 </div><div class="memdoc">
 
 <p>Runs every validation check and returns true if the path is fully valid. </p>
-<p>A path is valid when it is non empty and every component is a valid name. The root path "/" is also valid.</p>
-<p>Examples "/geo/mesh_01" valid "geo/mesh" valid relative path "/geo//mesh" invalid empty component "/geo/me!sh" invalid illegal character</p>
+<p>A path is valid when it is non empty and every component is either a valid name or the ".." step that walks up to a parent. The root path "/" is also valid.</p>
+<p>Examples "/assets/mesh_01" valid "assets/mesh" valid relative path "../mesh" valid step up to a sibling "/assets//mesh" invalid empty component "/assets/me!sh" invalid illegal character</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5f1dc9079c22cf25f999058b114f7e4d" title="Checks the given name to make sure it fits the alphanumeric guidelines.">isValidName</a> for the per component character rules. </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classenzo_1_1NetworkPath.html#a97e3bbc86dd1663d90eaca95c86cfb47">enzo::NetworkPath</a>.</p>
@@ -438,6 +445,35 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>path_</b></td>
 
 <p>Converts a relative path to absolute, adding a root character. </p>
 <dl class="section return"><dt>Returns</dt><dd>A new <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> object with the absolute path. </dd></dl>
+
+</div>
+</div>
+<a id="af132d52f0091b102d3d8e21d6e82cd4a" name="af132d52f0091b102d3d8e21d6e82cd4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af132d52f0091b102d3d8e21d6e82cd4a">&#9670;&#160;</a></span>makeAbsoluteFrom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1Path.html">enzo::Path</a> enzo::Path::makeAbsoluteFrom </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>anchor</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the absolute path this one names when read from an anchor. </p>
+<p>A relative path joins onto the anchor and an absolute path ignores it. Either way every ".." step is collapsed, so the result names a location directly.</p>
+<p>E.g. against the anchor "/assets/component" "mesh" becomes "/assets/component/mesh" "../mesh" becomes "/assets/mesh" "/assets/mesh" stays "/assets/mesh"</p>
+<dl class="section note"><dt>Note</dt><dd>A ".." at the root has nowhere to go and stays at the root.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">anchor</td><td>The absolute path a relative path is read from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The resolved absolute path, or an empty <a class="el" href="classenzo_1_1Path.html" title="A default path class for creation and manipulation of tree-based paths.">Path</a> when the anchor cannot anchor a relative path because it is not itself absolute. </dd></dl>
 
 </div>
 </div>

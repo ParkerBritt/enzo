@@ -98,6 +98,11 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">enzo::nt::NodeType Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Everything every node of one kind shares.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="NodeType_8h_source.html">NodeType.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -105,21 +110,34 @@ Public Member Functions</h2></td></tr>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getName</b> () const</td></tr>
 <tr class="memdesc:a6932079c203ab6213b375e7e1d49e0b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the internal type name shared by all nodes of this type (eg. "copy_to_points") <br /></td></tr>
 <tr class="separator:a6932079c203ab6213b375e7e1d49e0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8e0bbd979db6fcd0e3cafb55432b138" id="r_aa8e0bbd979db6fcd0e3cafb55432b138"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8e0bbd979db6fcd0e3cafb55432b138">getFullName</a> () const</td></tr>
+<tr class="memdesc:aa8e0bbd979db6fcd0e3cafb55432b138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name that uniquely identifies this type (eg. "enzo::copy_to_points")  <br /></td></tr>
+<tr class="separator:aa8e0bbd979db6fcd0e3cafb55432b138"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9ad3a05fa98ceee839c3e184ceceb8d" id="r_aa9ad3a05fa98ceee839c3e184ceceb8d"><td class="memItemLeft" align="right" valign="top"><a id="aa9ad3a05fa98ceee839c3e184ceceb8d" name="aa9ad3a05fa98ceee839c3e184ceceb8d"></a>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getLabel</b> () const</td></tr>
 <tr class="memdesc:aa9ad3a05fa98ceee839c3e184ceceb8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the human readable type label shown in the UI (eg. "Copy To Points") <br /></td></tr>
 <tr class="separator:aa9ad3a05fa98ceee839c3e184ceceb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f6a4e1e92cefe02c21395a0cd98af37" id="r_a1f6a4e1e92cefe02c21395a0cd98af37"><td class="memItemLeft" align="right" valign="top"><a id="a1f6a4e1e92cefe02c21395a0cd98af37" name="a1f6a4e1e92cefe02c21395a0cd98af37"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasChildScope</b> () const</td></tr>
+<tr class="memdesc:a1f6a4e1e92cefe02c21395a0cd98af37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether this node holds a scope of other nodes inside it. <br /></td></tr>
+<tr class="separator:a1f6a4e1e92cefe02c21395a0cd98af37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f0fa50bf5bf99b0dd98a488ee01ba24" id="r_a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f0fa50bf5bf99b0dd98a488ee01ba24">getIconFile</a> () const</td></tr>
+<tr class="memdesc:a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the icon file on disk.  <br /></td></tr>
+<tr class="separator:a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ab0f69cfe725e8f169ecb6fc6b947de90" id="r_ab0f69cfe725e8f169ecb6fc6b947de90"><td class="memItemLeft" align="right" valign="top"><a id="ab0f69cfe725e8f169ecb6fc6b947de90" name="ab0f69cfe725e8f169ecb6fc6b947de90"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>internalName</b></td></tr>
 <tr class="separator:ab0f69cfe725e8f169ecb6fc6b947de90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588bb3e4cfe1810d2e8cb80711ee07ae" id="r_a588bb3e4cfe1810d2e8cb80711ee07ae"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a588bb3e4cfe1810d2e8cb80711ee07ae">typeNamespace</a></td></tr>
+<tr class="memdesc:a588bb3e4cfe1810d2e8cb80711ee07ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The namespace the node was published under, such as "enzo".  <br /></td></tr>
+<tr class="separator:a588bb3e4cfe1810d2e8cb80711ee07ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae556aceb9758ebe4dc638c7f96884c88" id="r_ae556aceb9758ebe4dc638c7f96884c88"><td class="memItemLeft" align="right" valign="top"><a id="ae556aceb9758ebe4dc638c7f96884c88" name="ae556aceb9758ebe4dc638c7f96884c88"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>displayName</b></td></tr>
 <tr class="separator:ae556aceb9758ebe4dc638c7f96884c88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5721e577ee92a1cb1dbd1c43d6770c50" id="r_a5721e577ee92a1cb1dbd1c43d6770c50"><td class="memItemLeft" align="right" valign="top"><a id="a5721e577ee92a1cb1dbd1c43d6770c50" name="a5721e577ee92a1cb1dbd1c43d6770c50"></a>
-nodeConstructor&#160;</td><td class="memItemRight" valign="bottom"><b>ctorFunc</b></td></tr>
+nodeConstructor&#160;</td><td class="memItemRight" valign="bottom"><b>ctorFunc</b> = nullptr</td></tr>
 <tr class="separator:a5721e577ee92a1cb1dbd1c43d6770c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa18fd40f148f69958d1908af8c6b5af5" id="r_aa18fd40f148f69958d1908af8c6b5af5"><td class="memItemLeft" align="right" valign="top"><a id="aa18fd40f148f69958d1908af8c6b5af5" name="aa18fd40f148f69958d1908af8c6b5af5"></a>
 std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">enzo::prm::Template</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>templates</b></td></tr>
@@ -133,7 +151,121 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>maxInputs</b>
 <tr class="memitem:a94a8c0e2e6cc821528f8da4d25d4d3d0" id="r_a94a8c0e2e6cc821528f8da4d25d4d3d0"><td class="memItemLeft" align="right" valign="top"><a id="a94a8c0e2e6cc821528f8da4d25d4d3d0" name="a94a8c0e2e6cc821528f8da4d25d4d3d0"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>maxOutputs</b> = 1</td></tr>
 <tr class="separator:a94a8c0e2e6cc821528f8da4d25d4d3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b3444145836d7bb09790254054607f5" id="r_a5b3444145836d7bb09790254054607f5"><td class="memItemLeft" align="right" valign="top"><a id="a5b3444145836d7bb09790254054607f5" name="a5b3444145836d7bb09790254054607f5"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tags</b></td></tr>
+<tr class="memdesc:a5b3444145836d7bb09790254054607f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The words the tab menu searches on, such as "curve" or "primitive". <br /></td></tr>
+<tr class="separator:a5b3444145836d7bb09790254054607f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eaf802db4da115c6b0fb48a6b03d4da" id="r_a1eaf802db4da115c6b0fb48a6b03d4da"><td class="memItemLeft" align="right" valign="top"><a id="a1eaf802db4da115c6b0fb48a6b03d4da" name="a1eaf802db4da115c6b0fb48a6b03d4da"></a>
+std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>folder</b></td></tr>
+<tr class="memdesc:a1eaf802db4da115c6b0fb48a6b03d4da"><td class="mdescLeft">&#160;</td><td class="mdescRight">The folder the node was loaded from, which is also where its assets live. <br /></td></tr>
+<tr class="separator:a1eaf802db4da115c6b0fb48a6b03d4da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc39b5ff0e83dfec04a80b9f218f3edc" id="r_abc39b5ff0e83dfec04a80b9f218f3edc"><td class="memItemLeft" align="right" valign="top"><a id="abc39b5ff0e83dfec04a80b9f218f3edc" name="abc39b5ff0e83dfec04a80b9f218f3edc"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>iconPath</b></td></tr>
+<tr class="memdesc:abc39b5ff0e83dfec04a80b9f218f3edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The icon file relative to the folder, empty when the node ships none. <br /></td></tr>
+<tr class="separator:abc39b5ff0e83dfec04a80b9f218f3edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a662866f5b9dacf5648f8d811f8997fd6" id="r_a662866f5b9dacf5648f8d811f8997fd6"><td class="memItemLeft" align="right" valign="top"><a id="a662866f5b9dacf5648f8d811f8997fd6" name="a662866f5b9dacf5648f8d811f8997fd6"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>docsPath</b></td></tr>
+<tr class="memdesc:a662866f5b9dacf5648f8d811f8997fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The documentation file relative to the folder, empty when there is none. <br /></td></tr>
+<tr class="separator:a662866f5b9dacf5648f8d811f8997fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac06f344551c670e2d34a4c34bc5e634c" id="r_ac06f344551c670e2d34a4c34bc5e634c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac06f344551c670e2d34a4c34bc5e634c">childScopeType</a></td></tr>
+<tr class="memdesc:ac06f344551c670e2d34a4c34bc5e634c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The kind of scope this node holds inside it, empty when it holds none.  <br /></td></tr>
+<tr class="separator:ac06f344551c670e2d34a4c34bc5e634c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Everything every node of one kind shares. </p>
+<p>A node type is what a grid node has in common with every other grid node, so the label, the parameters, the input and output counts, and the constructor that produces its behaviour. It comes from a node folder's manifest and is owned by the <a class="el" href="classenzo_1_1nt_1_1NodeTypeTable.html" title="The sole owner of every node type the application knows about.">nt::NodeTypeTable</a>, with each node holding a reference to it. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa8e0bbd979db6fcd0e3cafb55432b138" name="aa8e0bbd979db6fcd0e3cafb55432b138"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8e0bbd979db6fcd0e3cafb55432b138">&#9670;&#160;</a></span>getFullName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string enzo::nt::NodeType::getFullName </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the name that uniquely identifies this type (eg. "enzo::copy_to_points") </p>
+<dl class="section note"><dt>Note</dt><dd>This is the form saved scenes store and the form lookups take. </dd></dl>
+
+</div>
+</div>
+<a id="a5f0fa50bf5bf99b0dd98a488ee01ba24" name="a5f0fa50bf5bf99b0dd98a488ee01ba24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f0fa50bf5bf99b0dd98a488ee01ba24">&#9670;&#160;</a></span>getIconFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::filesystem::path enzo::nt::NodeType::getIconFile </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the icon file on disk. </p>
+<dl class="section return"><dt>Returns</dt><dd>The full path, empty when the node ships no icon. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac06f344551c670e2d34a4c34bc5e634c" name="ac06f344551c670e2d34a4c34bc5e634c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac06f344551c670e2d34a4c34bc5e634c">&#9670;&#160;</a></span>childScopeType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string enzo::nt::NodeType::childScopeType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The kind of scope this node holds inside it, empty when it holds none. </p>
+<p>A node naming one can be entered and filled with other nodes, and the kind names what those nodes are allowed to be, so a "geometry" scope takes geometry nodes. </p>
+
+</div>
+</div>
+<a id="a588bb3e4cfe1810d2e8cb80711ee07ae" name="a588bb3e4cfe1810d2e8cb80711ee07ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a588bb3e4cfe1810d2e8cb80711ee07ae">&#9670;&#160;</a></span>typeNamespace</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string enzo::nt::NodeType::typeNamespace</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The namespace the node was published under, such as "enzo". </p>
+<dl class="section note"><dt>Note</dt><dd>Two authors may both publish a "circle" as long as their namespaces differ. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Engine/Network/<a class="el" href="NodeType_8h_source.html">NodeType.h</a></li>
 </ul>

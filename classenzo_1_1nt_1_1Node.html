@@ -106,9 +106,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adc6c3ff8ee1f91cef20388820ffe05df" id="r_adc6c3ff8ee1f91cef20388820ffe05df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc6c3ff8ee1f91cef20388820ffe05df">Node</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId, <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> nodeType)</td></tr>
-<tr class="memdesc:adc6c3ff8ee1f91cef20388820ffe05df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new node.  <br /></td></tr>
-<tr class="separator:adc6c3ff8ee1f91cef20388820ffe05df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5aa92eeeb7b09df01e6db3fdcef2f4d" id="r_af5aa92eeeb7b09df01e6db3fdcef2f4d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5aa92eeeb7b09df01e6db3fdcef2f4d">Node</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId, const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;nodeType, const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;path)</td></tr>
+<tr class="memdesc:af5aa92eeeb7b09df01e6db3fdcef2f4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new node.  <br /></td></tr>
+<tr class="separator:af5aa92eeeb7b09df01e6db3fdcef2f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f963629c82240bb64f8b5f76dc6aae0" id="r_a6f963629c82240bb64f8b5f76dc6aae0"><td class="memItemLeft" align="right" valign="top"><a id="a6f963629c82240bb64f8b5f76dc6aae0" name="a6f963629c82240bb64f8b5f76dc6aae0"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Node</b> (const <a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> &amp;)=delete</td></tr>
 <tr class="memdesc:a6f963629c82240bb64f8b5f76dc6aae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy constructor to avoid accidental copies. <br /></td></tr>
@@ -117,13 +117,19 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> &amp;)=delete</td></tr>
 <tr class="memdesc:a203df9c1d6c875c36a94c02e0a68e0e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy assignment operator to avoid accidental copies. <br /></td></tr>
 <tr class="separator:a203df9c1d6c875c36a94c02e0a68e0e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dc13b71c07a1fe6049789422a93189d" id="r_a8dc13b71c07a1fe6049789422a93189d"><td class="memItemLeft" align="right" valign="top"><a id="a8dc13b71c07a1fe6049789422a93189d" name="a8dc13b71c07a1fe6049789422a93189d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>cook</b> (<a class="el" href="classenzo_1_1nt_1_1CookContext.html">nt::CookContext</a> context)</td></tr>
-<tr class="memdesc:a8dc13b71c07a1fe6049789422a93189d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the output geometry based on the <a class="el" href="classenzo_1_1nt_1_1NodeDef.html#a79fcfc2b0871c18c52e7221973a3d050">cook</a> definition in <a class="el" href="classenzo_1_1nt_1_1NodeDef.html" title="Abstract class used to create new nodes.">nt::NodeDef</a>. This is set by the <code>nodeType</code> constructor parameter. <br /></td></tr>
-<tr class="separator:a8dc13b71c07a1fe6049789422a93189d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aade8c1436ef4ba6c7fd5239ef3d06c9f" id="r_aade8c1436ef4ba6c7fd5239ef3d06c9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aade8c1436ef4ba6c7fd5239ef3d06c9f">cook</a> (<a class="el" href="classenzo_1_1nt_1_1CookContext.html">nt::CookContext</a> &amp;context)</td></tr>
+<tr class="memdesc:aade8c1436ef4ba6c7fd5239ef3d06c9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the node's implementation and runs its cook, filling the output packets.  <br /></td></tr>
+<tr class="separator:aade8c1436ef4ba6c7fd5239ef3d06c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51aac6dcbcf2a2b6a62efbb7a8a41df9" id="r_a51aac6dcbcf2a2b6a62efbb7a8a41df9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51aac6dcbcf2a2b6a62efbb7a8a41df9">getOutputPacket</a> (unsigned int outputIndex) const</td></tr>
 <tr class="memdesc:a51aac6dcbcf2a2b6a62efbb7a8a41df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current output geometry.  <br /></td></tr>
 <tr class="separator:a51aac6dcbcf2a2b6a62efbb7a8a41df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab10a0dcd6e2947cc0bce8cdd61b08578" id="r_ab10a0dcd6e2947cc0bce8cdd61b08578"><td class="memItemLeft" align="right" valign="top"><a id="ab10a0dcd6e2947cc0bce8cdd61b08578" name="ab10a0dcd6e2947cc0bce8cdd61b08578"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputPacket</b> (unsigned int outputIndex, <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> packet)</td></tr>
+<tr class="memdesc:ab10a0dcd6e2947cc0bce8cdd61b08578"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores finished geometry against one of the node's outputs. <br /></td></tr>
+<tr class="separator:ab10a0dcd6e2947cc0bce8cdd61b08578"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeee770d1df55a6cdf977d100391647e4" id="r_aeee770d1df55a6cdf977d100391647e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeee770d1df55a6cdf977d100391647e4">outputRequested</a> (unsigned int outputIndex) const</td></tr>
+<tr class="memdesc:aeee770d1df55a6cdf977d100391647e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether anything downstream is asking for one of the node's outputs.  <br /></td></tr>
+<tr class="separator:aeee770d1df55a6cdf977d100391647e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cf5b514e4a8fadd11f313f111e87a53" id="r_a5cf5b514e4a8fadd11f313f111e87a53"><td class="memItemLeft" align="right" valign="top"><a id="a5cf5b514e4a8fadd11f313f111e87a53" name="a5cf5b514e4a8fadd11f313f111e87a53"></a>
 std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodeParameter.html">prm::NodeParameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getParameters</b> ()</td></tr>
 <tr class="memdesc:a5cf5b514e4a8fadd11f313f111e87a53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all parameters belonging to this node. <br /></td></tr>
@@ -141,7 +147,7 @@ std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodePa
 <tr class="memdesc:a2ef93fc27d29a8f533f8a8fafd936337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
 <tr class="separator:a2ef93fc27d29a8f533f8a8fafd936337"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20ae338cb5cdf01d34e150b6f454d143" id="r_a20ae338cb5cdf01d34e150b6f454d143"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20ae338cb5cdf01d34e150b6f454d143">getName</a> () const</td></tr>
-<tr class="memdesc:a20ae338cb5cdf01d34e150b6f454d143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the runtime name uniquely identifying this node within its scope (eg. "my_node_05")  <br /></td></tr>
+<tr class="memdesc:a20ae338cb5cdf01d34e150b6f454d143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the runtime name uniquely identifying this node among its siblings (eg. "grid1")  <br /></td></tr>
 <tr class="separator:a20ae338cb5cdf01d34e150b6f454d143"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2804ac4cf89d0e4f156c006c10e866bb" id="r_a2804ac4cf89d0e4f156c006c10e866bb"><td class="memItemLeft" align="right" valign="top"><a id="a2804ac4cf89d0e4f156c006c10e866bb" name="a2804ac4cf89d0e4f156c006c10e866bb"></a>
 const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPath</b> () const</td></tr>
@@ -196,8 +202,8 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The unique runtime representation of a node. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="adc6c3ff8ee1f91cef20388820ffe05df" name="adc6c3ff8ee1f91cef20388820ffe05df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc6c3ff8ee1f91cef20388820ffe05df">&#9670;&#160;</a></span>Node()</h2>
+<a id="af5aa92eeeb7b09df01e6db3fdcef2f4d" name="af5aa92eeeb7b09df01e6db3fdcef2f4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5aa92eeeb7b09df01e6db3fdcef2f4d">&#9670;&#160;</a></span>Node()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,7 +216,12 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a></td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -220,6 +231,7 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
   <table class="params">
     <tr><td class="paramname">nodeId</td><td>the node id assigned to this node. For most situations this should be set by the <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html" title="The central coordinator of the engine&#39;s node system.">nt::NetworkManager</a> </td></tr>
     <tr><td class="paramname">nodeType</td><td>The data class informing the node what its properties are that set it apart from other nodes. This is what makes a grid node different to a transform node. </td></tr>
+    <tr><td class="paramname">path</td><td>The full path locating the node, whose leaf is the node name. The <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html" title="The central coordinator of the engine&#39;s node system.">nt::NetworkManager</a> picks a path that is free within its parent. </td></tr>
   </table>
   </dd>
 </dl>
@@ -227,6 +239,26 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aade8c1436ef4ba6c7fd5239ef3d06c9f" name="aade8c1436ef4ba6c7fd5239ef3d06c9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aade8c1436ef4ba6c7fd5239ef3d06c9f">&#9670;&#160;</a></span>cook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::Node::cook </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classenzo_1_1nt_1_1CookContext.html">nt::CookContext</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>context</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Builds the node's implementation and runs its cook, filling the output packets. </p>
+<dl class="section note"><dt>Note</dt><dd>Does nothing while the node is clean. </dd></dl>
+
+</div>
+</div>
 <a id="a7c3a97ec17f7f09a42dbcde76e70e86a" name="a7c3a97ec17f7f09a42dbcde76e70e86a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7c3a97ec17f7f09a42dbcde76e70e86a">&#9670;&#160;</a></span>dirtyNode()</h2>
 
@@ -267,9 +299,8 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the runtime name uniquely identifying this node within its scope (eg. "my_node_05") </p>
-<p>The name is the leaf of the node's path, not stored separately. Unlike the type name it is per node and is intended to be user assignable. </p><dl class="section note"><dt>Note</dt><dd>The starting name is synthesized from the type name and node id as a placeholder. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo</a></b></dt><dd>implement uniqueness checked node names </dd></dl>
+<p>Returns the runtime name uniquely identifying this node among its siblings (eg. "grid1") </p>
+<p>The name is the leaf of the node's path, not stored separately. Unlike the type name it is per node and is intended to be user assignable. Only nodes sharing a parent have to differ, so the same name can appear once in every scope. </p>
 
 </div>
 </div>
@@ -290,7 +321,7 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 
 <p>Returns the current output geometry. </p>
 <p>Does not trigger a cook so if the geometry may be outdated if not cooked first.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo</a></b></dt><dd>Add option to force cook or cook if dirty. </dd></dl>
 
 </div>
 </div>
@@ -350,7 +381,7 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 </div><div class="memdoc">
 
 <p>Returns the static type definition this node was created from. </p>
-<p>The type carries data shared by every node of the same type such as its name and label. Use <a class="el" href="#a47fbf45bdb6eff76ec971468b3e9dd54" title="Returns the static type definition this node was created from.">getType()</a>.<a class="el" href="#a20ae338cb5cdf01d34e150b6f454d143" title="Returns the runtime name uniquely identifying this node within its scope (eg. &quot;my_node_05&quot;)">getName()</a> for the internal type name (eg. "copy_to_points") and <a class="el" href="#a47fbf45bdb6eff76ec971468b3e9dd54" title="Returns the static type definition this node was created from.">getType()</a>.getLabel() for the display label (eg. "Copy To Points"). </p>
+<p>The type carries data shared by every node of the same type such as its name and label. Use <a class="el" href="#a47fbf45bdb6eff76ec971468b3e9dd54" title="Returns the static type definition this node was created from.">getType()</a>.<a class="el" href="#a20ae338cb5cdf01d34e150b6f454d143" title="Returns the runtime name uniquely identifying this node among its siblings (eg. &quot;grid1&quot;)">getName()</a> for the internal type name (eg. "copy_to_points") and <a class="el" href="#a47fbf45bdb6eff76ec971468b3e9dd54" title="Returns the static type definition this node was created from.">getType()</a>.getLabel() for the display label (eg. "Copy To Points"). </p>
 
 </div>
 </div>
@@ -391,6 +422,26 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 
 <p>Whether the named parameter's hide condition currently hides it. </p>
 <dl class="section return"><dt>Returns</dt><dd>True only when the condition is present and met. </dd></dl>
+
+</div>
+</div>
+<a id="aeee770d1df55a6cdf977d100391647e4" name="aeee770d1df55a6cdf977d100391647e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeee770d1df55a6cdf977d100391647e4">&#9670;&#160;</a></span>outputRequested()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enzo::nt::Node::outputRequested </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns whether anything downstream is asking for one of the node's outputs. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo</a></b></dt><dd>Always true until dirtiness is tracked per output. </dd></dl>
 
 </div>
 </div>
