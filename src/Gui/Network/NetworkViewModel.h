@@ -71,6 +71,10 @@ class NetworkViewModel : public QObject
     /// @brief Sets the given node as the one whose geometry the viewport shows.
     Q_INVOKABLE void setDisplayNode(qulonglong nodeId);
 
+    /// @brief Sets the primary node as the one whose geometry the viewport shows.
+    /// @note Does nothing when there is no primary node.
+    Q_INVOKABLE void setDisplayNodeToPrimary();
+
     /// @brief Moves the selected nodes in the ui, doesn't apply to engine until
     /// committed with commitSelectionMove.
     Q_INVOKABLE void stageSelectionMove(qreal dx, qreal dy);
