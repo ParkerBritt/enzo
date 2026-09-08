@@ -4,7 +4,7 @@ import QtQuick.Effects
 import Enzo
 import "../Utils.js" as Utils
 
-// Search menu that creates a node at the cursor. The search field holds focus so
+// Search menu for picking the node type to create. The search field holds focus so
 // typing filters the list while the arrow keys, Return, Tab and Escape navigate
 // and close without the focus ever leaving the field.
 Popup {
@@ -13,7 +13,7 @@ Popup {
     // Every node type to choose from, each a {label, name} map.
     property var nodeTypes: []
     // Emitted with the chosen node's internal name.
-    signal nodeTypeChosen(string name)
+    signal nodeTypeChosen(string name, bool chainToPrimary)
 
     width: 300
     padding: 8
@@ -37,10 +37,13 @@ Popup {
         list.positionViewAtIndex(highlighted, ListView.Contain);
     }
 
-    function activate() {
+    // Commits the highlighted node type. Shift chains it onto the current node
+    // instead of placing it at the menu.
+    function activate(modifiers) {
         if (matches.length === 0)
             return;
-        root.nodeTypeChosen(matches[highlighted].name);
+        const chainToPrimary = (modifiers & Qt.ShiftModifier) !== 0;
+        root.nodeTypeChosen(matches[highlighted].name, chainToPrimary);
         root.close();
     }
 
@@ -86,8 +89,8 @@ Popup {
             // Navigation keys steer the list, every other key edits the text.
             Keys.onUpPressed: root.moveHighlight(-1)
             Keys.onDownPressed: root.moveHighlight(1)
-            Keys.onReturnPressed: root.activate()
-            Keys.onEnterPressed: root.activate()
+            Keys.onReturnPressed: event => root.activate(event.modifiers)
+            Keys.onEnterPressed: event => root.activate(event.modifiers)
             Keys.onEscapePressed: root.close()
             Keys.onTabPressed: root.close()
         }
@@ -119,7 +122,7 @@ Popup {
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: root.highlighted = index
-                    onClicked: root.activate()
+                    onClicked: mouse => root.activate(mouse.modifiers)
                 }
             }
         }

@@ -101,9 +101,7 @@ Rectangle {
 
         // True while the cursor rests on a link a press would pick up.
         property bool overRedirect: false
-        cursorShape: draggingLink ? Qt.ClosedHandCursor
-                     : overRedirect ? Qt.PointingHandCursor
-                     : Qt.ArrowCursor
+        cursorShape: draggingLink ? Qt.ClosedHandCursor : overRedirect ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         // True while a left drag is pulling a link out of a grabbed port.
         property bool draggingLink: false
@@ -270,7 +268,13 @@ Rectangle {
         id: tabMenu
         nodeTypes: network.nodeTypes
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        onNodeTypeChosen: name => network.createNode(name, root.toCanvasX(x), root.toCanvasY(y))
+        onNodeTypeChosen: (name, chainToPrimary) => {
+            // Chain node placement (shift+enter)
+            if (chainToPrimary && network.chainNodeToPrimary(name))
+                return;
+            // Normal node placement.
+            network.createNode(name, root.toCanvasX(x), root.toCanvasY(y));
+        }
     }
 
     // Canvas

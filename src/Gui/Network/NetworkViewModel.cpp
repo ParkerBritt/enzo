@@ -15,6 +15,11 @@
 
 namespace enzo::ui {
 
+namespace {
+/// The vertical space left between a node and the one created below it.
+constexpr qreal chainedNodeGap = 30;
+} // namespace
+
 NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
 {
     auto& network = nt::nm();
@@ -90,6 +95,34 @@ void NetworkViewModel::createNode(const QString& fullName, qreal x, qreal y)
 {
     const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
     nt::nm().createNode(nodeType, Path("/"), "", {static_cast<float>(x), static_cast<float>(y)});
+}
+
+bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
+{
+    auto& network = nt::nm();
+
+    const std::optional<nt::NodeId> primaryId = network.getPrimaryNode();
+    if (!primaryId) return false;
+
+    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
+
+    const nt::Node& primaryNode = network.getNode(*primaryId);
+    const Vector2 primaryPosition = primaryNode.getPosition();
+    const bool primaryHasOutput = primaryNode.getMaxOutputs() > 0;
+
+    const float rowSpacing = static_cast<float>(NodeListModel::nodeHeight + chainedNodeGap);
+    const Vector2 belowPosition = {primaryPosition.x(), primaryPosition.y() + rowSpacing};
+
+    // Creating, wiring and selecting the node collapse into a single undo step.
+    nt::UndoTransaction transaction(network.undoStack());
+
+    const nt::NodeId createdId = network.createNode(nodeType, Path("/"), "", belowPosition);
+
+    if (primaryHasOutput && network.getNode(createdId).getMaxInputs() > 0)
+        network.connectNodes(*primaryId, 0, createdId, 0);
+
+    selectNode(createdId, false);
+    return true;
 }
 
 void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)
