@@ -251,6 +251,14 @@ void NetworkViewModel::setDisplayNode(qulonglong nodeId)
     network.setDisplayNode(nodeId);
 }
 
+void NetworkViewModel::setDisplayNodeToPrimary()
+{
+    const std::optional<nt::NodeId> primaryId = nt::nm().getPrimaryNode();
+    if (!primaryId) return;
+
+    setDisplayNode(*primaryId);
+}
+
 void NetworkViewModel::clearSelection()
 {
     auto& network = nt::nm();

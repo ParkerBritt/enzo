@@ -84,6 +84,8 @@ Rectangle {
             network.deleteSelected();
         else if (event.key === Qt.Key_Escape && linkController.linking)
             linkController.cancel();
+        else if (event.key === Qt.Key_R)
+            network.setDisplayNodeToPrimary();
     }
 
     FocusReclaimer {
