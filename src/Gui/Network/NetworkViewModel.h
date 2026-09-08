@@ -43,6 +43,10 @@ class NetworkViewModel : public QObject
     /// @brief Creates a node of the given node type at a network position.
     Q_INVOKABLE void createNode(const QString& fullName, qreal x, qreal y);
 
+    /// @brief Creates a node below the primary node, selects it, and connects the two.
+    /// @return False when there is no primary node to chain onto.
+    Q_INVOKABLE bool chainNodeToPrimary(const QString& fullName);
+
     /// @brief Selects a node, optionally adding it to the current selection.
     ///
     /// @param additive Toggles the node within the selection rather than
