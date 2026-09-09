@@ -3,6 +3,7 @@
 #include "Engine/Core/Types.h"
 #include <QAbstractListModel>
 #include <QPointF>
+#include <QRectF>
 #include <QVariant>
 #include <QVariantMap>
 #include <functional>
@@ -43,11 +44,13 @@ class NodeListModel : public QAbstractListModel
     /// @return A {nodeId, slot, isOutput, x, y} map, empty when none is within reach.
     Q_INVOKABLE QVariantMap getSnapPort(QPointF canvasPoint, bool wantOutput) const;
 
-    /// @brief Whether a canvas point lies over any node's card.
-    ///
-    /// A press over a card is handled by the node itself, so the canvas never sees
-    /// it. A grab only reaches the canvas in the margin outside every card.
-    Q_INVOKABLE bool isOverNodeBody(QPointF canvasPoint) const;
+    /// @brief Returns the ids of every node whose card the given canvas rectangle
+    /// touches.
+    std::vector<nt::NodeId> getNodesInRect(QRectF canvasRect) const;
+
+    /// @brief Whether a canvas point lies over a node's card or within reach of one
+    /// of its ports.
+    Q_INVOKABLE bool isOverNodeOrPort(QPointF canvasPoint) const;
 
     /// @brief Returns the canvas position of one port, or nothing when the node is absent.
     ///
@@ -120,8 +123,14 @@ class NodeListModel : public QAbstractListModel
     /// @brief Reads the display data for a node into a row.
     static Node makeNode(nt::NodeId nodeId);
 
+    /// @brief Whether a canvas point lies over any node's card.
+    bool isOverNodeBody(QPointF canvasPoint) const;
+
     /// @brief Returns the row index of a node, or -1 when absent.
     int rowOf(nt::NodeId nodeId) const;
+
+    /// @brief Returns the canvas rectangle a node's card covers.
+    static QRectF getNodeBody(const Node& node);
 
     /// @brief Returns the canvas position of one port on @p node.
     ///

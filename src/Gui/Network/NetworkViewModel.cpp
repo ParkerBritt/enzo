@@ -7,6 +7,7 @@
 #include "Engine/UndoRedo/UndoStack.h"
 
 #include <QPointF>
+#include <QRectF>
 #include <QVariantMap>
 #include <algorithm>
 #include <memory>
@@ -125,15 +126,41 @@ bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
     return true;
 }
 
-void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)
+void NetworkViewModel::selectNodes(
+    const std::vector<nt::NodeId>& selection,
+    std::optional<nt::NodeId> primaryId
+)
 {
     auto& network = nt::nm();
 
-    std::vector<nt::NodeId> prevSelection = network.getSelectedNodes();
+    const std::vector<nt::NodeId> prevSelection = network.getSelectedNodes();
+    const std::optional<nt::NodeId> prevPrimary = network.getPrimaryNode();
+
+    nt::UndoTransaction transaction(network.undoStack());
+
+    if (selection != prevSelection)
+    {
+        network.undoStack().push(
+            std::make_unique<nt::ChangeSelectionCommand>(prevSelection, selection)
+        );
+        network.setSelectedNodes(selection);
+    }
+
+    if (primaryId && primaryId != prevPrimary)
+    {
+        network.undoStack().push(
+            std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, *primaryId)
+        );
+        network.setPrimaryNode(*primaryId);
+    }
+}
+
+void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)
+{
     std::vector<nt::NodeId> nextSelection;
     if (additive)
     {
-        nextSelection = prevSelection;
+        nextSelection = nt::nm().getSelectedNodes();
         const auto found = std::find(nextSelection.begin(), nextSelection.end(), nodeId);
         if (found != nextSelection.end())
             nextSelection.erase(found);
@@ -145,26 +172,28 @@ void NetworkViewModel::selectNode(qulonglong nodeId, bool additive)
         nextSelection = {nodeId};
     }
 
-    std::optional<nt::NodeId> prevPrimary = network.getPrimaryNode();
+    selectNodes(nextSelection, nodeId);
+}
 
-    // A click changes selection and primary together, so they undo as one unit.
-    nt::UndoTransaction transaction(network.undoStack());
+void NetworkViewModel::selectNodesInRect(QRectF canvasRect, bool additive)
+{
+    auto& network = nt::nm();
 
-    if (nextSelection != prevSelection)
+    const std::vector<nt::NodeId> boxedIds = nodes_.getNodesInRect(canvasRect);
+
+    std::vector<nt::NodeId> nextSelection =
+        additive ? network.getSelectedNodes() : std::vector<nt::NodeId>{};
+    for (nt::NodeId nodeId : boxedIds)
     {
-        network.undoStack().push(
-            std::make_unique<nt::ChangeSelectionCommand>(prevSelection, nextSelection)
-        );
-        network.setSelectedNodes(nextSelection);
+        const auto found = std::find(nextSelection.begin(), nextSelection.end(), nodeId);
+        if (found == nextSelection.end()) nextSelection.push_back(nodeId);
     }
 
-    if (prevPrimary != nodeId)
-    {
-        network.undoStack().push(
-            std::make_unique<nt::ChangePrimaryNodeCommand>(prevPrimary, nodeId)
-        );
-        network.setPrimaryNode(nodeId);
-    }
+    // The last node the box swept over leads the new selection.
+    const std::optional<nt::NodeId> nextPrimary =
+        boxedIds.empty() ? std::nullopt : std::optional<nt::NodeId>(boxedIds.back());
+
+    selectNodes(nextSelection, nextPrimary);
 }
 
 void NetworkViewModel::stageSelectionMove(qreal dx, qreal dy)
@@ -261,14 +290,7 @@ void NetworkViewModel::setDisplayNodeToPrimary()
 
 void NetworkViewModel::clearSelection()
 {
-    auto& network = nt::nm();
-    std::vector<nt::NodeId> prev = network.getSelectedNodes();
-    if (prev.empty()) return;
-
-    network.undoStack().push(
-        std::make_unique<nt::ChangeSelectionCommand>(prev, std::vector<nt::NodeId>{})
-    );
-    network.setSelectedNodes({});
+    selectNodes({}, std::nullopt);
 }
 
 } // namespace enzo::ui

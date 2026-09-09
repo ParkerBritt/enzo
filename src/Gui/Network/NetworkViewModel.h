@@ -3,9 +3,12 @@
 #include "Gui/Network/EdgeListModel.h"
 #include "Gui/Network/NodeListModel.h"
 #include <QObject>
+#include <QRectF>
 #include <QVariantList>
 #include <QVariantMap>
 #include <boost/signals2/connection.hpp>
+#include <optional>
+#include <vector>
 
 namespace enzo::ui {
 
@@ -53,6 +56,12 @@ class NetworkViewModel : public QObject
     /// replacing it, the modifier click behaviour.
     Q_INVOKABLE void selectNode(qulonglong nodeId, bool additive);
 
+    /// @brief Selects every node the drag selection box covers.
+    ///
+    /// @param additive Adds the boxed nodes to the current selection rather than
+    /// replacing it, the modifier drag behaviour.
+    Q_INVOKABLE void selectNodesInRect(QRectF canvasRect, bool additive);
+
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
@@ -92,6 +101,13 @@ class NetworkViewModel : public QObject
     Q_INVOKABLE void clearSelection();
 
   private:
+    /// @brief Selects a set of nodes and their primary as one undo step.
+    ///
+    /// @param primaryId The node leading the selection, empty to keep the current
+    /// one.
+    void
+    selectNodes(const std::vector<nt::NodeId>& selection, std::optional<nt::NodeId> primaryId);
+
     NodeListModel nodes_;
     EdgeListModel edges_;
     boost::signals2::scoped_connection nodeCreatedSubscription_;

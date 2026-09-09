@@ -122,6 +122,7 @@ Rectangle {
             root.mouseLastY = mouse.y;
             grabbedOnPress = false;
             cutting = false;
+            selectionBox.applied = false;
             if (mouse.button !== Qt.LeftButton)
                 return;
 
@@ -145,6 +146,10 @@ Rectangle {
             // Away from every port, a press on a link picks it up by its nearer end.
             if (!linkController.linking)
                 pickUpLink(canvasPoint);
+
+            // On bare canvas the press waits to see whether it becomes a selection box.
+            if (!grabbedOnPress && !linkController.linking)
+                selectionBox.press(canvasPoint, (mouse.modifiers & Qt.ShiftModifier) !== 0);
         }
 
         // Detaches the pressed end of the link under the cursor and hands it to
@@ -170,7 +175,7 @@ Rectangle {
         // the selection. The press that grabbed a port does none of these, and a
         // click on a node body is consumed by the node.
         onClicked: mouse => {
-            if (mouse.button !== Qt.LeftButton || grabbedOnPress)
+            if (mouse.button !== Qt.LeftButton || grabbedOnPress || selectionBox.applied)
                 return;
 
             // A Ctrl click cuts the link under the cursor.
@@ -189,6 +194,7 @@ Rectangle {
 
         onReleased: {
             cutting = false;
+            selectionBox.release();
             if (draggingLink) {
                 linkController.release();
                 draggingLink = false;
@@ -205,6 +211,8 @@ Rectangle {
             root.cursorY = mouse.y;
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
 
+            selectionBox.drag(canvasPoint);
+
             // A Ctrl drag cuts every link its path sweeps across.
             if (cutting) {
                 root.cutLink(committedLinks.linkCrossing(cutLast, canvasPoint), canvasPoint);
@@ -215,7 +223,7 @@ Rectangle {
             overRedirect = false;
             if (mouse.modifiers & Qt.ControlModifier) {
                 committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, NodeLinkLayer.Cut);
-            } else if (draggingLink || linkController.linking || network.nodes.isOverNodeBody(canvasPoint) || network.nodes.getGrabPort(canvasPoint).nodeId !== undefined) {
+            } else if (selectionBox.sweeping || draggingLink || linkController.linking || network.nodes.isOverNodeOrPort(canvasPoint)) {
                 committedLinks.setHover(-1, NodeLinkLayer.None);
             } else {
                 const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
@@ -358,6 +366,13 @@ Rectangle {
             floatingOutput: linkController.outputPoint
             floatingInput: linkController.inputPoint
             linkColor: Theme.nodeLink.activeColor
+        }
+
+        // The selection box draws over every node it covers.
+        SelectionBox {
+            id: selectionBox
+            z: 3
+            viewZoom: root.viewZoom
         }
     }
 }

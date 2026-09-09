@@ -230,6 +230,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Network/Network.qml
         src/Gui/Network/Node.qml
         src/Gui/Network/NodeLinkController.qml
+        src/Gui/Network/SelectionBox.qml
         src/Gui/Network/TabMenu.qml
         src/Gui/Spreadsheet/Spreadsheet.qml
         src/Gui/Spreadsheet/SpreadsheetHeader.qml
