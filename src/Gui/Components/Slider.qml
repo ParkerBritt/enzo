@@ -143,7 +143,7 @@ Item {
         color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
         border.color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
 
-        // The accent fill floats inside the frame with a small inset on every
+        // The value fill floats inside the frame with a small inset on every
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill

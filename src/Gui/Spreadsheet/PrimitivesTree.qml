@@ -118,7 +118,6 @@ Rectangle {
                 anchors.fill: parent
                 radius: 6
                 color: node.selected ? Qt.rgba(0.545, 0.361, 0.965, 0.13) : "transparent"
-                border.color: node.selected ? Qt.rgba(0.545, 0.361, 0.965, 0.32) : "transparent"
             }
 
             Row {

@@ -4,7 +4,7 @@ import Enzo
 import "../Components"
 
 // Attribute table of the selected primitive. Column headers and values are
-// tinted by axis, the active row carries a mode coloured bar, and a footer
+// tinted by axis, the active row sits on a lightly raised fill, and a footer
 // reports the element count and cook stats.
 Item {
     id: root
@@ -12,7 +12,6 @@ Item {
     property var viewModel
     property int selectedRow: 0
 
-    readonly property string modeColor: Theme.spreadsheet.attributeOwnerColors[root.viewModel.mode]
     readonly property var modeIcons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
 
     function axisColor(axis, light) {
@@ -141,14 +140,12 @@ Item {
 
             Rectangle {
                 anchors.fill: parent
-                color: cell.selected ? ("#1f" + root.modeColor.slice(1)) : "transparent"
-            }
-
-            Rectangle {
-                visible: cell.selected && cell.column === 0
-                width: 2
-                height: parent.height
-                color: root.modeColor
+                color: cell.selected ? Theme.spreadsheet.selectedRowColor : "transparent"
+                radius: 6
+                topLeftRadius: cell.column === 0 ? radius : 0
+                bottomLeftRadius: cell.column === 0 ? radius : 0
+                topRightRadius: cell.column === table.columns - 1 ? radius : 0
+                bottomRightRadius: cell.column === table.columns - 1 ? radius : 0
             }
 
             Text {

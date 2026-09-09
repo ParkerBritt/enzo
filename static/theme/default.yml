@@ -9,6 +9,10 @@ variables:
   surface:       "#141418"
   surfaceRaised: "#191920"
 
+  # Fill behind a selected row or an active parameter value, a touch lighter
+  # than the field surface
+  selectedFill: "#2e2e38"
+
   # Borders
   borderSoft:  "#1d1d25"
   fieldBorder: "#242430"
@@ -30,7 +34,9 @@ variables:
   accentBright: "#a78bfa"
   accentDim:    $accent @ 0.15
   accentLine:   $accent @ 0.45
-  parameter: "#7850ab"
+
+  # Fill that marks a parameter's value, such as the bar in a slider
+  parameter: $selectedFill
 
   # Destructive actions, such as deleting a point
   danger: "#c98d92"
@@ -73,6 +79,7 @@ components:
   spreadsheet:
     backgroundColor: $fieldSurface
     lineColor:       $fieldBorder
+    selectedRowColor: $selectedFill
     # Colours per attribute owner, indexed Points Vertices Faces Primitive Node
     attributeOwnerColors:
       - "#4ea1ff"
