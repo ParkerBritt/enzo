@@ -53,19 +53,6 @@ Item {
     // Emitted when a drag finishes, so the new position can be committed.
     signal dragReleased
 
-    // The primary node swaps its drop shadow for an accent glow.
-    states: State {
-        name: "primary"
-        when: root.primary
-        PropertyChanges {
-            shadow.shadowColor: Theme.var.accent
-            shadow.shadowBlur: 0.9
-            shadow.shadowOpacity: 0.4
-            shadow.shadowHorizontalOffset: 0
-            shadow.shadowVerticalOffset: 0
-        }
-    }
-
     // The visible node card.
     Item {
         id: card
