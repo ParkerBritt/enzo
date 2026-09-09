@@ -56,6 +56,10 @@ components:
     barColor: "#0e0e12"
   network:
     dotColor: "#1e1e26"
+    # The box dragged across the canvas to select nodes.
+    selectionColor:       $accentDim
+    selectionBorderColor: $accentLine
+    selectionRadius:      4
   node:
     bodyColor:        "#1f202a"
     borderColor:      "#333341"

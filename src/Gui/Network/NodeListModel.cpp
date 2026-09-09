@@ -236,14 +236,36 @@ QVariantMap NodeListModel::getNearestPort(
     return nearest;
 }
 
+QRectF NodeListModel::getNodeBody(const Node& node)
+{
+    return QRectF(node.x - nodeWidth / 2, node.y - nodeHeight / 2, nodeWidth, nodeHeight);
+}
+
+std::vector<nt::NodeId> NodeListModel::getNodesInRect(QRectF canvasRect) const
+{
+    const QRectF box = canvasRect.normalized();
+
+    std::vector<nt::NodeId> boxedIds;
+    for (const Node& node : nodes_)
+    {
+        if (box.intersects(getNodeBody(node))) boxedIds.push_back(node.nodeId);
+    }
+    return boxedIds;
+}
+
 bool NodeListModel::isOverNodeBody(QPointF canvasPoint) const
 {
     for (const Node& node : nodes_)
     {
-        const QRectF body(node.x - nodeWidth / 2, node.y - nodeHeight / 2, nodeWidth, nodeHeight);
-        if (body.contains(canvasPoint)) return true;
+        if (getNodeBody(node).contains(canvasPoint)) return true;
     }
     return false;
+}
+
+bool NodeListModel::isOverNodeOrPort(QPointF canvasPoint) const
+{
+    if (isOverNodeBody(canvasPoint)) return true;
+    return !getNearestPort(canvasPoint, true, true, kGrabRadius).isEmpty();
 }
 
 QVariantMap NodeListModel::getGrabPort(QPointF canvasPoint) const
