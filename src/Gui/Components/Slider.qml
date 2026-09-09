@@ -30,6 +30,14 @@ Item {
     property string paramName: ""
     property int componentIndex: 0
 
+    // Axis tint that marks this slider as one component of a vector parameter,
+    // shown as a swatch in place of the value fill. Unset on a plain scalar slider.
+    property color axisColor: "transparent"
+    readonly property bool isVectorComponent: axisColor.a > 0
+
+    // Space the track's contents keep clear of the axis swatch on the left.
+    readonly property real contentInset: isVectorComponent ? 20 : 0
+
     // Evaluates typed text for the floating editor's live preview, without committing it.
     property var evaluator: null
 
@@ -147,7 +155,7 @@ Item {
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill
-            visible: !root.expressionStyled
+            visible: !root.expressionStyled && !root.isVectorComponent
             readonly property real inset: 3
             x: fill.inset
             y: fill.inset
@@ -155,6 +163,18 @@ Item {
             width: (parent.width - fill.inset * 2) * root.fraction
             radius: Theme.parameter.borderRadius - fill.inset
             color: Theme.slider.fillColor
+        }
+
+        // Axis swatch marking which vector component this slider drives.
+        Rectangle {
+            visible: root.isVectorComponent
+            anchors.left: parent.left
+            anchors.leftMargin: 7
+            anchors.verticalCenter: parent.verticalCenter
+            width: 8
+            height: 8
+            radius: 3
+            color: root.axisColor
         }
 
         Text {
@@ -172,7 +192,7 @@ Item {
             id: editField
             visible: root.editing
             anchors.fill: parent
-            anchors.leftMargin: 8
+            anchors.leftMargin: 8 + root.contentInset
             anchors.rightMargin: 8
             verticalAlignment: TextInput.AlignVCenter
             horizontalAlignment: TextInput.AlignHCenter
@@ -190,7 +210,7 @@ Item {
             id: fxBadge
             visible: root.showingExpression
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 10 + root.contentInset
             anchors.verticalCenter: parent.verticalCenter
             radius: 4
             color: Theme.expression.badgeBackgroundColor
