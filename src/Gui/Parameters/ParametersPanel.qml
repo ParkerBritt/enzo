@@ -1,9 +1,10 @@
 import QtQuick
+import QtQuick.Effects
 import Enzo
 import "../Components"
 
 // Floating panel showing the primary node's parameters.
-Rectangle {
+Item {
     id: panel
 
     // Layout constants.
@@ -14,101 +15,127 @@ Rectangle {
     readonly property real contentMargin: 12
     readonly property real maxHeightInset: 28
     readonly property real gripSize: 18
+    readonly property real radius: Theme.var.panelRadius
 
     width: defaultWidth
     visible: parameters.hasNode
-    clip: true
-    radius: Theme.var.panelRadius
-    color: Theme.parameter.panelColor
 
     // Height follows the content until the user drags the resize grip, which
     // assigns an explicit size and takes over.
     implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + contentMargin)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
-    // Gives the panel keyboard focus on hover, without blocking clicks to its
-    // controls or stealing focus from a field being edited.
-    MouseArea {
-        id: panelHover
+    // Lifts the panel off the network behind it, so its edges stay readable
+    // against a bright canvas.
+    Rectangle {
+        id: shadowCaster
+        anchors.fill: parent
+        radius: panel.radius
+        color: Theme.parameter.panelColor
+    }
+
+    MultiEffect {
+        source: shadowCaster
+        anchors.fill: shadowCaster
+        shadowEnabled: true
+        shadowBlur: 1.0
+        shadowOpacity: 0.55
+        shadowVerticalOffset: 6
+    }
+
+    // The panel body, clipped to the rounded outline.
+    Rectangle {
+        id: body
 
         anchors.fill: parent
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
-    }
+        clip: true
+        radius: panel.radius
+        color: Theme.parameter.panelColor
 
-    FocusReclaimer {
-        target: panel
-        area: panelHover
-    }
+        // Gives the panel keyboard focus on hover, without blocking clicks to its
+        // controls or stealing focus from a field being edited.
+        MouseArea {
+            id: panelHover
 
-    // Title strip naming the node the parameters belong to.
-    Rectangle {
-        id: header
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: headerRow.implicitHeight + panel.contentMargin * 2
-        topLeftRadius: panel.radius
-        topRightRadius: panel.radius
-        color: Theme.var.surfaceRaised
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            hoverEnabled: true
+        }
 
-        Row {
-            id: headerRow
-            anchors.verticalCenter: parent.verticalCenter
+        FocusReclaimer {
+            target: panel
+            area: panelHover
+        }
+
+        // Title strip naming the node the parameters belong to.
+        Rectangle {
+            id: header
+            anchors.top: parent.top
             anchors.left: parent.left
-            anchors.leftMargin: panel.contentMargin
-            spacing: 8
+            anchors.right: parent.right
+            height: headerRow.implicitHeight + panel.contentMargin * 2
+            topLeftRadius: panel.radius
+            topRightRadius: panel.radius
+            color: Theme.var.surfaceRaised
 
-            Icon {
-                name: "sliders-horizontal"
-                size: 15
-                color: Theme.var.accentBright
+            Row {
+                id: headerRow
                 anchors.verticalCenter: parent.verticalCenter
-            }
+                anchors.left: parent.left
+                anchors.leftMargin: panel.contentMargin
+                spacing: 8
 
-            Column {
-                Text {
-                    text: parameters.nodeType
-                    color: Theme.var.textLabel
-                    font.family: Theme.var.fontSans
-                    font.pixelSize: 10
+                Icon {
+                    name: "sliders-horizontal"
+                    size: 15
+                    color: Theme.var.accentBright
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-                Text {
-                    text: parameters.nodeName
-                    color: Theme.var.textStrong
-                    font.family: Theme.var.fontSans
-                    font.pixelSize: 13
-                    font.weight: Font.DemiBold
+
+                Column {
+                    Text {
+                        text: parameters.nodeType
+                        color: Theme.var.textLabel
+                        font.family: Theme.var.fontSans
+                        font.pixelSize: 10
+                    }
+                    Text {
+                        text: parameters.nodeName
+                        color: Theme.var.textStrong
+                        font.family: Theme.var.fontSans
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                    }
                 }
             }
         }
-    }
 
-    Rectangle {
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 1
-        color: Theme.var.borderSoft
-    }
+        Rectangle {
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: Theme.var.borderSoft
+        }
 
-    ParameterList {
-        id: list
-        anchors.top: header.bottom
-        anchors.topMargin: panel.contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: panel.contentMargin
-        anchors.right: parent.right
-        anchors.rightMargin: panel.contentMargin
-        model: parameters.parameters
-    }
+        ParameterList {
+            id: list
+            anchors.top: header.bottom
+            anchors.topMargin: panel.contentMargin
+            anchors.left: parent.left
+            anchors.leftMargin: panel.contentMargin
+            anchors.right: parent.right
+            anchors.rightMargin: panel.contentMargin
+            model: parameters.parameters
+        }
 
-    // Drawn last so the border isn't painted over by the header fill.
-    Rectangle {
-        anchors.fill: parent
-        radius: panel.radius
-        color: "transparent"
-        border.color: Theme.var.borderSoft
+        // Drawn last so the border isn't painted over by the header fill.
+        Rectangle {
+            anchors.fill: parent
+            radius: panel.radius
+            color: "transparent"
+            border.color: Theme.var.borderSoft
+        }
     }
 
     // Drag the bottom left corner to resize. The top right stays pinned, so the

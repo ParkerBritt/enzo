@@ -100,10 +100,9 @@ Item {
             source: dropShadowRect
             anchors.fill: dropShadowRect
             shadowEnabled: true
-            shadowBlur: 0.4
-            shadowOpacity: 0.4
-            shadowHorizontalOffset: 2
-            shadowVerticalOffset: 2
+            shadowBlur: 0.7
+            shadowOpacity: 0.55
+            shadowVerticalOffset: 3
         }
 
         // Main shape
