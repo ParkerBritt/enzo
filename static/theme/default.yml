@@ -67,8 +67,8 @@ components:
     selectionBorderColor: $accentLine
     selectionRadius:      4
   node:
-    bodyColor:        "#1f202a"
-    borderColor:      "#333341"
+    bodyColor:        "#272834"
+    borderColor:      "#3d3d4c"
     portColor:        "#4a4a54"
     displayFlagColor: "#4ea1ff"
   nodeLink:
