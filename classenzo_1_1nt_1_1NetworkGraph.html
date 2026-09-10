@@ -115,11 +115,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>disconnect</b> (const
 <tr class="separator:a555a11033ea0bd0707594eff2e85285f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a736e469e3c049439922c330d32eb982c" id="r_a736e469e3c049439922c330d32eb982c"><td class="memItemLeft" align="right" valign="top"><a id="a736e469e3c049439922c330d32eb982c" name="a736e469e3c049439922c330d32eb982c"></a>
 std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getInputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target) const</td></tr>
-<tr class="memdesc:a736e469e3c049439922c330d32eb982c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connections feeding <code>target</code>, ordered by input slot. <br /></td></tr>
+<tr class="memdesc:a736e469e3c049439922c330d32eb982c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connections feeding <code>target</code>, ordered by input index. <br /></td></tr>
 <tr class="separator:a736e469e3c049439922c330d32eb982c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9a1f624be4910bfe40610530ac69e9a" id="r_af9a1f624be4910bfe40610530ac69e9a"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9a1f624be4910bfe40610530ac69e9a">getInputConnection</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target, unsigned int inputSlot) const</td></tr>
-<tr class="memdesc:af9a1f624be4910bfe40610530ac69e9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connection on one input slot of <code>target</code>, if any.  <br /></td></tr>
-<tr class="separator:af9a1f624be4910bfe40610530ac69e9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37fa70796a7e8dc359a469a4025f99dd" id="r_a37fa70796a7e8dc359a469a4025f99dd"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37fa70796a7e8dc359a469a4025f99dd">getInputConnection</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target, unsigned int inputIndex) const</td></tr>
+<tr class="memdesc:a37fa70796a7e8dc359a469a4025f99dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connection on one input of <code>target</code>, if any.  <br /></td></tr>
+<tr class="separator:a37fa70796a7e8dc359a469a4025f99dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47df71cc5c3385911f93bd4817ffd920" id="r_a47df71cc5c3385911f93bd4817ffd920"><td class="memItemLeft" align="right" valign="top"><a id="a47df71cc5c3385911f93bd4817ffd920" name="a47df71cc5c3385911f93bd4817ffd920"></a>
 std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> source) const</td></tr>
 <tr class="memdesc:a47df71cc5c3385911f93bd4817ffd920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connections leaving <code>source</code>. <br /></td></tr>
@@ -191,8 +191,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 
 </div>
 </div>
-<a id="af9a1f624be4910bfe40610530ac69e9a" name="af9a1f624be4910bfe40610530ac69e9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9a1f624be4910bfe40610530ac69e9a">&#9670;&#160;</a></span>getInputConnection()</h2>
+<a id="a37fa70796a7e8dc359a469a4025f99dd" name="a37fa70796a7e8dc359a469a4025f99dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37fa70796a7e8dc359a469a4025f99dd">&#9670;&#160;</a></span>getInputConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,13 +205,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>inputSlot</em></span>&#160;) const</td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>inputIndex</em></span>&#160;) const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the connection on one input slot of <code>target</code>, if any. </p>
-<dl class="section note"><dt>Note</dt><dd>An input slot holds at most one connection. </dd></dl>
+<p>Returns the connection on one input of <code>target</code>, if any. </p>
+<dl class="section note"><dt>Note</dt><dd>An input holds at most one connection. </dd></dl>
 
 </div>
 </div>

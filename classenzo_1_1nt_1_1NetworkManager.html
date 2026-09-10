@@ -202,12 +202,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 <a class="el" href="classenzo_1_1nt_1_1NetworkGraph.html">nt::NetworkGraph</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>graph</b> ()</td></tr>
 <tr class="memdesc:ae5480672d5e68e00d81c6af4cb2e08d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the graph that owns the network's wiring and dependencies. <br /></td></tr>
 <tr class="separator:ae5480672d5e68e00d81c6af4cb2e08d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86943038b1fd5e45132bd17c625fdcf3" id="r_a86943038b1fd5e45132bd17c625fdcf3"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86943038b1fd5e45132bd17c625fdcf3">getInputCount</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId)</td></tr>
+<tr class="memdesc:a86943038b1fd5e45132bd17c625fdcf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many inputs a node currently takes.  <br /></td></tr>
+<tr class="separator:a86943038b1fd5e45132bd17c625fdcf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af91834ebedabd29c46231ae35eff879e" id="r_af91834ebedabd29c46231ae35eff879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af91834ebedabd29c46231ae35eff879e">connectNodes</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> inputNodeId, unsigned int inputIndex, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> outputNodeId, unsigned int outputIndex)</td></tr>
 <tr class="memdesc:af91834ebedabd29c46231ae35eff879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wires one node's output into another node's input.  <br /></td></tr>
 <tr class="separator:af91834ebedabd29c46231ae35eff879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee0120a53b7e3dec885444904c0ecb9" id="r_a9ee0120a53b7e3dec885444904c0ecb9"><td class="memItemLeft" align="right" valign="top"><a id="a9ee0120a53b7e3dec885444904c0ecb9" name="a9ee0120a53b7e3dec885444904c0ecb9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>disconnectNodes</b> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;connection)</td></tr>
-<tr class="memdesc:a9ee0120a53b7e3dec885444904c0ecb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a wired connection between two nodes. <br /></td></tr>
+<tr class="memitem:a9ee0120a53b7e3dec885444904c0ecb9" id="r_a9ee0120a53b7e3dec885444904c0ecb9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ee0120a53b7e3dec885444904c0ecb9">disconnectNodes</a> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;connection)</td></tr>
+<tr class="memdesc:a9ee0120a53b7e3dec885444904c0ecb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a wired connection between two nodes.  <br /></td></tr>
 <tr class="separator:a9ee0120a53b7e3dec885444904c0ecb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a103e727d922cbca7a930a51c5cc2f445" id="r_a103e727d922cbca7a930a51c5cc2f445"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a103e727d922cbca7a930a51c5cc2f445">findNode</a> (const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;path, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> fromNode=<a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a>)</td></tr>
 <tr class="memdesc:a103e727d922cbca7a930a51c5cc2f445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a node reference such as "grid1" or "../grid1" to its node.  <br /></td></tr>
@@ -326,7 +328,9 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 
 <p>Wires one node's output into another node's input. </p>
 <dl class="section return"><dt>Returns</dt><dd>The connection that was created. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Replaces any connection already on the target input slot. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>A single input port holds one connection, so whatever was on it is replaced. </dd>
+<dd>
+A multi input port makes room, moving the connections from the index onward up one. </dd></dl>
 
 </div>
 </div>
@@ -499,6 +503,26 @@ Only the node itself is created, not the parameter values or connections it had.
 
 </div>
 </div>
+<a id="a9ee0120a53b7e3dec885444904c0ecb9" name="a9ee0120a53b7e3dec885444904c0ecb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ee0120a53b7e3dec885444904c0ecb9">&#9670;&#160;</a></span>disconnectNodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkManager::disconnectNodes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>connection</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Removes a wired connection between two nodes. </p>
+<dl class="section note"><dt>Note</dt><dd>Leaving a multi input port closes the gap, moving the connections above the index down one. </dd></dl>
+
+</div>
+</div>
 <a id="a103e727d922cbca7a930a51c5cc2f445" name="a103e727d922cbca7a930a51c5cc2f445"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a103e727d922cbca7a930a51c5cc2f445">&#9670;&#160;</a></span>findNode()</h2>
 
@@ -588,6 +612,26 @@ Only the node itself is created, not the parameter values or connections it had.
 
 <p>Returns the ids of the nodes living directly inside a scope, in no particular order. </p>
 <dl class="section note"><dt>Note</dt><dd>Nodes deeper inside a nested scope are not included. </dd></dl>
+
+</div>
+</div>
+<a id="a86943038b1fd5e45132bd17c625fdcf3" name="a86943038b1fd5e45132bd17c625fdcf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86943038b1fd5e45132bd17c625fdcf3">&#9670;&#160;</a></span>getInputCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int enzo::nt::NetworkManager::getInputCount </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns how many inputs a node currently takes. </p>
+<dl class="section note"><dt>Note</dt><dd>A single port holds one input. A multi input port holds one input per connection it has. </dd></dl>
 
 </div>
 </div>

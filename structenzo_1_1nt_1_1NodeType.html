@@ -121,6 +121,21 @@ const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasChildScope</b> () const</td></tr>
 <tr class="memdesc:a1f6a4e1e92cefe02c21395a0cd98af37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether this node holds a scope of other nodes inside it. <br /></td></tr>
 <tr class="separator:a1f6a4e1e92cefe02c21395a0cd98af37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3de9abc9122ad2706b0e0ac2ad96c131" id="r_a3de9abc9122ad2706b0e0ac2ad96c131"><td class="memItemLeft" align="right" valign="top"><a id="a3de9abc9122ad2706b0e0ac2ad96c131" name="a3de9abc9122ad2706b0e0ac2ad96c131"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasMultiInputPort</b> () const</td></tr>
+<tr class="memdesc:a3de9abc9122ad2706b0e0ac2ad96c131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the last declared port holds any number of inputs. <br /></td></tr>
+<tr class="separator:a3de9abc9122ad2706b0e0ac2ad96c131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66f729676c929e8f61f0ca3dfb73f978" id="r_a66f729676c929e8f61f0ca3dfb73f978"><td class="memItemLeft" align="right" valign="top"><a id="a66f729676c929e8f61f0ca3dfb73f978" name="a66f729676c929e8f61f0ca3dfb73f978"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getSinglePortCount</b> () const</td></tr>
+<tr class="memdesc:a66f729676c929e8f61f0ca3dfb73f978"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of ports that hold a single input each. <br /></td></tr>
+<tr class="separator:a66f729676c929e8f61f0ca3dfb73f978"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa16c7c663898bcaa44e4a7dd73e96d1" id="r_aaa16c7c663898bcaa44e4a7dd73e96d1"><td class="memItemLeft" align="right" valign="top"><a id="aaa16c7c663898bcaa44e4a7dd73e96d1" name="aaa16c7c663898bcaa44e4a7dd73e96d1"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isMultiInputPortAt</b> (unsigned int inputIndex) const</td></tr>
+<tr class="memdesc:aaa16c7c663898bcaa44e4a7dd73e96d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the input at this index belongs to the multi input port. <br /></td></tr>
+<tr class="separator:aaa16c7c663898bcaa44e4a7dd73e96d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5698f4a9d93a111671ec923a1af8f09" id="r_ad5698f4a9d93a111671ec923a1af8f09"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structenzo_1_1nt_1_1InputPort.html">InputPort</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5698f4a9d93a111671ec923a1af8f09">getPortAt</a> (unsigned int inputIndex) const</td></tr>
+<tr class="memdesc:ad5698f4a9d93a111671ec923a1af8f09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the port holding an input.  <br /></td></tr>
+<tr class="separator:ad5698f4a9d93a111671ec923a1af8f09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f0fa50bf5bf99b0dd98a488ee01ba24" id="r_a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f0fa50bf5bf99b0dd98a488ee01ba24">getIconFile</a> () const</td></tr>
 <tr class="memdesc:a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the icon file on disk.  <br /></td></tr>
 <tr class="separator:a5f0fa50bf5bf99b0dd98a488ee01ba24"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,12 +157,10 @@ nodeConstructor&#160;</td><td class="memItemRight" valign="bottom"><b>ctorFunc</
 <tr class="memitem:aa18fd40f148f69958d1908af8c6b5af5" id="r_aa18fd40f148f69958d1908af8c6b5af5"><td class="memItemLeft" align="right" valign="top"><a id="aa18fd40f148f69958d1908af8c6b5af5" name="aa18fd40f148f69958d1908af8c6b5af5"></a>
 std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">enzo::prm::Template</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>templates</b></td></tr>
 <tr class="separator:aa18fd40f148f69958d1908af8c6b5af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba674afcbe6d04535ef4f910193f3775" id="r_aba674afcbe6d04535ef4f910193f3775"><td class="memItemLeft" align="right" valign="top"><a id="aba674afcbe6d04535ef4f910193f3775" name="aba674afcbe6d04535ef4f910193f3775"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>minInputs</b> = 0</td></tr>
-<tr class="separator:aba674afcbe6d04535ef4f910193f3775"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf6948e1bcca6aafe5287833a4c37ddb" id="r_acf6948e1bcca6aafe5287833a4c37ddb"><td class="memItemLeft" align="right" valign="top"><a id="acf6948e1bcca6aafe5287833a4c37ddb" name="acf6948e1bcca6aafe5287833a4c37ddb"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>maxInputs</b> = 1</td></tr>
-<tr class="separator:acf6948e1bcca6aafe5287833a4c37ddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3328938a19ced9a6fedab311e4d51b3a" id="r_a3328938a19ced9a6fedab311e4d51b3a"><td class="memItemLeft" align="right" valign="top"><a id="a3328938a19ced9a6fedab311e4d51b3a" name="a3328938a19ced9a6fedab311e4d51b3a"></a>
+std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1InputPort.html">InputPort</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>inputPorts</b></td></tr>
+<tr class="memdesc:a3328938a19ced9a6fedab311e4d51b3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The input ports the node declares, in the order their inputs run. <br /></td></tr>
+<tr class="separator:a3328938a19ced9a6fedab311e4d51b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94a8c0e2e6cc821528f8da4d25d4d3d0" id="r_a94a8c0e2e6cc821528f8da4d25d4d3d0"><td class="memItemLeft" align="right" valign="top"><a id="a94a8c0e2e6cc821528f8da4d25d4d3d0" name="a94a8c0e2e6cc821528f8da4d25d4d3d0"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>maxOutputs</b> = 1</td></tr>
 <tr class="separator:a94a8c0e2e6cc821528f8da4d25d4d3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,7 +186,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>docsPath</b></
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Everything every node of one kind shares. </p>
-<p>A node type is what a grid node has in common with every other grid node, so the label, the parameters, the input and output counts, and the constructor that produces its behaviour. It comes from a node folder's manifest and is owned by the <a class="el" href="classenzo_1_1nt_1_1NodeTypeTable.html" title="The sole owner of every node type the application knows about.">nt::NodeTypeTable</a>, with each node holding a reference to it. </p>
+<p>A node type is what a grid node has in common with every other grid node, so the label, the parameters, the inputs and outputs, and the constructor that produces its behaviour. It comes from a node folder's manifest and is owned by the <a class="el" href="classenzo_1_1nt_1_1NodeTypeTable.html" title="The sole owner of every node type the application knows about.">nt::NodeTypeTable</a>, with each node holding a reference to it. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa8e0bbd979db6fcd0e3cafb55432b138" name="aa8e0bbd979db6fcd0e3cafb55432b138"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa8e0bbd979db6fcd0e3cafb55432b138">&#9670;&#160;</a></span>getFullName()</h2>
@@ -228,6 +241,35 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>docsPath</b></
 
 <p>Returns the icon file on disk. </p>
 <dl class="section return"><dt>Returns</dt><dd>The full path, empty when the node ships no icon. </dd></dl>
+
+</div>
+</div>
+<a id="ad5698f4a9d93a111671ec923a1af8f09" name="ad5698f4a9d93a111671ec923a1af8f09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5698f4a9d93a111671ec923a1af8f09">&#9670;&#160;</a></span>getPortAt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structenzo_1_1nt_1_1InputPort.html">InputPort</a> * enzo::nt::NodeType::getPortAt </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>inputIndex</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the port holding an input. </p>
+<dl class="section return"><dt>Returns</dt><dd>The declared port, or nothing when the index is past the last input. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Every index at or above the multi input port's position belongs to it. </dd></dl>
 
 </div>
 </div>

@@ -135,6 +135,9 @@ Protected Member Functions</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasInput</b> (unsigned int inputIndex)</td></tr>
 <tr class="memdesc:a7e24c488a62f9d5dfca5279f3973f8b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether an input has anything connected to it. <br /></td></tr>
 <tr class="separator:a7e24c488a62f9d5dfca5279f3973f8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cc09dae15dc389f1d4953a195e8f24b" id="r_a8cc09dae15dc389f1d4953a195e8f24b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cc09dae15dc389f1d4953a195e8f24b">getInputCount</a> ()</td></tr>
+<tr class="memdesc:a8cc09dae15dc389f1d4953a195e8f24b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many inputs the node takes.  <br /></td></tr>
+<tr class="separator:a8cc09dae15dc389f1d4953a195e8f24b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af431d733cd8cdcee488bbc9320698696" id="r_af431d733cd8cdcee488bbc9320698696"><td class="memItemLeft" align="right" valign="top"><a id="af431d733cd8cdcee488bbc9320698696" name="af431d733cd8cdcee488bbc9320698696"></a>
 floatT&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmFloat</b> (std::string_view parmName, const unsigned int index=0) const</td></tr>
 <tr class="separator:af431d733cd8cdcee488bbc9320698696"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,6 +210,34 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 
 <p>Produces this node's output packets from its inputs and parameters. </p>
 <dl class="section post"><dt>Postcondition</dt><dd>Any output left unset stays an empty packet. </dd></dl>
+
+</div>
+</div>
+<a id="a8cc09dae15dc389f1d4953a195e8f24b" name="a8cc09dae15dc389f1d4953a195e8f24b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cc09dae15dc389f1d4953a195e8f24b">&#9670;&#160;</a></span>getInputCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int enzo::nt::NodeImpl::getInputCount </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns how many inputs the node takes. </p>
+<dl class="section note"><dt>Note</dt><dd>A multi input port holds one input per connection it has. </dd></dl>
 
 </div>
 </div>

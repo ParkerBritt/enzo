@@ -167,14 +167,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPath</b> (const <a
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDirty</b> ()</td></tr>
 <tr class="memdesc:a20821df2226ae9cf95dd968ba0091704"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the node is dirty and false if the node is clean (does not need cooking). <br /></td></tr>
 <tr class="separator:a20821df2226ae9cf95dd968ba0091704"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04b8677b737d5fec66850ae0b9704824" id="r_a04b8677b737d5fec66850ae0b9704824"><td class="memItemLeft" align="right" valign="top"><a id="a04b8677b737d5fec66850ae0b9704824" name="a04b8677b737d5fec66850ae0b9704824"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMinInputs</b> () const</td></tr>
-<tr class="memdesc:a04b8677b737d5fec66850ae0b9704824"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum number of input connections required for the node to function. These are in order so 3 would mean the first three inputs must have a connection. <br /></td></tr>
-<tr class="separator:a04b8677b737d5fec66850ae0b9704824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9119849157eb16fb997e4fe4ce5deb61" id="r_a9119849157eb16fb997e4fe4ce5deb61"><td class="memItemLeft" align="right" valign="top"><a id="a9119849157eb16fb997e4fe4ce5deb61" name="a9119849157eb16fb997e4fe4ce5deb61"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxInputs</b> () const</td></tr>
-<tr class="memdesc:a9119849157eb16fb997e4fe4ce5deb61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of input connections accepted by the node. <br /></td></tr>
-<tr class="separator:a9119849157eb16fb997e4fe4ce5deb61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a002af788380bd00d945846a81c99e382" id="r_a002af788380bd00d945846a81c99e382"><td class="memItemLeft" align="right" valign="top"><a id="a002af788380bd00d945846a81c99e382" name="a002af788380bd00d945846a81c99e382"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>takesInput</b> () const</td></tr>
+<tr class="memdesc:a002af788380bd00d945846a81c99e382"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the node takes any input at all. <br /></td></tr>
+<tr class="separator:a002af788380bd00d945846a81c99e382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a2c512f07ddb933e1d8b0435adf1718" id="r_a8a2c512f07ddb933e1d8b0435adf1718"><td class="memItemLeft" align="right" valign="top"><a id="a8a2c512f07ddb933e1d8b0435adf1718" name="a8a2c512f07ddb933e1d8b0435adf1718"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getMaxOutputs</b> () const</td></tr>
 <tr class="memdesc:a8a2c512f07ddb933e1d8b0435adf1718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of available outputs the node provides. <br /></td></tr>
