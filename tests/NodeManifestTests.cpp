@@ -595,16 +595,16 @@ TEST_CASE("The sweep manifest parses into its node type")
     REQUIRE(manifest.getImplementation().library == "enzoOps");
 
     // The parameters, in the order the node's interface is built from.
-    REQUIRE(nodeType.templates.size() == 9);
-    REQUIRE(nodeType.templates.at(0).getName() == "profileShape");
-    REQUIRE(nodeType.templates.at(0).getDefault().getString() == "round");
-    REQUIRE(nodeType.templates.at(2).getHideCondition() == "profileShape != 1");
+    REQUIRE(nodeType.templates.size() == 12);
+    REQUIRE(nodeType.templates.at(1).getName() == "profileShape");
+    REQUIRE(nodeType.templates.at(1).getDefault().getString() == "round");
+    REQUIRE(nodeType.templates.at(3).getHideCondition() == "profileShape != 1");
 
     const prm::Template& capGroup =
-        nodeType.templates.at(5).getChild("endCapGroup").getChild("endCapGroupName");
+        nodeType.templates.at(7).getChild("endCapGroup").getChild("endCapGroupName");
     REQUIRE(capGroup.getDefault().getString() == "sweepCap");
     REQUIRE(capGroup.isBackgroundEnabled() == false);
 
-    const prm::Template& scaleRamp = nodeType.templates.at(8);
+    const prm::Template& scaleRamp = nodeType.templates.at(11);
     REQUIRE(scaleRamp.getInstanceDefault("value", 0)->getFloat() == Catch::Approx(1));
 }
