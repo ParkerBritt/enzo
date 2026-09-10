@@ -278,6 +278,22 @@ TEST_CASE("Conditions, tooltips and layout flags reach the template")
     REQUIRE(parameter.getHideCondition() == "profileShape != 1");
 }
 
+TEST_CASE("A divider carries its label and icon")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: shapeDivider
+    label: Shape
+    type: divider
+    icon: box
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+
+    REQUIRE(parameter.getType() == prm::Type::DIVIDER);
+    REQUIRE(parameter.getLabel() == "Shape");
+    REQUIRE(parameter.getIcon() == "box");
+    REQUIRE(parameter.isBackgroundEnabled() == false);
+}
+
 TEST_CASE("Groups nest through their parameters key")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(

@@ -113,7 +113,7 @@ enum class Type
     GROUP,
     DROPDOWN,
     RAMP,
-    SPACER
+    DIVIDER
 };
 enum class Direction
 {
@@ -157,8 +157,8 @@ inline std::string toString(Type type)
         return "dropdown";
     case Type::RAMP:
         return "ramp";
-    case Type::SPACER:
-        return "spacer";
+    case Type::DIVIDER:
+        return "divider";
     }
     return "";
 }
@@ -174,7 +174,7 @@ inline constexpr std::array kAllTypes = {
     Type::GROUP,
     Type::DROPDOWN,
     Type::RAMP,
-    Type::SPACER
+    Type::DIVIDER
 };
 
 /// @brief Returns the parameter type a canonical name stands for, e.g. "dropdown".
@@ -200,8 +200,8 @@ inline ValueType toValueType(Type type)
     // Multiparm parameters (like ramp) use integers to represent their instance
     // count and store the actual data in their instances.
     case Type::RAMP:
-    // Spacers are purely visual and store an int nobody reads.
-    case Type::SPACER:
+    // Dividers are purely visual and store an int nobody reads.
+    case Type::DIVIDER:
         return ValueType::Int;
     case Type::STRING:
     case Type::DROPDOWN:

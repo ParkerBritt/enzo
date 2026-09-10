@@ -12,6 +12,9 @@ Column {
     // Widest label, reported up so a parent can share a column across lists.
     readonly property real implicitLabelWidth: widest
     property real widest: 0
+
+    // Horizontal padding each row carries around its content.
+    property real contentInset: 0
     spacing: 6
 
     function remeasure() {
@@ -30,6 +33,7 @@ Column {
             required property var modelData
             item: modelData
             width: list.width
+            contentInset: list.contentInset
             labelColumnWidth: list.labelColumnWidth
             onImplicitLabelWidthChanged: list.remeasure()
             Component.onCompleted: list.remeasure()

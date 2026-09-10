@@ -2,7 +2,7 @@ import QtQuick
 import Enzo
 import "../Style"
 
-// One parameter, picking the control for its kind. Groups and spacers span the
+// One parameter, picking the control for its kind. Groups and dividers span the
 // full width, every other kind sits beside its label.
 Item {
     id: row
@@ -17,9 +17,17 @@ Item {
     // Column width for the label, assigned by the list.
     property real labelColumnWidth: 0
 
+    // Horizontal padding around the row's content, assigned by the list.
+    property real contentInset: 0
+
+    // Kinds that run edge to edge instead of sitting inside the inset.
+    readonly property var fullWidthKinds: ["divider"]
+
+    readonly property real bodyInset: (item && fullWidthKinds.includes(item.kind)) ? 0 : contentInset
+
     // Kinds the row adds no side label for, either because the control draws its
     // own or because it has none.
-    readonly property var unlabeledKinds: ["group", "ramp", "spacer"]
+    readonly property var unlabeledKinds: ["group", "ramp", "divider"]
 
     // Whether this row shows a label beside its control.
     readonly property bool hasLabel: item && !unlabeledKinds.includes(item.kind) && !item.hidden && !item.labelHidden
@@ -46,12 +54,15 @@ Item {
 
     Loader {
         id: leafBody
-        width: row.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: row.bodyInset
+        anchors.rightMargin: row.bodyInset
         sourceComponent: {
             if (!row.item || row.item.kind === "group")
                 return null;
-            if (row.item.kind === "spacer")
-                return spacerComp;
+            if (row.item.kind === "divider")
+                return dividerComp;
             return parameterComp;
         }
     }
@@ -59,7 +70,10 @@ Item {
     // Loaded by URL to break the ParameterRow/Group type cycle QML errors on.
     Loader {
         id: groupLoader
-        width: row.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: row.bodyInset
+        anchors.rightMargin: row.bodyInset
         Component.onCompleted: {
             if (row.item && row.item.kind === "group")
                 setSource("Group.qml", {
@@ -82,7 +96,7 @@ Item {
                 height: row.parameterHeight
                 verticalAlignment: Text.AlignVCenter
                 text: row.item.label
-                color: Theme.var.textLabel
+                color: Theme.var.text
                 font.family: Theme.var.fontSans
                 font.pixelSize: row.labelFontSize
                 elide: Text.ElideRight
@@ -108,16 +122,16 @@ Item {
                     case "ramp":
                         return rampComp;
                     }
-                    return spacerComp;
+                    return null;
                 }
             }
         }
     }
 
     Component {
-        id: spacerComp
-        Item {
-            implicitHeight: 8
+        id: dividerComp
+        Divider {
+            item: row.item
         }
     }
     Component {

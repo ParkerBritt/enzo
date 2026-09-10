@@ -12,7 +12,12 @@ Item {
     readonly property real defaultHeight: Theme.parameter.panelHeight
     readonly property real minWidth: 200
     readonly property real minHeight: 120
-    readonly property real contentMargin: 12
+    // Space above and below the panel's content.
+    readonly property real verticalMargin: 12
+    // Inset between the panel edge and its content.
+    readonly property real sideMargin: 16
+    // Extra left padding inside each parameter row. Not all parameters will use this.
+    readonly property real parameterInset: 20
     readonly property real maxHeightInset: 28
     readonly property real gripSize: 18
     readonly property real radius: Theme.var.panelRadius
@@ -22,7 +27,7 @@ Item {
 
     // Height follows the content until the user drags the resize grip, which
     // assigns an explicit size and takes over.
-    implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + contentMargin)
+    implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + verticalMargin)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
     // Lifts the panel off the network behind it, so its edges stay readable
@@ -73,7 +78,7 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            height: headerRow.implicitHeight + panel.contentMargin * 2
+            height: headerRow.implicitHeight + panel.verticalMargin * 2
             topLeftRadius: panel.radius
             topRightRadius: panel.radius
             color: Theme.var.surfaceRaised
@@ -82,7 +87,7 @@ Item {
                 id: headerRow
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: panel.contentMargin
+                anchors.leftMargin: panel.sideMargin
                 spacing: 8
 
                 Icon {
@@ -121,11 +126,12 @@ Item {
         ParameterList {
             id: list
             anchors.top: header.bottom
-            anchors.topMargin: panel.contentMargin
+            anchors.topMargin: panel.verticalMargin
             anchors.left: parent.left
-            anchors.leftMargin: panel.contentMargin
+            anchors.leftMargin: panel.sideMargin
             anchors.right: parent.right
-            anchors.rightMargin: panel.contentMargin
+            anchors.rightMargin: panel.sideMargin
+            contentInset: panel.parameterInset
             model: parameters.parameters
         }
 

@@ -135,6 +135,8 @@ String prm::Template::getHideCondition() const { return hideCondition_; }
 
 bool prm::Template::isLabelHidden() const { return labelHidden_; }
 
+String prm::Template::getIcon() const { return icon_; }
+
 prm::Template& prm::Template::setTooltip(String tooltip)
 {
     tooltip_ = std::move(tooltip);
@@ -212,6 +214,12 @@ prm::Template& prm::Template::setLabelHidden(bool hidden)
 prm::Template& prm::Template::setBackgroundEnabled(bool enabled)
 {
     backgroundEnabled_ = enabled;
+    return *this;
+}
+
+prm::Template& prm::Template::setIcon(String icon)
+{
+    icon_ = std::move(icon);
     return *this;
 }
 

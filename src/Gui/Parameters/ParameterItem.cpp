@@ -99,6 +99,7 @@ ParameterItem::ParameterItem(
     nodeName_ = QString::fromStdString(node.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());
     tooltip_ = QString::fromStdString(prmTemplate.getTooltip());
+    icon_ = QString::fromStdString(prmTemplate.getIcon());
     vectorSize_ = static_cast<int>(prmTemplate.getSize());
     horizontal_ = prmTemplate.getDirection() == prm::Direction::HORIZONTAL;
     labelHidden_ = prmTemplate.isLabelHidden();
