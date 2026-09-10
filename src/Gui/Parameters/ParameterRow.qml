@@ -14,6 +14,9 @@ Item {
 
     required property var item
 
+    // This row's position in its list.
+    property int rowIndex: 0
+
     // Column width for the label, assigned by the list.
     property real labelColumnWidth: 0
 
@@ -145,6 +148,7 @@ Item {
         id: dividerComp
         Divider {
             item: row.item
+            rowIndex: row.rowIndex
         }
     }
     Component {

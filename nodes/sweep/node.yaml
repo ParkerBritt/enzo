@@ -16,6 +16,11 @@ implementation:
   constructor: sweep
 
 parameters:
+  - name: profile_divider
+    label: Profile
+    type: divider
+    icon: disc
+
   - name: profileShape
     label: Profile Shape
     type: dropdown
@@ -52,6 +57,11 @@ parameters:
     default: 2
     range: {min: 2, max: 64, minLocked: true}
     hideCondition: profileShape != 3
+
+  - name: caps_divider
+    label: Caps
+    type: divider
+    icon: square-minus
 
   - name: endCapRow
     label: End Cap
@@ -102,6 +112,11 @@ parameters:
             tooltip: >
               Enter the name to put the end cap polygons in this group. You can use this
               group name in later nodes to easily target just the cap polygons.
+
+  - name: along_sweep_divider
+    label: Along Sweep
+    type: divider
+    icon: route
 
   - name: stretchTurns
     label: Stretch Around Turns

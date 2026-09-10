@@ -31,7 +31,9 @@ Column {
         onCountChanged: list.remeasure()
         delegate: ParameterRow {
             required property var modelData
+            required property int index
             item: modelData
+            rowIndex: index
             width: list.width
             contentInset: list.contentInset
             labelColumnWidth: list.labelColumnWidth
