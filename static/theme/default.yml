@@ -7,6 +7,7 @@ variables:
   fieldSurface:  "#0d0d11"
   surfaceHeader: "#101015"
   surface:       "#141418"
+  surfacePanel:  "#17171c"
   surfaceRaised: "#191920"
 
   # Fill behind a selected row or an active parameter value, a touch lighter
@@ -89,7 +90,7 @@ components:
       - "#b69bf2"
   parameter:
     # The floating panel container, translucent over the network behind it.
-    panelColor:      $surface
+    panelColor:      $surfacePanel
     # The inset fields inside it, such as sliders and text boxes.
     backgroundColor: $fieldSurface
     lineColor:       $fieldBorder
