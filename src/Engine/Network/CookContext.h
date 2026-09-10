@@ -26,6 +26,7 @@ class CookContext
     CookContext(enzo::nt::NodeId nodeId, enzo::nt::NetworkManager& networkManager);
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
+    unsigned int getInputCount();
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
     intT evalParmInt(std::string_view parmName, const unsigned int index = 0) const;
     boolT evalParmBool(std::string_view parmName, const unsigned int index = 0) const;
