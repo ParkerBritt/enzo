@@ -16,14 +16,38 @@ implementation:
   constructor: transform
 
 parameters:
+  - name: selection
+    label: Selection
+    type: string
+    tooltip: >
+      The points to transform. Accepts a point selection or a group name. Leave
+      it empty to transform everything.
+
   - name: translate
     label: Translate
     type: float
     size: 3
     style: xyz
+    tooltip: How far to move along each axis.
 
   - name: rotate
     label: Rotate
     type: float
     size: 3
     style: xyz
+    range: {min: -360, max: 360}
+    tooltip: How far to turn about each axis, in degrees.
+
+  - name: scale
+    label: Scale
+    type: float
+    size: 3
+    default: 1
+    style: xyz
+    tooltip: How much to grow or shrink along each axis.
+
+  - name: uniform_scale
+    label: Uniform Scale
+    type: float
+    default: 1
+    tooltip: How much to grow or shrink along every axis at once.

@@ -20,14 +20,17 @@ struct NMReset
     ~NMReset() { nt::nm()._reset(); }
 };
 
-// Returns the first point of a cooked node's output.
-Vector3 getFirstPoint(nt::Node& node)
+// Returns one point of a cooked node's output.
+Vector3 getPoint(nt::Node& node, Offset pointOffset)
 {
     const auto mesh = std::dynamic_pointer_cast<const geo::Mesh>(node.getOutputPacket(0)->getPrimitive(0));
     REQUIRE(mesh != nullptr);
-    REQUIRE(mesh->getNumPoints() > 0);
-    return mesh->getPointPos(0);
+    REQUIRE(mesh->getNumPoints() > pointOffset);
+    return mesh->getPointPos(pointOffset);
 }
+
+// Returns the first point of a cooked node's output.
+Vector3 getFirstPoint(nt::Node& node) { return getPoint(node, 0); }
 
 } // namespace
 
@@ -52,4 +55,52 @@ TEST_CASE_METHOD(NMReset, "Rotate is read in degrees")
     REQUIRE(after.x() == Catch::Approx(before.z()).margin(1e-5));
     REQUIRE(after.y() == Catch::Approx(before.y()).margin(1e-5));
     REQUIRE(after.z() == Catch::Approx(-before.x()).margin(1e-5));
+}
+
+TEST_CASE_METHOD(NMReset, "Scale multiplies each axis independently")
+{
+    nt::NodeLoader::loadNodes();
+    auto& nm = nt::nm();
+
+    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    const nt::NodeId transform =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    nm.connectNodes(grid, 0, transform, 0);
+
+    auto scale = nm.getNode(transform).getParameter("scale").lock();
+    scale->setFloat(2.f, 0);
+    scale->setFloat(3.f, 1);
+    scale->setFloat(4.f, 2);
+    nm.cook(transform);
+
+    const Vector3 before = getFirstPoint(nm.getNode(grid));
+    const Vector3 after = getFirstPoint(nm.getNode(transform));
+
+    REQUIRE(after.x() == Catch::Approx(before.x() * 2.f).margin(1e-5));
+    REQUIRE(after.y() == Catch::Approx(before.y() * 3.f).margin(1e-5));
+    REQUIRE(after.z() == Catch::Approx(before.z() * 4.f).margin(1e-5));
+}
+
+TEST_CASE_METHOD(NMReset, "A point selection leaves the other points where they are")
+{
+    nt::NodeLoader::loadNodes();
+    auto& nm = nt::nm();
+
+    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    const nt::NodeId transform =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    nm.connectNodes(grid, 0, transform, 0);
+
+    // Lift only the first point of the grid
+    nm.getNode(transform).getParameter("selection").lock()->setString("p{0}");
+    nm.getNode(transform).getParameter("translate").lock()->setFloat(5.f, 1);
+    nm.cook(transform);
+
+    const Vector3 firstBefore = getPoint(nm.getNode(grid), 0);
+    const Vector3 firstAfter = getPoint(nm.getNode(transform), 0);
+    REQUIRE(firstAfter.y() == Catch::Approx(firstBefore.y() + 5.f).margin(1e-5));
+
+    const Vector3 secondBefore = getPoint(nm.getNode(grid), 1);
+    const Vector3 secondAfter = getPoint(nm.getNode(transform), 1);
+    REQUIRE(secondAfter.y() == Catch::Approx(secondBefore.y()).margin(1e-5));
 }

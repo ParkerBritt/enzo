@@ -1,12 +1,29 @@
+#include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Geometry/AngleAxis.h>
-#include <Eigen/src/Geometry/Transform.h>
-#include <numbers>
+#include "Engine/Primitives/Mesh.h"
+#include "Engine/Selection/Selection.h"
+#include <memory>
+#include <vector>
 
 namespace {
+
+/// @brief Moves the given points of a mesh, leaving the rest of the mesh where it is.
+void transformPoints(
+    enzo::geo::PrimPtr prim,
+    const std::vector<enzo::Offset>& pointOffsets,
+    const enzo::Transform& transform
+)
+{
+    auto mesh = std::dynamic_pointer_cast<enzo::geo::Mesh>(prim);
+    if (!mesh) return;
+
+    for (const enzo::Offset pointOffset : pointOffsets)
+    {
+        mesh->setPointPos(pointOffset, transform * mesh->getPointPos(pointOffset));
+    }
+}
 
 class Transform : public enzo::nt::NodeImpl
 {
@@ -24,26 +41,28 @@ void Transform::cook()
 
     NodePacket packet = cloneInputPacket(0);
 
-    const floatT degreesToRadians = std::numbers::pi / 180.0;
-    const floatT rotateX = evalParmFloat("rotate", 0) * degreesToRadians;
-    const floatT rotateY = evalParmFloat("rotate", 1) * degreesToRadians;
-    const floatT rotateZ = evalParmFloat("rotate", 2) * degreesToRadians;
+    const String selectionString = evalParmString("selection");
+    const Vector3 translate = evalParmVector3("translate");
+    const Vector3 rotate = evalParmVector3("rotate");
+    const Vector3 scale = evalParmVector3("scale");
+    const floatT uniformScale = evalParmFloat("uniform_scale");
 
-    // Compose translation then rotation into one homogeneous transform.
-    Eigen::Affine3f transform = Eigen::Affine3f::Identity();
-    transform.translate(Vector3(
-        evalParmFloat("translate", 0),
-        evalParmFloat("translate", 1),
-        evalParmFloat("translate", 2)
-    ));
-    transform.rotate(Eigen::AngleAxisf(rotateX, Vector3(1, 0, 0)));
-    transform.rotate(Eigen::AngleAxisf(rotateY, Vector3(0, 1, 0)));
-    transform.rotate(Eigen::AngleAxisf(rotateZ, Vector3(0, 0, 1)));
+    // Scale runs first, then the rotation, then the translation.
+    const enzo::Transform transform = enzo::Transform()
+                                        .translate(translate)
+                                        .rotateEuler(rotate)
+                                        .scale(scale * uniformScale);
 
-    const Matrix4 matrix = transform.matrix();
-    for (unsigned int p = 0; p < packet.size(); ++p)
+    Selection selection(selectionString);
+    for (geo::PrimPtr prim : selection.getPrims(packet))
     {
-        packet.getPrimitive(p)->applyTransform(matrix, TransformClass::POINT);
+        const bool wholePrim = selection.containsPrim(prim, true);
+        if (wholePrim)
+        {
+            prim->applyTransform(transform, TransformClass::POINT);
+            continue;
+        }
+        transformPoints(prim, selection.getPoints(prim), transform);
     }
 
     setOutputPacket(0, packet);
