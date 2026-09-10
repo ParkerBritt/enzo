@@ -18,6 +18,7 @@ Item {
     property color fillColor: Theme.node.bodyColor
     property color borderColor: Theme.node.borderColor
 
+    property var nodeId
     property string label: "Grid"
     property real radius: 5
     property real viewZoom: 1
@@ -26,6 +27,9 @@ Item {
     property bool display: false
     property int inputPortCount: 0
     property int outputPortCount: 0
+
+    // Whether the last input port takes any number of inputs.
+    property bool multiInput: false
 
     // While a link is being drawn the card lets presses through so the canvas can
     // grab and drop ports that sit beneath it.
@@ -174,20 +178,26 @@ Item {
         }
     }
 
-    // One port, a dot on its point along a card edge where the link layer
-    // anchors its curves. Hit testing lives on the canvas, so this is purely the
-    // visual dot and lights up only while it is the highlighted port.
+    // One port, the place along a card edge where the link layer anchors its
+    // curves. Hit testing lives on the canvas, so this is purely the visual mark
+    // and lights up only while it is the highlighted port.
     component Port: Item {
         id: portDot
 
-        property int portIndex: 0
-        property int portCount: 1
+        // The stretch of card edge this port covers.
+        property rect box
+
         property bool active: false
 
-        x: root.width * (portIndex + 1) / (portCount + 1)
+        // Whether this port holds any number of inputs.
+        property bool multiInput: false
+
+        x: box.x + box.width / 2
+        y: box.y
 
         Rectangle {
-            width: 7
+            // A multi input port fills the edge it covers, a single port marks its center.
+            width: portDot.multiInput ? portDot.box.width : 7
             height: 4
             radius: 1.5
             x: -width / 2
@@ -195,7 +205,7 @@ Item {
 
             // The dot grows and brightens once it is the closest port, to invite a drag.
             color: portDot.active ? Qt.lighter(Theme.node.portColor, 1.6) : Theme.node.portColor
-            scale: portDot.active ? 1.5 : 1
+            scale: portDot.active && !portDot.multiInput ? 1.5 : 1
             Behavior on color {
                 ColorAnimation {
                     duration: 90
@@ -214,20 +224,21 @@ Item {
         model: root.inputPortCount
         delegate: Port {
             required property int index
-            portIndex: index
-            portCount: root.inputPortCount
-            active: root.highlightedInput === index
-            y: 0
+
+            box: network.nodes.getPortBox(root.nodeId, index, false)
+
+            // Holds every input from the last declared port onward.
+            multiInput: root.multiInput && index === root.inputPortCount - 1
+            active: multiInput ? root.highlightedInput >= index : root.highlightedInput === index
         }
     }
     Repeater {
         model: root.outputPortCount
         delegate: Port {
             required property int index
-            portIndex: index
-            portCount: root.outputPortCount
+
+            box: network.nodes.getPortBox(root.nodeId, index, true)
             active: root.highlightedOutput === index
-            y: root.height
         }
     }
 }

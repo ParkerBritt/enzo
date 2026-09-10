@@ -44,6 +44,14 @@ class NodeListModel : public QAbstractListModel
     /// @return A {nodeId, index, isOutput, x, y} map, empty when none is within reach.
     Q_INVOKABLE QVariantMap getSnapPort(QPointF canvasPoint, bool wantOutput) const;
 
+    /// @brief Returns the stretch of card edge one port covers, in card coordinates.
+    ///
+    /// Every port on an edge covers an equal share of it, so a single port centers
+    /// its dot in that share and a multi input port fills it as a bar.
+    ///
+    /// @note The height is zero. A port's thickness is drawn, not laid out.
+    Q_INVOKABLE QRectF getPortBox(qulonglong nodeId, int index, bool isOutput) const;
+
     /// @brief Returns the ids of every node whose card the given canvas rectangle
     /// touches.
     std::vector<nt::NodeId> getNodesInRect(QRectF canvasRect) const;
@@ -99,6 +107,7 @@ class NodeListModel : public QAbstractListModel
         float y;
         int inputPortCount;
         int outputPortCount;
+        bool multiInput;
         bool selected = false;
         bool primary = false;
         bool display = false;
@@ -132,11 +141,24 @@ class NodeListModel : public QAbstractListModel
     /// @brief Returns the canvas rectangle a node's card covers.
     static QRectF getNodeBody(const Node& node);
 
-    /// @brief Returns the canvas position of one port on @p node.
+    /// @brief Returns the canvas position of one output port on @p node's bottom edge.
     ///
-    /// Ports spread evenly along an edge, so one lands at the middle and two land
-    /// at the third marks. Inputs sit on the top edge, outputs on the bottom.
-    QPointF getPortPosition(const Node& node, int index, bool isOutput) const;
+    /// Ports spread evenly along the edge, so one lands at the middle and two land
+    /// at the third marks.
+    QPointF getOutputPosition(const Node& node, int outputIndex) const;
+
+    /// @brief Returns the canvas position of one input on @p node's top edge.
+    ///
+    /// Every declared port covers an equal share of the edge. A single port sits at
+    /// the center of its share, while the multi input port fills its share as a bar
+    /// and spreads @p multiCount connections evenly inside it.
+    ///
+    /// @note Passing one more than the port holds gives a position at each end of
+    /// the bar and one between every adjacent pair, where a new link would insert.
+    QPointF getInputPosition(const Node& node, int inputIndex, int multiCount) const;
+
+    /// @brief Returns how many connections @p node's multi input port holds.
+    int getMultiInputCount(const Node& node) const;
 
     /// @brief Returns the nearest port within @p pickRadius across the chosen edges.
     QVariantMap getNearestPort(
