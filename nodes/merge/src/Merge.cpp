@@ -21,35 +21,33 @@ void Merge::cook()
 
     if (!outputRequested(0)) return;
 
-    NodePacket packet0 = cloneInputPacket(0);
-    NodePacket packet1 = cloneInputPacket(1);
+    NodePacket output;
 
-    // Index primitives from input 0 by path
-    std::unordered_map<String, size_t> pathIndex;
-    for (size_t i = 0; i < packet0.size(); ++i)
-    {
-        pathIndex[packet0.getPrimitive(i)->getPath()] = i;
-    }
+    // The output index each path sits at
+    std::unordered_map<String, size_t> indexByPath;
 
-    // For each primitive in input 1, merge if path conflicts, otherwise append
-    NodePacket output = std::move(packet0);
-    for (size_t i = 0; i < packet1.size(); ++i)
+    const unsigned int inputCount = getInputCount();
+    for (unsigned int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
     {
-        auto prim = packet1.getPrimitive(i);
-        auto it = pathIndex.find(prim->getPath());
-        if (it != pathIndex.end())
+        NodePacket input = cloneInputPacket(inputIndex);
+        for (size_t primIndex = 0; primIndex < input.size(); ++primIndex)
         {
-            auto dst = output.getPrimitive(it->second);
-            if (dst->getType() == geo::PrimType::MESH && prim->getType() == geo::PrimType::MESH)
+            auto prim = input.getPrimitive(primIndex);
+            const String path = prim->getPath();
+            auto placed = indexByPath.find(path);
+            if (placed == indexByPath.end())
             {
-                std::static_pointer_cast<geo::Mesh>(dst)->merge(
-                    *std::static_pointer_cast<geo::Mesh>(prim)
-                );
+                indexByPath[path] = output.size();
+                output.addPrimitive(prim);
+                continue;
             }
-        }
-        else
-        {
-            output.addPrimitive(prim);
+
+            auto destination = output.getPrimitive(placed->second);
+            const bool bothAreMeshes = destination->getType() == geo::PrimType::MESH
+                                       && prim->getType() == geo::PrimType::MESH;
+            if (bothAreMeshes)
+                std::static_pointer_cast<geo::Mesh>(destination)
+                    ->merge(*std::static_pointer_cast<geo::Mesh>(prim));
         }
     }
 

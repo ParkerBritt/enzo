@@ -237,7 +237,10 @@ class NetworkManager
 
     /// @brief Wires one node's output into another node's input.
     /// @return The connection that was created.
-    /// @note Replaces any connection already on the target input.
+    /// @note A single input port holds one connection, so whatever was on it is
+    /// replaced.
+    /// @note A multi input port makes room, moving the connections from the index
+    /// onward up one.
     nt::Connection connectNodes(
         NodeId inputNodeId,
         unsigned int inputIndex,
@@ -246,6 +249,8 @@ class NetworkManager
     );
 
     /// @brief Removes a wired connection between two nodes.
+    /// @note Leaving a multi input port closes the gap, moving the connections
+    /// above the index down one.
     void disconnectNodes(const nt::Connection& connection);
 
     /// @brief Resolves a node reference such as "grid1" or "../grid1" to its node.
@@ -318,6 +323,15 @@ class NetworkManager
     // functions
     /// @brief Removes all of a node's connections, each as its own undo command.
     void disconnectNode(NodeId nodeId);
+
+    /// @brief Moves the connections at or above @p fromIndex up one input.
+    void openInputGap(NodeId nodeId, unsigned int fromIndex);
+
+    /// @brief Moves the connections above @p fromIndex down one input.
+    void closeInputGap(NodeId nodeId, unsigned int fromIndex);
+
+    /// @brief Moves a connection onto a different input of the same node.
+    void moveInput(const nt::Connection& connection, unsigned int inputIndex);
 
     /**
      * @brief Slot called when a node of @p NodeId is dirtied

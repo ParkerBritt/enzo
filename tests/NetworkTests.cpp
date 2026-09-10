@@ -8,6 +8,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 struct NMReset
 {
@@ -24,6 +25,7 @@ static NodeTypeTableInit _nodeTypeTableInit;
 const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
 const enzo::nt::NodeType& transformNodeType =
     enzo::nt::NodeTypeTable::requireNodeType("enzo::transform");
+const enzo::nt::NodeType& mergeNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::merge");
 
 // A node type that holds a scope. No shipped node has one, so the tests declare their own
 // and register it in the table, where undo looks up the type of a restored node.
@@ -428,4 +430,104 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes li
     REQUIRE_FALSE(nm.isValidNode(inner));
     REQUIRE_FALSE(nm.isValidNode(deeper));
     REQUIRE(nm.getScope(Path("/container1")) == nullptr);
+}
+
+// Returns the source node feeding each input of a node, low index first.
+static std::vector<enzo::nt::NodeId> getInputSources(enzo::nt::NodeId nodeId)
+{
+    std::vector<enzo::nt::NodeId> sources;
+    for (const enzo::nt::Connection& connection : enzo::nt::nm().graph().getInputs(nodeId))
+        sources.push_back(connection.sourceNode);
+    return sources;
+}
+
+TEST_CASE_METHOD(NMReset, "Connecting into a multi input port makes room for the connection")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::NodeId merge = nm.createNode(mergeNodeType);
+    nt::NodeId first = nm.createNode(testNodeType);
+    nt::NodeId second = nm.createNode(testNodeType);
+
+    nm.connectNodes(first, 0, merge, 0);
+    nm.connectNodes(second, 0, merge, 1);
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
+
+    // Connects into an input the multi port already holds, moving the rest up
+    nt::NodeId inserted = nm.createNode(testNodeType);
+    nm.connectNodes(inserted, 0, merge, 1);
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, inserted, second});
+}
+
+TEST_CASE_METHOD(NMReset, "Disconnecting from a multi input port closes the gap")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::NodeId merge = nm.createNode(mergeNodeType);
+    nt::NodeId first = nm.createNode(testNodeType);
+    nt::NodeId second = nm.createNode(testNodeType);
+    nt::NodeId third = nm.createNode(testNodeType);
+
+    nm.connectNodes(first, 0, merge, 0);
+    nm.connectNodes(second, 0, merge, 1);
+    nm.connectNodes(third, 0, merge, 2);
+
+    nm.disconnectNodes({second, 0, merge, 1});
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, third});
+}
+
+TEST_CASE_METHOD(NMReset, "Undoing a connection into a multi input port restores the order")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+    nm.undoStack().clear();
+
+    nt::NodeId merge = nm.createNode(mergeNodeType);
+    nt::NodeId first = nm.createNode(testNodeType);
+    nt::NodeId second = nm.createNode(testNodeType);
+    nm.connectNodes(first, 0, merge, 0);
+    nm.connectNodes(second, 0, merge, 1);
+
+    nt::NodeId inserted = nm.createNode(testNodeType);
+    nm.connectNodes(inserted, 0, merge, 0);
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{inserted, first, second});
+
+    nm.undoStack().undo();
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
+
+    nm.undoStack().redo();
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{inserted, first, second});
+}
+
+TEST_CASE_METHOD(NMReset, "Connecting into an occupied single input port replaces the connection")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::NodeId transform = nm.createNode(transformNodeType);
+    nt::NodeId first = nm.createNode(testNodeType);
+    nt::NodeId second = nm.createNode(testNodeType);
+
+    nm.connectNodes(first, 0, transform, 0);
+    nm.connectNodes(second, 0, transform, 0);
+    REQUIRE(getInputSources(transform) == std::vector<nt::NodeId>{second});
+}
+
+TEST_CASE_METHOD(NMReset, "Connecting past the last input of a multi input port appends")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::NodeId merge = nm.createNode(mergeNodeType);
+    nt::NodeId first = nm.createNode(testNodeType);
+    nt::NodeId second = nm.createNode(testNodeType);
+
+    nm.connectNodes(first, 0, merge, 0);
+    nt::Connection connection = nm.connectNodes(second, 0, merge, 5);
+
+    REQUIRE(connection.targetInput == 1);
+    REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
+    REQUIRE(nm.getInputCount(merge) == 2);
 }

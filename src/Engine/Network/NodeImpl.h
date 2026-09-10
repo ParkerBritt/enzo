@@ -67,6 +67,10 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     /// @brief Returns whether an input has anything connected to it.
     bool hasInput(unsigned int inputIndex);
 
+    /// @brief Returns how many inputs the node takes.
+    /// @note A multi input port holds one input per connection it has.
+    unsigned int getInputCount();
+
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
     intT evalParmInt(std::string_view parmName, const unsigned int index = 0) const;
     boolT evalParmBool(std::string_view parmName, const unsigned int index = 0) const;

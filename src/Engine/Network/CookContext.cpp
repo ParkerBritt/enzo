@@ -28,6 +28,8 @@ bool nt::CookContext::hasInput(unsigned int inputIndex)
     return networkManager_.graph().getInputConnection(nodeId_, inputIndex).has_value();
 }
 
+unsigned int nt::CookContext::getInputCount() { return networkManager_.getInputCount(nodeId_); }
+
 // TODO: cache value
 floatT nt::CookContext::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {

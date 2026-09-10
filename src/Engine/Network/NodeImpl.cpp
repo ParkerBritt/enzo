@@ -29,6 +29,8 @@ NodePacket NodeImpl::cloneInputPacket(unsigned int inputIndex)
 
 bool NodeImpl::hasInput(unsigned int inputIndex) { return context_.hasInput(inputIndex); }
 
+unsigned int NodeImpl::getInputCount() { return context_.getInputCount(); }
+
 floatT NodeImpl::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {
     return context_.evalParmFloat(parmName, index);

@@ -94,6 +94,12 @@ struct NodeType
         return hasMultiInputPort() ? declaredCount - 1 : declaredCount;
     }
 
+    /// @brief Returns whether the input at this index belongs to the multi input port.
+    bool isMultiInputPortAt(unsigned int inputIndex) const
+    {
+        return hasMultiInputPort() && inputIndex >= getSinglePortCount();
+    }
+
     /// @brief Returns the port holding an input.
     /// @return The declared port, or nothing when the index is past the last input.
     /// @note Every index at or above the multi input port's position belongs to it.
