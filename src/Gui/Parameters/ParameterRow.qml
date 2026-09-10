@@ -107,6 +107,8 @@ Item {
                 sourceComponent: {
                     switch (row.item.kind) {
                     case "float":
+                        if (row.item.style === "rangeCircle")
+                            return rangeDialComp;
                         return row.item.vectorSize > 1 ? vecComp : floatComp;
                     case "int":
                         return intComp;
@@ -153,6 +155,12 @@ Item {
     Component {
         id: vecComp
         VectorParameter {
+            item: row.item
+        }
+    }
+    Component {
+        id: rangeDialComp
+        RangeDial {
             item: row.item
         }
     }

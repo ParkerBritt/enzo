@@ -77,9 +77,8 @@ parameters:
     range: {min: 1, max: 100, minLocked: true}
 
   - name: arc
-    label: Arc Type
+    label: Arc
     type: dropdown
-    labelHidden: true
     options:
       - {value: closed, label: Closed}
       - {value: open_arc, label: Open Arc}
@@ -93,4 +92,8 @@ parameters:
     default: [0, 360]
     labelHidden: true
     range: {min: 0, max: 360, minLocked: true}
-    style: xyz
+    hideCondition: arc == 0
+    style: rangeCircle
+    styleOptions:
+      ordered: true
+      caption: arc

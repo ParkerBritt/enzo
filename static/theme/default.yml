@@ -97,6 +97,15 @@ components:
     panelHeight:     420
   slider:
     fillColor: $parameter
+  rangeDial:
+    # The ring
+    trackColor: $fieldSurface
+    edgeColor:  $fieldBorder
+    arcColor:   $parameter
+    tickColor:  $textFaint
+    # The two handles
+    handleColor:      "#c8c8d2"
+    handleHoverColor: $textStrong
   codeEditor:
     backgroundColor:   $background
     gutterBorderColor: $borderSoft

@@ -22,6 +22,32 @@ struct Xyz
 {
 };
 
+// A pair of floats read as the start and end of an arc, drawn as a dial.
+struct RangeCircle
+{
+    enum Setting
+    {
+        ORDERED,
+        CAPTION
+    };
+
+    std::vector<std::shared_ptr<prm::Parameter>> settings = {
+        std::make_shared<prm::Parameter>(
+            Template(Type::BOOL, Name("ordered", "Ordered"), Default(false))
+        ),
+        std::make_shared<prm::Parameter>(
+            Template(Type::STRING, Name("caption", "Caption"), Default(""))
+        ),
+    };
+
+    // Whether the low bound stays below the high one rather than the arc
+    // wrapping past the end of the range.
+    bool ordered() const { return settings[ORDERED]->evalInt() != 0; }
+
+    // The label shown with the arc's reading, e.g. "arc", empty for none.
+    String caption() const { return settings[CAPTION]->evalString(); }
+};
+
 // A bool drawn as an icon rather than a checkbox.
 struct BoolIcon
 {
@@ -54,6 +80,8 @@ inline void attachStyle(prm::Template& parameter, const std::string& styleName)
         parameter.setStyle(BoolIcon{});
     else if (styleName == "xyz")
         parameter.setStyle(Xyz{});
+    else if (styleName == "rangeCircle")
+        parameter.setStyle(RangeCircle{});
     else
         throw std::runtime_error("unknown style " + styleName);
 }
@@ -71,6 +99,7 @@ inline std::string toString(const std::any& style)
     if (holds<BoolSwitch>(style)) return "boolSwitch";
     if (holds<BoolIcon>(style)) return "boolIcon";
     if (holds<Xyz>(style)) return "xyz";
+    if (holds<RangeCircle>(style)) return "rangeCircle";
     return "";
 }
 
@@ -80,8 +109,10 @@ inline std::string toString(const std::any& style)
 /// style itself.
 inline std::vector<std::shared_ptr<prm::Parameter>> settings(const std::any& style)
 {
-    if (const auto* held = std::any_cast<std::shared_ptr<BoolIcon>>(&style))
-        return (*held)->settings;
+    if (const auto* boolIcon = std::any_cast<std::shared_ptr<BoolIcon>>(&style))
+        return (*boolIcon)->settings;
+    if (const auto* rangeCircle = std::any_cast<std::shared_ptr<RangeCircle>>(&style))
+        return (*rangeCircle)->settings;
     return {};
 }
 

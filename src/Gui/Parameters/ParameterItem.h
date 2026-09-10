@@ -27,6 +27,7 @@ class ParameterItem : public QObject
     Q_OBJECT
     Q_PROPERTY(QString kind READ kind CONSTANT)
     Q_PROPERTY(QString style READ style CONSTANT)
+    Q_PROPERTY(QVariantMap styleOptions READ styleOptions CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString nodeName READ nodeName CONSTANT)
     Q_PROPERTY(QString label READ label CONSTANT)
@@ -86,6 +87,9 @@ class ParameterItem : public QObject
 
     QString style() const { return style_; }
 
+    /// @brief The settings the style was given in node.yaml, keyed by name.
+    QVariantMap styleOptions() const { return styleOptions_; }
+
     bool enabled() const { return enabled_; }
     bool hidden() const { return hidden_; }
 
@@ -134,6 +138,7 @@ class ParameterItem : public QObject
   private:
     QString kind_;
     QString style_;
+    QVariantMap styleOptions_;
     QString name_;
     QString nodeName_;
     QString label_;

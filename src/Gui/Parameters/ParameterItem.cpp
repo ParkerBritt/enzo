@@ -17,6 +17,31 @@ bool hasRange(prm::Type type)
     return type == prm::Type::FLOAT || type == prm::Type::INT;
 }
 
+/// @brief Returns a style's settings as QML reads them, keyed by setting name.
+QVariantMap getStyleOptions(const std::any& style)
+{
+    QVariantMap options;
+    for (const std::shared_ptr<prm::Parameter>& setting : prm::style::settings(style))
+    {
+        const QString settingName = QString::fromStdString(setting->getName());
+        switch (setting->getValueType())
+        {
+        case prm::ValueType::Float:
+            options[settingName] = static_cast<double>(setting->evalFloat());
+            break;
+        case prm::ValueType::Int:
+            options[settingName] = setting->getType() == prm::Type::BOOL
+                                       ? QVariant(setting->evalInt() != 0)
+                                       : QVariant(static_cast<qlonglong>(setting->evalInt()));
+            break;
+        case prm::ValueType::String:
+            options[settingName] = QString::fromStdString(setting->evalString());
+            break;
+        }
+    }
+    return options;
+}
+
 /// @brief Returns a multiparm's instances as a list of maps keyed by field name.
 ///
 /// e.g. a ramp reads as
@@ -97,6 +122,7 @@ ParameterItem::ParameterItem(
 {
     kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
     style_ = QString::fromStdString(prm::style::toString(prmTemplate.getStyle()));
+    styleOptions_ = getStyleOptions(prmTemplate.getStyle());
     name_ = QString::fromStdString(prmTemplate.getName());
     nodeName_ = QString::fromStdString(node.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());
