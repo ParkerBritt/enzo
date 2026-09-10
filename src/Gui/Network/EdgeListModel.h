@@ -12,7 +12,7 @@ namespace enzo::ui {
 /// @brief Wired connections of the network as a flat list for the wire layer.
 ///
 /// Each row is one edge carrying the endpoints it links, the source node's
-/// output slot feeding the target node's input slot. The model holds no engine
+/// output feeding the target node's input. The model holds no engine
 /// state of its own. The network view-model drives it from the engine signals,
 /// so a row only ever changes in response to the engine.
 class EdgeListModel : public QAbstractListModel

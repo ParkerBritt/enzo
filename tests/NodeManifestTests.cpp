@@ -70,15 +70,15 @@ implementation:
     REQUIRE(manifest.getImplementation().constructor == "circle");
 }
 
-TEST_CASE("Input and output counts are read from the manifest")
+TEST_CASE("Inputs and the output count are read from the manifest")
 {
     const std::string yaml = R"(
 version: 1
 name: sweep
 namespace: enzo
 inputs:
-  min: 1
-  max: 2
+  - label: Backbone
+  - label: Profile
 outputs: 3
 implementation:
   kind: cpp
@@ -87,18 +87,92 @@ implementation:
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(yaml);
     const nt::NodeType& nodeType = manifest.getNodeType();
 
-    REQUIRE(nodeType.minInputs == 1);
-    REQUIRE(nodeType.maxInputs == 2);
+    REQUIRE(nodeType.inputPorts.size() == 2);
+    REQUIRE(nodeType.inputPorts.at(0).label == "Backbone");
+    REQUIRE(nodeType.inputPorts.at(1).label == "Profile");
     REQUIRE(nodeType.maxOutputs == 3);
 }
 
-TEST_CASE("Missing counts leave a node with one input and one output")
+TEST_CASE("An input is required unless the manifest marks it optional")
+{
+    const std::string yaml = R"(
+version: 1
+name: sweep
+namespace: enzo
+inputs:
+  - label: Backbone
+  - label: Profile
+    optional: true
+implementation:
+  kind: cpp
+  library: enzoOps
+)";
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(yaml);
+    const nt::NodeType& nodeType = manifest.getNodeType();
+
+    REQUIRE(!nodeType.inputPorts.at(0).optional);
+    REQUIRE(nodeType.inputPorts.at(1).optional);
+}
+
+TEST_CASE("An input with no label is rejected")
+{
+    const std::string yaml = R"(
+version: 1
+name: blur
+namespace: enzo
+inputs:
+  - multiInput: true
+implementation:
+  kind: cpp
+  library: enzoOps
+)";
+    REQUIRE_THROWS(nt::NodeManifest::loadFromString(yaml));
+}
+
+TEST_CASE("A multi input port can be declared last")
+{
+    const std::string yaml = R"(
+version: 1
+name: merge
+namespace: enzo
+inputs:
+  - label: Geometry
+    multiInput: true
+implementation:
+  kind: cpp
+  library: enzoOps
+)";
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(yaml);
+    const nt::NodeType& nodeType = manifest.getNodeType();
+
+    REQUIRE(nodeType.inputPorts.size() == 1);
+    REQUIRE(nodeType.inputPorts.at(0).label == "Geometry");
+    REQUIRE(nodeType.inputPorts.at(0).multiInput);
+}
+
+TEST_CASE("A multi input port before another port is rejected")
+{
+    const std::string yaml = R"(
+version: 1
+name: broken
+namespace: enzo
+inputs:
+  - label: Cutters
+    multiInput: true
+  - label: Geometry
+implementation:
+  kind: cpp
+  library: enzoOps
+)";
+    REQUIRE_THROWS(nt::NodeManifest::loadFromString(yaml));
+}
+
+TEST_CASE("A manifest naming no inputs declares a node that takes none")
 {
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kMinimalManifest);
     const nt::NodeType& nodeType = manifest.getNodeType();
 
-    REQUIRE(nodeType.minInputs == 0);
-    REQUIRE(nodeType.maxInputs == 1);
+    REQUIRE(nodeType.inputPorts.empty());
     REQUIRE(nodeType.maxOutputs == 1);
 }
 
@@ -514,8 +588,10 @@ TEST_CASE("The sweep manifest parses into its node type")
 
     REQUIRE(nodeType.getName() == "sweep");
     REQUIRE(nodeType.getLabel() == "Sweep");
-    REQUIRE(nodeType.minInputs == 1);
-    REQUIRE(nodeType.maxInputs == 2);
+    REQUIRE(nodeType.inputPorts.size() == 2);
+    REQUIRE(nodeType.inputPorts.at(0).label == "Backbone");
+    REQUIRE(nodeType.inputPorts.at(1).label == "Profile");
+    REQUIRE(nodeType.inputPorts.at(1).optional);
     REQUIRE(manifest.getImplementation().library == "enzoOps");
 
     // The parameters, in the order the node's interface is built from.

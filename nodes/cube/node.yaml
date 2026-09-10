@@ -5,9 +5,6 @@ namespace: enzo
 label: Cube
 tags: [primitive, surface, polygon]
 
-inputs:
-  min: 0
-  max: 0
 outputs: 1
 
 implementation:

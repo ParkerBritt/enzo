@@ -227,9 +227,17 @@ class NetworkManager
     /// @brief Returns the graph that owns the network's wiring and dependencies.
     nt::NetworkGraph& graph() { return network_.graph(); }
 
+    /**
+     * @brief Returns how many inputs a node currently takes.
+     *
+     * @note A single port holds one input. A multi input port holds one input
+     * per connection it has.
+     */
+    unsigned int getInputCount(NodeId nodeId);
+
     /// @brief Wires one node's output into another node's input.
     /// @return The connection that was created.
-    /// @note Replaces any connection already on the target input slot.
+    /// @note Replaces any connection already on the target input.
     nt::Connection connectNodes(
         NodeId inputNodeId,
         unsigned int inputIndex,

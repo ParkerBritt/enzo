@@ -283,6 +283,19 @@ NodePacket nt::NetworkManager::cookOutput(nt::NodeId nodeId, unsigned int output
     return getNode(nodeId).getOutputPacket(outputIndex)->deepCopy();
 }
 
+unsigned int nt::NetworkManager::getInputCount(NodeId nodeId)
+{
+    const nt::NodeType& nodeType = getNode(nodeId).getType();
+    const unsigned int singlePortCount = nodeType.getSinglePortCount();
+    if (!nodeType.hasMultiInputPort()) return singlePortCount;
+
+    unsigned int multiConnectionCount = 0;
+    for (const nt::Connection& connection : graph().getInputs(nodeId))
+        if (connection.targetInput >= singlePortCount) ++multiConnectionCount;
+
+    return singlePortCount + multiConnectionCount;
+}
+
 nt::Connection nt::NetworkManager::connectNodes(
     NodeId inputNodeId,
     unsigned int inputIndex,
@@ -294,7 +307,7 @@ nt::Connection nt::NetworkManager::connectNodes(
 
     nt::Connection connection{inputNodeId, inputIndex, outputNodeId, outputIndex};
 
-    // An input slot holds one connection, so replace whatever was there
+    // An input port holds one connection, so replace whatever was there
     if (auto existing = graph().getInputConnection(outputNodeId, outputIndex))
     {
         disconnectNodes(*existing);

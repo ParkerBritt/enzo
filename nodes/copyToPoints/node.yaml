@@ -6,8 +6,8 @@ label: Copy To Points
 tags: [copy, instance, scatter]
 
 inputs:
-  min: 2
-  max: 2
+  - label: Geometry
+  - label: Target Points
 outputs: 1
 
 implementation:

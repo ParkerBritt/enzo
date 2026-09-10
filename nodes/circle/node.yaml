@@ -5,9 +5,6 @@ namespace: enzo
 label: Circle
 tags: [primitive, curve, 2d]
 
-inputs:
-  min: 0
-  max: 0
 outputs: 1
 
 implementation:

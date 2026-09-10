@@ -65,7 +65,7 @@ class NetworkViewModel : public QObject
     /// @brief Deletes every selected node as one undo step.
     Q_INVOKABLE void deleteSelected();
 
-    /// @brief Wires a source node's output slot into a target node's input slot.
+    /// @brief Wires a source node's output into a target node's input.
     Q_INVOKABLE void
     connectNodes(qulonglong sourceNode, int sourceOutput, qulonglong targetNode, int targetInput);
 

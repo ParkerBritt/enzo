@@ -24,16 +24,16 @@ Item {
     property bool selected: false
     property bool primary: false
     property bool display: false
-    property int inputSlotCount: 0
-    property int outputSlotCount: 0
+    property int inputPortCount: 0
+    property int outputPortCount: 0
 
     // While a link is being drawn the card lets presses through so the canvas can
     // grab and drop ports that sit beneath it.
     property bool linking: false
 
-    // The slot index of the input or output port to highlight, or -1 for none.
-    property int highlightedInputSlot: -1
-    property int highlightedOutputSlot: -1
+    // The index of the input or output to highlight, or -1 for none.
+    property int highlightedInput: -1
+    property int highlightedOutput: -1
 
     // The primary and selected nodes both carry an accent outline.
     readonly property bool highlighted: selected || primary
@@ -174,17 +174,17 @@ Item {
         }
     }
 
-    // One port, a dot on its slot point along a card edge where the link layer
+    // One port, a dot on its point along a card edge where the link layer
     // anchors its curves. Hit testing lives on the canvas, so this is purely the
     // visual dot and lights up only while it is the highlighted port.
     component Port: Item {
         id: portDot
 
-        property int slotIndex: 0
-        property int slotCount: 1
+        property int portIndex: 0
+        property int portCount: 1
         property bool active: false
 
-        x: root.width * (slotIndex + 1) / (slotCount + 1)
+        x: root.width * (portIndex + 1) / (portCount + 1)
 
         Rectangle {
             width: 7
@@ -211,22 +211,22 @@ Item {
 
     // Input ports along the top edge, output ports along the bottom.
     Repeater {
-        model: root.inputSlotCount
+        model: root.inputPortCount
         delegate: Port {
             required property int index
-            slotIndex: index
-            slotCount: root.inputSlotCount
-            active: root.highlightedInputSlot === index
+            portIndex: index
+            portCount: root.inputPortCount
+            active: root.highlightedInput === index
             y: 0
         }
     }
     Repeater {
-        model: root.outputSlotCount
+        model: root.outputPortCount
         delegate: Port {
             required property int index
-            slotIndex: index
-            slotCount: root.outputSlotCount
-            active: root.highlightedOutputSlot === index
+            portIndex: index
+            portCount: root.outputPortCount
+            active: root.highlightedOutput === index
             y: root.height
         }
     }

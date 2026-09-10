@@ -221,6 +221,28 @@ NodeImplementation readImplementation(const YAML::Node& implementation, const st
     return parsed;
 }
 
+std::vector<InputPort> readInputPorts(const YAML::Node& inputs, const std::string& nodeName)
+{
+    std::vector<InputPort> parsed;
+    for (const YAML::Node& input : inputs)
+    {
+        const bool followsAMultiInputPort = !parsed.empty() && parsed.back().multiInput;
+        if (followsAMultiInputPort)
+            throw std::runtime_error(
+                "node " + nodeName + " declares input " + parsed.back().label
+                + " as a multi input port but it is not the last port"
+            );
+
+        InputPort declared;
+        declared.label = requireString(input, "label", "node " + nodeName + " input");
+        declared.multiInput = input["multiInput"] && input["multiInput"].as<bool>();
+        declared.optional = input["optional"] && input["optional"].as<bool>();
+        parsed.push_back(std::move(declared));
+    }
+
+    return parsed;
+}
+
 std::vector<std::string> readTags(const YAML::Node& tags)
 {
     std::vector<std::string> parsed;
@@ -253,11 +275,7 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     nodeType.docsPath = readString(document, "docs");
     nodeType.childScopeType = readString(document, "childScopeType");
 
-    // Counts left out of the manifest keep the one input one output shape a
-    // NodeType starts with.
-    const YAML::Node inputs = document["inputs"];
-    if (inputs && inputs["min"]) nodeType.minInputs = inputs["min"].as<unsigned int>();
-    if (inputs && inputs["max"]) nodeType.maxInputs = inputs["max"].as<unsigned int>();
+    nodeType.inputPorts = readInputPorts(document["inputs"], nodeType.internalName);
     if (document["outputs"]) nodeType.maxOutputs = document["outputs"].as<unsigned int>();
 
     manifest.implementation_ =

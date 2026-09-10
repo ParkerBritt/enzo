@@ -111,12 +111,9 @@ class Node
     /// cooking).
     bool isDirty();
 
-    /// @brief Returns the minimum number of input connections required
-    /// for the node to function. These are in order so 3 would mean the
-    /// first three inputs must have a connection.
-    unsigned int getMinInputs() const;
-    /// @brief Returns the maximum number of input connections accepted by the node.
-    unsigned int getMaxInputs() const;
+    /// @brief Returns whether the node takes any input at all.
+    bool takesInput() const;
+
     /// @brief Returns the number of available outputs the node provides.
     unsigned int getMaxOutputs() const;
 

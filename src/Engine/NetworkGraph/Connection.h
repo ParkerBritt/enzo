@@ -9,7 +9,7 @@ namespace enzo::nt {
 /**
  * @brief One wired link between two nodes, the ground truth of the network's wiring.
  *
- * Data flows from the source node's output slot into the target node's input slot,
+ * Data flows from the source node's output into the target node's input,
  * so the target depends on the source.
  *
  * Example

@@ -36,7 +36,7 @@ void NetworkGraph::eraseConnection_(ConnectionMap& side, NodeId key, const Conne
 }
 
 namespace {
-bool orderByInputSlot(const Connection& first, const Connection& second)
+bool orderByInputIndex(const Connection& first, const Connection& second)
 {
     return first.targetInput < second.targetInput;
 }
@@ -48,18 +48,18 @@ std::vector<Connection> NetworkGraph::getInputs(NodeId target) const
     if (entry == byTarget_.end()) return {};
 
     std::vector<Connection> inputs = entry->second;
-    std::sort(inputs.begin(), inputs.end(), orderByInputSlot);
+    std::sort(inputs.begin(), inputs.end(), orderByInputIndex);
     return inputs;
 }
 
 std::optional<Connection>
-NetworkGraph::getInputConnection(NodeId target, unsigned int inputSlot) const
+NetworkGraph::getInputConnection(NodeId target, unsigned int inputIndex) const
 {
     auto entry = byTarget_.find(target);
     if (entry == byTarget_.end()) return std::nullopt;
 
     for (const Connection& connection : entry->second)
-        if (connection.targetInput == inputSlot) return connection;
+        if (connection.targetInput == inputIndex) return connection;
 
     return std::nullopt;
 }
