@@ -58,6 +58,7 @@ qt6-qtsvg-devel
 qt6-qtshadertools-devel
 qt6-qtwayland-devel
 manifold-devel
+argparse-devel
 ```
 
 ### installed with daslang
