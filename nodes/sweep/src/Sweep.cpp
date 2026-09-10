@@ -288,7 +288,9 @@ class Sweeper
             // Local X already lines up across the turn, so only X grows to keep
             // the tube from pinching there.
             const float stretchX =
-                settings_.stretchTurns ? calculateStretch(curveFace, relPointNum) : 1.0f;
+                settings_.stretchTurns
+                    ? calculateStretch(curveFace, relPointNum, tangents[relPointNum])
+                    : 1.0f;
 
             // The scale runs first so it sizes the profile before the orientation
             // turns it.
@@ -301,7 +303,7 @@ class Sweeper
     }
 
     /// @brief Returns how much to widen the profile across a turn so the tube keeps its width.
-    float calculateStretch(Offset curveFace, int relPointNum)
+    float calculateStretch(Offset curveFace, int relPointNum, const Vector3& tangent)
     {
         // The widening is capped so a near fold cannot run away.
         constexpr float maxStretch = 8.0f;
@@ -322,7 +324,6 @@ class Sweeper
 
         // The profile faces along the average of the turn, so the sharper the
         // turn the more it leans away from each segment and the wider it grows.
-        const Vector3 tangent = faceTangents_(curveFace)[relPointNum];
         const float bendLean = tangent.dot(onwardDirection.normalized());
         if (bendLean <= 1e-3f) return 1.0f;
 
