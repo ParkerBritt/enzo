@@ -10,7 +10,7 @@ set(BenchExec bench)
 set(CMAKE_AUTORCC ON)
 
 # setup project
-project(enzo)
+project(enzo VERSION 0.3.0)
 
 set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/nodes/")
 set(ENZO_DEV_NODES_DIR "${CMAKE_SOURCE_DIR}/nodes")
@@ -79,6 +79,9 @@ find_package (Eigen3 REQUIRED NO_MODULE)
 find_package(TBB REQUIRED COMPONENTS tbb)
 
 find_package(Boost REQUIRED COMPONENTS filesystem system)
+
+# argparse (command line)
+find_package(argparse REQUIRED)
 
 # cgal
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -263,11 +266,13 @@ target_compile_definitions(${AppExec} PRIVATE
     ENZO_DEV_STATIC_DIR="${CMAKE_SOURCE_DIR}/static"
 )
 
+target_compile_definitions(${AppExec} PRIVATE ENZO_VERSION="${PROJECT_VERSION}")
+
 set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::QuickShapes Qt6::OpenGL)
+target_link_libraries(${AppExec} PRIVATE enzoEngine argparse::argparse Qt6::Quick Qt6::QuickControls2 Qt6::QuickShapes Qt6::OpenGL)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type

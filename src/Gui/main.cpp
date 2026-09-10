@@ -1,13 +1,14 @@
-#include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodeLoader.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Viewport/ViewportViewModel.h"
+#include <argparse/argparse.hpp>
+
 #include <QDir>
 #include <QDirIterator>
+#include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QFontDatabase>
 #include <QGuiApplication>
@@ -17,6 +18,8 @@
 #include <QQuickWindow>
 #include <QSurfaceFormat>
 #include <QUrl>
+
+#include <iostream>
 
 namespace {
 
@@ -64,36 +67,30 @@ void installHotReload(QQmlApplicationEngine& engine, const QUrl& entry)
 
 namespace {
 
-/// @brief Builds a one node grid network and selects it.
+/// @brief Returns the scene file path given on the command line, empty when none was.
 ///
-/// Stands in for real scene loading. Selecting the node makes the engine emit
-/// the selection signal the spreadsheet view-model listens for.
-void buildSampleNetwork()
+/// @note Exits the process on a bad argument, and on --help or --version,
+/// before any of the interface is built.
+QString parseCommandLine(int argc, char** argv)
 {
-    enzo::nt::NodeLoader::loadNodes();
+    argparse::ArgumentParser parser("enzo", ENZO_VERSION);
+    parser.add_description("Procedural 3D modelling.");
+    parser.add_argument("scene")
+        .help("an .enzo scene to open on startup")
+        .nargs(argparse::nargs_pattern::optional)
+        .default_value(std::string{});
 
-    auto& network = enzo::nt::nm();
-    auto create = [&](const char* fullName, enzo::Vector2 position) {
-        return network.createNode(
-            enzo::nt::NodeTypeTable::requireNodeType(fullName),
-            enzo::Path("/"),
-            "",
-            position
-        );
-    };
+    try
+    {
+        parser.parse_args(argc, argv);
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr << error.what() << "\n\n" << parser;
+        std::exit(1);
+    }
 
-    const enzo::nt::NodeId gridId = create("enzo::grid", {0.f, 0.f});
-    const enzo::nt::NodeId transformId = create("enzo::transform", {200.f, 120.f});
-    create("enzo::cube", {-180.f, 140.f});
-    create("enzo::circle", {40.f, -160.f});
-
-    // Feed the grid's output into the transform so there is a wire to draw.
-    network.connectNodes(gridId, 0, transformId, 0);
-
-    network.cook(gridId);
-    network.setSelectedNodes({gridId});
-    network.setPrimaryNode(gridId);
-    network.setDisplayNode(gridId);
+    return QString::fromStdString(parser.get<std::string>("scene"));
 }
 
 } // namespace
@@ -117,6 +114,8 @@ void loadFonts()
 
 int main(int argc, char** argv)
 {
+    const QString scenePath = parseCommandLine(argc, argv);
+
     // The viewport composites a legacy OpenGL renderer, so the scene graph runs
     // on the OpenGL backend.
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
@@ -149,7 +148,28 @@ int main(int argc, char** argv)
     enzo::ui::ViewportViewModel viewport;
     enzo::ui::ParametersViewModel parameters;
     enzo::ui::SceneController scene;
-    buildSampleNetwork();
+
+    enzo::nt::NodeLoader::loadNodes();
+
+    if (!scenePath.isEmpty())
+    {
+        if (!QFileInfo::exists(scenePath))
+        {
+            std::cerr << "no such file: " << scenePath.toStdString() << "\n";
+            return 1;
+        }
+
+        try
+        {
+            scene.openPath(scenePath);
+        }
+        catch (const std::exception& error)
+        {
+            std::cerr << "could not open " << scenePath.toStdString() << ": " << error.what()
+                      << "\n";
+            return 1;
+        }
+    }
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
