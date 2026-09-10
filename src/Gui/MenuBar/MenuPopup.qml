@@ -27,7 +27,7 @@ PopupList {
             required property int index
             required property var modelData
 
-            width: parent.width
+            width: list.availableWidth
             height: list.rowHeight
 
             readonly property bool disabled: modelData.enabled === false
