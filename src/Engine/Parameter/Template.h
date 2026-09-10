@@ -80,6 +80,10 @@ class Template
     bool isLabelHidden() const;
     bool isBackgroundEnabled() const;
 
+    /// @brief Returns the Lucide icon name shown beside a divider's label.
+    /// @return The name, empty when the parameter carries no icon.
+    enzo::String getIcon() const;
+
     // Chainable setters. Mutate in place and return *this so a Template can
     // be configured inline at construction.
     Template& setTooltip(String tooltip);
@@ -99,6 +103,7 @@ class Template
     getInstanceDefault(const std::string& fieldToken, unsigned int instanceIndex) const;
     Template& setLabelHidden(bool hidden);
     Template& setBackgroundEnabled(bool enabled);
+    Template& setIcon(String icon);
 
     // Style structs may hold parameters with change signals, which cannot
     // be copied. Wrapping in a shared pointer lets the style live inside
@@ -123,6 +128,7 @@ class Template
     String documentation_;
     String disableCondition_;
     String hideCondition_;
+    String icon_;
 
     bool labelHidden_ = false;
     bool backgroundEnabled_ = true;
@@ -136,9 +142,9 @@ class Template
     // parameter count.
     inline const static std::unordered_set<prm::Type> multiParmTypes_ = {prm::Type::RAMP};
     inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ =
-        {prm::Type::GROUP, prm::Type::XYZ, prm::Type::SPACER};
-    // Types that render without a label, such as blank spacers.
-    inline const static std::unordered_set<prm::Type> labelHiddenByDefault_ = {prm::Type::SPACER};
+        {prm::Type::GROUP, prm::Type::XYZ, prm::Type::DIVIDER};
+    // Types that render without a side label because they draw their own.
+    inline const static std::unordered_set<prm::Type> labelHiddenByDefault_ = {prm::Type::DIVIDER};
 };
 
 } // namespace enzo::prm

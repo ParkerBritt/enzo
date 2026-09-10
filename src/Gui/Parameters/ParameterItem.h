@@ -30,6 +30,7 @@ class ParameterItem : public QObject
     Q_PROPERTY(QString nodeName READ nodeName CONSTANT)
     Q_PROPERTY(QString label READ label CONSTANT)
     Q_PROPERTY(QString tooltip READ tooltip CONSTANT)
+    Q_PROPERTY(QString icon READ icon CONSTANT)
     Q_PROPERTY(int vectorSize READ vectorSize CONSTANT)
     Q_PROPERTY(qreal minimum READ minimum CONSTANT)
     Q_PROPERTY(qreal maximum READ maximum CONSTANT)
@@ -49,7 +50,7 @@ class ParameterItem : public QObject
 
   public:
     /// @brief Builds an item from a template and the parameter it drives.
-    /// @param parameter The value source, empty for a container or spacer.
+    /// @param parameter The value source, empty for a container or divider.
     ParameterItem(
         const prm::Template& prmTemplate,
         std::weak_ptr<prm::NodeParameter> parameter,
@@ -64,6 +65,8 @@ class ParameterItem : public QObject
     QString nodeName() const { return nodeName_; }
     QString label() const { return label_; }
     QString tooltip() const { return tooltip_; }
+    /// @brief Returns the Lucide icon name a divider shows beside its label.
+    QString icon() const { return icon_; }
     int vectorSize() const { return vectorSize_; }
     qreal minimum() const { return minimum_; }
     qreal maximum() const { return maximum_; }
@@ -131,6 +134,7 @@ class ParameterItem : public QObject
     QString nodeName_;
     QString label_;
     QString tooltip_;
+    QString icon_;
     int vectorSize_ = 1;
     qreal minimum_ = 0;
     qreal maximum_ = 0;

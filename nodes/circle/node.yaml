@@ -16,6 +16,11 @@ implementation:
   constructor: circle
 
 parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
   - name: orientation
     label: Orientation
     type: dropdown
@@ -39,8 +44,10 @@ parameters:
     default: 0
     range: {min: -360, max: 360}
 
-  - name: spacer1
-    type: spacer
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
 
   - name: uniform_scale
     label: Uniform Scale
@@ -55,8 +62,10 @@ parameters:
     default: 1
     range: {min: 0, max: 10}
 
-  - name: spacer2
-    type: spacer
+  - name: divisions_divider
+    label: Divisions
+    type: divider
+    icon: spline
 
   - name: divisions
     label: Divisions
@@ -64,25 +73,20 @@ parameters:
     default: 10
     range: {min: 1, max: 100, minLocked: true}
 
-  - name: arc_group
-    label: Arc
-    type: group
-    background: false
-    parameters:
-      - name: arc
-        label: Arc Type
-        type: dropdown
-        labelHidden: true
-        options:
-          - {value: closed, label: Closed}
-          - {value: open_arc, label: Open Arc}
-          - {value: closed_arc, label: Closed Arc}
-          - {value: sliced_arc, label: Sliced Arc}
+  - name: arc
+    label: Arc Type
+    type: dropdown
+    labelHidden: true
+    options:
+      - {value: closed, label: Closed}
+      - {value: open_arc, label: Open Arc}
+      - {value: closed_arc, label: Closed Arc}
+      - {value: sliced_arc, label: Sliced Arc}
 
-      - name: arc_angles
-        label: Arc Angles
-        type: xyz
-        size: 2
-        default: [0, 360]
-        labelHidden: true
-        range: {min: 0, max: 360, minLocked: true}
+  - name: arc_angles
+    label: Arc Angles
+    type: xyz
+    size: 2
+    default: [0, 360]
+    labelHidden: true
+    range: {min: 0, max: 360, minLocked: true}

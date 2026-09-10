@@ -226,6 +226,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/StringParameter.qml
         src/Gui/Parameters/DropdownParameter.qml
         src/Gui/Parameters/Group.qml
+        src/Gui/Parameters/Divider.qml
         src/Gui/Parameters/RampEditor.qml
         src/Gui/Network/Network.qml
         src/Gui/Network/Node.qml

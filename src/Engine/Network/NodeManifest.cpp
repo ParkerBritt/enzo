@@ -167,6 +167,7 @@ prm::Template readParameter(const YAML::Node& parm)
     if (parm["direction"]) parameter.setDirection(readDirection(parm["direction"]));
     if (parm["labelHidden"]) parameter.setLabelHidden(parm["labelHidden"].as<bool>());
     if (parm["background"]) parameter.setBackgroundEnabled(parm["background"].as<bool>());
+    if (parm["icon"]) parameter.setIcon(parm["icon"].as<std::string>());
     if (parm["options"]) parameter.setOptions(readOptions(parm["options"]));
     if (parm["style"]) readStyle(parameter, parm["style"]);
     if (parm["instanceDefaults"]) readInstanceDefaults(parameter, parm["instanceDefaults"]);
