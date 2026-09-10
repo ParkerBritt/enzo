@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Enzo
 
 // A group of parameters, stacked in a column or laid out in a row.
@@ -34,19 +35,17 @@ Column {
         labelColumnWidth: group.labelColumnWidth
     }
 
-    Row {
-        id: side
+    RowLayout {
         visible: group.horizontal
         width: group.width
         spacing: 8
 
         Repeater {
-            id: cells
             model: group.horizontal ? group.members : []
             delegate: ParameterRow {
                 required property var modelData
                 item: modelData
-                width: (side.width - side.spacing * (cells.count - 1)) / cells.count
+                Layout.fillWidth: implicitWidth === 0
             }
         }
     }
