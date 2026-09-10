@@ -15,6 +15,15 @@ constexpr qreal kGrabRadius = 60;
 // How close a dragged link must be to a port to snap onto it.
 constexpr qreal kSnapRadius = 60;
 
+// Returns the width one port covers on a card edge holding portCount of them.
+qreal getPortWidth(int portCount) { return NodeListModel::nodeWidth / (portCount + 1); }
+
+// Returns the center of one port, measured from the card's left edge.
+qreal getPortCenter(int portIndex, int portCount)
+{
+    return getPortWidth(portCount) * (portIndex + 1);
+}
+
 } // namespace
 
 NodeListModel::NodeListModel(QObject* parent) : QAbstractListModel(parent) {}
@@ -29,6 +38,7 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"y", [](const Node& node) { return QVariant(node.y); }},
         {"inputPortCount", [](const Node& node) { return QVariant(node.inputPortCount); }},
         {"outputPortCount", [](const Node& node) { return QVariant(node.outputPortCount); }},
+        {"multiInput", [](const Node& node) { return QVariant(node.multiInput); }},
         {"selected", [](const Node& node) { return QVariant(node.selected); }},
         {"primary", [](const Node& node) { return QVariant(node.primary); }},
         {"display", [](const Node& node) { return QVariant(node.display); }},
@@ -177,16 +187,50 @@ QPointF NodeListModel::getPosition(nt::NodeId nodeId) const
     return QPointF(nodes_[row].x, nodes_[row].y);
 }
 
-QPointF NodeListModel::getPortPosition(const Node& node, int index, bool isOutput) const
+QRectF NodeListModel::getPortBox(qulonglong nodeId, int index, bool isOutput) const
 {
-    // Nodes store their center, so shift to the top left the ports measure from.
+    const int row = rowOf(nodeId);
+    if (row == -1) return {};
+
+    const Node& node = nodes_[row];
+    const int portCount = isOutput ? node.outputPortCount : node.inputPortCount;
+    const qreal width = getPortWidth(portCount);
+    const qreal left = getPortCenter(index, portCount) - width / 2;
+    return QRectF(left, isOutput ? nodeHeight : 0, width, 0);
+}
+
+QPointF NodeListModel::getOutputPosition(const Node& node, int outputIndex) const
+{
+    // Shifts the stored center to the bottom left corner the ports measure from.
+    const qreal left = node.x - nodeWidth / 2;
+    const qreal bottom = node.y + nodeHeight / 2;
+    return QPointF(left + getPortCenter(outputIndex, node.outputPortCount), bottom);
+}
+
+int NodeListModel::getMultiInputCount(const Node& node) const
+{
+    if (!node.multiInput || !nt::nm().isValidNode(node.nodeId)) return 0;
+
+    // Assigns every input past the single ports to the multi input port.
+    const int singlePortCount = node.inputPortCount - 1;
+    return static_cast<int>(nt::nm().getInputCount(node.nodeId)) - singlePortCount;
+}
+
+QPointF NodeListModel::getInputPosition(const Node& node, int inputIndex, int multiCount) const
+{
     const qreal left = node.x - nodeWidth / 2;
     const qreal top = node.y - nodeHeight / 2;
+    const int portCount = node.inputPortCount;
+    const int singlePortCount = node.multiInput ? portCount - 1 : portCount;
 
-    const int portCount = isOutput ? node.outputPortCount : node.inputPortCount;
-    const qreal x = left + nodeWidth * (index + 1) / (portCount + 1);
-    const qreal y = top + (isOutput ? nodeHeight : 0);
-    return QPointF(x, y);
+    if (inputIndex < singlePortCount)
+        return QPointF(left + getPortCenter(inputIndex, portCount), top);
+
+    // Spreads the multi input port's connections evenly across the width it covers.
+    const qreal barWidth = getPortWidth(portCount);
+    const qreal barLeft = left + getPortCenter(portCount - 1, portCount) - barWidth / 2;
+    const int barPosition = inputIndex - singlePortCount;
+    return QPointF(barLeft + barWidth * (barPosition + 1) / (multiCount + 1), top);
 }
 
 std::optional<QPointF>
@@ -195,7 +239,9 @@ NodeListModel::getPortPosition(nt::NodeId nodeId, int index, bool isOutput) cons
     const int row = rowOf(nodeId);
     if (row == -1) return std::nullopt;
 
-    return getPortPosition(nodes_[row], index, isOutput);
+    const Node& node = nodes_[row];
+    if (isOutput) return getOutputPosition(node, index);
+    return getInputPosition(node, index, getMultiInputCount(node));
 }
 
 QVariantMap NodeListModel::getNearestPort(
@@ -209,10 +255,16 @@ QVariantMap NodeListModel::getNearestPort(
     qreal nearestDistance = pickRadius;
 
     auto consider = [&](const Node& node, bool isOutput) {
-        const int portCount = isOutput ? node.outputPortCount : node.inputPortCount;
+        // Lays the inputs out with one more than the multi input port holds, so a
+        // link can land at either end of the bar or between any two connections.
+        const int multiCount = getMultiInputCount(node);
+        const int inputDropCount = node.inputPortCount + multiCount;
+
+        const int portCount = isOutput ? node.outputPortCount : inputDropCount;
         for (int index = 0; index < portCount; ++index)
         {
-            const QPointF port = getPortPosition(node, index, isOutput);
+            const QPointF port = isOutput ? getOutputPosition(node, index)
+                                          : getInputPosition(node, index, multiCount + 1);
             const qreal distance = QLineF(port, canvasPoint).length();
             if (distance < nearestDistance)
             {
@@ -292,6 +344,7 @@ NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
         position.y(),
         static_cast<int>(node.getType().inputPorts.size()),
         static_cast<int>(node.getMaxOutputs()),
+        node.getType().hasMultiInputPort(),
     };
 }
 

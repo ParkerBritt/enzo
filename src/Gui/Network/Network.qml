@@ -348,12 +348,14 @@ Rectangle {
                 // An endpoint node rises above the floating layer, so the link tucks
                 // under its ports while still drawing over the nodes it crosses.
                 z: linkEndpoint ? 2 : 0
+                nodeId: model.nodeId
                 label: model.name
                 selected: model.selected
                 primary: model.primary
                 display: model.display
                 inputPortCount: model.inputPortCount
                 outputPortCount: model.outputPortCount
+                multiInput: model.multiInput
                 linking: linkController.linking
 
                 // The highlighted port when it is one of this node's own.
