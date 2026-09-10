@@ -171,8 +171,8 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 7
             anchors.verticalCenter: parent.verticalCenter
-            width: 8
-            height: 8
+            width: 6
+            height: 10
             radius: 3
             color: root.axisColor
         }
