@@ -273,6 +273,26 @@ Rectangle {
         property color dotColor: Theme.network.dotColor
     }
 
+    // The hint shown on a network with no nodes in it. It sits on the panel
+    // colour so the background dots do not run through the text.
+    Rectangle {
+        anchors.centerIn: parent
+        visible: nodeRepeater.count === 0
+        width: hintText.width + 20
+        height: hintText.height + 12
+        color: root.color
+        radius: 6
+
+        Text {
+            id: hintText
+            anchors.centerIn: parent
+            text: "Press Tab to place a node"
+            color: Theme.var.textMuted
+            font.family: Theme.var.fontSans
+            font.pixelSize: 13
+        }
+    }
+
     // Tab menu
     TabMenu {
         id: tabMenu
@@ -312,6 +332,7 @@ Rectangle {
         }
 
         Repeater {
+            id: nodeRepeater
             model: network.nodes
 
             delegate: Node {
