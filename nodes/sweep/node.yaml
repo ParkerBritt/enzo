@@ -89,8 +89,8 @@ parameters:
             tooltip: >
               Create a face group with the end cap polygons in this group. You can use
               this group in later nodes to easily target just the cap polygons.
-            style:
-              kind: boolIconSlash
+            style: boolIcon
+            styleOptions:
               icon: squares-subtract
 
           - name: endCapGroupName

@@ -26,6 +26,7 @@ class ParameterItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString kind READ kind CONSTANT)
+    Q_PROPERTY(QString style READ style CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString nodeName READ nodeName CONSTANT)
     Q_PROPERTY(QString label READ label CONSTANT)
@@ -83,6 +84,8 @@ class ParameterItem : public QObject
     bool horizontal() const { return horizontal_; }
     bool labelHidden() const { return labelHidden_; }
 
+    QString style() const { return style_; }
+
     bool enabled() const { return enabled_; }
     bool hidden() const { return hidden_; }
 
@@ -92,7 +95,7 @@ class ParameterItem : public QObject
     QString expression() const { return expressionAt(0); }
     QString expressionError() const { return expressionErrorAt(0); }
 
-    /// @brief Reads one component of a vector parameter such as an XYZ axis.
+    /// @brief Reads one component of a vector parameter.
     /// @note A multiparm reads as a list of instance maps keyed by field name.
     Q_INVOKABLE QVariant valueAt(int index) const;
     /// @brief Writes one component of a vector parameter.
@@ -130,6 +133,7 @@ class ParameterItem : public QObject
 
   private:
     QString kind_;
+    QString style_;
     QString name_;
     QString nodeName_;
     QString label_;

@@ -107,7 +107,6 @@ enum class Type
     STRING,
     FLOAT,
     BOOL,
-    XYZ,
     INT,
     TOGGLE,
     GROUP,
@@ -145,8 +144,6 @@ inline std::string toString(Type type)
         return "float";
     case Type::BOOL:
         return "bool";
-    case Type::XYZ:
-        return "xyz";
     case Type::INT:
         return "int";
     case Type::TOGGLE:
@@ -168,7 +165,6 @@ inline constexpr std::array kAllTypes = {
     Type::STRING,
     Type::FLOAT,
     Type::BOOL,
-    Type::XYZ,
     Type::INT,
     Type::TOGGLE,
     Type::GROUP,
@@ -192,7 +188,6 @@ inline ValueType toValueType(Type type)
     switch (type)
     {
     case Type::FLOAT:
-    case Type::XYZ:
         return ValueType::Float;
     case Type::INT:
     case Type::BOOL:

@@ -30,13 +30,12 @@ Item {
     property string paramName: ""
     property int componentIndex: 0
 
-    // Axis tint that marks this slider as one component of a vector parameter,
-    // shown as a swatch in place of the value fill. Unset on a plain scalar slider.
+    // Axis tint of the swatch this slider shows in place of its value fill.
     property color axisColor: "transparent"
-    readonly property bool isVectorComponent: axisColor.a > 0
+    readonly property bool hasAxisSwatch: axisColor.a > 0
 
     // Space the track's contents keep clear of the axis swatch on the left.
-    readonly property real contentInset: isVectorComponent ? 20 : 0
+    readonly property real contentInset: hasAxisSwatch ? 20 : 0
 
     // Evaluates typed text for the floating editor's live preview, without committing it.
     property var evaluator: null
@@ -155,7 +154,7 @@ Item {
         // side so the rounded track border stays visible around it.
         Rectangle {
             id: fill
-            visible: !root.expressionStyled && !root.isVectorComponent
+            visible: !root.expressionStyled && !root.hasAxisSwatch
             readonly property real inset: 3
             x: fill.inset
             y: fill.inset
@@ -167,7 +166,7 @@ Item {
 
         // Axis swatch marking which vector component this slider drives.
         Rectangle {
-            visible: root.isVectorComponent
+            visible: root.hasAxisSwatch
             anchors.left: parent.left
             anchors.leftMargin: 7
             anchors.verticalCenter: parent.verticalCenter

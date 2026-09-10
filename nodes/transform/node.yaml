@@ -18,10 +18,12 @@ implementation:
 parameters:
   - name: translate
     label: Translate
-    type: xyz
+    type: float
     size: 3
+    style: xyz
 
   - name: rotate
     label: Rotate
-    type: xyz
+    type: float
     size: 3
+    style: xyz

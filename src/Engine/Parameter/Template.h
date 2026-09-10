@@ -142,7 +142,7 @@ class Template
     // parameter count.
     inline const static std::unordered_set<prm::Type> multiParmTypes_ = {prm::Type::RAMP};
     inline const static std::unordered_set<prm::Type> backgroundDisabledByDefault_ =
-        {prm::Type::GROUP, prm::Type::XYZ, prm::Type::DIVIDER};
+        {prm::Type::GROUP, prm::Type::DIVIDER};
     // Types that render without a side label because they draw their own.
     inline const static std::unordered_set<prm::Type> labelHiddenByDefault_ = {prm::Type::DIVIDER};
 };

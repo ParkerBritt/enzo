@@ -107,14 +107,12 @@ Item {
                 sourceComponent: {
                     switch (row.item.kind) {
                     case "float":
-                        return floatComp;
+                        return row.item.vectorSize > 1 ? vecComp : floatComp;
                     case "int":
                         return intComp;
                     case "bool":
                     case "toggle":
                         return toggleComp;
-                    case "xyz":
-                        return vecComp;
                     case "string":
                         return stringComp;
                     case "dropdown":

@@ -30,6 +30,17 @@ ui::ParameterItem makeItem(nt::Node& node, const std::string& parmName)
 
 } // namespace
 
+TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style token to the gui")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::circle"));
+    nt::Node& node = networkManager.getNode(nodeId);
+
+    REQUIRE(makeItem(node, "center").style() == "xyz");
+    REQUIRE(makeItem(node, "uniform_scale").style() == "");
+}
+
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a toggle edited through its item")
 {
     auto& networkManager = nt::nm();

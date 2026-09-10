@@ -22,8 +22,9 @@ parameters:
 
   - name: center
     label: Center
-    type: xyz
+    type: float
     size: 3
+    style: xyz
 
   - name: frequency
     label: Frequency

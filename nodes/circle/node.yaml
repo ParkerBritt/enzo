@@ -32,17 +32,19 @@ parameters:
 
   - name: center
     label: Center
-    type: xyz
+    type: float
     size: 3
     default: 0
     range: {min: -10, max: 10}
+    style: xyz
 
   - name: rotate
     label: Rotate
-    type: xyz
+    type: float
     size: 3
     default: 0
     range: {min: -360, max: 360}
+    style: xyz
 
   - name: dimensions_divider
     label: Dimensions
@@ -57,10 +59,11 @@ parameters:
 
   - name: radius
     label: Radius
-    type: xyz
+    type: float
     size: 2
     default: 1
     range: {min: 0, max: 10}
+    style: xyz
 
   - name: divisions_divider
     label: Divisions
@@ -85,8 +88,9 @@ parameters:
 
   - name: arc_angles
     label: Arc Angles
-    type: xyz
+    type: float
     size: 2
     default: [0, 360]
     labelHidden: true
     range: {min: 0, max: 360, minLocked: true}
+    style: xyz

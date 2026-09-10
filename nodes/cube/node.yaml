@@ -18,23 +18,26 @@ implementation:
 parameters:
   - name: size
     label: Size
-    type: xyz
+    type: float
     size: 3
     default: 1
     range: {min: 0, max: 100}
+    style: xyz
 
   - name: center
     label: Center
-    type: xyz
+    type: float
     size: 3
     default: 0
+    style: xyz
 
   - name: rotate
     label: Rotation
-    type: xyz
+    type: float
     size: 3
     default: 0
     range: {min: -360, max: 360}
+    style: xyz
 
   - name: uniformScale
     label: Uniform Scale
