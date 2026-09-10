@@ -347,6 +347,39 @@ TEST_CASE("An xyz style marks a float vector as axis components")
     REQUIRE(std::any_cast<std::shared_ptr<prm::style::Xyz>>(parameter.getStyle()) != nullptr);
 }
 
+TEST_CASE("A range circle style marks a float pair as a dial")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: arc_angles
+    type: float
+    size: 2
+    default: [0, 360]
+    style: rangeCircle
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+
+    REQUIRE(parameter.getSize() == 2);
+    REQUIRE(
+        std::any_cast<std::shared_ptr<prm::style::RangeCircle>>(parameter.getStyle()) != nullptr
+    );
+}
+
+TEST_CASE("A range circle keeps its bounds in order when asked to")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: arc_angles
+    type: float
+    size: 2
+    style: rangeCircle
+    styleOptions:
+      ordered: true
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+    const auto style = std::any_cast<std::shared_ptr<prm::style::RangeCircle>>(parameter.getStyle());
+
+    REQUIRE(style->ordered());
+}
+
 TEST_CASE("Instance defaults set the starting values of a multiparm")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(

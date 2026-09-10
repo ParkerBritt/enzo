@@ -65,7 +65,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 ShaderTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 QuickShapes ShaderTools)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -223,6 +223,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/IntSlider.qml
         src/Gui/Parameters/Toggle.qml
         src/Gui/Parameters/VectorParameter.qml
+        src/Gui/Parameters/RangeDial.qml
         src/Gui/Parameters/StringParameter.qml
         src/Gui/Parameters/DropdownParameter.qml
         src/Gui/Parameters/Group.qml
@@ -266,7 +267,7 @@ set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
+target_link_libraries(${AppExec} PRIVATE enzoEngine Qt6::Quick Qt6::QuickControls2 Qt6::QuickShapes Qt6::OpenGL)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type

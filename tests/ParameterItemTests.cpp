@@ -38,6 +38,7 @@ TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style token to the gu
     nt::Node& node = networkManager.getNode(nodeId);
 
     REQUIRE(makeItem(node, "center").style() == "xyz");
+    REQUIRE(makeItem(node, "arc_angles").style() == "rangeCircle");
     REQUIRE(makeItem(node, "uniform_scale").style() == "");
 }
 
@@ -86,4 +87,17 @@ TEST_CASE_METHOD(PluginsAndReset, "A drag over many values records one undo step
     networkManager.undoStack().undo();
     REQUIRE(distance.value().toDouble() == original);
     REQUIRE_FALSE(networkManager.undoStack().canUndo());
+}
+
+TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style options to the gui")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId nodeId =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::circle"));
+    nt::Node& node = networkManager.getNode(nodeId);
+
+    const QVariantMap options = makeItem(node, "arc_angles").styleOptions();
+
+    REQUIRE(options.value("ordered") == QVariant(true));
+    REQUIRE(options.value("caption") == QVariant("arc"));
 }
