@@ -57,7 +57,7 @@ PopupList {
     // The function a pasted reference must call, matching this parameter's own
     // value type since that is what its expression has to produce.
     readonly property string referenceFn: {
-        if (menu.kind === "float" || menu.kind === "xyz")
+        if (menu.kind === "float")
             return "prm";
         if (menu.kind === "string" || menu.kind === "dropdown")
             return "prmS";

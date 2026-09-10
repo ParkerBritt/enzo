@@ -76,8 +76,8 @@ parameters:
             labelHidden: true
             tooltip: >
               Create a face group with the polygons of the extrusionfront in this group. You can use this group in later nodes to easily target just the front polygons.
-            style:
-              kind: boolIconSlash
+            style: boolIcon
+            styleOptions:
               icon: squares-subtract
 
           - name: frontGroupName
@@ -118,8 +118,8 @@ parameters:
             labelHidden: true
             tooltip: >
               Create a face group with the polygons of the extrusion sides in this group. You can use this group in later nodes to easily target just the side polygons.
-            style:
-              kind: boolIconSlash
+            style: boolIcon
+            styleOptions:
               icon: squares-subtract
 
           - name: sideGroupName
@@ -160,8 +160,8 @@ parameters:
             labelHidden: true
             tooltip: >
               Create a face group with the original extruded polygons in this group. You can use this group in later nodes to easily target just the back polygons.
-            style:
-              kind: boolIconSlash
+            style: boolIcon
+            styleOptions:
               icon: squares-subtract
 
           - name: backGroupName

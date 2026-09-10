@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
+#include "Engine/Parameter/Style.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
@@ -13,7 +14,7 @@ namespace {
 /// @brief Whether the type carries a numeric range worth reading.
 bool hasRange(prm::Type type)
 {
-    return type == prm::Type::FLOAT || type == prm::Type::INT || type == prm::Type::XYZ;
+    return type == prm::Type::FLOAT || type == prm::Type::INT;
 }
 
 /// @brief Returns a multiparm's instances as a list of maps keyed by field name.
@@ -95,6 +96,7 @@ ParameterItem::ParameterItem(
     : QObject(parent), parameter_(std::move(parameter))
 {
     kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
+    style_ = QString::fromStdString(prm::style::toString(prmTemplate.getStyle()));
     name_ = QString::fromStdString(prmTemplate.getName());
     nodeName_ = QString::fromStdString(node.getName());
     label_ = QString::fromStdString(prmTemplate.getLabel());

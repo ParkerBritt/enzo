@@ -3,13 +3,14 @@ import Enzo
 import "../Components"
 import "../Style"
 
-// One slider per component of a vector parameter, each marked with an
-// axis-coloured swatch.
+// One slider per component of a vector parameter. The xyz style colours each
+// component by the axis it drives.
 Row {
     id: vec
 
     required property var item
     readonly property int count: item ? item.vectorSize : 0
+    readonly property bool axisStyled: item ? item.style === "xyz" : false
     spacing: 4
 
     // Per component swatch colour, matching the axis tint the geometry
@@ -31,7 +32,7 @@ Row {
 
             width: (vec.width - vec.spacing * (vec.count - 1)) / vec.count
             implicitHeight: Constants.parameterHeight
-            axisColor: vec.axisColors[Math.min(index, 3)]
+            axisColor: vec.axisStyled ? vec.axisColors[Math.min(index, 3)] : "transparent"
             from: vec.item ? vec.item.minimum : 0
             to: vec.item ? vec.item.maximum : 1
             clampMin: vec.item ? vec.item.minLocked : true

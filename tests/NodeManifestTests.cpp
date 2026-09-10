@@ -193,7 +193,7 @@ TEST_CASE("One default covers every component of a vector parameter")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(
   - name: center
-    type: xyz
+    type: float
     size: 3
     default: 2.5
 )");
@@ -208,7 +208,7 @@ TEST_CASE("A list of defaults gives each component its own value")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(
   - name: scale
-    type: xyz
+    type: float
     size: 3
     default: [1, 2, 3]
     range: {min: 0, max: 5}
@@ -319,17 +319,32 @@ TEST_CASE("A style is attached by its name")
     const nt::NodeManifest manifest = manifestWithParameters(R"(
   - name: capGroupEnabled
     type: bool
-    style:
-      kind: boolIconSlash
+    style: boolIcon
+    styleOptions:
       icon: squares-subtract
       scale: 0.5
 )");
     const prm::Template& parameter = manifest.getNodeType().templates.at(0);
     const auto style =
-        std::any_cast<std::shared_ptr<prm::style::BoolIconSlash>>(parameter.getStyle());
+        std::any_cast<std::shared_ptr<prm::style::BoolIcon>>(parameter.getStyle());
 
     REQUIRE(style->icon() == "squares-subtract");
     REQUIRE(style->scale() == Catch::Approx(0.5));
+}
+
+TEST_CASE("An xyz style marks a float vector as axis components")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: center
+    type: float
+    size: 3
+    style: xyz
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+
+    REQUIRE(parameter.getType() == prm::Type::FLOAT);
+    REQUIRE(parameter.getSize() == 3);
+    REQUIRE(std::any_cast<std::shared_ptr<prm::style::Xyz>>(parameter.getStyle()) != nullptr);
 }
 
 TEST_CASE("Instance defaults set the starting values of a multiparm")
@@ -423,8 +438,30 @@ TEST_CASE("A parameter with an unknown style is rejected")
     const std::string parameters = R"(
   - name: capGroupEnabled
     type: bool
-    style:
-      kind: boolWobble
+    style: boolWobble
+)";
+    REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
+}
+
+TEST_CASE("A style option no setting answers to is rejected")
+{
+    const std::string parameters = R"(
+  - name: capGroupEnabled
+    type: bool
+    style: boolIcon
+    styleOptions:
+      wobble: 3
+)";
+    REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
+}
+
+TEST_CASE("Style options without a style are rejected")
+{
+    const std::string parameters = R"(
+  - name: capGroupEnabled
+    type: bool
+    styleOptions:
+      icon: squares-subtract
 )";
     REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
 }

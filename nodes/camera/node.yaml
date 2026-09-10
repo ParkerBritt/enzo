@@ -18,13 +18,15 @@ implementation:
 parameters:
   - name: transform
     label: Transform
-    type: xyz
+    type: float
     size: 3
     default: 0
+    style: xyz
 
   - name: rotate
     label: Rotate
-    type: xyz
+    type: float
     size: 3
     default: 0
     range: {min: 0, max: 360}
+    style: xyz

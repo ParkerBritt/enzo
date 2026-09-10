@@ -18,10 +18,11 @@ implementation:
 parameters:
   - name: size
     label: Size
-    type: xyz
+    type: float
     size: 2
     default: 10
     range: {min: 0, max: 100}
+    style: xyz
 
   - name: rows
     label: Rows

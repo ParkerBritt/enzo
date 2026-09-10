@@ -93,26 +93,45 @@ prm::Direction readDirection(const YAML::Node& direction)
     throw std::runtime_error("unknown direction " + text);
 }
 
-// Attaches one of the style structs named in Style.h. The two icon styles take
-// the same settings.
-void readStyle(prm::Template& parameter, const YAML::Node& style)
+// Writes one styleOptions entry onto the style setting it names.
+void readStyleOption(prm::Parameter& setting, const YAML::Node& value)
 {
-    const std::string kind = requireString(style, "kind", "style");
+    const prm::Default parsed = readDefault(value, setting.getValueType());
 
-    const auto attach = [&](auto shape) {
-        if (style["icon"]) shape.setIcon(style["icon"].as<std::string>());
-        if (style["scale"]) shape.setScale(style["scale"].as<floatT>());
-        parameter.setStyle(std::move(shape));
-    };
+    switch (setting.getValueType())
+    {
+    case prm::ValueType::String:
+        setting.setString(parsed.getString());
+        return;
+    case prm::ValueType::Int:
+        setting.setInt(parsed.getInt());
+        return;
+    case prm::ValueType::Float:
+        setting.setFloat(parsed.getFloat());
+        return;
+    }
+}
 
-    if (kind == "boolSwitch")
-        parameter.setStyle(prm::style::BoolSwitch{});
-    else if (kind == "boolIcon")
-        attach(prm::style::BoolIcon{});
-    else if (kind == "boolIconSlash")
-        attach(prm::style::BoolIconSlash{});
-    else
-        throw std::runtime_error("unknown style " + kind);
+// Attaches the style named in node.yaml and fills in the settings it exposes
+// from the styleOptions block. An option the style has no setting for throws.
+void readStyle(prm::Template& parameter, const YAML::Node& style, const YAML::Node& styleOptions)
+{
+    const std::string styleName = style.as<std::string>();
+    prm::style::attachStyle(parameter, styleName);
+
+    if (!styleOptions) return;
+
+    for (const auto& option : styleOptions)
+    {
+        const std::string optionName = option.first.as<std::string>();
+        const std::shared_ptr<prm::Parameter> setting =
+            prm::style::getSetting(parameter.getStyle(), optionName);
+
+        if (!setting)
+            throw std::runtime_error("style " + styleName + " has no setting " + optionName);
+
+        readStyleOption(*setting, option.second);
+    }
 }
 
 // Reads the starting values of a multiparm, one list per field of its instance
@@ -169,7 +188,9 @@ prm::Template readParameter(const YAML::Node& parm)
     if (parm["background"]) parameter.setBackgroundEnabled(parm["background"].as<bool>());
     if (parm["icon"]) parameter.setIcon(parm["icon"].as<std::string>());
     if (parm["options"]) parameter.setOptions(readOptions(parm["options"]));
-    if (parm["style"]) readStyle(parameter, parm["style"]);
+    if (parm["styleOptions"] && !parm["style"])
+        throw std::runtime_error("parameter " + name + " has styleOptions but no style");
+    if (parm["style"]) readStyle(parameter, parm["style"], parm["styleOptions"]);
     if (parm["instanceDefaults"]) readInstanceDefaults(parameter, parm["instanceDefaults"]);
 
     for (const YAML::Node& child : parm["parameters"])
