@@ -40,9 +40,17 @@ Item {
         return hasLabel ? Math.ceil(labelMetrics.advanceWidth) : 0;
     }
 
-    width: parent ? parent.width : 0
+    // Width the row asks for, 0 when its control stretches to whatever width it
+    // is given.
+    implicitWidth: {
+        const controlWidth = leafBody.item ? (leafBody.item.controlWidth || 0) : 0;
+        if (controlWidth === 0)
+            return 0;
+        return hasLabel ? labelColumnWidth + labelGap + controlWidth : controlWidth;
+    }
+
     visible: item && !item.hidden
-    height: visible ? leafBody.implicitHeight + groupLoader.implicitHeight : 0
+    implicitHeight: visible ? leafBody.implicitHeight + groupLoader.implicitHeight : 0
     opacity: (item && item.enabled) ? 1 : 0.4
 
     TextMetrics {
@@ -87,6 +95,9 @@ Item {
         id: parameterComp
 
         Row {
+            // Width the control asks for, 0 when it takes whatever it is given.
+            readonly property real controlWidth: control.implicitWidth
+
             width: parent.width
             spacing: row.hasLabel ? row.labelGap : 0
 
@@ -103,6 +114,8 @@ Item {
             }
 
             Loader {
+                id: control
+
                 width: parent.width - (row.hasLabel ? row.labelColumnWidth + row.labelGap : 0)
                 sourceComponent: {
                     switch (row.item.kind) {

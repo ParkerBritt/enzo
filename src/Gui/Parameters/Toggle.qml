@@ -9,6 +9,7 @@ Item {
 
     required property var item
     implicitHeight: Constants.parameterHeight
+    implicitWidth: switchTrack.width
 
     Rectangle {
         id: switchTrack
