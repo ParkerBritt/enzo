@@ -6,8 +6,7 @@ label: Sine Wave
 tags: [deform, displace]
 
 inputs:
-  min: 1
-  max: 1
+  - label: Geometry
 outputs: 1
 
 implementation:

@@ -6,8 +6,8 @@ label: Boolean
 tags: [boolean, combine, polygon]
 
 inputs:
-  min: 2
-  max: 2
+  - label: A
+  - label: B
 outputs: 1
 
 implementation:

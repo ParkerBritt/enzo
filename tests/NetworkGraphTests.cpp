@@ -15,7 +15,7 @@ bool contains(const std::vector<nt::Unit>& units, const nt::Unit& target)
     return false;
 }
 
-// A connection from one node's first output into another node's given input slot.
+// A connection from one node's first output into another node's given input.
 nt::Connection wire(nt::NodeId source, nt::NodeId target, unsigned int targetInput = 0)
 {
     return nt::Connection{source, 0, target, targetInput};
@@ -103,7 +103,7 @@ TEST_CASE("Disconnecting drops the dependency")
     REQUIRE(graph.getCookOrder(2) == std::vector<nt::NodeId>{2});
 }
 
-TEST_CASE("A node's inputs come back ordered by input slot")
+TEST_CASE("A node's inputs come back ordered by input index")
 {
     nt::NetworkGraph graph;
     graph.connect(wire(5, 9, 1));
@@ -128,7 +128,7 @@ TEST_CASE("A node's outputs list every connection leaving it")
 
 TEST_CASE("Two connections between the same pair survive removing one")
 {
-    // Node 1 feeds node 2 through two separate input slots.
+    // Node 1 feeds node 2 through two separate inputs.
     nt::NetworkGraph graph;
     graph.connect(wire(1, 2, 0));
     graph.connect(wire(1, 2, 1));

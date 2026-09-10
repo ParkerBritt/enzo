@@ -6,8 +6,8 @@ label: Merge
 tags: [utility, combine]
 
 inputs:
-  min: 2
-  max: 2
+  - label: Geometry
+    multiInput: true
 outputs: 1
 
 implementation:

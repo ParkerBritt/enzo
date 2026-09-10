@@ -6,8 +6,9 @@ label: Sweep
 tags: [curve, surface, polygon]
 
 inputs:
-  min: 1
-  max: 2
+  - label: Backbone
+  - label: Profile
+    optional: true
 outputs: 1
 
 implementation:

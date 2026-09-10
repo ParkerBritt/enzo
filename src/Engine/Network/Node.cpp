@@ -48,10 +48,10 @@ std::optional<ParameterComparison> parseParameterComparison(const std::string& t
 nt::Node::Node(nt::NodeId nodeId, const nt::NodeType& nodeType, const Path& path)
     : nodeId_{nodeId}, nodeType_{nodeType}, path_{path}
 {
-    // Start every slot on an empty packet so consumers never see null.
+    // Start every output on an empty packet so consumers never see null.
     outputPackets_.resize(getMaxOutputs());
-    for (auto& slot : outputPackets_)
-        slot = std::make_shared<const NodePacket>();
+    for (auto& packet : outputPackets_)
+        packet = std::make_shared<const NodePacket>();
 
     initParameters();
 }
@@ -211,8 +211,7 @@ const nt::NodeType& nt::Node::getType() const { return nodeType_; }
 //     return outputIds_.at(outputNumber);
 // }
 
-unsigned int nt::Node::getMaxInputs() const { return nodeType_.maxInputs; }
+bool nt::Node::takesInput() const { return !nodeType_.inputPorts.empty(); }
 unsigned int nt::Node::getMaxOutputs() const { return nodeType_.maxOutputs; }
-unsigned int nt::Node::getMinInputs() const { return nodeType_.minInputs; }
 
 } // namespace enzo

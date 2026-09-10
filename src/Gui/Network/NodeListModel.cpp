@@ -27,8 +27,8 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"type", [](const Node& node) { return QVariant(node.type); }},
         {"x", [](const Node& node) { return QVariant(node.x); }},
         {"y", [](const Node& node) { return QVariant(node.y); }},
-        {"inputSlotCount", [](const Node& node) { return QVariant(node.inputSlotCount); }},
-        {"outputSlotCount", [](const Node& node) { return QVariant(node.outputSlotCount); }},
+        {"inputPortCount", [](const Node& node) { return QVariant(node.inputPortCount); }},
+        {"outputPortCount", [](const Node& node) { return QVariant(node.outputPortCount); }},
         {"selected", [](const Node& node) { return QVariant(node.selected); }},
         {"primary", [](const Node& node) { return QVariant(node.primary); }},
         {"display", [](const Node& node) { return QVariant(node.display); }},
@@ -177,25 +177,25 @@ QPointF NodeListModel::getPosition(nt::NodeId nodeId) const
     return QPointF(nodes_[row].x, nodes_[row].y);
 }
 
-QPointF NodeListModel::getPortPosition(const Node& node, int slot, bool isOutput) const
+QPointF NodeListModel::getPortPosition(const Node& node, int index, bool isOutput) const
 {
     // Nodes store their center, so shift to the top left the ports measure from.
     const qreal left = node.x - nodeWidth / 2;
     const qreal top = node.y - nodeHeight / 2;
 
-    const int slotCount = isOutput ? node.outputSlotCount : node.inputSlotCount;
-    const qreal x = left + nodeWidth * (slot + 1) / (slotCount + 1);
+    const int portCount = isOutput ? node.outputPortCount : node.inputPortCount;
+    const qreal x = left + nodeWidth * (index + 1) / (portCount + 1);
     const qreal y = top + (isOutput ? nodeHeight : 0);
     return QPointF(x, y);
 }
 
 std::optional<QPointF>
-NodeListModel::getPortPosition(nt::NodeId nodeId, int slot, bool isOutput) const
+NodeListModel::getPortPosition(nt::NodeId nodeId, int index, bool isOutput) const
 {
     const int row = rowOf(nodeId);
     if (row == -1) return std::nullopt;
 
-    return getPortPosition(nodes_[row], slot, isOutput);
+    return getPortPosition(nodes_[row], index, isOutput);
 }
 
 QVariantMap NodeListModel::getNearestPort(
@@ -209,17 +209,17 @@ QVariantMap NodeListModel::getNearestPort(
     qreal nearestDistance = pickRadius;
 
     auto consider = [&](const Node& node, bool isOutput) {
-        const int slotCount = isOutput ? node.outputSlotCount : node.inputSlotCount;
-        for (int slot = 0; slot < slotCount; ++slot)
+        const int portCount = isOutput ? node.outputPortCount : node.inputPortCount;
+        for (int index = 0; index < portCount; ++index)
         {
-            const QPointF port = getPortPosition(node, slot, isOutput);
+            const QPointF port = getPortPosition(node, index, isOutput);
             const qreal distance = QLineF(port, canvasPoint).length();
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;
                 nearest = QVariantMap{
                     {"nodeId", QVariant::fromValue(node.nodeId)},
-                    {"slot", slot},
+                    {"index", index},
                     {"isOutput", isOutput},
                     {"x", port.x()},
                     {"y", port.y()}
@@ -290,7 +290,7 @@ NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
         QString::fromStdString(node.getType().getLabel()),
         position.x(),
         position.y(),
-        static_cast<int>(node.getMaxInputs()),
+        static_cast<int>(node.getType().inputPorts.size()),
         static_cast<int>(node.getMaxOutputs()),
     };
 }

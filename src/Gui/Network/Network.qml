@@ -51,7 +51,7 @@ Rectangle {
                 return null;
             return {
                 nodeId: linkController.hoverNodeId,
-                slot: linkController.hoverSlot,
+                index: linkController.hoverIndex,
                 isOutput: !linkController.fromOutput
             };
         }
@@ -137,7 +137,7 @@ Rectangle {
 
             const port = network.nodes.getGrabPort(canvasPoint);
             if (port.nodeId !== undefined) {
-                linkController.grab(port.nodeId, port.slot, port.isOutput, Qt.point(port.x, port.y));
+                linkController.grab(port.nodeId, port.index, port.isOutput, Qt.point(port.x, port.y));
                 grabbedOnPress = true;
                 draggingLink = linkController.linking;
                 return;
@@ -352,14 +352,14 @@ Rectangle {
                 selected: model.selected
                 primary: model.primary
                 display: model.display
-                inputSlotCount: model.inputSlotCount
-                outputSlotCount: model.outputSlotCount
+                inputPortCount: model.inputPortCount
+                outputPortCount: model.outputPortCount
                 linking: linkController.linking
 
                 // The highlighted port when it is one of this node's own.
                 readonly property var highlight: root.highlightedPort && root.highlightedPort.nodeId === model.nodeId ? root.highlightedPort : null
-                highlightedInputSlot: highlight && !highlight.isOutput ? highlight.slot : -1
-                highlightedOutputSlot: highlight && highlight.isOutput ? highlight.slot : -1
+                highlightedInput: highlight && !highlight.isOutput ? highlight.index : -1
+                highlightedOutput: highlight && highlight.isOutput ? highlight.index : -1
 
                 // Was this node already selected when the press began.
                 property bool selectedAtPress: false

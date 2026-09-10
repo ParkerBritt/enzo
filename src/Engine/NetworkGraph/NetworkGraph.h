@@ -29,12 +29,12 @@ class NetworkGraph
     /// @brief Removes a wired connection between two nodes.
     void disconnect(const Connection& connection);
 
-    /// @brief Returns the connections feeding @p target, ordered by input slot.
+    /// @brief Returns the connections feeding @p target, ordered by input index.
     std::vector<Connection> getInputs(NodeId target) const;
 
-    /// @brief Returns the connection on one input slot of @p target, if any.
-    /// @note An input slot holds at most one connection.
-    std::optional<Connection> getInputConnection(NodeId target, unsigned int inputSlot) const;
+    /// @brief Returns the connection on one input of @p target, if any.
+    /// @note An input holds at most one connection.
+    std::optional<Connection> getInputConnection(NodeId target, unsigned int inputIndex) const;
 
     /// @brief Returns the connections leaving @p source.
     std::vector<Connection> getOutputs(NodeId source) const;

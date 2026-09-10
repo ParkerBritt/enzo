@@ -16,14 +16,14 @@ QtObject {
     property bool dragging: false
 
     property var originNodeId
-    property int originSlot: 0
+    property int originIndex: 0
     property bool fromOutput: true
     property point outputPoint
     property point inputPoint
 
     // The port the loose end is currently snapped to, undefined when it is free.
     property var hoverNodeId
-    property int hoverSlot: 0
+    property int hoverIndex: 0
 
     // Moves the loose end of the in-progress link to a canvas point.
     function setLooseEnd(canvasPoint) {
@@ -35,14 +35,14 @@ QtObject {
 
     // Grabs a port. With no link in progress this anchors a fresh link there,
     // otherwise it places the in-progress link onto the port.
-    function grab(nodeId, slot, isOutput, canvasPoint) {
+    function grab(nodeId, index, isOutput, canvasPoint) {
         if (linking) {
             update(canvasPoint);
             finish();
             return;
         }
         originNodeId = nodeId;
-        originSlot = slot;
+        originIndex = index;
         fromOutput = isOutput;
         outputPoint = canvasPoint;
         inputPoint = canvasPoint;
@@ -69,7 +69,7 @@ QtObject {
         const hit = viewModel.nodes.getSnapPort(canvasPoint, !fromOutput);
         if (hit.nodeId !== undefined && hit.nodeId !== originNodeId) {
             hoverNodeId = hit.nodeId;
-            hoverSlot = hit.slot;
+            hoverIndex = hit.index;
             setLooseEnd(Qt.point(hit.x, hit.y));
         } else {
             hoverNodeId = undefined;
@@ -84,9 +84,9 @@ QtObject {
 
         if (hoverNodeId !== undefined) {
             if (fromOutput)
-                viewModel.connectNodes(originNodeId, originSlot, hoverNodeId, hoverSlot);
+                viewModel.connectNodes(originNodeId, originIndex, hoverNodeId, hoverIndex);
             else
-                viewModel.connectNodes(hoverNodeId, hoverSlot, originNodeId, originSlot);
+                viewModel.connectNodes(hoverNodeId, hoverIndex, originNodeId, originIndex);
         }
         hoverNodeId = undefined;
         linking = false;

@@ -415,6 +415,7 @@ if(ENZO_BUILD_TESTS)
         tests/PathTests.cpp
         tests/NetworkPathTests.cpp
         tests/NodeManifestTests.cpp
+        tests/NodeTypeTests.cpp
         tests/NodeLoaderTests.cpp
         tests/GeometryImportTests.cpp
         tests/TransformNodeTests.cpp

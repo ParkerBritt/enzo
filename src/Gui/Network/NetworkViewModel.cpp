@@ -119,7 +119,7 @@ bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
 
     const nt::NodeId createdId = network.createNode(nodeType, Path("/"), "", belowPosition);
 
-    if (primaryHasOutput && network.getNode(createdId).getMaxInputs() > 0)
+    if (primaryHasOutput && network.getNode(createdId).takesInput())
         network.connectNodes(*primaryId, 0, createdId, 0);
 
     selectNode(createdId, false);

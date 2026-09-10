@@ -13,10 +13,25 @@ class CookContext;
 using nodeConstructor = NodeImpl* (*)(Node&, CookContext&);
 
 /**
+ * @brief One input port a node type declares.
+ *
+ * @note A single port holds one input. A multi input port holds every input from its
+ * own position onward, so it has to be the last port declared.
+ */
+struct InputPort
+{
+    std::string label;
+    bool multiInput = false;
+
+    /// @brief Whether the node cooks with nothing wired into this port.
+    bool optional = false;
+};
+
+/**
  * @brief Everything every node of one kind shares.
  *
  * A node type is what a grid node has in common with every other grid node, so
- * the label, the parameters, the input and output counts, and the constructor
+ * the label, the parameters, the inputs and outputs, and the constructor
  * that produces its behaviour. It comes from a node folder's manifest and is
  * owned by the nt::NodeTypeTable, with each node holding a reference to it.
  */
@@ -31,8 +46,10 @@ struct NodeType
     std::string displayName;
     nodeConstructor ctorFunc = nullptr;
     std::vector<enzo::prm::Template> templates;
-    unsigned int minInputs = 0;
-    unsigned int maxInputs = 1;
+
+    /// @brief The input ports the node declares, in the order their inputs run.
+    std::vector<InputPort> inputPorts;
+
     unsigned int maxOutputs = 1;
 
     /// @brief The words the tab menu searches on, such as "curve" or "primitive".
@@ -66,6 +83,26 @@ struct NodeType
 
     /// @brief Returns whether this node holds a scope of other nodes inside it.
     bool hasChildScope() const { return !childScopeType.empty(); }
+
+    /// @brief Returns whether the last declared port holds any number of inputs.
+    bool hasMultiInputPort() const { return !inputPorts.empty() && inputPorts.back().multiInput; }
+
+    /// @brief Returns the number of ports that hold a single input each.
+    unsigned int getSinglePortCount() const
+    {
+        const auto declaredCount = static_cast<unsigned int>(inputPorts.size());
+        return hasMultiInputPort() ? declaredCount - 1 : declaredCount;
+    }
+
+    /// @brief Returns the port holding an input.
+    /// @return The declared port, or nothing when the index is past the last input.
+    /// @note Every index at or above the multi input port's position belongs to it.
+    const InputPort* getPortAt(unsigned int inputIndex) const
+    {
+        if (inputIndex < getSinglePortCount()) return &inputPorts[inputIndex];
+        if (hasMultiInputPort()) return &inputPorts.back();
+        return nullptr;
+    }
 
     /// @brief Returns the icon file on disk.
     /// @return The full path, empty when the node ships no icon.
