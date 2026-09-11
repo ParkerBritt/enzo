@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <type_traits>
 
 namespace enzo {
 
@@ -101,6 +102,20 @@ using Index = size_t;
  * as adding and deleting points unless defragmented.
  */
 using Offset = size_t;
+
+namespace attr {
+/// @brief Returns the attribute type that stores values of the given C++ type.
+template <typename T> constexpr AttributeType getAttributeType()
+{
+    if constexpr (std::is_same_v<T, intT>) return AttributeType::intT;
+    else if constexpr (std::is_same_v<T, floatT>) return AttributeType::floatT;
+    else if constexpr (std::is_same_v<T, boolT>) return AttributeType::boolT;
+    else if constexpr (std::is_same_v<T, Vector3>) return AttributeType::vectorT;
+    else if constexpr (std::is_same_v<T, Matrix4>) return AttributeType::matrixT;
+    else static_assert(sizeof(T) == 0, "No attribute type stores this C++ type");
+}
+} // namespace attr
+
 namespace prm {
 enum class Type
 {

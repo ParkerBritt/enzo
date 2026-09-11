@@ -18,13 +18,13 @@
 namespace enzo {
 
 geo::Mesh::Mesh(std::string_view path)
-    : vertexCountFaceHandle_{addIntAttribute(attr::AttrOwner::FACE, "vertexCount", true)},
-      closedFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "closed", true)},
-      pointOffsetVertexHandle_{addIntAttribute(attr::AttrOwner::VERTEX, "point", true)},
-      posPointHandle_{addVector3Attribute(attr::AttrOwner::POINT, "P", true)},
-      validFaceHandle_{addBoolAttribute(attr::AttrOwner::FACE, "__valid", true, true)},
-      validVertexHandle_{addBoolAttribute(attr::AttrOwner::VERTEX, "__valid", true, true)},
-      validPointHandle_{addBoolAttribute(attr::AttrOwner::POINT, "__valid", true, true)},
+    : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true)},
+      closedFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "closed", true)},
+      pointOffsetVertexHandle_{addAttribute<intT>(attr::AttrOwner::VERTEX, "point", true)},
+      posPointHandle_{addAttribute<Vector3>(attr::AttrOwner::POINT, "P", true)},
+      validFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "__valid", true, true)},
+      validVertexHandle_{addAttribute<boolT>(attr::AttrOwner::VERTEX, "__valid", true, true)},
+      validPointHandle_{addAttribute<boolT>(attr::AttrOwner::POINT, "__valid", true, true)},
       Primitive(path)
 {
 }

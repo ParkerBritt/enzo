@@ -257,7 +257,7 @@ TEST_CASE("Group name can match attribute name")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Same name on both stores must not collide
-    mesh.addBoolAttribute(attr::AttrOwner::FACE, "selected");
+    mesh.addAttribute<boolT>(attr::AttrOwner::FACE, "selected");
     mesh.addGroup(attr::AttrOwner::FACE, "selected");
 
     auto attribute = mesh.getAttribByName(attr::AttrOwner::FACE, "selected");
@@ -447,7 +447,7 @@ TEST_CASE("Face normal prefers Normal attribute over Newell")
 
     // Newell would give (0, 1, 0) for this face. Override with a different
     // direction so we can tell which path was used.
-    auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::FACE, "Normal");
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::FACE, "Normal");
     normalAttr.setValue(0, Vector3(1, 0, 0));
 
     auto faceNormals = mesh.getFaceNormal();
@@ -502,7 +502,7 @@ TEST_CASE("Vertex normal prefers Normal attribute over face fallback")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Override one vertex's normal so we can see the attribute path wins
-    auto normalAttr = mesh.addVector3Attribute(attr::AttrOwner::VERTEX, "Normal");
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::VERTEX, "Normal");
     normalAttr.setValue(0, Vector3(1, 0, 0));
     normalAttr.setValue(1, Vector3(0, 1, 0));
     normalAttr.setValue(2, Vector3(0, 0, 1));
@@ -527,9 +527,9 @@ TEST_CASE("Adding an attribute twice keeps a single attribute")
 
     const size_t attributeCount = mesh.getNumAttributes(attr::AttrOwner::POINT);
 
-    auto first = mesh.addVector3Attribute(attr::AttrOwner::POINT, "up");
+    auto first = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "up");
     first.setValue(0, Vector3(0, 1, 0));
-    auto second = mesh.addVector3Attribute(attr::AttrOwner::POINT, "up");
+    auto second = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "up");
 
     REQUIRE(mesh.getNumAttributes(attr::AttrOwner::POINT) == attributeCount + 1);
     REQUIRE(second.getValue(0) == Vector3(0, 1, 0));
@@ -545,10 +545,10 @@ TEST_CASE("Adding an attribute of another type replaces the stored one")
     auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.addVector3Attribute(attr::AttrOwner::POINT, "tag");
+    mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "tag");
     const size_t attributeCount = mesh.getNumAttributes(attr::AttrOwner::POINT);
 
-    mesh.addIntAttribute(attr::AttrOwner::POINT, "tag");
+    mesh.addAttribute<intT>(attr::AttrOwner::POINT, "tag");
 
     auto stored = mesh.getAttribByName(attr::AttrOwner::POINT, "tag");
     REQUIRE(mesh.getNumAttributes(attr::AttrOwner::POINT) == attributeCount);
@@ -567,7 +567,7 @@ TEST_CASE("Adding an attribute leaves an intrinsic of the same name alone")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
     // Add an ordinary P beside the intrinsic P that holds the positions
-    auto ordinary = mesh.addVector3Attribute(attr::AttrOwner::POINT, "P");
+    auto ordinary = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "P");
     ordinary.setValue(0, Vector3(9, 9, 9));
 
     REQUIRE(mesh.getPointPos(pointOffset0) == Vector3(0, 0, 0));

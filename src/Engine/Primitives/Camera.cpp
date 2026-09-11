@@ -3,7 +3,7 @@
 namespace enzo {
 
 geo::Camera::Camera(std::string_view path)
-    : transformHandle_{addMatrix4Attribute(attr::AttributeOwner::PRIMITIVE, "transform", true)},
+    : transformHandle_{addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true)},
       Primitive(path)
 {
     transformHandle_.addValue(Matrix4::Identity());
