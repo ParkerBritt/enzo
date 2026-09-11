@@ -1,8 +1,107 @@
 #include "Engine/Network/NodePacket.h"
+#include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Primitives/Mesh.h"
 #include <cstddef>
+#include <span>
 #include <stdexcept>
 
 namespace enzo {
+
+namespace {
+
+const std::string kNormalAttribute = "Normal";
+const std::string kUpAttribute = "Up";
+
+/**
+ * @brief Returns whether an attribute exists and holds vector values.
+ */
+bool isPopulatedVector(const std::shared_ptr<attr::Attribute>& attribute)
+{
+    return attribute && attribute->getType() == attr::AttrType::vectorT &&
+           attribute->getSize() > 0;
+}
+
+/**
+ * @brief Returns the vector each point carries, averaging the vertices that meet there.
+ *
+ * @note A point no vertex refers to comes back as a zero vector.
+ */
+std::vector<Vector3> getPointVectorsFromVertices(
+    geo::Mesh& mesh,
+    const std::shared_ptr<attr::Attribute>& vertexAttribute
+)
+{
+    const attr::AttributeHandle<Vector3> vertexValues(vertexAttribute);
+    const std::span<const intT> vertexPoints = mesh.vertexPointSpan();
+
+    std::vector<Vector3> pointValues(mesh.getNumPoints(), Vector3::Zero());
+    for (Offset vertexOffset = 0; vertexOffset < vertexPoints.size(); ++vertexOffset)
+    {
+        if (!mesh.isValidVertex(vertexOffset)) continue;
+        pointValues[vertexPoints[vertexOffset]] += vertexValues[vertexOffset];
+    }
+
+    for (Vector3& value : pointValues)
+    {
+        if (value.squaredNorm() > 0) value.normalize();
+    }
+
+    return pointValues;
+}
+
+/**
+ * @brief Returns the named attribute as one vector per point, preferring vertex over point.
+ *
+ * @return A vector for every point, or an empty vector when the primitive carries neither.
+ */
+std::vector<Vector3> getPointVectors(geo::Primitive& prim, const std::string& name)
+{
+    if (auto* mesh = dynamic_cast<geo::Mesh*>(&prim))
+    {
+        std::shared_ptr<attr::Attribute> vertexAttribute =
+            mesh->getAttribByName(attr::AttributeOwner::VERTEX, name);
+        if (isPopulatedVector(vertexAttribute))
+            return getPointVectorsFromVertices(*mesh, vertexAttribute);
+    }
+
+    std::shared_ptr<attr::Attribute> pointAttribute =
+        prim.getAttribByName(attr::AttributeOwner::POINT, name);
+    if (!isPopulatedVector(pointAttribute)) return {};
+
+    return attr::AttributeHandle<Vector3>(pointAttribute).getAllValues();
+}
+
+/**
+ * @brief Returns the rotation that aims each point down its normal, with Up taking the roll.
+ *
+ * @return One rotation per point, or an empty vector when the primitive has no normals.
+ *
+ * @note Points with no normal come back as the identity.
+ */
+std::vector<Transform> getPointOrientations(geo::Primitive& prim)
+{
+    const std::vector<Vector3> normals = getPointVectors(prim, kNormalAttribute);
+    if (normals.empty()) return {};
+
+    const std::vector<Vector3> ups = getPointVectors(prim, kUpAttribute);
+
+    std::vector<Transform> orientations(normals.size());
+    for (Offset pointOffset = 0; pointOffset < normals.size(); ++pointOffset)
+    {
+        const Vector3& normal = normals[pointOffset];
+        if (normal.squaredNorm() <= 0) continue;
+
+        Vector3 up = Vector3::UnitY();
+        const bool hasUp = pointOffset < ups.size() && ups[pointOffset].squaredNorm() > 0;
+        if (hasUp) up = ups[pointOffset];
+
+        orientations[pointOffset] = Transform::lookAt(Vector3::Zero(), normal, up);
+    }
+
+    return orientations;
+}
+
+} // namespace
 
 // ---
 // Transforms::Iterator
@@ -20,7 +119,9 @@ NodePacket::Transforms::Iterator::Iterator(
 
 Transform NodePacket::Transforms::Iterator::operator*() const
 {
-    return Transform::fromAttribute(*curAttrib_, offset_);
+    Transform transform = Transform::fromAttribute(*curAttrib_, offset_);
+    if (offset_ < orientations_.size()) transform.compose(orientations_[offset_]);
+    return transform;
 }
 
 NodePacket::Transforms::Iterator& NodePacket::Transforms::Iterator::operator++()
@@ -46,6 +147,7 @@ void NodePacket::Transforms::Iterator::advance()
 {
     curAttrib_ = nullptr;
     curSize_ = 0;
+    orientations_.clear();
     while (primIdx_ < primitives_.size())
     {
         auto& prim = primitives_[primIdx_];
@@ -60,6 +162,7 @@ void NodePacket::Transforms::Iterator::advance()
             {
                 curAttrib_ = attrib;
                 curSize_ = attrib->getSize();
+                orientations_ = getPointOrientations(*prim);
                 return;
             }
         }

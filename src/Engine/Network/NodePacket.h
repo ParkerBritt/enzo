@@ -40,6 +40,7 @@ class NodePacket
             Offset offset_ = 0;
             std::shared_ptr<attr::Attribute> curAttrib_;
             size_t curSize_ = 0;
+            std::vector<Transform> orientations_;
 
             void advance();
         };
