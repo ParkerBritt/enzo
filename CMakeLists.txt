@@ -205,6 +205,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Icon.qml
         src/Gui/Components/IconButton.qml
         src/Gui/Components/Panel.qml
+        src/Gui/Components/ScrollArea.qml
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
         src/Gui/Components/Dropdown.qml
