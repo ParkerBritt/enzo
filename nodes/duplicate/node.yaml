@@ -1,0 +1,68 @@
+version: 1
+
+name: duplicate
+namespace: enzo
+label: Duplicate
+tags: [copy, duplicate, transform]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: duplicate
+
+parameters:
+  - name: selection
+    label: Selection
+    type: string
+    tooltip: >
+      The primitives to duplicate. Accepts a primitive path or a group name.
+      Leave it empty to duplicate everything.
+
+  - name: count
+    label: Count
+    type: int
+    default: 2
+    range: {min: 1, max: 64, minLocked: true}
+    tooltip: >
+      How many copies to end up with, counting the original. A count of one
+      leaves the geometry alone.
+
+  - name: transform_divider
+    label: Transform
+    type: divider
+    icon: move-3d
+
+  - name: translate
+    label: Translate
+    type: float
+    size: 3
+    style: xyz
+    tooltip: How far each copy moves along each axis, beyond the copy before it.
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    style: xyz
+    range: {min: -360, max: 360}
+    tooltip: >
+      How far each copy turns about each axis, in degrees, beyond the copy
+      before it.
+
+  - name: scale
+    label: Scale
+    type: float
+    size: 3
+    default: 1
+    style: xyz
+    tooltip: How much each copy grows or shrinks along each axis, relative to the copy before it.
+
+  - name: uniform_scale
+    label: Uniform Scale
+    type: float
+    default: 1
+    tooltip: How much each copy grows or shrinks along every axis at once, relative to the copy before it.
