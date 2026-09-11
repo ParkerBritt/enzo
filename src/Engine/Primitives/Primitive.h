@@ -129,31 +129,25 @@ class Primitive
     );
 
     /**
-     * @brief Returns the int attribute stored under this name, adding one when the
-     * name is free.
+     * @brief Returns the attribute of this type stored under this name, adding one
+     * when the name is free.
      *
      * @note An attribute of another type under the same name is replaced, dropping
      *       its values. An intrinsic of the same name is matched separately and
      *       left alone.
      */
-    attr::AttributeHandle<intT>
-    addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
-    /// @copydoc addIntAttribute
-    attr::AttributeHandle<floatT>
-    addFloatAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
-    /// @copydoc addIntAttribute
-    attr::AttributeHandleBool addBoolAttribute(
+    template <typename T>
+    attr::AttributeHandle<T> addAttribute(
         attr::AttributeOwner owner,
         std::string name,
         bool intrinsic = false,
         bool isPrivate = false
-    );
-    /// @copydoc addIntAttribute
-    attr::AttributeHandle<Vector3>
-    addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
-    /// @copydoc addIntAttribute
-    attr::AttributeHandle<Matrix4>
-    addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
+    )
+    {
+        return attr::AttributeHandle<T>(addAttribute(
+            owner, std::move(name), attr::getAttributeType<T>(), intrinsic, isPrivate
+        ));
+    }
 
     std::shared_ptr<attr::Attribute>
     getAttribByName(attr::AttributeOwner owner, std::string name, bool includeIntrinsics = false);

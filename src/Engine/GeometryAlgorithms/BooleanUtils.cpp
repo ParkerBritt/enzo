@@ -725,27 +725,13 @@ void ensureAttributeOnDestination(
     if (sourceAttribute->isIntrinsic()) return;
     if (destMesh.attributeExists(owner, sourceAttribute->getName())) return;
 
-    const std::string name = sourceAttribute->getName();
-    switch (sourceAttribute->getType())
-    {
-    case attr::AttributeType::intT:
-        destMesh.addIntAttribute(owner, name);
-        break;
-    case attr::AttributeType::floatT:
-        destMesh.addFloatAttribute(owner, name);
-        break;
-    case attr::AttributeType::vectorT:
-        destMesh.addVector3Attribute(owner, name);
-        break;
-    case attr::AttributeType::boolT:
-        destMesh.addBoolAttribute(owner, name, false, sourceAttribute->isPrivate());
-        break;
-    case attr::AttributeType::matrixT:
-        destMesh.addMatrix4Attribute(owner, name);
-        break;
-    default:
-        break;
-    }
+    destMesh.addAttribute(
+        owner,
+        sourceAttribute->getName(),
+        sourceAttribute->getType(),
+        false,
+        sourceAttribute->isPrivate()
+    );
 }
 
 // Assemble the output mesh from fragments and detriangulated polygons. Points

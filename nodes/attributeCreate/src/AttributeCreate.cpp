@@ -51,7 +51,6 @@ void writeAttribute(
     enzo::Selection& selection,
     enzo::attr::AttributeOwner owner,
     const enzo::String& name,
-    enzo::attr::AttributeType type,
     const T& value
 )
 {
@@ -62,7 +61,7 @@ void writeAttribute(
         const std::vector<Offset> offsets = getSelectedOffsets(selection, prim, owner);
         if (offsets.empty()) continue;
 
-        attr::AttributeHandle<T> attribute(prim->addAttribute(owner, name, type));
+        attr::AttributeHandle<T> attribute = prim->addAttribute<T>(owner, name);
         for (const Offset offset : offsets)
             attribute.setValue(offset, value);
     }
@@ -98,22 +97,22 @@ void AttributeCreate::cook()
     if (type == "int")
     {
         const intT value = evalParmInt("intValue");
-        writeAttribute(packet, selection, owner, attributeName, attr::AttrType::intT, value);
+        writeAttribute(packet, selection, owner, attributeName, value);
     }
     else if (type == "vector")
     {
         const Vector3 value = evalParmVector3("vectorValue");
-        writeAttribute(packet, selection, owner, attributeName, attr::AttrType::vectorT, value);
+        writeAttribute(packet, selection, owner, attributeName, value);
     }
     else if (type == "bool")
     {
         const boolT value = evalParmBool("boolValue");
-        writeAttribute(packet, selection, owner, attributeName, attr::AttrType::boolT, value);
+        writeAttribute(packet, selection, owner, attributeName, value);
     }
     else
     {
         const floatT value = evalParmFloat("floatValue");
-        writeAttribute(packet, selection, owner, attributeName, attr::AttrType::floatT, value);
+        writeAttribute(packet, selection, owner, attributeName, value);
     }
 
     setOutputPacket(0, packet);

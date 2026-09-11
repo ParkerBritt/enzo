@@ -22,7 +22,7 @@ TEST_CASE("geometry")
     using namespace enzo;
     geo::Mesh geo;
     // check add function
-    attr::AttributeHandleInt myHandle = geo.addIntAttribute(attr::AttrOwner::POINT, "index");
+    attr::AttributeHandleInt myHandle = geo.addAttribute<intT>(attr::AttrOwner::POINT, "index");
     myHandle.addValue(5);
     myHandle.addValue(6);
     REQUIRE(myHandle.getValue(0) == 5);

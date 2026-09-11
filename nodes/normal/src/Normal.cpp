@@ -40,7 +40,7 @@ void Normal::cook()
 
         const attr::AttrOwner owner = perVertex ? attr::AttrOwner::VERTEX : attr::AttrOwner::POINT;
         attr::AttributeHandle<Vector3> normalAttribute =
-            mesh->addVector3Attribute(owner, attributeName);
+            mesh->addAttribute<Vector3>(owner, attributeName);
 
         for (Offset offset = 0; offset < normals.size(); ++offset)
         {

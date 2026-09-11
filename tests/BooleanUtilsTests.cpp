@@ -63,10 +63,10 @@ TEST_CASE("Face attribute carries from source mesh to result face")
     auto cubeB = utils::buildCube(Vector3(1, 1, 1), Vector3(3, 0, 0));
 
     // Tag every face of cube A with 11 and every face of cube B with 22.
-    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::FACE, "tag");
+    auto attrA = cubeA->addAttribute<intT>(attr::AttrOwner::FACE, "tag");
     for (Offset faceOffset = 0; faceOffset < cubeA->getNumFaces(); ++faceOffset)
         attrA.setValue(faceOffset, 11);
-    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::FACE, "tag");
+    auto attrB = cubeB->addAttribute<intT>(attr::AttrOwner::FACE, "tag");
     for (Offset faceOffset = 0; faceOffset < cubeB->getNumFaces(); ++faceOffset)
         attrB.setValue(faceOffset, 22);
 
@@ -101,10 +101,10 @@ TEST_CASE("Point attribute survives on un-cut points")
     auto cubeB = utils::buildCube(Vector3(1, 1, 1), Vector3(3, 0, 0));
 
     // Tag every point of A with 1 and every point of B with 2.
-    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "src");
+    auto attrA = cubeA->addAttribute<intT>(attr::AttrOwner::POINT, "src");
     for (Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
         attrA.setValue(pointOffset, 1);
-    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "src");
+    auto attrB = cubeB->addAttribute<intT>(attr::AttrOwner::POINT, "src");
     for (Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, 2);
 
@@ -138,14 +138,14 @@ TEST_CASE("Cut point interpolates point attribute from edge endpoints")
     auto cubeB = utils::buildCube(Vector3(2, 3, 3), Vector3(2, 0.5, 0.5));
 
     // Tag each A point with ten times its X coordinate so a cut at x=1 should interpolate to 10.
-    auto attrA = cubeA->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
+    auto attrA = cubeA->addAttribute<intT>(attr::AttrOwner::POINT, "xCoord");
     for (Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
     {
         const Vector3 position = cubeA->getPointPos(pointOffset);
         attrA.setValue(pointOffset, static_cast<intT>(std::lround(position.x() * 10)));
     }
     // Mark B points so they are easy to tell apart from interpolated values.
-    auto attrB = cubeB->addIntAttribute(attr::AttrOwner::POINT, "xCoord");
+    auto attrB = cubeB->addAttribute<intT>(attr::AttrOwner::POINT, "xCoord");
     for (Offset pointOffset = 0; pointOffset < cubeB->getNumPoints(); ++pointOffset)
         attrB.setValue(pointOffset, -1);
 

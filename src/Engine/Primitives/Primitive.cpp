@@ -110,50 +110,6 @@ std::shared_ptr<attr::Attribute> geo::Primitive::addAttribute(
     );
 }
 
-attr::AttributeHandleInt
-geo::Primitive::addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
-{
-    return attr::AttributeHandleInt(
-        addAttribute(owner, std::move(name), attr::AttrType::intT, intrinsic)
-    );
-}
-
-attr::AttributeHandleFloat
-geo::Primitive::addFloatAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
-{
-    return attr::AttributeHandleFloat(
-        addAttribute(owner, std::move(name), attr::AttrType::floatT, intrinsic)
-    );
-}
-
-attr::AttributeHandleBool geo::Primitive::addBoolAttribute(
-    attr::AttributeOwner owner,
-    std::string name,
-    bool intrinsic,
-    bool isPrivate
-)
-{
-    return attr::AttributeHandleBool(
-        addAttribute(owner, std::move(name), attr::AttrType::boolT, intrinsic, isPrivate)
-    );
-}
-
-attr::AttributeHandle<Vector3>
-geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
-{
-    return attr::AttributeHandle<Vector3>(
-        addAttribute(owner, std::move(name), attr::AttrType::vectorT, intrinsic)
-    );
-}
-
-attr::AttributeHandle<Matrix4>
-geo::Primitive::addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
-{
-    return attr::AttributeHandle<Matrix4>(
-        addAttribute(owner, std::move(name), attr::AttrType::matrixT, intrinsic)
-    );
-}
-
 attr::attribVector& geo::Primitive::getAttributeStore(const attr::AttributeOwner& owner)
 {
     switch (owner)
