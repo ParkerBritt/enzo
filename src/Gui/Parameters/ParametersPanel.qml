@@ -27,7 +27,7 @@ Item {
 
     // Height follows the content until the user drags the resize grip, which
     // assigns an explicit size and takes over.
-    implicitHeight: Math.max(defaultHeight, header.height + 1 + list.implicitHeight + verticalMargin)
+    implicitHeight: Math.max(defaultHeight, header.height + verticalMargin * 2 + scroller.contentHeight)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
     // Lifts the panel off the network behind it, so its edges stay readable
@@ -58,13 +58,15 @@ Item {
         color: Theme.parameter.panelColor
 
         // Gives the panel keyboard focus on hover, without blocking clicks to its
-        // controls or stealing focus from a field being edited.
+        // controls or stealing focus from a field being edited. Swallows the
+        // wheel so it never reaches the network behind.
         MouseArea {
             id: panelHover
 
             anchors.fill: parent
             acceptedButtons: Qt.NoButton
             hoverEnabled: true
+            onWheel: wheel => wheel.accepted = true
         }
 
         FocusReclaimer {
@@ -123,16 +125,26 @@ Item {
             color: Theme.var.borderSoft
         }
 
-        ParameterList {
-            id: list
+        // Spans the full body width so the scrollbar sits in the side margin
+        // rather than over a parameter row.
+        ScrollArea {
+            id: scroller
+
             anchors.top: header.bottom
             anchors.topMargin: panel.verticalMargin
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: panel.verticalMargin
             anchors.left: parent.left
-            anchors.leftMargin: panel.sideMargin
             anchors.right: parent.right
-            anchors.rightMargin: panel.sideMargin
-            contentInset: panel.parameterInset
-            model: parameters.parameters
+
+            ParameterList {
+                anchors.left: parent.left
+                anchors.leftMargin: panel.sideMargin
+                anchors.right: parent.right
+                anchors.rightMargin: panel.sideMargin
+                contentInset: panel.parameterInset
+                model: parameters.parameters
+            }
         }
 
         // Drawn last so the border isn't painted over by the header fill.
