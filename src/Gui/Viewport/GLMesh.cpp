@@ -89,42 +89,33 @@ void GLMesh::setPosBuffer(const enzo::NodePacket& packet)
         auto prim = packet.getPrimitive(pi);
         if (prim->getType() != enzo::geo::PrimType::MESH) continue;
         auto geometry = std::static_pointer_cast<const enzo::geo::Mesh>(prim);
-        const size_t numFaces = geometry->getNumFaces();
+        const size_t numVerts = geometry->getNumVerts();
 
         const size_t localVertOffset = vertOffset;
-        auto faceNormals = geometry->getFaceNormal(true);
+        const enzo::geo::VertexNormalHandle vertexNormals = geometry->getVertexNormal();
 
         // Storage views resolve each vertex position with two direct loads
         const std::span<const enzo::intT> vertexPoints = geometry->vertexPointSpan();
         const std::span<const enzo::Vector3> pointPositions = geometry->pointPosSpan();
-        const std::span<const enzo::Offset> faceStarts = geometry->getFaceStartVertices();
 
         tbb::parallel_for(
-            tbb::blocked_range<size_t>(0, numFaces),
+            tbb::blocked_range<size_t>(0, numVerts),
             [&](tbb::blocked_range<size_t> range) {
-                for (int faceOffset = range.begin(); faceOffset < range.end(); ++faceOffset)
+                for (size_t vertexOffset = range.begin(); vertexOffset < range.end();
+                     ++vertexOffset)
                 {
-                    const enzo::Offset faceStartVert = faceStarts[faceOffset];
-                    const unsigned int faceVertCnt = geometry->getFaceVertCount(faceOffset);
+                    const enzo::Vector3& pos = pointPositions[vertexPoints[vertexOffset]];
+                    const enzo::Vector3 normal = vertexNormals[vertexOffset];
 
-                    enzo::Vector3 Normal(0, 0, 0);
-                    if (faceVertCnt >= 3) Normal = faceNormals[faceOffset];
-
-                    for (int i = 0; i < faceVertCnt; ++i)
-                    {
-                        const unsigned int vertexCount = faceStartVert + i;
-                        const enzo::Vector3& p = pointPositions[vertexPoints[vertexCount]];
-
-                        vertices[localVertOffset + vertexCount] = {
-                            {p.x(), p.y(), p.z()},
-                            {Normal.x(), Normal.y(), Normal.z()}
-                        };
-                    }
+                    vertices[localVertOffset + vertexOffset] = {
+                        {pos.x(), pos.y(), pos.z()},
+                        {normal.x(), normal.y(), normal.z()}
+                    };
                 }
             }
         );
 
-        vertOffset += geometry->getNumVerts();
+        vertOffset += numVerts;
     }
 
     glBufferData(
