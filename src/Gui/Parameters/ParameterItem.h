@@ -15,6 +15,10 @@ class NodeParameter;
 class Template;
 } // namespace enzo::prm
 
+namespace enzo::prm::style {
+struct Attribute;
+}
+
 namespace enzo::nt {
 class Node;
 }
@@ -120,6 +124,12 @@ class ParameterItem : public QObject
     /// @return A map with value (the result) and invalid (whether it errored).
     Q_INVOKABLE QVariantMap previewExpressionAt(int index, const QString& expression) const;
 
+    /// @brief Returns the attribute names on the node's input this parameter can
+    /// pick from, sorted alphabetically.
+    /// @note Reads the input's last cooked geometry, so an input that has never
+    /// cooked offers nothing.
+    Q_INVOKABLE QStringList attributeNames() const;
+
     /// @brief Snapshots the parameter ahead of a gesture such as a handle drag.
     Q_INVOKABLE void beginEdit();
     /// @brief Pushes one undo step covering everything since beginEdit.
@@ -154,6 +164,7 @@ class ParameterItem : public QObject
     QList<QObject*> children_;
     bool horizontal_ = false;
     bool labelHidden_ = false;
+    std::shared_ptr<const prm::style::Attribute> attributeStyle_;
 
     std::weak_ptr<prm::NodeParameter> parameter_;
     boost::signals2::scoped_connection valueSubscription_;

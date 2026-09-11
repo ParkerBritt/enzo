@@ -3,20 +3,10 @@
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Selection/Selection.h"
+#include <optional>
 #include <vector>
 
 namespace {
-
-/// @brief Returns the part of the geometry the attachTo name stands for.
-enzo::attr::AttributeOwner getAttributeOwner(const enzo::String& attachTo)
-{
-    using namespace enzo;
-
-    if (attachTo == "vertex") return attr::AttributeOwner::VERTEX;
-    if (attachTo == "face") return attr::AttributeOwner::FACE;
-    if (attachTo == "primitive") return attr::AttributeOwner::PRIMITIVE;
-    return attr::AttributeOwner::POINT;
-}
 
 /// @brief Returns the offsets of the elements the selection covers on one primitive.
 ///
@@ -90,29 +80,40 @@ void AttributeCreate::cook()
 
     NodePacket packet = cloneInputPacket(0);
 
-    const attr::AttributeOwner owner = getAttributeOwner(evalParmString("attachTo"));
+    const std::optional<attr::AttributeOwner> owner = attr::getOwner(evalParmString("attachTo"));
+    if (!owner)
+    {
+        throwError("Unknown attach point.");
+        return;
+    }
+
     const String type = evalParmString("type");
     Selection selection(evalParmString("selection"));
 
     if (type == "int")
     {
         const intT value = evalParmInt("intValue");
-        writeAttribute(packet, selection, owner, attributeName, value);
+        writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else if (type == "vector")
     {
         const Vector3 value = evalParmVector3("vectorValue");
-        writeAttribute(packet, selection, owner, attributeName, value);
+        writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else if (type == "bool")
     {
         const boolT value = evalParmBool("boolValue");
-        writeAttribute(packet, selection, owner, attributeName, value);
+        writeAttribute(packet, selection, *owner, attributeName, value);
+    }
+    else if (type == "float")
+    {
+        const floatT value = evalParmFloat("floatValue");
+        writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else
     {
-        const floatT value = evalParmFloat("floatValue");
-        writeAttribute(packet, selection, owner, attributeName, value);
+        throwError("Unknown attribute type.");
+        return;
     }
 
     setOutputPacket(0, packet);

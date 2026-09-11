@@ -1,11 +1,17 @@
 #include "Gui/Parameters/ParameterItem.h"
+#include "Engine/Attribute/Attribute.h"
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
-#include "Engine/Parameter/Style.h"
+#include "Engine/Network/NodePacket.h"
+#include "Engine/NetworkGraph/NetworkGraph.h"
+#include "Engine/Primitives/Primitive.h"
+#include "Engine/Parameter/StyleAccess.h"
+#include "Engine/Parameter/Styles.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
+#include <algorithm>
 
 namespace enzo::ui {
 
@@ -40,6 +46,43 @@ QVariantMap getStyleOptions(const std::any& style)
         }
     }
     return options;
+}
+
+/// @brief Returns the attribute names in a packet the style accepts, sorted alphabetically.
+/// @note Private attributes stay out of the list.
+QStringList getAttributeNames(const NodePacket& packet, const prm::style::Attribute& style)
+{
+    const std::vector<attr::AttributeOwner> owners = style.getOwners();
+    const std::vector<attr::AttributeType> types = style.getTypes();
+
+    QStringList names;
+    const auto primitiveCount = static_cast<unsigned int>(packet.size());
+    for (unsigned int primitiveIndex = 0; primitiveIndex < primitiveCount; ++primitiveIndex)
+    {
+        const std::shared_ptr<const geo::Primitive> primitive = packet.getPrimitive(primitiveIndex);
+        if (!primitive) continue;
+
+        for (attr::AttributeOwner owner : owners)
+        {
+            const auto attributeCount =
+                static_cast<unsigned int>(primitive->getNumAttributes(owner));
+            for (unsigned int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex)
+            {
+                const auto attribute = primitive->getAttributeByIndex(owner, attributeIndex).lock();
+                if (!attribute || attribute->isPrivate()) continue;
+
+                const bool typeWanted =
+                    std::find(types.begin(), types.end(), attribute->getType()) != types.end();
+                if (!typeWanted) continue;
+
+                const QString name = QString::fromStdString(attribute->getName());
+                if (!names.contains(name)) names.append(name);
+            }
+        }
+    }
+
+    names.sort(Qt::CaseInsensitive);
+    return names;
 }
 
 /// @brief Returns a multiparm's instances as a list of maps keyed by field name.
@@ -131,6 +174,10 @@ ParameterItem::ParameterItem(
     vectorSize_ = static_cast<int>(prmTemplate.getSize());
     horizontal_ = prmTemplate.getDirection() == prm::Direction::HORIZONTAL;
     labelHidden_ = prmTemplate.isLabelHidden();
+
+    if (prm::style::holds<prm::style::Attribute>(prmTemplate.getStyle()))
+        attributeStyle_ =
+            std::any_cast<std::shared_ptr<prm::style::Attribute>>(prmTemplate.getStyle());
 
     if (hasRange(prmTemplate.getType()))
     {
@@ -270,6 +317,22 @@ QVariantMap ParameterItem::previewExpressionAt(int index, const QString& express
     result["value"] = value;
     result["invalid"] = !error.empty();
     return result;
+}
+
+QStringList ParameterItem::attributeNames() const
+{
+    auto param = parameter_.lock();
+    if (!param || !attributeStyle_) return {};
+
+    const std::optional<nt::Connection> input =
+        nt::nm().graph().getInputConnection(param->getNodeId(), 0);
+    if (!input) return {};
+
+    const std::shared_ptr<const NodePacket> packet =
+        nt::nm().getNode(input->sourceNode).getOutputPacket(input->sourceOutput);
+    if (!packet) return {};
+
+    return getAttributeNames(*packet, *attributeStyle_);
 }
 
 void ParameterItem::beginEdit()

@@ -10,6 +10,7 @@
 #include <optional>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 namespace enzo {
 
@@ -43,6 +44,50 @@ enum class AttributeType
 };
 using AttrType = AttributeType;
 using AttrOwner = AttributeOwner;
+
+/// @brief Returns every part of the geometry that can own an attribute.
+inline std::vector<AttributeOwner> getAllOwners()
+{
+    return {AttributeOwner::POINT,
+            AttributeOwner::VERTEX,
+            AttributeOwner::FACE,
+            AttributeOwner::PRIMITIVE};
+}
+
+/// @brief Returns every type an attribute can store.
+inline std::vector<AttributeType> getAllTypes()
+{
+    return {AttributeType::intT,
+            AttributeType::floatT,
+            AttributeType::listT,
+            AttributeType::vectorT,
+            AttributeType::boolT,
+            AttributeType::matrixT};
+}
+
+/// @brief Returns the part of the geometry a name stands for, e.g. "point".
+/// @return The owner, or empty when nothing owns attributes under that name.
+inline std::optional<AttributeOwner> getOwner(const std::string& name)
+{
+    if (name == "point") return AttributeOwner::POINT;
+    if (name == "vertex") return AttributeOwner::VERTEX;
+    if (name == "face") return AttributeOwner::FACE;
+    if (name == "primitive") return AttributeOwner::PRIMITIVE;
+    return std::nullopt;
+}
+
+/// @brief Returns the type a name stands for, e.g. "vector".
+/// @return The type, or empty when no type goes by that name.
+inline std::optional<AttributeType> getType(const std::string& name)
+{
+    if (name == "int") return AttributeType::intT;
+    if (name == "float") return AttributeType::floatT;
+    if (name == "list") return AttributeType::listT;
+    if (name == "vector") return AttributeType::vectorT;
+    if (name == "bool") return AttributeType::boolT;
+    if (name == "matrix") return AttributeType::matrixT;
+    return std::nullopt;
+}
 } // namespace attr
 namespace geo {
 enum class PrimType

@@ -427,6 +427,7 @@ if(ENZO_BUILD_TESTS)
         tests/DuplicateNodeTests.cpp
         tests/TransformTests.cpp
         tests/ParameterItemTests.cpp
+        tests/StyleTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
