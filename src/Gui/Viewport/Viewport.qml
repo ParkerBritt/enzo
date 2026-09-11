@@ -16,6 +16,11 @@ Item {
         geometryColor: Theme.viewport.geometryColor
     }
 
+    Shortcut {
+        sequence: "w"
+        onActivated: surface.toggleWireframe()
+    }
+
     // Left drag orbits, middle drag pans, horizontal right drag and wheel dolly.
     MouseArea {
         anchors.fill: parent

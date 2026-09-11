@@ -62,6 +62,12 @@ class ViewportItem : public QQuickFramebufferObject
     QColor geometryColor() const { return geometryColor_; }
     void setGeometryColor(const QColor& colour);
 
+    /// @brief Whether the wireframe draws over the shaded display geometry.
+    bool wireframeVisible() const { return wireframeVisible_; }
+
+    /// @brief Turns the wireframe on or off.
+    Q_INVOKABLE void toggleWireframe();
+
     /// @brief Orbits the camera around the centre by a pointer drag.
     Q_INVOKABLE void orbit(qreal dx, qreal dy);
 
@@ -94,6 +100,7 @@ class ViewportItem : public QQuickFramebufferObject
     QColor gradientCenter_{"#191920"};
     QColor gradientEdge_{"#0b0b0f"};
     QColor geometryColor_{"#a8a8b8"};
+    bool wireframeVisible_ = true;
 
     // Geometry handed to the renderer on the next sync. Null once consumed.
     std::shared_ptr<const enzo::NodePacket> pendingGeometry_;
