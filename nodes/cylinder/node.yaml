@@ -1,0 +1,185 @@
+version: 1
+
+name: cylinder
+namespace: enzo
+label: Cylinder
+tags: [primitive, surface, polygon]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: cylinder
+
+parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
+  - name: axis
+    label: Axis
+    type: dropdown
+    default: y
+    tooltip: The axis the cylinder stands up along.
+    options:
+      - {value: x, label: X Axis}
+      - {value: y, label: Y Axis}
+      - {value: z, label: Z Axis}
+
+  - name: center
+    label: Center
+    type: float
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+    style: xyz
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+    style: xyz
+
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
+
+  - name: uniformScale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: radius
+    label: Radius
+    type: float
+    size: 2
+    default: 1
+    range: {min: 0, max: 10, minLocked: true}
+    tooltip: >
+      The radius at the top end and at the bottom end. Setting one of them to
+      zero gives a cone.
+
+  - name: uniformRadius
+    label: Uniform Radius
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+    tooltip: A multiplier on both radii, for resizing the cylinder without retyping either.
+
+  - name: height
+    label: Height
+    type: float
+    default: 2
+    range: {min: 0, max: 10, minLocked: true}
+
+  - name: divisions_divider
+    label: Divisions
+    type: divider
+    icon: spline
+
+  - name: columns
+    label: Columns
+    type: int
+    default: 12
+    range: {min: 3, max: 64, minLocked: true}
+    tooltip: How many faces go around the cylinder.
+
+  - name: rows
+    label: Rows
+    type: int
+    default: 1
+    range: {min: 1, max: 64, minLocked: true}
+    tooltip: How many faces the side is split into from the bottom to the top.
+
+  - name: arc
+    label: Arc
+    type: dropdown
+    default: closed
+    options:
+      - {value: closed, label: Closed}
+      - {value: open_arc, label: Open Arc}
+      - {value: closed_arc, label: Closed Arc}
+
+  - name: arcAngles
+    label: Arc Angles
+    type: float
+    size: 2
+    default: [0, 360]
+    labelHidden: true
+    range: {min: 0, max: 360, minLocked: true}
+    hideCondition: arc == 0
+    style: rangeCircle
+    styleOptions:
+      ordered: true
+      caption: arc
+
+  - name: caps_divider
+    label: Caps
+    type: divider
+    icon: square-minus
+
+  - name: endCapRow
+    label: End Cap
+    type: group
+    direction: horizontal
+    tooltip: Controls for closing the open ends of the cylinder and grouping the caps.
+    parameters:
+      - name: endCapType
+        label: Cap Type
+        type: dropdown
+        default: single
+        labelHidden: true
+        tooltip: >
+          How to close the ends of the cylinder. None leaves the ends open,
+          Single Polygon fills each end with one face.
+        options:
+          - {value: none, label: None}
+          - {value: single, label: Single Polygon}
+
+      - name: endCapGroup
+        label: Cap Group
+        type: group
+        direction: horizontal
+        background: true
+        labelHidden: true
+        hideCondition: endCapType == 0
+        tooltip: >
+          Enter the name to put the end cap polygons in this group. You can use
+          this group name in later nodes to easily target just the cap polygons.
+        parameters:
+          - name: endCapGroupEnabled
+            label: Cap Group
+            type: bool
+            labelHidden: true
+            tooltip: >
+              Create a face group with the end cap polygons in this group. You can use
+              this group in later nodes to easily target just the cap polygons.
+            style: boolIcon
+            styleOptions:
+              icon: squares-subtract
+
+          - name: endCapGroupName
+            label: Cap Name
+            type: string
+            default: cylinderCap
+            labelHidden: true
+            background: false
+            tooltip: >
+              Enter the name to put the end cap polygons in this group. You can use this
+              group name in later nodes to easily target just the cap polygons.
+
+  - name: weldCaps
+    label: Weld To Body
+    type: bool
+    default: true
+    hideCondition: endCapType == 0
+    tooltip: >
+      Share the rim points between the caps and the side, so the cylinder is one
+      joined surface. Turn this off to give the caps their own points, keeping
+      the edge between the cap and the side sharp.
