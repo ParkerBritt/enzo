@@ -113,16 +113,42 @@ class Primitive
      */
     virtual void defragment() {}
 
+    /**
+     * @brief Returns the attribute of this name and type, adding one when the name
+     * is free.
+     *
+     * @note An attribute of another type under the same name is replaced, dropping
+     *       its values. Intrinsic and ordinary attributes are matched separately.
+     */
+    std::shared_ptr<attr::Attribute> addAttribute(
+        attr::AttributeOwner owner,
+        std::string name,
+        attr::AttributeType type,
+        bool intrinsic = false,
+        bool isPrivate = false
+    );
+
+    /**
+     * @brief Returns the int attribute stored under this name, adding one when the
+     * name is free.
+     *
+     * @note An attribute of another type under the same name is replaced, dropping
+     *       its values. An intrinsic of the same name is matched separately and
+     *       left alone.
+     */
     attr::AttributeHandle<intT>
     addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
+    /// @copydoc addIntAttribute
     attr::AttributeHandleBool addBoolAttribute(
         attr::AttributeOwner owner,
         std::string name,
         bool intrinsic = false,
         bool isPrivate = false
     );
+    /// @copydoc addIntAttribute
     attr::AttributeHandle<Vector3>
     addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
+    /// @copydoc addIntAttribute
     attr::AttributeHandle<Matrix4>
     addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
 
@@ -145,14 +171,13 @@ class Primitive
     bool attributeExists(attr::AttributeOwner owner, std::string name);
 
     /**
-     * @brief Creates a group on the given owner.
+     * @brief Returns the group of this name on the given owner, adding one when the
+     * name is free.
      *
-     * Groups are boolean flags that mark elements as members. A group
-     * and a regular attribute can share a name without colliding.
-     *
-     * @return Handle to the new group.
+     * @note Groups are boolean flags that mark elements as members. A group and an
+     *       attribute can share a name without colliding.
      */
-    attr::AttributeHandleBool createGroup(attr::AttributeOwner owner, std::string name);
+    attr::AttributeHandleBool addGroup(attr::AttributeOwner owner, std::string name);
     /**
      * @brief Marks the given offsets as members of the group.
      */
@@ -177,17 +202,15 @@ class Primitive
     std::weak_ptr<const attr::Attribute>
     getGroupByIndex(attr::AttributeOwner owner, unsigned int index) const;
 
-    /// @brief Creates a point group.
-    /// @return Handle to the new group.
-    attr::AttributeHandleBool createPointGroup(std::string name)
+    /// @brief Returns the point group of this name, adding one when the name is free.
+    attr::AttributeHandleBool addPointGroup(std::string name)
     {
-        return createGroup(attr::AttributeOwner::POINT, std::move(name));
+        return addGroup(attr::AttributeOwner::POINT, std::move(name));
     }
-    /// @brief Creates a primitive group.
-    /// @return Handle to the new group.
-    attr::AttributeHandleBool createPrimitiveGroup(std::string name)
+    /// @brief Returns the primitive group of this name, adding one when the name is free.
+    attr::AttributeHandleBool addPrimitiveGroup(std::string name)
     {
-        return createGroup(attr::AttributeOwner::PRIMITIVE, std::move(name));
+        return addGroup(attr::AttributeOwner::PRIMITIVE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the point group.
     void addToPointGroup(const std::string& name, const std::vector<Offset>& offsets)

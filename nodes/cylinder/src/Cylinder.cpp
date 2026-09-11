@@ -199,7 +199,7 @@ void Cylinder::cook()
 
     if (!settings.capGroupName.empty() && !capFaces.empty())
     {
-        mesh->createFaceGroup(settings.capGroupName);
+        mesh->addFaceGroup(settings.capGroupName);
         mesh->addToFaceGroup(settings.capGroupName, capFaces);
     }
 

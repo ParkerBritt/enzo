@@ -533,7 +533,7 @@ TEST_CASE("Selection by group name returns faces in the group")
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
-    mesh->createFaceGroup("highlighted");
+    mesh->addFaceGroup("highlighted");
     mesh->addToFaceGroup("highlighted", {0, 2});
 
     Selection selection("highlighted");
@@ -551,8 +551,8 @@ TEST_CASE("Two group components combine into the union of their faces")
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
-    mesh->createFaceGroup("groupA");
-    mesh->createFaceGroup("groupB");
+    mesh->addFaceGroup("groupA");
+    mesh->addFaceGroup("groupB");
     mesh->addToFaceGroup("groupA", {0});
     mesh->addToFaceGroup("groupB", {2});
 
@@ -571,8 +571,8 @@ TEST_CASE("Inverting two group components selects the complement of their union"
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
-    mesh->createFaceGroup("groupA");
-    mesh->createFaceGroup("groupB");
+    mesh->addFaceGroup("groupA");
+    mesh->addFaceGroup("groupB");
     mesh->addToFaceGroup("groupA", {0});
     mesh->addToFaceGroup("groupB", {2});
 
@@ -599,7 +599,7 @@ TEST_CASE("Selection by group name uses offsets not compacted indices")
     mesh->deleteFaces({1});
 
     // The group member lives at offset 3, which is compacted index 2.
-    mesh->createFaceGroup("highlighted");
+    mesh->addFaceGroup("highlighted");
     mesh->addToFaceGroup("highlighted", {3});
 
     // Group membership must be read by offset, so only offset 3 is selected.
@@ -618,7 +618,7 @@ TEST_CASE("Inverted face group selects no points or vertices")
     Offset point2 = mesh->addPoint(Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
-    mesh->createFaceGroup("extrudeBottom");
+    mesh->addFaceGroup("extrudeBottom");
     mesh->addToFaceGroup("extrudeBottom", {0});
 
     Selection selection("extrudeBottom");
@@ -644,7 +644,7 @@ TEST_CASE("Inverted group selection excludes only the group members on a fragmen
     mesh->addFace({point0, point1, point2});
     mesh->addFace({point0, point1, point2});
     mesh->deleteFaces({1});
-    mesh->createFaceGroup("highlighted");
+    mesh->addFaceGroup("highlighted");
     mesh->addToFaceGroup("highlighted", {3});
 
     // Inverting selects every valid face except the group member, not everything.
@@ -673,7 +673,7 @@ TEST_CASE("Selection by group name getPrims only includes prims with the group")
     NodePacket packet;
     auto withGroup = std::make_shared<geo::Mesh>("/with");
     auto withoutGroup = std::make_shared<geo::Mesh>("/without");
-    withGroup->createFaceGroup("g");
+    withGroup->addFaceGroup("g");
     packet.addPrimitive(withGroup);
     packet.addPrimitive(withoutGroup);
 
@@ -690,9 +690,9 @@ TEST_CASE("Selection by primitive group includes prims where the flag is set")
     auto inactive = std::make_shared<geo::Mesh>("/inactive");
 
     // Both prims have the group, but only one has the flag set
-    active->createPrimitiveGroup("active");
+    active->addPrimitiveGroup("active");
     active->addToPrimitiveGroup("active", {0});
-    inactive->createPrimitiveGroup("active");
+    inactive->addPrimitiveGroup("active");
 
     packet.addPrimitive(active);
     packet.addPrimitive(inactive);
@@ -710,7 +710,7 @@ TEST_CASE("Selection by primitive group treats the prim as whole-prim selection"
     Offset point1 = mesh->addPoint(Vector3(1, 0, 0));
     Offset point2 = mesh->addPoint(Vector3(0, 1, 0));
     mesh->addFace({point0, point1, point2});
-    mesh->createPrimitiveGroup("active");
+    mesh->addPrimitiveGroup("active");
     mesh->addToPrimitiveGroup("active", {0});
 
     Selection selection("active");

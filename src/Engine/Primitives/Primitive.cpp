@@ -2,6 +2,7 @@
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -58,13 +59,63 @@ geo::Primitive::getAttributeByIndex(attr::AttributeOwner owner, unsigned int ind
     );
 }
 
+namespace {
+
+/**
+ * @brief Returns the attribute of this name and type from the store, adding one when
+ * the name is free.
+ *
+ * @note An attribute of another type under the same name is replaced, dropping its
+ *       values. Intrinsic and ordinary attributes are matched separately.
+ */
+std::shared_ptr<attr::Attribute> addToStore(
+    attr::attribVector& store,
+    size_t elementCount,
+    const std::string& name,
+    attr::AttributeType type,
+    bool intrinsic,
+    bool isPrivate
+)
+{
+    const auto holdsTheName = [&](const std::shared_ptr<attr::Attribute>& stored) {
+        return stored && stored->getName() == name && stored->isIntrinsic() == intrinsic;
+    };
+    const auto takenSlot = std::ranges::find_if(store, holdsTheName);
+    const bool nameTaken = takenSlot != store.end();
+
+    if (nameTaken && (*takenSlot)->getType() == type) return *takenSlot;
+
+    auto newAttribute = std::make_shared<attr::Attribute>(name, type, intrinsic, isPrivate);
+    // Match the owner's element count so existing elements get a value.
+    newAttribute->resize(elementCount);
+
+    if (nameTaken) *takenSlot = newAttribute;
+    else store.push_back(newAttribute);
+
+    return newAttribute;
+}
+
+} // namespace
+
+std::shared_ptr<attr::Attribute> geo::Primitive::addAttribute(
+    attr::AttributeOwner owner,
+    std::string name,
+    attr::AttributeType type,
+    bool intrinsic,
+    bool isPrivate
+)
+{
+    return addToStore(
+        getAttributeStore(owner), getElementCount(owner), name, type, intrinsic, isPrivate
+    );
+}
+
 attr::AttributeHandleInt
 geo::Primitive::addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::intT, intrinsic);
-    newAttribute->resize(getElementCount(owner));
-    getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandleInt(newAttribute);
+    return attr::AttributeHandleInt(
+        addAttribute(owner, std::move(name), attr::AttrType::intT, intrinsic)
+    );
 }
 
 attr::AttributeHandleBool geo::Primitive::addBoolAttribute(
@@ -74,29 +125,25 @@ attr::AttributeHandleBool geo::Primitive::addBoolAttribute(
     bool isPrivate
 )
 {
-    auto newAttribute =
-        std::make_shared<attr::Attribute>(name, attr::AttrType::boolT, intrinsic, isPrivate);
-    newAttribute->resize(getElementCount(owner));
-    getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandleBool(newAttribute);
+    return attr::AttributeHandleBool(
+        addAttribute(owner, std::move(name), attr::AttrType::boolT, intrinsic, isPrivate)
+    );
 }
 
 attr::AttributeHandle<Vector3>
 geo::Primitive::addVector3Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::vectorT, intrinsic);
-    newAttribute->resize(getElementCount(owner));
-    getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandle<Vector3>(newAttribute);
+    return attr::AttributeHandle<Vector3>(
+        addAttribute(owner, std::move(name), attr::AttrType::vectorT, intrinsic)
+    );
 }
 
 attr::AttributeHandle<Matrix4>
 geo::Primitive::addMatrix4Attribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
 {
-    auto newAttribute = std::make_shared<attr::Attribute>(name, attr::AttrType::matrixT, intrinsic);
-    newAttribute->resize(getElementCount(owner));
-    getAttributeStore(owner).push_back(newAttribute);
-    return attr::AttributeHandle<Matrix4>(newAttribute);
+    return attr::AttributeHandle<Matrix4>(
+        addAttribute(owner, std::move(name), attr::AttrType::matrixT, intrinsic)
+    );
 }
 
 attr::attribVector& geo::Primitive::getAttributeStore(const attr::AttributeOwner& owner)
@@ -163,13 +210,11 @@ size_t geo::Primitive::getElementCount(const attr::AttributeOwner& owner) const
     return store.front()->getSize();
 }
 
-attr::AttributeHandleBool geo::Primitive::createGroup(attr::AttributeOwner owner, std::string name)
+attr::AttributeHandleBool geo::Primitive::addGroup(attr::AttributeOwner owner, std::string name)
 {
-    auto newGroup = std::make_shared<attr::Attribute>(name, attr::AttrType::boolT);
-    // Match the owner's current element count so existing elements start as non-members.
-    newGroup->resize(getElementCount(owner));
-    getGroupStore(owner).push_back(newGroup);
-    return attr::AttributeHandleBool(newGroup);
+    return attr::AttributeHandleBool(addToStore(
+        getGroupStore(owner), getElementCount(owner), name, attr::AttrType::boolT, false, false
+    ));
 }
 
 void geo::Primitive::addToGroup(

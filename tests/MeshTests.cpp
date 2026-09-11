@@ -192,7 +192,7 @@ TEST_CASE("Create face group")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(attr::AttrOwner::FACE, "myGroup");
+    mesh.addGroup(attr::AttrOwner::FACE, "myGroup");
 
     // The group lookup should find it, and the attribute lookup should not
     auto group = mesh.getGroupByName(attr::AttrOwner::FACE, "myGroup");
@@ -218,7 +218,7 @@ TEST_CASE("Add to face group")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addGroup(attr::AttrOwner::FACE, "g");
     mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 2});
 
     // Faces 0 and 2 should be members, face 1 should not
@@ -233,7 +233,7 @@ TEST_CASE("Create primitive group")
     geo::Mesh mesh;
 
     // Primitive groups have exactly one slot per primitive
-    mesh.createGroup(attr::AttrOwner::PRIMITIVE, "selected");
+    mesh.addGroup(attr::AttrOwner::PRIMITIVE, "selected");
 
     auto group = mesh.getGroupByName(attr::AttrOwner::PRIMITIVE, "selected");
     REQUIRE(group != nullptr);
@@ -258,7 +258,7 @@ TEST_CASE("Group name can match attribute name")
 
     // Same name on both stores must not collide
     mesh.addBoolAttribute(attr::AttrOwner::FACE, "selected");
-    mesh.createGroup(attr::AttrOwner::FACE, "selected");
+    mesh.addGroup(attr::AttrOwner::FACE, "selected");
 
     auto attribute = mesh.getAttribByName(attr::AttrOwner::FACE, "selected");
     auto group = mesh.getGroupByName(attr::AttrOwner::FACE, "selected");
@@ -280,7 +280,7 @@ TEST_CASE("Group survives defragment")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addGroup(attr::AttrOwner::FACE, "g");
     mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 2});
 
     // Drop the middle face and compact
@@ -384,7 +384,7 @@ TEST_CASE("Add faces resizes group")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    mesh.createGroup(attr::AttrOwner::FACE, "g");
+    mesh.addGroup(attr::AttrOwner::FACE, "g");
     mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 1});
 
     // Add one more face via the batch path
@@ -513,4 +513,83 @@ TEST_CASE("Vertex normal prefers Normal attribute over face fallback")
     REQUIRE(vertexNormals[1] == Vector3(0, 1, 0));
     REQUIRE(vertexNormals[2] == Vector3(0, 0, 1));
     REQUIRE(vertexNormals[3] == Vector3(-1, 0, 0));
+}
+
+TEST_CASE("Adding an attribute twice keeps a single attribute")
+{
+    geo::Mesh mesh;
+
+    // Build a mesh with one face
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    const size_t attributeCount = mesh.getNumAttributes(attr::AttrOwner::POINT);
+
+    auto first = mesh.addVector3Attribute(attr::AttrOwner::POINT, "up");
+    first.setValue(0, Vector3(0, 1, 0));
+    auto second = mesh.addVector3Attribute(attr::AttrOwner::POINT, "up");
+
+    REQUIRE(mesh.getNumAttributes(attr::AttrOwner::POINT) == attributeCount + 1);
+    REQUIRE(second.getValue(0) == Vector3(0, 1, 0));
+}
+
+TEST_CASE("Adding an attribute of another type replaces the stored one")
+{
+    geo::Mesh mesh;
+
+    // Build a mesh with one face
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.addVector3Attribute(attr::AttrOwner::POINT, "tag");
+    const size_t attributeCount = mesh.getNumAttributes(attr::AttrOwner::POINT);
+
+    mesh.addIntAttribute(attr::AttrOwner::POINT, "tag");
+
+    auto stored = mesh.getAttribByName(attr::AttrOwner::POINT, "tag");
+    REQUIRE(mesh.getNumAttributes(attr::AttrOwner::POINT) == attributeCount);
+    REQUIRE(stored->getType() == attr::AttrType::intT);
+    REQUIRE(stored->getSize() == mesh.getNumPoints());
+}
+
+TEST_CASE("Adding an attribute leaves an intrinsic of the same name alone")
+{
+    geo::Mesh mesh;
+
+    // Build a mesh with one face
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    // Add an ordinary P beside the intrinsic P that holds the positions
+    auto ordinary = mesh.addVector3Attribute(attr::AttrOwner::POINT, "P");
+    ordinary.setValue(0, Vector3(9, 9, 9));
+
+    REQUIRE(mesh.getPointPos(pointOffset0) == Vector3(0, 0, 0));
+}
+
+TEST_CASE("Creating a group twice keeps a single group")
+{
+    geo::Mesh mesh;
+
+    // Build a mesh with two faces
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+
+    mesh.addGroup(attr::AttrOwner::FACE, "g");
+    mesh.addToGroup(attr::AttrOwner::FACE, "g", {1});
+    mesh.addGroup(attr::AttrOwner::FACE, "g");
+
+    // The second create finds the existing group, so face 1 stays a member
+    REQUIRE(mesh.getNumGroups(attr::AttrOwner::FACE) == 1);
+    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
+    REQUIRE(handle.getValue(1) == true);
 }

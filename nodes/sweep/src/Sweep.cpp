@@ -258,7 +258,7 @@ class Sweeper
             std::vector<Offset> capFaces = mesh_.addFaces(capPointOffsets_, capVertexCounts_);
             if (!settings_.capGroupName.empty())
             {
-                mesh_.createFaceGroup(settings_.capGroupName);
+                mesh_.addFaceGroup(settings_.capGroupName);
                 mesh_.addToFaceGroup(settings_.capGroupName, capFaces);
             }
         }

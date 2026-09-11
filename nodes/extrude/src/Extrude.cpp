@@ -344,11 +344,11 @@ void extrude(
     const std::string sideGroup = outputs.side ? groupNames.side : std::string();
     const std::string frontGroup = outputs.front ? groupNames.front : std::string();
 
-    if (outputs.side && !groupNames.side.empty()) mesh->createFaceGroup(groupNames.side);
-    if (outputs.front && !groupNames.front.empty()) mesh->createFaceGroup(groupNames.front);
+    if (outputs.side && !groupNames.side.empty()) mesh->addFaceGroup(groupNames.side);
+    if (outputs.front && !groupNames.front.empty()) mesh->addFaceGroup(groupNames.front);
     if (outputs.back && !groupNames.back.empty())
     {
-        mesh->createFaceGroup(groupNames.back);
+        mesh->addFaceGroup(groupNames.back);
         mesh->addToFaceGroup(groupNames.back, faces);
     }
 
