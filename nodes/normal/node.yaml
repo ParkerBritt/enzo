@@ -1,0 +1,43 @@
+version: 1
+
+name: normal
+namespace: enzo
+label: Normal
+tags: [attribute, utility]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: normal
+
+parameters:
+  - name: attachTo
+    label: Attach To
+    type: dropdown
+    default: vertex
+    tooltip: >
+      Whether each point gets one normal shared by every face meeting there, or
+      each vertex gets its own so creases can stay sharp.
+    options:
+      - {value: point, label: Point}
+      - {value: vertex, label: Vertex}
+
+  - name: cuspAngle
+    label: Cusp Angle
+    type: float
+    default: 60
+    range: {min: 0, max: 180, minLocked: true, maxLocked: true}
+    hideCondition: attachTo == 0
+    tooltip: >
+      The widest angle between two faces that still counts as smooth, in
+      degrees. Anything sharper keeps a hard edge.
+
+  - name: name
+    label: Attribute Name
+    type: string
+    default: Normal
+    tooltip: The name to write the normals under.
