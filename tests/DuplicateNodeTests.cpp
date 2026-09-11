@@ -131,3 +131,27 @@ TEST_CASE_METHOD(NMReset, "A primitive outside the selection is not duplicated")
 
     REQUIRE(duplicated->getNumPoints() == grid->getNumPoints());
 }
+
+TEST_CASE_METHOD(NMReset, "The transform order decides whether a copy swings around the origin")
+{
+    auto& nm = nt::nm();
+    const GridAndDuplicate nodes = addDuplicateAfterGrid();
+
+    auto& duplicate = nm.getNode(nodes.duplicate);
+    duplicate.getParameter("count").lock()->setInt(2);
+    duplicate.getParameter("translate").lock()->setFloat(5.f, 2);
+    duplicate.getParameter("rotate").lock()->setFloat(90.f, 1);
+    duplicate.getParameter("transform_order").lock()->setString("trs");
+    nm.cook(nodes.duplicate);
+
+    const auto grid = getMesh(nm.getNode(nodes.grid));
+    const auto duplicated = getMesh(nm.getNode(nodes.duplicate));
+
+    // Moves the copy down Z first, then the quarter turn about Y swings that
+    // whole offset around the origin.
+    const Vector3 first = grid->getPointPos(0);
+    const Vector3 moved = first + Vector3(0, 0, 5);
+    const Vector3 expected(moved.z(), moved.y(), -moved.x());
+
+    requirePointsMatch(duplicated->getPointPos(grid->getNumPoints()), expected);
+}

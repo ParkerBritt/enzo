@@ -8,17 +8,6 @@
 
 namespace {
 
-/// @brief Returns the scale a copy has reached after growing once per step.
-enzo::Vector3 scaleAfterSteps(const enzo::Vector3& scalePerStep, enzo::intT steps)
-{
-    enzo::Vector3 scale = enzo::Vector3::Ones();
-    for (enzo::intT step = 0; step < steps; ++step)
-    {
-        scale = scale.cwiseProduct(scalePerStep);
-    }
-    return scale;
-}
-
 class Duplicate : public enzo::nt::NodeImpl
 {
   public:
@@ -40,6 +29,7 @@ void Duplicate::cook()
     const Vector3 translatePerCopy = evalParmVector3("translate");
     const Vector3 rotatePerCopy = evalParmVector3("rotate");
     const Vector3 scalePerCopy = evalParmVector3("scale") * evalParmFloat("uniform_scale");
+    const TransformOrder transformOrder = getTransformOrder(evalParmString("transform_order"));
 
     // Clones every copy before merging any of them, since merging grows the prim
     // the copies are taken from.
@@ -50,13 +40,12 @@ void Duplicate::cook()
         for (intT copyIndex = 1; copyIndex < count; ++copyIndex)
         {
             const floatT stepsFromOriginal = static_cast<floatT>(copyIndex);
+            const Vector3 translation = translatePerCopy * stepsFromOriginal;
+            const Vector3 rotation = rotatePerCopy * stepsFromOriginal;
+            const Vector3 scale = scalePerCopy.array().pow(stepsFromOriginal).matrix();
 
-            // Scale runs first, then the rotation, then the translation.
             const enzo::Transform transform =
-                enzo::Transform()
-                    .translate(translatePerCopy * stepsFromOriginal)
-                    .rotateEuler(rotatePerCopy * stepsFromOriginal)
-                    .scale(scaleAfterSteps(scalePerCopy, copyIndex));
+                enzo::Transform::fromComponents(translation, rotation, scale, transformOrder);
 
             geo::PrimPtr copy = prim->clone();
             copy->applyTransform(transform, TransformClass::POINT_PRIORITY);

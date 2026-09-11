@@ -3,12 +3,35 @@
 #include "Engine/Core/Types.h"
 #include <Eigen/Geometry>
 #include <numbers>
+#include <string_view>
 
 namespace enzo::attr {
 class Attribute;
 }
 
 namespace enzo {
+
+/**
+ * @brief The order a point passes through a translation, a rotation, and a scale.
+ *
+ * The letters read left to right in the order the point travels, so SRT
+ * scales the point, then turns it, then moves it.
+ */
+enum class TransformOrder : uint8_t
+{
+    SRT,
+    STR,
+    RST,
+    RTS,
+    TSR,
+    TRS
+};
+
+/**
+ * @brief Returns the order named by its three letters, such as "srt".
+ * @return The named order, or SRT when the name is not one of the six.
+ */
+TransformOrder getTransformOrder(std::string_view name);
 
 /**
  * @class enzo::Transform
@@ -54,6 +77,19 @@ class Transform
      *       forward and up are parallel the rotation falls back to identity.
      */
     static Transform lookAt(const Vector3& translation, const Vector3& forward, const Vector3& up);
+
+    /**
+     * @brief Builds a transform from a translation, a rotation, and a scale.
+     * @return The three combined so a point passes through them in the given order.
+     *
+     * @note The rotation is given in degrees.
+     */
+    static Transform fromComponents(
+        const Vector3& translation,
+        const Vector3& rotationDegrees,
+        const Vector3& scale,
+        TransformOrder order = TransformOrder::SRT
+    );
 
     // Builders compose in the current local frame, so the first call is applied
     // to a point first and later calls wrap it.
