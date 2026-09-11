@@ -1,0 +1,77 @@
+version: 1
+
+name: attributeCreate
+namespace: enzo
+label: Attribute Create
+tags: [attribute, utility]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: attributeCreate
+
+parameters:
+  - name: selection
+    label: Selection
+    type: string
+    tooltip: >
+      The elements to write the value on. Accepts a selection or a group name.
+      Leave it empty to write on everything.
+
+  - name: name
+    label: Attribute Name
+    type: string
+    default: attribute
+    tooltip: The name to store the attribute under.
+
+  - name: attachTo
+    label: Attach To
+    type: dropdown
+    default: point
+    tooltip: The part of the geometry that holds one value each.
+    options:
+      - {value: point, label: Point}
+      - {value: vertex, label: Vertex}
+      - {value: face, label: Face}
+      - {value: primitive, label: Primitive}
+
+  - name: type
+    label: Type
+    type: dropdown
+    default: float
+    tooltip: The kind of value the attribute stores.
+    options:
+      - {value: float, label: Float}
+      - {value: int, label: Integer}
+      - {value: vector, label: Vector}
+      - {value: bool, label: Boolean}
+
+  - name: floatValue
+    label: Value
+    type: float
+    hideCondition: type != 0
+    tooltip: The value written on every selected element.
+
+  - name: intValue
+    label: Value
+    type: int
+    hideCondition: type != 1
+    tooltip: The value written on every selected element.
+
+  - name: vectorValue
+    label: Value
+    type: float
+    size: 3
+    style: xyz
+    hideCondition: type != 2
+    tooltip: The value written on every selected element.
+
+  - name: boolValue
+    label: Value
+    type: bool
+    hideCondition: type != 3
+    tooltip: The value written on every selected element.

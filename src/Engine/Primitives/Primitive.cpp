@@ -118,6 +118,14 @@ geo::Primitive::addIntAttribute(attr::AttributeOwner owner, std::string name, bo
     );
 }
 
+attr::AttributeHandleFloat
+geo::Primitive::addFloatAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic)
+{
+    return attr::AttributeHandleFloat(
+        addAttribute(owner, std::move(name), attr::AttrType::floatT, intrinsic)
+    );
+}
+
 attr::AttributeHandleBool geo::Primitive::addBoolAttribute(
     attr::AttributeOwner owner,
     std::string name,
