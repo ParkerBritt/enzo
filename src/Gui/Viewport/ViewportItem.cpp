@@ -106,6 +106,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         gradientCenter_ = viewport->gradientCenter();
         gradientEdge_ = viewport->gradientEdge();
         geometryColor_ = viewport->geometryColor();
+        wireframeVisible_ = viewport->wireframeVisible();
 
         if (auto packet = viewport->takePendingGeometry())
         {
@@ -248,8 +249,12 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         const GLint wireLoc = glGetUniformLocation(meshProgram_, "uWireframe");
         glUniform1i(wireLoc, 0);
         mesh_->draw();
-        glUniform1i(wireLoc, 1);
-        mesh_->drawWireframe();
+
+        if (wireframeVisible_)
+        {
+            glUniform1i(wireLoc, 1);
+            mesh_->drawWireframe();
+        }
     }
 
     void drawPoints(const glm::mat4& proj)
@@ -297,6 +302,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     QColor gradientCenter_;
     QColor gradientEdge_;
     QColor geometryColor_;
+    bool wireframeVisible_ = true;
     GLuint meshProgram_ = 0;
     GLuint backgroundProgram_ = 0;
     GLuint backgroundVao_ = 0;
@@ -360,6 +366,12 @@ void ViewportItem::setGradientEdge(const QColor& colour)
     gradientEdge_ = colour;
     update();
     Q_EMIT gradientEdgeChanged();
+}
+
+void ViewportItem::toggleWireframe()
+{
+    wireframeVisible_ = !wireframeVisible_;
+    update();
 }
 
 std::shared_ptr<const enzo::NodePacket> ViewportItem::takePendingGeometry()
