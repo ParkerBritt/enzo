@@ -54,6 +54,11 @@ Item {
         return ((toAngle - fromAngle + 540) % 360) - 180;
     }
 
+    // Returns the moved angle clamped to within a full turn of the fixed one.
+    function withinTurn(fixedAngle, movedAngle) {
+        return Math.max(fixedAngle - 360, Math.min(fixedAngle + 360, movedAngle));
+    }
+
     // Brings an angle into range. Wraps when the range is a full turn, clamps
     // when it is less.
     function intoRange(angle) {
@@ -79,13 +84,24 @@ Item {
         return Qt.point(dial.centre + Math.cos(radians) * dial.ringRadius, dial.centre - Math.sin(radians) * dial.ringRadius);
     }
 
+    function handleDistance(angle, px, py) {
+        const point = dial.handlePoint(angle);
+        return Math.hypot(px - point.x, py - point.y);
+    }
+
+    // Returns the handle a point catches, the end one when it catches both.
     function handleAt(px, py) {
-        for (let index = 0; index < 2; ++index) {
-            const point = dial.handlePoint(index === 0 ? dial.start : dial.end);
-            if (Math.hypot(px - point.x, py - point.y) <= dial.handleReach)
-                return index;
-        }
+        if (dial.handleDistance(dial.end, px, py) <= dial.handleReach)
+            return 1;
+        if (dial.handleDistance(dial.start, px, py) <= dial.handleReach)
+            return 0;
         return -1;
+    }
+
+    function handlesOverlapAt(px, py) {
+        const onStart = dial.handleDistance(dial.start, px, py) <= dial.handleReach;
+        const onEnd = dial.handleDistance(dial.end, px, py) <= dial.handleReach;
+        return onStart && onEnd;
     }
 
     function onBand(px, py) {
@@ -224,8 +240,13 @@ Item {
 
             property bool turning: false
 
-            // The handle being dragged, or -1 when the arc itself is.
+            // The handle being dragged, -1 for the arc itself, or
+            // undecidedHandle before a handle has been picked.
             property int grabbedHandle: -1
+
+            // The stand-in grabbedHandle holds until the first turn picks a
+            // handle.
+            readonly property int undecidedHandle: -2
 
             // The angles the drag is turning. Kept here so a swap does not feed
             // back into the next step.
@@ -242,11 +263,13 @@ Item {
             }
 
             onPressed: mouse => {
-                grabbedHandle = dial.handleAt(mouse.x, mouse.y);
-                if (grabbedHandle < 0 && !dial.onBand(mouse.x, mouse.y)) {
+                const handle = dial.handleAt(mouse.x, mouse.y);
+                if (handle < 0 && !dial.onBand(mouse.x, mouse.y)) {
                     mouse.accepted = false;
                     return;
                 }
+                const overlapping = dial.handlesOverlapAt(mouse.x, mouse.y);
+                grabbedHandle = overlapping ? ringArea.undecidedHandle : handle;
                 turning = true;
                 turnedStart = dial.start;
                 turnedEnd = dial.end;
@@ -259,10 +282,22 @@ Item {
                 const cursor = dial.angleAt(mouse.x, mouse.y);
                 const turn = dial.turnBetween(lastCursor, cursor);
                 lastCursor = cursor;
-                if (grabbedHandle !== 1)
+                if (grabbedHandle === ringArea.undecidedHandle) {
+                    if (turn === 0)
+                        return;
+                    // Takes the handle that is free to follow the turn.
+                    const turnedEndAngle = turnedEnd + turn;
+                    const endFollows = dial.withinTurn(turnedStart, turnedEndAngle) === turnedEndAngle;
+                    grabbedHandle = endFollows ? 1 : 0;
+                }
+                if (grabbedHandle === 0) {
+                    turnedStart = dial.withinTurn(turnedEnd, turnedStart + turn);
+                } else if (grabbedHandle === 1) {
+                    turnedEnd = dial.withinTurn(turnedStart, turnedEnd + turn);
+                } else {
                     turnedStart += turn;
-                if (grabbedHandle !== 0)
                     turnedEnd += turn;
+                }
                 dial.setBounds(turnedStart, turnedEnd);
             }
             onReleased: {
