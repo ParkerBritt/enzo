@@ -139,6 +139,9 @@ class Primitive
     attr::AttributeHandle<intT>
     addIntAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
     /// @copydoc addIntAttribute
+    attr::AttributeHandle<floatT>
+    addFloatAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic = false);
+    /// @copydoc addIntAttribute
     attr::AttributeHandleBool addBoolAttribute(
         attr::AttributeOwner owner,
         std::string name,

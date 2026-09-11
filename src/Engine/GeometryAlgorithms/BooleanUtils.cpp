@@ -731,7 +731,8 @@ void ensureAttributeOnDestination(
     case attr::AttributeType::intT:
         destMesh.addIntAttribute(owner, name);
         break;
-    case attr::AttributeType::floatT: /* no addFloatAttribute helper, fall through */
+    case attr::AttributeType::floatT:
+        destMesh.addFloatAttribute(owner, name);
         break;
     case attr::AttributeType::vectorT:
         destMesh.addVector3Attribute(owner, name);
