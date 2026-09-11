@@ -1,0 +1,106 @@
+version: 1
+
+name: sphere
+namespace: enzo
+label: Sphere
+tags: [primitive, surface, polygon]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: sphere
+
+parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
+  - name: axis
+    label: Axis
+    type: dropdown
+    default: y
+    tooltip: The axis the poles sit on.
+    options:
+      - {value: x, label: X Axis}
+      - {value: y, label: Y Axis}
+      - {value: z, label: Z Axis}
+
+  - name: center
+    label: Center
+    type: float
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+    style: xyz
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+    style: xyz
+
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
+
+  - name: uniformScale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: radius
+    label: Radius
+    type: float
+    size: 3
+    default: 1
+    range: {min: 0, max: 10, minLocked: true}
+    style: xyz
+    tooltip: The radius along each axis. Setting them to different values gives an egg or a lens.
+
+  - name: divisions_divider
+    label: Divisions
+    type: divider
+    icon: spline
+
+  - name: columns
+    label: Columns
+    type: int
+    default: 16
+    range: {min: 3, max: 64, minLocked: true}
+    tooltip: How many faces go around the sphere.
+
+  - name: rows
+    label: Rows
+    type: int
+    default: 8
+    range: {min: 2, max: 64, minLocked: true}
+    tooltip: How many faces the surface is split into from one pole to the other.
+
+  - name: arc
+    label: Arc
+    type: dropdown
+    default: closed
+    options:
+      - {value: closed, label: Closed}
+      - {value: open_arc, label: Open Arc}
+      - {value: closed_arc, label: Closed Arc}
+
+  - name: arcAngles
+    label: Arc Angles
+    type: float
+    size: 2
+    default: [0, 360]
+    labelHidden: true
+    range: {min: 0, max: 360, minLocked: true}
+    hideCondition: arc == 0
+    style: rangeCircle
+    styleOptions:
+      ordered: true
+      caption: arc

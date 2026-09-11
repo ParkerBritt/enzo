@@ -421,6 +421,7 @@ if(ENZO_BUILD_TESTS)
         tests/GeometryImportTests.cpp
         tests/TransformNodeTests.cpp
         tests/CylinderNodeTests.cpp
+        tests/SphereNodeTests.cpp
         tests/DuplicateNodeTests.cpp
         tests/TransformTests.cpp
         tests/ParameterItemTests.cpp
