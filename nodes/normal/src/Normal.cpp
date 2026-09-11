@@ -9,18 +9,6 @@
 
 namespace {
 
-/// @brief Returns the named vector attribute, creating it when the mesh has none.
-enzo::attr::AttributeHandle<enzo::Vector3> getOrAddVector3Attribute(
-    enzo::geo::Mesh& mesh,
-    enzo::attr::AttributeOwner owner,
-    const std::string& name
-)
-{
-    std::shared_ptr<enzo::attr::Attribute> existing = mesh.getAttribByName(owner, name);
-    if (existing) return enzo::attr::AttributeHandle<enzo::Vector3>(existing);
-    return mesh.addVector3Attribute(owner, name);
-}
-
 class Normal : public enzo::nt::NodeImpl
 {
   public:
@@ -52,7 +40,7 @@ void Normal::cook()
 
         const attr::AttrOwner owner = perVertex ? attr::AttrOwner::VERTEX : attr::AttrOwner::POINT;
         attr::AttributeHandle<Vector3> normalAttribute =
-            getOrAddVector3Attribute(*mesh, owner, attributeName);
+            mesh->addVector3Attribute(owner, attributeName);
 
         for (Offset offset = 0; offset < normals.size(); ++offset)
         {

@@ -219,17 +219,15 @@ class Mesh : public Primitive
     // dense.
     FaceOffsets getFaces() const { return FaceOffsets(*this); }
 
-    /// @brief Creates a vertex group.
-    /// @return Handle to the new group.
-    attr::AttributeHandleBool createVertexGroup(std::string name)
+    /// @brief Returns the vertex group of this name, adding one when the name is free.
+    attr::AttributeHandleBool addVertexGroup(std::string name)
     {
-        return createGroup(attr::AttributeOwner::VERTEX, std::move(name));
+        return addGroup(attr::AttributeOwner::VERTEX, std::move(name));
     }
-    /// @brief Creates a face group.
-    /// @return Handle to the new group.
-    attr::AttributeHandleBool createFaceGroup(std::string name)
+    /// @brief Returns the face group of this name, adding one when the name is free.
+    attr::AttributeHandleBool addFaceGroup(std::string name)
     {
-        return createGroup(attr::AttributeOwner::FACE, std::move(name));
+        return addGroup(attr::AttributeOwner::FACE, std::move(name));
     }
     /// @brief Marks the given offsets as members of the vertex group.
     void addToVertexGroup(const std::string& name, const std::vector<Offset>& offsets)
