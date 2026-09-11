@@ -47,11 +47,8 @@ void Transform::cook()
     const Vector3 scale = evalParmVector3("scale");
     const floatT uniformScale = evalParmFloat("uniform_scale");
 
-    // Scale runs first, then the rotation, then the translation.
-    const enzo::Transform transform = enzo::Transform()
-                                        .translate(translate)
-                                        .rotateEuler(rotate)
-                                        .scale(scale * uniformScale);
+    const enzo::Transform transform =
+        enzo::Transform::fromComponents(translate, rotate, scale * uniformScale);
 
     Selection selection(selectionString);
     for (geo::PrimPtr prim : selection.getPrims(packet))

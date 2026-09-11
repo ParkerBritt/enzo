@@ -422,6 +422,7 @@ if(ENZO_BUILD_TESTS)
         tests/TransformNodeTests.cpp
         tests/CylinderNodeTests.cpp
         tests/DuplicateNodeTests.cpp
+        tests/TransformTests.cpp
         tests/ParameterItemTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )

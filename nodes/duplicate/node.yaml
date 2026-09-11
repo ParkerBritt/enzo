@@ -66,3 +66,19 @@ parameters:
     type: float
     default: 1
     tooltip: How much each copy grows or shrinks along every axis at once, relative to the copy before it.
+
+  - name: transform_order
+    label: Transform Order
+    type: dropdown
+    default: srt
+    tooltip: >
+      The order a copy passes through the scale, the rotation, and the
+      translation. Scale Rotate Translate turns a copy on the spot before
+      moving it, while Translate Rotate Scale swings it around the origin.
+    options:
+      - {value: srt, label: Scale Rotate Translate}
+      - {value: str, label: Scale Translate Rotate}
+      - {value: rst, label: Rotate Scale Translate}
+      - {value: rts, label: Rotate Translate Scale}
+      - {value: tsr, label: Translate Scale Rotate}
+      - {value: trs, label: Translate Rotate Scale}
