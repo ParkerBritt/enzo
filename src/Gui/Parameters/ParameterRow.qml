@@ -132,6 +132,8 @@ Item {
                     case "toggle":
                         return toggleComp;
                     case "string":
+                        if (row.item.style === "attribute")
+                            return attributeComp;
                         return stringComp;
                     case "dropdown":
                         return dropComp;
@@ -184,6 +186,12 @@ Item {
     Component {
         id: stringComp
         StringParameter {
+            item: row.item
+        }
+    }
+    Component {
+        id: attributeComp
+        AttributeParameter {
             item: row.item
         }
     }

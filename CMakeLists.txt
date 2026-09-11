@@ -230,6 +230,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/VectorParameter.qml
         src/Gui/Parameters/RangeDial.qml
         src/Gui/Parameters/StringParameter.qml
+        src/Gui/Parameters/AttributeParameter.qml
         src/Gui/Parameters/DropdownParameter.qml
         src/Gui/Parameters/Group.qml
         src/Gui/Parameters/Divider.qml
