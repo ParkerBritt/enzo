@@ -26,6 +26,10 @@ parameters:
     label: Attribute Name
     type: string
     default: attribute
+    style: attribute
+    styleOptions:
+      owners: all
+      attributeTypes: all
     tooltip: The name to store the attribute under.
 
   - name: attachTo

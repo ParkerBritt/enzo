@@ -40,4 +40,8 @@ parameters:
     label: Attribute Name
     type: string
     default: Normal
+    style: attribute
+    styleOptions:
+      owners: point vertex
+      attributeTypes: vector
     tooltip: The name to write the normals under.

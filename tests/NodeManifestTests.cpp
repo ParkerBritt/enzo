@@ -1,6 +1,6 @@
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeManifest.h"
-#include "Engine/Parameter/Style.h"
+#include "Engine/Parameter/Styles.h"
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
@@ -454,6 +454,29 @@ TEST_CASE("A range circle keeps its bounds in order when asked to")
     REQUIRE(style->ordered());
 }
 
+TEST_CASE("An attribute name style carries the attributes it offers")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: name
+    type: string
+    style: attribute
+    styleOptions:
+      owners: point vertex
+      attributeTypes: float vector
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+    const auto style =
+        std::any_cast<std::shared_ptr<prm::style::Attribute>>(parameter.getStyle());
+
+    REQUIRE(
+        style->getOwners()
+        == std::vector{attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX}
+    );
+    REQUIRE(
+        style->getTypes() == std::vector{attr::AttributeType::floatT, attr::AttributeType::vectorT}
+    );
+}
+
 TEST_CASE("Instance defaults set the starting values of a multiparm")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(
@@ -546,6 +569,18 @@ TEST_CASE("A parameter with an unknown style is rejected")
   - name: capGroupEnabled
     type: bool
     style: boolWobble
+)";
+    REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
+}
+
+TEST_CASE("An attribute name style naming an owner that does not exist is rejected")
+{
+    const std::string parameters = R"(
+  - name: name
+    type: string
+    style: attribute
+    styleOptions:
+      owners: corner
 )";
     REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
 }

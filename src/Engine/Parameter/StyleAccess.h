@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Engine/Core/Types.h"
 #include "Engine/Parameter/Parameter.h"
-#include "Engine/Parameter/PrmName.h"
+#include "Engine/Parameter/Styles.h"
 #include "Engine/Parameter/Template.h"
 
 #include <any>
@@ -12,63 +11,6 @@
 #include <vector>
 
 namespace enzo::prm::style {
-
-struct BoolSwitch
-{
-};
-
-// A vector whose components read as x, y and z axes, each with its own colour.
-struct Xyz
-{
-};
-
-// A pair of floats read as the start and end of an arc, drawn as a dial.
-struct RangeCircle
-{
-    enum Setting
-    {
-        ORDERED,
-        CAPTION
-    };
-
-    std::vector<std::shared_ptr<prm::Parameter>> settings = {
-        std::make_shared<prm::Parameter>(
-            Template(Type::BOOL, Name("ordered", "Ordered"), Default(false))
-        ),
-        std::make_shared<prm::Parameter>(
-            Template(Type::STRING, Name("caption", "Caption"), Default(""))
-        ),
-    };
-
-    // Whether the low bound stays below the high one rather than the arc
-    // wrapping past the end of the range.
-    bool ordered() const { return settings[ORDERED]->evalInt() != 0; }
-
-    // The label shown with the arc's reading, e.g. "arc", empty for none.
-    String caption() const { return settings[CAPTION]->evalString(); }
-};
-
-// A bool drawn as an icon rather than a checkbox.
-struct BoolIcon
-{
-    enum Setting
-    {
-        ICON,
-        SCALE
-    };
-
-    std::vector<std::shared_ptr<prm::Parameter>> settings = {
-        std::make_shared<prm::Parameter>(
-            Template(Type::STRING, Name("icon", "Icon"), Default("eye"))
-        ),
-        std::make_shared<prm::Parameter>(
-            Template(Type::FLOAT, Name("scale", "Scale"), Default(0.95f))
-        ),
-    };
-
-    String icon() const { return settings[ICON]->evalString(); }
-    floatT scale() const { return settings[SCALE]->evalFloat(); }
-};
 
 /// @brief Attaches the style a node.yaml name asks for.
 /// @note An unknown name throws.
@@ -82,6 +24,8 @@ inline void attachStyle(prm::Template& parameter, const std::string& styleName)
         parameter.setStyle(Xyz{});
     else if (styleName == "rangeCircle")
         parameter.setStyle(RangeCircle{});
+    else if (styleName == "attribute")
+        parameter.setStyle(Attribute{});
     else
         throw std::runtime_error("unknown style " + styleName);
 }
@@ -100,6 +44,7 @@ inline std::string toString(const std::any& style)
     if (holds<BoolIcon>(style)) return "boolIcon";
     if (holds<Xyz>(style)) return "xyz";
     if (holds<RangeCircle>(style)) return "rangeCircle";
+    if (holds<Attribute>(style)) return "attribute";
     return "";
 }
 
@@ -113,7 +58,20 @@ inline std::vector<std::shared_ptr<prm::Parameter>> settings(const std::any& sty
         return (*boolIcon)->settings;
     if (const auto* rangeCircle = std::any_cast<std::shared_ptr<RangeCircle>>(&style))
         return (*rangeCircle)->settings;
+    if (const auto* attribute = std::any_cast<std::shared_ptr<Attribute>>(&style))
+        return (*attribute)->settings;
     return {};
+}
+
+/// @brief Checks the values a style's settings hold.
+/// @note A value the style cannot read throws.
+inline void validateSettings(const std::any& style)
+{
+    if (const auto* attribute = std::any_cast<std::shared_ptr<Attribute>>(&style))
+    {
+        (*attribute)->getOwners();
+        (*attribute)->getTypes();
+    }
 }
 
 /// @brief Returns the setting a style exposes under a name, e.g. "scale".

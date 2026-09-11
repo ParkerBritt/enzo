@@ -4,7 +4,6 @@
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Parameter/Ramp.h"
-#include "Engine/Parameter/Style.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/src/Core/Matrix.h>

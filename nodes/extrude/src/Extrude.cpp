@@ -2,7 +2,6 @@
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Parameter/Style.h"
 #include "Engine/Primitives/Mesh.h"
 #include "Engine/Selection/Selection.h"
 #include <memory>

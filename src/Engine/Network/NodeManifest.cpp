@@ -3,7 +3,7 @@
 #include "Engine/Parameter/Default.h"
 #include "Engine/Parameter/PrmName.h"
 #include "Engine/Parameter/Range.h"
-#include "Engine/Parameter/Style.h"
+#include "Engine/Parameter/StyleAccess.h"
 #include "Engine/Parameter/Template.h"
 
 #include <fstream>
@@ -113,7 +113,8 @@ void readStyleOption(prm::Parameter& setting, const YAML::Node& value)
 }
 
 // Attaches the style named in node.yaml and fills in the settings it exposes
-// from the styleOptions block. An option the style has no setting for throws.
+// from the styleOptions block. An unknown option or a value the style cannot
+// read throws.
 void readStyle(prm::Template& parameter, const YAML::Node& style, const YAML::Node& styleOptions)
 {
     const std::string styleName = style.as<std::string>();
@@ -132,6 +133,8 @@ void readStyle(prm::Template& parameter, const YAML::Node& style, const YAML::No
 
         readStyleOption(*setting, option.second);
     }
+
+    prm::style::validateSettings(parameter.getStyle());
 }
 
 // Reads the starting values of a multiparm, one list per field of its instance

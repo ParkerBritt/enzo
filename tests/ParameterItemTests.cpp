@@ -89,6 +89,35 @@ TEST_CASE_METHOD(PluginsAndReset, "A drag over many values records one undo step
     REQUIRE_FALSE(networkManager.undoStack().canUndo());
 }
 
+TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attributes on its input")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId grid = networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    nt::NodeId attributeCreate =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    networkManager.connectNodes(grid, 0, attributeCreate, 0);
+    networkManager.cook(grid);
+
+    nt::Node& node = networkManager.getNode(attributeCreate);
+    const QStringList names = makeItem(node, "name").attributeNames();
+
+    REQUIRE(names.contains("P"));
+    REQUIRE(names.contains("vertexCount"));
+
+    // Private attributes stay out of the list.
+    REQUIRE_FALSE(names.contains("__valid"));
+}
+
+TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lists nothing")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId attributeCreate =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::Node& node = networkManager.getNode(attributeCreate);
+
+    REQUIRE(makeItem(node, "name").attributeNames().isEmpty());
+}
+
 TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style options to the gui")
 {
     auto& networkManager = nt::nm();
