@@ -3,6 +3,7 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
+#include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Primitives/Primitive.h"
 #include "icecream.hpp"
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -859,18 +860,32 @@ Vector3 geo::FaceNormalHandle::computeNormal(Offset faceOffset) const
     return utils::polygonNormal(mesh_.posPointHandle_.getSpan(), mesh_.getFacePoints(faceOffset));
 }
 
-geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, bool precompute)
-    : mesh_(mesh), faceNormals_(mesh.getFaceNormal(precompute))
+geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, double cuspAngle) : mesh_(mesh)
 {
-    std::shared_ptr<const attr::Attribute> normalAttr =
+    std::shared_ptr<const attr::Attribute> vertexNormals =
         mesh.getAttribByName(attr::AttrOwner::VERTEX, "Normal");
-    if (normalAttr) cached_.emplace(normalAttr);
+    if (vertexNormals)
+    {
+        vertexAttribute_.emplace(vertexNormals);
+        return;
+    }
+
+    std::shared_ptr<const attr::Attribute> pointNormals =
+        mesh.getAttribByName(attr::AttrOwner::POINT, "Normal");
+    if (pointNormals)
+    {
+        pointAttribute_.emplace(pointNormals);
+        return;
+    }
+
+    computed_ = utils::computeVertexNormals(mesh, cuspAngle);
 }
 
 Vector3 geo::VertexNormalHandle::operator[](Offset vertexOffset) const
 {
-    if (cached_) return cached_->getValue(vertexOffset);
-    return faceNormals_[mesh_.getVertexFace(vertexOffset)];
+    if (vertexAttribute_) return vertexAttribute_->getValue(vertexOffset);
+    if (pointAttribute_) return pointAttribute_->getValue(mesh_.getVertexPoint(vertexOffset));
+    return computed_[vertexOffset];
 }
 
 geo::FaceNormalHandle geo::Mesh::getFaceNormal(bool precompute) const
@@ -878,9 +893,9 @@ geo::FaceNormalHandle geo::Mesh::getFaceNormal(bool precompute) const
     return FaceNormalHandle(*this, precompute);
 }
 
-geo::VertexNormalHandle geo::Mesh::getVertexNormal(bool precompute) const
+geo::VertexNormalHandle geo::Mesh::getVertexNormal(double cuspAngle) const
 {
-    return VertexNormalHandle(*this, precompute);
+    return VertexNormalHandle(*this, cuspAngle);
 }
 
 } // namespace enzo
