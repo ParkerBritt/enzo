@@ -52,6 +52,7 @@ set(ENGINE_SOURCES
     src/Engine/Selection/SelectionComponent.cpp
     src/Engine/Selection/IndexSet.cpp
     src/Engine/GeometryAlgorithms/MeshUtils.cpp
+    src/Engine/GeometryAlgorithms/Normals.cpp
     src/Engine/GeometryAlgorithms/MeshShapes.cpp
     src/Engine/GeometryAlgorithms/BooleanUtils.cpp
     src/Engine/Util/UnionFind.cpp

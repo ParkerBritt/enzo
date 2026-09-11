@@ -20,6 +20,9 @@ class Mesh;
 class FaceNormalHandle;
 class VertexNormalHandle;
 
+/// @brief The cusp angle used when nothing asks for a particular one, in degrees.
+inline constexpr double kDefaultCuspAngle = 60;
+
 /**
  * @class enzo::geo::Mesh
  * @brief Polygonal mesh primitive with point, vertex, and face attributes.
@@ -133,7 +136,7 @@ class Mesh : public Primitive
     unsigned int getFacePointCount(Offset faceOffset) const;
     Offset getVertexFace(Offset vertexOffset) const;
 
-    Offset getPointVertex(Offset vertexOffset) const
+    Offset getVertexPoint(Offset vertexOffset) const
     {
         return pointOffsetVertexHandle_.getValue(vertexOffset);
     }
@@ -261,15 +264,16 @@ class Mesh : public Primitive
     /**
      * @brief Returns a handle for reading per-vertex normals.
      *
-     * When the mesh has a vertex attribute named Normal the handle reads it
-     * directly. Otherwise the handle returns the owning face's normal.
+     * A vertex attribute named Normal is read first, then a point attribute
+     * of the same name, and failing both the normals are computed at the
+     * given cusp angle.
      *
-     * @param precompute Forwarded to the internal FaceNormalHandle when the
-     *                   vertex attribute is absent. Useful when many vertices
-     *                   on a small number of faces are read.
+     * @param cuspAngle The widest angle between two faces that still counts
+     *                  as smooth, in degrees. Only reached when neither
+     *                  attribute is present.
      * @return Handle whose operator[] returns the normal for a vertex offset.
      */
-    VertexNormalHandle getVertexNormal(bool precompute = false) const;
+    VertexNormalHandle getVertexNormal(double cuspAngle = kDefaultCuspAngle) const;
 
     friend class FaceNormalHandle;
     friend class VertexNormalHandle;
@@ -361,8 +365,8 @@ class FaceNormalHandle
  * @brief Read accessor for per-vertex normals.
  *
  * Built by @ref Mesh::getVertexNormal. The constructor resolves the Normal
- * vertex attribute once. If present, operator[] reads it. If absent, the
- * handle returns the owning face's normal via an internal FaceNormalHandle.
+ * vertex attribute, then the Normal point attribute, and computes every
+ * vertex normal up front when the mesh carries neither.
  */
 class VertexNormalHandle
 {
@@ -371,9 +375,10 @@ class VertexNormalHandle
 
   private:
     friend class Mesh;
-    VertexNormalHandle(const Mesh& mesh, bool precompute);
+    VertexNormalHandle(const Mesh& mesh, double cuspAngle);
     const Mesh& mesh_;
-    std::optional<attr::AttributeHandleRO<Vector3>> cached_;
-    FaceNormalHandle faceNormals_;
+    std::optional<attr::AttributeHandleRO<Vector3>> vertexAttribute_;
+    std::optional<attr::AttributeHandleRO<Vector3>> pointAttribute_;
+    std::vector<Vector3> computed_;
 };
 } // namespace enzo::geo
