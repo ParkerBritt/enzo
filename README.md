@@ -27,7 +27,7 @@
 
   ## Features
   **Free and Open Source** - 
-  Enzo's open source licensing (GPL) makes it free for commercial or personal projects and allows developers to expand the software and make it their own, for any use case.
+  Enzo's open source licensing (MIT) makes it free for commercial or personal projects and allows developers to expand the software and make it their own, for any use case.
   
   *No expensive licensing or getting locked out of your own work.*
   
