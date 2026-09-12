@@ -1,11 +1,4 @@
 #include "Gui/Viewport/GLMesh.h"
-#if defined(__linux__) || defined(_WIN32)
-#include <GL/gl.h>
-#endif
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#endif
-
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
