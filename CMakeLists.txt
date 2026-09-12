@@ -394,7 +394,9 @@ if(WIN32)
 
     install(RUNTIME_DEPENDENCY_SET enzoRuntime
         DIRECTORIES ${ENZO_DEP_BIN_DIRS}
-        PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
+        # Enzo's own libraries have their own install rules. The api-ms and
+        # ext-ms names are Windows api sets rather than files on disk.
+        PRE_EXCLUDE_REGEXES "^enzo.*\\.dll$" "api-ms-" "ext-ms-"
         POST_EXCLUDE_REGEXES "[Ss]ystem32"
         RUNTIME DESTINATION ${ENZO_BIN_DIR}
     )
