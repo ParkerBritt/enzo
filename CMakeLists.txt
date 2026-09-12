@@ -26,6 +26,10 @@ endif()
 # leaving the node library with no engine symbols to link against.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+# The installed libraries sit in one directory, so they find each other next to
+# themselves. The executable overrides this, since it sits in bin.
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+
 set(ENZO_DEV_LIB_DIR "${CMAKE_BINARY_DIR}/nodes/")
 set(ENZO_DEV_NODES_DIR "${CMAKE_SOURCE_DIR}/nodes")
 
@@ -36,6 +40,7 @@ set(ENGINE_SOURCES
     src/Engine/Primitives/Mesh.cpp
     src/Engine/Primitives/Camera.cpp
     src/Engine/Selection/PrimPath.cpp
+    src/Engine/Core/InstallPaths.cpp
     src/Engine/Core/Path.cpp
     src/Engine/Network/Network.cpp
     src/Engine/Network/NetworkPath.cpp
@@ -168,6 +173,7 @@ target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
 target_compile_definitions(enzoEngine PRIVATE
     ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}"
     ENZO_DEV_NODES_DIR="${ENZO_DEV_NODES_DIR}"
+    ENZO_DEV_STATIC_DIR="${CMAKE_SOURCE_DIR}/static"
 )
 
 
@@ -210,6 +216,9 @@ set_source_files_properties(src/Gui/Components/ParameterClipboard.qml
 qt_add_qml_module(${AppExec}
     URI Enzo
     VERSION 1.0
+    # The prefix the qml engine searches by default, so an installed run finds
+    # the module compiled into the binary.
+    RESOURCE_PREFIX /qt/qml
     SOURCES
         src/Gui/Style/Theme.cpp
         src/Gui/Network/NodeLinkLayer.cpp
@@ -226,6 +235,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
         src/Gui/Components/Dropdown.qml
+        src/Gui/Components/ExpressionEditor.qml
+        src/Gui/Components/FocusReclaimer.qml
         src/Gui/Components/Stepper.qml
         src/Gui/Components/Tooltip.qml
         src/Gui/Components/PlaceholderDialog.qml
@@ -278,11 +289,10 @@ qt6_add_shaders(${AppExec} "enzoShaders"
     "src/Gui/Shaders/NetworkDots.frag"
 )
 
-# Dev builds load QML from the source tree so edits reload without a rebuild.
-# Packaged builds omit this and load the module compiled into the binary.
+# A run from a build directory loads QML from here, so edits reload without a
+# rebuild. An installed run loads the module compiled into the binary instead.
 target_compile_definitions(${AppExec} PRIVATE
     ENZO_QML_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/Gui"
-    ENZO_DEV_STATIC_DIR="${CMAKE_SOURCE_DIR}/static"
 )
 
 target_compile_definitions(${AppExec} PRIVATE ENZO_VERSION="${PROJECT_VERSION}")
@@ -342,12 +352,6 @@ set_target_properties(${AppExec} PROPERTIES
 
 include(CPack)
 
-install(TARGETS ${AppExec} enzoEngine
-    RUNTIME DESTINATION ${ENZO_BIN_DIR}
-    LIBRARY DESTINATION ${ENZO_LIB_DIR}
-    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
-)
-
 # Copies the Qt libraries, plugins and qml modules the app reaches at install
 # time, along with a qt.conf pointing at them.
 qt_generate_deploy_qml_app_script(
@@ -367,24 +371,14 @@ install(CODE "
 ")
 install(SCRIPT ${ENZO_QT_DEPLOY_SCRIPT})
 
-if(UNIX)
-    find_program(ENZO_PATCHELF patchelf)
-    if(NOT ENZO_PATCHELF)
-        install(CODE "message(FATAL_ERROR \"patchelf is needed to install enzo\")")
-    endif()
+# The deployment gathers its dependencies from the build tree, so enzo's own
+# binaries are installed afterwards to land with their install runpath.
+install(TARGETS ${AppExec} enzoEngine
+    RUNTIME DESTINATION ${ENZO_BIN_DIR}
+    LIBRARY DESTINATION ${ENZO_LIB_DIR}
+    ARCHIVE DESTINATION ${ENZO_LIB_DIR}
+)
 
-    # The bundled libraries arrive from several build trees, each carrying a
-    # runpath into the tree it came from. Every one of them sits beside its
-    # dependencies once installed, so they all point at their own directory.
-    install(CODE "
-        file(GLOB libraries \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${ENZO_LIB_DIR}/*.so*\")
-        foreach(library IN LISTS libraries)
-            if(NOT IS_SYMLINK \${library})
-                execute_process(COMMAND ${ENZO_PATCHELF} --set-rpath \$ORIGIN \${library})
-            endif()
-        endforeach()
-    ")
-endif()
 
 # Puts the launcher on PATH, so the desktop entry and a shell both reach it by
 # name while the application itself still resolves its root from the real path.
@@ -409,9 +403,10 @@ install(FILES static/icons/icon-main-white-square.svg
     RENAME org.enzosoftware.Enzo.svg
 )
 
-install(DIRECTORY static/icons/
-    DESTINATION ${CMAKE_PROJECT_NAME}/share/icons
-    FILES_MATCHING PATTERN "*.svg"
+# The fonts, icons and theme the application reads at runtime.
+install(DIRECTORY static/
+    DESTINATION ${CMAKE_PROJECT_NAME}/share
+    PATTERN "resources.qrc" EXCLUDE
 )
 
 # Ship daslib as a sibling of enzo/bin so the runtime finds the standard library.

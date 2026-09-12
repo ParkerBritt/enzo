@@ -5,8 +5,6 @@ project(enzoOps)
 find_package(Boost REQUIRED)
 # eigen (math)
 find_package (Eigen3 REQUIRED NO_MODULE)
-# manifold (boolean nodes)
-find_package(manifold CONFIG REQUIRED)
 
 # Every builtin node compiles into one library, so startup performs a single
 # library load no matter how many nodes ship.
@@ -15,11 +13,9 @@ file(GLOB NODE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*/src/*.cp
 set(libName enzoOps)
 add_library(${libName} SHARED ${NODE_SOURCES})
 
-target_link_libraries(${libName} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
+target_link_libraries(${libName} PRIVATE enzoEngine Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb libDaScript)
 
 # packaging
-set_target_properties(${libName} PROPERTIES INSTALL_RPATH "$ORIGIN")
-
 install(TARGETS ${libName}
     RUNTIME DESTINATION ${ENZO_LIB_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}

@@ -1,4 +1,5 @@
 #include "Gui/Style/Theme.h"
+#include "Engine/Core/InstallPaths.h"
 #include "Gui/Style/ThemeLoader.h"
 
 #include <QCoreApplication>
@@ -11,7 +12,10 @@ namespace enzo::ui {
 
 namespace {
 
-QString defaultThemePath() { return QStringLiteral(ENZO_DEV_STATIC_DIR "/theme/default.yml"); }
+QString defaultThemePath()
+{
+    return QString::fromStdString((getStaticDir() / "theme" / "default.yml").string());
+}
 
 QString userThemePath()
 {
@@ -23,7 +27,8 @@ QString userThemePath()
 
 QString iconsDir()
 {
-    return QUrl::fromLocalFile(QStringLiteral(ENZO_DEV_STATIC_DIR "/icons/lucide/")).toString();
+    const QString dir = QString::fromStdString((getStaticDir() / "icons" / "lucide").string());
+    return QUrl::fromLocalFile(dir + QChar(u'/')).toString();
 }
 
 } // namespace

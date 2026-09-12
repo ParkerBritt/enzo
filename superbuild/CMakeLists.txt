@@ -47,6 +47,12 @@ set(ENZO_DEP_CMAKE_ARGS
     -DBUILD_TESTING:BOOL=OFF
 )
 
+# The libraries end up beside each other in the packaged tree, so they look for
+# their siblings next to themselves rather than in the prefix they were built in.
+if(UNIX)
+    list(APPEND ENZO_DEP_CMAKE_ARGS -DCMAKE_INSTALL_RPATH:STRING=$ORIGIN)
+endif()
+
 include(deps/tbb.cmake)
 include(deps/boost.cmake)
 include(deps/manifold.cmake)
