@@ -6,7 +6,6 @@
 #include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Primitives/Primitive.h"
 #include "icecream.hpp"
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -664,87 +663,6 @@ void geo::Mesh::setPointPos(const Offset offset, const Vector3& pos)
 unsigned int geo::Mesh::getFacePointCount(Offset faceOffset) const
 {
     return getFaceVertCount(faceOffset);
-}
-
-geo::HeMesh geo::Mesh::computeHalfEdgeMesh()
-{
-    HeMesh heMesh;
-
-    std::shared_ptr<attr::Attribute> PAttr = getAttribByName(attr::AttrOwner::POINT, "P");
-    attr::AttributeHandleVector3 PAttrHandle = attr::AttributeHandleVector3(PAttr);
-    auto pointPositions = PAttrHandle.getAllValues();
-
-    std::shared_ptr<attr::Attribute> pointAttr = getAttribByName(attr::AttrOwner::VERTEX, "point");
-    attr::AttributeHandleInt pointAttrHandle = attr::AttributeHandleInt(pointAttr);
-    auto vertexPointIndices = pointAttrHandle.getAllValues();
-
-    std::shared_ptr<attr::Attribute> vertexCountAttr =
-        getAttribByName(attr::AttrOwner::FACE, "vertexCount");
-    attr::AttributeHandleInt vertexCountHandle = attr::AttributeHandleInt(vertexCountAttr);
-    auto vertexCounts = vertexCountHandle.getAllValues();
-
-    int vertexIndex = 0;
-    std::vector<geo::vertexDescriptor> createdPoints;
-    createdPoints.reserve(pointPositions.size());
-    std::vector<geo::vertexDescriptor> facePoints;
-    facePoints.reserve(16);
-
-    for (auto pointPos : pointPositions)
-    {
-        geo::vertexDescriptor point =
-            heMesh.add_vertex(geo::Point(pointPos.x(), pointPos.y(), pointPos.z()));
-        createdPoints.push_back(point);
-    }
-
-    CGAL::Polygon_mesh_processing::orient(heMesh);
-
-    // iterate through each face
-    for (int faceIndx = 0; faceIndx < vertexCounts.size(); ++faceIndx)
-    {
-        facePoints.clear();
-
-        // represents how many vertices are in a face
-        auto vertexCount = vertexCounts[faceIndx];
-
-        // create face vertices
-        for (int i = 0; i < vertexCount; ++i)
-        {
-            auto pointIndex = vertexPointIndices.at(vertexIndex);
-            facePoints.push_back(createdPoints[pointIndex]);
-            ++vertexIndex;
-        }
-
-        // debug
-        std::cout << "Primitive " << faceIndx << " has " << vertexCount << " vertices: ";
-        for (auto& v : facePoints)
-        {
-            auto pt = heMesh.point(v);
-            std::cout << "(" << pt.x() << ", " << pt.y() << ", " << pt.z() << ") ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "Point indices: ";
-        for (int i = 0; i < vertexCount; ++i)
-        {
-            int pointIndex = vertexPointIndices.at(vertexIndex - vertexCount + i);
-            std::cout << pointIndex << " ";
-        }
-        std::cout << std::endl;
-        // debug
-
-        auto face = heMesh.add_face(facePoints);
-        if (face != HeMesh::null_face())
-        {
-            // validFaceIndices.push_back(geo::F_index(faceIndx));
-        }
-        else
-        {
-            // throw std::runtime_error("Warning: Face creation failed at primitive " +
-            // std::to_string(faceIndx));
-        }
-    }
-
-    return heMesh;
 }
 
 std::span<const Offset> geo::Mesh::getFaceStartVertices() const

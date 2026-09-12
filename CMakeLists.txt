@@ -84,9 +84,6 @@ find_package(Boost REQUIRED COMPONENTS filesystem system)
 # argparse (command line)
 find_package(argparse REQUIRED)
 
-# cgal
-find_package(CGAL REQUIRED COMPONENTS Core)
-
 # manifold (boolean ops)
 find_package(manifold CONFIG REQUIRED)
 
@@ -147,7 +144,7 @@ set_source_files_properties(
 # the whole process shares one engine and one set of its singletons. The engine
 # loads the plugins at runtime rather than linking them.
 add_library(enzoEngine SHARED ${ENGINE_SOURCES})
-target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system CGAL::CGAL CGAL::CGAL_Core manifold::manifold libDaScript yaml-cpp::yaml-cpp)
+target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system manifold::manifold libDaScript yaml-cpp::yaml-cpp)
 target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
 target_compile_definitions(enzoEngine PRIVATE
     ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}"
