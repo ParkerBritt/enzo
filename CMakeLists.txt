@@ -313,6 +313,14 @@ target_include_directories(${AppExec} PRIVATE
 )
 
 
+# The layout every install rule writes into.
+set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
+set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
+set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
+
+# compile nodes
+add_subdirectory(nodes)
+
 # --- packaging ---
 set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake)
 
@@ -342,10 +350,6 @@ else()
     set(CPACK_SYSTEM_NAME linux-${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
-set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
-set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
-set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
-
 set_target_properties(${AppExec} PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
 )
@@ -374,10 +378,27 @@ install(SCRIPT ${ENZO_QT_DEPLOY_SCRIPT})
 # The deployment gathers its dependencies from the build tree, so enzo's own
 # binaries are installed afterwards to land with their install runpath.
 install(TARGETS ${AppExec} enzoEngine
+    RUNTIME_DEPENDENCY_SET enzoRuntime
     RUNTIME DESTINATION ${ENZO_BIN_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
 )
+
+# windeployqt brings the Qt libraries and nothing else, so the remaining shared
+# dependencies come from reading the imports of the installed binaries.
+if(WIN32)
+    set(ENZO_DEP_BIN_DIRS "")
+    foreach(prefix IN LISTS CMAKE_PREFIX_PATH)
+        list(APPEND ENZO_DEP_BIN_DIRS "${prefix}/bin")
+    endforeach()
+
+    install(RUNTIME_DEPENDENCY_SET enzoRuntime
+        DIRECTORIES ${ENZO_DEP_BIN_DIRS}
+        PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
+        POST_EXCLUDE_REGEXES "[Ss]ystem32"
+        RUNTIME DESTINATION ${ENZO_BIN_DIR}
+    )
+endif()
 
 
 # Puts the launcher on PATH, so the desktop entry and a shell both reach it by
@@ -418,8 +439,6 @@ install(DIRECTORY ${DAS_DASLIB_DIR}
 
 
 
-# compile nodes
-add_subdirectory(nodes)
 
 # tests
 option(ENZO_BUILD_TESTS "Build tests and benchmarks" ON)
