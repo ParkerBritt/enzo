@@ -104,7 +104,7 @@ jobs:
         shell: cmd
         run: |
           cmake -S . -B build-super -G Ninja ^
-            -DCMAKE_BUILD_TYPE=Release ^
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
             -DENZO_SUPERBUILD=ON
           cmake --build build-super
 
@@ -113,10 +113,23 @@ jobs:
       # build directory they were compiled in.
       - name: Smoke test
         shell: pwsh
+        timeout-minutes: 15
         run: |
           cmake --install build-super/enzo-build --prefix "$PWD/stage"
-          $env:QT_DEBUG_PLUGINS = "1"
-          $app = Start-Process "$PWD/stage/enzo/bin/enzoGui.exe" -PassThru -NoNewWindow `
+          $exe = "$PWD/stage/enzo/bin/enzoGui.exe"
+          $debuggers = "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64"
+
+          # Page heap puts an unmapped page after every allocation, so a write
+          # past the end faults where it happens rather than at the next free.
+          if (Test-Path "$debuggers/cdb.exe") {
+            & "$debuggers/gflags.exe" /p /enable enzoGui.exe /full
+            $env:_NT_SYMBOL_PATH = "$PWD/build-super/enzo-build/enzo/bin;srv*https://msdl.microsoft.com/download/symbols"
+            & "$debuggers/cdb.exe" -g -G -c ".lastevent; kb; !analyze -v; q" $exe
+            & "$debuggers/gflags.exe" /p /disable enzoGui.exe
+            exit 1
+          }
+
+          $app = Start-Process $exe -PassThru -NoNewWindow `
             -RedirectStandardOutput smoke-out.txt -RedirectStandardError smoke-err.txt
           Start-Sleep -Seconds 60
           if (-not $app.HasExited) { $app.Kill(); Get-Content smoke-out.txt, smoke-err.txt; exit 0 }
