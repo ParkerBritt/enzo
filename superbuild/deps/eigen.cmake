@@ -7,5 +7,8 @@ ExternalProject_Add(eigen
         ${ENZO_DEP_CMAKE_ARGS}
         -DEIGEN_BUILD_DOC:BOOL=OFF
         -DEIGEN_BUILD_TESTING:BOOL=OFF
+        # Eigen's blas subdirectory enables Fortran whenever it finds a
+        # compiler, and nothing there is built. Declaring none skips it.
+        -DCMAKE_Fortran_COMPILER:FILEPATH=NOTFOUND
 )
 list(APPEND ENZO_DEPS eigen)
