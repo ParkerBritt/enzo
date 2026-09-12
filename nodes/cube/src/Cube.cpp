@@ -5,6 +5,7 @@
 #include "Engine/Parameter/Range.h"
 #include "Engine/Primitives/Mesh.h"
 #include <Eigen/Geometry>
+#include <numbers>
 
 namespace {
 
@@ -33,9 +34,9 @@ void Cube::cook()
 
     const floatT uniformScale = evalParmFloat("uniformScale");
 
-    const floatT rotateX = evalParmFloat("rotate", 0) * M_PI / 180.0;
-    const floatT rotateY = evalParmFloat("rotate", 1) * M_PI / 180.0;
-    const floatT rotateZ = evalParmFloat("rotate", 2) * M_PI / 180.0;
+    const floatT rotateX = evalParmFloat("rotate", 0) * std::numbers::pi / 180.0;
+    const floatT rotateY = evalParmFloat("rotate", 1) * std::numbers::pi / 180.0;
+    const floatT rotateZ = evalParmFloat("rotate", 2) * std::numbers::pi / 180.0;
 
     // Build an axis aligned cube around the origin so rotation pivots on its center.
     const Vector3 scaledSize(sizeX * uniformScale, sizeY * uniformScale, sizeZ * uniformScale);
