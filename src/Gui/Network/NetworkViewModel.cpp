@@ -8,6 +8,7 @@
 
 #include <QPointF>
 #include <QRectF>
+#include <QVariantList>
 #include <QVariantMap>
 #include <algorithm>
 #include <memory>
@@ -19,6 +20,28 @@ namespace enzo::ui {
 namespace {
 /// The vertical space left between a node and the one created below it.
 constexpr qreal chainedNodeGap = 30;
+
+/// @brief Returns the map form of a link that QML and the link layer read.
+QVariantMap makeLink(
+    nt::NodeId sourceNode,
+    unsigned int sourceOutput,
+    nt::NodeId targetNode,
+    unsigned int targetInput
+)
+{
+    return {
+        {"sourceNode", static_cast<qulonglong>(sourceNode)},
+        {"sourceOutput", static_cast<int>(sourceOutput)},
+        {"targetNode", static_cast<qulonglong>(targetNode)},
+        {"targetInput", static_cast<int>(targetInput)},
+    };
+}
+
+/// @brief Returns a drop preview, the links it cuts and the links it wires.
+QVariantMap makeDropPreview(QVariantList cutLinks, QVariantList newLinks)
+{
+    return {{"cutLinks", std::move(cutLinks)}, {"newLinks", std::move(newLinks)}};
+}
 } // namespace
 
 NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
@@ -257,6 +280,118 @@ void NetworkViewModel::removeLink(int linkIndex)
     if (auto connection = edges_.connectionAt(linkIndex)) nt::nm().disconnectNodes(*connection);
 }
 
+QVariantMap
+NetworkViewModel::getDropPreview(qulonglong nodeId, int hoveredLink, bool bypassing) const
+{
+    return bypassing ? getBypassPreview() : getInsertPreview(nodeId, hoveredLink);
+}
+
+QVariantMap NetworkViewModel::getInsertPreview(qulonglong nodeId, int hoveredLink) const
+{
+    const QVariantMap nothingToDo = makeDropPreview({}, {});
+
+    const std::optional<nt::Connection> connection = edges_.connectionAt(hoveredLink);
+    if (!connection) return nothingToDo;
+
+    auto& network = nt::nm();
+
+    // Leaves a wider selection alone, since dropping many nodes into one link has no
+    // single meaning.
+    if (network.getSelectedNodes().size() > 1) return nothingToDo;
+
+    if (connection->sourceNode == nodeId || connection->targetNode == nodeId) return nothingToDo;
+
+    const nt::Node& node = network.getNode(nodeId);
+    if (!node.takesInput() || node.getMaxOutputs() == 0) return nothingToDo;
+
+    // Leaves a node that already has an input alone, since the drop would take it over.
+    if (network.graph().getInputConnection(nodeId, 0)) return nothingToDo;
+
+    return makeDropPreview(
+        {hoveredLink},
+        {makeLink(connection->sourceNode, connection->sourceOutput, nodeId, 0),
+         makeLink(nodeId, 0, connection->targetNode, connection->targetInput)}
+    );
+}
+
+QVariantMap NetworkViewModel::getBypassPreview() const
+{
+    auto& network = nt::nm();
+    const std::vector<nt::NodeId> bypassed = network.getSelectedNodes();
+
+    const auto isBypassed = [&](nt::NodeId nodeId) {
+        return std::find(bypassed.begin(), bypassed.end(), nodeId) != bypassed.end();
+    };
+
+    // Cuts every link touching the selection.
+    QVariantList cutLinks;
+    for (int linkIndex = 0; linkIndex < edges_.rowCount(); ++linkIndex)
+    {
+        const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
+        if (connection &&
+            (isBypassed(connection->sourceNode) || isBypassed(connection->targetNode)))
+            cutLinks.append(linkIndex);
+    }
+
+    // Returns the first input above a node that is not itself being pulled out.
+    const auto getFeed = [&](nt::NodeId nodeId) {
+        std::optional<nt::Connection> feed = network.graph().getInputConnection(nodeId, 0);
+        for (std::size_t step = 0; feed && isBypassed(feed->sourceNode); ++step)
+        {
+            if (step > bypassed.size()) return std::optional<nt::Connection>{};
+            feed = network.graph().getInputConnection(feed->sourceNode, 0);
+        }
+        return feed;
+    };
+
+    QVariantList newLinks;
+    for (nt::NodeId nodeId : bypassed)
+    {
+        const std::optional<nt::Connection> feed = getFeed(nodeId);
+        if (!feed) continue;
+
+        for (const nt::Connection& outgoing : network.graph().getOutputs(nodeId))
+        {
+            if (isBypassed(outgoing.targetNode)) continue;
+            newLinks.append(makeLink(
+                feed->sourceNode,
+                feed->sourceOutput,
+                outgoing.targetNode,
+                outgoing.targetInput
+            ));
+        }
+    }
+    return makeDropPreview(cutLinks, newLinks);
+}
+
+void NetworkViewModel::applyDropPreview(const QVariantMap& preview)
+{
+    // Reads the connections off the model first, since cutting one shifts the index
+    // of every link after it.
+    std::vector<nt::Connection> cut;
+    for (const QVariant& linkIndex : preview["cutLinks"].toList())
+        if (auto connection = edges_.connectionAt(linkIndex.toInt())) cut.push_back(*connection);
+
+    const QVariantList newLinks = preview["newLinks"].toList();
+    if (cut.empty() && newLinks.isEmpty()) return;
+
+    auto& network = nt::nm();
+
+    nt::UndoTransaction transaction(network.undoStack());
+    for (const nt::Connection& connection : cut)
+        network.disconnectNodes(connection);
+    for (const QVariant& link : newLinks)
+    {
+        const QVariantMap fields = link.toMap();
+        network.connectNodes(
+            fields["sourceNode"].toULongLong(),
+            fields["sourceOutput"].toUInt(),
+            fields["targetNode"].toULongLong(),
+            fields["targetInput"].toUInt()
+        );
+    }
+}
+
 QVariantMap NetworkViewModel::getLinkEndpoints(int linkIndex) const
 {
     const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
@@ -288,9 +423,6 @@ void NetworkViewModel::setDisplayNodeToPrimary()
     setDisplayNode(*primaryId);
 }
 
-void NetworkViewModel::clearSelection()
-{
-    selectNodes({}, std::nullopt);
-}
+void NetworkViewModel::clearSelection() { selectNodes({}, std::nullopt); }
 
 } // namespace enzo::ui
