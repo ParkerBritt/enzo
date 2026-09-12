@@ -33,7 +33,9 @@ ExternalProject_Add(qt
         ${ENZO_AQT_PYTHON} -m pip install --quiet --disable-pip-version-check
         aqtinstall==${ENZO_AQTINSTALL_VERSION}
     COMMAND
-        ${ENZO_AQT_PYTHON} -m aqt install-qt
+        ${ENZO_AQT_PYTHON} -m aqt
+        --config ${CMAKE_CURRENT_LIST_DIR}/aqt-settings.ini
+        install-qt
         ${ENZO_QT_HOST} desktop ${ENZO_QT_VERSION} ${ENZO_QT_ARCH}
         --modules ${ENZO_QT_MODULES}
         --outputdir ${ENZO_QT_ROOT}
