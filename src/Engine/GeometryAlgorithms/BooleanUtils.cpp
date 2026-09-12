@@ -19,8 +19,7 @@ namespace enzo::utils {
 namespace {
 
 // Backend neutral intermediate. A soup of result triangles whose vertices live
-// in a single shared position list and whose source faces are tagged. Both
-// Manifold and a future CGAL clip backend can produce this shape.
+// in a single shared position list and whose source faces are tagged.
 struct SourceFace
 {
     enum class Side

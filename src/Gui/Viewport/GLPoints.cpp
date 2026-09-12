@@ -10,7 +10,6 @@
 #include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "icecream.hpp"
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 #include <tbb/blocked_range.h>

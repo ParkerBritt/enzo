@@ -20,9 +20,6 @@
     },
     {
       "name": "boost-system"
-    },
-    {
-      "name": "cgal"
     }
   ]
 }

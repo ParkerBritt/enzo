@@ -11,7 +11,6 @@
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Primitives/Mesh.h"
 #include "icecream.hpp"
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <iostream>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>

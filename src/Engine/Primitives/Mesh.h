@@ -1,21 +1,10 @@
 #pragma once
 #include "Engine/Primitives/Primitive.h"
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <span>
 #include <tbb/spin_mutex.h>
 #include <unordered_set>
 
 namespace enzo::geo {
-using Kernel = CGAL::Simple_cartesian<double>;
-using Point = Kernel::Point_3;
-using Vector = Kernel::Vector_3;
-using HeMesh = CGAL::Surface_mesh<Point>;
-using vertexDescriptor = HeMesh::Vertex_index;
-using faceDescriptor = HeMesh::Face_index;
-using V_index = HeMesh::Vertex_index;
-using F_index = HeMesh::Face_index;
-
 class Mesh;
 class FaceNormalHandle;
 class VertexNormalHandle;
@@ -115,8 +104,6 @@ class Mesh : public Primitive
     void defragment() override;
 
     void merge(Mesh& other);
-
-    HeMesh computeHalfEdgeMesh();
 
     std::unordered_set<Offset>::const_iterator soloPointsBegin() const;
     std::unordered_set<Offset>::const_iterator soloPointsEnd() const;
