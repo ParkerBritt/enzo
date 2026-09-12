@@ -108,6 +108,21 @@ jobs:
             -DENZO_SUPERBUILD=ON
           cmake --build build-super
 
+      # Starting the installed app is the only check that covers the deployed
+      # tree, where the libraries, plugins and qml modules sit apart from the
+      # build directory they were compiled in.
+      - name: Smoke test
+        shell: pwsh
+        run: |
+          cmake --install build-super/enzo-build --prefix "$PWD/stage"
+          $env:QT_DEBUG_PLUGINS = "1"
+          $app = Start-Process "$PWD/stage/enzo/bin/enzoGui.exe" -PassThru -NoNewWindow `
+            -RedirectStandardOutput smoke-out.txt -RedirectStandardError smoke-err.txt
+          Start-Sleep -Seconds 60
+          if (-not $app.HasExited) { $app.Kill(); Get-Content smoke-out.txt, smoke-err.txt; exit 0 }
+          Get-Content smoke-out.txt, smoke-err.txt
+          throw "enzoGui exited on startup with $($app.ExitCode)"
+
       - name: Package
         shell: cmd
         run: |
