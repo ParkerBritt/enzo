@@ -104,7 +104,7 @@ jobs:
         shell: cmd
         run: |
           cmake -S . -B build-super -G Ninja ^
-            -DCMAKE_BUILD_TYPE=Release ^
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
             -DENZO_SUPERBUILD=ON
           cmake --build build-super
 
@@ -115,12 +115,27 @@ jobs:
         timeout-minutes: 15
         run: |
           cmake --install build-super/enzo-build --prefix "$PWD/stage"
-          $env:QT_DEBUG_PLUGINS = "1"
-          $app = Start-Process "$PWD/stage/enzo/bin/enzoGui.exe" -PassThru -NoNewWindow `
+          $exe = "$PWD/stage/enzo/bin/enzoGui.exe"
+
+          # A runner has no console window, so Qt writes its messages to the
+          # debugger rather than stderr unless it is told otherwise.
+          $env:QT_FORCE_STDERR_LOGGING = "1"
+
+          $app = Start-Process $exe -PassThru -NoNewWindow `
             -RedirectStandardOutput smoke-out.txt -RedirectStandardError smoke-err.txt
           Start-Sleep -Seconds 60
           if (-not $app.HasExited) { $app.Kill(); Get-Content smoke-out.txt, smoke-err.txt; exit 0 }
           Get-Content smoke-out.txt, smoke-err.txt
+
+          # Page heap puts an unmapped page after every allocation, so the
+          # second run faults where the memory is written rather than later.
+          $debuggers = "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64"
+          if (Test-Path "$debuggers/cdb.exe") {
+            & "$debuggers/gflags.exe" /p /enable enzoGui.exe /full
+            $env:_NT_SYMBOL_PATH = "$PWD/build-super/enzo-build/enzo/bin"
+            & "$debuggers/cdb.exe" -g -G -c ".lastevent; kb; q" $exe
+            & "$debuggers/gflags.exe" /p /disable enzoGui.exe
+          }
           throw "enzoGui exited on startup with $($app.ExitCode)"
 
       - name: Package
