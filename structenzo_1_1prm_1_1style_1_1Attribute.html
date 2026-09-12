@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::prm::style::RangeCircle Struct Reference</title>
+<title>Enzo: enzo::prm::style::Attribute Struct Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>prm</b></li><li class="navelem"><b>style</b></li><li class="navelem"><a class="el" href="structenzo_1_1prm_1_1style_1_1RangeCircle.html">RangeCircle</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>prm</b></li><li class="navelem"><b>style</b></li><li class="navelem"><a class="el" href="structenzo_1_1prm_1_1style_1_1Attribute.html">Attribute</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -95,50 +95,52 @@ $(function(){ initResizable(false); });
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structenzo_1_1prm_1_1style_1_1RangeCircle-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::prm::style::RangeCircle Struct Reference</div></div>
+<a href="structenzo_1_1prm_1_1style_1_1Attribute-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::prm::style::Attribute Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a747e0f7f901ec23e5141d28ba3e77737" id="r_a747e0f7f901ec23e5141d28ba3e77737"><td class="memItemLeft" align="right" valign="top"><a id="a747e0f7f901ec23e5141d28ba3e77737" name="a747e0f7f901ec23e5141d28ba3e77737"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Option</b> { <b>ORDERED</b>
-, <b>CAPTION</b>
+<tr class="memitem:a26565fcb504ce3cdfc13e899f2fa6832" id="r_a26565fcb504ce3cdfc13e899f2fa6832"><td class="memItemLeft" align="right" valign="top"><a id="a26565fcb504ce3cdfc13e899f2fa6832" name="a26565fcb504ce3cdfc13e899f2fa6832"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Option</b> { <b>OWNERS</b>
+, <b>ATTRIBUTE_TYPES</b>
  }</td></tr>
-<tr class="separator:a747e0f7f901ec23e5141d28ba3e77737"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a26565fcb504ce3cdfc13e899f2fa6832"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a500f1045237762c1477b1827bcb69e66" id="r_a500f1045237762c1477b1827bcb69e66"><td class="memItemLeft" align="right" valign="top"><a id="a500f1045237762c1477b1827bcb69e66" name="a500f1045237762c1477b1827bcb69e66"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>ordered</b> () const</td></tr>
-<tr class="separator:a500f1045237762c1477b1827bcb69e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6ec1d2a3b2ece9b3cfa0b650ffcad6e" id="r_ab6ec1d2a3b2ece9b3cfa0b650ffcad6e"><td class="memItemLeft" align="right" valign="top"><a id="ab6ec1d2a3b2ece9b3cfa0b650ffcad6e" name="ab6ec1d2a3b2ece9b3cfa0b650ffcad6e"></a>
-String&#160;</td><td class="memItemRight" valign="bottom"><b>caption</b> () const</td></tr>
-<tr class="separator:ab6ec1d2a3b2ece9b3cfa0b650ffcad6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7afcbd6124485dd6403392c0a318a5f0" id="r_a7afcbd6124485dd6403392c0a318a5f0"><td class="memItemLeft" align="right" valign="top"><a id="a7afcbd6124485dd6403392c0a318a5f0" name="a7afcbd6124485dd6403392c0a318a5f0"></a>
+String&#160;</td><td class="memItemRight" valign="bottom"><b>owners</b> () const</td></tr>
+<tr class="memdesc:a7afcbd6124485dd6403392c0a318a5f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parts of the geometry the attributes come from, e.g. "point vertex". <br /></td></tr>
+<tr class="separator:a7afcbd6124485dd6403392c0a318a5f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a0d916b2cdec798243bbe048faec4d7" id="r_a1a0d916b2cdec798243bbe048faec4d7"><td class="memItemLeft" align="right" valign="top"><a id="a1a0d916b2cdec798243bbe048faec4d7" name="a1a0d916b2cdec798243bbe048faec4d7"></a>
+String&#160;</td><td class="memItemRight" valign="bottom"><b>attributeTypes</b> () const</td></tr>
+<tr class="memdesc:a1a0d916b2cdec798243bbe048faec4d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value types the attributes can hold, e.g. "float vector". <br /></td></tr>
+<tr class="separator:a1a0d916b2cdec798243bbe048faec4d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a34b70f6837a41daca37cac29aca35bea" id="r_a34b70f6837a41daca37cac29aca35bea"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34b70f6837a41daca37cac29aca35bea">options</a></td></tr>
-<tr class="separator:a34b70f6837a41daca37cac29aca35bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae26515ee02c3efa4adc65ba8fab61f69" id="r_ae26515ee02c3efa4adc65ba8fab61f69"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae26515ee02c3efa4adc65ba8fab61f69">options</a></td></tr>
+<tr class="separator:ae26515ee02c3efa4adc65ba8fab61f69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a34b70f6837a41daca37cac29aca35bea" name="a34b70f6837a41daca37cac29aca35bea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34b70f6837a41daca37cac29aca35bea">&#9670;&#160;</a></span>options</h2>
+<a id="ae26515ee02c3efa4adc65ba8fab61f69" name="ae26515ee02c3efa4adc65ba8fab61f69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae26515ee02c3efa4adc65ba8fab61f69">&#9670;&#160;</a></span>options</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a>&gt; &gt; enzo::prm::style::RangeCircle::options</td>
+          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classenzo_1_1prm_1_1Parameter.html">prm::Parameter</a>&gt; &gt; enzo::prm::style::Attribute::options</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
 <div class="line">        std::make_shared&lt;prm::Parameter&gt;(</div>
-<div class="line">            Template(Type::BOOL, Name(<span class="stringliteral">&quot;ordered&quot;</span>, <span class="stringliteral">&quot;Ordered&quot;</span>), Default(<span class="keyword">false</span>))</div>
+<div class="line">            Template(Type::STRING, Name(<span class="stringliteral">&quot;owners&quot;</span>, <span class="stringliteral">&quot;Owners&quot;</span>), Default(<span class="stringliteral">&quot;all&quot;</span>))</div>
 <div class="line">        ),</div>
 <div class="line">        std::make_shared&lt;prm::Parameter&gt;(</div>
-<div class="line">            Template(Type::STRING, Name(<span class="stringliteral">&quot;caption&quot;</span>, <span class="stringliteral">&quot;Caption&quot;</span>), Default(<span class="stringliteral">&quot;&quot;</span>))</div>
+<div class="line">            Template(Type::STRING, Name(<span class="stringliteral">&quot;attributeTypes&quot;</span>, <span class="stringliteral">&quot;Attribute Types&quot;</span>), Default(<span class="stringliteral">&quot;all&quot;</span>))</div>
 <div class="line">        ),</div>
 <div class="line">    }</div>
 </div><!-- fragment -->

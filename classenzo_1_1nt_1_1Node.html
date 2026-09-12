@@ -143,6 +143,9 @@ std::vector&lt; std::weak_ptr&lt; <a class="el" href="classenzo_1_1prm_1_1NodePa
 <tr class="memitem:ab6a2bfe28f00de06ab502a4830787fc3" id="r_ab6a2bfe28f00de06ab502a4830787fc3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6a2bfe28f00de06ab502a4830787fc3">isParameterHidden</a> (std::string_view parmName)</td></tr>
 <tr class="memdesc:ab6a2bfe28f00de06ab502a4830787fc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the named parameter's hide condition currently hides it.  <br /></td></tr>
 <tr class="separator:ab6a2bfe28f00de06ab502a4830787fc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b5c5815abf1d7706bc2ec27666ee641" id="r_a9b5c5815abf1d7706bc2ec27666ee641"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b5c5815abf1d7706bc2ec27666ee641">getReferencedValue</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a9b5c5815abf1d7706bc2ec27666ee641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value text written as prm(name) reads from that parameter, or the text itself when it names no parameter.  <br /></td></tr>
+<tr class="separator:a9b5c5815abf1d7706bc2ec27666ee641"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ef93fc27d29a8f533f8a8fafd936337" id="r_a2ef93fc27d29a8f533f8a8fafd936337"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ef93fc27d29a8f533f8a8fafd936337">getTemplates</a> () const</td></tr>
 <tr class="memdesc:a2ef93fc27d29a8f533f8a8fafd936337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the template tree declared by this node's type.  <br /></td></tr>
 <tr class="separator:a2ef93fc27d29a8f533f8a8fafd936337"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -338,6 +341,26 @@ boost::signals2::signal&lt; void(const std::string &amp;parmName)&gt;&#160;</td>
 
 <p>Returns a parameter with the given name belonging to this node. </p>
 <dl class="section return"><dt>Returns</dt><dd>Empty default constructed std::weak_ptr&lt;prm::Parameter&gt;() if no parameter of that name exists. </dd></dl>
+
+</div>
+</div>
+<a id="a9b5c5815abf1d7706bc2ec27666ee641" name="a9b5c5815abf1d7706bc2ec27666ee641"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b5c5815abf1d7706bc2ec27666ee641">&#9670;&#160;</a></span>getReferencedValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::string &gt; enzo::nt::Node::getReferencedValue </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the value text written as prm(name) reads from that parameter, or the text itself when it names no parameter. </p>
+<dl class="section return"><dt>Returns</dt><dd>Nothing when the text names a parameter this node does not have. </dd></dl>
 
 </div>
 </div>

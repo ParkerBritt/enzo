@@ -107,6 +107,8 @@ $(function(){ initResizable(false); });
 <code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div>
 <p><a href="Types_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -219,6 +221,28 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aa45841427fe0f79c22512a0d5a059f25" id="r_aa45841427fe0f79c22512a0d5a059f25"><td class="memItemLeft" align="right" valign="top"><a id="aa45841427fe0f79c22512a0d5a059f25" name="aa45841427fe0f79c22512a0d5a059f25"></a>
+std::vector&lt; <a class="el" href="#ab7dcfb86b7eac8d93e460f34bc678303">AttributeOwner</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::attr::getAllOwners</b> ()</td></tr>
+<tr class="memdesc:aa45841427fe0f79c22512a0d5a059f25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every part of the geometry that can own an attribute. <br /></td></tr>
+<tr class="separator:aa45841427fe0f79c22512a0d5a059f25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dd18968d62c32dad4f34cfa525adc63" id="r_a6dd18968d62c32dad4f34cfa525adc63"><td class="memItemLeft" align="right" valign="top"><a id="a6dd18968d62c32dad4f34cfa525adc63" name="a6dd18968d62c32dad4f34cfa525adc63"></a>
+std::vector&lt; <a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::attr::getAllTypes</b> ()</td></tr>
+<tr class="memdesc:a6dd18968d62c32dad4f34cfa525adc63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every type an attribute can store. <br /></td></tr>
+<tr class="separator:a6dd18968d62c32dad4f34cfa525adc63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34d77beea9393d65a26e200d5ca795e5" id="r_a34d77beea9393d65a26e200d5ca795e5"><td class="memItemLeft" align="right" valign="top"><a id="a34d77beea9393d65a26e200d5ca795e5" name="a34d77beea9393d65a26e200d5ca795e5"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::attr::getOwnerName</b> (<a class="el" href="#ab7dcfb86b7eac8d93e460f34bc678303">AttributeOwner</a> owner)</td></tr>
+<tr class="memdesc:a34d77beea9393d65a26e200d5ca795e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of a part of the geometry, e.g. "point". <br /></td></tr>
+<tr class="separator:a34d77beea9393d65a26e200d5ca795e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af20e38dee60c8a99ae8dd4d28554c8d3" id="r_af20e38dee60c8a99ae8dd4d28554c8d3"><td class="memItemLeft" align="right" valign="top"><a id="af20e38dee60c8a99ae8dd4d28554c8d3" name="af20e38dee60c8a99ae8dd4d28554c8d3"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::attr::getTypeName</b> (<a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> type)</td></tr>
+<tr class="memdesc:af20e38dee60c8a99ae8dd4d28554c8d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of a type an attribute can store, e.g. "vector". <br /></td></tr>
+<tr class="separator:af20e38dee60c8a99ae8dd4d28554c8d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb23b24839cd7c1721663bcb944907e8" id="r_afb23b24839cd7c1721663bcb944907e8"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="#ab7dcfb86b7eac8d93e460f34bc678303">AttributeOwner</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb23b24839cd7c1721663bcb944907e8">enzo::attr::getOwner</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:afb23b24839cd7c1721663bcb944907e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the part of the geometry a name stands for, e.g. "point".  <br /></td></tr>
+<tr class="separator:afb23b24839cd7c1721663bcb944907e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad08c5e997b4cc57146870476ad548951" id="r_ad08c5e997b4cc57146870476ad548951"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad08c5e997b4cc57146870476ad548951">enzo::attr::getType</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:ad08c5e997b4cc57146870476ad548951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type a name stands for, e.g. "vector".  <br /></td></tr>
+<tr class="separator:ad08c5e997b4cc57146870476ad548951"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a352e52d0ef8c329f1af7d2401d033793" id="r_a352e52d0ef8c329f1af7d2401d033793"><td class="memItemLeft" align="right" valign="top"><a id="a352e52d0ef8c329f1af7d2401d033793" name="a352e52d0ef8c329f1af7d2401d033793"></a>
 TransformClass&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::operator|</b> (TransformClass a, TransformClass b)</td></tr>
 <tr class="separator:a352e52d0ef8c329f1af7d2401d033793"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,6 +252,11 @@ TransformClass&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::opera
 <tr class="memitem:a94c2fcec321fede5aa7a6861682d9964" id="r_a94c2fcec321fede5aa7a6861682d9964"><td class="memItemLeft" align="right" valign="top"><a id="a94c2fcec321fede5aa7a6861682d9964" name="a94c2fcec321fede5aa7a6861682d9964"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::hasFlag</b> (TransformClass value, TransformClass flag)</td></tr>
 <tr class="separator:a94c2fcec321fede5aa7a6861682d9964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f01d7c52589a829ea43fe104e06dca4" id="r_a5f01d7c52589a829ea43fe104e06dca4"><td class="memTemplParams" colspan="2"><a id="a5f01d7c52589a829ea43fe104e06dca4" name="a5f01d7c52589a829ea43fe104e06dca4"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a5f01d7c52589a829ea43fe104e06dca4"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><b>enzo::attr::getAttributeType</b> ()</td></tr>
+<tr class="memdesc:a5f01d7c52589a829ea43fe104e06dca4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute type that stores values of the given C++ type. <br /></td></tr>
+<tr class="separator:a5f01d7c52589a829ea43fe104e06dca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa747b7a013ecc2df775727846306bb4b" id="r_aa747b7a013ecc2df775727846306bb4b"><td class="memItemLeft" align="right" valign="top"><a id="aa747b7a013ecc2df775727846306bb4b" name="aa747b7a013ecc2df775727846306bb4b"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toString</b> (Type type)</td></tr>
 <tr class="memdesc:aa747b7a013ecc2df775727846306bb4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lowercase canonical name of a parameter type, e.g. "dropdown". <br /></td></tr>
@@ -344,6 +373,62 @@ constexpr <a class="el" href="#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#16
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="afb23b24839cd7c1721663bcb944907e8" name="afb23b24839cd7c1721663bcb944907e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb23b24839cd7c1721663bcb944907e8">&#9670;&#160;</a></span>getOwner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; AttributeOwner &gt; enzo::attr::getOwner </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the part of the geometry a name stands for, e.g. "point". </p>
+<dl class="section return"><dt>Returns</dt><dd>The owner, or empty when nothing owns attributes under that name. </dd></dl>
+
+</div>
+</div>
+<a id="ad08c5e997b4cc57146870476ad548951" name="ad08c5e997b4cc57146870476ad548951"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad08c5e997b4cc57146870476ad548951">&#9670;&#160;</a></span>getType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; AttributeType &gt; enzo::attr::getType </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the type a name stands for, e.g. "vector". </p>
+<dl class="section return"><dt>Returns</dt><dd>The type, or empty when no type goes by that name. </dd></dl>
+
+</div>
+</div>
 <a id="aee1c0fcff4b265e7ca4e8ee24795fee8" name="aee1c0fcff4b265e7ca4e8ee24795fee8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee1c0fcff4b265e7ca4e8ee24795fee8">&#9670;&#160;</a></span>toType()</h2>
 

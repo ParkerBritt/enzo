@@ -156,6 +156,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ad21d035014213d23d9193c6c2fdf697a" id="r_ad21d035014213d23d9193c6c2fdf697a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classenzo_1_1Transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad21d035014213d23d9193c6c2fdf697a">lookAt</a> (const Vector3 &amp;translation, const Vector3 &amp;forward, const Vector3 &amp;up)</td></tr>
 <tr class="memdesc:ad21d035014213d23d9193c6c2fdf697a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds an orientation frame that points down a forward axis.  <br /></td></tr>
 <tr class="separator:ad21d035014213d23d9193c6c2fdf697a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76df2ff15ce9839d9b69a7039f4d6c69" id="r_a76df2ff15ce9839d9b69a7039f4d6c69"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classenzo_1_1Transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76df2ff15ce9839d9b69a7039f4d6c69">fromComponents</a> (const Vector3 &amp;translation, const Vector3 &amp;rotationDegrees, const Vector3 &amp;<a class="el" href="#a3d02aa3a6ebeaf7e3b50525356a63579">scale</a>, TransformOrder order=TransformOrder::SRT)</td></tr>
+<tr class="memdesc:a76df2ff15ce9839d9b69a7039f4d6c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a transform from a translation, a rotation, and a scale.  <br /></td></tr>
+<tr class="separator:a76df2ff15ce9839d9b69a7039f4d6c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An affine transform that composes translation, rotation, and scale. </p>
@@ -192,6 +195,49 @@ Static Public Member Functions</h2></td></tr>
 <p>Reads a transform from a single attribute value. </p>
 <dl class="section return"><dt>Returns</dt><dd>The transform encoded at the given offset.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>A vector attribute becomes a translation. A matrix attribute is used directly. Any other type yields the identity. </dd></dl>
+
+</div>
+</div>
+<a id="a76df2ff15ce9839d9b69a7039f4d6c69" name="a76df2ff15ce9839d9b69a7039f4d6c69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76df2ff15ce9839d9b69a7039f4d6c69">&#9670;&#160;</a></span>fromComponents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1Transform.html">Transform</a> enzo::Transform::fromComponents </td>
+          <td>(</td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>translation</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>rotationDegrees</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Vector3 &amp;</td>          <td class="paramname"><span class="paramname"><em>scale</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TransformOrder</td>          <td class="paramname"><span class="paramname"><em>order</em></span><span class="paramdefsep"> = </span><span class="paramdefval">TransformOrder::SRT</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Builds a transform from a translation, a rotation, and a scale. </p>
+<dl class="section return"><dt>Returns</dt><dd>The three combined so a point passes through them in the given order.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The rotation is given in degrees. </dd></dl>
 
 </div>
 </div>

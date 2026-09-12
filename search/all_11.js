@@ -19,6 +19,9 @@ var searchData=
   ['setvalue_16',['setValue',['../classenzo_1_1attr_1_1AttributeHandle.html#aa18502cec545a116e244d7fdb0e7248e',1,'enzo::attr::AttributeHandle']]],
   ['size_17',['size',['../classenzo_1_1util_1_1UnionFind.html#aa09880043a521510c7a91af1400a809a',1,'enzo::util::UnionFind']]],
   ['split_18',['split',['../classenzo_1_1Path.html#ac784d68cf05d0ea2cce4f07dbd9b1f91',1,'enzo::Path']]],
-  ['strip_19',['strip',['../classenzo_1_1Path.html#a353ae9138a08a9ad053eab44b8c21fbb',1,'enzo::Path']]],
-  ['submitexpressiondependencies_5f_20',['submitExpressionDependencies_',['../classenzo_1_1prm_1_1NodeParameter.html#a4fba1a7b014332990891213e396ae2bf',1,'enzo::prm::NodeParameter::submitExpressionDependencies_()'],['../classenzo_1_1prm_1_1Parameter.html#ab8aef2a691483f88c02861267c9af12b',1,'enzo::prm::Parameter::submitExpressionDependencies_()']]]
+  ['splitnames_19',['splitNames',['../StyleAccess_8h.html#a0c79a16e9b44093efc72a887e3b3c017',1,'enzo::prm::style']]],
+  ['strip_20',['strip',['../classenzo_1_1Path.html#a353ae9138a08a9ad053eab44b8c21fbb',1,'enzo::Path']]],
+  ['styleaccess_2eh_21',['StyleAccess.h',['../StyleAccess_8h.html',1,'']]],
+  ['styles_2eh_22',['Styles.h',['../Styles_8h.html',1,'']]],
+  ['submitexpressiondependencies_5f_23',['submitExpressionDependencies_',['../classenzo_1_1prm_1_1NodeParameter.html#a4fba1a7b014332990891213e396ae2bf',1,'enzo::prm::NodeParameter::submitExpressionDependencies_()'],['../classenzo_1_1prm_1_1Parameter.html#ab8aef2a691483f88c02861267c9af12b',1,'enzo::prm::Parameter::submitExpressionDependencies_()']]]
 ];

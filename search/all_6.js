@@ -9,6 +9,7 @@ var searchData=
   ['findparameter_6',['findParameter',['../classenzo_1_1nt_1_1Network.html#ad63e8304b4a5cecd527378ac2e67d220',1,'enzo::nt::Network::findParameter()'],['../classenzo_1_1nt_1_1NetworkManager.html#aedb1092aeb72e082879846f0a0da5633',1,'enzo::nt::NetworkManager::findParameter()']]],
   ['folder_7',['folder',['../structenzo_1_1nt_1_1NodeType.html#a1eaf802db4da115c6b0fb48a6b03d4da',1,'enzo::nt::NodeType']]],
   ['fromattribute_8',['fromAttribute',['../classenzo_1_1Transform.html#af513ee688eb338cfc2e42f9dcf8fcdcc',1,'enzo::Transform']]],
-  ['fromgroup_9',['fromGroup',['../classenzo_1_1SelectionComponent.html#ad2507969d282b9bd24afae9250156fea',1,'enzo::SelectionComponent']]],
-  ['fromstring_10',['fromString',['../classenzo_1_1SelectionComponent.html#aae86cf1a6c2adf8a35ddf25b83570e39',1,'enzo::SelectionComponent']]]
+  ['fromcomponents_9',['fromComponents',['../classenzo_1_1Transform.html#a76df2ff15ce9839d9b69a7039f4d6c69',1,'enzo::Transform']]],
+  ['fromgroup_10',['fromGroup',['../classenzo_1_1SelectionComponent.html#ad2507969d282b9bd24afae9250156fea',1,'enzo::SelectionComponent']]],
+  ['fromstring_11',['fromString',['../classenzo_1_1SelectionComponent.html#aae86cf1a6c2adf8a35ddf25b83570e39',1,'enzo::SelectionComponent']]]
 ];

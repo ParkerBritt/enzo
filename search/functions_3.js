@@ -14,12 +14,7 @@ var searchData=
   ['connectnodes_11',['connectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af91834ebedabd29c46231ae35eff879e',1,'enzo::nt::NetworkManager']]],
   ['cook_12',['cook',['../classenzo_1_1nt_1_1NetworkManager.html#a2df671a62df60d8df53c0bed27c460cd',1,'enzo::nt::NetworkManager::cook()'],['../classenzo_1_1nt_1_1Node.html#aade8c1436ef4ba6c7fd5239ef3d06c9f',1,'enzo::nt::Node::cook()'],['../classenzo_1_1nt_1_1NodeImpl.html#a65d99c57095048a57d9d50ee31d1209e',1,'enzo::nt::NodeImpl::cook()']]],
   ['cookoutput_13',['cookOutput',['../classenzo_1_1nt_1_1NetworkManager.html#a694b54104642d1085960f61f5e32c2ee',1,'enzo::nt::NetworkManager']]],
-  ['createfacegroup_14',['createFaceGroup',['../classenzo_1_1geo_1_1Mesh.html#ae93ba17be0397a40da83fa3c3ce541d6',1,'enzo::geo::Mesh']]],
-  ['creategroup_15',['createGroup',['../classenzo_1_1geo_1_1Primitive.html#a87edbc57ed5616a1ba342311cf4b35e6',1,'enzo::geo::Primitive']]],
-  ['createnode_16',['createNode',['../classenzo_1_1nt_1_1Network.html#a60964cae9ed4a804585b3399bde00a60',1,'enzo::nt::Network::createNode()'],['../classenzo_1_1nt_1_1NetworkManager.html#a9ec491b50ad7c1aea9d1384df63e2fbf',1,'enzo::nt::NetworkManager::createNode(const nt::NodeType &amp;nodeType, const Path &amp;parent=Path(&quot;/&quot;), const std::string &amp;name=&quot;&quot;, Vector2 position={0.f, 0.f})']]],
-  ['createnodewithid_17',['createNodeWithId',['../classenzo_1_1nt_1_1NetworkManager.html#aa7cee9ee6653e1b4c577af2d036ddf42',1,'enzo::nt::NetworkManager']]],
-  ['createpointgroup_18',['createPointGroup',['../classenzo_1_1geo_1_1Primitive.html#ae0358ab001a1b4718175bd132ddc4c3b',1,'enzo::geo::Primitive']]],
-  ['createprimitivegroup_19',['createPrimitiveGroup',['../classenzo_1_1geo_1_1Primitive.html#a279f43beae9983e6c7c80b65bbcc85ce',1,'enzo::geo::Primitive']]],
-  ['createvertexgroup_20',['createVertexGroup',['../classenzo_1_1geo_1_1Mesh.html#aa9768b0fdb4fcbf738e3ab99ceb6e45e',1,'enzo::geo::Mesh']]],
-  ['currentnode_21',['currentNode',['../classenzo_1_1expr_1_1ExpressionContext.html#af9376c02ce76d1d790d745bc7e8881eb',1,'enzo::expr::ExpressionContext']]]
+  ['createnode_14',['createNode',['../classenzo_1_1nt_1_1Network.html#a60964cae9ed4a804585b3399bde00a60',1,'enzo::nt::Network::createNode()'],['../classenzo_1_1nt_1_1NetworkManager.html#a9ec491b50ad7c1aea9d1384df63e2fbf',1,'enzo::nt::NetworkManager::createNode(const nt::NodeType &amp;nodeType, const Path &amp;parent=Path(&quot;/&quot;), const std::string &amp;name=&quot;&quot;, Vector2 position={0.f, 0.f})']]],
+  ['createnodewithid_15',['createNodeWithId',['../classenzo_1_1nt_1_1NetworkManager.html#aa7cee9ee6653e1b4c577af2d036ddf42',1,'enzo::nt::NetworkManager']]],
+  ['currentnode_16',['currentNode',['../classenzo_1_1expr_1_1ExpressionContext.html#af9376c02ce76d1d790d745bc7e8881eb',1,'enzo::expr::ExpressionContext']]]
 ];
