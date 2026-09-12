@@ -17,6 +17,7 @@ target_link_libraries(${libName} PRIVATE enzoEngine Boost::filesystem Boost::sys
 
 # packaging
 install(TARGETS ${libName}
+    RUNTIME_DEPENDENCY_SET enzoRuntime
     RUNTIME DESTINATION ${ENZO_LIB_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
