@@ -147,11 +147,16 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 
 # daslang is built without RTTI, so the files that subclass its types match it.
 # Otherwise their typeinfo references daslang symbols that were never emitted.
-set_source_files_properties(
-    src/Engine/Expression/DasRuntime.cpp
-    src/Engine/Expression/ParameterFunctions.cpp
-    PROPERTIES COMPILE_OPTIONS "$<IF:$<CXX_COMPILER_ID:MSVC>,/GR-,-fno-rtti>"
-)
+# MSVC writes the full descriptor for a derived class into the file that
+# defines it, and turning RTTI off for part of a target trips the link time
+# check Boost.TypeIndex plants in every object.
+if(NOT MSVC)
+    set_source_files_properties(
+        src/Engine/Expression/DasRuntime.cpp
+        src/Engine/Expression/ParameterFunctions.cpp
+        PROPERTIES COMPILE_OPTIONS "-fno-rtti"
+    )
+endif()
 
 # The engine is a self contained library with no knowledge of the ui or the
 # operator plugins. The ui executable and the plugins both link against it, so
