@@ -91,7 +91,7 @@ class ParameterItem : public QObject
 
     QString style() const { return style_; }
 
-    /// @brief The settings the style was given in node.yaml, keyed by name.
+    /// @brief The options the style was given in node.yaml, keyed by name.
     QVariantMap styleOptions() const { return styleOptions_; }
 
     bool enabled() const { return enabled_; }

@@ -2,6 +2,7 @@
 #include "Engine/Network/CookContext.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Parameter/StyleAccess.h"
 #include "Engine/Parameter/Template.h"
 #include "Engine/Primitives/Primitive.h"
 #include "icecream.hpp"
@@ -180,6 +181,17 @@ bool nt::Node::isParameterHidden(std::string_view parmName)
 
     // Hidden only while its hide comparison is true.
     return isComparisonTrue(parameter.lock()->getTemplate().getHideCondition());
+}
+
+std::optional<std::string> nt::Node::getReferencedValue(const std::string& text)
+{
+    const std::optional<std::string> name = prm::style::getReferencedParameterName(text);
+    if (!name) return text;
+
+    const std::weak_ptr<prm::NodeParameter> referenced = getParameter(*name);
+    if (referenced.expired()) return std::nullopt;
+
+    return referenced.lock()->evalString();
 }
 
 std::vector<std::weak_ptr<prm::NodeParameter>> nt::Node::getParameters()

@@ -6,6 +6,8 @@
 #include "Engine/Network/NodeType.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include <memory>
+#include <optional>
+#include <string>
 
 namespace enzo::nt {
 /**
@@ -68,6 +70,11 @@ class Node
     /// @brief Whether the named parameter's hide condition currently hides it.
     /// @return True only when the condition is present and met.
     bool isParameterHidden(std::string_view parmName);
+
+    /// @brief Returns the value text written as prm(name) reads from that
+    /// parameter, or the text itself when it names no parameter.
+    /// @return Nothing when the text names a parameter this node does not have.
+    std::optional<std::string> getReferencedValue(const std::string& text);
 
     /// @brief Returns the template tree declared by this node's type.
     /// @returns Top level templates. Group templates contain child templates recursively.

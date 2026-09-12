@@ -42,6 +42,6 @@ parameters:
     default: Normal
     style: attribute
     styleOptions:
-      owners: point vertex
+      owners: prm(attachTo)
       attributeTypes: vector
     tooltip: The name to write the normals under.

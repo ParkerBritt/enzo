@@ -62,7 +62,7 @@ parameters:
     default: 1
     range: {min: 0, max: 10, minLocked: true}
     tooltip: >
-      The radius at the top end and at the bottom end. Setting one of them to
+      The radius at the top end and at the bottom end. Option one of them to
       zero gives a cone.
 
   - name: uniformRadius

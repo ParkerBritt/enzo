@@ -1,4 +1,4 @@
-#include "Engine/Parameter/Styles.h"
+#include "Engine/Parameter/StyleAccess.h"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace enzo;
@@ -39,4 +39,15 @@ TEST_CASE("The attribute type name all stands for every type")
 TEST_CASE("An unknown attribute type name is rejected")
 {
     REQUIRE_THROWS_AS(prm::style::parseAttributeTypes("quaternion"), std::runtime_error);
+}
+
+TEST_CASE("A option written as a call names the parameter it reads")
+{
+    REQUIRE(prm::style::getReferencedParameterName("prm(attachTo)") == "attachTo");
+}
+
+TEST_CASE("A option written as a literal reads no parameter")
+{
+    REQUIRE_FALSE(prm::style::getReferencedParameterName("point vertex").has_value());
+    REQUIRE_FALSE(prm::style::getReferencedParameterName("all").has_value());
 }

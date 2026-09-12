@@ -93,28 +93,28 @@ prm::Direction readDirection(const YAML::Node& direction)
     throw std::runtime_error("unknown direction " + text);
 }
 
-// Writes one styleOptions entry onto the style setting it names.
-void readStyleOption(prm::Parameter& setting, const YAML::Node& value)
+// Writes a value from node.yaml onto a style option.
+void readStyleOption(prm::Parameter& option, const YAML::Node& value)
 {
-    const prm::Default parsed = readDefault(value, setting.getValueType());
+    const prm::Default parsed = readDefault(value, option.getValueType());
 
-    switch (setting.getValueType())
+    switch (option.getValueType())
     {
     case prm::ValueType::String:
-        setting.setString(parsed.getString());
+        option.setString(parsed.getString());
         return;
     case prm::ValueType::Int:
-        setting.setInt(parsed.getInt());
+        option.setInt(parsed.getInt());
         return;
     case prm::ValueType::Float:
-        setting.setFloat(parsed.getFloat());
+        option.setFloat(parsed.getFloat());
         return;
     }
 }
 
-// Attaches the style named in node.yaml and fills in the settings it exposes
-// from the styleOptions block. An unknown option or a value the style cannot
-// read throws.
+// Attaches the style named in node.yaml and fills in the options it exposes
+// from the styleOptions block. An unknown style or a option the style does not
+// have throws.
 void readStyle(prm::Template& parameter, const YAML::Node& style, const YAML::Node& styleOptions)
 {
     const std::string styleName = style.as<std::string>();
@@ -122,19 +122,17 @@ void readStyle(prm::Template& parameter, const YAML::Node& style, const YAML::No
 
     if (!styleOptions) return;
 
-    for (const auto& option : styleOptions)
+    for (const auto& entry : styleOptions)
     {
-        const std::string optionName = option.first.as<std::string>();
-        const std::shared_ptr<prm::Parameter> setting =
-            prm::style::getSetting(parameter.getStyle(), optionName);
+        const std::string optionName = entry.first.as<std::string>();
+        const std::shared_ptr<prm::Parameter> option =
+            prm::style::getOption(parameter.getStyle(), optionName);
 
-        if (!setting)
-            throw std::runtime_error("style " + styleName + " has no setting " + optionName);
+        if (!option)
+            throw std::runtime_error("style " + styleName + " has no option " + optionName);
 
-        readStyleOption(*setting, option.second);
+        readStyleOption(*option, entry.second);
     }
-
-    prm::style::validateSettings(parameter.getStyle());
 }
 
 // Reads the starting values of a multiparm, one list per field of its instance
@@ -210,6 +208,31 @@ std::vector<prm::Template> readParameters(const YAML::Node& parameters)
     return templates;
 }
 
+// Returns every parameter on the node, the ones nested in groups included.
+std::vector<const prm::Template*>
+getFlattenedParameters(const std::vector<prm::Template>& templates)
+{
+    std::vector<const prm::Template*> parameters;
+    for (const prm::Template& parameter : templates)
+    {
+        parameters.push_back(&parameter);
+
+        const std::vector<const prm::Template*> children =
+            getFlattenedParameters(parameter.getChildren());
+        parameters.insert(parameters.end(), children.begin(), children.end());
+    }
+    return parameters;
+}
+
+// Checks the style options of every parameter. A value a style cannot read, or
+// a missing parameter, throws.
+void validateStyles(const std::vector<prm::Template>& templates)
+{
+    const std::vector<const prm::Template*> parameters = getFlattenedParameters(templates);
+    for (const prm::Template* parameter : parameters)
+        prm::style::validateOptions(parameter->getStyle(), parameters);
+}
+
 NodeImplementation readImplementation(const YAML::Node& implementation, const std::string& nodeName)
 {
     if (!implementation) throw std::runtime_error("node " + nodeName + " has no implementation");
@@ -232,8 +255,8 @@ std::vector<InputPort> readInputPorts(const YAML::Node& inputs, const std::strin
         const bool followsAMultiInputPort = !parsed.empty() && parsed.back().multiInput;
         if (followsAMultiInputPort)
             throw std::runtime_error(
-                "node " + nodeName + " declares input " + parsed.back().label
-                + " as a multi input port but it is not the last port"
+                "node " + nodeName + " declares input " + parsed.back().label +
+                " as a multi input port but it is not the last port"
             );
 
         InputPort declared;
@@ -273,6 +296,7 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     nodeType.typeNamespace = requireString(document, "namespace", "node manifest");
     nodeType.displayName = readString(document, "label", nodeType.internalName);
     nodeType.templates = readParameters(document["parameters"]);
+    validateStyles(nodeType.templates);
     nodeType.tags = readTags(document["tags"]);
     nodeType.iconPath = readString(document, "icon");
     nodeType.docsPath = readString(document, "docs");

@@ -5,11 +5,10 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
-#include "Engine/Primitives/Primitive.h"
-#include "Engine/Parameter/StyleAccess.h"
-#include "Engine/Parameter/Styles.h"
 #include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Parameter/StyleAccess.h"
 #include "Engine/Parameter/Template.h"
+#include "Engine/Primitives/Primitive.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
 #include <algorithm>
 
@@ -18,43 +17,62 @@ namespace enzo::ui {
 namespace {
 
 /// @brief Whether the type carries a numeric range worth reading.
-bool hasRange(prm::Type type)
-{
-    return type == prm::Type::FLOAT || type == prm::Type::INT;
-}
+/// TODO: I'm not sure about this function. Should probably look at removing
+bool hasRange(prm::Type type) { return type == prm::Type::FLOAT || type == prm::Type::INT; }
 
-/// @brief Returns a style's settings as QML reads them, keyed by setting name.
+/// @brief Returns a style's options how QML reads them, keyed by option name.
 QVariantMap getStyleOptions(const std::any& style)
 {
-    QVariantMap options;
-    for (const std::shared_ptr<prm::Parameter>& setting : prm::style::settings(style))
+    QVariantMap values;
+    for (const std::shared_ptr<prm::Parameter>& option : prm::style::options(style))
     {
-        const QString settingName = QString::fromStdString(setting->getName());
-        switch (setting->getValueType())
+        const QString optionName = QString::fromStdString(option->getName());
+        switch (option->getValueType())
         {
         case prm::ValueType::Float:
-            options[settingName] = static_cast<double>(setting->evalFloat());
+            values[optionName] = static_cast<double>(option->evalFloat());
             break;
         case prm::ValueType::Int:
-            options[settingName] = setting->getType() == prm::Type::BOOL
-                                       ? QVariant(setting->evalInt() != 0)
-                                       : QVariant(static_cast<qlonglong>(setting->evalInt()));
+            values[optionName] = option->getType() == prm::Type::BOOL
+                                     ? QVariant(option->evalInt() != 0)
+                                     : QVariant(static_cast<qlonglong>(option->evalInt()));
             break;
         case prm::ValueType::String:
-            options[settingName] = QString::fromStdString(setting->evalString());
+            values[optionName] = QString::fromStdString(option->evalString());
             break;
         }
     }
-    return options;
+    return values;
+}
+
+/// @brief Returns the owners or types a style option names, reading the
+/// parameter it points at when it is written as prm(name).
+/// @note A option that reads back empty, or names an owner or type that does
+/// not exist, gives all of them.
+template <typename Parse>
+auto getStyleOptionValues(const std::string& optionText, nt::NodeId nodeId, Parse parseValue)
+{
+    const std::optional<std::string> text = nt::nm().getNode(nodeId).getReferencedValue(optionText);
+    if (!text || text->empty()) return parseValue("all");
+
+    try
+    {
+        return parseValue(*text);
+    }
+    catch (const std::runtime_error&)
+    {
+        return parseValue("all");
+    }
 }
 
 /// @brief Returns the attribute names in a packet the style accepts, sorted alphabetically.
 /// @note Private attributes stay out of the list.
-QStringList getAttributeNames(const NodePacket& packet, const prm::style::Attribute& style)
+QStringList getAttributeNames(
+    const NodePacket& packet,
+    const std::vector<attr::AttributeOwner>& owners,
+    const std::vector<attr::AttributeType>& types
+)
 {
-    const std::vector<attr::AttributeOwner> owners = style.getOwners();
-    const std::vector<attr::AttributeType> types = style.getTypes();
-
     QStringList names;
     const auto primitiveCount = static_cast<unsigned int>(packet.size());
     for (unsigned int primitiveIndex = 0; primitiveIndex < primitiveCount; ++primitiveIndex)
@@ -332,7 +350,16 @@ QStringList ParameterItem::attributeNames() const
         nt::nm().getNode(input->sourceNode).getOutputPacket(input->sourceOutput);
     if (!packet) return {};
 
-    return getAttributeNames(*packet, *attributeStyle_);
+    const nt::NodeId nodeId = param->getNodeId();
+    const std::vector<attr::AttributeOwner> owners =
+        getStyleOptionValues(attributeStyle_->owners(), nodeId, prm::style::parseOwners);
+    const std::vector<attr::AttributeType> types = getStyleOptionValues(
+        attributeStyle_->attributeTypes(),
+        nodeId,
+        prm::style::parseAttributeTypes
+    );
+
+    return getAttributeNames(*packet, owners, types);
 }
 
 void ParameterItem::beginEdit()
