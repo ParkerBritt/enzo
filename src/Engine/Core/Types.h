@@ -65,14 +65,50 @@ inline std::vector<AttributeType> getAllTypes()
             AttributeType::matrixT};
 }
 
+/// @brief Returns the name of a part of the geometry, e.g. "point".
+inline std::string getOwnerName(AttributeOwner owner)
+{
+    switch (owner)
+    {
+    case AttributeOwner::POINT:
+        return "point";
+    case AttributeOwner::VERTEX:
+        return "vertex";
+    case AttributeOwner::FACE:
+        return "face";
+    case AttributeOwner::PRIMITIVE:
+        return "primitive";
+    }
+    return "";
+}
+
+/// @brief Returns the name of a type an attribute can store, e.g. "vector".
+inline std::string getTypeName(AttributeType type)
+{
+    switch (type)
+    {
+    case AttributeType::intT:
+        return "int";
+    case AttributeType::floatT:
+        return "float";
+    case AttributeType::listT:
+        return "list";
+    case AttributeType::vectorT:
+        return "vector";
+    case AttributeType::boolT:
+        return "bool";
+    case AttributeType::matrixT:
+        return "matrix";
+    }
+    return "";
+}
+
 /// @brief Returns the part of the geometry a name stands for, e.g. "point".
 /// @return The owner, or empty when nothing owns attributes under that name.
 inline std::optional<AttributeOwner> getOwner(const std::string& name)
 {
-    if (name == "point") return AttributeOwner::POINT;
-    if (name == "vertex") return AttributeOwner::VERTEX;
-    if (name == "face") return AttributeOwner::FACE;
-    if (name == "primitive") return AttributeOwner::PRIMITIVE;
+    for (AttributeOwner owner : getAllOwners())
+        if (getOwnerName(owner) == name) return owner;
     return std::nullopt;
 }
 
@@ -80,12 +116,8 @@ inline std::optional<AttributeOwner> getOwner(const std::string& name)
 /// @return The type, or empty when no type goes by that name.
 inline std::optional<AttributeType> getType(const std::string& name)
 {
-    if (name == "int") return AttributeType::intT;
-    if (name == "float") return AttributeType::floatT;
-    if (name == "list") return AttributeType::listT;
-    if (name == "vector") return AttributeType::vectorT;
-    if (name == "bool") return AttributeType::boolT;
-    if (name == "matrix") return AttributeType::matrixT;
+    for (AttributeType type : getAllTypes())
+        if (getTypeName(type) == name) return type;
     return std::nullopt;
 }
 } // namespace attr

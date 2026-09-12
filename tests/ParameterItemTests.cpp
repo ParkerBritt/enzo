@@ -145,6 +145,19 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lis
     REQUIRE(makeItem(node, "name").attributeNames().isEmpty());
 }
 
+TEST_CASE_METHOD(PluginsAndReset, "An empty attribute list says what it would accept")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId attributeCreate =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::Node& node = networkManager.getNode(attributeCreate);
+    ui::ParameterItem name = makeItem(node, "name");
+
+    node.getParameter("attachTo").lock()->setString("vertex");
+    node.getParameter("type").lock()->setString("float");
+    REQUIRE(name.noAttributesMessage() == "No float vertex attributes");
+}
+
 TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style options to the gui")
 {
     auto& networkManager = nt::nm();
