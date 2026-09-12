@@ -99,13 +99,40 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attribu
     networkManager.cook(grid);
 
     nt::Node& node = networkManager.getNode(attributeCreate);
+    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("type").lock()->setString("vector");
+
     const QStringList names = makeItem(node, "name").attributeNames();
 
     REQUIRE(names.contains("P"));
-    REQUIRE(names.contains("vertexCount"));
 
     // Private attributes stay out of the list.
     REQUIRE_FALSE(names.contains("__valid"));
+}
+
+TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its style reads")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId grid = networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    nt::NodeId attributeCreate =
+        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    networkManager.connectNodes(grid, 0, attributeCreate, 0);
+    networkManager.cook(grid);
+
+    nt::Node& node = networkManager.getNode(attributeCreate);
+    ui::ParameterItem name = makeItem(node, "name");
+
+    // The point positions are a vector held by every point.
+    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("type").lock()->setString("vector");
+    REQUIRE(name.attributeNames().contains("P"));
+    REQUIRE_FALSE(name.attributeNames().contains("vertexCount"));
+
+    // The vertex counts are an integer held by every face.
+    node.getParameter("attachTo").lock()->setString("face");
+    node.getParameter("type").lock()->setString("int");
+    REQUIRE(name.attributeNames().contains("vertexCount"));
+    REQUIRE_FALSE(name.attributeNames().contains("P"));
 }
 
 TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lists nothing")

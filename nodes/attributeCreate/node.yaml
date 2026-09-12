@@ -28,8 +28,8 @@ parameters:
     default: attribute
     style: attribute
     styleOptions:
-      owners: all
-      attributeTypes: all
+      owners: prm(attachTo)
+      attributeTypes: prm(type)
     tooltip: The name to store the attribute under.
 
   - name: attachTo

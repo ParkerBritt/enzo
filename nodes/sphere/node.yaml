@@ -62,7 +62,7 @@ parameters:
     default: 1
     range: {min: 0, max: 10, minLocked: true}
     style: xyz
-    tooltip: The radius along each axis. Setting them to different values gives an egg or a lens.
+    tooltip: The radius along each axis. Option them to different values gives an egg or a lens.
 
   - name: divisions_divider
     label: Divisions

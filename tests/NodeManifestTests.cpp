@@ -468,13 +468,28 @@ TEST_CASE("An attribute name style carries the attributes it offers")
     const auto style =
         std::any_cast<std::shared_ptr<prm::style::Attribute>>(parameter.getStyle());
 
-    REQUIRE(
-        style->getOwners()
-        == std::vector{attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX}
-    );
-    REQUIRE(
-        style->getTypes() == std::vector{attr::AttributeType::floatT, attr::AttributeType::vectorT}
-    );
+    REQUIRE(style->owners() == "point vertex");
+    REQUIRE(style->attributeTypes() == "float vector");
+}
+
+TEST_CASE("A style option reads its value from another parameter")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: name
+    type: string
+    style: attribute
+    styleOptions:
+      owners: prm(attachTo)
+  - name: attachTo
+    type: dropdown
+    options:
+      - {value: point, label: Point}
+      - {value: vertex, label: Vertex}
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+    const auto style = std::any_cast<std::shared_ptr<prm::style::Attribute>>(parameter.getStyle());
+
+    REQUIRE(style->owners() == "prm(attachTo)");
 }
 
 TEST_CASE("Instance defaults set the starting values of a multiparm")
@@ -585,7 +600,36 @@ TEST_CASE("An attribute name style naming an owner that does not exist is reject
     REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
 }
 
-TEST_CASE("A style option no setting answers to is rejected")
+TEST_CASE("A style option reading a parameter the node does not have is rejected")
+{
+    const std::string parameters = R"(
+  - name: name
+    type: string
+    style: attribute
+    styleOptions:
+      owners: prm(attachTo)
+)";
+    REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
+}
+
+TEST_CASE("A style option reading a dropdown with an option it cannot use is rejected")
+{
+    const std::string parameters = R"(
+  - name: name
+    type: string
+    style: attribute
+    styleOptions:
+      owners: prm(attachTo)
+  - name: attachTo
+    type: dropdown
+    options:
+      - {value: point, label: Point}
+      - {value: corner, label: Corner}
+)";
+    REQUIRE_THROWS_AS(manifestWithParameters(parameters), std::runtime_error);
+}
+
+TEST_CASE("A style option no option answers to is rejected")
 {
     const std::string parameters = R"(
   - name: capGroupEnabled
