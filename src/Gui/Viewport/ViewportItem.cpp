@@ -156,9 +156,9 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     }
 
   private:
-    /// @brief Builds the GL resources once a context is current on the render thread.
+    /// @brief Returns whether the viewport can draw.
     ///
-    /// @return Whether the viewport can draw.
+    /// @note Builds the GL resources the first time a context is current.
     bool ensureInitialised()
     {
         if (initialised_) return true;
@@ -314,7 +314,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     }
 
     bool initialised_ = false;
-    // Set when the context is below 3.3 core, so the failure is reported once.
+    // Whether the context fell short of 3.3 core.
     bool unsupported_ = false;
     QSize size_;
     GLCamera camera_;
