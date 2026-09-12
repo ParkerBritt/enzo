@@ -130,6 +130,12 @@ class ParameterItem : public QObject
     /// cooked offers nothing.
     Q_INVOKABLE QStringList attributeNames() const;
 
+    /// @brief Returns the message naming the attributes this parameter accepts.
+    ///
+    /// A parameter limited to float attributes on vertices gives "No float
+    /// vertex attributes".
+    Q_INVOKABLE QString noAttributesMessage() const;
+
     /// @brief Snapshots the parameter ahead of a gesture such as a handle drag.
     Q_INVOKABLE void beginEdit();
     /// @brief Pushes one undo step covering everything since beginEdit.

@@ -56,7 +56,7 @@ Rectangle {
         onPressed: {
             if (attributeList.visible) return;
             attributeList.model = parameter.item.attributeNames();
-            if (attributeList.model.length > 0) attributeList.open();
+            attributeList.open();
         }
 
         Icon {
@@ -83,6 +83,11 @@ Rectangle {
         rowHeight: 26
         model: []
 
+        readonly property bool hasNoAttributes: attributeList.count === 0
+
+        header: attributeList.hasNoAttributes ? noAttributes : null
+        headerHeight: attributeList.hasNoAttributes ? 68 : 0
+
         onActivated: index => {
             parameter.commitValue(attributeList.model[index]);
             attributeList.close();
@@ -97,12 +102,40 @@ Rectangle {
             leftPadding: 10
             rightPadding: 10
             text: modelData
-            color: modelData === parameter.item.value ? Theme.var.text : Theme.var.textLabel
+            color: parameter.item && modelData === parameter.item.value ? Theme.var.text : Theme.var.textLabel
             font.family: Theme.var.fontSans
             font.pixelSize: 12
             font.weight: Font.Medium
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
+        }
+    }
+
+    Component {
+        id: noAttributes
+
+        Item {
+            Column {
+                anchors.centerIn: parent
+                spacing: 6
+
+                Icon {
+                    name: "search-x"
+                    size: 18
+                    color: Theme.var.textMuted
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                Text {
+                    width: attributeList.availableWidth - 20
+                    text: parameter.item ? parameter.item.noAttributesMessage() : ""
+                    color: Theme.var.textMuted
+                    font.family: Theme.var.fontSans
+                    font.pixelSize: 12
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                }
+            }
         }
     }
 

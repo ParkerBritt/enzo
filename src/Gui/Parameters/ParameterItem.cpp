@@ -65,6 +65,44 @@ auto getStyleOptionValues(const std::string& optionText, nt::NodeId nodeId, Pars
     }
 }
 
+/// @brief Returns the parts of the geometry the style takes attributes from.
+std::vector<attr::AttributeOwner>
+getStyleOwners(const prm::style::Attribute& style, nt::NodeId nodeId)
+{
+    return getStyleOptionValues(style.owners(), nodeId, prm::style::parseOwners);
+}
+
+/// @brief Returns the value types the style takes attributes of.
+std::vector<attr::AttributeType>
+getStyleTypes(const prm::style::Attribute& style, nt::NodeId nodeId)
+{
+    return getStyleOptionValues(style.attributeTypes(), nodeId, prm::style::parseAttributeTypes);
+}
+
+/// @brief Returns the message naming the attributes the style accepts.
+///
+/// Float attributes on vertices give "No float vertex attributes", and a style
+/// open to everything gives "No attributes".
+QString getNoAttributesMessage(
+    const std::vector<attr::AttributeOwner>& owners,
+    const std::vector<attr::AttributeType>& types
+)
+{
+    const bool anyType = types.size() >= attr::getAllTypes().size();
+    const bool anyOwner = owners.size() >= attr::getAllOwners().size();
+
+    QStringList accepted;
+    if (!anyType)
+        for (attr::AttributeType type : types)
+            accepted.append(QString::fromStdString(attr::getTypeName(type)));
+    if (!anyOwner)
+        for (attr::AttributeOwner owner : owners)
+            accepted.append(QString::fromStdString(attr::getOwnerName(owner)));
+
+    if (accepted.isEmpty()) return QStringLiteral("No attributes");
+    return QStringLiteral("No ") + accepted.join(' ') + QStringLiteral(" attributes");
+}
+
 /// @brief Returns the attribute names in a packet the style accepts, sorted alphabetically.
 /// @note Private attributes stay out of the list.
 QStringList getAttributeNames(
@@ -342,24 +380,32 @@ QStringList ParameterItem::attributeNames() const
     auto param = parameter_.lock();
     if (!param || !attributeStyle_) return {};
 
-    const std::optional<nt::Connection> input =
-        nt::nm().graph().getInputConnection(param->getNodeId(), 0);
+    const nt::NodeId nodeId = param->getNodeId();
+    const std::optional<nt::Connection> input = nt::nm().graph().getInputConnection(nodeId, 0);
     if (!input) return {};
 
     const std::shared_ptr<const NodePacket> packet =
         nt::nm().getNode(input->sourceNode).getOutputPacket(input->sourceOutput);
     if (!packet) return {};
 
-    const nt::NodeId nodeId = param->getNodeId();
-    const std::vector<attr::AttributeOwner> owners =
-        getStyleOptionValues(attributeStyle_->owners(), nodeId, prm::style::parseOwners);
-    const std::vector<attr::AttributeType> types = getStyleOptionValues(
-        attributeStyle_->attributeTypes(),
-        nodeId,
-        prm::style::parseAttributeTypes
+    return getAttributeNames(
+        *packet,
+        getStyleOwners(*attributeStyle_, nodeId),
+        getStyleTypes(*attributeStyle_, nodeId)
     );
+}
 
-    return getAttributeNames(*packet, owners, types);
+QString ParameterItem::noAttributesMessage() const
+{
+    auto param = parameter_.lock();
+    if (!param || !attributeStyle_)
+        return getNoAttributesMessage(attr::getAllOwners(), attr::getAllTypes());
+
+    const nt::NodeId nodeId = param->getNodeId();
+    return getNoAttributesMessage(
+        getStyleOwners(*attributeStyle_, nodeId),
+        getStyleTypes(*attributeStyle_, nodeId)
+    );
 }
 
 void ParameterItem::beginEdit()
