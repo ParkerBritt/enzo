@@ -2,7 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
-#include <QOpenGLFunctions_3_2_Core>
+#include <QOpenGLFunctions_3_3_Core>
 #include <glm/ext/vector_float3.hpp>
 
 struct Vertex
@@ -11,7 +11,7 @@ struct Vertex
     glm::vec3 normal;
 };
 
-class GLMesh : protected QOpenGLFunctions_3_2_Core
+class GLMesh : protected QOpenGLFunctions_3_3_Core
 {
   public:
     GLMesh();

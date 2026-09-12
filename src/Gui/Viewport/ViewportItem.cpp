@@ -4,8 +4,10 @@
 #include "Gui/Viewport/GLMesh.h"
 #include "Gui/Viewport/GLPoints.h"
 #include "Gui/Viewport/ViewportViewModel.h"
+#include <QOpenGLContext>
 #include <QOpenGLFramebufferObjectFormat>
-#include <QOpenGLFunctions_3_2_Core>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QSurfaceFormat>
 #include <glm/geometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -94,7 +96,7 @@ const char* const kBackgroundFragmentShader = R"(
 /// Owns every GL resource and a copy of the camera, both refreshed from the item
 /// during `synchronize`. The grid draws first so geometry overdraws it.
 class ViewportRenderer : public QQuickFramebufferObject::Renderer,
-                         protected QOpenGLFunctions_3_2_Core
+                         protected QOpenGLFunctions_3_3_Core
 {
   public:
     void synchronize(QQuickFramebufferObject* item) override
@@ -110,7 +112,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
 
         if (auto packet = viewport->takePendingGeometry())
         {
-            ensureInitialised();
+            if (!ensureInitialised()) return;
             mesh_->setPosBuffer(*packet);
             mesh_->setIndexBuffer(*packet);
             points_->setPoints(*packet, camera_);
@@ -128,7 +130,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
 
     void render() override
     {
-        ensureInitialised();
+        if (!ensureInitialised()) return;
 
         glViewport(0, 0, size_.width(), size_.height());
         glEnable(GL_DEPTH_TEST);
@@ -154,11 +156,26 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     }
 
   private:
-    // Builds the GL resources once a context is current on the render thread.
-    void ensureInitialised()
+    /// @brief Builds the GL resources once a context is current on the render thread.
+    ///
+    /// @return Whether the viewport can draw.
+    bool ensureInitialised()
     {
-        if (initialised_) return;
-        initializeOpenGLFunctions();
+        if (initialised_) return true;
+        if (unsupported_) return false;
+
+        if (!initializeOpenGLFunctions())
+        {
+            const QSurfaceFormat format = QOpenGLContext::currentContext()->format();
+            qWarning(
+                "The viewport needs an OpenGL 3.3 core context. This one is %d.%d, profile %d.",
+                format.majorVersion(),
+                format.minorVersion(),
+                int(format.profile())
+            );
+            unsupported_ = true;
+            return false;
+        }
 
         mesh_ = std::make_unique<GLMesh>();
         grid_ = std::make_unique<GLGrid>();
@@ -168,6 +185,7 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
         backgroundProgram_ = buildProgram(kBackgroundVertexShader, kBackgroundFragmentShader);
         glGenVertexArrays(1, &backgroundVao_);
         initialised_ = true;
+        return true;
     }
 
     GLuint buildProgram(const char* vertexSource, const char* fragmentSource)
@@ -296,6 +314,8 @@ class ViewportRenderer : public QQuickFramebufferObject::Renderer,
     }
 
     bool initialised_ = false;
+    // Set when the context is below 3.3 core, so the failure is reported once.
+    bool unsupported_ = false;
     QSize size_;
     GLCamera camera_;
     QColor backgroundColor_;
