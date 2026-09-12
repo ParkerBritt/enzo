@@ -22,6 +22,10 @@ if(ENZO_SUPERBUILD)
     return()
 endif()
 
+# MSVC exports nothing from a shared library unless the declaration says so,
+# leaving the node library with no engine symbols to link against.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 set(ENZO_DEV_LIB_DIR "${CMAKE_BINARY_DIR}/nodes/")
 set(ENZO_DEV_NODES_DIR "${CMAKE_SOURCE_DIR}/nodes")
 
@@ -146,7 +150,7 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 set_source_files_properties(
     src/Engine/Expression/DasRuntime.cpp
     src/Engine/Expression/ParameterFunctions.cpp
-    PROPERTIES COMPILE_OPTIONS "-fno-rtti"
+    PROPERTIES COMPILE_OPTIONS "$<IF:$<CXX_COMPILER_ID:MSVC>,/GR-,-fno-rtti>"
 )
 
 # The engine is a self contained library with no knowledge of the ui or the
@@ -297,7 +301,31 @@ target_include_directories(${AppExec} PRIVATE
 # --- packaging ---
 set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_SOURCE_DIR}/cmake/CPackProjectConfig.cmake)
 
-set(CPACK_GENERATOR "RPM;TGZ")
+if(WIN32)
+    set(CPACK_GENERATOR "WIX;ZIP")
+else()
+    set(CPACK_GENERATOR "RPM;DEB;TGZ")
+endif()
+
+set(CPACK_PACKAGE_NAME enzo)
+set(CPACK_PACKAGE_VENDOR "Enzo Software")
+set(CPACK_PACKAGE_CONTACT "Parker Britt <parker@enzosoftware.org>")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/ParkerBritt/enzo")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Node based procedural 3D modeling framework")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "Enzo")
+# The WiX generator only accepts a licence with a .txt or .rtf extension.
+configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/LICENSE.txt COPYONLY)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_BINARY_DIR}/LICENSE.txt)
+set(CPACK_PACKAGE_EXECUTABLES ${AppExec} "Enzo 3D")
+set(CPACK_STRIP_FILES ON)
+
+# Names the archive and package files after the platform they were built for,
+# so artifacts from every job can sit in one release.
+if(WIN32)
+    set(CPACK_SYSTEM_NAME windows-${CMAKE_SYSTEM_PROCESSOR})
+else()
+    set(CPACK_SYSTEM_NAME linux-${CMAKE_SYSTEM_PROCESSOR})
+endif()
 
 set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
 set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
@@ -333,6 +361,36 @@ install(CODE "
     set(QT_DEPLOY_TRANSLATIONS_DIR \"${CMAKE_PROJECT_NAME}/translations\")
 ")
 install(SCRIPT ${ENZO_QT_DEPLOY_SCRIPT})
+
+if(UNIX)
+    find_program(ENZO_PATCHELF patchelf)
+    if(NOT ENZO_PATCHELF)
+        install(CODE "message(FATAL_ERROR \"patchelf is needed to install enzo\")")
+    endif()
+
+    # The bundled libraries arrive from several build trees, each carrying a
+    # runpath into the tree it came from. Every one of them sits beside its
+    # dependencies once installed, so they all point at their own directory.
+    install(CODE "
+        file(GLOB libraries \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${ENZO_LIB_DIR}/*.so*\")
+        foreach(library IN LISTS libraries)
+            if(NOT IS_SYMLINK \${library})
+                execute_process(COMMAND ${ENZO_PATCHELF} --set-rpath \$ORIGIN \${library})
+            endif()
+        endforeach()
+    ")
+endif()
+
+# Puts the launcher on PATH, so the desktop entry and a shell both reach it by
+# name while the application itself still resolves its root from the real path.
+if(UNIX)
+    install(CODE "
+        set(root \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
+        file(MAKE_DIRECTORY \"\${root}/bin\")
+        file(REMOVE \"\${root}/bin/${AppExec}\")
+        file(CREATE_LINK \"../${ENZO_BIN_DIR}/${AppExec}\" \"\${root}/bin/${AppExec}\" SYMBOLIC)
+    ")
+endif()
 
 # desktop integration (Flatpak / Linux desktop)
 install(FILES flatpak/org.enzosoftware.Enzo.desktop

@@ -1,0 +1,139 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Pushing a fix abandons the run it supersedes rather than queueing behind it.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    # Rocky 9 sets the oldest glibc the packages support. A binary linked
+    # against the runner's own glibc would refuse to start on anything older.
+    container: rockylinux/rockylinux:9
+    env:
+      CC: /opt/rh/gcc-toolset-13/root/usr/bin/gcc
+      CXX: /opt/rh/gcc-toolset-13/root/usr/bin/g++
+      APPIMAGE_EXTRACT_AND_RUN: 1
+
+    steps:
+      - name: Install build tools
+        run: |
+          dnf install -y dnf-plugins-core epel-release
+          dnf config-manager --set-enabled crb
+          dnf install -y \
+            gcc-toolset-13 git make patchelf rpm-build file which xz \
+            python3 python3-pip \
+            mesa-libGL-devel mesa-libEGL-devel fontconfig-devel \
+            libxkbcommon-x11-devel xcb-util-image-devel xcb-util-keysyms-devel \
+            xcb-util-renderutil-devel xcb-util-wm-devel xcb-util-cursor-devel
+          pip3 install --quiet cmake==3.31.6 ninja==1.11.1.3
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache dependency prefix
+        uses: actions/cache@v4
+        with:
+          path: |
+            build-super/deps
+            build-super/superbuild/Stamp
+          key: linux-deps-v1-${{ hashFiles('cmake/versions.cmake') }}
+
+      - name: Build
+        run: |
+          cmake -S . -B build-super -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DENZO_SUPERBUILD=ON \
+            -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build-super
+
+      - name: Package
+        run: |
+          cd build-super/enzo-build
+          cpack -G "RPM;DEB;TGZ"
+
+      - name: Build AppImage
+        run: |
+          cmake --install build-super/enzo-build --prefix "$PWD/appdir-prefix"
+          curl -sSfL -o /usr/local/bin/appimagetool \
+            https://github.com/AppImage/appimagetool/releases/download/1.9.0/appimagetool-x86_64.AppImage
+          chmod +x /usr/local/bin/appimagetool
+          ./packaging/make-appimage.sh "$PWD/appdir-prefix" "$PWD/enzo-linux-x86_64.AppImage"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: linux-packages
+          if-no-files-found: warn
+          path: |
+            build-super/enzo-build/enzo-*.rpm
+            build-super/enzo-build/enzo-*.deb
+            build-super/enzo-build/enzo-*.tar.gz
+            enzo-linux-x86_64.AppImage
+
+  windows:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install WiX
+        run: choco install wixtoolset --no-progress -y
+
+      - name: Cache dependency prefix
+        uses: actions/cache@v4
+        with:
+          path: |
+            build-super/deps
+            build-super/superbuild/Stamp
+          key: windows-deps-v1-${{ hashFiles('cmake/versions.cmake') }}
+
+      - name: Build
+        shell: cmd
+        run: |
+          cmake -S . -B build-super -G Ninja ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DENZO_SUPERBUILD=ON
+          cmake --build build-super
+
+      - name: Package
+        shell: cmd
+        run: |
+          cd build-super\enzo-build
+          cpack -G "WIX;ZIP"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-packages
+          if-no-files-found: warn
+          path: |
+            build-super/enzo-build/enzo-*.msi
+            build-super/enzo-build/enzo-*.zip
+
+  release:
+    needs: [linux, windows]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*/*

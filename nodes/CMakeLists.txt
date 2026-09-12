@@ -18,7 +18,10 @@ add_library(${libName} SHARED ${NODE_SOURCES})
 target_link_libraries(${libName} PRIVATE enzoEngine Qt6::Core Qt6::Widgets Qt6::SvgWidgets Qt6::OpenGLWidgets Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb manifold::manifold libDaScript)
 
 # packaging
+set_target_properties(${libName} PROPERTIES INSTALL_RPATH "$ORIGIN")
+
 install(TARGETS ${libName}
+    RUNTIME DESTINATION ${ENZO_LIB_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
 )
