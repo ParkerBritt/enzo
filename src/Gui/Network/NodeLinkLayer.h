@@ -6,6 +6,7 @@
 #include <QPointF>
 #include <QQuickItem>
 #include <QTimer>
+#include <QVariantList>
 #include <QVariantMap>
 #include <vector>
 
@@ -28,6 +29,17 @@ class NodeLinkLayer : public QQuickItem
     // Colors for the cut and rewire pickup hover previews.
     Q_PROPERTY(QColor cutColor MEMBER cutColor_ NOTIFY cutColorChanged)
     Q_PROPERTY(QColor redirectColor MEMBER redirectColor_ NOTIFY redirectColorChanged)
+
+    // The preview of what releasing a node drag would rewire, the link model indices
+    // it cuts in previewCutLinks and the links that replace them in previewLinks.
+    Q_PROPERTY(
+        QVariantList previewCutLinks READ previewCutLinks WRITE setPreviewCutLinks NOTIFY
+            previewChanged
+    )
+    Q_PROPERTY(
+        QVariantList previewLinks READ previewLinks WRITE setPreviewLinks NOTIFY previewChanged
+    )
+    Q_PROPERTY(QColor previewColor MEMBER previewColor_ NOTIFY previewColorChanged)
 
     // The in-progress link dragged from a fixed port to the cursor.
     Q_PROPERTY(
@@ -93,6 +105,12 @@ class NodeLinkLayer : public QQuickItem
     QPointF floatingInput() const;
     void setFloatingInput(QPointF point);
 
+    QVariantList previewCutLinks() const;
+    void setPreviewCutLinks(const QVariantList& linkIndices);
+
+    QVariantList previewLinks() const;
+    void setPreviewLinks(const QVariantList& links);
+
   Q_SIGNALS:
     void nodesChanged();
     void linksChanged();
@@ -100,6 +118,8 @@ class NodeLinkLayer : public QQuickItem
     void cutColorChanged();
     void redirectColorChanged();
     void floatingChanged();
+    void previewChanged();
+    void previewColorChanged();
 
   protected:
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data) override;
@@ -130,6 +150,9 @@ class NodeLinkLayer : public QQuickItem
     bool floatingActive_ = false;
     QPointF floatingOutput_;
     QPointF floatingInput_;
+    QVariantList previewCutLinks_;
+    QVariantList previewLinks_;
+    QColor previewColor_;
 
     std::vector<FadingLink> fadingLinks_;
     QTimer fadeTimer_;

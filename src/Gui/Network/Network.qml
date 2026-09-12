@@ -26,10 +26,24 @@ Rectangle {
     // How near the cursor must fall to a link to cut, pick up, or hover it.
     property real linkHitRadius: 20
 
+    // How near a dragged node's center must fall to a link to drop into it.
+    property real linkInsertRadius: network.nodeHeight
+
     property real viewX: width / 2
     property real viewY: height / 2
     property real mouseLastX: 0
     property real mouseLastY: 0
+
+    // True while shift is held, which turns a node drag into a bypass.
+    property bool bypassHeld: false
+
+    // The node a drag is moving and where its center sits.
+    property var draggedNodeId: undefined
+    property point draggedPoint
+
+    // What releasing the current node drag would rewire, null while no drag runs.
+    // It holds the link indices the drop cuts and the links it wires in their place.
+    property var dropPreview: null
 
     // Latest cursor position over the network, used to place popups.
     property real cursorX: 0
@@ -59,6 +73,39 @@ Rectangle {
         return port.nodeId === undefined ? null : port;
     }
 
+    // Previews what releasing a node drag would do, either pulling the selected nodes
+    // out of the graph or dropping the dragged node into the link it covers.
+    function previewDrop(nodeId, canvasPoint) {
+        draggedNodeId = nodeId;
+        draggedPoint = canvasPoint;
+        refreshDropPreview();
+    }
+
+    // Rebuilds the preview from the node being dragged and whether shift is held.
+    function refreshDropPreview() {
+        if (draggedNodeId === undefined)
+            return;
+        const hoveredLink = bypassHeld ? -1 : committedLinks.linkAt(draggedPoint, root.linkInsertRadius).linkIndex;
+        dropPreview = network.getDropPreview(draggedNodeId, hoveredLink, bypassHeld);
+    }
+
+    onBypassHeldChanged: refreshDropPreview()
+
+    // Discards the preview without applying it.
+    function clearDropPreview() {
+        draggedNodeId = undefined;
+        dropPreview = null;
+    }
+
+    // Applies the previewed drop, cutting the links it covers and wiring the ones
+    // that replace them.
+    function commitDrop() {
+        const preview = dropPreview;
+        clearDropPreview();
+        if (preview)
+            network.applyDropPreview(preview);
+    }
+
     // Removes a link, dissolving it outward from the cut point.
     function cutLink(linkIndex, canvasPoint) {
         if (linkIndex < 0)
@@ -80,12 +127,19 @@ Rectangle {
     }
 
     Keys.onPressed: event => {
-        if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace)
+        if (event.key === Qt.Key_Shift)
+            bypassHeld = true;
+        else if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace)
             network.deleteSelected();
         else if (event.key === Qt.Key_Escape && linkController.linking)
             linkController.cancel();
         else if (event.key === Qt.Key_R)
             network.setDisplayNodeToPrimary();
+    }
+
+    Keys.onReleased: event => {
+        if (event.key === Qt.Key_Shift)
+            bypassHeld = false;
     }
 
     FocusReclaimer {
@@ -329,6 +383,9 @@ Rectangle {
             linkColor: Theme.nodeLink.inactiveColor
             cutColor: Theme.nodeLink.cutColor
             redirectColor: Theme.nodeLink.redirectColor
+            previewColor: Theme.nodeLink.activeColor
+            previewCutLinks: root.dropPreview ? root.dropPreview.cutLinks : []
+            previewLinks: root.dropPreview ? root.dropPreview.newLinks : []
         }
 
         Repeater {
@@ -370,13 +427,21 @@ Rectangle {
                     selectedAtPress = model.selected;
                     if (!model.selected)
                         network.selectNode(model.nodeId, additive);
+                    root.previewDrop(model.nodeId, Qt.point(model.x, model.y));
                 }
                 onClicked: additive => {
                     if (selectedAtPress)
                         network.selectNode(model.nodeId, additive);
+                    root.clearDropPreview();
                 }
-                onDragMoved: (dx, dy) => network.stageSelectionMove(dx, dy)
-                onDragReleased: network.commitSelectionMove()
+                onDragMoved: (dx, dy) => {
+                    network.stageSelectionMove(dx, dy);
+                    root.previewDrop(model.nodeId, Qt.point(model.x, model.y));
+                }
+                onDragReleased: {
+                    network.commitSelectionMove();
+                    root.commitDrop();
+                }
                 onDisplayToggled: network.setDisplayNode(model.nodeId)
             }
         }

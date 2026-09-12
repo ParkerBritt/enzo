@@ -72,6 +72,21 @@ class NetworkViewModel : public QObject
     /// @brief Removes the link at an index in the link model.
     Q_INVOKABLE void removeLink(int linkIndex);
 
+    /// @brief Returns the rewiring that releasing a node drag would perform.
+    ///
+    /// @param hoveredLink The link the dragged node covers, -1 when it covers none.
+    /// @param bypassing Whether to pull the selected nodes out of the graph rather
+    /// than drop the dragged node into the link it covers.
+    /// @return A {cutLinks, newLinks} map, cutLinks the link model indices the drop
+    /// removes and newLinks the {sourceNode, sourceOutput, targetNode, targetInput}
+    /// maps it wires in their place. Both are empty when the drop only moves nodes.
+    Q_INVOKABLE QVariantMap
+    getDropPreview(qulonglong nodeId, int hoveredLink, bool bypassing) const;
+
+    /// @brief Cuts the links a drop preview names and wires its new ones, as one undo
+    /// step.
+    Q_INVOKABLE void applyDropPreview(const QVariantMap& preview);
+
     /// @brief Returns the ports the link at an index connects.
     /// @return A {sourceNode, sourceOutput, targetNode, targetInput} map, empty when
     /// the index is out of range.
@@ -105,8 +120,19 @@ class NetworkViewModel : public QObject
     ///
     /// @param primaryId The node leading the selection, empty to keep the current
     /// one.
-    void
-    selectNodes(const std::vector<nt::NodeId>& selection, std::optional<nt::NodeId> primaryId);
+    void selectNodes(const std::vector<nt::NodeId>& selection, std::optional<nt::NodeId> primaryId);
+
+    /// @brief Returns the preview of dropping a node into the link it covers.
+    ///
+    /// @note The preview is empty when the node is part of a wider selection, is
+    /// already fed by something, has no ports to wire, or is an end of that link.
+    QVariantMap getInsertPreview(qulonglong nodeId, int hoveredLink) const;
+
+    /// @brief Returns the preview of pulling the selected nodes out of the graph.
+    ///
+    /// @note Every link touching the selection is cut, and what fed a node is wired
+    /// on to what that node fed.
+    QVariantMap getBypassPreview() const;
 
     NodeListModel nodes_;
     EdgeListModel edges_;

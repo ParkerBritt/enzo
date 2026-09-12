@@ -5,6 +5,7 @@
 #include <QSGGeometryNode>
 #include <QSGVertexColorMaterial>
 #include <algorithm>
+#include <optional>
 
 namespace enzo::ui {
 
@@ -13,10 +14,12 @@ namespace {
 // How many straight segments approximate each bezier link.
 constexpr int kSegmentsPerLink = 24;
 
-// Stroke widths for a normal link, a hovered cut target, and a rewire pickup preview.
+// Stroke widths for a normal link, a hovered cut target, a rewire pickup preview,
+// and a link a node drop would wire.
 constexpr float kLinkWidth = 1;
 constexpr float kCutWidth = 1;
 constexpr float kRedirectWidth = 2;
+constexpr float kPreviewWidth = 2;
 
 // How long a cut link takes to dissolve, and how soft the dissolving edge is.
 constexpr qreal kFadeMs = 150;
@@ -268,6 +271,26 @@ void NodeLinkLayer::setFloatingInput(QPointF point)
     update();
 }
 
+QVariantList NodeLinkLayer::previewCutLinks() const { return previewCutLinks_; }
+
+void NodeLinkLayer::setPreviewCutLinks(const QVariantList& linkIndices)
+{
+    if (previewCutLinks_ == linkIndices) return;
+    previewCutLinks_ = linkIndices;
+    Q_EMIT previewChanged();
+    update();
+}
+
+QVariantList NodeLinkLayer::previewLinks() const { return previewLinks_; }
+
+void NodeLinkLayer::setPreviewLinks(const QVariantList& links)
+{
+    if (previewLinks_ == links) return;
+    previewLinks_ = links;
+    Q_EMIT previewChanged();
+    update();
+}
+
 void NodeLinkLayer::connectForRepaint(QAbstractItemModel* model)
 {
     // Any row or value change means the links must redraw, including the per-frame
@@ -393,8 +416,17 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         return built;
     };
 
+    // A link the drop would cut leaves the canvas while the preview stands.
+    const auto isPreviewCut = [this](int linkIndex) {
+        for (const QVariant& cut : previewCutLinks_)
+            if (cut.toInt() == linkIndex) return true;
+        return false;
+    };
+
     for (const Link& link : links)
     {
+        if (isPreviewCut(link.linkIndex)) continue;
+
         const bool cutHovered = hoverKind_ == LinkHover::Cut && link.linkIndex == hoverLink_;
         const QColor& color = cutHovered ? cutColor_ : linkColor_;
         const float width = cutHovered ? kCutWidth : kLinkWidth;
@@ -410,6 +442,32 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
                                                   : std::vector<QPointF>(middle, points.end());
             updateLinkNode(claimNode(), half, redirectColor_, kRedirectWidth, QPointF(), -1);
         }
+    }
+
+    // The links the drop would wire in place of the ones it cuts.
+    for (const QVariant& entry : nodes_ ? previewLinks_ : QVariantList())
+    {
+        const QVariantMap fields = entry.toMap();
+        const std::optional<QPointF> output = nodes_->getPortPosition(
+            fields["sourceNode"].toULongLong(),
+            fields["sourceOutput"].toInt(),
+            true
+        );
+        const std::optional<QPointF> input = nodes_->getPortPosition(
+            fields["targetNode"].toULongLong(),
+            fields["targetInput"].toInt(),
+            false
+        );
+        if (!output || !input) continue;
+
+        updateLinkNode(
+            claimNode(),
+            samplePolyline(Link{*output, *input}),
+            previewColor_,
+            kPreviewWidth,
+            QPointF(),
+            -1
+        );
     }
 
     // Dissolving cut links come last so they draw on top of the live ones.
