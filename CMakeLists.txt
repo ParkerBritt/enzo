@@ -12,7 +12,17 @@ set(CMAKE_AUTORCC ON)
 # setup project
 project(enzo VERSION 0.3.0)
 
-set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/nodes/")
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/versions.cmake)
+
+# Builds the pinned dependencies first, then configures this same project again
+# against them.
+option(ENZO_SUPERBUILD "Build the pinned dependencies, then enzo against them" OFF)
+if(ENZO_SUPERBUILD)
+    add_subdirectory(superbuild)
+    return()
+endif()
+
+set(ENZO_DEV_LIB_DIR "${CMAKE_BINARY_DIR}/nodes/")
 set(ENZO_DEV_NODES_DIR "${CMAKE_SOURCE_DIR}/nodes")
 
 set(ENGINE_SOURCES
@@ -66,7 +76,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 QuickShapes ShaderTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 ShaderTools)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -91,8 +101,8 @@ find_package(manifold CONFIG REQUIRED)
 include(FetchContent)
 FetchContent_Declare(
   yaml-cpp
-  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-  GIT_TAG        0.8.0
+  URL      ${ENZO_YAML_CPP_URL}
+  URL_HASH SHA256=${ENZO_YAML_CPP_SHA256}
 )
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(yaml-cpp)
@@ -272,7 +282,7 @@ set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine argparse::argparse Qt6::Quick Qt6::QuickControls2 Qt6::QuickShapes Qt6::OpenGL)
+target_link_libraries(${AppExec} PRIVATE enzoEngine argparse::argparse Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
@@ -293,22 +303,36 @@ set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install director
 set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
 set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
 
-
 set_target_properties(${AppExec} PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
 )
 
 include(CPack)
 
-# cpack_add_component("runtimes")
-# cpack_add_component("tgz-runtimes")
-
 install(TARGETS ${AppExec} enzoEngine
     RUNTIME DESTINATION ${ENZO_BIN_DIR}
     LIBRARY DESTINATION ${ENZO_LIB_DIR}
     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
-    # COMPONENT "runtimes"
 )
+
+# Copies the Qt libraries, plugins and qml modules the app reaches at install
+# time, along with a qt.conf pointing at them.
+qt_generate_deploy_qml_app_script(
+    TARGET ${AppExec}
+    OUTPUT_SCRIPT ENZO_QT_DEPLOY_SCRIPT
+)
+
+# Sets the destinations in the install script itself, since Qt reads them when
+# the deployment runs rather than when it is generated.
+install(CODE "
+    set(QT_DEPLOY_BIN_DIR \"${ENZO_BIN_DIR}\")
+    set(QT_DEPLOY_LIB_DIR \"${ENZO_LIB_DIR}\")
+    set(QT_DEPLOY_LIBEXEC_DIR \"${CMAKE_PROJECT_NAME}/libexec\")
+    set(QT_DEPLOY_PLUGINS_DIR \"${CMAKE_PROJECT_NAME}/plugins\")
+    set(QT_DEPLOY_QML_DIR \"${CMAKE_PROJECT_NAME}/qml\")
+    set(QT_DEPLOY_TRANSLATIONS_DIR \"${CMAKE_PROJECT_NAME}/translations\")
+")
+install(SCRIPT ${ENZO_QT_DEPLOY_SCRIPT})
 
 # desktop integration (Flatpak / Linux desktop)
 install(FILES flatpak/org.enzosoftware.Enzo.desktop
@@ -332,53 +356,6 @@ install(DIRECTORY ${DAS_DASLIB_DIR}
     DESTINATION ${CMAKE_PROJECT_NAME}
 )
 
-# install(TARGETS ${AppExec}
-#     RUNTIME_DEPENDENCY_SET app_deps
-#     RUNTIME DESTINATION ${ENZO_BIN_DIR}
-#     LIBRARY DESTINATION ${ENZO_LIB_DIR}
-#     ARCHIVE DESTINATION ${ENZO_LIB_DIR}
-#     COMPONENT "tgz-runtimes"
-# )
-
-# install(RUNTIME_DEPENDENCY_SET app_deps
-#     DIRECTORIES "${CMAKE_BINARY_DIR}"
-#     PRE_EXCLUDE_REGEXES
-#     "libc.so.*" "libm.so.*" "libpthread.so.*" "librt.so.*" "libdl.so.*"
-#     "libgcc_s.so.*" "libstdc++.so.*"
-#     DESTINATION ${ENZO_LIB_DIR}
-#     COMPONENT "tgz-runtimes"
-# )
-
-# install(
-#     DIRECTORY /usr/lib64/qt6
-#     DESTINATION ${CMAKE_PROJECT_NAME}
-#     COMPONENT "tgz-runtimes"
-# )
-
-# install(
-#     DIRECTORY /usr/lib64/
-#     DESTINATION ${ENZO_LIB_DIR}
-#     COMPONENT "tgz-runtimes"
-#     FILES_MATCHING PATTERN "*Qt*.so*"
-# )
-
-# file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/packaging/qt.conf
-# "[Paths]
-# Plugins = ../qt6/plugins
-# Libraries = ../lib
-# ")
-
-# install(
-#     FILES ${CMAKE_CURRENT_BINARY_DIR}/packaging/qt.conf
-#     DESTINATION ${ENZO_BIN_DIR}
-#     COMPONENT "tgz-runtimes"
-# )
-
-
-
-
-# set(CPACK_RPM_PACKAGE_REQUIRES "openssl >= 1.1.1, zlib >= 1.2.11")
-
 # --- end packaging
 
 
@@ -393,8 +370,8 @@ if(ENZO_BUILD_TESTS)
 
     FetchContent_Declare(
       Catch2
-      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-      GIT_TAG        v3.8.1 # or a later release
+      URL      ${ENZO_CATCH2_URL}
+      URL_HASH SHA256=${ENZO_CATCH2_SHA256}
     )
 
     FetchContent_MakeAvailable(Catch2)
