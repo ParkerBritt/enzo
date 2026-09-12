@@ -108,9 +108,8 @@ jobs:
             -DENZO_SUPERBUILD=ON
           cmake --build build-super
 
-      # Starting the installed app is the only check that covers the deployed
-      # tree, where the libraries, plugins and qml modules sit apart from the
-      # build directory they were compiled in.
+      # Starts the installed tree, where the libraries, plugins and qml modules
+      # sit apart from the build directory they were compiled in.
       - name: Smoke test
         shell: pwsh
         timeout-minutes: 15
