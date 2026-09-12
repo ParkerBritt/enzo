@@ -1,3 +1,4 @@
+#include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
@@ -101,7 +102,7 @@ namespace {
 void loadFonts()
 {
     QDirIterator it(
-        QStringLiteral(ENZO_DEV_STATIC_DIR "/fonts"),
+        QString::fromStdString((enzo::getStaticDir() / "fonts").string()),
         {"*.ttf"},
         QDir::Files,
         QDirIterator::Subdirectories
@@ -178,16 +179,20 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("parameters", &parameters);
     engine.rootContext()->setContextProperty("scene", &scene);
 
-#ifdef ENZO_QML_SOURCE_DIR
-    // Dev builds load QML straight from the source tree and reload on edit.
-    const QUrl entry = QUrl::fromLocalFile(QStringLiteral(ENZO_QML_SOURCE_DIR) + "/App.qml");
-    engine.addImportPath(QStringLiteral(ENZO_QML_SOURCE_DIR));
-    installHotReload(engine, entry);
-    engine.load(entry);
-#else
-    // Release loads the module compiled into the binary.
-    engine.loadFromModule("Enzo", "App");
-#endif
+    // A run from a build directory loads QML straight from the source tree and
+    // reloads on edit. An installed run loads the module compiled into the binary.
+    const QString qmlSourceDir = QStringLiteral(ENZO_QML_SOURCE_DIR);
+    if (QFileInfo::exists(qmlSourceDir + "/App.qml"))
+    {
+        const QUrl entry = QUrl::fromLocalFile(qmlSourceDir + "/App.qml");
+        engine.addImportPath(qmlSourceDir);
+        installHotReload(engine, entry);
+        engine.load(entry);
+    }
+    else
+    {
+        engine.loadFromModule("Enzo", "App");
+    }
 
     if (engine.rootObjects().isEmpty()) return -1;
 

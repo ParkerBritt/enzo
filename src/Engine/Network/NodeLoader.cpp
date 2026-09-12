@@ -1,9 +1,9 @@
 #include "Engine/Network/NodeLoader.h"
+#include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NodeManifest.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Network/NodeType.h"
 #include "Engine/Network/NodeTypeTable.h"
-#include <boost/dll/runtime_symbol_info.hpp>
 #include <boost/dll/shared_library.hpp>
 #include <iostream>
 #include <map>
@@ -24,13 +24,6 @@ namespace {
 
 // The file naming a folder as a node.
 constexpr const char* kManifestName = "node.yaml";
-
-// The directory the application is installed into, holding bin, lib and nodes.
-std::filesystem::path getInstallRoot()
-{
-    const std::filesystem::path executable(boost::dll::program_location().string());
-    return executable.parent_path().parent_path();
-}
 
 std::filesystem::path getLibraryFile(const std::string& libraryName)
 {
