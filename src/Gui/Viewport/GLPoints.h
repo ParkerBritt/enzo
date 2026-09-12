@@ -1,12 +1,5 @@
 #pragma once
 #include "Engine/Core/Types.h"
-#if defined(__linux__) || defined(_WIN32)
-#include <GL/gl.h>
-#endif
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#endif
-
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include "Gui/Viewport/GLCamera.h"

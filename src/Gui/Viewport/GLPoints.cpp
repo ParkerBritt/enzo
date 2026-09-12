@@ -1,12 +1,5 @@
 
 #include "Gui/Viewport/GLPoints.h"
-#if defined(__linux__) || defined(_WIN32)
-#include <GL/gl.h>
-#endif
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#endif
-
 #include "Engine/Core/Types.h"
 #include "Gui/Viewport/GLCamera.h"
 #include "icecream.hpp"
