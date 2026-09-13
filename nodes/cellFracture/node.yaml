@@ -1,0 +1,33 @@
+version: 1
+
+name: cellFracture
+namespace: enzo
+label: Cell Fracture
+tags: [fracture, cell, voronoi, shatter, break, destruction, polygon]
+
+inputs:
+  - label: Geometry
+  - label: Seed Points
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: cellFracture
+
+parameters:
+  - name: pieceAttribute
+    label: Piece Attribute
+    type: string
+    default: piece
+    tooltip: >
+      The face attribute numbering each piece by the seed point it formed
+      around. Leave it empty to skip the attribute.
+
+  - name: insideGroup
+    label: Inside Group
+    type: string
+    default: inside
+    tooltip: >
+      The face group holding the new faces that close the inside of each
+      piece. Leave it empty to skip the group.
