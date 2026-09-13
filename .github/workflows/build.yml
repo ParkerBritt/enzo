@@ -48,15 +48,21 @@ jobs:
         with:
           submodules: recursive
 
-      # The version every package and the release are named after. A matching
-      # tag on the remote marks it as already published.
+      # The version every package and the release are named after. A release
+      # already carrying that tag, draft or not, marks it as cut.
       - id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           version=$(sed -n 's/^project(enzo VERSION \([0-9.]*\)).*/\1/p' CMakeLists.txt)
           echo "value=$version" >> "$GITHUB_OUTPUT"
-          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null 2>&1; then
+          curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases?per_page=100" > releases.json
+          if python3 -c "import json,sys; sys.exit(0 if any(
+                r['tag_name'] == 'v$version' for r in json.load(open('releases.json'))) else 1)"; then
             echo "published=true" >> "$GITHUB_OUTPUT"
           fi
+          rm -f releases.json
 
       - name: Cache dependency prefix
         uses: actions/cache@v4
@@ -123,9 +129,6 @@ jobs:
         run: |
           cmake -S . -B build-super -G Ninja ^
             -DCMAKE_BUILD_TYPE=Release ^
-            -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=ProgramDatabase ^
-            -DCMAKE_EXE_LINKER_FLAGS="/DEBUG /OPT:REF /OPT:ICF" ^
-            -DCMAKE_SHARED_LINKER_FLAGS="/DEBUG /OPT:REF /OPT:ICF" ^
             -DENZO_SUPERBUILD=ON
           cmake --build build-super
 
