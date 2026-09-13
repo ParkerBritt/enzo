@@ -10,7 +10,7 @@ set(BenchExec bench)
 set(CMAKE_AUTORCC ON)
 
 # setup project
-project(enzo VERSION 0.3.0)
+project(enzo VERSION 0.4.0)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/versions.cmake)
 
