@@ -34,9 +34,12 @@ foreach(setting IN ITEMS
     CMAKE_CXX_COMPILER
     CMAKE_TOOLCHAIN_FILE
     CMAKE_MAKE_PROGRAM
-    CMAKE_MSVC_RUNTIME_LIBRARY)
-    if(${setting})
-        list(APPEND ENZO_TOOLCHAIN_CMAKE_ARGS -D${setting}:STRING=${${setting}})
+    CMAKE_MSVC_RUNTIME_LIBRARY
+    CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+    CMAKE_EXE_LINKER_FLAGS
+    CMAKE_SHARED_LINKER_FLAGS)
+    if(NOT "${${setting}}" STREQUAL "")
+        list(APPEND ENZO_TOOLCHAIN_CMAKE_ARGS "-D${setting}:STRING=${${setting}}")
     endif()
 endforeach()
 
