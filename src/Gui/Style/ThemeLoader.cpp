@@ -199,7 +199,8 @@ ThemeLoader::loadFromFile(const QString& defaultPath, const QString& userPath)
 {
     QFile defaultFile(defaultPath);
     if (!defaultFile.open(QIODevice::ReadOnly | QIODevice::Text))
-        throw std::runtime_error("cannot open default theme " + defaultPath.toStdString());
+        throw std::runtime_error("cannot open default theme " + defaultPath.toStdString() + ", "
+                                 + defaultFile.errorString().toStdString());
 
     QString userYaml;
     QFile userFile(userPath);

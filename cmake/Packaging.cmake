@@ -105,10 +105,11 @@ install(FILES static/icons/icon-main-white-square.svg
     RENAME org.enzosoftware.Enzo.svg
 )
 
-# The fonts, icons and theme the application reads at runtime.
+# The fonts and icons the application reads at runtime. The theme is compiled
+# into the binary.
 install(DIRECTORY static/
     DESTINATION ${CMAKE_PROJECT_NAME}/share
-    PATTERN "resources.qrc" EXCLUDE
+    PATTERN "theme" EXCLUDE
 )
 
 # Installs daslib beside enzo/bin, where the runtime looks for the standard

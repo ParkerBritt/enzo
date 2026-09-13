@@ -14,7 +14,7 @@ namespace {
 
 QString defaultThemePath()
 {
-    return QString::fromStdString((getStaticDir() / "theme" / "default.yml").string());
+    return QStringLiteral(":/theme/default.yml");
 }
 
 QString userThemePath()
