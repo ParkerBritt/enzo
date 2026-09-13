@@ -1,6 +1,4 @@
 #include "Engine/GeometryAlgorithms/BooleanUtils.h"
-#include "Engine/Attribute/Attribute.h"
-#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Primitives/Mesh.h"
 
@@ -558,181 +556,6 @@ std::vector<DetriangulatedFace> detriangulate(const BooleanFragments& fragments,
     return faces;
 }
 
-// Generic copy of one row from a source attribute store into a destination
-// attribute store, matching attributes by name and dispatching on type.
-void copyAttributeRow(
-    const attr::attribVector& sourceStore,
-    attr::attribVector& destStore,
-    Offset sourceOffset,
-    Offset destOffset
-)
-{
-    for (const auto& sourceAttribute : sourceStore)
-    {
-        if (!sourceAttribute) continue;
-        if (sourceAttribute->isIntrinsic()) continue;
-
-        // Find a matching destination attribute by name. Skip if it doesn't exist.
-        std::shared_ptr<attr::Attribute> destAttribute;
-        for (const auto& candidate : destStore)
-        {
-            if (candidate && candidate->getName() == sourceAttribute->getName())
-            {
-                destAttribute = candidate;
-                break;
-            }
-        }
-        if (!destAttribute) continue;
-        if (destAttribute->getType() != sourceAttribute->getType()) continue;
-
-        switch (sourceAttribute->getType())
-        {
-        case attr::AttributeType::intT:
-        {
-            attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<intT> destHandle(destAttribute);
-            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-            break;
-        }
-        case attr::AttributeType::floatT:
-        {
-            attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<floatT> destHandle(destAttribute);
-            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-            break;
-        }
-        case attr::AttributeType::vectorT:
-        {
-            attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<Vector3> destHandle(destAttribute);
-            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-            break;
-        }
-        case attr::AttributeType::boolT:
-        {
-            attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<boolT> destHandle(destAttribute);
-            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-            break;
-        }
-        case attr::AttributeType::matrixT:
-        {
-            attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<Matrix4> destHandle(destAttribute);
-            destHandle.setValue(destOffset, sourceHandle.getValue(sourceOffset));
-            break;
-        }
-        default:
-            break;
-        }
-    }
-}
-
-// Same as copyAttributeRow but writes a linear blend of two source rows,
-// useful for cut points sitting on an edge of an input mesh.
-void interpolateAttributeRow(
-    const attr::attribVector& sourceStore,
-    attr::attribVector& destStore,
-    Offset endpointOffset0,
-    Offset endpointOffset1,
-    double parametricT,
-    Offset destOffset
-)
-{
-    const double weight1 = parametricT;
-    const double weight0 = 1.0 - parametricT;
-
-    for (const auto& sourceAttribute : sourceStore)
-    {
-        if (!sourceAttribute) continue;
-        if (sourceAttribute->isIntrinsic()) continue;
-
-        std::shared_ptr<attr::Attribute> destAttribute;
-        for (const auto& candidate : destStore)
-        {
-            if (candidate && candidate->getName() == sourceAttribute->getName())
-            {
-                destAttribute = candidate;
-                break;
-            }
-        }
-        if (!destAttribute) continue;
-        if (destAttribute->getType() != sourceAttribute->getType()) continue;
-
-        switch (sourceAttribute->getType())
-        {
-        case attr::AttributeType::intT:
-        {
-            attr::AttributeHandleRO<intT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<intT> destHandle(destAttribute);
-            const double blended = sourceHandle.getValue(endpointOffset0) * weight0 +
-                                   sourceHandle.getValue(endpointOffset1) * weight1;
-            destHandle.setValue(destOffset, static_cast<intT>(std::llround(blended)));
-            break;
-        }
-        case attr::AttributeType::floatT:
-        {
-            attr::AttributeHandleRO<floatT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<floatT> destHandle(destAttribute);
-            const double blended = sourceHandle.getValue(endpointOffset0) * weight0 +
-                                   sourceHandle.getValue(endpointOffset1) * weight1;
-            destHandle.setValue(destOffset, blended);
-            break;
-        }
-        case attr::AttributeType::vectorT:
-        {
-            attr::AttributeHandleRO<Vector3> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<Vector3> destHandle(destAttribute);
-            const Vector3 blended = sourceHandle.getValue(endpointOffset0) * weight0 +
-                                    sourceHandle.getValue(endpointOffset1) * weight1;
-            destHandle.setValue(destOffset, blended);
-            break;
-        }
-        case attr::AttributeType::boolT:
-        {
-            // Booleans don't blend so fall back to the nearest endpoint.
-            attr::AttributeHandleRO<boolT> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<boolT> destHandle(destAttribute);
-            const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
-            destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
-            break;
-        }
-        case attr::AttributeType::matrixT:
-        {
-            // Matrices don't blend componentwise meaningfully so pick an endpoint.
-            attr::AttributeHandleRO<Matrix4> sourceHandle(sourceAttribute);
-            attr::AttributeHandle<Matrix4> destHandle(destAttribute);
-            const Offset chosen = (parametricT < 0.5) ? endpointOffset0 : endpointOffset1;
-            destHandle.setValue(destOffset, sourceHandle.getValue(chosen));
-            break;
-        }
-        default:
-            break;
-        }
-    }
-}
-
-// Build a new attribute on the destination mesh shaped like a source attribute
-// from A or B. Skips intrinsics and attributes that already exist.
-void ensureAttributeOnDestination(
-    geo::Mesh& destMesh,
-    attr::AttributeOwner owner,
-    const std::shared_ptr<attr::Attribute>& sourceAttribute
-)
-{
-    if (!sourceAttribute) return;
-    if (sourceAttribute->isIntrinsic()) return;
-    if (destMesh.attributeExists(owner, sourceAttribute->getName())) return;
-
-    destMesh.addAttribute(
-        owner,
-        sourceAttribute->getName(),
-        sourceAttribute->getType(),
-        false,
-        sourceAttribute->isPrivate()
-    );
-}
-
 // Assemble the output mesh from fragments and detriangulated polygons. Points
 // are laid out as A-survivors first, then B-survivors, then cut points, then
 // any fully new points. The point remap lets us rewrite each loop's corners
@@ -793,88 +616,37 @@ std::shared_ptr<geo::Mesh> assembleMesh(
         appendVertex(vertIndex);
     outputMesh->addPoints(orderedPositions);
 
-    // Mirror every non intrinsic attribute schema from A and B onto the output
-    // mesh so the copy step below has a destination column to write into.
-    auto mirrorAttributes = [&](const geo::Mesh& sourceMesh, attr::AttributeOwner owner) {
-        const size_t count = sourceMesh.getNumAttributes(owner);
-        for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
-        {
-            auto weak = sourceMesh.getAttributeByIndex(owner, static_cast<unsigned int>(attrIndex));
-            auto shared = weak.lock();
-            if (!shared) continue;
-            // weak holds shared_ptr<const Attribute> so cast away const to fit the helper
-            // signature.
-            auto mutableShared = std::const_pointer_cast<attr::Attribute>(shared);
-            ensureAttributeOnDestination(*outputMesh, owner, mutableShared);
-        }
-    };
-    mirrorAttributes(meshA, attr::AttributeOwner::POINT);
-    mirrorAttributes(meshB, attr::AttributeOwner::POINT);
-    mirrorAttributes(meshA, attr::AttributeOwner::VERTEX);
-    mirrorAttributes(meshB, attr::AttributeOwner::VERTEX);
-    mirrorAttributes(meshA, attr::AttributeOwner::FACE);
-    mirrorAttributes(meshB, attr::AttributeOwner::FACE);
+    // Add every attribute from A and B to the output.
+    for (const attr::AttributeOwner owner :
+         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
+    {
+        outputMesh->addAttributesFrom(meshA, owner);
+        outputMesh->addAttributesFrom(meshB, owner);
+    }
 
     // Copy point attributes over each output point, interpolating cut points.
     auto copyPointAttrFor = [&](int fragmentVertex, Offset destPointOffset) {
         const VertexOrigin& origin = origins[fragmentVertex];
+        const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
         if (origin.kind == VertexOrigin::Kind::ORIGINAL)
         {
-            const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
-            // We can't reach a protected attrib store here, so iterate by name.
-            const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
-            for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
-            {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(
-                    attr::AttributeOwner::POINT,
-                    static_cast<unsigned int>(attrIndex)
-                );
-                auto sourceShared = sourceWeak.lock();
-                if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(
-                    attr::AttributeOwner::POINT,
-                    sourceShared->getName()
-                );
-                if (!destShared) continue;
-                if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = {
-                    std::const_pointer_cast<attr::Attribute>(sourceShared)
-                };
-                attr::attribVector singleDest = {destShared};
-                copyAttributeRow(singleSource, singleDest, origin.endpoint0, destPointOffset);
-            }
+            outputMesh->copyAttributeValuesFrom(
+                sourceMesh,
+                attr::AttributeOwner::POINT,
+                origin.endpoint0,
+                destPointOffset
+            );
         }
         else if (origin.kind == VertexOrigin::Kind::ON_EDGE)
         {
-            const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
-            const size_t count = sourceMesh.getNumAttributes(attr::AttributeOwner::POINT);
-            for (size_t attrIndex = 0; attrIndex < count; ++attrIndex)
-            {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(
-                    attr::AttributeOwner::POINT,
-                    static_cast<unsigned int>(attrIndex)
-                );
-                auto sourceShared = sourceWeak.lock();
-                if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(
-                    attr::AttributeOwner::POINT,
-                    sourceShared->getName()
-                );
-                if (!destShared) continue;
-                if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = {
-                    std::const_pointer_cast<attr::Attribute>(sourceShared)
-                };
-                attr::attribVector singleDest = {destShared};
-                interpolateAttributeRow(
-                    singleSource,
-                    singleDest,
-                    origin.endpoint0,
-                    origin.endpoint1,
-                    origin.t,
-                    destPointOffset
-                );
-            }
+            outputMesh->interpolateAttributeValuesFrom(
+                sourceMesh,
+                attr::AttributeOwner::POINT,
+                origin.endpoint0,
+                origin.endpoint1,
+                origin.t,
+                destPointOffset
+            );
         }
         // NEW points keep their default initialization.
     };
@@ -917,25 +689,12 @@ std::shared_ptr<geo::Mesh> assembleMesh(
         const geo::Mesh& sourceMesh = (face.source.side == SourceFace::Side::A) ? meshA : meshB;
 
         // Copy face attrs from source face to the new face.
-        const size_t faceAttrCount = sourceMesh.getNumAttributes(attr::AttributeOwner::FACE);
-        for (size_t attrIndex = 0; attrIndex < faceAttrCount; ++attrIndex)
-        {
-            auto sourceWeak = sourceMesh.getAttributeByIndex(
-                attr::AttributeOwner::FACE,
-                static_cast<unsigned int>(attrIndex)
-            );
-            auto sourceShared = sourceWeak.lock();
-            if (!sourceShared) continue;
-            auto destShared =
-                outputMesh->getAttribByName(attr::AttributeOwner::FACE, sourceShared->getName());
-            if (!destShared) continue;
-            if (destShared->getType() != sourceShared->getType()) continue;
-            attr::attribVector singleSource = {
-                std::const_pointer_cast<attr::Attribute>(sourceShared)
-            };
-            attr::attribVector singleDest = {destShared};
-            copyAttributeRow(singleSource, singleDest, face.source.faceOffset, cursorFaceOffset);
-        }
+        outputMesh->copyAttributeValuesFrom(
+            sourceMesh,
+            attr::AttributeOwner::FACE,
+            face.source.faceOffset,
+            cursorFaceOffset
+        );
 
         // Match each output corner back to a source vertex on the source face
         // by walking the source face's corners and comparing point offsets.
@@ -969,28 +728,12 @@ std::shared_ptr<geo::Mesh> assembleMesh(
             }
             if (matchedSourceVertex == static_cast<Offset>(-1)) continue;
 
-            const size_t vertexAttrCount =
-                sourceMesh.getNumAttributes(attr::AttributeOwner::VERTEX);
-            for (size_t attrIndex = 0; attrIndex < vertexAttrCount; ++attrIndex)
-            {
-                auto sourceWeak = sourceMesh.getAttributeByIndex(
-                    attr::AttributeOwner::VERTEX,
-                    static_cast<unsigned int>(attrIndex)
-                );
-                auto sourceShared = sourceWeak.lock();
-                if (!sourceShared) continue;
-                auto destShared = outputMesh->getAttribByName(
-                    attr::AttributeOwner::VERTEX,
-                    sourceShared->getName()
-                );
-                if (!destShared) continue;
-                if (destShared->getType() != sourceShared->getType()) continue;
-                attr::attribVector singleSource = {
-                    std::const_pointer_cast<attr::Attribute>(sourceShared)
-                };
-                attr::attribVector singleDest = {destShared};
-                copyAttributeRow(singleSource, singleDest, matchedSourceVertex, destVertexOffset);
-            }
+            outputMesh->copyAttributeValuesFrom(
+                sourceMesh,
+                attr::AttributeOwner::VERTEX,
+                matchedSourceVertex,
+                destVertexOffset
+            );
         }
 
         cursorVertexOffset += face.loop.size();

@@ -165,6 +165,13 @@ class Primitive
     const size_t getNumAttributes(const attr::AttributeOwner owner) const;
     std::weak_ptr<const attr::Attribute>
     getAttributeByIndex(attr::AttributeOwner owner, unsigned int index) const;
+    /**
+     * @brief Returns every attribute on the owner.
+     *
+     * @note Private attributes are left out, like @ref getAttributeByIndex.
+     */
+    std::vector<std::shared_ptr<const attr::Attribute>>
+    getAttributes(attr::AttributeOwner owner, bool includeIntrinsics = false) const;
     bool attributeExists(attr::AttributeOwner owner, std::string name);
 
     /**
@@ -198,6 +205,47 @@ class Primitive
      */
     std::weak_ptr<const attr::Attribute>
     getGroupByIndex(attr::AttributeOwner owner, unsigned int index) const;
+    /// @brief Returns every group on the owner.
+    std::vector<std::shared_ptr<const attr::Attribute>> getGroups(attr::AttributeOwner owner) const;
+
+    /**
+     * @brief Adds each attribute and group of the source to this primitive, keeping its name and
+     * type.
+     *
+     * @note Names this primitive already holds are left alone.
+     */
+    void addAttributesFrom(const Primitive& source, attr::AttributeOwner owner);
+
+    /**
+     * @brief Copies one element's attribute values and group membership from the source.
+     *
+     * @note Attributes and groups are matched by name. One missing here or holding a different
+     * type is skipped.
+     */
+    void copyAttributeValuesFrom(
+        const Primitive& source,
+        attr::AttributeOwner owner,
+        Offset sourceOffset,
+        Offset destOffset
+    );
+
+    /**
+     * @brief Writes a blend of two source elements' attribute values and group membership into
+     * one element.
+     *
+     * @param blend How far from the first source element toward the second, from 0 to 1.
+     *
+     * @note Integers round to the nearest whole number. Booleans, matrices and group membership
+     * take the value of whichever source element is nearer.
+     */
+    void interpolateAttributeValuesFrom(
+        const Primitive& source,
+        attr::AttributeOwner owner,
+        Offset sourceOffset0,
+        Offset sourceOffset1,
+        double blend,
+        Offset destOffset
+    );
 
     /// @brief Returns the point group of this name, adding one when the name is free.
     attr::AttributeHandleBool addPointGroup(std::string name)
