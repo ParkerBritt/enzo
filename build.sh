@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-# Usage: ./build.sh [Debug|Release|RelWithDebInfo] [--superbuild]   (default: Debug)
+# Usage: ./build.sh [Debug|Release|RelWithDebInfo] [--system-deps]  (default: Debug)
 #
-# --superbuild builds the pinned dependencies into build-super/deps first, then
-# builds enzo against them. Without it enzo builds into build against whatever
-# the system provides.
+# The pinned dependencies are built into build-super/deps first, then enzo is
+# built against them. --system-deps skips that and builds into build against
+# whatever the system provides.
 set -e
 
 BUILD_TYPE=Debug
-SUPERBUILD=OFF
-BUILD_DIR=build
+SUPERBUILD=ON
+BUILD_DIR=build-super
 
 for arg in "$@"; do
     case "$arg" in
-        --superbuild) SUPERBUILD=ON; BUILD_DIR=build-super ;;
+        --system-deps) SUPERBUILD=OFF; BUILD_DIR=build ;;
         *) BUILD_TYPE="$arg" ;;
     esac
 done

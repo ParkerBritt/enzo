@@ -16,10 +16,20 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/versions.cmake)
 
 # Builds the pinned dependencies first, then configures this same project again
 # against them.
-option(ENZO_SUPERBUILD "Build the pinned dependencies, then enzo against them" OFF)
+option(ENZO_SUPERBUILD "Build the pinned dependencies, then enzo against them" ON)
 if(ENZO_SUPERBUILD)
     add_subdirectory(superbuild)
     return()
+endif()
+
+# Every MSVC build writes a program database, so a crash in a shipped binary
+# resolves to function names.
+if(MSVC)
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT ProgramDatabase)
+    add_link_options(/DEBUG)
+    # /DEBUG leaves out dead code removal and identical function folding.
+    add_link_options($<$<NOT:$<CONFIG:Debug>>:/OPT:REF>)
+    add_link_options($<$<NOT:$<CONFIG:Debug>>:/OPT:ICF>)
 endif()
 
 # MSVC exports nothing from a shared library unless the declaration says so,
