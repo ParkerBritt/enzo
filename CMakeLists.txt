@@ -143,6 +143,11 @@ set(DAS_PUGIXML_DISABLED ON CACHE BOOL "" FORCE)
 set(DAS_HV_DISABLED ON CACHE BOOL "" FORCE)
 set(DAS_SQLITE_DISABLED ON CACHE BOOL "" FORCE)
 
+# Leaves the global operator new and delete alone. enzoEngine and each node
+# library link daslang separately, so its allocation cache cannot own every
+# free.
+add_compile_definitions(DAS_NO_GLOBAL_NEW_AND_DELETE)
+
 add_subdirectory(${DASLANG_DIR} ${CMAKE_BINARY_DIR}/daslang EXCLUDE_FROM_ALL)
 
 # daslang exposes its public headers only as a private requirement, so the
