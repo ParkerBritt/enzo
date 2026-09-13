@@ -304,6 +304,17 @@ qt6_add_shaders(${AppExec} "enzoShaders"
     "src/Gui/Shaders/NetworkDots.frag"
 )
 
+# The theme every token falls back to. It is compiled in so no missing or
+# unreadable file can leave the application unstyled.
+qt_add_resources(${AppExec} "enzoTheme"
+    PREFIX
+    "/"
+    BASE
+    "static"
+    FILES
+    "static/theme/default.yml"
+)
+
 # A run from a build directory loads QML from here, so edits reload without a
 # rebuild. An installed run loads the module compiled into the binary instead.
 target_compile_definitions(${AppExec} PRIVATE
