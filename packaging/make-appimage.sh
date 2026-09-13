@@ -28,4 +28,5 @@ exec "$HERE/enzo/bin/enzoGui" "$@"
 RUN
 chmod +x "$APPDIR/AppRun"
 
+mkdir -p "$(dirname "$OUTPUT")"
 appimagetool --no-appstream "$APPDIR" "$OUTPUT"
