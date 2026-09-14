@@ -3,6 +3,7 @@
 #include "Engine/Network/CookContext.h"
 #include "Engine/Network/NodePacket.h"
 #include <boost/config.hpp>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -53,6 +54,9 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     /// @brief Displays a warning on the node without interrupting the cook.
     /// @todo Add visual warning to GUI
     void throwWarning(std::string warning);
+
+    /// @brief Returns the folder the node was loaded from, where its assets live.
+    const std::filesystem::path& getNodeFolder() const;
 
     /// @brief Returns whether anything downstream is asking for this output.
     /// @todo Always true until nt::Node tracks dirtiness per output.
