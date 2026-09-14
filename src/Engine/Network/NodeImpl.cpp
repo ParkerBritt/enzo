@@ -12,6 +12,8 @@ void NodeImpl::throwWarning(std::string warning)
     std::cerr << "NODE WARNING: " << warning << "\n";
 }
 
+const std::filesystem::path& NodeImpl::getNodeFolder() const { return node_.getType().folder; }
+
 bool NodeImpl::outputRequested(unsigned int outputIndex)
 {
     return node_.outputRequested(outputIndex);

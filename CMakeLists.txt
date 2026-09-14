@@ -86,6 +86,7 @@ set(ENGINE_SOURCES
     src/Engine/GeometryAlgorithms/BooleanUtils.cpp
     src/Engine/GeometryAlgorithms/AttributeTransfer.cpp
     src/Engine/GeometryAlgorithms/PlaneCut.cpp
+    src/Engine/GeometryAlgorithms/ObjReader.cpp
     src/Engine/Util/UnionFind.cpp
 )
 
@@ -398,6 +399,7 @@ if(ENZO_BUILD_TESTS)
         tests/NodeTypeTests.cpp
         tests/NodeLoaderTests.cpp
         tests/GeometryImportTests.cpp
+        tests/ModelRatNodeTests.cpp
         tests/TransformNodeTests.cpp
         tests/AttributeCreateNodeTests.cpp
         tests/CylinderNodeTests.cpp
