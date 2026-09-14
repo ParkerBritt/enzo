@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Enzo 3D
 Comment=Node-based procedural 3D modeling application
-Exec=enzoGui
+Exec=enzo
 Icon=org.enzosoftware.Enzo
 Terminal=false
 Type=Application

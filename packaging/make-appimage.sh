@@ -24,7 +24,7 @@ cp "$APPDIR/share/icons/hicolor/scalable/apps/org.enzosoftware.Enzo.svg" "$APPDI
 cat > "$APPDIR/AppRun" <<'RUN'
 #!/usr/bin/env bash
 HERE=$(dirname "$(readlink -f "$0")")
-exec "$HERE/enzo/bin/enzoGui" "$@"
+exec "$HERE/enzo/bin/enzo" "$@"
 RUN
 chmod +x "$APPDIR/AppRun"
 
