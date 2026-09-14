@@ -46,12 +46,17 @@ if(WIN32)
     # config file without escaping it.
     set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${AppExec}.exe")
 
+    # Doubles the backslashes of the NSIS image paths, since makensis needs
+    # native paths and CPack copies the values into its config file unescaped.
+    file(TO_NATIVE_PATH "${ENZO_WINDOWS_PACKAGING_DIR}" ENZO_NSIS_PACKAGING_DIR)
+    string(REPLACE "\\" "\\\\" ENZO_NSIS_PACKAGING_DIR "${ENZO_NSIS_PACKAGING_DIR}")
+
     set(CPACK_NSIS_IGNORE_LICENSE_PAGE ON)
-    set(CPACK_NSIS_MUI_ICON "${ENZO_WINDOWS_ICON}")
-    set(CPACK_NSIS_MUI_UNIICON "${ENZO_WINDOWS_ICON}")
-    set(CPACK_NSIS_MUI_HEADERIMAGE "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-header.bmp")
-    set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-welcome.bmp")
-    set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-welcome.bmp")
+    set(CPACK_NSIS_MUI_ICON "${ENZO_NSIS_PACKAGING_DIR}\\\\enzo.ico")
+    set(CPACK_NSIS_MUI_UNIICON "${ENZO_NSIS_PACKAGING_DIR}\\\\enzo.ico")
+    set(CPACK_NSIS_MUI_HEADERIMAGE "${ENZO_NSIS_PACKAGING_DIR}\\\\nsis-header.bmp")
+    set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${ENZO_NSIS_PACKAGING_DIR}\\\\nsis-welcome.bmp")
+    set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${ENZO_NSIS_PACKAGING_DIR}\\\\nsis-welcome.bmp")
 
     set(CPACK_WIX_PRODUCT_ICON "${ENZO_WINDOWS_ICON}")
     set(CPACK_WIX_UI_BANNER "${ENZO_WINDOWS_PACKAGING_DIR}/wix-banner.bmp")

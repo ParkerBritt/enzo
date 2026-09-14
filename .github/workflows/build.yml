@@ -169,6 +169,12 @@ jobs:
           cd build-super\enzo-build
           cpack -G "WIX;NSIS;ZIP" -B "%GITHUB_WORKSPACE%\dist"
 
+      # Prints the makensis output, which CPack only names by path on failure.
+      - name: Show NSIS log
+        if: failure() && env.ENZO_PACKAGE == 'true'
+        shell: pwsh
+        run: Get-ChildItem dist -Recurse -Filter NSISOutput.log | Get-Content -Tail 60
+
       - uses: actions/upload-artifact@v4
         if: env.ENZO_PACKAGE == 'true'
         with:
