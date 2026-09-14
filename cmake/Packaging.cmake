@@ -30,10 +30,35 @@ else()
     set(CPACK_SYSTEM_NAME linux-${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
-# Offers to run the launcher when the installer finishes, and shows its icon in
-# the installed programs list.
-set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${AppExec}.exe")
-set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\${AppExec}.exe")
+# Brands the Windows executable and both installers with the app icon and the
+# header and welcome images.
+if(WIN32)
+    set(ENZO_WINDOWS_PACKAGING_DIR "${CMAKE_SOURCE_DIR}/packaging/windows")
+    set(ENZO_WINDOWS_ICON "${ENZO_WINDOWS_PACKAGING_DIR}/enzo.ico")
+
+    configure_file(${ENZO_WINDOWS_PACKAGING_DIR}/enzo.rc.in ${CMAKE_BINARY_DIR}/enzo.rc)
+    target_sources(${AppExec} PRIVATE ${CMAKE_BINARY_DIR}/enzo.rc)
+
+    # Offers to run the launcher when the installer finishes, and shows its
+    # icon in the installed programs list.
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${AppExec}.exe")
+    # Writes the backslash as four, since CPack copies the value into its
+    # config file without escaping it.
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${AppExec}.exe")
+
+    set(CPACK_NSIS_IGNORE_LICENSE_PAGE ON)
+    set(CPACK_NSIS_MUI_ICON "${ENZO_WINDOWS_ICON}")
+    set(CPACK_NSIS_MUI_UNIICON "${ENZO_WINDOWS_ICON}")
+    set(CPACK_NSIS_MUI_HEADERIMAGE "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-header.bmp")
+    set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-welcome.bmp")
+    set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${ENZO_WINDOWS_PACKAGING_DIR}/nsis-welcome.bmp")
+
+    set(CPACK_WIX_PRODUCT_ICON "${ENZO_WINDOWS_ICON}")
+    set(CPACK_WIX_UI_BANNER "${ENZO_WINDOWS_PACKAGING_DIR}/wix-banner.bmp")
+    set(CPACK_WIX_UI_DIALOG "${ENZO_WINDOWS_PACKAGING_DIR}/wix-dialog.bmp")
+    set(CPACK_WIX_UI_REF EnzoUI_InstallDir)
+    set(CPACK_WIX_EXTRA_SOURCES "${ENZO_WINDOWS_PACKAGING_DIR}/EnzoUI.wxs")
+endif()
 
 set_target_properties(${AppExec} PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib"
@@ -112,6 +137,12 @@ if(UNIX)
         RENAME com.enzo3d.Enzo.svg
     )
 endif()
+
+# Installs the licence into the folder holding bin and lib.
+cmake_path(SET ENZO_APP_ROOT NORMALIZE "${ENZO_APP_DIR}.")
+install(FILES ${CMAKE_BINARY_DIR}/LICENSE.txt
+    DESTINATION ${ENZO_APP_ROOT}
+)
 
 # The fonts and icons the application reads at runtime. The theme is compiled
 # into the binary.
