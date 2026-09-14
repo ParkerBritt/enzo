@@ -12,8 +12,8 @@ endif()
 
 set(CPACK_PACKAGE_NAME enzo)
 set(CPACK_PACKAGE_VENDOR "Enzo Software")
-set(CPACK_PACKAGE_CONTACT "Parker Britt <parker@enzosoftware.org>")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/ParkerBritt/enzo")
+set(CPACK_PACKAGE_CONTACT "Parker Britt <parker@parkerbritt.com>")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://enzo3d.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Node based procedural 3D modeling framework")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Enzo")
 # The WiX generator only accepts a licence with a .txt or .rtf extension.
@@ -101,15 +101,15 @@ endif()
 
 # Installs the desktop entry, metadata and icon Linux desktops read.
 if(UNIX)
-    install(FILES flatpak/org.enzosoftware.Enzo.desktop
+    install(FILES flatpak/com.enzo3d.Enzo.desktop
         DESTINATION share/applications
     )
-    install(FILES flatpak/org.enzosoftware.Enzo.metainfo.xml
+    install(FILES flatpak/com.enzo3d.Enzo.metainfo.xml
         DESTINATION share/metainfo
     )
     install(FILES static/icons/icon-main-white-square.svg
         DESTINATION share/icons/hicolor/scalable/apps
-        RENAME org.enzosoftware.Enzo.svg
+        RENAME com.enzo3d.Enzo.svg
     )
 endif()
 
