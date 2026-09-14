@@ -216,37 +216,6 @@ class Primitive
      */
     void addAttributesFrom(const Primitive& source, attr::AttributeOwner owner);
 
-    /**
-     * @brief Copies one element's attribute values and group membership from the source.
-     *
-     * @note Attributes and groups are matched by name. One missing here or holding a different
-     * type is skipped.
-     */
-    void copyAttributeValuesFrom(
-        const Primitive& source,
-        attr::AttributeOwner owner,
-        Offset sourceOffset,
-        Offset destOffset
-    );
-
-    /**
-     * @brief Writes a blend of two source elements' attribute values and group membership into
-     * one element.
-     *
-     * @param blend How far from the first source element toward the second, from 0 to 1.
-     *
-     * @note Integers round to the nearest whole number. Booleans, matrices and group membership
-     * take the value of whichever source element is nearer.
-     */
-    void interpolateAttributeValuesFrom(
-        const Primitive& source,
-        attr::AttributeOwner owner,
-        Offset sourceOffset0,
-        Offset sourceOffset1,
-        double blend,
-        Offset destOffset
-    );
-
     /// @brief Returns the point group of this name, adding one when the name is free.
     attr::AttributeHandleBool addPointGroup(std::string name)
     {

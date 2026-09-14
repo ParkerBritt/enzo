@@ -9,6 +9,7 @@
 #include <cmath>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <vector>
 
@@ -25,6 +26,18 @@ buildQuadMesh(const std::vector<Vector3>& positions, const std::vector<Offset>& 
     const std::vector<Offset> vertexCounts(quadPoints.size() / 4, 4);
     mesh->addFaces(quadPoints, vertexCounts);
     return mesh;
+}
+
+// Returns the cut of a mesh by a plane, failing the test when nothing lies past the plane.
+utils::PlaneCut requireCutByPlane(
+    const geo::Mesh& mesh,
+    const Vector3& planePoint,
+    const Vector3& keptSideNormal
+)
+{
+    std::optional<utils::PlaneCut> cut = utils::cutMeshByPlane(mesh, planePoint, keptSideNormal);
+    REQUIRE(cut.has_value());
+    return std::move(*cut);
 }
 
 // Builds a two by two quad spanning x and y from 0 to 2.
@@ -181,9 +194,10 @@ cutAndCapPiece(const geo::Mesh& mesh, const std::vector<Vector3>& seedPositions,
         const Vector3& otherSeedPosition = seedPositions[otherSeedIndex];
         const Vector3 towardSeed = (seedPosition - otherSeedPosition).normalized();
         const Vector3 midpoint = (seedPosition + otherSeedPosition) / 2;
-        utils::PlaneCut cut = utils::cutMeshByPlane(*piece, midpoint, towardSeed);
-        utils::fillCutCaps(*cut.mesh, cut.cutEdges);
-        piece = cut.mesh;
+        std::optional<utils::PlaneCut> cut = utils::cutMeshByPlane(*piece, midpoint, towardSeed);
+        if (!cut) continue;
+        utils::fillCutCaps(*cut->mesh, cut->cutEdges);
+        piece = cut->mesh;
     }
     return piece;
 }
@@ -203,29 +217,24 @@ TEST_CASE("Plane through a quad keeps the side the normal points toward")
 {
     auto quad = buildSingleQuad();
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 1);
     REQUIRE(cut.mesh->getFaceVertCount(0) == 4);
     REQUIRE(getMaxX(*cut.mesh) == Catch::Approx(1));
 }
 
-TEST_CASE("Quad entirely on the kept side comes through unchanged")
+TEST_CASE("Quad entirely on the kept side is left uncut")
 {
     auto quad = buildSingleQuad();
-
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {5, 0, 0}, {-1, 0, 0});
-
-    REQUIRE(cut.mesh->getNumFaces() == 1);
-    REQUIRE(cut.mesh->getNumPoints() == 4);
-    REQUIRE(cut.cutEdges.empty());
+    REQUIRE_FALSE(utils::cutMeshByPlane(*quad, {5, 0, 0}, {-1, 0, 0}).has_value());
 }
 
 TEST_CASE("Quad entirely on the removed side is dropped")
 {
     auto quad = buildSingleQuad();
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {-5, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {-5, 0, 0}, {-1, 0, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 0);
     REQUIRE(cut.mesh->getNumPoints() == 0);
@@ -236,7 +245,7 @@ TEST_CASE("Two quads sharing an edge share the cut point on it")
 {
     auto quads = buildTwoQuads();
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
 
     // Three bottom points are kept and each of the three vertical edges gets one cut point.
     REQUIRE(cut.mesh->getNumFaces() == 2);
@@ -247,7 +256,7 @@ TEST_CASE("Each cut face leaves one cut edge lying on the plane")
 {
     auto quads = buildTwoQuads();
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
 
     REQUIRE(cut.cutEdges.size() == 2);
     for (const auto& [startPoint, endPoint] : cut.cutEdges)
@@ -262,7 +271,7 @@ TEST_CASE("Cut edge follows the winding of the face it came from")
 {
     auto quad = buildSingleQuad();
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
 
     // The quad winds counterclockwise, so its edge along x equal to 1 runs from y 0 up to y 2.
     REQUIRE(cut.cutEdges.size() == 1);
@@ -278,7 +287,7 @@ TEST_CASE("Point attribute is interpolated at the cut")
     for (Offset pointOffset = 0; pointOffset < quad->getNumPoints(); ++pointOffset)
         heat.setValue(pointOffset, quad->getPointPos(pointOffset).x() * 10);
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {0.5, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {0.5, 0, 0}, {-1, 0, 0});
 
     // Heat is ten times x, so a cut point at x equal to 0.5 carries 5.
     auto cutHeatAttribute = cut.mesh->getAttribByName(attr::AttributeOwner::POINT, "heat");
@@ -299,7 +308,7 @@ TEST_CASE("Vertex attribute is interpolated at the cut")
     for (Offset vertexOffset = 0; vertexOffset < quad->getNumVerts(); ++vertexOffset)
         heat.setValue(vertexOffset, quad->getPosFromVert(vertexOffset).x() * 10);
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {0.5, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {0.5, 0, 0}, {-1, 0, 0});
 
     // Heat is ten times x, so a cut corner at x equal to 0.5 carries 5.
     auto cutHeatAttribute = cut.mesh->getAttribByName(attr::AttributeOwner::VERTEX, "heat");
@@ -318,7 +327,7 @@ TEST_CASE("Corners on the plane are kept without adding cut points")
     // A diamond whose top and bottom corners sit on the plane at x equal to 1.
     auto diamond = buildQuadMesh({{1, 0, 0}, {2, 1, 0}, {1, 2, 0}, {0, 1, 0}}, {0, 1, 2, 3});
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*diamond, {1, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*diamond, {1, 0, 0}, {-1, 0, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 1);
     REQUIRE(cut.mesh->getFaceVertCount(0) == 3);
@@ -347,7 +356,7 @@ TEST_CASE("Concave face crossing the plane four times splits into two faces")
     );
     uShape->addFace({0, 1, 2, 3, 4, 5, 6, 7});
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*uShape, {0, 2, 0}, {0, 1, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*uShape, {0, 2, 0}, {0, 1, 0});
 
     // Keeping everything above y equal to 2 leaves the two prongs of the U.
     REQUIRE(cut.mesh->getNumFaces() == 2);
@@ -381,7 +390,7 @@ TEST_CASE("Concave face whose kept part stays connected remains one face")
     );
     uShape->addFace({0, 1, 2, 3, 4, 5, 6, 7});
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*uShape, {0, 2, 0}, {0, -1, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*uShape, {0, 2, 0}, {0, -1, 0});
 
     // Keeping everything below y equal to 2 leaves the base of the U with two short prongs.
     REQUIRE(cut.mesh->getNumFaces() == 1);
@@ -395,7 +404,7 @@ TEST_CASE("Face group carries onto the cut face")
     quad->addFaceGroup("front");
     quad->addToFaceGroup("front", {0});
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
 
     auto cutGroup = cut.mesh->getGroupByName(attr::AttributeOwner::FACE, "front");
     REQUIRE(cutGroup != nullptr);
@@ -406,7 +415,7 @@ TEST_CASE("Face group carries onto the cut face")
 TEST_CASE("Cutting a closed cube in half caps the opening")
 {
     auto cube = utils::buildCube({2, 2, 2}, {0, 0, 0});
-    utils::PlaneCut cut = utils::cutMeshByPlane(*cube, {0, 0, 0}, {-1, 0, 0});
+    utils::PlaneCut cut = requireCutByPlane(*cube, {0, 0, 0}, {-1, 0, 0});
 
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
@@ -418,7 +427,7 @@ TEST_CASE("Cutting a closed cube in half caps the opening")
 TEST_CASE("Cap faces away from the kept side")
 {
     auto cube = utils::buildCube({2, 2, 2}, {0, 0, 0});
-    utils::PlaneCut cut = utils::cutMeshByPlane(*cube, {0, 0, 0}, {-1, 0, 0});
+    utils::PlaneCut cut = requireCutByPlane(*cube, {0, 0, 0}, {-1, 0, 0});
 
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
@@ -469,7 +478,7 @@ TEST_CASE("A cut along existing edges still caps the opening")
     auto box = buildQuadMesh(positions, quadPoints);
     REQUIRE(isClosedSurface(*box));
 
-    utils::PlaneCut cut = utils::cutMeshByPlane(*box, {0, 0, 0}, {-1, 0, 0});
+    utils::PlaneCut cut = requireCutByPlane(*box, {0, 0, 0}, {-1, 0, 0});
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(caps.size() == 1);
@@ -479,7 +488,7 @@ TEST_CASE("A cut along existing edges still caps the opening")
 TEST_CASE("Cutting an open surface adds no cap")
 {
     auto quads = buildTwoQuads();
-    utils::PlaneCut cut = utils::cutMeshByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
+    utils::PlaneCut cut = requireCutByPlane(*quads, {0, 0.5, 0}, {0, -1, 0});
 
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
@@ -491,7 +500,7 @@ TEST_CASE("Each closed loop of cut edges gets its own cap")
 {
     auto cubes = utils::buildCube({2, 2, 2}, {0, 0, 0});
     cubes->merge(*utils::buildCube({2, 2, 2}, {0, 0, 5}));
-    utils::PlaneCut cut = utils::cutMeshByPlane(*cubes, {0, 0, 0}, {-1, 0, 0});
+    utils::PlaneCut cut = requireCutByPlane(*cubes, {0, 0, 0}, {-1, 0, 0});
 
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
@@ -505,7 +514,7 @@ TEST_CASE("Face attribute carries onto the cut face")
     auto tag = quad->addAttribute<intT>(attr::AttributeOwner::FACE, "tag");
     tag.setValue(0, 7);
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
 
     auto cutTagAttribute = cut.mesh->getAttribByName(attr::AttributeOwner::FACE, "tag");
     REQUIRE(cutTagAttribute != nullptr);
@@ -518,7 +527,7 @@ TEST_CASE("Cutting through a hole leaves the hole uncapped", "[!shouldfail]")
     auto ring = buildSquareRing();
     REQUIRE(isClosedSurface(*ring));
 
-    utils::PlaneCut cut = utils::cutMeshByPlane(*ring, {0, 0, 0.5}, {0, 0, -1});
+    utils::PlaneCut cut = requireCutByPlane(*ring, {0, 0, 0.5}, {0, 0, -1});
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     // The middle of the hole stays open and the solid part of the ring is covered exactly once.
@@ -527,15 +536,10 @@ TEST_CASE("Cutting through a hole leaves the hole uncapped", "[!shouldfail]")
     REQUIRE(countFacesCoveringAlongZ(*cut.mesh, caps, 1, 0) == 1);
 }
 
-TEST_CASE("A flat surface lying in the plane gets no cap")
+TEST_CASE("A flat surface lying in the plane is left uncut")
 {
     auto quads = buildTwoQuads();
-
-    utils::PlaneCut cut = utils::cutMeshByPlane(*quads, {0, 0, 0}, {0, 0, 1});
-    const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
-
-    REQUIRE(caps.empty());
-    REQUIRE(cut.mesh->getNumFaces() == 2);
+    REQUIRE_FALSE(utils::cutMeshByPlane(*quads, {0, 0, 0}, {0, 0, 1}).has_value());
 }
 
 TEST_CASE("A flat surface lying in the plane gets no cap while another part is cut")
@@ -543,7 +547,7 @@ TEST_CASE("A flat surface lying in the plane gets no cap while another part is c
     auto mesh = buildTwoQuads();
     mesh->merge(*utils::buildCube({2, 2, 2}, {10, 0, 0}));
 
-    utils::PlaneCut cut = utils::cutMeshByPlane(*mesh, {0, 0, 0}, {0, 0, 1});
+    utils::PlaneCut cut = requireCutByPlane(*mesh, {0, 0, 0}, {0, 0, 1});
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     // Only the cube is opened by the cut.
@@ -555,7 +559,7 @@ TEST_CASE("Keeping only a face that lies on the plane leaves nothing", "[!should
     auto cube = utils::buildCube({2, 2, 2}, {0, 0, 0});
 
     // Everything past the cube's right face is kept, which holds no volume at all.
-    utils::PlaneCut cut = utils::cutMeshByPlane(*cube, {1, 0, 0}, {1, 0, 0});
+    utils::PlaneCut cut = requireCutByPlane(*cube, {1, 0, 0}, {1, 0, 0});
     utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(cut.mesh->getNumFaces() == 0);
@@ -579,7 +583,7 @@ TEST_CASE("Concave face touching the plane at its inner corners splits into two 
     );
     uShape->addFace({0, 1, 2, 3, 4, 5, 6, 7});
 
-    const utils::PlaneCut cut = utils::cutMeshByPlane(*uShape, {0, 1, 0}, {0, 1, 0});
+    const utils::PlaneCut cut = requireCutByPlane(*uShape, {0, 1, 0}, {0, 1, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 2);
 }
@@ -591,7 +595,7 @@ TEST_CASE("Two boxes sharing an edge each get their own cap")
     addBox(boxes, pointsByPosition, {0, 0, 0}, {1, 1, 1});
     addBox(boxes, pointsByPosition, {1, 1, 0}, {2, 2, 1});
 
-    utils::PlaneCut cut = utils::cutMeshByPlane(boxes, {0, 0, 0.5}, {0, 0, -1});
+    utils::PlaneCut cut = requireCutByPlane(boxes, {0, 0, 0.5}, {0, 0, -1});
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(caps.size() == 2);
@@ -603,7 +607,7 @@ TEST_CASE("A plane through opposite edges of a cube caps the diagonal")
 {
     auto cube = utils::buildCube({2, 2, 2}, {0, 0, 0});
 
-    utils::PlaneCut cut = utils::cutMeshByPlane(*cube, {0, 0, 0}, Vector3(-1, 0, 1).normalized());
+    utils::PlaneCut cut = requireCutByPlane(*cube, {0, 0, 0}, Vector3(-1, 0, 1).normalized());
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(caps.size() == 1);
@@ -630,4 +634,16 @@ TEST_CASE("Pieces cut far from the origin around uneven seed points stay closed"
         REQUIRE(piece->getNumFaces() > 0);
         REQUIRE(isClosedSurface(*piece));
     }
+}
+
+TEST_CASE("A plane along a quad's edge leaves it uncut")
+{
+    auto quad = buildSingleQuad();
+    REQUIRE_FALSE(utils::cutMeshByPlane(*quad, {0, 0, 0}, {1, 0, 0}).has_value());
+}
+
+TEST_CASE("Points close enough to lie on the plane are not cut away")
+{
+    auto quad = buildSingleQuad();
+    REQUIRE_FALSE(utils::cutMeshByPlane(*quad, {1e-7f, 0, 0}, {1, 0, 0}).has_value());
 }

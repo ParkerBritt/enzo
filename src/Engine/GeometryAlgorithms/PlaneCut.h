@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Core/Types.h"
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -24,11 +25,13 @@ struct PlaneCut
  *
  * @param planePoint Any point on the plane.
  * @param keptSideNormal The plane's normal, pointing toward the side that is kept.
+ * @return Nothing when no point lies past the plane.
  *
- * @note Faces that are not closed are dropped. A concave face whose kept side falls into several
- * pieces comes out as one face for each piece.
+ * @note Points close enough to count as lying on the plane are not past it. Faces that are not
+ * closed are dropped. A concave face whose kept side falls into several pieces comes out as one
+ * face for each piece.
  */
-PlaneCut
+std::optional<PlaneCut>
 cutMeshByPlane(const geo::Mesh& mesh, const Vector3& planePoint, const Vector3& keptSideNormal);
 
 /**
