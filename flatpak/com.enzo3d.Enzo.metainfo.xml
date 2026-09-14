@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.enzosoftware.Enzo</id>
+  <id>com.enzo3d.Enzo</id>
   <name>Enzo 3D</name>
   <summary>Node-based procedural 3D modeling framework</summary>
   <metadata_license>CC0-1.0</metadata_license>
-  <developer id="org.enzosoftware">
+  <developer id="com.enzo3d">
     <name>Parker Britt</name>
   </developer>
 
@@ -17,9 +17,9 @@
     </p>
   </description>
 
-  <launchable type="desktop-id">org.enzosoftware.Enzo.desktop</launchable>
+  <launchable type="desktop-id">com.enzo3d.Enzo.desktop</launchable>
 
-  <url type="homepage">https://github.com/ParkerBritt/enzo</url>
+  <url type="homepage">https://enzo3d.com</url>
   <url type="bugtracker">https://github.com/ParkerBritt/enzo/issues</url>
 
   <content_rating type="oars-1.1" />

@@ -18,8 +18,8 @@ trap 'rm -rf "$APPDIR"' EXIT
 
 cp -a "$PREFIX/." "$APPDIR/"
 
-cp "$APPDIR/share/applications/org.enzosoftware.Enzo.desktop" "$APPDIR/"
-cp "$APPDIR/share/icons/hicolor/scalable/apps/org.enzosoftware.Enzo.svg" "$APPDIR/"
+cp "$APPDIR/share/applications/com.enzo3d.Enzo.desktop" "$APPDIR/"
+cp "$APPDIR/share/icons/hicolor/scalable/apps/com.enzo3d.Enzo.svg" "$APPDIR/"
 
 cat > "$APPDIR/AppRun" <<'RUN'
 #!/usr/bin/env bash
