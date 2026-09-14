@@ -28,5 +28,6 @@ var searchData=
   ['createnode_25',['createNode',['../classenzo_1_1nt_1_1Network.html#a60964cae9ed4a804585b3399bde00a60',1,'enzo::nt::Network::createNode()'],['../classenzo_1_1nt_1_1NetworkManager.html#a9ec491b50ad7c1aea9d1384df63e2fbf',1,'enzo::nt::NetworkManager::createNode()']]],
   ['createnodecommand_26',['CreateNodeCommand',['../classenzo_1_1nt_1_1CreateNodeCommand.html',1,'enzo::nt']]],
   ['createnodewithid_27',['createNodeWithId',['../classenzo_1_1nt_1_1NetworkManager.html#aa7cee9ee6653e1b4c577af2d036ddf42',1,'enzo::nt::NetworkManager']]],
-  ['currentnode_28',['currentNode',['../classenzo_1_1expr_1_1ExpressionContext.html#af9376c02ce76d1d790d745bc7e8881eb',1,'enzo::expr::ExpressionContext']]]
+  ['currentnode_28',['currentNode',['../classenzo_1_1expr_1_1ExpressionContext.html#af9376c02ce76d1d790d745bc7e8881eb',1,'enzo::expr::ExpressionContext']]],
+  ['cutedges_29',['cutEdges',['../structenzo_1_1utils_1_1PlaneCut.html#af3055e4a3a7fd969f5ca48b1529394da',1,'enzo::utils::PlaneCut']]]
 ];

@@ -193,6 +193,9 @@ const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumAttribu
 <tr class="memitem:a5a03da78a6dbeed5aeb29e205676cd85" id="r_a5a03da78a6dbeed5aeb29e205676cd85"><td class="memItemLeft" align="right" valign="top"><a id="a5a03da78a6dbeed5aeb29e205676cd85" name="a5a03da78a6dbeed5aeb29e205676cd85"></a>
 std::weak_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttributeByIndex</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, unsigned int index) const</td></tr>
 <tr class="separator:a5a03da78a6dbeed5aeb29e205676cd85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a486a4d4b497a4960a91bae835e3e93c7" id="r_a486a4d4b497a4960a91bae835e3e93c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a486a4d4b497a4960a91bae835e3e93c7">getAttributes</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, bool includeIntrinsics=false) const</td></tr>
+<tr class="memdesc:a486a4d4b497a4960a91bae835e3e93c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute on the owner.  <br /></td></tr>
+<tr class="separator:a486a4d4b497a4960a91bae835e3e93c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a527a9caf266b296cb6ac7945b88f18ad" id="r_a527a9caf266b296cb6ac7945b88f18ad"><td class="memItemLeft" align="right" valign="top"><a id="a527a9caf266b296cb6ac7945b88f18ad" name="a527a9caf266b296cb6ac7945b88f18ad"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name)</td></tr>
 <tr class="separator:a527a9caf266b296cb6ac7945b88f18ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,6 +217,13 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumGroups</b> (<
 std::weak_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getGroupByIndex</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, unsigned int index) const</td></tr>
 <tr class="memdesc:a4ed9c839d335539a53784a341ad623f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the group at the given index in the owner's group store. <br /></td></tr>
 <tr class="separator:a4ed9c839d335539a53784a341ad623f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1916e1a9364cd9e5a78d7975ce2c4869" id="r_a1916e1a9364cd9e5a78d7975ce2c4869"><td class="memItemLeft" align="right" valign="top"><a id="a1916e1a9364cd9e5a78d7975ce2c4869" name="a1916e1a9364cd9e5a78d7975ce2c4869"></a>
+std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getGroups</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner) const</td></tr>
+<tr class="memdesc:a1916e1a9364cd9e5a78d7975ce2c4869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every group on the owner. <br /></td></tr>
+<tr class="separator:a1916e1a9364cd9e5a78d7975ce2c4869"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41f82500a3fb9c4627892a7e559e7244" id="r_a41f82500a3fb9c4627892a7e559e7244"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41f82500a3fb9c4627892a7e559e7244">addAttributesFrom</a> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;source, <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner)</td></tr>
+<tr class="memdesc:a41f82500a3fb9c4627892a7e559e7244"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds each attribute and group of the source to this primitive, keeping its name and type.  <br /></td></tr>
+<tr class="separator:a41f82500a3fb9c4627892a7e559e7244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace1f2028837f48beb33dfe6895a4f363" id="r_ace1f2028837f48beb33dfe6895a4f363"><td class="memItemLeft" align="right" valign="top"><a id="ace1f2028837f48beb33dfe6895a4f363" name="ace1f2028837f48beb33dfe6895a4f363"></a>
 <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>addPointGroup</b> (std::string name)</td></tr>
 <tr class="memdesc:ace1f2028837f48beb33dfe6895a4f363"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the point group of this name, adding one when the name is free. <br /></td></tr>
@@ -365,6 +375,30 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a41f82500a3fb9c4627892a7e559e7244" name="a41f82500a3fb9c4627892a7e559e7244"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41f82500a3fb9c4627892a7e559e7244">&#9670;&#160;</a></span>addAttributesFrom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::geo::Primitive::addAttributesFrom </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds each attribute and group of the source to this primitive, keeping its name and type. </p>
+<dl class="section note"><dt>Note</dt><dd>Names this primitive already holds are left alone. </dd></dl>
+
+</div>
+</div>
 <a id="a0f9ebcf823dc0f40528be39d1dcbca7f" name="a0f9ebcf823dc0f40528be39d1dcbca7f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f9ebcf823dc0f40528be39d1dcbca7f">&#9670;&#160;</a></span>addGroup()</h2>
 
@@ -444,6 +478,30 @@ template&lt;typename T &gt; </div>
 
 <p>Const counterpart of getAttribByName. </p>
 <p>Returns a read only shared pointer so the caller cannot mutate the attribute through a const <a class="el" href="classenzo_1_1geo_1_1Primitive.html" title="Base class for all primitive types in the engine.">Primitive</a>. </p>
+
+</div>
+</div>
+<a id="a486a4d4b497a4960a91bae835e3e93c7" name="a486a4d4b497a4960a91bae835e3e93c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a486a4d4b497a4960a91bae835e3e93c7">&#9670;&#160;</a></span>getAttributes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; &gt; enzo::geo::Primitive::getAttributes </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>includeIntrinsics</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns every attribute on the owner. </p>
+<dl class="section note"><dt>Note</dt><dd>Private attributes are left out, like getAttributeByIndex. </dd></dl>
 
 </div>
 </div>
