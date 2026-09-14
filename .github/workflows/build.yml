@@ -139,7 +139,7 @@ jobs:
         timeout-minutes: 15
         run: |
           cmake --install build-super/enzo-build --prefix "$PWD/stage"
-          $exe = "$PWD/stage/enzo/bin/enzoGui.exe"
+          $exe = "$PWD/stage/bin/enzoGui.exe"
 
           # A runner has no console window, so Qt writes its messages to the
           # debugger rather than stderr unless it is told otherwise.
@@ -167,7 +167,7 @@ jobs:
         shell: cmd
         run: |
           cd build-super\enzo-build
-          cpack -G "WIX;ZIP" -B "%GITHUB_WORKSPACE%\dist"
+          cpack -G "WIX;NSIS;ZIP" -B "%GITHUB_WORKSPACE%\dist"
 
       - uses: actions/upload-artifact@v4
         if: env.ENZO_PACKAGE == 'true'

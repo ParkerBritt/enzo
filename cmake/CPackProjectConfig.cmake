@@ -39,3 +39,13 @@ if(CPACK_GENERATOR STREQUAL "WIX")
     set(CPACK_WIX_PROPERTY_ARPHELPLINK "${CPACK_PACKAGE_HOMEPAGE_URL}")
     set(CPACK_WIX_ROOT_FEATURE_TITLE "Enzo 3D")
 endif()
+
+if(CPACK_GENERATOR STREQUAL "NSIS")
+    set(CPACK_NSIS_DISPLAY_NAME "Enzo 3D")
+    set(CPACK_NSIS_PACKAGE_NAME "Enzo 3D")
+    set(CPACK_NSIS_URL_INFO_ABOUT "${CPACK_PACKAGE_HOMEPAGE_URL}")
+    set(CPACK_NSIS_CONTACT "${CPACK_PACKAGE_CONTACT}")
+    # Removes the previous version before installing, so old files never
+    # linger beside the new ones.
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+endif()

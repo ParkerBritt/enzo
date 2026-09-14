@@ -341,10 +341,18 @@ target_include_directories(${AppExec} PRIVATE
 )
 
 
+# Groups the install tree under enzo/ on Linux, so the bundled Qt stays out of
+# the system lib folder. Windows installs straight into its own Enzo folder.
+if(WIN32)
+    set(ENZO_APP_DIR "")
+else()
+    set(ENZO_APP_DIR "${CMAKE_PROJECT_NAME}/")
+endif()
+
 # The layout every install rule writes into.
-set(ENZO_BIN_DIR ${CMAKE_PROJECT_NAME}/bin CACHE STRING "Binary install directory")
-set(ENZO_LIB_DIR ${CMAKE_PROJECT_NAME}/lib CACHE STRING "Library install directory")
-set(ENZO_NODES_DIR ${CMAKE_PROJECT_NAME}/nodes CACHE STRING "Node folder install directory")
+set(ENZO_BIN_DIR ${ENZO_APP_DIR}bin CACHE STRING "Binary install directory")
+set(ENZO_LIB_DIR ${ENZO_APP_DIR}lib CACHE STRING "Library install directory")
+set(ENZO_NODES_DIR ${ENZO_APP_DIR}nodes CACHE STRING "Node folder install directory")
 
 # compile nodes
 add_subdirectory(nodes)
