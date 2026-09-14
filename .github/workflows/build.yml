@@ -139,7 +139,7 @@ jobs:
         timeout-minutes: 15
         run: |
           cmake --install build-super/enzo-build --prefix "$PWD/stage"
-          $exe = "$PWD/stage/bin/enzoGui.exe"
+          $exe = "$PWD/stage/bin/enzo.exe"
 
           # A runner has no console window, so Qt writes its messages to the
           # debugger rather than stderr unless it is told otherwise.
@@ -155,12 +155,12 @@ jobs:
           # second run faults where the memory is written rather than later.
           $debuggers = "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64"
           if (Test-Path "$debuggers/cdb.exe") {
-            & "$debuggers/gflags.exe" /p /enable enzoGui.exe /full
+            & "$debuggers/gflags.exe" /p /enable enzo.exe /full
             $env:_NT_SYMBOL_PATH = "$PWD/build-super/enzo-build/enzo/bin"
             & "$debuggers/cdb.exe" -g -G -c ".lastevent; kb; q" $exe
-            & "$debuggers/gflags.exe" /p /disable enzoGui.exe
+            & "$debuggers/gflags.exe" /p /disable enzo.exe
           }
-          throw "enzoGui exited on startup with $($app.ExitCode)"
+          throw "enzo exited on startup with $($app.ExitCode)"
 
       - name: Package
         if: env.ENZO_PACKAGE == 'true'

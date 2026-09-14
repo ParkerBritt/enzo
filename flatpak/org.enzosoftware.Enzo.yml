@@ -2,7 +2,7 @@ app-id: org.enzosoftware.Enzo
 runtime: org.kde.Platform
 runtime-version: '6.10'
 sdk: org.kde.Sdk
-command: enzoGui
+command: enzo
 
 finish-args:
   - --device=dri          # OpenGL
