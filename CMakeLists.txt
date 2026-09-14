@@ -84,6 +84,7 @@ set(ENGINE_SOURCES
     src/Engine/GeometryAlgorithms/Normals.cpp
     src/Engine/GeometryAlgorithms/MeshShapes.cpp
     src/Engine/GeometryAlgorithms/BooleanUtils.cpp
+    src/Engine/GeometryAlgorithms/AttributeTransfer.cpp
     src/Engine/GeometryAlgorithms/PlaneCut.cpp
     src/Engine/Util/UnionFind.cpp
 )
@@ -380,6 +381,7 @@ if(ENZO_BUILD_TESTS)
         tests/MeshTests.cpp
         tests/BooleanUtilsTests.cpp
         tests/PrimitiveTests.cpp
+        tests/AttributeTransferTests.cpp
         tests/PlaneCutTests.cpp
         tests/CellFractureNodeTests.cpp
         tests/PathTests.cpp

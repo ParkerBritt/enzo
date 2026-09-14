@@ -1,4 +1,5 @@
 #include "Engine/GeometryAlgorithms/BooleanUtils.h"
+#include "Engine/GeometryAlgorithms/AttributeTransfer.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Primitives/Mesh.h"
 
@@ -35,6 +36,15 @@ struct BooleanFragments
     std::vector<Vector3> positions;
     std::vector<std::array<int, 3>> triangles;
     std::vector<SourceFace> triSourceFace;
+};
+
+// The source faces and vertices whose attributes one input mesh gives the output.
+struct SourceCopies
+{
+    std::vector<Offset> sourceFaces;
+    std::vector<Offset> destFaces;
+    std::vector<Offset> sourceVertices;
+    std::vector<Offset> destVertices;
 };
 
 // Origin tag for a single result vertex.
@@ -625,37 +635,26 @@ std::shared_ptr<geo::Mesh> assembleMesh(
     }
 
     // Copy point attributes over each output point, interpolating cut points.
-    auto copyPointAttrFor = [&](int fragmentVertex, Offset destPointOffset) {
-        const VertexOrigin& origin = origins[fragmentVertex];
-        const geo::Mesh& sourceMesh = (origin.side == VertexOrigin::Side::A) ? meshA : meshB;
-        if (origin.kind == VertexOrigin::Kind::ORIGINAL)
-        {
-            outputMesh->copyAttributeValuesFrom(
-                sourceMesh,
-                attr::AttributeOwner::POINT,
-                origin.endpoint0,
-                destPointOffset
-            );
-        }
-        else if (origin.kind == VertexOrigin::Kind::ON_EDGE)
-        {
-            outputMesh->interpolateAttributeValuesFrom(
-                sourceMesh,
-                attr::AttributeOwner::POINT,
-                origin.endpoint0,
-                origin.endpoint1,
-                origin.t,
-                destPointOffset
-            );
-        }
-        // NEW points keep their default initialization.
-    };
+    std::vector<utils::ElementBlend> pointBlendsA;
+    std::vector<utils::ElementBlend> pointBlendsB;
     for (size_t fragmentVertex = 0; fragmentVertex < fragments.positions.size(); ++fragmentVertex)
     {
         const Offset destPointOffset = fragmentToOutputPoint[fragmentVertex];
         if (destPointOffset == static_cast<Offset>(-1)) continue;
-        copyPointAttrFor(static_cast<int>(fragmentVertex), destPointOffset);
+
+        const VertexOrigin& origin = origins[fragmentVertex];
+        std::vector<utils::ElementBlend>& pointBlends =
+            (origin.side == VertexOrigin::Side::A) ? pointBlendsA : pointBlendsB;
+        const Offset endpoint0 = static_cast<Offset>(origin.endpoint0);
+        const Offset endpoint1 = static_cast<Offset>(origin.endpoint1);
+        if (origin.kind == VertexOrigin::Kind::ORIGINAL)
+            pointBlends.push_back({endpoint0, endpoint0, 0.0, destPointOffset});
+        else if (origin.kind == VertexOrigin::Kind::ON_EDGE)
+            pointBlends.push_back({endpoint0, endpoint1, origin.t, destPointOffset});
+        // NEW points keep their default initialization.
     }
+    utils::interpolateAttributeValues(meshA, *outputMesh, attr::AttributeOwner::POINT, pointBlendsA);
+    utils::interpolateAttributeValues(meshB, *outputMesh, attr::AttributeOwner::POINT, pointBlendsB);
 
     // Sort detriangulated faces so A faces come first in source order, then B.
     std::vector<size_t> faceOrder(faces.size());
@@ -681,20 +680,19 @@ std::shared_ptr<geo::Mesh> assembleMesh(
     outputMesh->addFaces(flatPointOffsets, vertexCounts);
 
     // Copy face and vertex attributes by walking output faces in the order they were added.
+    SourceCopies copiesA;
+    SourceCopies copiesB;
     Offset cursorFaceOffset = 0;
     Offset cursorVertexOffset = 0;
     for (size_t orderedIndex : faceOrder)
     {
         const DetriangulatedFace& face = faces[orderedIndex];
         const geo::Mesh& sourceMesh = (face.source.side == SourceFace::Side::A) ? meshA : meshB;
+        SourceCopies& copies = (face.source.side == SourceFace::Side::A) ? copiesA : copiesB;
 
         // Copy face attrs from source face to the new face.
-        outputMesh->copyAttributeValuesFrom(
-            sourceMesh,
-            attr::AttributeOwner::FACE,
-            face.source.faceOffset,
-            cursorFaceOffset
-        );
+        copies.sourceFaces.push_back(face.source.faceOffset);
+        copies.destFaces.push_back(cursorFaceOffset);
 
         // Match each output corner back to a source vertex on the source face
         // by walking the source face's corners and comparing point offsets.
@@ -728,17 +726,33 @@ std::shared_ptr<geo::Mesh> assembleMesh(
             }
             if (matchedSourceVertex == static_cast<Offset>(-1)) continue;
 
-            outputMesh->copyAttributeValuesFrom(
-                sourceMesh,
-                attr::AttributeOwner::VERTEX,
-                matchedSourceVertex,
-                destVertexOffset
-            );
+            copies.sourceVertices.push_back(matchedSourceVertex);
+            copies.destVertices.push_back(destVertexOffset);
         }
 
         cursorVertexOffset += face.loop.size();
         ++cursorFaceOffset;
     }
+
+    auto copyFaceAndVertexAttributes = [&](const geo::Mesh& sourceMesh,
+                                           const SourceCopies& copies) {
+        utils::copyAttributeValues(
+            sourceMesh,
+            *outputMesh,
+            attr::AttributeOwner::FACE,
+            copies.sourceFaces,
+            copies.destFaces
+        );
+        utils::copyAttributeValues(
+            sourceMesh,
+            *outputMesh,
+            attr::AttributeOwner::VERTEX,
+            copies.sourceVertices,
+            copies.destVertices
+        );
+    };
+    copyFaceAndVertexAttributes(meshA, copiesA);
+    copyFaceAndVertexAttributes(meshB, copiesB);
 
     return outputMesh;
 }

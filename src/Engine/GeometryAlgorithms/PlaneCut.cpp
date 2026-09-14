@@ -1,10 +1,11 @@
 #include "Engine/GeometryAlgorithms/PlaneCut.h"
+#include "Engine/GeometryAlgorithms/AttributeTransfer.h"
 #include "Engine/Primitives/Mesh.h"
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <map>
-#include <set>
 #include <unordered_map>
 
 namespace enzo::utils {
@@ -13,6 +14,8 @@ namespace {
 
 // Distances closer to the plane than this count as lying on it.
 constexpr float kOnPlaneTolerance = 1e-6f;
+
+constexpr Offset kNoPointIndex = std::numeric_limits<Offset>::max();
 
 // Where an element of the cut mesh comes from, as a blend between two source elements.
 // An element carried over whole names the same source element twice with a blend of 0.
@@ -65,7 +68,7 @@ bool isOnPlane(const BlendSource& pointSource, const std::vector<float>& distanc
     return isCrossing || distances[pointSource.sourceOffset0] == 0;
 }
 
-// Returns the signed distance of every point, positive on the kept side.
+// Returns the signed distance of every point, positive on the kept side and 0 on the plane.
 std::vector<float> getSignedDistances(
     std::span<const Vector3> sourcePositions,
     const Vector3& planePoint,
@@ -81,12 +84,20 @@ std::vector<float> getSignedDistances(
     return distances;
 }
 
+// Returns whether any corner of a face arrives along the cut.
+bool hasCornerArrivingAlongCut(const std::vector<CutCorner>& faceCorners)
+{
+    return std::any_of(faceCorners.begin(), faceCorners.end(), [](const CutCorner& corner) {
+        return corner.arrivesAlongCut;
+    });
+}
+
 // Returns a face's corners on the kept side, with a corner added wherever an edge crosses the
 // plane.
 ClippedFace clipFace(
     const geo::Mesh& mesh,
     Offset faceOffset,
-    const Vector3& faceNormal,
+    const geo::FaceNormalHandle& faceNormals,
     const std::vector<float>& distances,
     const Vector3& keptSideNormal
 )
@@ -97,6 +108,7 @@ ClippedFace clipFace(
     const Offset faceCornerCount = facePoints.size();
 
     ClippedFace clipped{{}, false, true};
+    clipped.corners.reserve(faceCornerCount);
     bool removedSinceLastCorner = false;
     for (Offset cornerIndex = 0; cornerIndex < faceCornerCount; ++cornerIndex)
     {
@@ -127,6 +139,7 @@ ClippedFace clipFace(
         if (edgeLiesOnPlane)
         {
             const Vector3 edgeDirection = sourcePositions[nextPoint] - sourcePositions[point];
+            const Vector3 faceNormal = faceNormals[faceOffset];
             const Vector3 towardInside = faceNormal.cross(edgeDirection).normalized();
             if (towardInside.dot(keptSideNormal) < -kOnPlaneTolerance)
                 removedSinceLastCorner = true;
@@ -243,7 +256,7 @@ std::vector<std::pair<Offset, Offset>> getCutEdges(
 )
 {
     std::vector<std::pair<Offset, Offset>> candidateEdges;
-    std::set<std::pair<Offset, Offset>> planeEdges;
+    std::vector<std::pair<Offset, Offset>> planeEdges;
     for (const CutFace& cutFace : cutFaces)
     {
         const Offset faceCornerCount = cutFace.corners.size();
@@ -260,33 +273,93 @@ std::vector<std::pair<Offset, Offset>> getCutEdges(
 
             const Offset startPoint = cutPoints[previousCorner.pointIndex];
             const Offset endPoint = cutPoints[corner.pointIndex];
-            planeEdges.insert({startPoint, endPoint});
+            planeEdges.push_back({startPoint, endPoint});
             if (!cutFace.liesOnPlane) candidateEdges.push_back({startPoint, endPoint});
         }
     }
+    std::sort(planeEdges.begin(), planeEdges.end());
 
     std::vector<std::pair<Offset, Offset>> cutEdges;
     for (const auto& [startPoint, endPoint] : candidateEdges)
     {
-        if (planeEdges.contains({endPoint, startPoint})) continue;
+        const std::pair<Offset, Offset> reversedEdge{endPoint, startPoint};
+        if (std::binary_search(planeEdges.begin(), planeEdges.end(), reversedEdge)) continue;
         cutEdges.push_back({startPoint, endPoint});
     }
     return cutEdges;
 }
 
+// Carries attribute values from the source mesh onto the cut mesh.
+void copyCutAttributes(
+    const geo::Mesh& mesh,
+    geo::Mesh& cutMesh,
+    const std::vector<BlendSource>& pointSources,
+    const std::vector<Offset>& cutPoints,
+    const std::vector<CutFace>& cutFaces,
+    const std::vector<Offset>& cutFaceOffsets
+)
+{
+    for (const attr::AttributeOwner owner :
+         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
+        cutMesh.addAttributesFrom(mesh, owner);
+
+    std::vector<ElementBlend> pointBlends;
+    pointBlends.reserve(pointSources.size());
+    for (Offset pointIndex = 0; pointIndex < pointSources.size(); ++pointIndex)
+    {
+        const BlendSource& pointSource = pointSources[pointIndex];
+        pointBlends.push_back(
+            {pointSource.sourceOffset0,
+             pointSource.sourceOffset1,
+             pointSource.blend,
+             cutPoints[pointIndex]}
+        );
+    }
+    interpolateAttributeValues(mesh, cutMesh, attr::AttributeOwner::POINT, pointBlends);
+
+    std::vector<Offset> sourceFaces;
+    std::vector<ElementBlend> vertexBlends;
+    sourceFaces.reserve(cutFaces.size());
+    for (Offset faceIndex = 0; faceIndex < cutFaces.size(); ++faceIndex)
+    {
+        const CutFace& cutFace = cutFaces[faceIndex];
+        const Offset cutFaceStartVertex = cutMesh.getFaceStartVertices()[cutFaceOffsets[faceIndex]];
+        sourceFaces.push_back(cutFace.sourceFace);
+
+        for (Offset cornerIndex = 0; cornerIndex < cutFace.corners.size(); ++cornerIndex)
+        {
+            const BlendSource& vertexSource = cutFace.corners[cornerIndex].vertexSource;
+            vertexBlends.push_back(
+                {vertexSource.sourceOffset0,
+                 vertexSource.sourceOffset1,
+                 vertexSource.blend,
+                 cutFaceStartVertex + cornerIndex}
+            );
+        }
+    }
+    copyAttributeValues(mesh, cutMesh, attr::AttributeOwner::FACE, sourceFaces, cutFaceOffsets);
+    interpolateAttributeValues(mesh, cutMesh, attr::AttributeOwner::VERTEX, vertexBlends);
+}
+
 } // namespace
 
-PlaneCut
+std::optional<PlaneCut>
 cutMeshByPlane(const geo::Mesh& mesh, const Vector3& planePoint, const Vector3& keptSideNormal)
 {
     const std::span<const Vector3> sourcePositions = mesh.pointPosSpan();
     const std::vector<float> distances =
         getSignedDistances(sourcePositions, planePoint, keptSideNormal);
+    const bool hasPointPastPlane =
+        std::any_of(distances.begin(), distances.end(), [](float distance) {
+            return distance < 0;
+        });
+    if (!hasPointPastPlane) return std::nullopt;
     const geo::FaceNormalHandle faceNormals = mesh.getFaceNormal();
 
-    // Clip every face, finding each point by the source edge it sits on so neighbouring faces share
-    // it.
+    // Clip every face, finding each point by the source point or source edge it sits on so
+    // neighbouring faces share it.
     std::vector<BlendSource> pointSources;
+    std::vector<Offset> pointIndexBySourcePoint(sourcePositions.size(), kNoPointIndex);
     std::map<std::pair<Offset, Offset>, Offset> pointIndexBySourceEdge;
     std::vector<CutFace> cutFaces;
     bool removedAnyCorner = false;
@@ -295,25 +368,36 @@ cutMeshByPlane(const geo::Mesh& mesh, const Vector3& planePoint, const Vector3& 
         if (!mesh.isValidFace(faceOffset)) continue;
         if (!mesh.isClosed(faceOffset)) continue;
 
-        const Vector3 faceNormal = faceNormals[faceOffset];
-        ClippedFace clipped = clipFace(mesh, faceOffset, faceNormal, distances, keptSideNormal);
+        ClippedFace clipped = clipFace(mesh, faceOffset, faceNormals, distances, keptSideNormal);
         if (clipped.removedAnyCorner) removedAnyCorner = true;
 
         for (CutCorner& corner : clipped.corners)
         {
             const BlendSource& pointSource = corner.pointSource;
-            const auto sourceEdge =
+            const bool isSourcePoint = pointSource.sourceOffset0 == pointSource.sourceOffset1;
+            const std::pair<Offset, Offset> sourceEdge =
                 std::minmax(pointSource.sourceOffset0, pointSource.sourceOffset1);
-            const auto [entry, isNew] =
-                pointIndexBySourceEdge.try_emplace(sourceEdge, pointSources.size());
-            if (isNew) pointSources.push_back(pointSource);
-            corner.pointIndex = entry->second;
-            corner.pointSource = pointSources[corner.pointIndex];
+            Offset& pointIndex =
+                isSourcePoint
+                    ? pointIndexBySourcePoint[pointSource.sourceOffset0]
+                    : pointIndexBySourceEdge.try_emplace(sourceEdge, kNoPointIndex).first->second;
+            if (pointIndex == kNoPointIndex)
+            {
+                pointIndex = pointSources.size();
+                pointSources.push_back(pointSource);
+            }
+            corner.pointIndex = pointIndex;
+            corner.pointSource = pointSources[pointIndex];
         }
 
         if (clipped.corners.size() < 3) continue;
+        if (!hasCornerArrivingAlongCut(clipped.corners))
+        {
+            cutFaces.push_back({faceOffset, std::move(clipped.corners), clipped.liesOnPlane});
+            continue;
+        }
 
-        const Vector3 cutDirection = keptSideNormal.cross(faceNormal);
+        const Vector3 cutDirection = keptSideNormal.cross(faceNormals[faceOffset]);
         for (std::vector<CutCorner>& splitCorners :
              splitAlongCut(std::move(clipped.corners), cutDirection, sourcePositions))
         {
@@ -341,50 +425,7 @@ cutMeshByPlane(const geo::Mesh& mesh, const Vector3& planePoint, const Vector3& 
     }
     const std::vector<Offset> cutFaceOffsets = cutMesh->addFaces(cornerPoints, cornerCounts);
 
-    // Carry attributes across.
-    for (const attr::AttributeOwner owner :
-         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
-        cutMesh->addAttributesFrom(mesh, owner);
-
-    for (Offset pointIndex = 0; pointIndex < pointSources.size(); ++pointIndex)
-    {
-        const BlendSource& pointSource = pointSources[pointIndex];
-        cutMesh->interpolateAttributeValuesFrom(
-            mesh,
-            attr::AttributeOwner::POINT,
-            pointSource.sourceOffset0,
-            pointSource.sourceOffset1,
-            pointSource.blend,
-            cutPoints[pointIndex]
-        );
-    }
-
-    for (Offset faceIndex = 0; faceIndex < cutFaces.size(); ++faceIndex)
-    {
-        const CutFace& cutFace = cutFaces[faceIndex];
-        const Offset cutFaceOffset = cutFaceOffsets[faceIndex];
-        const Offset cutFaceStartVertex = cutMesh->getFaceStartVertices()[cutFaceOffset];
-
-        cutMesh->copyAttributeValuesFrom(
-            mesh,
-            attr::AttributeOwner::FACE,
-            cutFace.sourceFace,
-            cutFaceOffset
-        );
-
-        for (Offset cornerIndex = 0; cornerIndex < cutFace.corners.size(); ++cornerIndex)
-        {
-            const BlendSource& vertexSource = cutFace.corners[cornerIndex].vertexSource;
-            cutMesh->interpolateAttributeValuesFrom(
-                mesh,
-                attr::AttributeOwner::VERTEX,
-                vertexSource.sourceOffset0,
-                vertexSource.sourceOffset1,
-                vertexSource.blend,
-                cutFaceStartVertex + cornerIndex
-            );
-        }
-    }
+    copyCutAttributes(mesh, *cutMesh, pointSources, cutPoints, cutFaces, cutFaceOffsets);
 
     PlaneCut cut{cutMesh, {}};
     if (removedAnyCorner) cut.cutEdges = getCutEdges(cutFaces, cutPoints, distances);
