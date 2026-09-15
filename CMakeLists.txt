@@ -405,6 +405,7 @@ if(ENZO_BUILD_TESTS)
         tests/CylinderNodeTests.cpp
         tests/SphereNodeTests.cpp
         tests/DuplicateNodeTests.cpp
+        tests/CopyToPointsNodeTests.cpp
         tests/TransformTests.cpp
         tests/ParameterItemTests.cpp
         tests/StyleTests.cpp

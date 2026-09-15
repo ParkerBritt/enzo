@@ -187,6 +187,105 @@ TEST_CASE_METHOD(NMReset, "Cell fracture of a cube")
     };
 }
 
+namespace {
+
+// Returns a grid node with the given division counts.
+enzo::nt::NodeId addGrid(int rows, int columns)
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    nm.getNode(grid).getParameter("rows").lock()->setInt(rows);
+    nm.getNode(grid).getParameter("columns").lock()->setInt(columns);
+    return grid;
+}
+
+// Returns a cooked copy to points node wiring the prototype onto the target points.
+enzo::nt::NodeId addCopyToPoints(enzo::nt::NodeId prototype, enzo::nt::NodeId targetPoints)
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId copy = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::copyToPoints"));
+    nm.connectNodes(prototype, 0, copy, 0);
+    nm.connectNodes(targetPoints, 0, copy, 1);
+    nm.cook(copy);
+    return copy;
+}
+
+// Prints the point and face counts of a node's output mesh.
+void printMeshShape(const std::string& label, enzo::nt::NodeId node)
+{
+    using namespace enzo;
+    const auto mesh = std::dynamic_pointer_cast<const geo::Mesh>(
+        nt::nm().getNode(node).getOutputPacket(0)->getPrimitive(0)
+    );
+    REQUIRE(mesh != nullptr);
+    std::cout << label << ": points " << mesh->getNumPoints() << ", faces " << mesh->getNumFaces()
+              << "\n";
+}
+
+} // namespace
+
+TEST_CASE_METHOD(NMReset, "Copy dense prototype to points")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId denseSphere =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    setSphereShape(nm.getNode(denseSphere), 1.0f, 400, 250);
+    const nt::NodeId fewPoints = addGrid(4, 4);
+    const nt::NodeId denseOntoFew = addCopyToPoints(denseSphere, fewPoints);
+    printMeshShape("dense prototype", denseSphere);
+    printMeshShape("few target points", fewPoints);
+    printMeshShape("dense onto few", denseOntoFew);
+    // Cooks only the copy each run, since the nodes above it stay clean.
+    BENCHMARK("Copy dense sphere onto few points")
+    {
+        nm.getNode(denseOntoFew).dirtyNode(false);
+        nm.cook(denseOntoFew);
+    };
+}
+
+TEST_CASE_METHOD(NMReset, "Copy to many points")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId cube = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cube"));
+    const nt::NodeId manyPoints = addGrid(316, 316);
+    const nt::NodeId cubeOntoMany = addCopyToPoints(cube, manyPoints);
+    printMeshShape("many target points", manyPoints);
+    printMeshShape("cube onto many", cubeOntoMany);
+    BENCHMARK("Copy cube onto many points")
+    {
+        nm.getNode(cubeOntoMany).dirtyNode(false);
+        nm.cook(cubeOntoMany);
+    };
+}
+
+TEST_CASE_METHOD(NMReset, "Copy medium prototype to medium points")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId mediumSphere =
+        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    setSphereShape(nm.getNode(mediumSphere), 1.0f, 32, 32);
+    const nt::NodeId mediumPoints = addGrid(32, 32);
+    const nt::NodeId mediumOntoMedium = addCopyToPoints(mediumSphere, mediumPoints);
+    printMeshShape("medium prototype", mediumSphere);
+    printMeshShape("medium target points", mediumPoints);
+    printMeshShape("medium onto medium", mediumOntoMedium);
+    BENCHMARK("Copy medium sphere onto medium points")
+    {
+        nm.getNode(mediumOntoMedium).dirtyNode(false);
+        nm.cook(mediumOntoMedium);
+    };
+}
+
 TEST_CASE("Ramp sampling")
 {
     using namespace enzo;
