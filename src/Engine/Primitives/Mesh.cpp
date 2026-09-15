@@ -312,7 +312,7 @@ std::vector<Offset> geo::Mesh::addFaces(
     {
         if (group) group->resize(newVertCount);
     }
-    vertexFaces_.reserve(newVertCount);
+    vertexFaces_.resize(newVertCount);
 
     std::vector<Offset> newFaceOffsets;
     newFaceOffsets.reserve(numFacesToAdd);
@@ -329,7 +329,7 @@ std::vector<Offset> geo::Mesh::addFaces(
             const Offset pointOffset = pointOffsetsFlat[vertCursor - firstVertOffset];
             pointOffsetVertexHandle_.setValue(vertCursor, pointOffset);
             validVertexHandle_.setValue(vertCursor, true);
-            vertexFaces_.push_back(faceOffset);
+            vertexFaces_[vertCursor] = faceOffset;
             ++vertCursor;
         }
 
