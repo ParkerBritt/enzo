@@ -62,6 +62,7 @@ include(deps/manifold.cmake)
 include(deps/eigen.cmake)
 include(deps/glm.cmake)
 include(deps/argparse.cmake)
+include(deps/fastnoise2.cmake)
 
 # Builds enzo last, into a normal cmake build folder that ninja can be run in
 # directly.

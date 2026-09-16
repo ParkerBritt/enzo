@@ -45,6 +45,12 @@ set(ENZO_MANIFOLD_URL
 set(ENZO_MANIFOLD_SHA256
     35cb5e0d78882f461ec39b17d8f09c2aceca761356f3ce948e3f3908289b8f2e)
 
+set(ENZO_FASTNOISE2_VERSION 1.1.1)
+set(ENZO_FASTNOISE2_URL
+    https://github.com/Auburn/FastNoise2/archive/refs/tags/v${ENZO_FASTNOISE2_VERSION}.tar.gz)
+set(ENZO_FASTNOISE2_SHA256
+    e460592c32e9b1a2cf6e6f6aea5e16c9fe23c68bd185adb315202a5a993656b9)
+
 set(ENZO_YAML_CPP_VERSION 0.8.0)
 set(ENZO_YAML_CPP_URL
     https://github.com/jbeder/yaml-cpp/archive/refs/tags/${ENZO_YAML_CPP_VERSION}.tar.gz)

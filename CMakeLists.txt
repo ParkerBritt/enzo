@@ -119,6 +119,9 @@ find_package(argparse REQUIRED)
 # manifold (boolean ops)
 find_package(manifold CONFIG REQUIRED)
 
+# FastNoise2 (noise nodes)
+find_package(FastNoise2 CONFIG REQUIRED)
+
 # yaml-cpp (node manifests and themes)
 include(FetchContent)
 FetchContent_Declare(
@@ -424,6 +427,7 @@ if(ENZO_BUILD_TESTS)
         tests/TransformTests.cpp
         tests/ParameterItemTests.cpp
         tests/StyleTests.cpp
+        tests/AttributeNoiseNodeTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
