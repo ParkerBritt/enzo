@@ -1,0 +1,187 @@
+version: 1
+
+name: attributeNoise
+namespace: enzo
+label: Attribute Noise
+tags: [attribute, noise]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: attributeNoise
+
+parameters:
+  - name: attribute_divider
+    label: Attribute
+    type: divider
+    icon: tag
+
+  - name: name
+    label: Attribute Name
+    type: string
+    default: noise
+    style: attribute
+    styleOptions:
+      owners: point
+      attributeTypes: prm(type)
+    tooltip: >
+      The point attribute the noise writes to. A missing attribute is added with
+      the chosen type.
+
+  - name: type
+    label: Type
+    type: dropdown
+    default: float
+    tooltip: >
+      The kind of value the attribute stores. A vector gets separate noise on each
+      axis.
+    options:
+      - {value: float, label: Float}
+      - {value: vector, label: Vector}
+
+  - name: alongVectorRow
+    label: Noise Along Vector
+    type: group
+    direction: horizontal
+    hideCondition: type != 1
+    tooltip: Moves the value along a vector attribute scaled by one noise value.
+    parameters:
+      - name: alongVector
+        label: Noise Along Vector
+        type: bool
+        labelHidden: true
+        tooltip: Moves the value along a vector attribute scaled by one noise value.
+
+      - name: alongVectorAttribute
+        label: Vector Attribute
+        type: string
+        default: Normal
+        labelHidden: true
+        hideCondition: alongVector == 0
+        style: attribute
+        styleOptions:
+          owners: point
+          attributeTypes: vector
+        tooltip: >
+          The point vector attribute the noise moves along. When the attribute is
+          missing the smooth point normals are used.
+
+  - name: operation
+    label: Operation
+    type: dropdown
+    default: add
+    tooltip: How the noise combines with the value already on the attribute.
+    options:
+      - {value: set, label: Set}
+      - {value: add, label: Add}
+      - {value: subtract, label: Subtract}
+      - {value: multiply, label: Multiply}
+      - {value: minimum, label: Minimum}
+      - {value: maximum, label: Maximum}
+
+  - name: noise_divider
+    label: Noise
+    type: divider
+    icon: audio-waveform
+
+  - name: noiseType
+    label: Noise Type
+    type: dropdown
+    default: simplex
+    tooltip: The pattern of noise to sample.
+    options:
+      - {value: simplex, label: Simplex}
+      - {value: superSimplex, label: Super Simplex}
+      - {value: perlin, label: Perlin}
+      - {value: value, label: Value}
+      - {value: cellular, label: Cellular}
+
+  - name: cellularMode
+    label: Cellular Mode
+    type: dropdown
+    default: value
+    hideCondition: noiseType != 4
+    tooltip: >
+      What each point reads from its nearest cell. Value gives every cell one flat
+      value, and distance gives how far the point is from the cell center.
+    options:
+      - {value: value, label: Value}
+      - {value: distance, label: Distance}
+
+  - name: amplitude
+    label: Amplitude
+    type: float
+    default: 1
+    tooltip: Scales the noise, which otherwise runs from minus one to one.
+
+  - name: frequency
+    label: Frequency
+    type: float
+    default: 1
+    tooltip: How many noise features fit in one unit of space.
+
+  - name: offset
+    label: Offset
+    type: float
+    size: 3
+    style: xyz
+    tooltip: Moves the noise through space.
+
+  - name: seed
+    label: Seed
+    type: int
+    default: 0
+    tooltip: Picks a different pattern of noise.
+
+  - name: fractal_divider
+    label: Fractal
+    type: divider
+    icon: layers
+
+  - name: fractalType
+    label: Fractal Type
+    type: dropdown
+    default: none
+    tooltip: >
+      How octaves of the noise are layered. FBm adds finer detail on top of the
+      base noise, and Ridged folds each octave into sharp creases.
+    options:
+      - {value: none, label: None}
+      - {value: fbm, label: FBm}
+      - {value: ridged, label: Ridged}
+
+  - name: octaves
+    label: Octaves
+    type: int
+    default: 3
+    range: {min: 1, max: 10, minLocked: true}
+    hideCondition: fractalType == 0
+    tooltip: How many layers of noise are stacked.
+
+  - name: lacunarity
+    label: Lacunarity
+    type: float
+    default: 2
+    hideCondition: fractalType == 0
+    tooltip: How much the frequency grows from one octave to the next.
+
+  - name: gain
+    label: Gain
+    type: float
+    default: 0.5
+    hideCondition: fractalType == 0
+    tooltip: How much each octave contributes compared with the one before it.
+
+  - name: weightedStrength
+    label: Weighted Strength
+    type: float
+    default: 0
+    range: {min: 0, max: 1}
+    hideCondition: fractalType == 0
+    tooltip: >
+      Lets octaves contribute less where the layers below them are low, so detail
+      gathers on the peaks.

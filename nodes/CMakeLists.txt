@@ -13,7 +13,7 @@ file(GLOB NODE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*/src/*.cp
 set(libName enzoOps)
 add_library(${libName} SHARED ${NODE_SOURCES})
 
-target_link_libraries(${libName} PRIVATE enzoEngine Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb libDaScript)
+target_link_libraries(${libName} PRIVATE enzoEngine Boost::filesystem Boost::system glm::glm Eigen3::Eigen TBB::tbb libDaScript FastNoise2::FastNoise)
 
 # packaging
 install(TARGETS ${libName}
