@@ -37,6 +37,9 @@ Rectangle {
     // True while shift is held, which turns a node drag into a bypass.
     property bool bypassHeld: false
 
+    // True while 'c' is held, which turns the left button into a link cutter.
+    property bool cutHeld: false
+
     // The node a drag is moving and where its center sits.
     property var draggedNodeId: undefined
     property point draggedPoint
@@ -129,6 +132,8 @@ Rectangle {
     Keys.onPressed: event => {
         if (event.key === Qt.Key_Shift)
             bypassHeld = true;
+        else if (event.key === Qt.Key_C)
+            cutHeld = true;
         else if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace)
             network.deleteSelected();
         else if (event.key === Qt.Key_Escape && linkController.linking)
@@ -137,9 +142,21 @@ Rectangle {
             network.setDisplayNodeToPrimary();
     }
 
+    // Clears the held keys when focus moves away, since their release goes elsewhere.
+    onActiveFocusChanged: {
+        if (activeFocus)
+            return;
+        bypassHeld = false;
+        cutHeld = false;
+    }
+
     Keys.onReleased: event => {
+        if (event.isAutoRepeat)
+            return;
         if (event.key === Qt.Key_Shift)
             bypassHeld = false;
+        else if (event.key === Qt.Key_C)
+            cutHeld = false;
     }
 
     FocusReclaimer {
@@ -166,7 +183,7 @@ Rectangle {
         // read as a click that would finish the link.
         property bool grabbedOnPress: false
 
-        // True while a Ctrl drag is cutting across links.
+        // True while a left drag is cutting across links.
         property bool cutting: false
         // The last canvas point a cutting drag passed through.
         property point cutLast
@@ -182,8 +199,8 @@ Rectangle {
 
             const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
 
-            // Ctrl turns the left button into a link cutter.
-            if (mouse.modifiers & Qt.ControlModifier) {
+            // Holding 'c' turns the left button into a link cutter.
+            if (root.cutHeld) {
                 cutting = true;
                 cutLast = canvasPoint;
                 return;
@@ -232,8 +249,8 @@ Rectangle {
             if (mouse.button !== Qt.LeftButton || grabbedOnPress || selectionBox.applied)
                 return;
 
-            // A Ctrl click cuts the link under the cursor.
-            if (mouse.modifiers & Qt.ControlModifier) {
+            // A click while 'c' is held cuts the link under the cursor.
+            if (root.cutHeld) {
                 const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
                 root.cutLink(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, canvasPoint);
                 committedLinks.setHover(-1, NodeLinkLayer.None);
@@ -246,7 +263,9 @@ Rectangle {
                 network.clearSelection();
         }
 
-        onReleased: {
+        // Ends the press, also when a popup such as the tab menu takes the mouse
+        // away before the button comes up.
+        function endPress() {
             cutting = false;
             selectionBox.release();
             if (draggingLink) {
@@ -254,6 +273,9 @@ Rectangle {
                 draggingLink = false;
             }
         }
+
+        onReleased: endPress()
+        onCanceled: endPress()
 
         onExited: {
             committedLinks.setHover(-1, NodeLinkLayer.None);
@@ -267,7 +289,7 @@ Rectangle {
 
             selectionBox.drag(canvasPoint);
 
-            // A Ctrl drag cuts every link its path sweeps across.
+            // A drag while 'c' is held cuts every link its path sweeps across.
             if (cutting) {
                 root.cutLink(committedLinks.linkCrossing(cutLast, canvasPoint), canvasPoint);
                 cutLast = canvasPoint;
@@ -275,7 +297,7 @@ Rectangle {
 
             // The hover preview mirrors what a press at this point would do.
             overRedirect = false;
-            if (mouse.modifiers & Qt.ControlModifier) {
+            if (root.cutHeld) {
                 committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, NodeLinkLayer.Cut);
             } else if (selectionBox.sweeping || draggingLink || linkController.linking || network.nodes.isOverNodeOrPort(canvasPoint)) {
                 committedLinks.setHover(-1, NodeLinkLayer.None);
@@ -462,5 +484,15 @@ Rectangle {
             z: 3
             viewZoom: root.viewZoom
         }
+    }
+
+    // The cursor shown while 'c' is held.
+    IconCursor {
+        anchors.fill: parent
+        active: root.cutHeld
+        name: "slice"
+        color: canvasArea.cutting ? Theme.nodeLink.cutColor : Theme.var.text
+        size: canvasArea.cutting ? 20 : 22
+        hotSpot: Qt.point(2, 20)
     }
 }

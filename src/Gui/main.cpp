@@ -124,6 +124,11 @@ int main(int argc, char** argv)
     // Icons recolour their SVG markup through a local file XMLHttpRequest.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
 
+    // Takes keys straight from the keyboard rather than through a Wayland input
+    // method, which repeats a held key as separate presses the network reads as
+    // taps rather than a hold.
+    qputenv("QT_IM_MODULES", "compose");
+
     // Send Qt and QML debug logging to the terminal.
     qputenv("QT_LOGGING_RULES", "default.debug=true;qml.debug=true;js.debug=true");
 

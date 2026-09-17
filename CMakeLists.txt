@@ -239,6 +239,7 @@ qt_add_qml_module(${AppExec}
     RESOURCE_PREFIX /qt/qml
     SOURCES
         src/Gui/Style/Theme.cpp
+        src/Gui/Components/IconCursor.cpp
         src/Gui/Network/NodeLinkLayer.cpp
         src/Gui/Parameters/RampCurveItem.cpp
         src/Gui/Viewport/ViewportItem.cpp
@@ -336,6 +337,7 @@ target_include_directories(${AppExec} PRIVATE
     # Folders holding QML_ELEMENT types, whose headers the generated type
     # registration includes by bare file name.
     src/Gui/Style
+    src/Gui/Components
     src/Gui/Network
     src/Gui/Parameters
     src/Gui/Viewport
