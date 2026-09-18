@@ -6,7 +6,7 @@ class Serializer
 {
   public:
     /// @brief Writes a network out to a file.
-    void save(Network& network, std::string filePath);
+    void save(NetworkManager& networkManager, std::string filePath);
 
     /// @brief Reads a file into the network, replacing whatever was there.
     /// @note Loading creates nodes, which runs through undo, cooking, and the signals the

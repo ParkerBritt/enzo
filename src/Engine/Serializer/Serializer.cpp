@@ -114,7 +114,7 @@ void applySerializable(enzo::prm::Parameter& parameter, const ParameterSerializa
 
 namespace enzo::nt {
 
-void Serializer::save(Network& network, std::string filePath)
+void Serializer::save(NetworkManager& networkManager, std::string filePath)
 {
     std::cout << "serializing\n";
     std::ofstream file(filePath);
@@ -122,6 +122,7 @@ void Serializer::save(Network& network, std::string filePath)
 
     NetworkSerializable networkModel;
 
+    Network& network = networkManager.network();
     auto nodes = network.nodes();
 
     // Build NodeId -> index mapping and serialize nodes
@@ -149,6 +150,11 @@ void Serializer::save(Network& network, std::string filePath)
         }
     }
 
+    networkModel.timeline.startFrame = networkManager.getStartFrame();
+    networkModel.timeline.endFrame = networkManager.getEndFrame();
+    networkModel.timeline.fps = networkManager.getFps();
+    networkModel.timeline.frame = networkManager.getFrame();
+
     save(CEREAL_NVP(networkModel));
 }
 
@@ -162,6 +168,12 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
 
     NetworkSerializable networkModel;
     load(networkModel);
+
+    // The range comes before the frame, which is clamped into it.
+    networkManager.setStartFrame(networkModel.timeline.startFrame);
+    networkManager.setEndFrame(networkModel.timeline.endFrame);
+    networkManager.setFps(networkModel.timeline.fps);
+    networkManager.setFrame(networkModel.timeline.frame);
 
     // A node is created inside its parent's scope, so the node holding a scope has to
     // exist before the nodes living in it. Sorting by path depth gets that in one pass.

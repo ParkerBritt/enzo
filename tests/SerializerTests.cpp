@@ -6,6 +6,7 @@
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/Serializer/Serializer.h"
 #include <catch2/catch_test_macros.hpp>
+#include <fstream>
 #include <optional>
 
 using namespace enzo;
@@ -149,7 +150,7 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 
     const std::string path = "/tmp/enzo_serializer_path_roundtrip.json";
     nt::Serializer serializer;
-    serializer.save(nm.network(), path);
+    serializer.save(nm, path);
 
     nm._reset();
     serializer.load(nm, path);
@@ -171,7 +172,7 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 
     const std::string path = "/tmp/enzo_serializer_roundtrip.json";
     nt::Serializer serializer;
-    serializer.save(nm.network(), path);
+    serializer.save(nm, path);
 
     nm._reset();
     serializer.load(nm, path);
@@ -203,7 +204,7 @@ TEST_CASE_METHOD(NMReset, "A node inside a scope round trips through save and lo
 
     const std::string path = "/tmp/enzo_serializer_scope_roundtrip.json";
     nt::Serializer serializer;
-    serializer.save(nm.network(), path);
+    serializer.save(nm, path);
 
     nm._reset();
     serializer.load(nm, path);
@@ -212,4 +213,35 @@ TEST_CASE_METHOD(NMReset, "A node inside a scope round trips through save and lo
     // scope to place that node in.
     REQUIRE(nm.getScope(containerPath) != nullptr);
     REQUIRE(nm.getChildNodeIds(containerPath).size() == 1);
+}
+
+TEST_CASE_METHOD(NMReset, "The timeline round trips through save and load")
+{
+    auto& nm = nt::nm();
+
+    nm.setStartFrame(10);
+    nm.setEndFrame(50);
+    nm.setFps(30);
+    nm.setFrame(20);
+
+    const std::string path = "/tmp/enzo_serializer_timeline_roundtrip.json";
+    nt::Serializer serializer;
+    serializer.save(nm, path);
+
+    nm._reset();
+    serializer.load(nm, path);
+
+    REQUIRE(nm.getStartFrame() == 10);
+    REQUIRE(nm.getEndFrame() == 50);
+    REQUIRE(nm.getFps() == 30);
+    REQUIRE(nm.getFrame() == 20);
+}
+
+TEST_CASE_METHOD(NMReset, "Loading a file without a timeline fails")
+{
+    const std::string path = "/tmp/enzo_serializer_no_timeline.json";
+    std::ofstream(path) << R"({"networkModel": {"nodes": [], "connections": []}})";
+
+    nt::Serializer serializer;
+    REQUIRE_THROWS(serializer.load(nt::nm(), path));
 }
