@@ -9,6 +9,7 @@ import "Viewport"
 import "Parameters"
 import "Components"
 import "MenuBar"
+import "Timeline"
 
 // Root window of the QML application.
 ApplicationWindow {
@@ -36,7 +37,10 @@ ApplicationWindow {
     SplitView {
         id: split
 
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: timelinePanel.top
         anchors.margins: window.marginSize
         orientation: Qt.Vertical
 
@@ -87,6 +91,22 @@ ApplicationWindow {
                 viewModel: spreadsheet
                 anchors.fill: parent
             }
+        }
+    }
+
+    Panel {
+        id: timelinePanel
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: window.marginSize
+        height: timeline.implicitHeight + 2 * timelinePanel.borderWidth
+
+        Timeline {
+            id: timeline
+
+            anchors.fill: parent
         }
     }
 }

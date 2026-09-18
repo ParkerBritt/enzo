@@ -290,6 +290,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Spreadsheet/AttributeTable.qml
         src/Gui/Spreadsheet/PrimitivesTree.qml
         src/Gui/Spreadsheet/ModeControl.qml
+        src/Gui/Timeline/Timeline.qml
+        src/Gui/Timeline/TimelineRuler.qml
         src/Gui/Viewport/Viewport.qml
     RESOURCES
         # Declares Constants.qml a singleton for the directory import.
