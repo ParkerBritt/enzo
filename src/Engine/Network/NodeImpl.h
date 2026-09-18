@@ -75,6 +75,13 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     /// @note A multi input port holds one input per connection it has.
     unsigned int getInputCount();
 
+    /// @brief Returns the frame the scene sits on.
+    /// @note The frame can be fractional.
+    floatT getFrame() const;
+
+    /// @brief Returns the scene time in seconds, measured from the start of frame 1.
+    floatT getTime() const;
+
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
     intT evalParmInt(std::string_view parmName, const unsigned int index = 0) const;
     boolT evalParmBool(std::string_view parmName, const unsigned int index = 0) const;

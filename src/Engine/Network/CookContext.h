@@ -14,11 +14,10 @@ class Ramp;
 namespace enzo::nt {
 /**
  * @class CookContext
- * @brief Provides network context for the cook function.
+ * @brief The handle a node holds while it cooks to get context about the network.
  *
- * The cook context is the handle a node holds while it cooks. It provides important runtime context
- * about the network, allowing querying parameters, reading input geometry, and in the future
- * provides values like time.
+ * Carries the runtime context a cook reads from the network, covering parameter values, input
+ * geometry and the scene time.
  */
 class CookContext
 {
@@ -27,6 +26,14 @@ class CookContext
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     unsigned int getInputCount();
+
+    /// @brief Returns the frame the scene sits on.
+    /// @note The frame can be fractional.
+    floatT getFrame() const;
+
+    /// @brief Returns the scene time in seconds, measured from the start of frame 1.
+    floatT getTime() const;
+
     floatT evalParmFloat(std::string_view parmName, const unsigned int index = 0) const;
     intT evalParmInt(std::string_view parmName, const unsigned int index = 0) const;
     boolT evalParmBool(std::string_view parmName, const unsigned int index = 0) const;
