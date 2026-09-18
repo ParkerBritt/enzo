@@ -65,7 +65,7 @@ set(ENGINE_SOURCES
     src/Engine/NetworkGraph/NetworkGraph.cpp
     src/Engine/Expression/DasRuntime.cpp
     src/Engine/Expression/ExpressionEngine.cpp
-    src/Engine/Expression/ParameterFunctions.cpp
+    src/Engine/Expression/ExpressionFunctions.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -176,7 +176,7 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 if(NOT MSVC)
     set_source_files_properties(
         src/Engine/Expression/DasRuntime.cpp
-        src/Engine/Expression/ParameterFunctions.cpp
+        src/Engine/Expression/ExpressionFunctions.cpp
         PROPERTIES COMPILE_OPTIONS "-fno-rtti"
     )
 endif()

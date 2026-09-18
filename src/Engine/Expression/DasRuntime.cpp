@@ -6,8 +6,8 @@
 // Makes daslang's builtin modules (math, strings, and the rest) available.
 DECLARE_ALL_DEFAULT_MODULES;
 
-// Makes our parameter functions module (prm and friends) available.
-DECLARE_MODULE(ParameterModule);
+// Makes our expression functions module (prm, frame and friends) available.
+DECLARE_MODULE(ExpressionModule);
 
 namespace enzo::expr {
 
@@ -124,7 +124,7 @@ DasRuntime& DasRuntime::instance()
 DasRuntime::DasRuntime()
 {
     PULL_ALL_DEFAULT_MODULES;
-    PULL_MODULE(ParameterModule);
+    PULL_MODULE(ExpressionModule);
     das::Module::Initialize();
 }
 

@@ -12,7 +12,7 @@ String wrapExpression(const String& expression, const String& returnType)
 {
     return "options gen2\n"
            "require math\n"
-           "require enzo_parameter\n"
+           "require enzo_expression\n"
            "[export]\n"
            "def " +
            String(evalFunctionName) + " : " + returnType +
