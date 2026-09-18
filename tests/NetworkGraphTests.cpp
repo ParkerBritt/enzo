@@ -181,3 +181,35 @@ TEST_CASE("Removing a node forgets its edges")
     REQUIRE(graph.getCookOrder(3) == std::vector<nt::NodeId>{3});
     REQUIRE(graph.getDependents(nt::Unit{1}).empty());
 }
+
+TEST_CASE("A unit reading the scene time is listed as a time dependent")
+{
+    nt::NetworkGraph graph;
+    nt::Unit parameter{2, "scale", 0};
+    graph.setTimeDependent(parameter, true);
+    graph.setTimeDependent(nt::Unit{3}, true);
+
+    REQUIRE(contains(graph.getTimeDependents(), parameter));
+    REQUIRE(contains(graph.getTimeDependents(), nt::Unit{3}));
+}
+
+TEST_CASE("A unit that stops reading the scene time drops out of the time dependents")
+{
+    nt::NetworkGraph graph;
+    nt::Unit parameter{2, "scale", 0};
+    graph.setTimeDependent(parameter, true);
+    graph.setTimeDependent(parameter, false);
+
+    REQUIRE(graph.getTimeDependents().empty());
+}
+
+TEST_CASE("Removing a node forgets that it read the scene time")
+{
+    nt::NetworkGraph graph;
+    graph.setTimeDependent(nt::Unit{2}, true);
+    graph.setTimeDependent(nt::Unit{2, "scale", 0}, true);
+    graph.setTimeDependent(nt::Unit{3}, true);
+    graph.removeNode(2);
+
+    REQUIRE(graph.getTimeDependents() == std::vector<nt::Unit>{nt::Unit{3}});
+}

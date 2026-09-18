@@ -47,6 +47,15 @@ class NetworkGraph
     /// so its previous captured edges are dropped and the new set takes over.
     void setCapturedDependencies(const Unit& dependent, const std::vector<Unit>& dependencies);
 
+    /// @brief Records whether a unit reads the scene time.
+    /// @note A parameter records this each time it evaluates and a node each
+    /// time it cooks.
+    void setTimeDependent(const Unit& dependent, bool dependsOnTime);
+
+    /// @brief Returns every unit the scene time reaches, in no particular order.
+    /// @note Covers the units that read the time and everything downstream of them.
+    std::vector<Unit> getTimeDependents() const;
+
     /// @brief Removes every connection and captured edge touching the node.
     void removeNode(NodeId nodeId);
 
@@ -107,6 +116,10 @@ class NetworkGraph
     CapturedMap capturedDependents_;
     // Captured reads keyed by the reading parameter component.
     CapturedMap capturedDependencies_;
+
+    // The units that read the scene time, at the same mixed granularity as the
+    // captured maps.
+    std::unordered_set<Unit> timeDependents_;
 };
 
 } // namespace enzo::nt

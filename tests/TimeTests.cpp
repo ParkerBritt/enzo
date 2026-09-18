@@ -3,6 +3,8 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
+#include "Engine/NetworkGraph/NetworkGraph.h"
+#include "Engine/Parameter/NodeParameter.h"
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
@@ -160,4 +162,67 @@ TEST_CASE_METHOD(NMReset, "a cook reads the frame the scene sits on")
 
     REQUIRE(context.getFrame() == 49);
     REQUIRE(context.getTime() == Catch::Approx(2.f));
+}
+
+TEST_CASE_METHOD(NMReset, "moving the frame dirties a parameter whose expression reads it")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId =
+        nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    auto translate = nm.getNode(nodeId).getParameter("translate").lock();
+    translate->setExpression("frame()");
+
+    // Records the read and leaves the node clean, so only the frame move can dirty it
+    translate->evalFloat();
+    nm.cook(nodeId);
+    REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
+
+    nm.setFrame(20);
+    REQUIRE(nm.getNode(nodeId).isDirty());
+    REQUIRE(translate->evalFloat() == 20.0f);
+}
+
+TEST_CASE_METHOD(NMReset, "moving the frame leaves a node that never read it alone")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    nm.cook(nodeId);
+    REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
+
+    nm.setFrame(20);
+    REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
+}
+
+TEST_CASE_METHOD(NMReset, "moving the frame dirties a node whose cook read it")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    nm.cook(nodeId);
+
+    enzo::nt::CookContext context(nodeId, nm);
+    context.getFrame();
+
+    nm.setFrame(20);
+    REQUIRE(nm.getNode(nodeId).isDirty());
+}
+
+TEST_CASE_METHOD(NMReset, "a cook that no longer reads the frame stops being time dependent")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::CookContext context(nodeId, nm);
+    context.getFrame();
+
+    // Clears the read, since the grid's own cook reads no time
+    nm.cook(nodeId);
+
+    REQUIRE(nm.graph().getTimeDependents().empty());
 }

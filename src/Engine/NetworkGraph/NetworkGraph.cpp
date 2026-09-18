@@ -119,12 +119,33 @@ void NetworkGraph::eraseUnit_(CapturedMap& map, const Unit& key, const Unit& val
     if (units.empty()) map.erase(entry);
 }
 
+void NetworkGraph::setTimeDependent(const Unit& dependent, bool dependsOnTime)
+{
+    if (dependsOnTime)
+        timeDependents_.insert(dependent);
+    else
+        timeDependents_.erase(dependent);
+}
+
+std::vector<Unit> NetworkGraph::getTimeDependents() const
+{
+    std::vector<Unit> dependents(timeDependents_.begin(), timeDependents_.end());
+    std::unordered_set<Unit> seen(timeDependents_.begin(), timeDependents_.end());
+
+    for (const Unit& reader : timeDependents_)
+        for (const Unit& dependent : getDependents(reader))
+            if (seen.insert(dependent).second) dependents.push_back(dependent);
+
+    return dependents;
+}
+
 void NetworkGraph::removeNode(NodeId nodeId)
 {
     eraseConnectionsTouching_(byTarget_, nodeId);
     eraseConnectionsTouching_(bySource_, nodeId);
     eraseCapturedTouching_(capturedDependents_, nodeId);
     eraseCapturedTouching_(capturedDependencies_, nodeId);
+    std::erase_if(timeDependents_, [nodeId](const Unit& unit) { return unit.nodeId == nodeId; });
 }
 
 void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId)
@@ -190,6 +211,7 @@ void NetworkGraph::clear()
     bySource_.clear();
     capturedDependents_.clear();
     capturedDependencies_.clear();
+    timeDependents_.clear();
 }
 
 std::vector<NodeId> NetworkGraph::getCookOrder(NodeId target) const
