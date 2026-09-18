@@ -388,6 +388,7 @@ if(ENZO_BUILD_TESTS)
         tests/UndoTests.cpp
         tests/AttributeTests.cpp
         tests/NetworkTests.cpp
+        tests/TimeTests.cpp
         tests/SelectionTests.cpp
         tests/MeshTests.cpp
         tests/BooleanUtilsTests.cpp

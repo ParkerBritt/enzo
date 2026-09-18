@@ -139,6 +139,38 @@ class NetworkManager
      */
     void clearPrimaryNode();
 
+    /// @brief Returns the frame the scene sits on.
+    /// @note A fractional frame is allowed, so a sample can fall between two frames.
+    floatT getFrame() const { return frame_; }
+
+    /// @brief Moves the scene to a frame, clamped to the playback range.
+    void setFrame(floatT frame);
+
+    /// @brief Returns the first frame of the playback range.
+    intT getStartFrame() const { return startFrame_; }
+
+    /// @brief Returns the last frame of the playback range.
+    intT getEndFrame() const { return endFrame_; }
+
+    /// @brief Sets the frame the playback range starts on.
+    /// @note The end frame moves up with it rather than letting the range invert.
+    void setStartFrame(intT frame);
+
+    /// @brief Sets the frame the playback range ends on.
+    /// @note The start frame moves down with it rather than letting the range invert.
+    void setEndFrame(intT frame);
+
+    /// @brief Returns how many frames make up a second of playback.
+    floatT getFps() const { return fps_; }
+
+    /// @brief Sets how many frames make up a second of playback.
+    /// @note A rate of zero or less is ignored, since it has no time to measure.
+    void setFps(floatT fps);
+
+    /// @brief Returns the current frame as seconds, where the start of frame 1 is zero.
+    /// @return Frame 25 at 24 fps gives 1.0.
+    floatT getTime() const { return (frame_ - 1) / fps_; }
+
     /**
      * @brief Set the selection state for the given node.
      *
@@ -308,6 +340,15 @@ class NetworkManager
 
     // @brief A signal emitted when a node's position changes programmatically (e.g. undo/redo)
     boost::signals2::signal<void(nt::NodeId, Vector2)> nodePositionChanged;
+
+    // @brief A signal emitted when the scene moves to a different frame
+    boost::signals2::signal<void(floatT frame)> frameChanged;
+
+    // @brief A signal emitted when the playback range changes
+    boost::signals2::signal<void(intT startFrame, intT endFrame)> frameRangeChanged;
+
+    // @brief A signal emitted when the playback rate changes
+    boost::signals2::signal<void(floatT fps)> fpsChanged;
     /** @} */
 
     UndoStack& undoStack() { return undoStack_; }
@@ -338,6 +379,9 @@ class NetworkManager
      */
     void onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents);
 
+    /// @brief Puts the frame, the playback range, and the rate back to their defaults.
+    void resetTime_();
+
     // variables
     // every node, its wiring, and the scopes they live in
     nt::Network network_;
@@ -346,6 +390,12 @@ class NetworkManager
     std::optional<NodeId> displayNode_ = std::nullopt;
     // the primary node that drives the parameter and geometry panes
     std::optional<NodeId> primaryNode_ = std::nullopt;
+
+    // the frame the scene sits on, and the range playback runs over
+    floatT frame_ = 1;
+    intT startFrame_ = 1;
+    intT endFrame_ = 240;
+    floatT fps_ = 24;
 
     UndoStack undoStack_;
 };
