@@ -169,6 +169,55 @@ void nt::NetworkManager::clearPrimaryNode()
     primaryNodeChanged(std::nullopt);
 }
 
+void nt::NetworkManager::setFrame(floatT frame)
+{
+    const floatT clamped =
+        std::clamp(frame, static_cast<floatT>(startFrame_), static_cast<floatT>(endFrame_));
+    if (clamped == frame_) return;
+
+    frame_ = clamped;
+    frameChanged(frame_);
+}
+
+void nt::NetworkManager::setStartFrame(intT frame)
+{
+    startFrame_ = frame;
+    endFrame_ = std::max(frame, endFrame_);
+    frameRangeChanged(startFrame_, endFrame_);
+
+    // The frame may now sit outside the range, so put it back inside.
+    setFrame(frame_);
+}
+
+void nt::NetworkManager::setEndFrame(intT frame)
+{
+    endFrame_ = frame;
+    startFrame_ = std::min(frame, startFrame_);
+    frameRangeChanged(startFrame_, endFrame_);
+
+    setFrame(frame_);
+}
+
+void nt::NetworkManager::setFps(floatT fps)
+{
+    if (fps <= 0) return;
+
+    fps_ = fps;
+    fpsChanged(fps_);
+}
+
+void nt::NetworkManager::resetTime_()
+{
+    frame_ = 1;
+    startFrame_ = 1;
+    endFrame_ = 240;
+    fps_ = 24;
+
+    frameRangeChanged(startFrame_, endFrame_);
+    fpsChanged(fps_);
+    frameChanged(frame_);
+}
+
 void nt::NetworkManager::setSelectedNode(NodeId nodeId, bool selected, bool add)
 {
     if (add)
@@ -259,6 +308,7 @@ void nt::NetworkManager::clear()
     network_.clear();
     selectedNodes_.clear();
     undoStack_.clear();
+    resetTime_();
     clearDisplayFlag();
     clearPrimaryNode();
     selectedNodesChanged(selectedNodes_);
@@ -436,6 +486,7 @@ void nt::NetworkManager::_reset()
 
     network_.clear();
     displayNode_.reset();
+    resetTime_();
 }
 
 } // namespace enzo
