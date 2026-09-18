@@ -139,6 +139,17 @@ components:
     fillColor:     $accent @ 0.25
     pointColor:    "#8a8a94"
     selectedColor: $accentBright
+  timeline:
+    # The frame scale and its ticks
+    baselineColor:  $border
+    frameTickColor: $fieldBorder
+    minorTickColor: $selectedFill
+    majorTickColor: "#45454f"
+    # The play button
+    playColor:      $parameter
+    playHoverColor: $textFaint
+    # The marker on the current frame
+    playheadColor: $accent
   toggle:
     onColor: $parameter
   popup:
