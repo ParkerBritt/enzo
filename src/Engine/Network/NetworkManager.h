@@ -379,6 +379,13 @@ class NetworkManager
      */
     void onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents);
 
+    /// @brief Dirties each unit's node and announces the change on parameter units.
+    /// @note Takes the whole affected chain, since dirtying a unit here does not propagate.
+    void dirtyUnits_(const std::vector<nt::Unit>& units);
+
+    /// @brief Dirties every unit that reads the scene time.
+    void dirtyTimeDependents_();
+
     /// @brief Puts the frame, the playback range, and the rate back to their defaults.
     void resetTime_();
 

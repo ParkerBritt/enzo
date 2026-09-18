@@ -57,6 +57,9 @@ class CookContext
     enzo::prm::Ramp evalParmRamp(std::string_view parmName) const;
 
   private:
+    /// @brief Records that the cooking node reads the scene time.
+    void recordTimeDependency_() const;
+
     enzo::nt::NodeId nodeId_;
     enzo::nt::NetworkManager& networkManager_;
 };

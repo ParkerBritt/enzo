@@ -20,10 +20,9 @@ void prm::NodeParameter::submitExpressionDependencies_(
     unsigned int index
 ) const
 {
-    nt::nm().graph().setCapturedDependencies(
-        nt::Unit{nodeId_, getName(), index},
-        context.getExpressionDependencies()
-    );
+    const nt::Unit unit{nodeId_, getName(), index};
+    nt::nm().graph().setCapturedDependencies(unit, context.getExpressionDependencies());
+    nt::nm().graph().setTimeDependent(unit, context.dependsOnTime());
 }
 
 } // namespace enzo

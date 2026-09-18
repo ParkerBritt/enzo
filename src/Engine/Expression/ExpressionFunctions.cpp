@@ -78,7 +78,7 @@ char* prmS(const char* path, int32_t index, das::Context* dasContext)
 
 // Notes on the context that the running expression read the time. A preview
 // evaluation has no context and records nothing.
-void recordTimeRead(das::Context* dasContext)
+void recordTimeDependency(das::Context* dasContext)
 {
     const ExpressionContext* context = expressionContextOf(dasContext);
     if (context) context->recordTimeDependency();
@@ -88,14 +88,14 @@ void recordTimeRead(das::Context* dasContext)
 /// @note The frame can be fractional.
 floatT frame(das::Context* dasContext)
 {
-    recordTimeRead(dasContext);
+    recordTimeDependency(dasContext);
     return nt::nm().getFrame();
 }
 
 /// @brief Returns the scene time in seconds, measured from the start of frame 1.
 floatT time(das::Context* dasContext)
 {
-    recordTimeRead(dasContext);
+    recordTimeDependency(dasContext);
     return nt::nm().getTime();
 }
 

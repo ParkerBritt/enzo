@@ -177,6 +177,7 @@ void nt::NetworkManager::setFrame(floatT frame)
 
     frame_ = clamped;
     frameChanged(frame_);
+    dirtyTimeDependents_();
 }
 
 void nt::NetworkManager::setStartFrame(intT frame)
@@ -324,6 +325,9 @@ void nt::NetworkManager::cook(nt::NodeId nodeId)
         nt::Node& node = getNode(cookNodeId);
         if (node.isDirty())
         {
+            // Drops the last time read, so the cook records one only if it reads it again
+            graph().setTimeDependent(nt::Unit{cookNodeId}, false);
+
             nt::CookContext context(cookNodeId, *this);
             node.cook(context);
         }
@@ -403,10 +407,10 @@ void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
 
     graph().disconnect(connection);
 
-    const bool targetSurvives = isValidNode(connection.targetNode);
+    const bool targetNodeExists = isValidNode(connection.targetNode);
 
     // Only the downstream node goes stale, its input changed
-    if (targetSurvives)
+    if (targetNodeExists)
     {
         getNode(connection.targetNode).dirtyNode();
     }
@@ -414,8 +418,8 @@ void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
     connectionRemoved(connection);
 
     const bool leftAMultiInputPort =
-        targetSurvives
-        && getNode(connection.targetNode).getType().isMultiInputPortAt(connection.targetInput);
+        targetNodeExists &&
+        getNode(connection.targetNode).getType().isMultiInputPortAt(connection.targetInput);
     if (leftAMultiInputPort)
     {
         closeInputGap(connection.targetNode, connection.targetInput);
@@ -429,8 +433,7 @@ void nt::NetworkManager::openInputGap(NodeId nodeId, unsigned int fromIndex)
     for (auto input = inputs.rbegin(); input != inputs.rend(); ++input)
     {
         const nt::Connection& connection = *input;
-        if (connection.targetInput >= fromIndex)
-            moveInput(connection, connection.targetInput + 1);
+        if (connection.targetInput >= fromIndex) moveInput(connection, connection.targetInput + 1);
     }
 }
 
@@ -439,8 +442,7 @@ void nt::NetworkManager::closeInputGap(NodeId nodeId, unsigned int fromIndex)
     // Moves in index order, so each connection lands on an index just vacated
     for (const nt::Connection& connection : graph().getInputs(nodeId))
     {
-        if (connection.targetInput > fromIndex)
-            moveInput(connection, connection.targetInput - 1);
+        if (connection.targetInput > fromIndex) moveInput(connection, connection.targetInput - 1);
     }
 }
 
@@ -458,25 +460,33 @@ void nt::NetworkManager::moveInput(const nt::Connection& connection, unsigned in
 
 std::optional<nt::NodeId> nt::NetworkManager::getDisplayNode() { return displayNode_; }
 
+void nt::NetworkManager::dirtyUnits_(const std::vector<nt::Unit>& units)
+{
+    for (const nt::Unit& unit : units)
+    {
+        nt::Node& node = getNode(unit.nodeId);
+        node.dirtyNode(false);
+        if (unit.isParameter()) node.parameterChanged(unit.parm);
+    }
+}
+
+void nt::NetworkManager::dirtyTimeDependents_()
+{
+    // Holds one lock around the whole set, so the cook runs once for all of them
+    auto updateLock = lockUpdates();
+
+    dirtyUnits_(graph().getTimeDependents());
+}
+
 void nt::NetworkManager::onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents)
 {
-    if (dirtyDependents)
+    if (!dirtyDependents) return;
+
+    dirtyUnits_(graph().getDependents(nt::Unit{nodeId}));
+
+    if (nt::UpdateLock::isUnlocked())
     {
-        std::vector<nt::Unit> dependents = graph().getDependents(nt::Unit{nodeId});
-        for (const nt::Unit& dependent : dependents)
-        {
-            // Dirty dependent node
-            nt::Node& dependentNode = getNode(dependent.nodeId);
-            dependentNode.dirtyNode(false);
-
-            // Dirty dependent parameter
-            if (dependent.isParameter()) dependentNode.parameterChanged(dependent.parm);
-        }
-
-        if (nt::UpdateLock::isUnlocked())
-        {
-            update();
-        }
+        update();
     }
 }
 

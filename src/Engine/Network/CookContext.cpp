@@ -30,9 +30,22 @@ bool nt::CookContext::hasInput(unsigned int inputIndex)
 
 unsigned int nt::CookContext::getInputCount() { return networkManager_.getInputCount(nodeId_); }
 
-floatT nt::CookContext::getFrame() const { return networkManager_.getFrame(); }
+void nt::CookContext::recordTimeDependency_() const
+{
+    networkManager_.graph().setTimeDependent(nt::Unit{nodeId_}, true);
+}
 
-floatT nt::CookContext::getTime() const { return networkManager_.getTime(); }
+floatT nt::CookContext::getFrame() const
+{
+    recordTimeDependency_();
+    return networkManager_.getFrame();
+}
+
+floatT nt::CookContext::getTime() const
+{
+    recordTimeDependency_();
+    return networkManager_.getTime();
+}
 
 // TODO: cache value
 floatT nt::CookContext::evalParmFloat(std::string_view parmName, const unsigned int index) const
