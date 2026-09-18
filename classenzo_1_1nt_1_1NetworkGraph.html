@@ -131,6 +131,12 @@ std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connect
 <tr class="memitem:ac1df06034bb66b9d123b14afcd47fc29" id="r_ac1df06034bb66b9d123b14afcd47fc29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1df06034bb66b9d123b14afcd47fc29">setCapturedDependencies</a> (const <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &amp;dependent, const std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &gt; &amp;dependencies)</td></tr>
 <tr class="memdesc:ac1df06034bb66b9d123b14afcd47fc29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every captured dependency of one parameter at once.  <br /></td></tr>
 <tr class="separator:ac1df06034bb66b9d123b14afcd47fc29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a617c053af6637c5b52ef3c58f581fd16" id="r_a617c053af6637c5b52ef3c58f581fd16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a617c053af6637c5b52ef3c58f581fd16">setTimeDependent</a> (const <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &amp;dependent, bool dependsOnTime)</td></tr>
+<tr class="memdesc:a617c053af6637c5b52ef3c58f581fd16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records whether a unit reads the scene time.  <br /></td></tr>
+<tr class="separator:a617c053af6637c5b52ef3c58f581fd16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a657a5ebc3254ac165feaa05a008833ac" id="r_a657a5ebc3254ac165feaa05a008833ac"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a657a5ebc3254ac165feaa05a008833ac">getTimeDependents</a> () const</td></tr>
+<tr class="memdesc:a657a5ebc3254ac165feaa05a008833ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every unit the scene time reaches, in no particular order.  <br /></td></tr>
+<tr class="separator:a657a5ebc3254ac165feaa05a008833ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add46220c97175ae5ce28d4d2ab9e8401" id="r_add46220c97175ae5ce28d4d2ab9e8401"><td class="memItemLeft" align="right" valign="top"><a id="add46220c97175ae5ce28d4d2ab9e8401" name="add46220c97175ae5ce28d4d2ab9e8401"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>removeNode</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId)</td></tr>
 <tr class="memdesc:add46220c97175ae5ce28d4d2ab9e8401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes every connection and captured edge touching the node. <br /></td></tr>
@@ -215,6 +221,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 
 </div>
 </div>
+<a id="a657a5ebc3254ac165feaa05a008833ac" name="a657a5ebc3254ac165feaa05a008833ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a657a5ebc3254ac165feaa05a008833ac">&#9670;&#160;</a></span>getTimeDependents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &gt; enzo::nt::NetworkGraph::getTimeDependents </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns every unit the scene time reaches, in no particular order. </p>
+<dl class="section note"><dt>Note</dt><dd>Covers the units that read the time and everything downstream of them. </dd></dl>
+
+</div>
+</div>
 <a id="ac1df06034bb66b9d123b14afcd47fc29" name="ac1df06034bb66b9d123b14afcd47fc29"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1df06034bb66b9d123b14afcd47fc29">&#9670;&#160;</a></span>setCapturedDependencies()</h2>
 
@@ -236,6 +262,30 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 
 <p>Replaces every captured dependency of one parameter at once. </p>
 <dl class="section note"><dt>Note</dt><dd>A parameter rebuilds its full reference set each time it evaluates, so its previous captured edges are dropped and the new set takes over. </dd></dl>
+
+</div>
+</div>
+<a id="a617c053af6637c5b52ef3c58f581fd16" name="a617c053af6637c5b52ef3c58f581fd16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a617c053af6637c5b52ef3c58f581fd16">&#9670;&#160;</a></span>setTimeDependent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enzo::nt::NetworkGraph::setTimeDependent </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>dependent</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>dependsOnTime</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Records whether a unit reads the scene time. </p>
+<dl class="section note"><dt>Note</dt><dd>A parameter records this each time it evaluates and a node each time it cooks. </dd></dl>
 
 </div>
 </div>

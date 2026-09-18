@@ -9,5 +9,6 @@ var searchData=
   ['evalstring_6',['evalString',['../classenzo_1_1expr_1_1CompiledScript.html#aca7f4b1741acfe5fe19c7a09f5187784',1,'enzo::expr::CompiledScript::evalString()'],['../classenzo_1_1expr_1_1ExpressionEngine.html#a869779219b05f45c30880fa46f27d6cd',1,'enzo::expr::ExpressionEngine::evalString()']]],
   ['explicitindexset_7',['ExplicitIndexSet',['../classenzo_1_1ExplicitIndexSet.html',1,'enzo']]],
   ['expressioncontext_8',['ExpressionContext',['../classenzo_1_1expr_1_1ExpressionContext.html',1,'enzo::expr']]],
-  ['expressionengine_9',['ExpressionEngine',['../classenzo_1_1expr_1_1ExpressionEngine.html',1,'enzo::expr']]]
+  ['expressionengine_9',['ExpressionEngine',['../classenzo_1_1expr_1_1ExpressionEngine.html',1,'enzo::expr']]],
+  ['expressionmodule_10',['ExpressionModule',['../classenzo_1_1expr_1_1ExpressionModule.html',1,'enzo::expr']]]
 ];

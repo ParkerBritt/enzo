@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Provides network context for the cook function.  
+<p>The handle a node holds while it cooks to get context about the network.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="CookContext_8h_source.html">CookContext.h</a>&gt;</code></p>
@@ -117,6 +117,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasInput</b> (unsigne
 <tr class="memitem:a262f8618e7ffd256604beff546feca11" id="r_a262f8618e7ffd256604beff546feca11"><td class="memItemLeft" align="right" valign="top"><a id="a262f8618e7ffd256604beff546feca11" name="a262f8618e7ffd256604beff546feca11"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getInputCount</b> ()</td></tr>
 <tr class="separator:a262f8618e7ffd256604beff546feca11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a440ac2eb0664717692018d8c2723139e" id="r_a440ac2eb0664717692018d8c2723139e"><td class="memItemLeft" align="right" valign="top">floatT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a440ac2eb0664717692018d8c2723139e">getFrame</a> () const</td></tr>
+<tr class="memdesc:a440ac2eb0664717692018d8c2723139e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the frame the scene sits on.  <br /></td></tr>
+<tr class="separator:a440ac2eb0664717692018d8c2723139e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b6478435f040fe27e454ab81b5949a0" id="r_a0b6478435f040fe27e454ab81b5949a0"><td class="memItemLeft" align="right" valign="top"><a id="a0b6478435f040fe27e454ab81b5949a0" name="a0b6478435f040fe27e454ab81b5949a0"></a>
+floatT&#160;</td><td class="memItemRight" valign="bottom"><b>getTime</b> () const</td></tr>
+<tr class="memdesc:a0b6478435f040fe27e454ab81b5949a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the scene time in seconds, measured from the start of frame 1. <br /></td></tr>
+<tr class="separator:a0b6478435f040fe27e454ab81b5949a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a22b638d0960744ff9ae3e25b3655b0" id="r_a0a22b638d0960744ff9ae3e25b3655b0"><td class="memItemLeft" align="right" valign="top"><a id="a0a22b638d0960744ff9ae3e25b3655b0" name="a0a22b638d0960744ff9ae3e25b3655b0"></a>
 floatT&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmFloat</b> (std::string_view parmName, const unsigned int index=0) const</td></tr>
 <tr class="separator:a0a22b638d0960744ff9ae3e25b3655b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,9 +156,30 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 <tr class="separator:a395ff66813c445224a0d9fbb47236bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides network context for the cook function. </p>
-<p>The cook context is the handle a node holds while it cooks. It provides important runtime context about the network, allowing querying parameters, reading input geometry, and in the future provides values like time. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+<div class="textblock"><p>The handle a node holds while it cooks to get context about the network. </p>
+<p>Carries the runtime context a cook reads from the network, covering parameter values, input geometry and the scene time. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a440ac2eb0664717692018d8c2723139e" name="a440ac2eb0664717692018d8c2723139e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a440ac2eb0664717692018d8c2723139e">&#9670;&#160;</a></span>getFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">floatT enzo::nt::CookContext::getFrame </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the frame the scene sits on. </p>
+<dl class="section note"><dt>Note</dt><dd>The frame can be fractional. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Engine/Network/<a class="el" href="CookContext_8h_source.html">CookContext.h</a></li>
 <li>src/Engine/Network/<b>CookContext.cpp</b></li>
 </ul>

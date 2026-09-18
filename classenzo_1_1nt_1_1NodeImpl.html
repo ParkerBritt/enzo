@@ -142,6 +142,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasInput</b> (unsigne
 <tr class="memitem:a8cc09dae15dc389f1d4953a195e8f24b" id="r_a8cc09dae15dc389f1d4953a195e8f24b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cc09dae15dc389f1d4953a195e8f24b">getInputCount</a> ()</td></tr>
 <tr class="memdesc:a8cc09dae15dc389f1d4953a195e8f24b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many inputs the node takes.  <br /></td></tr>
 <tr class="separator:a8cc09dae15dc389f1d4953a195e8f24b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a1e9f6955e810d3378b7d673f55e88" id="r_a12a1e9f6955e810d3378b7d673f55e88"><td class="memItemLeft" align="right" valign="top">floatT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12a1e9f6955e810d3378b7d673f55e88">getFrame</a> () const</td></tr>
+<tr class="memdesc:a12a1e9f6955e810d3378b7d673f55e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the frame the scene sits on.  <br /></td></tr>
+<tr class="separator:a12a1e9f6955e810d3378b7d673f55e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff394fb286eed9d224e94e29b90cbf1b" id="r_aff394fb286eed9d224e94e29b90cbf1b"><td class="memItemLeft" align="right" valign="top"><a id="aff394fb286eed9d224e94e29b90cbf1b" name="aff394fb286eed9d224e94e29b90cbf1b"></a>
+floatT&#160;</td><td class="memItemRight" valign="bottom"><b>getTime</b> () const</td></tr>
+<tr class="memdesc:aff394fb286eed9d224e94e29b90cbf1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the scene time in seconds, measured from the start of frame 1. <br /></td></tr>
+<tr class="separator:aff394fb286eed9d224e94e29b90cbf1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af431d733cd8cdcee488bbc9320698696" id="r_af431d733cd8cdcee488bbc9320698696"><td class="memItemLeft" align="right" valign="top"><a id="af431d733cd8cdcee488bbc9320698696" name="af431d733cd8cdcee488bbc9320698696"></a>
 floatT&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmFloat</b> (std::string_view parmName, const unsigned int index=0) const</td></tr>
 <tr class="separator:af431d733cd8cdcee488bbc9320698696"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,6 +221,34 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 
 <p>Produces this node's output packets from its inputs and parameters. </p>
 <dl class="section post"><dt>Postcondition</dt><dd>Any output left unset stays an empty packet. </dd></dl>
+
+</div>
+</div>
+<a id="a12a1e9f6955e810d3378b7d673f55e88" name="a12a1e9f6955e810d3378b7d673f55e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a1e9f6955e810d3378b7d673f55e88">&#9670;&#160;</a></span>getFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">floatT enzo::nt::NodeImpl::getFrame </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the frame the scene sits on. </p>
+<dl class="section note"><dt>Note</dt><dd>The frame can be fractional. </dd></dl>
 
 </div>
 </div>
