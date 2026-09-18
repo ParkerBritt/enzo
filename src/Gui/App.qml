@@ -101,10 +101,10 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: window.marginSize
-        height: timeline.implicitHeight + 2 * timelinePanel.borderWidth
+        height: timelineBar.implicitHeight + 2 * timelinePanel.borderWidth
 
         Timeline {
-            id: timeline
+            id: timelineBar
 
             anchors.fill: parent
         }

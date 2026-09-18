@@ -4,6 +4,7 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
+#include "Gui/Timeline/TimelineViewModel.h"
 #include "Gui/Viewport/ViewportViewModel.h"
 #include <argparse/argparse.hpp>
 
@@ -148,6 +149,7 @@ int main(int argc, char** argv)
     enzo::ui::NetworkViewModel network;
     enzo::ui::ViewportViewModel viewport;
     enzo::ui::ParametersViewModel parameters;
+    enzo::ui::TimelineViewModel timeline;
     enzo::ui::SceneController scene;
 
     enzo::nt::NodeLoader::loadNodes();
@@ -177,6 +179,7 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("network", &network);
     engine.rootContext()->setContextProperty("viewport", &viewport);
     engine.rootContext()->setContextProperty("parameters", &parameters);
+    engine.rootContext()->setContextProperty("timeline", &timeline);
     engine.rootContext()->setContextProperty("scene", &scene);
 
     // A run from a build directory loads QML straight from the source tree and

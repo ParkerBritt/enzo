@@ -7,42 +7,21 @@ import "../Components"
 Item {
     id: root
 
-    property int startFrame: 1
-    property int endFrame: 240
-    property int frame: 72
-    property int framesPerSecond: 24
     property bool playing: false
 
     implicitHeight: 38
 
-    function goToFrame(value) {
-        root.frame = Math.max(root.startFrame, Math.min(root.endFrame, value));
-    }
-
-    // Moves the playhead for the user, which stops playback.
+    // Moves the playhead and stops playback.
     function scrubToFrame(value) {
         root.playing = false;
-        root.goToFrame(value);
-    }
-
-    // Sets the frame the range starts on, carrying the end frame along with it.
-    function setStartFrame(value) {
-        root.startFrame = value;
-        root.endFrame = Math.max(value, root.endFrame);
-        root.goToFrame(root.frame);
-    }
-
-    function setEndFrame(value) {
-        root.endFrame = value;
-        root.startFrame = Math.min(value, root.startFrame);
-        root.goToFrame(root.frame);
+        timeline.frame = value;
     }
 
     // Steps forward, wrapping round to the start at the end of the range.
     function advance(steps) {
-        const span = root.endFrame - root.startFrame + 1;
-        const offset = root.frame - root.startFrame + steps;
-        root.frame = root.startFrame + offset % span;
+        const span = timeline.endFrame - timeline.startFrame + 1;
+        const offset = timeline.frame - timeline.startFrame + steps;
+        timeline.frame = timeline.startFrame + offset % span;
     }
 
     // Advances the frame on each screen refresh while playing.
@@ -55,7 +34,7 @@ Item {
         running: root.playing
         onRunningChanged: playback.carry = 0
         onTriggered: {
-            playback.carry += playback.smoothFrameTime * root.framesPerSecond;
+            playback.carry += playback.smoothFrameTime * timeline.fps;
             const steps = Math.floor(playback.carry);
             playback.carry -= steps;
             root.advance(steps);
@@ -79,12 +58,12 @@ Item {
                 name: "skip-back"
                 tooltip: "To start"
                 iconSize: 13
-                onClicked: root.scrubToFrame(root.startFrame)
+                onClicked: root.scrubToFrame(timeline.startFrame)
             }
             TransportButton {
                 name: "chevron-left"
                 tooltip: "Step back"
-                onClicked: root.scrubToFrame(root.frame - 1)
+                onClicked: root.scrubToFrame(timeline.frame - 1)
             }
             TransportButton {
                 name: root.playing ? "pause" : "play"
@@ -98,13 +77,13 @@ Item {
             TransportButton {
                 name: "chevron-right"
                 tooltip: "Step forward"
-                onClicked: root.scrubToFrame(root.frame + 1)
+                onClicked: root.scrubToFrame(timeline.frame + 1)
             }
             TransportButton {
                 name: "skip-forward"
                 tooltip: "To end"
                 iconSize: 13
-                onClicked: root.scrubToFrame(root.endFrame)
+                onClicked: root.scrubToFrame(timeline.endFrame)
             }
         }
 
@@ -127,7 +106,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: Math.max(42, contentWidth + 20)
                 horizontalAlignment: Text.AlignHCenter
-                text: root.frame
+                text: timeline.frame
                 color: Theme.var.textStrong
                 font.family: Theme.var.fontMono
                 font.pixelSize: 12
@@ -148,7 +127,7 @@ Item {
                     height: 12
                     radius: 0
                     iconSize: 9
-                    onClicked: root.scrubToFrame(root.frame + 1)
+                    onClicked: root.scrubToFrame(timeline.frame + 1)
                 }
 
                 IconButton {
@@ -158,7 +137,7 @@ Item {
                     height: 12
                     radius: 0
                     iconSize: 9
-                    onClicked: root.scrubToFrame(root.frame - 1)
+                    onClicked: root.scrubToFrame(timeline.frame - 1)
                 }
 
                 Rectangle {
@@ -183,9 +162,9 @@ Item {
         anchors.leftMargin: 9
         anchors.rightMargin: 9
         anchors.verticalCenter: parent.verticalCenter
-        startFrame: root.startFrame
-        endFrame: root.endFrame
-        frame: root.frame
+        startFrame: timeline.startFrame
+        endFrame: timeline.endFrame
+        frame: timeline.frame
         onFrameRequested: value => root.scrubToFrame(value)
     }
 
@@ -214,8 +193,8 @@ Item {
 
                 anchors.left: rangeLabel.right
                 label: "in"
-                value: root.startFrame
-                onCommitted: value => root.setStartFrame(value)
+                value: timeline.startFrame
+                onCommitted: value => timeline.startFrame = value
             }
 
             Text {
@@ -234,8 +213,8 @@ Item {
 
                 anchors.left: rangeDash.right
                 label: "out"
-                value: root.endFrame
-                onCommitted: value => root.setEndFrame(value)
+                value: timeline.endFrame
+                onCommitted: value => timeline.endFrame = value
             }
         }
 
@@ -256,8 +235,8 @@ Item {
 
                 x: 9
                 anchors.verticalCenter: parent.verticalCenter
-                value: root.framesPerSecond
-                onCommitted: value => root.framesPerSecond = Math.max(1, value)
+                value: timeline.fps
+                onCommitted: value => timeline.fps = value
             }
 
             Text {

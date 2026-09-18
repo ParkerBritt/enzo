@@ -210,6 +210,7 @@ qt_add_executable(${AppExec}
     src/Gui/Network/NetworkViewModel.cpp
     src/Gui/Parameters/ParameterItem.cpp
     src/Gui/Parameters/ParametersViewModel.cpp
+    src/Gui/Timeline/TimelineViewModel.cpp
     src/Gui/Controllers/SceneController.cpp
 
     # --- Viewport placeholder (throwaway, replaced by the Diligent rebuild).
