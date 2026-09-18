@@ -283,7 +283,16 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/Divider.qml
         src/Gui/Parameters/RampEditor.qml
         src/Gui/Network/Network.qml
+        src/Gui/Network/NetworkBackground.qml
+        src/Gui/Network/NetworkEmptyHint.qml
+        src/Gui/Network/NetworkNodes.qml
         src/Gui/Network/Node.qml
+        src/Gui/Network/NetworkViewTransform.qml
+        src/Gui/Network/NodeDropController.qml
+        src/Gui/Network/LinkCutController.qml
+        src/Gui/Network/LinkRedirectController.qml
+        src/Gui/Network/NetworkMouse.qml
+        src/Gui/Network/NetworkKeys.qml
         src/Gui/Network/NodeLinkController.qml
         src/Gui/Network/SelectionBox.qml
         src/Gui/Network/TabMenu.qml
