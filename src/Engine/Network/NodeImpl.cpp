@@ -33,6 +33,10 @@ bool NodeImpl::hasInput(unsigned int inputIndex) { return context_.hasInput(inpu
 
 unsigned int NodeImpl::getInputCount() { return context_.getInputCount(); }
 
+floatT NodeImpl::getFrame() const { return context_.getFrame(); }
+
+floatT NodeImpl::getTime() const { return context_.getTime(); }
+
 floatT NodeImpl::evalParmFloat(std::string_view parmName, const unsigned int index) const
 {
     return context_.evalParmFloat(parmName, index);

@@ -1,5 +1,8 @@
 #include "Engine/Core/Types.h"
+#include "Engine/Network/CookContext.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/NodeLoader.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
@@ -143,4 +146,18 @@ TEST_CASE_METHOD(NMReset, "clearing the scene puts the time back to its defaults
     REQUIRE(nm.getStartFrame() == 1);
     REQUIRE(nm.getEndFrame() == 240);
     REQUIRE(nm.getFps() == 24);
+}
+
+TEST_CASE_METHOD(NMReset, "a cook reads the frame the scene sits on")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::CookContext context(nodeId, nm);
+
+    nm.setFrame(49);
+
+    REQUIRE(context.getFrame() == 49);
+    REQUIRE(context.getTime() == Catch::Approx(2.f));
 }
