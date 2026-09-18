@@ -7,7 +7,7 @@ Item {
 
     property int startFrame: 1
     property int endFrame: 240
-    property int frame: 72
+    property real frame: 1
 
     readonly property real baselineY: height - 3
 
