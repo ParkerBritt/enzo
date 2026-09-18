@@ -1,3 +1,4 @@
+#include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
@@ -187,4 +188,57 @@ TEST_CASE_METHOD(NMReset, "PrmS reads another node's string parameter")
     path->setExpression("prmS(\"path1.path\")");
 
     REQUIRE(path->evalString() == "hello");
+}
+
+TEST_CASE_METHOD(NMReset, "Frame reads the frame the scene sits on")
+{
+    expr::ExpressionEngine& engine = expr::ExpressionEngine::instance();
+    nt::nm().setFrame(48);
+
+    floatT result = 0;
+    String error;
+    REQUIRE(engine.evalFloat("frame() * 2", nullptr, result, error));
+    REQUIRE(result == 96.0f);
+}
+
+TEST_CASE_METHOD(NMReset, "Frame reads its new value after the scene moves")
+{
+    expr::ExpressionEngine& engine = expr::ExpressionEngine::instance();
+
+    floatT result = 0;
+    String error;
+    nt::nm().setFrame(10);
+    REQUIRE(engine.evalFloat("frame()", nullptr, result, error));
+    REQUIRE(result == 10.0f);
+
+    // Runs the same expression again, so a call folded to a constant would
+    // return the first run's value.
+    nt::nm().setFrame(20);
+    REQUIRE(engine.evalFloat("frame()", nullptr, result, error));
+    REQUIRE(result == 20.0f);
+}
+
+TEST_CASE_METHOD(NMReset, "Time reads the scene time in seconds")
+{
+    expr::ExpressionEngine& engine = expr::ExpressionEngine::instance();
+    nt::nm().setFrame(25);
+
+    floatT result = 0;
+    String error;
+    REQUIRE(engine.evalFloat("time()", nullptr, result, error));
+    REQUIRE(result == 1.0f);
+}
+
+TEST_CASE_METHOD(NMReset, "Reading the frame makes the expression time dependent")
+{
+    expr::ExpressionEngine& engine = expr::ExpressionEngine::instance();
+    expr::ExpressionContext context(nt::nullNode);
+
+    floatT result = 0;
+    String error;
+    REQUIRE(engine.evalFloat("5 + 5", &context, result, error));
+    REQUIRE_FALSE(context.dependsOnTime());
+
+    REQUIRE(engine.evalFloat("frame()", &context, result, error));
+    REQUIRE(context.dependsOnTime());
 }

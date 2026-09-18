@@ -37,11 +37,18 @@ class ExpressionContext
         return expressionDependencies_;
     }
 
+    /// @brief Notes that the expression read the scene time.
+    void recordTimeDependency() const { readsTime_ = true; }
+
+    /// @brief Returns whether the expression read the scene time during this evaluation.
+    bool dependsOnTime() const { return readsTime_; }
+
   private:
     nt::NodeId currentNode_;
 
     // Filled as prm() and friends resolve, so const reads can still accumulate.
     mutable std::vector<nt::Unit> expressionDependencies_;
+    mutable bool readsTime_ = false;
 };
 
 } // namespace enzo::expr
