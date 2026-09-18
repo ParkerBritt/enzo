@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import Enzo
 import "../Components"
-import "../Utils.js" as Utils
 import "."
 
 Rectangle {
@@ -14,386 +13,103 @@ Rectangle {
     focus: true
     clip: true
 
-    // How fast scrolling changes the zoom.
-    property real zoomSpeed: 0.2
-    // How far you can zoom in. (e.g. 5x the initial scale)
-    property real zoomMax: 5
-    // How far you can zoom out. (e.g. 0.1x the initial scale)
-    property real zoomMin: 0.1
-    // Default zoom scale.
-    property real viewZoom: 1
-
-    // How near the cursor must fall to a link to cut, pick up, or hover it.
     property real linkHitRadius: 20
 
-    // How near a dragged node's center must fall to a link to drop into it.
-    property real linkInsertRadius: network.nodeHeight
-
-    property real viewX: width / 2
-    property real viewY: height / 2
-    property real mouseLastX: 0
-    property real mouseLastY: 0
-
-    // True while shift is held, which turns a node drag into a bypass.
-    property bool bypassHeld: false
-
-    // True while 'c' is held, which turns the left button into a link cutter.
-    property bool cutHeld: false
-
-    // The node a drag is moving and where its center sits.
-    property var draggedNodeId: undefined
-    property point draggedPoint
-
-    // What releasing the current node drag would rewire, null while no drag runs.
-    // It holds the link indices the drop cuts and the links it wires in their place.
-    property var dropPreview: null
-
-    // Latest cursor position over the network, used to place popups.
-    property real cursorX: 0
-    property real cursorY: 0
-
-    // Maps a view position to its position on the panned and zoomed canvas.
-    function toCanvasX(viewPosX) {
-        return (viewPosX - viewX) / viewZoom;
-    }
-    function toCanvasY(viewPosY) {
-        return (viewPosY - viewY) / viewZoom;
+    LinkRedirectController {
+        id: redirectController
+        links: committedLinks
+        linkDrag: linkController
+        hitRadius: root.linkHitRadius
+        enabled: !cutController.held
     }
 
-    // The port shown highlighted, the one a press would act on. While a link is
-    // drawn this is its snap target, otherwise the port nearest the idle cursor.
-    readonly property var highlightedPort: {
-        if (linkController.linking) {
-            if (linkController.hoverNodeId === undefined)
-                return null;
-            return {
-                nodeId: linkController.hoverNodeId,
-                index: linkController.hoverIndex,
-                isOutput: !linkController.fromOutput
-            };
-        }
-        const port = network.nodes.getGrabPort(Qt.point(toCanvasX(cursorX), toCanvasY(cursorY)));
-        return port.nodeId === undefined ? null : port;
+    LinkCutController {
+        id: cutController
+        links: committedLinks
+        hitRadius: root.linkHitRadius
     }
 
-    // Previews what releasing a node drag would do, either pulling the selected nodes
-    // out of the graph or dropping the dragged node into the link it covers.
-    function previewDrop(nodeId, canvasPoint) {
-        draggedNodeId = nodeId;
-        draggedPoint = canvasPoint;
-        refreshDropPreview();
+    NodeDropController {
+        id: dropController
+        links: committedLinks
+        insertRadius: network.nodeHeight
     }
 
-    // Rebuilds the preview from the node being dragged and whether shift is held.
-    function refreshDropPreview() {
-        if (draggedNodeId === undefined)
-            return;
-        const hoveredLink = bypassHeld ? -1 : committedLinks.linkAt(draggedPoint, root.linkInsertRadius).linkIndex;
-        dropPreview = network.getDropPreview(draggedNodeId, hoveredLink, bypassHeld);
+    NetworkViewTransform {
+        id: view
+        panX: root.width / 2
+        panY: root.height / 2
     }
 
-    onBypassHeldChanged: refreshDropPreview()
-
-    // Discards the preview without applying it.
-    function clearDropPreview() {
-        draggedNodeId = undefined;
-        dropPreview = null;
-    }
-
-    // Applies the previewed drop, cutting the links it covers and wiring the ones
-    // that replace them.
-    function commitDrop() {
-        const preview = dropPreview;
-        clearDropPreview();
-        if (preview)
-            network.applyDropPreview(preview);
-    }
-
-    // Removes a link, dissolving it outward from the cut point.
-    function cutLink(linkIndex, canvasPoint) {
-        if (linkIndex < 0)
-            return;
-        committedLinks.fadeLink(linkIndex, canvasPoint);
-        network.removeLink(linkIndex);
-    }
-
-    // Holds the state of the link being dragged between ports.
     NodeLinkController {
         id: linkController
         viewModel: network
     }
 
-    Keys.onTabPressed: event => {
-        tabMenu.x = root.cursorX;
-        tabMenu.y = root.cursorY;
-        tabMenu.open();
+    NetworkKeys {
+        id: keyBindings
+        nodeDrop: dropController
+        cutter: cutController
+        linkDrag: linkController
+        onMenuRequested: {
+            tabMenu.x = mouseInput.cursorX;
+            tabMenu.y = mouseInput.cursorY;
+            tabMenu.open();
+        }
     }
 
-    Keys.onPressed: event => {
-        if (event.key === Qt.Key_Shift)
-            bypassHeld = true;
-        else if (event.key === Qt.Key_C)
-            cutHeld = true;
-        else if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace)
-            network.deleteSelected();
-        else if (event.key === Qt.Key_Escape && linkController.linking)
-            linkController.cancel();
-        else if (event.key === Qt.Key_R)
-            network.setDisplayNodeToPrimary();
-    }
+    // Focus belongs to this item, so its key events go to the bindings.
+    Keys.forwardTo: [keyBindings]
 
     // Clears the held keys when focus moves away, since their release goes elsewhere.
-    onActiveFocusChanged: {
-        if (activeFocus)
-            return;
-        bypassHeld = false;
-        cutHeld = false;
-    }
-
-    Keys.onReleased: event => {
-        if (event.isAutoRepeat)
-            return;
-        if (event.key === Qt.Key_Shift)
-            bypassHeld = false;
-        else if (event.key === Qt.Key_C)
-            cutHeld = false;
-    }
+    onActiveFocusChanged: if (!activeFocus) keyBindings.clearHeld()
 
     FocusReclaimer {
         target: root
-        area: canvasArea
+        area: mouseInput
     }
 
-    // Pan, zoom, and port interaction. A press near a port grabs the closest one
-    // across every node, so the nearest port always wins over the topmost.
-    MouseArea {
-        id: canvasArea
+    NetworkMouse {
+        id: mouseInput
+        viewTransform: view
+        linkDrag: linkController
+        cutter: cutController
+        redirect: redirectController
+        selection: selectionBox
+    }
+
+    NetworkBackground {
         anchors.fill: parent
-        acceptedButtons: Qt.MiddleButton | Qt.LeftButton
-        hoverEnabled: true
-
-        // True while the cursor rests on a link a press would pick up.
-        property bool overRedirect: false
-        cursorShape: draggingLink ? Qt.ClosedHandCursor : overRedirect ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-        // True while a left drag is pulling a link out of a grabbed port.
-        property bool draggingLink: false
-
-        // True when the press grabbed a port, so the matching release is not also
-        // read as a click that would finish the link.
-        property bool grabbedOnPress: false
-
-        // True while a left drag is cutting across links.
-        property bool cutting: false
-        // The last canvas point a cutting drag passed through.
-        property point cutLast
-
-        onPressed: mouse => {
-            root.mouseLastX = mouse.x;
-            root.mouseLastY = mouse.y;
-            grabbedOnPress = false;
-            cutting = false;
-            selectionBox.applied = false;
-            if (mouse.button !== Qt.LeftButton)
-                return;
-
-            const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
-
-            // Holding 'c' turns the left button into a link cutter.
-            if (root.cutHeld) {
-                cutting = true;
-                cutLast = canvasPoint;
-                return;
-            }
-
-            const port = network.nodes.getGrabPort(canvasPoint);
-            if (port.nodeId !== undefined) {
-                linkController.grab(port.nodeId, port.index, port.isOutput, Qt.point(port.x, port.y));
-                grabbedOnPress = true;
-                draggingLink = linkController.linking;
-                return;
-            }
-
-            // Away from every port, a press on a link picks it up by its nearer end.
-            if (!linkController.linking)
-                pickUpLink(canvasPoint);
-
-            // On bare canvas the press waits to see whether it becomes a selection box.
-            if (!grabbedOnPress && !linkController.linking)
-                selectionBox.press(canvasPoint, (mouse.modifiers & Qt.ShiftModifier) !== 0);
-        }
-
-        // Detaches the pressed end of the link under the cursor and hands it to
-        // the link controller so the drag can rewire it onto another port.
-        function pickUpLink(canvasPoint) {
-            const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
-            if (hit.linkIndex < 0)
-                return;
-
-            const ends = network.getLinkEndpoints(hit.linkIndex);
-            network.removeLink(hit.linkIndex);
-            const anchor = Qt.point(hit.anchorX, hit.anchorY);
-            if (hit.atOutputEnd)
-                linkController.grab(ends.targetNode, ends.targetInput, false, anchor);
-            else
-                linkController.grab(ends.sourceNode, ends.sourceOutput, true, anchor);
-            linkController.drag(canvasPoint);
-            grabbedOnPress = true;
-            draggingLink = true;
-        }
-
-        // A left click commits a snapped link, drops an unsnapped one, or clears
-        // the selection. The press that grabbed a port does none of these, and a
-        // click on a node body is consumed by the node.
-        onClicked: mouse => {
-            if (mouse.button !== Qt.LeftButton || grabbedOnPress || selectionBox.applied)
-                return;
-
-            // A click while 'c' is held cuts the link under the cursor.
-            if (root.cutHeld) {
-                const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
-                root.cutLink(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, canvasPoint);
-                committedLinks.setHover(-1, NodeLinkLayer.None);
-                return;
-            }
-
-            if (linkController.linking)
-                linkController.finish();
-            else
-                network.clearSelection();
-        }
-
-        // Ends the press, also when a popup such as the tab menu takes the mouse
-        // away before the button comes up.
-        function endPress() {
-            cutting = false;
-            selectionBox.release();
-            if (draggingLink) {
-                linkController.release();
-                draggingLink = false;
-            }
-        }
-
-        onReleased: endPress()
-        onCanceled: endPress()
-
-        onExited: {
-            committedLinks.setHover(-1, NodeLinkLayer.None);
-            overRedirect = false;
-        }
-
-        onPositionChanged: mouse => {
-            root.cursorX = mouse.x;
-            root.cursorY = mouse.y;
-            const canvasPoint = Qt.point(root.toCanvasX(mouse.x), root.toCanvasY(mouse.y));
-
-            selectionBox.drag(canvasPoint);
-
-            // A drag while 'c' is held cuts every link its path sweeps across.
-            if (cutting) {
-                root.cutLink(committedLinks.linkCrossing(cutLast, canvasPoint), canvasPoint);
-                cutLast = canvasPoint;
-            }
-
-            // The hover preview mirrors what a press at this point would do.
-            overRedirect = false;
-            if (root.cutHeld) {
-                committedLinks.setHover(committedLinks.linkAt(canvasPoint, root.linkHitRadius).linkIndex, NodeLinkLayer.Cut);
-            } else if (selectionBox.sweeping || draggingLink || linkController.linking || network.nodes.isOverNodeOrPort(canvasPoint)) {
-                committedLinks.setHover(-1, NodeLinkLayer.None);
-            } else {
-                const hit = committedLinks.linkAt(canvasPoint, root.linkHitRadius);
-                committedLinks.setHover(hit.linkIndex, NodeLinkLayer.Redirect, hit.atOutputEnd === true);
-                overRedirect = hit.linkIndex >= 0;
-            }
-
-            // A held drag pulls the link, a click placed link trails the cursor.
-            if (draggingLink)
-                linkController.drag(canvasPoint);
-            else if (linkController.linking)
-                linkController.update(canvasPoint);
-
-            // Panning only happens while the middle button is held.
-            if (!(mouse.buttons & Qt.MiddleButton))
-                return;
-
-            viewX += mouse.x - root.mouseLastX;
-            viewY += mouse.y - root.mouseLastY;
-            root.mouseLastX = mouse.x;
-            root.mouseLastY = mouse.y;
-        }
-
-        onWheel: wheel => {
-            let oldZoomScale = root.viewZoom;
-            let newZoomScale = oldZoomScale * (1 + Math.sign(wheel.angleDelta.y) * root.zoomSpeed);
-            // Clamp zoom
-            newZoomScale = Utils.clamp(newZoomScale, root.zoomMin, root.zoomMax);
-            let scaleFactor = newZoomScale / oldZoomScale;
-
-            root.viewX = wheel.x - scaleFactor * (wheel.x - root.viewX);
-            root.viewY = wheel.y - scaleFactor * (wheel.y - root.viewY);
-
-            root.viewZoom = newZoomScale;
-        }
+        zoom: view.zoom
+        pan: Qt.point(view.panX, view.panY)
     }
 
-    // Background dots
-    ShaderEffect {
-        width: root.width
-        height: root.height
-        fragmentShader: "qrc:/NetworkDots.frag.qsb"
-
-        property real zoom: root.viewZoom
-        property point pan: Qt.point(root.viewX, root.viewY)
-        property size canvas: Qt.size(width, height)
-        property color dotColor: Theme.network.dotColor
-    }
-
-    // The hint shown on a network with no nodes in it. It sits on the panel
-    // colour so the background dots do not run through the text.
-    Rectangle {
+    NetworkEmptyHint {
         anchors.centerIn: parent
         visible: nodeRepeater.count === 0
-        width: hintText.width + 20
-        height: hintText.height + 12
-        color: root.color
-        radius: 6
-
-        Text {
-            id: hintText
-            anchors.centerIn: parent
-            text: "Press Tab to place a node"
-            color: Theme.var.textMuted
-            font.family: Theme.var.fontSans
-            font.pixelSize: 13
-        }
     }
 
-    // Tab menu
     TabMenu {
         id: tabMenu
         nodeTypes: network.nodeTypes
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         onNodeTypeChosen: (name, chainToPrimary) => {
-            // Chain node placement (shift+enter)
             if (chainToPrimary && network.chainNodeToPrimary(name))
                 return;
-            // Normal node placement.
-            network.createNode(name, root.toCanvasX(x), root.toCanvasY(y));
+            network.createNode(name, view.toCanvasX(x), view.toCanvasY(y));
         }
     }
 
-    // Canvas
     Item {
         id: canvasItem
         transform: [
             Scale {
-                xScale: root.viewZoom
-                yScale: root.viewZoom
+                xScale: view.zoom
+                yScale: view.zoom
             },
             Translate {
-                x: root.viewX
-                y: root.viewY
+                x: view.panX
+                y: view.panY
             }
         ]
 
@@ -406,70 +122,19 @@ Rectangle {
             cutColor: Theme.nodeLink.cutColor
             redirectColor: Theme.nodeLink.redirectColor
             previewColor: Theme.nodeLink.activeColor
-            previewCutLinks: root.dropPreview ? root.dropPreview.cutLinks : []
-            previewLinks: root.dropPreview ? root.dropPreview.newLinks : []
+            previewCutLinks: dropController.preview ? dropController.preview.cutLinks : []
+            previewLinks: dropController.preview ? dropController.preview.newLinks : []
         }
 
-        Repeater {
+        NetworkNodes {
             id: nodeRepeater
-            model: network.nodes
-
-            delegate: Node {
-                id: nodeDelegate
-                viewZoom: root.viewZoom
-
-                modelX: model.x
-                modelY: model.y
-
-                // True while this node anchors either end of the link being dragged.
-                readonly property bool linkEndpoint: linkController.linking && (model.nodeId === linkController.originNodeId || model.nodeId === linkController.hoverNodeId)
-
-                // An endpoint node rises above the floating layer, so the link tucks
-                // under its ports while still drawing over the nodes it crosses.
-                z: linkEndpoint ? 2 : 0
-                nodeId: model.nodeId
-                label: model.name
-                selected: model.selected
-                primary: model.primary
-                display: model.display
-                inputPortCount: model.inputPortCount
-                outputPortCount: model.outputPortCount
-                multiInput: model.multiInput
-                linking: linkController.linking
-
-                // The highlighted port when it is one of this node's own.
-                readonly property var highlight: root.highlightedPort && root.highlightedPort.nodeId === model.nodeId ? root.highlightedPort : null
-                highlightedInput: highlight && !highlight.isOutput ? highlight.index : -1
-                highlightedOutput: highlight && highlight.isOutput ? highlight.index : -1
-
-                // Was this node already selected when the press began.
-                property bool selectedAtPress: false
-
-                onPressed: additive => {
-                    selectedAtPress = model.selected;
-                    if (!model.selected)
-                        network.selectNode(model.nodeId, additive);
-                    root.previewDrop(model.nodeId, Qt.point(model.x, model.y));
-                }
-                onClicked: additive => {
-                    if (selectedAtPress)
-                        network.selectNode(model.nodeId, additive);
-                    root.clearDropPreview();
-                }
-                onDragMoved: (dx, dy) => {
-                    network.stageSelectionMove(dx, dy);
-                    root.previewDrop(model.nodeId, Qt.point(model.x, model.y));
-                }
-                onDragReleased: {
-                    network.commitSelectionMove();
-                    root.commitDrop();
-                }
-                onDisplayToggled: network.setDisplayNode(model.nodeId)
-            }
+            viewZoom: view.zoom
+            linkDrag: linkController
+            nodeDrop: dropController
+            cursorPoint: mouseInput.cursorPoint
         }
 
-        // The in-progress link renders above the nodes so it is never hidden behind
-        // a card. It reuses the link layer so it shares every link feature and style.
+        // The in-progress link renders above the nodes so a card never hides it.
         NodeLinkLayer {
             z: 1
             floatingActive: linkController.linking
@@ -482,17 +147,16 @@ Rectangle {
         SelectionBox {
             id: selectionBox
             z: 3
-            viewZoom: root.viewZoom
+            viewZoom: view.zoom
         }
     }
 
-    // The cursor shown while 'c' is held.
     IconCursor {
         anchors.fill: parent
-        active: root.cutHeld
+        active: cutController.held
         name: "slice"
-        color: canvasArea.cutting ? Theme.nodeLink.cutColor : Theme.var.text
-        size: canvasArea.cutting ? 20 : 22
+        color: cutController.cutting ? Theme.nodeLink.cutColor : Theme.var.text
+        size: cutController.cutting ? 20 : 22
         hotSpot: Qt.point(2, 20)
     }
 }
