@@ -7,6 +7,7 @@
 namespace enzo::geo {
 class Mesh;
 class FaceNormalHandle;
+class PointNormalHandle;
 class VertexNormalHandle;
 
 /// @brief The cusp angle used when nothing asks for a particular one, in degrees.
@@ -260,6 +261,16 @@ class Mesh : public Primitive
      */
     VertexNormalHandle getVertexNormal(double cuspAngle = kDefaultCuspAngle) const;
 
+    /**
+     * @brief Returns a handle for reading per-point normals.
+     *
+     * A point attribute named Normal is read when present, otherwise the
+     * normals are computed.
+     *
+     * @return Handle whose operator[] returns the normal for a point offset.
+     */
+    PointNormalHandle getPointNormal() const;
+
     friend class FaceNormalHandle;
     friend class VertexNormalHandle;
 
@@ -343,6 +354,30 @@ class FaceNormalHandle
     const Mesh& mesh_;
     std::optional<attr::AttributeHandleRO<Vector3>> cached_;
     std::vector<Vector3> precomputed_;
+};
+
+/**
+ * @class enzo::geo::PointNormalHandle
+ * @brief Read accessor for per-point normals.
+ *
+ * Built by @ref Mesh::getPointNormal. The constructor resolves the Normal
+ * point attribute, and computes every point normal up front when the mesh
+ * has none.
+ */
+class PointNormalHandle
+{
+  public:
+    Vector3 operator[](Offset pointOffset) const
+    {
+        if (attribute_) return (*attribute_)[pointOffset];
+        return computed_[pointOffset];
+    }
+
+  private:
+    friend class Mesh;
+    explicit PointNormalHandle(const Mesh& mesh);
+    std::optional<attr::AttributeHandleRO<Vector3>> attribute_;
+    std::vector<Vector3> computed_;
 };
 
 /**

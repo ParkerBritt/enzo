@@ -516,6 +516,48 @@ TEST_CASE("Vertex normal prefers Normal attribute over face fallback")
     REQUIRE(vertexNormals[3] == Vector3(-1, 0, 0));
 }
 
+TEST_CASE("Point normal is computed when the mesh has no Normal attribute")
+{
+    geo::Mesh mesh;
+
+    // Build an axis aligned quad facing +Y
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    auto pointNormals = mesh.getPointNormal();
+    REQUIRE(pointNormals[0] == Vector3(0, 1, 0));
+    REQUIRE(pointNormals[1] == Vector3(0, 1, 0));
+    REQUIRE(pointNormals[2] == Vector3(0, 1, 0));
+    REQUIRE(pointNormals[3] == Vector3(0, 1, 0));
+}
+
+TEST_CASE("Point normal prefers Normal attribute over computed normals")
+{
+    geo::Mesh mesh;
+
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(0, 0, 1));
+    auto pointOffset2 = mesh.addPoint(Vector3(1, 0, 1));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 0, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
+
+    // Set point normals that differ from the computed +Y
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "Normal");
+    normalAttr.setValue(0, Vector3(1, 0, 0));
+    normalAttr.setValue(1, Vector3(0, 0, 1));
+    normalAttr.setValue(2, Vector3(-1, 0, 0));
+    normalAttr.setValue(3, Vector3(0, 0, -1));
+
+    auto pointNormals = mesh.getPointNormal();
+    REQUIRE(pointNormals[0] == Vector3(1, 0, 0));
+    REQUIRE(pointNormals[1] == Vector3(0, 0, 1));
+    REQUIRE(pointNormals[2] == Vector3(-1, 0, 0));
+    REQUIRE(pointNormals[3] == Vector3(0, 0, -1));
+}
+
 TEST_CASE("Adding an attribute twice keeps a single attribute")
 {
     geo::Mesh mesh;

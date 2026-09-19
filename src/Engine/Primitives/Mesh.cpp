@@ -778,6 +778,19 @@ Vector3 geo::FaceNormalHandle::computeNormal(Offset faceOffset) const
     return utils::polygonNormal(mesh_.posPointHandle_.getSpan(), mesh_.getFacePoints(faceOffset));
 }
 
+geo::PointNormalHandle::PointNormalHandle(const Mesh& mesh)
+{
+    std::shared_ptr<const attr::Attribute> pointNormals =
+        mesh.getAttribByName(attr::AttrOwner::POINT, "Normal");
+    if (pointNormals)
+    {
+        attribute_.emplace(pointNormals);
+        return;
+    }
+
+    computed_ = utils::computePointNormals(mesh);
+}
+
 geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, double cuspAngle) : mesh_(mesh)
 {
     std::shared_ptr<const attr::Attribute> vertexNormals =
@@ -809,6 +822,11 @@ Vector3 geo::VertexNormalHandle::operator[](Offset vertexOffset) const
 geo::FaceNormalHandle geo::Mesh::getFaceNormal(bool precompute) const
 {
     return FaceNormalHandle(*this, precompute);
+}
+
+geo::PointNormalHandle geo::Mesh::getPointNormal() const
+{
+    return PointNormalHandle(*this);
 }
 
 geo::VertexNormalHandle geo::Mesh::getVertexNormal(double cuspAngle) const
