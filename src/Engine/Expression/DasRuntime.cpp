@@ -17,6 +17,8 @@ static_assert(maxScriptArguments == DAS_MAX_FUNCTION_ARGUMENTS);
 // compiled here once, not in every file that uses a script.
 struct CompiledScript::Impl
 {
+    // The source file that error locations point into.
+    das::FileAccessPtr fileAccess;
     das::ProgramPtr program;
     std::shared_ptr<DasContext> context;
 };
@@ -95,7 +97,8 @@ bool evalRaw(
     result = context.evalWithCatch(function, rawArguments);
     if (const char* exception = context.getException())
     {
-        error = exception;
+        const das::LineInfo& location = context.exceptionAt;
+        error = location.fileInfo ? location.describe() + ": " + exception : exception;
         return false;
     }
     return true;
@@ -155,6 +158,20 @@ bool CompiledScript::run(
     return evalRaw(*impl_->context, functionName, arguments, context, raw, error);
 }
 
+std::vector<bool> CompiledScript::getWrittenArguments(const String& functionName) const
+{
+    das::FunctionPtr function =
+        impl_->program->getThisModule()->findUniqueFunction(functionName);
+    if (!function) return {};
+
+    std::vector<bool> written;
+    for (const das::VariablePtr& argument : function->arguments)
+    {
+        written.push_back(argument->access_ref);
+    }
+    return written;
+}
+
 std::shared_ptr<CompiledScript> CompiledScript::clone() const
 {
     auto context = std::make_shared<DasContext>(
@@ -163,7 +180,7 @@ std::shared_ptr<CompiledScript> CompiledScript::clone() const
     );
     if (context->failed) return nullptr;
 
-    return std::shared_ptr<CompiledScript>(new CompiledScript({impl_->program, context}));
+    return std::shared_ptr<CompiledScript>(new CompiledScript({impl_->fileAccess, impl_->program, context}));
 }
 
 DasRuntime& DasRuntime::instance()
@@ -216,7 +233,7 @@ DasRuntime::compile(const String& name, const String& source, String& error)
         return nullptr;
     }
 
-    return std::shared_ptr<CompiledScript>(new CompiledScript({program, context}));
+    return std::shared_ptr<CompiledScript>(new CompiledScript({fileAccess, program, context}));
 }
 
 } // namespace enzo::expr

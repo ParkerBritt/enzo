@@ -68,6 +68,7 @@ set(ENGINE_SOURCES
     src/Engine/Expression/ExpressionEngine.cpp
     src/Engine/Expression/ScriptEngine.cpp
     src/Engine/Expression/ExpressionFunctions.cpp
+    src/Engine/Expression/PointScript.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -400,6 +401,7 @@ if(ENZO_BUILD_TESTS)
         tests/main-tests.cpp
         tests/ExpressionContextTests.cpp
         tests/ExpressionEngineTests.cpp
+        tests/PointScriptTests.cpp
         tests/ScriptEngineTests.cpp
         tests/CompiledScriptTests.cpp
         tests/ParameterTests.cpp
