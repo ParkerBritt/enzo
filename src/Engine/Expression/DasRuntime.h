@@ -3,6 +3,7 @@
 #include <memory>
 #include <span>
 #include <variant>
+#include <vector>
 
 namespace enzo::expr {
 
@@ -71,6 +72,10 @@ class CompiledScript
         const ExpressionContext* context,
         String& error
     );
+
+    /// @brief Returns whether the function writes each of its arguments, in argument order.
+    /// @return One flag per argument, or empty when the function is missing.
+    std::vector<bool> getWrittenArguments(const String& functionName) const;
 
     /**
      * @brief Returns a copy that shares the compiled program and runs in its own context.
