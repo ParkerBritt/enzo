@@ -1,7 +1,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
 #include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/UndoRedo/ChangeParameterCommand.h"
@@ -26,8 +25,7 @@ struct PluginsAndReset
 TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::sineWave");
 
     auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
     REQUIRE(remap);
@@ -51,8 +49,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::sineWave");
 
     auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
     REQUIRE(remap);
@@ -75,8 +72,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
 TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores a parameter expression")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::sineWave");
 
     auto frequency = networkManager.getNode(nodeId).getParameter("frequency").lock();
     REQUIRE(frequency);
@@ -97,8 +93,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores a parameter express
 TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores added ramp control points")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::sineWave");
 
     auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
     REQUIRE(remap);

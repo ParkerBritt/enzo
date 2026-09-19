@@ -1,5 +1,6 @@
 #include "Engine/Serializer/Serializer.h"
 #include "Engine/Network/NetworkManager.h"
+#include "Engine/Network/Node.h"
 #include "Engine/Network/NodeSnapshot.h"
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/Parameter.h"
@@ -110,6 +111,13 @@ void applySerializable(enzo::prm::Parameter& parameter, const ParameterSerializa
     for (unsigned int component = 0; component < model.expressions.size(); ++component)
         if (model.expressions[component])
             parameter.setExpression(*model.expressions[component], component);
+}
+
+void applySerializable(enzo::nt::Node& node, const std::vector<ParameterSerializable>& models)
+{
+    for (const ParameterSerializable& model : models)
+        if (auto parameter = node.getParameter(model.name).lock())
+            applySerializable(*parameter, model);
 }
 
 namespace enzo::nt {

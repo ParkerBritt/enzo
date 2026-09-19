@@ -3,7 +3,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_approx.hpp>
@@ -33,7 +32,7 @@ std::shared_ptr<const geo::Mesh> getMesh(nt::Node& node)
 nt::NodeId addCylinder()
 {
     nt::NodeLoader::loadNodes();
-    return nt::nm().createNode(nt::NodeTypeTable::requireNodeType("enzo::cylinder"));
+    return nt::nm().createNode("enzo::cylinder");
 }
 
 } // namespace

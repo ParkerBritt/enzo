@@ -191,6 +191,13 @@ prm::Template& prm::Template::addParm(Template child)
     return *this;
 }
 
+prm::Template& prm::Template::setDefaults(std::vector<Default> defaults)
+{
+    if (defaults.size() == 1) defaults.resize(vectorSize_, defaults.front());
+    defaults_ = std::move(defaults);
+    return *this;
+}
+
 prm::Template&
 prm::Template::setInstanceDefault(std::string fieldToken, std::vector<Default> defaults)
 {

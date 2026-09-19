@@ -17,7 +17,7 @@ class ThemeLoader
 {
   public:
     /// @brief Returns the resolved tokens for the default theme with the user theme on top.
-    /// @note Throws std::runtime_error when the default file is missing or malformed.
+    /// @throws std::runtime_error when the default file is missing or malformed.
     static QHash<QString, QVariant>
     loadFromFile(const QString& defaultPath, const QString& userPath = {});
 

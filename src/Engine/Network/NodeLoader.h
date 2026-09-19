@@ -22,7 +22,7 @@ class BOOST_SYMBOL_EXPORT NodeLoader
     static void loadNodes();
 
     /// @brief Returns the directory the node folders live in.
-    /// @note Throws std::runtime_error when no candidate directory exists.
+    /// @throws std::runtime_error when no candidate directory exists.
     static std::filesystem::path getNodesDirectory();
 };
 

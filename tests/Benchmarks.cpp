@@ -4,7 +4,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Parameter/Ramp.h"
 #include "Engine/Primitives/Mesh.h"
@@ -16,17 +15,13 @@
 
 struct NMReset
 {
-    NMReset() { enzo::nt::nm()._reset(); }
+    NMReset()
+    {
+        enzo::nt::NodeLoader::loadNodes();
+        enzo::nt::nm()._reset();
+    }
     ~NMReset() { enzo::nt::nm()._reset(); }
 };
-
-// TODO: fix this init monstrosity
-struct NodeTypeTableInit
-{
-    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
-};
-static NodeTypeTableInit _nodeTypeTableInit;
-const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::cube");
 
 TEST_CASE_METHOD(NMReset, "Network Manager")
 {
@@ -34,7 +29,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
 
     auto& nm = nt::nm();
 
-    nt::NodeId startNode = nm.createNode(testNodeType);
+    nt::NodeId startNode = nm.createNode("enzo::cube");
     nt::NodeId prevNode = startNode;
     std::vector<nt::NodeId> prevNodes;
 
@@ -42,7 +37,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
     {
         for (int i = 0; i < 4; ++i)
         {
-            nt::NodeId newNode = nm.createNode(testNodeType);
+            nt::NodeId newNode = nm.createNode("enzo::cube");
             prevNodes.push_back(newNode);
             nt::nm().connectNodes(newNode, i, prevNode, 0);
         }
@@ -52,7 +47,7 @@ TEST_CASE_METHOD(NMReset, "Network Manager")
             for (int i = 0; i < size(prevNodesBuffer); ++i)
             {
                 prevNodes.clear();
-                nt::NodeId newNode = nm.createNode(testNodeType);
+                nt::NodeId newNode = nm.createNode("enzo::cube");
                 prevNodes.push_back(newNode);
                 nt::nm().connectNodes(newNode, 0, prevNodesBuffer[i], 0);
             }
@@ -79,15 +74,15 @@ enzo::nt::NodeId addFractureOfSphere(int seedColumns, int seedRows)
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId geometry = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    const nt::NodeId geometry = nm.createNode("enzo::sphere");
     setSphereShape(nm.getNode(geometry), 1.0f, 64, 32);
 
     // Turns each seed sphere by a different angle so their rings do not line up.
-    const nt::NodeId seeds = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::merge"));
+    const nt::NodeId seeds = nm.createNode("enzo::merge");
     const float seedRadii[] = {0.3f, 0.6f, 0.9f};
     for (int shellIndex = 0; shellIndex < 3; ++shellIndex)
     {
-        const nt::NodeId shell = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+        const nt::NodeId shell = nm.createNode("enzo::sphere");
         nt::Node& shellNode = nm.getNode(shell);
         setSphereShape(shellNode, seedRadii[shellIndex], seedColumns, seedRows);
         shellNode.getParameter("rotate").lock()->setFloat(17.0f * (shellIndex + 1), 0);
@@ -95,8 +90,7 @@ enzo::nt::NodeId addFractureOfSphere(int seedColumns, int seedRows)
         nm.connectNodes(shell, 0, seeds, 0);
     }
 
-    const nt::NodeId fracture =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cellFracture"));
+    const nt::NodeId fracture = nm.createNode("enzo::cellFracture");
     nm.connectNodes(geometry, 0, fracture, 0);
     nm.connectNodes(seeds, 0, fracture, 1);
     nm.cook(fracture);
@@ -170,11 +164,10 @@ TEST_CASE_METHOD(NMReset, "Cell fracture of a cube")
 
     // Places every seed on a sphere around the cube, so every halfway plane passes through its
     // center.
-    const nt::NodeId cube = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cube"));
-    const nt::NodeId seeds = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    const nt::NodeId cube = nm.createNode("enzo::cube");
+    const nt::NodeId seeds = nm.createNode("enzo::sphere");
     setSphereShape(nm.getNode(seeds), 1.0f, 30, 30);
-    const nt::NodeId fracture =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cellFracture"));
+    const nt::NodeId fracture = nm.createNode("enzo::cellFracture");
     nm.connectNodes(cube, 0, fracture, 0);
     nm.connectNodes(seeds, 0, fracture, 1);
     nm.cook(fracture);
@@ -195,7 +188,7 @@ enzo::nt::NodeId addGrid(int rows, int columns)
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
     nm.getNode(grid).getParameter("rows").lock()->setInt(rows);
     nm.getNode(grid).getParameter("columns").lock()->setInt(columns);
     return grid;
@@ -207,7 +200,7 @@ enzo::nt::NodeId addCopyToPoints(enzo::nt::NodeId prototype, enzo::nt::NodeId ta
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId copy = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::copyToPoints"));
+    const nt::NodeId copy = nm.createNode("enzo::copyToPoints");
     nm.connectNodes(prototype, 0, copy, 0);
     nm.connectNodes(targetPoints, 0, copy, 1);
     nm.cook(copy);
@@ -233,8 +226,7 @@ TEST_CASE_METHOD(NMReset, "Copy dense prototype to points")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId denseSphere =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    const nt::NodeId denseSphere = nm.createNode("enzo::sphere");
     setSphereShape(nm.getNode(denseSphere), 1.0f, 400, 250);
     const nt::NodeId fewPoints = addGrid(4, 4);
     const nt::NodeId denseOntoFew = addCopyToPoints(denseSphere, fewPoints);
@@ -254,7 +246,7 @@ TEST_CASE_METHOD(NMReset, "Copy to many points")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId cube = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cube"));
+    const nt::NodeId cube = nm.createNode("enzo::cube");
     const nt::NodeId manyPoints = addGrid(316, 316);
     const nt::NodeId cubeOntoMany = addCopyToPoints(cube, manyPoints);
     printMeshShape("many target points", manyPoints);
@@ -271,8 +263,7 @@ TEST_CASE_METHOD(NMReset, "Copy medium prototype to medium points")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    const nt::NodeId mediumSphere =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::sphere"));
+    const nt::NodeId mediumSphere = nm.createNode("enzo::sphere");
     setSphereShape(nm.getNode(mediumSphere), 1.0f, 32, 32);
     const nt::NodeId mediumPoints = addGrid(32, 32);
     const nt::NodeId mediumOntoMedium = addCopyToPoints(mediumSphere, mediumPoints);

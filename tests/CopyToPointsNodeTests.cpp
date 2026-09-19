@@ -4,7 +4,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_approx.hpp>
@@ -34,7 +33,7 @@ std::shared_ptr<const geo::Mesh> getMesh(nt::Node& node)
 nt::NodeId addQuadGrid(floatT size)
 {
     auto& nm = nt::nm();
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
     nm.getNode(grid).getParameter("rows").lock()->setInt(2);
     nm.getNode(grid).getParameter("columns").lock()->setInt(2);
     nm.getNode(grid).getParameter("size").lock()->setFloat(size);
@@ -45,8 +44,7 @@ nt::NodeId addQuadGrid(floatT size)
 nt::NodeId addAttributeCreate(nt::NodeId input, const std::string& name, const std::string& type)
 {
     auto& nm = nt::nm();
-    const nt::NodeId attributeCreate =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    const nt::NodeId attributeCreate = nm.createNode("enzo::attributeCreate");
     nm.connectNodes(input, 0, attributeCreate, 0);
 
     auto& node = nm.getNode(attributeCreate);
@@ -86,7 +84,7 @@ QuadCopies addQuadCopiedOntoQuad()
     const nt::NodeId withFloat = addAttributeCreate(addQuadGrid(1.f), "weight", "float");
     nodes.prototype = addAttributeCreate(withFloat, "tint", "vector");
     nodes.targetPoints = addQuadGrid(10.f);
-    nodes.copy = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::copyToPoints"));
+    nodes.copy = nm.createNode("enzo::copyToPoints");
     nm.connectNodes(nodes.prototype, 0, nodes.copy, 0);
     nm.connectNodes(nodes.targetPoints, 0, nodes.copy, 1);
     nm.cook(nodes.copy);

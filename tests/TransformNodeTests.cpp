@@ -3,7 +3,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_approx.hpp>
@@ -40,9 +39,8 @@ TEST_CASE_METHOD(NMReset, "Rotate is read in degrees")
     auto& nm = nt::nm();
 
     // A grid feeding a transform that turns a quarter circle about Y
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    const nt::NodeId transform =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    const nt::NodeId transform = nm.createNode("enzo::transform");
     nm.connectNodes(grid, 0, transform, 0);
 
     nm.getNode(transform).getParameter("rotate").lock()->setFloat(90.f, 1);
@@ -62,9 +60,8 @@ TEST_CASE_METHOD(NMReset, "Scale multiplies each axis independently")
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    const nt::NodeId transform =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    const nt::NodeId transform = nm.createNode("enzo::transform");
     nm.connectNodes(grid, 0, transform, 0);
 
     auto scale = nm.getNode(transform).getParameter("scale").lock();
@@ -86,9 +83,8 @@ TEST_CASE_METHOD(NMReset, "A point selection leaves the other points where they 
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    const nt::NodeId transform =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    const nt::NodeId transform = nm.createNode("enzo::transform");
     nm.connectNodes(grid, 0, transform, 0);
 
     // Lift only the first point of the grid

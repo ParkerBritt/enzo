@@ -2,8 +2,11 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NetworkPath.h"
 #include "Engine/Network/Node.h"
+#include "Engine/Network/NodeAlias.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeTypeTable.h"
+#include "Engine/Parameter/NodeParameter.h"
+#include "Engine/Serializer/ParameterSerializable.h"
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>
@@ -12,36 +15,52 @@
 
 struct NMReset
 {
-    NMReset() { enzo::nt::nm()._reset(); }
+    NMReset()
+    {
+        enzo::nt::NodeLoader::loadNodes();
+        enzo::nt::nm()._reset();
+    }
     ~NMReset() { enzo::nt::nm()._reset(); }
 };
 
-// TODO: fix this init monstrosity
-struct NodeTypeTableInit
+// Registers a node type that holds a scope and returns its full name.
+std::string addContainerType()
 {
-    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
-};
-static NodeTypeTableInit _nodeTypeTableInit;
-const enzo::nt::NodeType& testNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
-const enzo::nt::NodeType& transformNodeType =
-    enzo::nt::NodeTypeTable::requireNodeType("enzo::transform");
-const enzo::nt::NodeType& mergeNodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::merge");
-
-// A node type that holds a scope. No shipped node has one, so the tests declare their own
-// and register it in the table, where undo looks up the type of a restored node.
-const enzo::nt::NodeType& containerNodeType = enzo::nt::NodeTypeTable::addNodeType([] {
+    enzo::nt::NodeLoader::loadNodes();
     enzo::nt::NodeType nodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
     nodeType.internalName = "container";
     nodeType.childScopeType = "geometry";
-    return nodeType;
-}());
+    return enzo::nt::NodeTypeTable::addNodeType(std::move(nodeType)).getFullName();
+}
+
+const std::string containerTypeName = addContainerType();
+
+// Registers an alias of the grid that starts with three rows and returns its full name.
+std::string addThreeRowGridAlias()
+{
+    enzo::nt::NodeLoader::loadNodes();
+
+    ParameterSerializable rows;
+    rows.name = "rows";
+    rows.intValues = {3};
+
+    enzo::nt::NodeAlias alias;
+    alias.internalName = "threeRowGrid";
+    alias.typeNamespace = "test";
+    alias.displayName = "Three Row Grid";
+    alias.aliasedType = "enzo::grid";
+    alias.parameterValues = {rows};
+    return enzo::nt::NodeTypeTable::addNodeAlias(std::move(alias)).getFullName();
+}
+
+const std::string threeRowGridAliasName = addThreeRowGridAlias();
 
 TEST_CASE_METHOD(NMReset, "network fixture separation start")
 {
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId newNodeId = nm.createNode(testNodeType);
+    nt::NodeId newNodeId = nm.createNode("enzo::grid");
     REQUIRE(newNodeId == 1);
     REQUIRE(nm.isValidNode(1));
 }
@@ -59,8 +78,8 @@ TEST_CASE_METHOD(NMReset, "network")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId newNodeId = nm.createNode(testNodeType);
-    nt::NodeId newNodeId2 = nm.createNode(testNodeType);
+    nt::NodeId newNodeId = nm.createNode("enzo::grid");
+    nt::NodeId newNodeId2 = nm.createNode("enzo::grid");
 
     REQUIRE(nm.isValidNode(newNodeId));
     REQUIRE(nm.isValidNode(newNodeId2));
@@ -76,8 +95,8 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
     nm.undoStack().clear();
 
     // Build two connected nodes where the upstream output feeds the downstream input
-    nt::NodeId upstream = nm.createNode(testNodeType);
-    nt::NodeId downstream = nm.createNode(testNodeType);
+    nt::NodeId upstream = nm.createNode("enzo::grid");
+    nt::NodeId downstream = nm.createNode("enzo::grid");
     nt::nm().connectNodes(upstream, 0, downstream, 0);
 
     // Delete the downstream node
@@ -97,9 +116,9 @@ TEST_CASE_METHOD(NMReset, "Cooking a node cooks its whole upstream chain")
     auto& nm = nt::nm();
 
     // Wire a three node chain where each output feeds the next input
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
-    nt::NodeId third = nm.createNode(testNodeType);
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
+    nt::NodeId third = nm.createNode("enzo::grid");
     nt::nm().connectNodes(first, 0, second, 0);
     nt::nm().connectNodes(second, 0, third, 0);
 
@@ -115,9 +134,9 @@ TEST_CASE_METHOD(NMReset, "Dirtying an upstream node restages everything downstr
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
-    nt::NodeId third = nm.createNode(testNodeType);
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
+    nt::NodeId third = nm.createNode("enzo::grid");
     nt::nm().connectNodes(first, 0, second, 0);
     nt::nm().connectNodes(second, 0, third, 0);
 
@@ -137,8 +156,8 @@ TEST_CASE_METHOD(NMReset, "Cooking pulls geometry across an input connection")
     auto& nm = nt::nm();
 
     // A grid feeding a transform, which copies the grid's primitives through
-    nt::NodeId grid = nm.createNode(testNodeType);
-    nt::NodeId transform = nm.createNode(transformNodeType);
+    nt::NodeId grid = nm.createNode("enzo::grid");
+    nt::NodeId transform = nm.createNode("enzo::transform");
     nt::nm().connectNodes(grid, 0, transform, 0);
 
     nm.cook(transform);
@@ -156,7 +175,7 @@ TEST_CASE_METHOD(NMReset, "Cooking an output reaches a node nothing is wired to"
     auto& nm = nt::nm();
 
     // Nothing is wired to the grid, so naming it is the only way to its geometry
-    nt::NodeId grid = nm.createNode(testNodeType);
+    nt::NodeId grid = nm.createNode("enzo::grid");
 
     NodePacket packet = nm.cookOutput(grid, 0);
 
@@ -169,7 +188,7 @@ TEST_CASE_METHOD(NMReset, "A cooked output is a copy the caller owns")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId grid = nm.createNode(testNodeType);
+    nt::NodeId grid = nm.createNode("enzo::grid");
 
     NodePacket packet = nm.cookOutput(grid, 0);
     size_t originalSize = packet.size();
@@ -186,7 +205,7 @@ TEST_CASE_METHOD(NMReset, "A node with no input cooks to an empty output")
     auto& nm = nt::nm();
 
     // A transform with nothing wired in has no primitives to pass through
-    nt::NodeId transform = nm.createNode(transformNodeType);
+    nt::NodeId transform = nm.createNode("enzo::transform");
 
     nm.cook(transform);
 
@@ -198,13 +217,13 @@ TEST_CASE_METHOD(NMReset, "reset")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId newNodeId = nm.createNode(testNodeType);
+    nt::NodeId newNodeId = nm.createNode("enzo::grid");
 
     nm._reset();
 
     REQUIRE_FALSE(nm.isValidNode(newNodeId));
 
-    nt::NodeId newNodeId2 = nm.createNode(testNodeType);
+    nt::NodeId newNodeId2 = nm.createNode("enzo::grid");
     REQUIRE(nm.isValidNode(newNodeId2));
 }
 
@@ -213,9 +232,9 @@ TEST_CASE_METHOD(NMReset, "New nodes are numbered from their type name")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
-    nt::NodeId transform = nm.createNode(transformNodeType);
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
+    nt::NodeId transform = nm.createNode("enzo::transform");
 
     REQUIRE(nm.getNode(first).getPath() == "/grid1");
     REQUIRE(nm.getNode(second).getPath() == "/grid2");
@@ -229,8 +248,8 @@ TEST_CASE_METHOD(NMReset, "A requested node name is numbered until it is free")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId first = nm.createNode(testNodeType, Path("/"), "mesh");
-    nt::NodeId second = nm.createNode(testNodeType, Path("/"), "mesh");
+    nt::NodeId first = nm.createNode("enzo::grid", Path("/"), "mesh");
+    nt::NodeId second = nm.createNode("enzo::grid", Path("/"), "mesh");
 
     REQUIRE(nm.getNode(first).getName() == "mesh");
     REQUIRE(nm.getNode(second).getName() == "mesh1");
@@ -241,9 +260,9 @@ TEST_CASE_METHOD(NMReset, "A node name only has to be free among its siblings")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId atRoot = nm.createNode(testNodeType);
-    nm.createNode(containerNodeType);
-    nt::NodeId nested = nm.createNode(testNodeType, Path("/container1"));
+    nt::NodeId atRoot = nm.createNode("enzo::grid");
+    nm.createNode(containerTypeName);
+    nt::NodeId nested = nm.createNode("enzo::grid", Path("/container1"));
 
     // The same name in two scopes is two different nodes
     REQUIRE(nm.getNode(atRoot).getPath() == "/grid1");
@@ -256,10 +275,10 @@ TEST_CASE_METHOD(NMReset, "A node is found by an absolute or a relative path")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId outer = nm.createNode(testNodeType);
-    nm.createNode(containerNodeType);
-    nt::NodeId inner = nm.createNode(testNodeType, Path("/container1"));
-    nt::NodeId sibling = nm.createNode(testNodeType, Path("/container1"));
+    nt::NodeId outer = nm.createNode("enzo::grid");
+    nm.createNode(containerTypeName);
+    nt::NodeId inner = nm.createNode("enzo::grid", Path("/container1"));
+    nt::NodeId sibling = nm.createNode("enzo::grid", Path("/container1"));
 
     // An absolute path needs no node to start from
     REQUIRE(nm.findNode("/grid1") == &nm.getNode(outer));
@@ -287,8 +306,8 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its name")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nm.createNode(testNodeType, Path("/"), "mesh");
-    nt::NodeId second = nm.createNode(testNodeType, Path("/"), "mesh");
+    nm.createNode("enzo::grid", Path("/"), "mesh");
+    nt::NodeId second = nm.createNode("enzo::grid", Path("/"), "mesh");
     REQUIRE(nm.getNode(second).getName() == "mesh1");
 
     nm.deleteNode(second);
@@ -306,8 +325,8 @@ TEST_CASE_METHOD(NMReset, "A scope exists only where a node holds one")
     // The root scope is always there for the top level nodes to live in
     REQUIRE(nm.getScope(Path("/")) != nullptr);
 
-    nm.createNode(testNodeType);
-    nm.createNode(containerNodeType);
+    nm.createNode("enzo::grid");
+    nm.createNode(containerTypeName);
 
     REQUIRE(nm.getScope(Path("/container1")) != nullptr);
     REQUIRE(nm.getScope(Path("/container1"))->getType() == "geometry");
@@ -322,11 +341,11 @@ TEST_CASE_METHOD(NMReset, "A node cannot be created where there is no scope")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    REQUIRE_THROWS(nm.createNode(testNodeType, Path("/nothing_here")));
+    REQUIRE_THROWS(nm.createNode("enzo::grid", Path("/nothing_here")));
 
     // An ordinary node is not a place other nodes can live
-    nm.createNode(testNodeType);
-    REQUIRE_THROWS(nm.createNode(testNodeType, Path("/grid1")));
+    nm.createNode("enzo::grid");
+    REQUIRE_THROWS(nm.createNode("enzo::grid", Path("/grid1")));
 }
 
 TEST_CASE_METHOD(NMReset, "A scope lists the nodes directly inside it")
@@ -334,9 +353,9 @@ TEST_CASE_METHOD(NMReset, "A scope lists the nodes directly inside it")
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId atRoot = nm.createNode(testNodeType);
-    nt::NodeId container = nm.createNode(containerNodeType);
-    nt::NodeId inner = nm.createNode(testNodeType, Path("/container1"));
+    nt::NodeId atRoot = nm.createNode("enzo::grid");
+    nt::NodeId container = nm.createNode(containerTypeName);
+    nt::NodeId inner = nm.createNode("enzo::grid", Path("/container1"));
 
     std::vector<nt::NodeId> rootChildren = nm.getChildNodeIds(Path("/"));
     REQUIRE(rootChildren.size() == 2);
@@ -352,10 +371,10 @@ TEST_CASE_METHOD(NMReset, "Deleting a node that holds a scope takes its contents
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId container = nm.createNode(containerNodeType);
-    nt::NodeId inner = nm.createNode(testNodeType, Path("/container1"));
-    nt::NodeId deeper = nm.createNode(containerNodeType, Path("/container1"));
-    nt::NodeId deepest = nm.createNode(testNodeType, Path("/container1/container1"));
+    nt::NodeId container = nm.createNode(containerTypeName);
+    nt::NodeId inner = nm.createNode("enzo::grid", Path("/container1"));
+    nt::NodeId deeper = nm.createNode(containerTypeName, Path("/container1"));
+    nt::NodeId deepest = nm.createNode("enzo::grid", Path("/container1/container1"));
 
     nm.deleteNode(container);
 
@@ -376,8 +395,8 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete brings the node back with its positi
     auto& nm = nt::nm();
     nm.undoStack().clear();
 
-    nt::NodeId upstream = nm.createNode(testNodeType);
-    nt::NodeId downstream = nm.createNode(transformNodeType, Path("/"), "", {5.f, 7.f});
+    nt::NodeId upstream = nm.createNode("enzo::grid");
+    nt::NodeId downstream = nm.createNode("enzo::transform", Path("/"), "", {5.f, 7.f});
     nm.connectNodes(upstream, 0, downstream, 0);
 
     nm.deleteNode(downstream);
@@ -406,9 +425,9 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes li
     auto& nm = nt::nm();
     nm.undoStack().clear();
 
-    nt::NodeId container = nm.createNode(containerNodeType);
-    nt::NodeId inner = nm.createNode(testNodeType, Path("/container1"));
-    nt::NodeId deeper = nm.createNode(transformNodeType, Path("/container1"), "", {2.f, 3.f});
+    nt::NodeId container = nm.createNode(containerTypeName);
+    nt::NodeId inner = nm.createNode("enzo::grid", Path("/container1"));
+    nt::NodeId deeper = nm.createNode("enzo::transform", Path("/container1"), "", {2.f, 3.f});
     nm.connectNodes(inner, 0, deeper, 0);
 
     nm.deleteNode(container);
@@ -446,16 +465,16 @@ TEST_CASE_METHOD(NMReset, "Connecting into a multi input port makes room for the
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId merge = nm.createNode(mergeNodeType);
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
+    nt::NodeId merge = nm.createNode("enzo::merge");
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
 
     nm.connectNodes(first, 0, merge, 0);
     nm.connectNodes(second, 0, merge, 1);
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
 
     // Connects into an input the multi port already holds, moving the rest up
-    nt::NodeId inserted = nm.createNode(testNodeType);
+    nt::NodeId inserted = nm.createNode("enzo::grid");
     nm.connectNodes(inserted, 0, merge, 1);
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, inserted, second});
 }
@@ -465,10 +484,10 @@ TEST_CASE_METHOD(NMReset, "Disconnecting from a multi input port closes the gap"
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId merge = nm.createNode(mergeNodeType);
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
-    nt::NodeId third = nm.createNode(testNodeType);
+    nt::NodeId merge = nm.createNode("enzo::merge");
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
+    nt::NodeId third = nm.createNode("enzo::grid");
 
     nm.connectNodes(first, 0, merge, 0);
     nm.connectNodes(second, 0, merge, 1);
@@ -484,13 +503,13 @@ TEST_CASE_METHOD(NMReset, "Undoing a connection into a multi input port restores
     auto& nm = nt::nm();
     nm.undoStack().clear();
 
-    nt::NodeId merge = nm.createNode(mergeNodeType);
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
+    nt::NodeId merge = nm.createNode("enzo::merge");
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
     nm.connectNodes(first, 0, merge, 0);
     nm.connectNodes(second, 0, merge, 1);
 
-    nt::NodeId inserted = nm.createNode(testNodeType);
+    nt::NodeId inserted = nm.createNode("enzo::grid");
     nm.connectNodes(inserted, 0, merge, 0);
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{inserted, first, second});
 
@@ -506,9 +525,9 @@ TEST_CASE_METHOD(NMReset, "Connecting into an occupied single input port replace
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId transform = nm.createNode(transformNodeType);
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
+    nt::NodeId transform = nm.createNode("enzo::transform");
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
 
     nm.connectNodes(first, 0, transform, 0);
     nm.connectNodes(second, 0, transform, 0);
@@ -520,9 +539,9 @@ TEST_CASE_METHOD(NMReset, "Connecting past the last input of a multi input port 
     using namespace enzo;
     auto& nm = nt::nm();
 
-    nt::NodeId merge = nm.createNode(mergeNodeType);
-    nt::NodeId first = nm.createNode(testNodeType);
-    nt::NodeId second = nm.createNode(testNodeType);
+    nt::NodeId merge = nm.createNode("enzo::merge");
+    nt::NodeId first = nm.createNode("enzo::grid");
+    nt::NodeId second = nm.createNode("enzo::grid");
 
     nm.connectNodes(first, 0, merge, 0);
     nt::Connection connection = nm.connectNodes(second, 0, merge, 5);
@@ -530,4 +549,47 @@ TEST_CASE_METHOD(NMReset, "Connecting past the last input of a multi input port 
     REQUIRE(connection.targetInput == 1);
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
     REQUIRE(nm.getInputCount(merge) == 2);
+}
+
+TEST_CASE_METHOD(
+    NMReset,
+    "An alias creates a node of the type it stands in for with its values set"
+)
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nt::NodeId grid = nm.createNode(threeRowGridAliasName);
+    nt::Node& node = nm.getNode(grid);
+
+    REQUIRE(node.getType().getFullName() == "enzo::grid");
+    REQUIRE(node.getPath() == "/grid1");
+    REQUIRE(node.getParameter("rows").lock()->evalInt() == 3);
+    REQUIRE(node.getParameter("columns").lock()->evalInt() == 10);
+}
+
+TEST_CASE_METHOD(NMReset, "An alias leaves the defaults of the type it stands in for alone")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    nm.createNode(threeRowGridAliasName);
+    nt::NodeId plainGrid = nm.createNode("enzo::grid");
+
+    REQUIRE(nm.getNode(plainGrid).getParameter("rows").lock()->evalInt() == 10);
+}
+
+TEST_CASE_METHOD(NMReset, "Redoing the creation of an alias node brings back its values")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+    nm.undoStack().clear();
+
+    nt::NodeId grid = nm.createNode(threeRowGridAliasName);
+
+    nm.undoStack().undo();
+    REQUIRE_FALSE(nm.isValidNode(grid));
+
+    nm.undoStack().redo();
+    REQUIRE(nm.getNode(grid).getParameter("rows").lock()->evalInt() == 3);
 }

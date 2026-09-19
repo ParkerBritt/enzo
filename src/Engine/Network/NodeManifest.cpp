@@ -8,10 +8,13 @@
 
 #include <fstream>
 #include <iterator>
+#include <map>
 #include <optional>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
@@ -55,6 +58,14 @@ prm::Default readDefault(const YAML::Node& value, prm::ValueType valueType)
         return prm::Default(value.as<floatT>());
     }
     return prm::Default();
+}
+
+// Returns the per component values of a list, or the single value that covers
+// every component.
+std::vector<YAML::Node> getComponents(const YAML::Node& value)
+{
+    if (!value.IsSequence()) return {value};
+    return std::vector<YAML::Node>(value.begin(), value.end());
 }
 
 prm::Range readRange(const YAML::Node& range)
@@ -164,20 +175,15 @@ prm::Template readParameter(const YAML::Node& parm)
     const unsigned int size = parm["size"] ? parm["size"].as<unsigned int>() : 1;
     const prm::Range range = readRange(parm["range"]);
 
-    // A list of defaults gives every component of a vector its own value, while
-    // a single one covers them all.
-    const YAML::Node defaultValue = parm["default"];
-    const bool isPerComponent = defaultValue && defaultValue.IsSequence();
+    prm::Template parameter(*type, parmName, prm::Default(), size, range);
 
-    std::vector<prm::Default> componentDefaults;
-    if (isPerComponent)
-        for (const YAML::Node& value : defaultValue)
-            componentDefaults.push_back(readDefault(value, valueType));
-
-    prm::Template parameter =
-        isPerComponent
-            ? prm::Template(*type, parmName, componentDefaults, size, {range})
-            : prm::Template(*type, parmName, readDefault(defaultValue, valueType), size, range);
+    if (parm["default"])
+    {
+        std::vector<prm::Default> defaults;
+        for (const YAML::Node& component : getComponents(parm["default"]))
+            defaults.push_back(readDefault(component, valueType));
+        parameter.setDefaults(std::move(defaults));
+    }
 
     if (parm["tooltip"]) parameter.setTooltip(parm["tooltip"].as<std::string>());
     if (parm["documentation"]) parameter.setDocumentation(parm["documentation"].as<std::string>());
@@ -225,6 +231,22 @@ getFlattenedParameters(const std::vector<prm::Template>& templates)
     return parameters;
 }
 
+// Returns the parameter carrying a name, including one nested in a group, or
+// nullptr when none does.
+const prm::Template*
+getParameter(const std::vector<prm::Template>& templates, const std::string& name)
+{
+    for (const prm::Template& parameter : templates)
+    {
+        if (parameter.getName() == name) return &parameter;
+        if (!parameter.isContainer()) continue;
+
+        const prm::Template* child = getParameter(parameter.getChildren(), name);
+        if (child) return child;
+    }
+    return nullptr;
+}
+
 // Checks the style options of every parameter. A value a style cannot read, or
 // a missing parameter, throws.
 void validateStyles(const std::vector<prm::Template>& templates)
@@ -238,14 +260,104 @@ NodeImplementation readImplementation(const YAML::Node& implementation, const st
 {
     if (!implementation) throw std::runtime_error("node " + nodeName + " has no implementation");
 
-    NodeImplementation parsed;
-    parsed.kind = requireString(implementation, "kind", "implementation");
-    if (parsed.kind != "cpp")
-        throw std::runtime_error("implementation kind " + parsed.kind + " is not supported yet");
+    const std::string kind = requireString(implementation, "kind", "implementation");
 
-    parsed.library = requireString(implementation, "library", "implementation");
-    parsed.constructor = readString(implementation, "constructor", nodeName);
+    if (kind == "cpp")
+        return CppImplementation{
+            .library = requireString(implementation, "library", "implementation"),
+            .constructor = readString(implementation, "constructor", nodeName),
+        };
+
+    if (kind == "alias")
+        return AliasImplementation{
+            .aliasedType = requireString(implementation, "type", "alias implementation"),
+        };
+
+    throw std::runtime_error("implementation kind " + kind + " is not supported yet");
+}
+
+// Returns the parameter values of an alias. A single value becomes a list of one.
+std::map<std::string, std::vector<std::string>> readParameterValues(const YAML::Node& values)
+{
+    std::map<std::string, std::vector<std::string>> parsed;
+    for (const auto& entry : values)
+    {
+        std::vector<std::string>& values = parsed[entry.first.as<std::string>()];
+        for (const YAML::Node& component : getComponents(entry.second))
+            values.push_back(component.as<std::string>());
+    }
     return parsed;
+}
+
+ParameterSerializable
+readParameterValue(const prm::Template& parameter, const std::vector<std::string>& componentValues)
+{
+    const prm::ValueType valueType = prm::toValueType(parameter.getType());
+    ParameterSerializable value;
+    value.name = parameter.getName();
+
+    for (unsigned int componentIndex = 0; componentIndex < parameter.getSize(); ++componentIndex)
+    {
+        const std::string& componentText =
+            componentValues.size() == 1 ? componentValues.front() : componentValues[componentIndex];
+        const prm::Default component = readDefault(YAML::Node(componentText), valueType);
+
+        switch (valueType)
+        {
+        case prm::ValueType::Float:
+            value.floatValues.push_back(component.getFloat());
+            break;
+        case prm::ValueType::Int:
+            value.intValues.push_back(component.getInt());
+            break;
+        case prm::ValueType::String:
+            value.stringValues.push_back(component.getString());
+            break;
+        }
+    }
+    return value;
+}
+
+// Rejects every top level key the implementation kind does not take.
+void validateKeysForKind(
+    const YAML::Node& document,
+    const NodeImplementation& implementation,
+    const std::string& nodeName
+)
+{
+    const std::set<std::string> cppKeys = {
+        "version",
+        "name",
+        "namespace",
+        "label",
+        "tags",
+        "implementation",
+        "icon",
+        "docs",
+        "childScopeType",
+        "inputs",
+        "outputs",
+        "parameters",
+    };
+    const std::set<std::string> aliasKeys = {
+        "version",
+        "name",
+        "namespace",
+        "label",
+        "tags",
+        "implementation",
+        "parameterValues",
+    };
+
+    const bool isAlias = std::holds_alternative<AliasImplementation>(implementation);
+    const std::set<std::string>& allowedKeys = isAlias ? aliasKeys : cppKeys;
+
+    for (const auto& entry : document)
+    {
+        const std::string key = entry.first.as<std::string>();
+        if (!allowedKeys.contains(key))
+            throw std::runtime_error("node " + nodeName + " cannot declare " + key);
+    }
 }
 
 std::vector<InputPort> readInputPorts(const YAML::Node& inputs, const std::string& nodeName)
@@ -296,6 +408,11 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     nodeType.internalName = requireString(document, "name", "node manifest");
     nodeType.typeNamespace = requireString(document, "namespace", "node manifest");
     nodeType.displayName = readString(document, "label", nodeType.internalName);
+
+    manifest.implementation_ =
+        readImplementation(document["implementation"], nodeType.internalName);
+    validateKeysForKind(document, manifest.implementation_, nodeType.internalName);
+
     nodeType.templates = readParameters(document["parameters"]);
     validateStyles(nodeType.templates);
     nodeType.tags = readTags(document["tags"]);
@@ -306,10 +423,49 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     nodeType.inputPorts = readInputPorts(document["inputs"], nodeType.internalName);
     if (document["outputs"]) nodeType.maxOutputs = document["outputs"].as<unsigned int>();
 
-    manifest.implementation_ =
-        readImplementation(document["implementation"], nodeType.internalName);
+    manifest.parameterValues_ = readParameterValues(document["parameterValues"]);
 
     return manifest;
+}
+
+NodeAlias NodeManifest::getNodeAlias(const NodeType& aliasedType) const
+{
+    NodeAlias alias;
+    alias.internalName = nodeType_.internalName;
+    alias.typeNamespace = nodeType_.typeNamespace;
+    alias.displayName = nodeType_.displayName;
+    alias.tags = nodeType_.tags;
+    alias.aliasedType = std::get<AliasImplementation>(implementation_).aliasedType;
+
+    for (const auto& [parameterName, componentValues] : parameterValues_)
+    {
+        const prm::Template* parameter = getParameter(aliasedType.templates, parameterName);
+        if (!parameter)
+            throw std::runtime_error(
+                "alias " + alias.getFullName() + " sets " + parameterName + ", which " +
+                aliasedType.getFullName() + " does not have"
+            );
+
+        if (parameter->isMultiParm())
+            throw std::runtime_error(
+                "alias " + alias.getFullName() + " sets " + parameterName +
+                ", which holds instances rather than a value"
+            );
+
+        const unsigned int componentCount = parameter->getSize();
+        const bool fitsParameter =
+            componentValues.size() == 1 || componentValues.size() == componentCount;
+        if (!fitsParameter)
+            throw std::runtime_error(
+                "alias " + alias.getFullName() + " gives " + parameterName + " " +
+                std::to_string(componentValues.size()) + " values but it has " +
+                std::to_string(componentCount) + " components"
+            );
+
+        alias.parameterValues.push_back(readParameterValue(*parameter, componentValues));
+    }
+
+    return alias;
 }
 
 NodeManifest NodeManifest::loadFromFile(const std::filesystem::path& path)
