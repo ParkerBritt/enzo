@@ -106,9 +106,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a12ad203d431d99a0e07d5652d39cd807" id="r_a12ad203d431d99a0e07d5652d39cd807"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12ad203d431d99a0e07d5652d39cd807">Attribute</a> (std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool <a class="el" href="#a210dc1d3319508ada6a8e17fdfb72418">isPrivate</a>=false)</td></tr>
-<tr class="memdesc:a12ad203d431d99a0e07d5652d39cd807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new attribute and initialize its typed storage.  <br /></td></tr>
-<tr class="separator:a12ad203d431d99a0e07d5652d39cd807"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14421ae1ea02201285c322b564140933" id="r_a14421ae1ea02201285c322b564140933"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14421ae1ea02201285c322b564140933">Attribute</a> (std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool <a class="el" href="#ad337351ecbd25b6bc15e711d5f818efd">isInternal</a>=false)</td></tr>
+<tr class="memdesc:a14421ae1ea02201285c322b564140933"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new attribute and initialize its typed storage.  <br /></td></tr>
+<tr class="separator:a14421ae1ea02201285c322b564140933"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5013e29095cefdc2c2c3558591d2e65" id="r_aa5013e29095cefdc2c2c3558591d2e65"><td class="memItemLeft" align="right" valign="top"><a id="aa5013e29095cefdc2c2c3558591d2e65" name="aa5013e29095cefdc2c2c3558591d2e65"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Attribute</b> (const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">Attribute</a> &amp;other)</td></tr>
 <tr class="separator:aa5013e29095cefdc2c2c3558591d2e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,9 +136,9 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>getTypeSize</
 <tr class="memitem:a10a9ed312201a64abba043fa59d5b58a" id="r_a10a9ed312201a64abba043fa59d5b58a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10a9ed312201a64abba043fa59d5b58a">isIntrinsic</a> () const</td></tr>
 <tr class="memdesc:a10a9ed312201a64abba043fa59d5b58a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the attribute is intrinsic.  <br /></td></tr>
 <tr class="separator:a10a9ed312201a64abba043fa59d5b58a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a210dc1d3319508ada6a8e17fdfb72418" id="r_a210dc1d3319508ada6a8e17fdfb72418"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a210dc1d3319508ada6a8e17fdfb72418">isPrivate</a> () const</td></tr>
-<tr class="memdesc:a210dc1d3319508ada6a8e17fdfb72418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the attribute is private.  <br /></td></tr>
-<tr class="separator:a210dc1d3319508ada6a8e17fdfb72418"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad337351ecbd25b6bc15e711d5f818efd" id="r_ad337351ecbd25b6bc15e711d5f818efd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad337351ecbd25b6bc15e711d5f818efd">isInternal</a> () const</td></tr>
+<tr class="memdesc:ad337351ecbd25b6bc15e711d5f818efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the engine maintains this attribute.  <br /></td></tr>
+<tr class="separator:ad337351ecbd25b6bc15e711d5f818efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85c03efef8653f74ab458484b2a49fd2" id="r_a85c03efef8653f74ab458484b2a49fd2"><td class="memItemLeft" align="right" valign="top"><a id="a85c03efef8653f74ab458484b2a49fd2" name="a85c03efef8653f74ab458484b2a49fd2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> (size_t size)</td></tr>
 <tr class="memdesc:a85c03efef8653f74ab458484b2a49fd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the number of elements stored. <br /></td></tr>
@@ -164,8 +164,8 @@ template&lt;typename T &gt; </td></tr>
 <p>Attributes are the containers for geometry data in the engine. Each attribute is a single column in the spreadsheet that makes up your geometry. The column has a single name and type. Based on the attribute owner it will also have a value for each element. For example, if the owner is a point then your attribute might be Color, your type might be a vector, and the attribute will have a color value for each point in the mesh. Attributes own the underlying storage for their values, which is contiguous and strongly typed (e.g., ints, floats, vectors, bools). This allows a single attribute class to store data regardless of the type without templates. Attributes cannot be read or written from by themselves. For that an attribute handle is required, (see <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html" title="Read write accessor for enzo::attr::Attribute.">enzo::attr::AttributeHandle</a>).</p>
 <dl class="section note"><dt>Note</dt><dd>Values are strongly typed; invalid type combinations are guarded both at compile time (via handles) and at runtime (defensive checks). </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a12ad203d431d99a0e07d5652d39cd807" name="a12ad203d431d99a0e07d5652d39cd807"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12ad203d431d99a0e07d5652d39cd807">&#9670;&#160;</a></span>Attribute()</h2>
+<a id="a14421ae1ea02201285c322b564140933" name="a14421ae1ea02201285c322b564140933"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14421ae1ea02201285c322b564140933">&#9670;&#160;</a></span>Attribute()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -188,7 +188,7 @@ template&lt;typename T &gt; </td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>isPrivate</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>isInternal</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -205,6 +205,26 @@ template&lt;typename T &gt; </td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad337351ecbd25b6bc15e711d5f818efd" name="ad337351ecbd25b6bc15e711d5f818efd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad337351ecbd25b6bc15e711d5f818efd">&#9670;&#160;</a></span>isInternal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enzo::attr::Attribute::isInternal </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns whether the engine maintains this attribute. </p>
+<dl class="section note"><dt>Note</dt><dd>Nodes can't write to an internal attribute and it is hidden from the user. </dd></dl>
+
+</div>
+</div>
 <a id="a10a9ed312201a64abba043fa59d5b58a" name="a10a9ed312201a64abba043fa59d5b58a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a10a9ed312201a64abba043fa59d5b58a">&#9670;&#160;</a></span>isIntrinsic()</h2>
 
@@ -222,26 +242,6 @@ template&lt;typename T &gt; </td></tr>
 
 <p>Returns whether the attribute is intrinsic. </p>
 <p>An intrinsic attribute is an inherent property of the geometry created with the geometry automatically and cannot be deleted. </p>
-
-</div>
-</div>
-<a id="a210dc1d3319508ada6a8e17fdfb72418" name="a210dc1d3319508ada6a8e17fdfb72418"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a210dc1d3319508ada6a8e17fdfb72418">&#9670;&#160;</a></span>isPrivate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool enzo::attr::Attribute::isPrivate </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns whether the attribute is private. </p>
-<p>A private attribute is hidden from the user (e.g. not shown in the spreadsheet). It is engine-internal state used during cooks. </p>
 
 </div>
 </div>

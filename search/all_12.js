@@ -15,6 +15,7 @@ var searchData=
   ['transforms_12',['Transforms',['../structenzo_1_1NodePacket_1_1Transforms.html',1,'enzo::NodePacket']]],
   ['translate_13',['translate',['../classenzo_1_1Transform.html#a67235a9e66315b1946d499642d5f955b',1,'enzo::Transform']]],
   ['triangulatedmesh_14',['TriangulatedMesh',['../structenzo_1_1utils_1_1TriangulatedMesh.html',1,'enzo::utils']]],
-  ['typenamespace_15',['typeNamespace',['../structenzo_1_1nt_1_1NodeType.html#a588bb3e4cfe1810d2e8cb80711ee07ae',1,'enzo::nt::NodeType']]],
-  ['types_2eh_16',['Types.h',['../Types_8h.html',1,'']]]
+  ['tryaddattribute_15',['tryAddAttribute',['../classenzo_1_1geo_1_1Primitive.html#a28da46cf5b4fe61943cc536a6ab73214',1,'enzo::geo::Primitive::tryAddAttribute(attr::AttributeOwner owner, std::string name, attr::AttributeType type, bool intrinsic=false, bool isInternal=false)'],['../classenzo_1_1geo_1_1Primitive.html#a8a7f563f18c19e9449569a538144bbf6',1,'enzo::geo::Primitive::tryAddAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic=false, bool isInternal=false)']]],
+  ['typenamespace_16',['typeNamespace',['../structenzo_1_1nt_1_1NodeType.html#a588bb3e4cfe1810d2e8cb80711ee07ae',1,'enzo::nt::NodeType']]],
+  ['types_2eh_17',['Types.h',['../Types_8h.html',1,'']]]
 ];

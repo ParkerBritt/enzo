@@ -1,7 +1,7 @@
 var searchData=
 [
   ['about_0',['About',['../index.html#autotoc_md0',1,'']]],
-  ['addattribute_1',['addAttribute',['../classenzo_1_1geo_1_1Primitive.html#aab581e58ea2326b85f02c478f5fa8b71',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, attr::AttributeType type, bool intrinsic=false, bool isPrivate=false)'],['../classenzo_1_1geo_1_1Primitive.html#ad643ec2f1470cac463de7a91784a3d3d',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic=false, bool isPrivate=false)']]],
+  ['addattribute_1',['addAttribute',['../classenzo_1_1geo_1_1Primitive.html#a2cd6c4d1e705a3ff3e13387c6a051e5a',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, attr::AttributeType type, bool intrinsic=false, bool isInternal=false)'],['../classenzo_1_1geo_1_1Primitive.html#ab2f388e3f572241fe5bc2696f3a598c5',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic=false, bool isInternal=false)']]],
   ['addattributesfrom_2',['addAttributesFrom',['../classenzo_1_1geo_1_1Primitive.html#a41f82500a3fb9c4627892a7e559e7244',1,'enzo::geo::Primitive']]],
   ['addcommand_3',['addCommand',['../classenzo_1_1nt_1_1UndoGroup.html#acbbe1180d61bb0aadd5a378b7552cade',1,'enzo::nt::UndoGroup']]],
   ['addface_4',['addFace',['../classenzo_1_1geo_1_1Mesh.html#a443c7167414f26f605d970202e712d19',1,'enzo::geo::Mesh']]],
@@ -21,7 +21,7 @@ var searchData=
   ['addvertexgroup_18',['addVertexGroup',['../classenzo_1_1geo_1_1Mesh.html#aaf9797c9582fc43f9ea60ac8031b7e59',1,'enzo::geo::Mesh']]],
   ['append_19',['append',['../classenzo_1_1Path.html#ab0330ab616bdd478175d8de62426baa0',1,'enzo::Path']]],
   ['attachstyle_20',['attachStyle',['../StyleAccess_8h.html#a728d02b0046726b92ed67f8247f11aef',1,'enzo::prm::style']]],
-  ['attribute_21',['Attribute',['../classenzo_1_1attr_1_1Attribute.html',1,'enzo::attr::Attribute'],['../structenzo_1_1prm_1_1style_1_1Attribute.html',1,'enzo::prm::style::Attribute'],['../classenzo_1_1attr_1_1Attribute.html#a12ad203d431d99a0e07d5652d39cd807',1,'enzo::attr::Attribute::Attribute()']]],
+  ['attribute_21',['Attribute',['../classenzo_1_1attr_1_1Attribute.html',1,'enzo::attr::Attribute'],['../structenzo_1_1prm_1_1style_1_1Attribute.html',1,'enzo::prm::style::Attribute'],['../classenzo_1_1attr_1_1Attribute.html#a14421ae1ea02201285c322b564140933',1,'enzo::attr::Attribute::Attribute()']]],
   ['attributehandle_22',['AttributeHandle',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr::AttributeHandle&lt; T &gt;'],['../classenzo_1_1attr_1_1AttributeHandle.html#ab3dde5cfe4d9c8764eaa3d6036d95f40',1,'enzo::attr::AttributeHandle::AttributeHandle()']]],
   ['attributehandle_3c_20matrix4_20_3e_23',['AttributeHandle&lt; Matrix4 &gt;',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr']]],
   ['attributehandlero_24',['AttributeHandleRO',['../classenzo_1_1attr_1_1AttributeHandleRO.html',1,'enzo::attr::AttributeHandleRO&lt; T &gt;'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a2c7d6591a3e6099d1019e7cb1d3bca81',1,'enzo::attr::AttributeHandleRO::AttributeHandleRO()']]],
