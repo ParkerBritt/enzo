@@ -120,7 +120,7 @@ void SineWave::cook()
         if (prim->getType() != geo::PrimType::MESH) continue;
         const auto mesh = std::static_pointer_cast<geo::Mesh>(prim);
 
-        // Samples the wave before writing, since the attribute being written may be P.
+        // Samples the wave before writing, since the attribute being written may be Position.
         const std::vector<floatT> wave = sampleWave(*mesh, settings, remap);
 
         const std::shared_ptr<attr::Attribute> attribute =

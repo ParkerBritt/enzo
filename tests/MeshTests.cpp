@@ -605,8 +605,8 @@ TEST_CASE("Adding an attribute returns the intrinsic of the same name and type")
     geo::Mesh mesh;
     mesh.addPoint(Vector3(0, 0, 0));
 
-    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, "P", true);
-    const auto added = mesh.addAttribute(attr::AttrOwner::POINT, "P", attr::AttrType::vectorT);
+    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
+    const auto added = mesh.addAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::vectorT);
 
     REQUIRE(added == positions);
 }
@@ -636,10 +636,10 @@ TEST_CASE("Adding an attribute of another type gives nothing when an intrinsic h
     geo::Mesh mesh;
     mesh.addPoint(Vector3(0, 0, 0));
 
-    const auto added = mesh.tryAddAttribute(attr::AttrOwner::POINT, "P", attr::AttrType::floatT);
+    const auto added = mesh.tryAddAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::floatT);
 
     REQUIRE(added == nullptr);
-    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, "P", true);
+    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
     REQUIRE(positions->getType() == attr::AttrType::vectorT);
 }
 

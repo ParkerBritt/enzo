@@ -1,3 +1,4 @@
+#include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
@@ -104,7 +105,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attribu
 
     const QStringList names = makeItem(node, "name").attributeNames();
 
-    REQUIRE(names.contains("P"));
+    REQUIRE(names.contains(attr::names::position));
 
     // Internal attributes stay out of the list.
     REQUIRE_FALSE(names.contains("__valid"));
@@ -125,16 +126,16 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its 
     // The point positions are a vector held by every point.
     node.getParameter("attachTo").lock()->setString("point");
     node.getParameter("type").lock()->setString("vector");
-    REQUIRE(name.attributeNames().contains("P"));
+    REQUIRE(name.attributeNames().contains(attr::names::position));
 
     // Faces hold no positions.
     node.getParameter("attachTo").lock()->setString("face");
-    REQUIRE_FALSE(name.attributeNames().contains("P"));
+    REQUIRE_FALSE(name.attributeNames().contains(attr::names::position));
 
     // The positions are not floats.
     node.getParameter("attachTo").lock()->setString("point");
     node.getParameter("type").lock()->setString("float");
-    REQUIRE_FALSE(name.attributeNames().contains("P"));
+    REQUIRE_FALSE(name.attributeNames().contains(attr::names::position));
 }
 
 TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lists nothing")
