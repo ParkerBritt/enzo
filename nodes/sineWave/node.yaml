@@ -37,5 +37,10 @@ parameters:
 
   - name: amplitude
     label: Amplitude
+    type: float
+    default: 1
+
+  - name: remap
+    label: Remap
     type: ramp
     default: 2

@@ -29,23 +29,23 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo and redo restore a ramp field edit")
     nt::NodeId nodeId =
         networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
 
-    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
-    REQUIRE(amplitude);
+    auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
+    REQUIRE(remap);
 
-    // The default amplitude ramp is a linear zero to one curve.
-    REQUIRE(amplitude->getInstanceField(0, "value")->evalFloat() == 0);
+    // The default remap ramp is a linear zero to one curve.
+    REQUIRE(remap->getInstanceField(0, "value")->evalFloat() == 0);
 
-    ParameterSerializable before = toSerializable(*amplitude);
-    amplitude->getInstanceField(0, "value")->setFloat(0.7f);
-    ParameterSerializable after = toSerializable(*amplitude);
+    ParameterSerializable before = toSerializable(*remap);
+    remap->getInstanceField(0, "value")->setFloat(0.7f);
+    ParameterSerializable after = toSerializable(*remap);
 
-    nt::ChangeParameterCommand command(nodeId, "amplitude", before, after);
+    nt::ChangeParameterCommand command(nodeId, "remap", before, after);
 
     command.undo();
-    REQUIRE(amplitude->getInstanceField(0, "value")->evalFloat() == 0);
+    REQUIRE(remap->getInstanceField(0, "value")->evalFloat() == 0);
 
     command.redo();
-    REQUIRE(amplitude->getInstanceField(0, "value")->evalFloat() == 0.7f);
+    REQUIRE(remap->getInstanceField(0, "value")->evalFloat() == 0.7f);
 }
 
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
@@ -54,22 +54,22 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo restores a removed ramp control point")
     nt::NodeId nodeId =
         networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
 
-    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
-    REQUIRE(amplitude);
+    auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
+    REQUIRE(remap);
 
-    ParameterSerializable before = toSerializable(*amplitude);
-    amplitude->addInstance();
-    amplitude->getInstanceField(2, "position")->setFloat(0.5f);
-    ParameterSerializable after = toSerializable(*amplitude);
+    ParameterSerializable before = toSerializable(*remap);
+    remap->addInstance();
+    remap->getInstanceField(2, "position")->setFloat(0.5f);
+    ParameterSerializable after = toSerializable(*remap);
 
-    nt::ChangeParameterCommand command(nodeId, "amplitude", before, after);
+    nt::ChangeParameterCommand command(nodeId, "remap", before, after);
 
     command.undo();
-    REQUIRE(amplitude->getInstanceCount() == 2);
+    REQUIRE(remap->getInstanceCount() == 2);
 
     command.redo();
-    REQUIRE(amplitude->getInstanceCount() == 3);
-    REQUIRE(amplitude->getInstanceField(2, "position")->evalFloat() == 0.5f);
+    REQUIRE(remap->getInstanceCount() == 3);
+    REQUIRE(remap->getInstanceField(2, "position")->evalFloat() == 0.5f);
 }
 
 TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores a parameter expression")
@@ -100,18 +100,18 @@ TEST_CASE_METHOD(PluginsAndReset, "Undoing a delete restores added ramp control 
     nt::NodeId nodeId =
         networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::sineWave"));
 
-    auto amplitude = networkManager.getNode(nodeId).getParameter("amplitude").lock();
-    REQUIRE(amplitude);
+    auto remap = networkManager.getNode(nodeId).getParameter("remap").lock();
+    REQUIRE(remap);
 
     // A third control point, one past the linear zero to one default.
-    amplitude->addInstance();
-    amplitude->getInstanceField(2, "position")->setFloat(0.5f);
-    REQUIRE(amplitude->getInstanceCount() == 3);
+    remap->addInstance();
+    remap->getInstanceField(2, "position")->setFloat(0.5f);
+    REQUIRE(remap->getInstanceCount() == 3);
 
     networkManager.deleteNode(nodeId);
     networkManager.undoStack().undo();
 
-    auto restored = networkManager.getNode(nodeId).getParameter("amplitude").lock();
+    auto restored = networkManager.getNode(nodeId).getParameter("remap").lock();
     REQUIRE(restored);
     REQUIRE(restored->getInstanceCount() == 3);
     REQUIRE(restored->getInstanceField(2, "position")->evalFloat() == 0.5f);

@@ -33,7 +33,8 @@ void SineWave::cook()
     const floatT frequency = evalParmFloat("frequency");
     const floatT offset = evalParmFloat("offset");
     const bool radial = evalParmBool("radial");
-    const prm::Ramp amplitude = evalParmRamp("amplitude");
+    const floatT amplitude = evalParmFloat("amplitude");
+    const prm::Ramp remap = evalParmRamp("remap");
 
     for (size_t p = 0; p < packet.size(); ++p)
     {
@@ -51,7 +52,7 @@ void SineWave::cook()
             );
             tbb::parallel_for(
                 tbb::blocked_range<Offset>(0, pointCount),
-                [&geo, &amplitude, frequency, center, offset](
+                [&geo, &remap, amplitude, frequency, center, offset](
                     tbb::blocked_range<Offset> range
                 ) {
                     for (Offset i = range.begin(); i != range.end(); ++i)
@@ -59,7 +60,7 @@ void SineWave::cook()
                         Vector3 pos = geo->getPointPos(i);
                         // The ramp remaps the wave from its zero to one domain.
                         const floatT wave = sin((pos - center).norm() * frequency + offset);
-                        pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
+                        pos += Vector3(0, amplitude * remap.sample((wave + 1) * 0.5f), 0);
                         geo->setPointPos(i, pos);
                     }
                 }
@@ -69,13 +70,13 @@ void SineWave::cook()
         {
             tbb::parallel_for(
                 tbb::blocked_range<Offset>(0, pointCount),
-                [&geo, &amplitude, frequency, offset](tbb::blocked_range<Offset> range) {
+                [&geo, &remap, amplitude, frequency, offset](tbb::blocked_range<Offset> range) {
                     for (Offset i = range.begin(); i != range.end(); ++i)
                     {
                         Vector3 pos = geo->getPointPos(i);
                         // The ramp remaps the wave from its zero to one domain.
                         const floatT wave = sin(pos.x() * frequency + offset);
-                        pos += Vector3(0, amplitude.sample((wave + 1) * 0.5f), 0);
+                        pos += Vector3(0, amplitude * remap.sample((wave + 1) * 0.5f), 0);
                         geo->setPointPos(i, pos);
                     }
                 }
