@@ -1,4 +1,5 @@
 #include <Engine/Attribute/AttributeHandle.h>
+#include <Engine/Attribute/AttributeNames.h>
 #include <Engine/Core/Types.h>
 #include <Engine/Primitives/Mesh.h>
 #include <catch2/catch_test_macros.hpp>
@@ -448,7 +449,7 @@ TEST_CASE("Face normal prefers Normal attribute over Newell")
 
     // Newell would give (0, 1, 0) for this face. Override with a different
     // direction so we can tell which path was used.
-    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::FACE, "Normal");
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::FACE, attr::names::normal);
     normalAttr.setValue(0, Vector3(1, 0, 0));
 
     auto faceNormals = mesh.getFaceNormal();
@@ -503,7 +504,7 @@ TEST_CASE("Vertex normal prefers Normal attribute over face fallback")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Override one vertex's normal so we can see the attribute path wins
-    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::VERTEX, "Normal");
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::VERTEX, attr::names::normal);
     normalAttr.setValue(0, Vector3(1, 0, 0));
     normalAttr.setValue(1, Vector3(0, 1, 0));
     normalAttr.setValue(2, Vector3(0, 0, 1));
@@ -545,7 +546,7 @@ TEST_CASE("Point normal prefers Normal attribute over computed normals")
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2, pointOffset3});
 
     // Set point normals that differ from the computed +Y
-    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "Normal");
+    auto normalAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, attr::names::normal);
     normalAttr.setValue(0, Vector3(1, 0, 0));
     normalAttr.setValue(1, Vector3(0, 0, 1));
     normalAttr.setValue(2, Vector3(-1, 0, 0));
