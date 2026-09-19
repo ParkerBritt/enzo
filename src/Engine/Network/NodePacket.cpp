@@ -151,7 +151,7 @@ void NodePacket::Transforms::Iterator::advance()
         auto& prim = primitives_[primIdx_];
         TransformClass primTransformClass = prim->transformType();
 
-        // POINT takes priority: use P attribute if both the query and primitive support it
+        // POINT takes priority: use Position attribute if both the query and primitive support it
         if (hasFlag(transformClass_, TransformClass::POINT) &&
             hasFlag(primTransformClass, TransformClass::POINT))
         {

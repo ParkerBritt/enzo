@@ -23,7 +23,7 @@ parameters:
   - name: name
     label: Attribute Name
     type: string
-    default: P
+    default: Position
     style: attribute
     styleOptions:
       owners: point

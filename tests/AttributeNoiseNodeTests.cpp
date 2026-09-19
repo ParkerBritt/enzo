@@ -1,4 +1,5 @@
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Network/NetworkManager.h"
@@ -48,10 +49,10 @@ nt::NodeId addGrid()
     return nt::nm().createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
 }
 
-// Sets the node to add vector noise to P.
+// Sets the node to add vector noise to Position.
 void setNoiseToAddToP(nt::Node& node)
 {
-    node.getParameter("name").lock()->setString("P");
+    node.getParameter("name").lock()->setString(attr::names::position);
     node.getParameter("type").lock()->setString("vector");
     node.getParameter("operation").lock()->setString("add");
 }
@@ -196,7 +197,7 @@ TEST_CASE_METHOD(NMReset, "Amplitude scales every noise value")
         REQUIRE(scaledValues[pointOffset] == Catch::Approx(unscaledValues[pointOffset] * 3.0f));
 }
 
-TEST_CASE_METHOD(NMReset, "Adding noise to P moves each axis of every point by up to one")
+TEST_CASE_METHOD(NMReset, "Adding noise to Position moves each axis of every point by up to one")
 {
     auto& nm = nt::nm();
     const nt::NodeId grid = addGrid();
@@ -227,7 +228,7 @@ TEST_CASE_METHOD(NMReset, "Noise along a vector moves each point along that vect
     auto& node = nm.getNode(attributeNoise);
     setNoiseToAddToP(node);
     node.getParameter("alongVector").lock()->setInt(1);
-    node.getParameter("alongVectorAttribute").lock()->setString("P");
+    node.getParameter("alongVectorAttribute").lock()->setString(attr::names::position);
     nm.cook(attributeNoise);
 
     const auto inputMesh = getMesh(nm.getNode(grid));
@@ -255,7 +256,7 @@ TEST_CASE_METHOD(NMReset, "Amplitude scales noise along a vector")
     auto& node = nm.getNode(attributeNoise);
     setNoiseToAddToP(node);
     node.getParameter("alongVector").lock()->setInt(1);
-    node.getParameter("alongVectorAttribute").lock()->setString("P");
+    node.getParameter("alongVectorAttribute").lock()->setString(attr::names::position);
 
     // Returns how far every point moved.
     const auto cookMovements = [&]() {
@@ -279,7 +280,7 @@ TEST_CASE_METHOD(NMReset, "Noise along missing normals moves points along their 
     auto& node = nm.getNode(attributeNoise);
     setNoiseToAddToP(node);
     node.getParameter("alongVector").lock()->setInt(1);
-    node.getParameter("alongVectorAttribute").lock()->setString("Normal");
+    node.getParameter("alongVectorAttribute").lock()->setString(attr::names::normal);
     nm.cook(attributeNoise);
 
     const auto inputMesh = getMesh(nm.getNode(grid));

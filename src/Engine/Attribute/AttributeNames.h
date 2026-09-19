@@ -8,7 +8,7 @@ namespace enzo::attr {
 namespace names {
 
 /// The point position every mesh is created with.
-inline constexpr const char* position = "P";
+inline constexpr const char* position = "Position";
 /// The direction a face, point or vertex faces.
 inline constexpr const char* normal = "Normal";
 /// The direction that orients a point's up axis.

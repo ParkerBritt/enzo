@@ -11,8 +11,8 @@ namespace enzo::ui {
 /// @brief Geometry attributes of one primitive laid out as a table.
 ///
 /// Rows are the elements of a single owner class and columns are the flattened
-/// components of each attribute, so a vector attribute such as `P` spans three
-/// columns `P.x P.y P.z`. The element index rides in the vertical header.
+/// components of each attribute, so a vector attribute such as `Position` spans three
+/// columns `Position.x Position.y Position.z`. The element index rides in the vertical header.
 ///
 /// @note Only the point owner is exposed for now. Vertices, faces, and
 /// primitives follow once the spreadsheet mode control lands.

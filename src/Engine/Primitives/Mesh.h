@@ -19,7 +19,7 @@ inline constexpr double kDefaultCuspAngle = 60;
  *
  * Extends Primitive with mesh-specific topology: points, vertices, faces,
  * and the intrinsic attributes that describe connectivity (vertexCount,
- * closed, point offset, and position P).
+ * closed, point offset, and Position).
  */
 class Mesh : public Primitive
 {
