@@ -1,4 +1,5 @@
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/AttributeOperation.h"
 #include "Engine/Network/NodeImpl.h"
@@ -230,7 +231,7 @@ void AttributeNoise::cook()
         {
             const std::shared_ptr<attr::Attribute> directionAttribute =
                 mesh->getAttribByName(attr::AttributeOwner::POINT, directionName, true);
-            const bool alongNormals = directionName == "Normal";
+            const bool alongNormals = directionName == attr::names::normal;
             if (!directionAttribute && !alongNormals)
             {
                 throwError(

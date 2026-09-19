@@ -1,5 +1,6 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Primitives/Mesh.h"
 #include <cstddef>
 #include <span>
@@ -8,9 +9,6 @@
 namespace enzo {
 
 namespace {
-
-const std::string kNormalAttribute = "Normal";
-const std::string kUpAttribute = "Up";
 
 /**
  * @brief Returns whether an attribute exists and holds vector values.
@@ -80,10 +78,10 @@ std::vector<Vector3> getPointVectors(geo::Primitive& prim, const std::string& na
  */
 std::vector<Transform> getPointOrientations(geo::Primitive& prim)
 {
-    const std::vector<Vector3> normals = getPointVectors(prim, kNormalAttribute);
+    const std::vector<Vector3> normals = getPointVectors(prim, attr::names::normal);
     if (normals.empty()) return {};
 
-    const std::vector<Vector3> ups = getPointVectors(prim, kUpAttribute);
+    const std::vector<Vector3> ups = getPointVectors(prim, attr::names::up);
 
     std::vector<Transform> orientations(normals.size());
     for (Offset pointOffset = 0; pointOffset < normals.size(); ++pointOffset)
@@ -157,7 +155,8 @@ void NodePacket::Transforms::Iterator::advance()
         if (hasFlag(transformClass_, TransformClass::POINT) &&
             hasFlag(primTransformClass, TransformClass::POINT))
         {
-            auto attrib = prim->getAttribByName(attr::AttributeOwner::POINT, "P", true);
+            auto attrib =
+                prim->getAttribByName(attr::AttributeOwner::POINT, attr::names::position, true);
             if (attrib && attrib->getSize() > 0)
             {
                 curAttrib_ = attrib;

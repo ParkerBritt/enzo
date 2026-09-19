@@ -1,6 +1,7 @@
 #include "Engine/Primitives/Mesh.h"
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Attribute/AttributeHandle.h"
+#include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/GeometryAlgorithms/Normals.h"
@@ -20,7 +21,7 @@ geo::Mesh::Mesh(std::string_view path)
     : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true, true)},
       closedFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "closed", true, true)},
       pointOffsetVertexHandle_{addAttribute<intT>(attr::AttrOwner::VERTEX, "point", true, true)},
-      posPointHandle_{addAttribute<Vector3>(attr::AttrOwner::POINT, "P", true)},
+      posPointHandle_{addAttribute<Vector3>(attr::AttrOwner::POINT, attr::names::position, true)},
       validFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "__valid", true, true)},
       validVertexHandle_{addAttribute<boolT>(attr::AttrOwner::VERTEX, "__valid", true, true)},
       validPointHandle_{addAttribute<boolT>(attr::AttrOwner::POINT, "__valid", true, true)},
@@ -47,9 +48,9 @@ geo::Mesh::Mesh(const Mesh& other)
       pointOffsetVertexHandle_{
           attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true))
       },
-      posPointHandle_{
-          attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true))
-      },
+      posPointHandle_{attr::AttributeHandleVector3(
+          getAttribByName(attr::AttrOwner::POINT, attr::names::position, true)
+      )},
       validFaceHandle_{
           attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true))
       },
@@ -88,8 +89,9 @@ geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs)
         attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "closed", true));
     pointOffsetVertexHandle_ =
         attr::AttributeHandleInt(getAttribByName(attr::AttrOwner::VERTEX, "point", true));
-    posPointHandle_ =
-        attr::AttributeHandleVector3(getAttribByName(attr::AttrOwner::POINT, "P", true));
+    posPointHandle_ = attr::AttributeHandleVector3(
+        getAttribByName(attr::AttrOwner::POINT, attr::names::position, true)
+    );
     validFaceHandle_ =
         attr::AttributeHandleBool(getAttribByName(attr::AttrOwner::FACE, "__valid", true));
     validVertexHandle_ =
@@ -752,7 +754,7 @@ const attr::attribVector& geo::Mesh::getGroupStore(const attr::AttributeOwner& o
 geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute) : mesh_(mesh)
 {
     std::shared_ptr<const attr::Attribute> normalAttr =
-        mesh.getAttribByName(attr::AttrOwner::FACE, "Normal");
+        mesh.getAttribByName(attr::AttrOwner::FACE, attr::names::normal);
     if (normalAttr)
     {
         cached_.emplace(normalAttr);
@@ -781,7 +783,7 @@ Vector3 geo::FaceNormalHandle::computeNormal(Offset faceOffset) const
 geo::PointNormalHandle::PointNormalHandle(const Mesh& mesh)
 {
     std::shared_ptr<const attr::Attribute> pointNormals =
-        mesh.getAttribByName(attr::AttrOwner::POINT, "Normal");
+        mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::normal);
     if (pointNormals)
     {
         attribute_.emplace(pointNormals);
@@ -794,7 +796,7 @@ geo::PointNormalHandle::PointNormalHandle(const Mesh& mesh)
 geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, double cuspAngle) : mesh_(mesh)
 {
     std::shared_ptr<const attr::Attribute> vertexNormals =
-        mesh.getAttribByName(attr::AttrOwner::VERTEX, "Normal");
+        mesh.getAttribByName(attr::AttrOwner::VERTEX, attr::names::normal);
     if (vertexNormals)
     {
         vertexAttribute_.emplace(vertexNormals);
@@ -802,7 +804,7 @@ geo::VertexNormalHandle::VertexNormalHandle(const Mesh& mesh, double cuspAngle) 
     }
 
     std::shared_ptr<const attr::Attribute> pointNormals =
-        mesh.getAttribByName(attr::AttrOwner::POINT, "Normal");
+        mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::normal);
     if (pointNormals)
     {
         pointAttribute_.emplace(pointNormals);
