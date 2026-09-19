@@ -1,0 +1,14 @@
+version: 1
+
+name: positionNoise
+namespace: enzo
+label: Position Noise
+
+implementation:
+  kind: alias
+  type: enzo::attributeNoise
+
+parameterValues:
+  name: Position
+  type: vector
+  alongVector: true
