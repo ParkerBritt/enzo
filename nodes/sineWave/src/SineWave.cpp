@@ -1,7 +1,6 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/AttributeOperation.h"
-#include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Parameter/Ramp.h"
@@ -145,6 +144,14 @@ void SineWave::cook()
         {
             const std::shared_ptr<attr::Attribute> directionAttribute =
                 mesh->getAttribByName(attr::AttributeOwner::POINT, directionName, true);
+            const bool alongNormals = directionName == "Normal";
+            if (!directionAttribute && !alongNormals)
+            {
+                throwError(
+                    "Wave along vector needs a point attribute named " + directionName + "."
+                );
+                return;
+            }
             if (directionAttribute && directionAttribute->getType() != attr::AttributeType::vectorT)
             {
                 throwError(
@@ -153,20 +160,15 @@ void SineWave::cook()
                 return;
             }
 
-            std::vector<Vector3> directions;
-            if (directionAttribute)
-            {
-                const std::span<const Vector3> directionSpan =
-                    attr::AttributeHandle<Vector3>(directionAttribute).getSpan();
-                directions.assign(directionSpan.begin(), directionSpan.end());
-            }
-            else
-            {
-                directions = utils::computePointNormals(*mesh);
-            }
+            const auto scaleWaveAlong = [&](const auto& directions) {
+                for (size_t pointOffset = 0; pointOffset < wave.size(); ++pointOffset)
+                    waveVectors[pointOffset] = directions[pointOffset] * wave[pointOffset];
+            };
 
-            for (size_t pointOffset = 0; pointOffset < wave.size(); ++pointOffset)
-                waveVectors[pointOffset] = directions[pointOffset] * wave[pointOffset];
+            if (alongNormals)
+                scaleWaveAlong(mesh->getPointNormal());
+            else
+                scaleWaveAlong(attr::AttributeHandleRO<Vector3>(directionAttribute));
         }
         else
         {

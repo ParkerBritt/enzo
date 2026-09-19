@@ -1,7 +1,6 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/AttributeOperation.h"
-#include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Primitives/Mesh.h"
@@ -231,6 +230,14 @@ void AttributeNoise::cook()
         {
             const std::shared_ptr<attr::Attribute> directionAttribute =
                 mesh->getAttribByName(attr::AttributeOwner::POINT, directionName, true);
+            const bool alongNormals = directionName == "Normal";
+            if (!directionAttribute && !alongNormals)
+            {
+                throwError(
+                    "Noise along vector needs a point attribute named " + directionName + "."
+                );
+                return;
+            }
             if (directionAttribute && directionAttribute->getType() != attr::AttributeType::vectorT)
             {
                 throwError(
@@ -239,26 +246,19 @@ void AttributeNoise::cook()
                 return;
             }
 
-            // TODO: Replace the computed normal fallback with an abstraction that can read implicit
-            // or defined normals on vertex or points, whatever is available
-            std::vector<Vector3> directions;
-            if (directionAttribute)
-            {
-                const std::span<const Vector3> directionSpan =
-                    attr::AttributeHandle<Vector3>(directionAttribute).getSpan();
-                directions.assign(directionSpan.begin(), directionSpan.end());
-            }
-            else
-            {
-                directions = utils::computePointNormals(*mesh);
-            }
-
             const std::vector<float> noise =
                 sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed);
 
             noiseVectors.resize(noise.size());
-            for (size_t pointOffset = 0; pointOffset < noise.size(); ++pointOffset)
-                noiseVectors[pointOffset] = directions[pointOffset] * noise[pointOffset];
+            const auto scaleNoiseAlong = [&](const auto& directions) {
+                for (size_t pointOffset = 0; pointOffset < noise.size(); ++pointOffset)
+                    noiseVectors[pointOffset] = directions[pointOffset] * noise[pointOffset];
+            };
+
+            if (alongNormals)
+                scaleNoiseAlong(mesh->getPointNormal());
+            else
+                scaleNoiseAlong(attr::AttributeHandleRO<Vector3>(directionAttribute));
         }
         else
         {

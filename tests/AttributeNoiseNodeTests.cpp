@@ -271,7 +271,7 @@ TEST_CASE_METHOD(NMReset, "Amplitude scales noise along a vector")
         REQUIRE(scaledMovements[pointOffset].isApprox(unscaledMovements[pointOffset] * 3.0f, 1e-4f));
 }
 
-TEST_CASE_METHOD(NMReset, "Noise along a missing attribute moves points along their computed normals")
+TEST_CASE_METHOD(NMReset, "Noise along missing normals moves points along their computed normals")
 {
     auto& nm = nt::nm();
     const nt::NodeId grid = addGrid();
@@ -279,7 +279,7 @@ TEST_CASE_METHOD(NMReset, "Noise along a missing attribute moves points along th
     auto& node = nm.getNode(attributeNoise);
     setNoiseToAddToP(node);
     node.getParameter("alongVector").lock()->setInt(1);
-    node.getParameter("alongVectorAttribute").lock()->setString("missing");
+    node.getParameter("alongVectorAttribute").lock()->setString("Normal");
     nm.cook(attributeNoise);
 
     const auto inputMesh = getMesh(nm.getNode(grid));
