@@ -15,32 +15,126 @@ implementation:
   constructor: sineWave
 
 parameters:
+  - name: attribute_divider
+    label: Attribute
+    type: divider
+    icon: tag
+
+  - name: name
+    label: Attribute Name
+    type: string
+    default: P
+    style: attribute
+    styleOptions:
+      owners: point
+      attributeTypes: prm(type)
+    tooltip: >
+      The point attribute the wave writes to. A missing attribute is added with
+      the chosen type.
+
+  - name: type
+    label: Type
+    type: dropdown
+    default: vector
+    tooltip: >
+      The kind of value the attribute stores. A vector not moved along a vector
+      attribute gets the same wave on each axis.
+    options:
+      - {value: float, label: Float}
+      - {value: vector, label: Vector}
+
+  - name: alongVectorRow
+    label: Wave Along Vector
+    type: group
+    direction: horizontal
+    labelInline: true
+    hideCondition: type != 1
+    tooltip: Moves the value along a vector attribute scaled by the wave.
+    parameters:
+      - name: alongVector
+        label: Wave Along Vector
+        type: bool
+        default: true
+        labelHidden: true
+        tooltip: Moves the value along a vector attribute scaled by the wave.
+
+      - name: alongVectorAttribute
+        label: Vector Attribute
+        type: string
+        default: Normal
+        labelHidden: true
+        hideCondition: alongVector == 0
+        style: attribute
+        styleOptions:
+          owners: point
+          attributeTypes: vector
+        tooltip: >
+          The point vector attribute the wave moves along. When the attribute is
+          missing the smooth point normals are used.
+
+  - name: operation
+    label: Operation
+    type: dropdown
+    default: add
+    tooltip: How the wave combines with the value already on the attribute.
+    options:
+      - {value: set, label: Set}
+      - {value: add, label: Add}
+      - {value: subtract, label: Subtract}
+      - {value: multiply, label: Multiply}
+      - {value: minimum, label: Minimum}
+      - {value: maximum, label: Maximum}
+
+  - name: wave_divider
+    label: Wave
+    type: divider
+    icon: waves-horizontal
+
   - name: radial
     label: Radial Mode
     type: bool
+    tooltip: Ripples the wave out from the center instead of along the x axis.
 
   - name: center
     label: Center
     type: float
     size: 3
     style: xyz
+    hideCondition: radial == 0
+    tooltip: The point the radial wave ripples out from.
 
   - name: frequency
     label: Frequency
     type: float
     default: 1
+    tooltip: How quickly the wave repeats across space.
 
   - name: offset
     label: Offset
     type: float
-    default: 0
+    size: 3
+    style: xyz
+    tooltip: Moves the wave through space.
 
   - name: amplitude
     label: Amplitude
     type: float
     default: 1
+    tooltip: Scales the wave after the range is applied.
+
+  - name: range
+    label: Range
+    type: dropdown
+    default: zeroCentered
+    tooltip: >
+      The values the wave runs between before amplitude. Positive runs from zero
+      to one, and zero centered runs from minus one to one.
+    options:
+      - {value: positive, label: Positive}
+      - {value: zeroCentered, label: Zero Centered}
 
   - name: remap
     label: Remap
     type: ramp
     default: 2
+    tooltip: Reshapes the wave from trough to peak.

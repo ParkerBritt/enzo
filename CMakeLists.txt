@@ -85,6 +85,7 @@ set(ENGINE_SOURCES
     src/Engine/GeometryAlgorithms/MeshShapes.cpp
     src/Engine/GeometryAlgorithms/BooleanUtils.cpp
     src/Engine/GeometryAlgorithms/AttributeTransfer.cpp
+    src/Engine/GeometryAlgorithms/AttributeOperation.cpp
     src/Engine/GeometryAlgorithms/PlaneCut.cpp
     src/Engine/GeometryAlgorithms/ObjReader.cpp
     src/Engine/Util/UnionFind.cpp
