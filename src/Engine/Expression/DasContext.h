@@ -16,6 +16,7 @@ class ExpressionContext;
 struct DasContext : das::Context
 {
     DasContext(uint32_t stackSize) : das::Context(stackSize) {}
+    DasContext(const DasContext& other, uint32_t category) : das::Context(other, category) {}
 
     const ExpressionContext* expressionContext = nullptr;
 };
