@@ -63,7 +63,7 @@ class Template
     const std::vector<Template>& getChildren() const;
 
     /// @brief Returns the child template with the given token.
-    /// @note Throws std::out_of_range when no child carries the token.
+    /// @throws std::out_of_range when no child carries the token.
     const Template& getChild(const enzo::String& token) const;
 
     const bool isContainer() const;
@@ -95,6 +95,9 @@ class Template
     Template& setDirection(Direction direction);
     Template& setOptions(std::vector<prm::Name> options);
     Template& addParm(Template child);
+    /// @brief Replaces the default of every component.
+    /// @note A single default covers every component.
+    Template& setDefaults(std::vector<Default> defaults);
     // Supplies the per instance default for a multiparm field, one Default per
     // instance. Entries past the live count are ignored, missing ones fall back
     // to the field's own default.

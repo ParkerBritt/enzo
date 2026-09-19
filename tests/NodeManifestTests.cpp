@@ -4,7 +4,10 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
+#include <map>
 #include <string>
+#include <variant>
+#include <vector>
 
 using namespace enzo;
 
@@ -19,6 +22,53 @@ namespace: enzo
 implementation:
   kind: cpp
   library: enzoOps
+)";
+
+// The smallest alias manifest that parses.
+const std::string kAliasManifest = R"(
+version: 1
+name: mountain
+namespace: enzo
+implementation:
+  kind: alias
+  type: enzo::attributeNoise
+)";
+
+// A node for kAliasManifest to stand in for, with one parameter of each kind an
+// alias can set and a multiparm it cannot.
+const std::string kAliasedManifest = R"(
+version: 1
+name: attributeNoise
+namespace: enzo
+label: Attribute Noise
+tags: [noise]
+inputs:
+  - label: Geometry
+implementation:
+  kind: cpp
+  library: enzoOps
+parameters:
+  - name: name
+    type: string
+    default: noise
+  - name: type
+    type: dropdown
+    options:
+      - {value: float}
+      - {value: vector}
+  - name: amplitude
+    type: float
+    default: 1
+  - name: offset
+    type: float
+    size: 3
+  - name: alongVectorRow
+    type: group
+    parameters:
+      - name: alongVector
+        type: bool
+  - name: falloff
+    type: ramp
 )";
 
 // Returns the minimal manifest with a parameter block bolted on. The manifest
@@ -36,8 +86,8 @@ TEST_CASE("A minimal manifest gives the node its name and implementation")
 
     REQUIRE(manifest.getNodeType().getName() == "circle");
     REQUIRE(manifest.getNodeType().getFullName() == "enzo::circle");
-    REQUIRE(manifest.getImplementation().kind == "cpp");
-    REQUIRE(manifest.getImplementation().library == "enzoOps");
+    const auto& implementation = std::get<nt::CppImplementation>(manifest.getImplementation());
+    REQUIRE(implementation.library == "enzoOps");
 }
 
 TEST_CASE("A missing label falls back to the node name")
@@ -51,7 +101,7 @@ TEST_CASE("A missing constructor falls back to the node name")
 {
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kMinimalManifest);
 
-    REQUIRE(manifest.getImplementation().constructor == "circle");
+    REQUIRE(std::get<nt::CppImplementation>(manifest.getImplementation()).constructor == "circle");
 }
 
 TEST_CASE("A named constructor is kept as written")
@@ -67,7 +117,38 @@ implementation:
 )";
     const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(yaml);
 
-    REQUIRE(manifest.getImplementation().constructor == "circle");
+    REQUIRE(std::get<nt::CppImplementation>(manifest.getImplementation()).constructor == "circle");
+}
+
+TEST_CASE("An alias names the node type it stands in for")
+{
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kAliasManifest);
+
+    REQUIRE(manifest.getNodeType().getFullName() == "enzo::mountain");
+    const auto& implementation = std::get<nt::AliasImplementation>(manifest.getImplementation());
+    REQUIRE(implementation.aliasedType == "enzo::attributeNoise");
+}
+
+TEST_CASE("An alias reads its parameter values as written")
+{
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kAliasManifest + R"(
+parameterValues:
+  name: P
+  offset: [0, 1, 0]
+)");
+
+    const std::map<std::string, std::vector<std::string>> expected = {
+        {"name", {"P"}},
+        {"offset", {"0", "1", "0"}},
+    };
+    REQUIRE(manifest.getParameterValues() == expected);
+}
+
+TEST_CASE("An alias with no parameter values sets none")
+{
+    const nt::NodeManifest manifest = nt::NodeManifest::loadFromString(kAliasManifest);
+
+    REQUIRE(manifest.getParameterValues().empty());
 }
 
 TEST_CASE("Inputs and the output count are read from the manifest")
@@ -571,6 +652,161 @@ implementation:
     REQUIRE_THROWS_AS(nt::NodeManifest::loadFromString(yaml), std::runtime_error);
 }
 
+TEST_CASE("An alias with no type is rejected")
+{
+    const std::string yaml = R"(
+version: 1
+name: mountain
+namespace: enzo
+implementation:
+  kind: alias
+)";
+    REQUIRE_THROWS_AS(nt::NodeManifest::loadFromString(yaml), std::runtime_error);
+}
+
+TEST_CASE("An alias declaring anything the node it stands in for provides is rejected")
+{
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(
+            kAliasManifest + "parameters:\n  - {name: seed, type: int}\n"
+        ),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "inputs:\n  - label: Geometry\n"),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "outputs: 2\n"),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "icon: icon.svg\n"),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "docs: docs.md\n"),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "childScopeType: geometry\n"),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("A top level key the manifest does not know is rejected")
+{
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kMinimalManifest + "paramters: []\n"),
+        std::runtime_error
+    );
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kAliasManifest + "paramterValues: {}\n"),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("Parameter values on a node that is not an alias are rejected")
+{
+    REQUIRE_THROWS_AS(
+        nt::NodeManifest::loadFromString(kMinimalManifest + "parameterValues:\n  seed: 4\n"),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("An alias carries its own name and the node type it stands in for")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest = nt::NodeManifest::loadFromString(kAliasManifest + R"(
+label: Mountain
+tags: [terrain]
+)");
+
+    const nt::NodeAlias alias = aliasManifest.getNodeAlias(aliasedManifest.getNodeType());
+
+    REQUIRE(alias.getFullName() == "enzo::mountain");
+    REQUIRE(alias.getLabel() == "Mountain");
+    REQUIRE(alias.tags == std::vector<std::string>{"terrain"});
+    REQUIRE(alias.aliasedType == "enzo::attributeNoise");
+}
+
+TEST_CASE("An alias reads each parameter value as the type of the parameter it sets")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest = nt::NodeManifest::loadFromString(kAliasManifest + R"(
+parameterValues:
+  name: P
+  type: vector
+  amplitude: 2.5
+  offset: [0, 1, 0]
+  alongVector: true
+)");
+
+    const nt::NodeAlias alias = aliasManifest.getNodeAlias(aliasedManifest.getNodeType());
+
+    std::map<std::string, ParameterSerializable> valuesByName;
+    for (const ParameterSerializable& value : alias.parameterValues)
+        valuesByName[value.name] = value;
+
+    // Flat parameters
+    REQUIRE(valuesByName.at("name").stringValues == std::vector<String>{"P"});
+    REQUIRE(valuesByName.at("type").stringValues == std::vector<String>{"vector"});
+    REQUIRE(valuesByName.at("amplitude").floatValues == std::vector<floatT>{2.5});
+
+    // One value per component
+    REQUIRE(valuesByName.at("offset").floatValues == std::vector<floatT>{0, 1, 0});
+
+    // A parameter nested in a group
+    REQUIRE(valuesByName.at("alongVector").intValues == std::vector<intT>{1});
+}
+
+TEST_CASE("One alias value covers every component of a vector parameter")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest =
+        nt::NodeManifest::loadFromString(kAliasManifest + "parameterValues:\n  offset: 4\n");
+
+    const nt::NodeAlias alias = aliasManifest.getNodeAlias(aliasedManifest.getNodeType());
+
+    REQUIRE(alias.parameterValues.at(0).floatValues == std::vector<floatT>{4, 4, 4});
+}
+
+TEST_CASE("An alias value naming a parameter the node does not have is rejected")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest =
+        nt::NodeManifest::loadFromString(kAliasManifest + "parameterValues:\n  roughness: 1\n");
+
+    REQUIRE_THROWS_AS(
+        aliasManifest.getNodeAlias(aliasedManifest.getNodeType()),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("An alias value with the wrong number of components is rejected")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest =
+        nt::NodeManifest::loadFromString(kAliasManifest + "parameterValues:\n  offset: [0, 1]\n");
+
+    REQUIRE_THROWS_AS(
+        aliasManifest.getNodeAlias(aliasedManifest.getNodeType()),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("An alias value for a multiparm is rejected")
+{
+    const nt::NodeManifest aliasedManifest = nt::NodeManifest::loadFromString(kAliasedManifest);
+    const nt::NodeManifest aliasManifest =
+        nt::NodeManifest::loadFromString(kAliasManifest + "parameterValues:\n  falloff: 2\n");
+
+    REQUIRE_THROWS_AS(
+        aliasManifest.getNodeAlias(aliasedManifest.getNodeType()),
+        std::runtime_error
+    );
+}
+
 TEST_CASE("A parameter with an unknown type is rejected")
 {
     const std::string parameters = R"(
@@ -673,7 +909,7 @@ TEST_CASE("The sweep manifest parses into its node type")
     REQUIRE(nodeType.inputPorts.at(0).label == "Backbone");
     REQUIRE(nodeType.inputPorts.at(1).label == "Profile");
     REQUIRE(nodeType.inputPorts.at(1).optional);
-    REQUIRE(manifest.getImplementation().library == "enzoOps");
+    REQUIRE(std::get<nt::CppImplementation>(manifest.getImplementation()).library == "enzoOps");
 
     // The parameters, in the order the node's interface is built from.
     REQUIRE(nodeType.templates.size() == 12);

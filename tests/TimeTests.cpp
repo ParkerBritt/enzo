@@ -2,7 +2,6 @@
 #include "Engine/Network/CookContext.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/NodeLoader.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include <catch2/catch_approx.hpp>
@@ -155,7 +154,7 @@ TEST_CASE_METHOD(NMReset, "a cook reads the frame the scene sits on")
     enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
 
-    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::grid");
     enzo::nt::CookContext context(nodeId, nm);
 
     nm.setFrame(49);
@@ -169,8 +168,7 @@ TEST_CASE_METHOD(NMReset, "moving the frame dirties a parameter whose expression
     enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
 
-    enzo::nt::NodeId nodeId =
-        nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::transform"));
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::transform");
     auto translate = nm.getNode(nodeId).getParameter("translate").lock();
     translate->setExpression("frame()");
 
@@ -189,7 +187,7 @@ TEST_CASE_METHOD(NMReset, "moving the frame leaves a node that never read it alo
     enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
 
-    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::grid");
     nm.cook(nodeId);
     REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
 
@@ -202,7 +200,7 @@ TEST_CASE_METHOD(NMReset, "moving the frame dirties a node whose cook read it")
     enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
 
-    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::grid");
     nm.cook(nodeId);
 
     enzo::nt::CookContext context(nodeId, nm);
@@ -217,7 +215,7 @@ TEST_CASE_METHOD(NMReset, "a cook that no longer reads the frame stops being tim
     enzo::nt::NodeLoader::loadNodes();
     auto& nm = enzo::nt::nm();
 
-    enzo::nt::NodeId nodeId = nm.createNode(enzo::nt::NodeTypeTable::requireNodeType("enzo::grid"));
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::grid");
     enzo::nt::CookContext context(nodeId, nm);
     context.getFrame();
 

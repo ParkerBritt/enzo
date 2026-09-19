@@ -112,13 +112,24 @@ QVariantList NetworkViewModel::getNodeTypes() const
         entry["name"] = QString::fromStdString(info.getFullName());
         list.append(entry);
     }
+    for (const nt::NodeAlias& alias : nt::NodeTypeTable::getNodeAliases())
+    {
+        QVariantMap entry;
+        entry["label"] = QString::fromStdString(alias.getLabel());
+        entry["name"] = QString::fromStdString(alias.getFullName());
+        list.append(entry);
+    }
     return list;
 }
 
 void NetworkViewModel::createNode(const QString& fullName, qreal x, qreal y)
 {
-    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
-    nt::nm().createNode(nodeType, Path("/"), "", {static_cast<float>(x), static_cast<float>(y)});
+    nt::nm().createNode(
+        fullName.toStdString(),
+        Path("/"),
+        "",
+        {static_cast<float>(x), static_cast<float>(y)}
+    );
 }
 
 bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
@@ -127,8 +138,6 @@ bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
 
     const std::optional<nt::NodeId> primaryId = network.getPrimaryNode();
     if (!primaryId) return false;
-
-    const nt::NodeType& nodeType = nt::NodeTypeTable::requireNodeType(fullName.toStdString());
 
     const nt::Node& primaryNode = network.getNode(*primaryId);
     const Vector2 primaryPosition = primaryNode.getPosition();
@@ -140,7 +149,8 @@ bool NetworkViewModel::chainNodeToPrimary(const QString& fullName)
     // Creating, wiring and selecting the node collapse into a single undo step.
     nt::UndoTransaction transaction(network.undoStack());
 
-    const nt::NodeId createdId = network.createNode(nodeType, Path("/"), "", belowPosition);
+    const nt::NodeId createdId =
+        network.createNode(fullName.toStdString(), Path("/"), "", belowPosition);
 
     if (primaryHasOutput && network.getNode(createdId).takesInput())
         network.connectNodes(*primaryId, 0, createdId, 0);

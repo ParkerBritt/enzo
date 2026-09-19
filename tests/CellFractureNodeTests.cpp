@@ -4,7 +4,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -54,9 +53,9 @@ GridAndSeeds addFractureOfQuad()
     auto& nm = nt::nm();
 
     GridAndSeeds nodes;
-    nodes.geometry = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nodes.seeds = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nodes.fracture = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cellFracture"));
+    nodes.geometry = nm.createNode("enzo::grid");
+    nodes.seeds = nm.createNode("enzo::grid");
+    nodes.fracture = nm.createNode("enzo::cellFracture");
     nm.connectNodes(nodes.geometry, 0, nodes.fracture, 0);
     nm.connectNodes(nodes.seeds, 0, nodes.fracture, 1);
 
@@ -73,9 +72,9 @@ GridAndSeeds addFractureOfCube(intT seedColumns, intT seedRows)
     auto& nm = nt::nm();
 
     GridAndSeeds nodes;
-    nodes.geometry = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cube"));
-    nodes.seeds = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nodes.fracture = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cellFracture"));
+    nodes.geometry = nm.createNode("enzo::cube");
+    nodes.seeds = nm.createNode("enzo::grid");
+    nodes.fracture = nm.createNode("enzo::cellFracture");
     nm.connectNodes(nodes.geometry, 0, nodes.fracture, 0);
     nm.connectNodes(nodes.seeds, 0, nodes.fracture, 1);
 
@@ -212,9 +211,8 @@ TEST_CASE_METHOD(NMReset, "Geometry without seeds passes through unchanged")
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId geometry = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    const nt::NodeId fracture =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::cellFracture"));
+    const nt::NodeId geometry = nm.createNode("enzo::grid");
+    const nt::NodeId fracture = nm.createNode("enzo::cellFracture");
     nm.connectNodes(geometry, 0, fracture, 0);
     setGridShape(nm.getNode(geometry), 2, 2);
     nm.cook(fracture);

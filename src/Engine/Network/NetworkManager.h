@@ -45,25 +45,24 @@ class NetworkManager
     /**
      * @brief Creates a new node inside a scope.
      *
-     * A node left unnamed takes the type name followed by the first free number, so the
-     * first grid placed in a scope becomes "grid1" and the next becomes "grid2". Only
-     * siblings have to differ, so each scope numbers its own nodes.
+     * A node left unnamed takes its type's name without the namespace followed by the first
+     * free number, so the first "enzo::grid" placed in a scope becomes "grid1" and the next
+     * becomes "grid2". Only siblings have to differ, so each scope numbers its own nodes.
      *
-     * @note The name is in place before the nodeCreated signal fires, so observers see the
-     * final name from the start.
+     * @throws std::runtime_error when no node type or alias is registered under typeName.
      *
-     * @param nodeType Data designating the properties of the node.
+     * @param typeName The full name of a node type such as "enzo::grid", or of an alias such as
+     * "enzo::mountain", which creates a node of the type it stands in for with the alias's
+     * starting values set.
      * @param parent The scope to create the node inside. The root holds the top level nodes.
      * @param name The name to give the node. Left empty a free one is picked, and a name
      * already taken by a sibling has a number appended until it is free.
      * @param position Where the node sits in the network view.
      *
      * @return The node ID of the newly created node
-     *
-     * @todo Take the type name rather than the whole node type.
      */
     NodeId createNode(
-        const nt::NodeType& nodeType,
+        const std::string& typeName,
         const Path& parent = Path("/"),
         const std::string& name = "",
         Vector2 position = {0.f, 0.f}
@@ -217,7 +216,7 @@ class NetworkManager
      * while undo brings a deleted node back with the id and path it had, since expressions
      * reference nodes by name and a node returning under a new name would break them.
      *
-     * @note Throws std::out_of_range when no scope sits at the path's parent.
+     * @throws std::out_of_range when no scope sits at the path's parent.
      *
      * @note Only the node itself is created, not the parameter values or connections it had.
      * The undo commands restore those around this call.

@@ -2,7 +2,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Gui/Parameters/ParameterItem.h"
 #include <catch2/catch_test_macros.hpp>
@@ -34,8 +33,7 @@ ui::ParameterItem makeItem(nt::Node& node, const std::string& parmName)
 TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style token to the gui")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::circle"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::circle");
     nt::Node& node = networkManager.getNode(nodeId);
 
     REQUIRE(makeItem(node, "center").style() == "xyz");
@@ -46,8 +44,7 @@ TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style token to the gu
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a toggle edited through its item")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::extrude"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::extrude");
     nt::Node& node = networkManager.getNode(nodeId);
 
     ui::ParameterItem frontOutput = makeItem(node, "frontOutput");
@@ -68,8 +65,7 @@ TEST_CASE_METHOD(PluginsAndReset, "Undo restores a toggle edited through its ite
 TEST_CASE_METHOD(PluginsAndReset, "A drag over many values records one undo step")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::extrude"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::extrude");
     nt::Node& node = networkManager.getNode(nodeId);
 
     ui::ParameterItem distance = makeItem(node, "distance");
@@ -93,9 +89,8 @@ TEST_CASE_METHOD(PluginsAndReset, "A drag over many values records one undo step
 TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attributes on its input")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId grid = networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nt::NodeId attributeCreate =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::NodeId grid = networkManager.createNode("enzo::grid");
+    nt::NodeId attributeCreate = networkManager.createNode("enzo::attributeCreate");
     networkManager.connectNodes(grid, 0, attributeCreate, 0);
     networkManager.cook(grid);
 
@@ -114,9 +109,8 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attribu
 TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its style reads")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId grid = networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nt::NodeId attributeCreate =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::NodeId grid = networkManager.createNode("enzo::grid");
+    nt::NodeId attributeCreate = networkManager.createNode("enzo::attributeCreate");
     networkManager.connectNodes(grid, 0, attributeCreate, 0);
     networkManager.cook(grid);
 
@@ -141,8 +135,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its 
 TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lists nothing")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId attributeCreate =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::NodeId attributeCreate = networkManager.createNode("enzo::attributeCreate");
     nt::Node& node = networkManager.getNode(attributeCreate);
 
     REQUIRE(makeItem(node, "name").attributeNames().isEmpty());
@@ -151,8 +144,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lis
 TEST_CASE_METHOD(PluginsAndReset, "An empty attribute list says what it would accept")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId attributeCreate =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    nt::NodeId attributeCreate = networkManager.createNode("enzo::attributeCreate");
     nt::Node& node = networkManager.getNode(attributeCreate);
     ui::ParameterItem name = makeItem(node, "name");
 
@@ -164,8 +156,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An empty attribute list says what it would ac
 TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style options to the gui")
 {
     auto& networkManager = nt::nm();
-    nt::NodeId nodeId =
-        networkManager.createNode(nt::NodeTypeTable::requireNodeType("enzo::circle"));
+    nt::NodeId nodeId = networkManager.createNode("enzo::circle");
     nt::Node& node = networkManager.getNode(nodeId);
 
     const QVariantMap options = makeItem(node, "arc_angles").styleOptions();

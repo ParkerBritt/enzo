@@ -3,7 +3,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -46,8 +45,7 @@ std::shared_ptr<const geo::Mesh> importMesh(const std::filesystem::path& file, f
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId nodeId =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::geometryImport"));
+    const nt::NodeId nodeId = nm.createNode("enzo::geometryImport");
     nt::Node& node = nm.getNode(nodeId);
     node.getParameter("filePath").lock()->setString(file.string());
     node.getParameter("size").lock()->setFloat(size);
@@ -127,8 +125,7 @@ TEST_CASE_METHOD(NMReset, "An unset file path imports nothing")
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId nodeId =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::geometryImport"));
+    const nt::NodeId nodeId = nm.createNode("enzo::geometryImport");
     nm.cook(nodeId);
 
     REQUIRE(nm.getNode(nodeId).getOutputPacket(0)->size() == 1);

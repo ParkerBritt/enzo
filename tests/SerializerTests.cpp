@@ -26,24 +26,25 @@ prm::Parameter makeRamp(int pointCount)
 
 struct NMReset
 {
-    NMReset() { enzo::nt::nm()._reset(); }
+    NMReset()
+    {
+        enzo::nt::NodeLoader::loadNodes();
+        enzo::nt::nm()._reset();
+    }
     ~NMReset() { enzo::nt::nm()._reset(); }
 };
 
-struct NodeTypeTableInit
+// Registers a node type that holds a scope and returns its full name.
+std::string addScopedType()
 {
-    NodeTypeTableInit() { enzo::nt::NodeLoader::loadNodes(); }
-};
-static NodeTypeTableInit _nodeTypeTableInit;
-
-// A node type that holds a scope. No shipped node has one, so the nested round trip
-// declares its own and registers it in the table, where load looks the type up by name.
-const enzo::nt::NodeType& scopedNodeType = enzo::nt::NodeTypeTable::addNodeType([] {
+    enzo::nt::NodeLoader::loadNodes();
     enzo::nt::NodeType nodeType = enzo::nt::NodeTypeTable::requireNodeType("enzo::grid");
     nodeType.internalName = "scopedContainer";
     nodeType.childScopeType = "geometry";
-    return nodeType;
-}());
+    return enzo::nt::NodeTypeTable::addNodeType(std::move(nodeType)).getFullName();
+}
+
+const std::string scopedTypeName = addScopedType();
 
 } // namespace
 
@@ -140,9 +141,7 @@ TEST_CASE("Applying a ramp model reconciles a mismatched instance count")
 TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 {
     auto& nm = nt::nm();
-    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("enzo::grid");
-
-    nt::NodeId grid = nm.createNode(gridInfo);
+    nt::NodeId grid = nm.createNode("enzo::grid");
     // Use a path the placeholder would never regenerate so the test fails if the
     // path is not actually serialized
     const std::string savedPath = "/my_renamed_grid";
@@ -163,11 +162,8 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
 TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
 {
     auto& nm = nt::nm();
-    const nt::NodeType& gridInfo = nt::NodeTypeTable::requireNodeType("enzo::grid");
-    const nt::NodeType& transformInfo = nt::NodeTypeTable::requireNodeType("enzo::transform");
-
-    nt::NodeId grid = nm.createNode(gridInfo);
-    nt::NodeId transform = nm.createNode(transformInfo);
+    nt::NodeId grid = nm.createNode("enzo::grid");
+    nt::NodeId transform = nm.createNode("enzo::transform");
     nt::nm().connectNodes(grid, 0, transform, 0);
 
     const std::string path = "/tmp/enzo_serializer_roundtrip.json";
@@ -198,9 +194,9 @@ TEST_CASE_METHOD(NMReset, "A node inside a scope round trips through save and lo
 {
     auto& nm = nt::nm();
 
-    nt::NodeId container = nm.createNode(scopedNodeType);
+    nt::NodeId container = nm.createNode(scopedTypeName);
     const Path containerPath = nm.getNode(container).getPath();
-    nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"), containerPath);
+    nm.createNode("enzo::grid", containerPath);
 
     const std::string path = "/tmp/enzo_serializer_scope_roundtrip.json";
     nt::Serializer serializer;

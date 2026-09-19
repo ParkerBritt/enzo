@@ -3,7 +3,6 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -41,38 +40,24 @@ TEST_CASE("evalFloat reports an error for a malformed expression")
 
 struct NMReset
 {
-    NMReset() { nt::nm()._reset(); }
+    NMReset()
+    {
+        nt::NodeLoader::loadNodes();
+        nt::nm()._reset();
+    }
     ~NMReset() { nt::nm()._reset(); }
 };
-
-static const nt::NodeType& transformNodeType()
-{
-    nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("enzo::transform");
-}
-
-static const nt::NodeType& gridNodeType()
-{
-    nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("enzo::grid");
-}
-
-static const nt::NodeType& pathNodeType()
-{
-    nt::NodeLoader::loadNodes();
-    return nt::NodeTypeTable::requireNodeType("enzo::path");
-}
 
 TEST_CASE_METHOD(NMReset, "Prm reads another node's parameter by path")
 {
     auto& nm = nt::nm();
 
     // The source node holds the value the expression should pull
-    nt::NodeId source = nm.createNode(transformNodeType());
+    nt::NodeId source = nm.createNode("enzo::transform");
     nm.getNode(source).getParameter("translate").lock()->setFloat(7.0f);
 
     // A second node reads the source's translate through a path expression
-    nt::NodeId reader = nm.createNode(transformNodeType());
+    nt::NodeId reader = nm.createNode("enzo::transform");
     auto translate = nm.getNode(reader).getParameter("translate").lock();
     translate->setExpression("prm(\"transform1.translate\")");
 
@@ -84,14 +69,14 @@ TEST_CASE_METHOD(NMReset, "Prm reads a chosen component of a vector parameter")
     auto& nm = nt::nm();
 
     // The source holds a distinct value in each component of its translate
-    nt::NodeId source = nm.createNode(transformNodeType());
+    nt::NodeId source = nm.createNode("enzo::transform");
     auto sourceTranslate = nm.getNode(source).getParameter("translate").lock();
     sourceTranslate->setFloat(1.0f, 0);
     sourceTranslate->setFloat(2.0f, 1);
     sourceTranslate->setFloat(3.0f, 2);
 
     // The reader pulls the second and third components by index
-    nt::NodeId reader = nm.createNode(transformNodeType());
+    nt::NodeId reader = nm.createNode("enzo::transform");
     auto translate = nm.getNode(reader).getParameter("translate").lock();
 
     translate->setExpression("prm(\"transform1.translate\", 1)");
@@ -106,13 +91,13 @@ TEST_CASE_METHOD(NMReset, "Prm without an index reads the first component")
     auto& nm = nt::nm();
 
     // The source holds different values across its translate components
-    nt::NodeId source = nm.createNode(transformNodeType());
+    nt::NodeId source = nm.createNode("enzo::transform");
     auto sourceTranslate = nm.getNode(source).getParameter("translate").lock();
     sourceTranslate->setFloat(1.0f, 0);
     sourceTranslate->setFloat(2.0f, 1);
 
     // Omitting the index reads the same component as passing 0
-    nt::NodeId reader = nm.createNode(transformNodeType());
+    nt::NodeId reader = nm.createNode("enzo::transform");
     auto translate = nm.getNode(reader).getParameter("translate").lock();
     translate->setExpression("prm(\"transform1.translate\")");
 
@@ -124,11 +109,11 @@ TEST_CASE_METHOD(NMReset, "Changing a parameter recooks nodes whose expressions 
     auto& nm = nt::nm();
 
     // The source node holds the value the reader pulls
-    nt::NodeId source = nm.createNode(transformNodeType());
+    nt::NodeId source = nm.createNode("enzo::transform");
     nm.getNode(source).getParameter("translate").lock()->setFloat(7.0f);
 
     // The reader pulls the source's translate through an expression
-    nt::NodeId reader = nm.createNode(transformNodeType());
+    nt::NodeId reader = nm.createNode("enzo::transform");
     auto translate = nm.getNode(reader).getParameter("translate").lock();
     translate->setExpression("prm(\"transform1.translate\")");
 
@@ -148,7 +133,7 @@ TEST_CASE_METHOD(NMReset, "Prm reports an error when the path matches no paramet
     auto& nm = nt::nm();
 
     // The reader points its expression at a node that does not exist
-    nt::NodeId reader = nm.createNode(transformNodeType());
+    nt::NodeId reader = nm.createNode("enzo::transform");
     auto translate = nm.getNode(reader).getParameter("translate").lock();
     translate->setExpression("prm(\"does_not_exist.translate\")");
 
@@ -163,11 +148,11 @@ TEST_CASE_METHOD(NMReset, "PrmI reads another node's integer parameter")
     auto& nm = nt::nm();
 
     // The source node holds the integer the expression should pull
-    nt::NodeId source = nm.createNode(gridNodeType());
+    nt::NodeId source = nm.createNode("enzo::grid");
     nm.getNode(source).getParameter("rows").lock()->setInt(5);
 
     // A second node reads the source's rows through a path expression
-    nt::NodeId reader = nm.createNode(gridNodeType());
+    nt::NodeId reader = nm.createNode("enzo::grid");
     auto rows = nm.getNode(reader).getParameter("rows").lock();
     rows->setExpression("prmI(\"grid1.rows\")");
 
@@ -179,11 +164,11 @@ TEST_CASE_METHOD(NMReset, "PrmS reads another node's string parameter")
     auto& nm = nt::nm();
 
     // The source node holds the string the expression should pull
-    nt::NodeId source = nm.createNode(pathNodeType());
+    nt::NodeId source = nm.createNode("enzo::path");
     nm.getNode(source).getParameter("path").lock()->setString("hello");
 
     // A second node reads the source's path through a path expression
-    nt::NodeId reader = nm.createNode(pathNodeType());
+    nt::NodeId reader = nm.createNode("enzo::path");
     auto path = nm.getNode(reader).getParameter("path").lock();
     path->setExpression("prmS(\"path1.path\")");
 

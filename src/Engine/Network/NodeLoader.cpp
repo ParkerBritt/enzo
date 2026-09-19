@@ -9,6 +9,8 @@
 #include <map>
 #include <stdexcept>
 #include <string>
+#include <variant>
+#include <vector>
 
 // The source and build tree locations, which let a development run work with no install step.
 #ifndef ENZO_DEV_NODES_DIR
@@ -59,8 +61,8 @@ boost::dll::shared_library& openLibrary(const std::string& libraryName)
     return inserted.first->second;
 }
 
-// Get a nodes constructor from the library pointed at in the manifest file.
-nodeConstructor getConstructor(const NodeImplementation& implementation)
+// Returns a node's constructor from the library its manifest names.
+nodeConstructor getConstructor(const CppImplementation& implementation)
 {
     boost::dll::shared_library& library = openLibrary(implementation.library);
     const std::string symbol = nodeConstructorSymbol(implementation.constructor);
@@ -74,23 +76,46 @@ nodeConstructor getConstructor(const NodeImplementation& implementation)
     return &library.get<NodeImpl*(Node&, CookContext&)>(symbol);
 }
 
-// Reads one folder's manifest and registers the node type it describes.
-void loadNode(const std::filesystem::path& folder)
+// A node folder on disk and the manifest read from it.
+struct NodeFolder
 {
-    const std::filesystem::path manifestPath = folder / kManifestName;
-    if (!std::filesystem::exists(manifestPath))
+    std::filesystem::path path;
+    NodeManifest manifest;
+};
+
+void reportSkippedNode(const std::filesystem::path& folder, const std::exception& error)
+{
+    std::cerr << "Couldn't load node " << folder.string() << ", " << error.what() << "\n";
+}
+
+// Returns every node folder with its manifest. A folder that fails to read is
+// reported and skipped.
+std::vector<NodeFolder> readNodeFolders()
+{
+    std::vector<NodeFolder> nodeFolders;
+    for (const auto& entry : std::filesystem::directory_iterator(NodeLoader::getNodesDirectory()))
     {
-        std::cerr << "Skipping " << folder.string() << ", it has no " << kManifestName << "\n";
-        return;
+        // A node is always a folder.
+        if (!entry.is_directory()) continue;
+
+        const std::filesystem::path manifestPath = entry.path() / kManifestName;
+        if (!std::filesystem::exists(manifestPath))
+        {
+            std::cerr << "Skipping " << entry.path().string() << ", it has no " << kManifestName
+                      << "\n";
+            continue;
+        }
+
+        try
+        {
+            nodeFolders.push_back({entry.path(), NodeManifest::loadFromFile(manifestPath)});
+        }
+        catch (const std::exception& error)
+        {
+            reportSkippedNode(entry.path(), error);
+        }
     }
-
-    const NodeManifest manifest = NodeManifest::loadFromFile(manifestPath);
-
-    NodeType nodeType = manifest.getNodeType();
-    nodeType.folder = folder;
-    nodeType.ctorFunc = getConstructor(manifest.getImplementation());
-
-    NodeTypeTable::addNodeType(std::move(nodeType));
+    return nodeFolders;
 }
 
 } // namespace
@@ -115,20 +140,44 @@ void NodeLoader::loadNodes()
     if (nodesLoaded) return;
     nodesLoaded = true;
 
-    for (const auto& entry : std::filesystem::directory_iterator(getNodesDirectory()))
-    {
-        // A node is always a folder.
-        if (!entry.is_directory()) continue;
+    const std::vector<NodeFolder> nodeFolders = readNodeFolders();
 
-        // One broken node should not take the rest of them down with it.
+    // Nodes with their own implementation
+    for (const NodeFolder& nodeFolder : nodeFolders)
+    {
+        const auto* implementation =
+            std::get_if<CppImplementation>(&nodeFolder.manifest.getImplementation());
+        if (!implementation) continue;
+
         try
         {
-            loadNode(entry.path());
+            NodeType nodeType = nodeFolder.manifest.getNodeType();
+            nodeType.folder = nodeFolder.path;
+            nodeType.ctorFunc = getConstructor(*implementation);
+            NodeTypeTable::addNodeType(std::move(nodeType));
         }
         catch (const std::exception& error)
         {
-            std::cerr << "Couldn't load node " << entry.path().string() << ", " << error.what()
-                      << "\n";
+            reportSkippedNode(nodeFolder.path, error);
+        }
+    }
+
+    // Aliases of the node types registered above
+    for (const NodeFolder& nodeFolder : nodeFolders)
+    {
+        const auto* implementation =
+            std::get_if<AliasImplementation>(&nodeFolder.manifest.getImplementation());
+        if (!implementation) continue;
+
+        try
+        {
+            const NodeType& aliasedType =
+                NodeTypeTable::requireNodeType(implementation->aliasedType);
+            NodeTypeTable::addNodeAlias(nodeFolder.manifest.getNodeAlias(aliasedType));
+        }
+        catch (const std::exception& error)
+        {
+            reportSkippedNode(nodeFolder.path, error);
         }
     }
 }

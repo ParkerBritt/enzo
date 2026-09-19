@@ -3,7 +3,9 @@
 #include "Engine/Network/NetworkPath.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeType.h"
+#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Network/UpdateLock.h"
+#include "Engine/Serializer/ParameterSerializable.h"
 #include "Engine/UndoRedo/ChangeConnectionCommand.h"
 #include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/UndoRedo/DeleteNodeCommand.h"
@@ -18,12 +20,16 @@
 namespace enzo {
 
 nt::NodeId nt::NetworkManager::createNode(
-    const nt::NodeType& nodeType,
+    const std::string& typeName,
     const Path& parent,
     const std::string& name,
     Vector2 position
 )
 {
+    const NodeAlias* alias = NodeTypeTable::getNodeAlias(typeName);
+    const NodeType& nodeType =
+        NodeTypeTable::requireNodeType(alias ? alias->aliasedType : typeName);
+
     // An unnamed node is numbered from its type name, so the first grid becomes "grid1"
     Path path = parent.append(Path(name.empty() ? nodeType.internalName + "1" : name));
     while (getNodeAtPath(path))
@@ -31,6 +37,8 @@ nt::NodeId nt::NetworkManager::createNode(
 
     NodeId nodeId = network_.reserveNodeId();
     createNodeWithId(nodeId, nodeType, path, position);
+
+    if (alias) applySerializable(getNode(nodeId), alias->parameterValues);
 
     return nodeId;
 }

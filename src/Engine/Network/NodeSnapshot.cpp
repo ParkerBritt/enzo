@@ -23,10 +23,7 @@ void nt::NodeSnapshot::restore(nt::NodeId nodeId) const
 {
     nm().createNodeWithId(nodeId, NodeTypeTable::requireNodeType(typeName_), path_, position_);
 
-    Node& node = nm().getNode(nodeId);
-    for (const ParameterSerializable& parameterModel : parameters_)
-        if (auto parameter = node.getParameter(parameterModel.name).lock())
-            applySerializable(*parameter, parameterModel);
+    applySerializable(nm().getNode(nodeId), parameters_);
 }
 
 } // namespace enzo

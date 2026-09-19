@@ -8,6 +8,10 @@
 #include <string>
 #include <vector>
 
+namespace enzo::nt {
+class Node;
+}
+
 struct ParameterSerializable
 {
     std::string name;
@@ -44,3 +48,7 @@ ParameterSerializable toSerializable(std::string name, const enzo::prm::PrmValue
 // Write a serialized model back onto a live parameter. Multiparms reconcile their
 // instance count to the model before writing each field by name.
 void applySerializable(enzo::prm::Parameter& parameter, const ParameterSerializable& model);
+
+// Writes each model onto the node's parameter of the same name. A model naming a
+// parameter the node lacks is skipped.
+void applySerializable(enzo::nt::Node& node, const std::vector<ParameterSerializable>& models);

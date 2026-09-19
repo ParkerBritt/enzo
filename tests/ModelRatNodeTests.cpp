@@ -2,7 +2,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -25,7 +24,7 @@ std::shared_ptr<const geo::Mesh> cookRat(const std::string& detail)
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId nodeId = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::modelRat"));
+    const nt::NodeId nodeId = nm.createNode("enzo::modelRat");
     nt::Node& node = nm.getNode(nodeId);
     node.getParameter("detail").lock()->setString(detail);
 

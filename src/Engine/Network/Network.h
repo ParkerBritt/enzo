@@ -48,7 +48,7 @@ class Network
     }
 
     /// @brief Returns the node with the given id.
-    /// @note Throws std::out_of_range when no node carries that id.
+    /// @throws std::out_of_range when no node carries that id.
     Node& getNode(NodeId nodeId);
 
     /// @brief Returns whether a node with the given id is present.

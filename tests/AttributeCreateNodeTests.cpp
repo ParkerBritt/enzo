@@ -4,7 +4,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_approx.hpp>
@@ -45,9 +44,8 @@ nt::NodeId addAttributeCreateAfterGrid()
     nt::NodeLoader::loadNodes();
     auto& nm = nt::nm();
 
-    const nt::NodeId grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    const nt::NodeId attributeCreate =
-        nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::attributeCreate"));
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    const nt::NodeId attributeCreate = nm.createNode("enzo::attributeCreate");
     nm.connectNodes(grid, 0, attributeCreate, 0);
 
     nm.getNode(attributeCreate).getParameter("name").lock()->setString("test");

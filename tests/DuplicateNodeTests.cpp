@@ -3,7 +3,6 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodePacket.h"
-#include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_approx.hpp>
@@ -43,8 +42,8 @@ GridAndDuplicate addDuplicateAfterGrid()
     auto& nm = nt::nm();
 
     GridAndDuplicate nodes;
-    nodes.grid = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::grid"));
-    nodes.duplicate = nm.createNode(nt::NodeTypeTable::requireNodeType("enzo::duplicate"));
+    nodes.grid = nm.createNode("enzo::grid");
+    nodes.duplicate = nm.createNode("enzo::duplicate");
     nm.connectNodes(nodes.grid, 0, nodes.duplicate, 0);
 
     nm.getNode(nodes.grid).getParameter("rows").lock()->setInt(1);
