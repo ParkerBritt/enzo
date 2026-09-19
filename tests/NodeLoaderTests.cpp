@@ -1,3 +1,4 @@
+#include "Engine/Network/NodeAlias.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Network/NodeType.h"
 #include "Engine/Network/NodeTypeTable.h"
@@ -35,7 +36,14 @@ TEST_CASE("Every shipped node loads and resolves its implementation")
         INFO("node " << name);
 
         // Every shipped node is published under the enzo namespace.
-        const nt::NodeType* nodeType = nt::NodeTypeTable::getNodeType("enzo::" + name);
+        const std::string fullName = "enzo::" + name;
+        if (const nt::NodeAlias* nodeAlias = nt::NodeTypeTable::getNodeAlias(fullName))
+        {
+            REQUIRE(nt::NodeTypeTable::getNodeType(nodeAlias->aliasedType) != nullptr);
+            continue;
+        }
+
+        const nt::NodeType* nodeType = nt::NodeTypeTable::getNodeType(fullName);
         REQUIRE(nodeType != nullptr);
         REQUIRE(nodeType->ctorFunc != nullptr);
         REQUIRE(nodeType->folder.filename() == name);
@@ -61,6 +69,8 @@ TEST_CASE("Loading twice leaves one entry per node")
         size_t entryCount = 0;
         for (const nt::NodeType& nodeType : nt::NodeTypeTable::getData())
             if (nodeType.getFullName() == fullName) entryCount++;
+        for (const nt::NodeAlias& nodeAlias : nt::NodeTypeTable::getNodeAliases())
+            if (nodeAlias.getFullName() == fullName) entryCount++;
 
         REQUIRE(entryCount == 1);
     }

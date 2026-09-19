@@ -429,6 +429,7 @@ if(ENZO_BUILD_TESTS)
         tests/ParameterItemTests.cpp
         tests/StyleTests.cpp
         tests/AttributeNoiseNodeTests.cpp
+        tests/MountainNodeTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
