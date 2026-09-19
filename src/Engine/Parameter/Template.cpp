@@ -135,6 +135,8 @@ String prm::Template::getHideCondition() const { return hideCondition_; }
 
 bool prm::Template::isLabelHidden() const { return labelHidden_; }
 
+bool prm::Template::isLabelInline() const { return labelInline_; }
+
 String prm::Template::getIcon() const { return icon_; }
 
 prm::Template& prm::Template::setTooltip(String tooltip)
@@ -208,6 +210,12 @@ prm::Template::getInstanceDefault(const std::string& fieldToken, unsigned int in
 prm::Template& prm::Template::setLabelHidden(bool hidden)
 {
     labelHidden_ = hidden;
+    return *this;
+}
+
+prm::Template& prm::Template::setLabelInline(bool isInline)
+{
+    labelInline_ = isInline;
     return *this;
 }
 

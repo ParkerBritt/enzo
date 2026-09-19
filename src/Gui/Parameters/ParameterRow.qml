@@ -91,7 +91,10 @@ Item {
                     "item": row.item
                 });
         }
-        onLoaded: item.labelColumnWidth = Qt.binding(() => row.labelColumnWidth)
+        onLoaded: {
+            item.labelColumnWidth = Qt.binding(() => row.labelColumnWidth);
+            item.labelGap = row.labelGap;
+        }
     }
 
     Component {

@@ -47,6 +47,7 @@ parameters:
     label: Noise Along Vector
     type: group
     direction: horizontal
+    labelInline: true
     hideCondition: type != 1
     tooltip: Moves the value along a vector attribute scaled by one noise value.
     parameters:

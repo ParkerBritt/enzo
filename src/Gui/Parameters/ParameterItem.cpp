@@ -230,6 +230,7 @@ ParameterItem::ParameterItem(
     vectorSize_ = static_cast<int>(prmTemplate.getSize());
     horizontal_ = prmTemplate.getDirection() == prm::Direction::HORIZONTAL;
     labelHidden_ = prmTemplate.isLabelHidden();
+    labelInline_ = prmTemplate.isLabelInline();
 
     if (prm::style::holds<prm::style::Attribute>(prmTemplate.getStyle()))
         attributeStyle_ =

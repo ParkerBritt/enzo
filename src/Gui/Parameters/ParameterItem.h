@@ -47,6 +47,7 @@ class ParameterItem : public QObject
     Q_PROPERTY(QList<QObject*> children READ children CONSTANT)
     Q_PROPERTY(bool horizontal READ horizontal CONSTANT)
     Q_PROPERTY(bool labelHidden READ labelHidden CONSTANT)
+    Q_PROPERTY(bool labelInline READ labelInline CONSTANT)
     Q_PROPERTY(bool enabled READ enabled NOTIFY metaChanged)
     Q_PROPERTY(bool hidden READ hidden NOTIFY metaChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
@@ -88,6 +89,7 @@ class ParameterItem : public QObject
     /// @brief Whether a group lays its children side by side rather than stacked.
     bool horizontal() const { return horizontal_; }
     bool labelHidden() const { return labelHidden_; }
+    bool labelInline() const { return labelInline_; }
 
     QString style() const { return style_; }
 
@@ -170,6 +172,7 @@ class ParameterItem : public QObject
     QList<QObject*> children_;
     bool horizontal_ = false;
     bool labelHidden_ = false;
+    bool labelInline_ = false;
     std::shared_ptr<const prm::style::Attribute> attributeStyle_;
 
     std::weak_ptr<prm::NodeParameter> parameter_;

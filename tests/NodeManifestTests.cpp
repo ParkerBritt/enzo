@@ -336,6 +336,7 @@ TEST_CASE("Conditions, tooltips and layout flags reach the template")
     direction: vertical
     background: false
     labelHidden: true
+    labelInline: true
     tooltip: How much of the circle to keep.
     documentation: The arc controls.
     disableCondition: applyScale == 0
@@ -346,6 +347,7 @@ TEST_CASE("Conditions, tooltips and layout flags reach the template")
     REQUIRE(parameter.getDirection() == prm::Direction::VERTICAL);
     REQUIRE(parameter.isBackgroundEnabled() == false);
     REQUIRE(parameter.isLabelHidden() == true);
+    REQUIRE(parameter.isLabelInline() == true);
     REQUIRE(parameter.getTooltip() == "How much of the circle to keep.");
     REQUIRE(parameter.getDocumentation() == "The arc controls.");
     REQUIRE(parameter.getDisableCondition() == "applyScale == 0");

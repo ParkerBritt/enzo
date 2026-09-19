@@ -78,6 +78,8 @@ class Template
     /// @return The condition, empty when the parameter is always shown.
     enzo::String getHideCondition() const;
     bool isLabelHidden() const;
+    /// @brief Returns whether a group shows its label beside its row instead of above it.
+    bool isLabelInline() const;
     bool isBackgroundEnabled() const;
 
     /// @brief Returns the Lucide icon name shown beside a divider's label.
@@ -102,6 +104,7 @@ class Template
     std::optional<Default>
     getInstanceDefault(const std::string& fieldToken, unsigned int instanceIndex) const;
     Template& setLabelHidden(bool hidden);
+    Template& setLabelInline(bool isInline);
     Template& setBackgroundEnabled(bool enabled);
     Template& setIcon(String icon);
 
@@ -131,6 +134,7 @@ class Template
     String icon_;
 
     bool labelHidden_ = false;
+    bool labelInline_ = false;
     bool backgroundEnabled_ = true;
 
     Direction direction_ = Direction::HORIZONTAL;

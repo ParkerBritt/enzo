@@ -1,5 +1,6 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
+#include "Engine/GeometryAlgorithms/AttributeOperation.h"
 #include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
@@ -13,68 +14,6 @@
 #include <vector>
 
 namespace {
-
-enum class Operation
-{
-    SET,
-    ADD,
-    SUBTRACT,
-    MULTIPLY,
-    MINIMUM,
-    MAXIMUM,
-};
-
-/// @brief Returns the operation a dropdown value names, or nothing when it names none.
-std::optional<Operation> getOperation(const enzo::String& name)
-{
-    if (name == "set") return Operation::SET;
-    if (name == "add") return Operation::ADD;
-    if (name == "subtract") return Operation::SUBTRACT;
-    if (name == "multiply") return Operation::MULTIPLY;
-    if (name == "minimum") return Operation::MINIMUM;
-    if (name == "maximum") return Operation::MAXIMUM;
-    return std::nullopt;
-}
-
-/// @brief Returns the value after the noise is combined into it.
-enzo::floatT applyOperation(Operation operation, enzo::floatT value, enzo::floatT noise)
-{
-    switch (operation)
-    {
-    case Operation::SET:
-        return noise;
-    case Operation::ADD:
-        return value + noise;
-    case Operation::SUBTRACT:
-        return value - noise;
-    case Operation::MULTIPLY:
-        return value * noise;
-    case Operation::MINIMUM:
-        return std::min(value, noise);
-    case Operation::MAXIMUM:
-        return std::max(value, noise);
-    }
-    return value;
-}
-
-/// @brief Returns the vector after the noise is combined into each axis.
-enzo::Vector3
-applyOperation(Operation operation, const enzo::Vector3& value, const enzo::Vector3& noise)
-{
-    return enzo::Vector3(
-        applyOperation(operation, value.x(), noise.x()),
-        applyOperation(operation, value.y(), noise.y()),
-        applyOperation(operation, value.z(), noise.z())
-    );
-}
-
-/// @brief Returns the attribute type a dropdown value names, or nothing when it names none.
-std::optional<enzo::attr::AttributeType> getAttributeType(const enzo::String& name)
-{
-    if (name == "float") return enzo::attr::AttributeType::floatT;
-    if (name == "vector") return enzo::attr::AttributeType::vectorT;
-    return std::nullopt;
-}
 
 /// @brief Returns a new generator of this type.
 template <typename T> FastNoise::SmartNode<> newGenerator()
@@ -199,15 +138,17 @@ void AttributeNoise::cook()
         return;
     }
 
-    const std::optional<attr::AttributeType> attributeType =
-        getAttributeType(evalParmString("type"));
-    if (!attributeType)
+    const std::optional<attr::AttributeType> attributeType = attr::getType(evalParmString("type"));
+    const bool isFloat = attributeType == attr::AttributeType::floatT;
+    const bool isVector = attributeType == attr::AttributeType::vectorT;
+    if (!isFloat && !isVector)
     {
         throwError("Unknown attribute type.");
         return;
     }
 
-    const std::optional<Operation> operation = getOperation(evalParmString("operation"));
+    const std::optional<utils::AttributeOperation> operation =
+        utils::getAttributeOperation(evalParmString("operation"));
     if (!operation)
     {
         throwError("Unknown operation.");
@@ -249,7 +190,6 @@ void AttributeNoise::cook()
     // Divides out the octaves stacking up so amplitude means the same with or without a fractal.
     const floatT fractalBound = fractalType == "none" ? 1.0f : getFractalBound(octaves, gain);
 
-    const bool isVector = *attributeType == attr::AttributeType::vectorT;
     const bool alongVector = isVector && evalParmBool("alongVector");
     const String directionName = evalParmString("alongVectorAttribute");
 
@@ -281,17 +221,12 @@ void AttributeNoise::cook()
                 mesh->addAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType);
         }
 
-        if (!isVector)
+        if (isFloat)
         {
             const std::vector<float> noise =
                 sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed);
 
-            attr::AttributeHandle<floatT> handle(attribute);
-            for (size_t pointOffset = 0; pointOffset < noise.size(); ++pointOffset)
-            {
-                const floatT value = handle.getValue(pointOffset);
-                handle.setValue(pointOffset, applyOperation(*operation, value, noise[pointOffset]));
-            }
+            utils::applyOperation(*operation, attr::AttributeHandle<floatT>(attribute), noise);
             continue;
         }
 
@@ -347,15 +282,7 @@ void AttributeNoise::cook()
                     Vector3(xNoise[pointOffset], yNoise[pointOffset], zNoise[pointOffset]);
         }
 
-        attr::AttributeHandle<Vector3> handle(attribute);
-        for (size_t pointOffset = 0; pointOffset < noiseVectors.size(); ++pointOffset)
-        {
-            const Vector3 value = handle.getValue(pointOffset);
-            handle.setValue(
-                pointOffset,
-                applyOperation(*operation, value, noiseVectors[pointOffset])
-            );
-        }
+        utils::applyOperation(*operation, attr::AttributeHandle<Vector3>(attribute), noiseVectors);
     }
 
     setOutputPacket(0, packet);
