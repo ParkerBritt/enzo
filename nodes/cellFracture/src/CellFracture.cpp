@@ -1,3 +1,4 @@
+#include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
 #include "Engine/GeometryAlgorithms/AttributeTransfer.h"
@@ -108,7 +109,7 @@ void appendPiece(
     geo::Mesh& fractured,
     const geo::Mesh& piece,
     intT pieceNumber,
-    const String& pieceAttributeName
+    std::optional<attr::AttributeHandle<intT>> pieceAttribute
 )
 {
     // Collect the valid faces and the points they use.
@@ -181,14 +182,17 @@ void appendPiece(
     );
 
     // Number the faces by the seed they formed around.
-    if (pieceAttributeName.empty()) return;
-    auto pieceAttribute =
-        fractured.addAttribute<intT>(attr::AttributeOwner::FACE, pieceAttributeName);
+    if (!pieceAttribute) return;
     for (const Offset fracturedFace : fracturedFaces)
-        pieceAttribute.setValue(fracturedFace, pieceNumber);
+        pieceAttribute->setValue(fracturedFace, pieceNumber);
 }
 
-/// @brief Returns the mesh broken into one piece for each seed, merged into a single mesh.
+/**
+ * @brief Returns the mesh broken into one piece for each seed, merged into a single mesh.
+ *
+ * @return The fractured mesh, or nullptr when the piece attribute name is taken by an
+ *         internal attribute.
+ */
 std::shared_ptr<geo::Mesh> fractureMesh(
     const geo::Mesh& mesh,
     const std::vector<Vector3>& seedPositions,
@@ -196,21 +200,27 @@ std::shared_ptr<geo::Mesh> fractureMesh(
     const String& insideGroupName
 )
 {
+    auto fractured = std::make_shared<geo::Mesh>(mesh.getPath());
+    for (const attr::AttributeOwner owner :
+         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
+        fractured->addAttributesFrom(mesh, owner);
+
+    std::optional<attr::AttributeHandle<intT>> pieceAttribute;
+    if (!pieceAttributeName.empty())
+    {
+        pieceAttribute =
+            fractured->tryAddAttribute<intT>(attr::AttributeOwner::FACE, pieceAttributeName);
+        if (!pieceAttribute) return nullptr;
+    }
+    if (!insideGroupName.empty()) fractured->addFaceGroup(insideGroupName);
+
     std::vector<std::shared_ptr<geo::Mesh>> pieces(seedPositions.size());
     tbb::parallel_for(size_t{0}, seedPositions.size(), [&](size_t seedIndex) {
         pieces[seedIndex] = cutPiece(mesh, seedPositions, seedIndex, insideGroupName);
     });
 
-    auto fractured = std::make_shared<geo::Mesh>(mesh.getPath());
-    for (const attr::AttributeOwner owner :
-         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
-        fractured->addAttributesFrom(mesh, owner);
-    if (!pieceAttributeName.empty())
-        fractured->addAttribute<intT>(attr::AttributeOwner::FACE, pieceAttributeName);
-    if (!insideGroupName.empty()) fractured->addFaceGroup(insideGroupName);
-
     for (size_t seedIndex = 0; seedIndex < pieces.size(); ++seedIndex)
-        appendPiece(*fractured, *pieces[seedIndex], seedIndex, pieceAttributeName);
+        appendPiece(*fractured, *pieces[seedIndex], seedIndex, pieceAttribute);
 
     return fractured;
 }
@@ -252,9 +262,14 @@ void CellFracture::cook()
             continue;
         }
         const auto mesh = std::static_pointer_cast<geo::Mesh>(prim);
-        output.addPrimitive(
-            fractureMesh(*mesh, seedPositions, pieceAttributeName, insideGroupName)
-        );
+        const std::shared_ptr<geo::Mesh> fractured =
+            fractureMesh(*mesh, seedPositions, pieceAttributeName, insideGroupName);
+        if (!fractured)
+        {
+            throwError("The piece attribute can't be named " + pieceAttributeName + ".");
+            return;
+        }
+        output.addPrimitive(fractured);
     }
 
     setOutputPacket(0, output);

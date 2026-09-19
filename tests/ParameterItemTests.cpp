@@ -106,7 +106,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attribu
 
     REQUIRE(names.contains("P"));
 
-    // Private attributes stay out of the list.
+    // Internal attributes stay out of the list.
     REQUIRE_FALSE(names.contains("__valid"));
 }
 
@@ -126,12 +126,14 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its 
     node.getParameter("attachTo").lock()->setString("point");
     node.getParameter("type").lock()->setString("vector");
     REQUIRE(name.attributeNames().contains("P"));
-    REQUIRE_FALSE(name.attributeNames().contains("vertexCount"));
 
-    // The vertex counts are an integer held by every face.
+    // Faces hold no positions.
     node.getParameter("attachTo").lock()->setString("face");
-    node.getParameter("type").lock()->setString("int");
-    REQUIRE(name.attributeNames().contains("vertexCount"));
+    REQUIRE_FALSE(name.attributeNames().contains("P"));
+
+    // The positions are not floats.
+    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("type").lock()->setString("float");
     REQUIRE_FALSE(name.attributeNames().contains("P"));
 }
 

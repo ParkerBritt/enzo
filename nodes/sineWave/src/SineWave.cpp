@@ -123,19 +123,12 @@ void SineWave::cook()
         // Samples the wave before writing, since the attribute being written may be P.
         const std::vector<floatT> wave = sampleWave(*mesh, settings, remap);
 
-        // Finds the attribute including intrinsics so P can be written.
-        std::shared_ptr<attr::Attribute> attribute =
-            mesh->getAttribByName(attr::AttributeOwner::POINT, attributeName, true);
-        const bool typeMatches = attribute && attribute->getType() == *attributeType;
-        if (!typeMatches)
+        const std::shared_ptr<attr::Attribute> attribute =
+            mesh->tryAddAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType);
+        if (!attribute)
         {
-            if (attribute && attribute->isIntrinsic())
-            {
-                throwError("The attribute " + attributeName + " can't change type.");
-                return;
-            }
-            attribute =
-                mesh->addAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType);
+            throwError("The attribute " + attributeName + " can't be written as this type.");
+            return;
         }
 
         if (isFloat)

@@ -34,9 +34,14 @@ std::vector<enzo::Offset> getSelectedOffsets(
     return {};
 }
 
-/// @brief Writes one value on every selected element of every selected primitive.
+/**
+ * @brief Writes one value on every selected element of every selected primitive.
+ *
+ * @return False when the name is taken by an internal attribute or by an intrinsic of
+ *         another type.
+ */
 template <typename T>
-void writeAttribute(
+bool writeAttribute(
     enzo::NodePacket& packet,
     enzo::Selection& selection,
     enzo::attr::AttributeOwner owner,
@@ -51,10 +56,12 @@ void writeAttribute(
         const std::vector<Offset> offsets = getSelectedOffsets(selection, prim, owner);
         if (offsets.empty()) continue;
 
-        attr::AttributeHandle<T> attribute = prim->addAttribute<T>(owner, name);
+        std::optional<attr::AttributeHandle<T>> attribute = prim->tryAddAttribute<T>(owner, name);
+        if (!attribute) return false;
         for (const Offset offset : offsets)
-            attribute.setValue(offset, value);
+            attribute->setValue(offset, value);
     }
+    return true;
 }
 
 class AttributeCreate : public enzo::nt::NodeImpl
@@ -90,29 +97,36 @@ void AttributeCreate::cook()
     const String type = evalParmString("type");
     Selection selection(evalParmString("selection"));
 
+    bool written = false;
     if (type == "int")
     {
         const intT value = evalParmInt("intValue");
-        writeAttribute(packet, selection, *owner, attributeName, value);
+        written = writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else if (type == "vector")
     {
         const Vector3 value = evalParmVector3("vectorValue");
-        writeAttribute(packet, selection, *owner, attributeName, value);
+        written = writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else if (type == "bool")
     {
         const boolT value = evalParmBool("boolValue");
-        writeAttribute(packet, selection, *owner, attributeName, value);
+        written = writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else if (type == "float")
     {
         const floatT value = evalParmFloat("floatValue");
-        writeAttribute(packet, selection, *owner, attributeName, value);
+        written = writeAttribute(packet, selection, *owner, attributeName, value);
     }
     else
     {
         throwError("Unknown attribute type.");
+        return;
+    }
+
+    if (!written)
+    {
+        throwError("The attribute " + attributeName + " can't hold " + type + " values.");
         return;
     }
 

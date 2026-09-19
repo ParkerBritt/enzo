@@ -5,6 +5,7 @@
 #include "Engine/Attribute/Transform.h"
 #include "Engine/Core/Types.h"
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace enzo::geo {
@@ -117,36 +118,84 @@ class Primitive
      * @brief Returns the attribute of this name and type, adding one when the name
      * is free.
      *
-     * @note An attribute of another type under the same name is replaced, dropping
-     *       its values. Intrinsic and ordinary attributes are matched separately.
+     * @throws std::runtime_error When the name belongs to an internal attribute or to an
+     *         intrinsic of another type.
+     * @note An ordinary attribute of another type under the same name is replaced,
+     *       dropping its values.
      */
     std::shared_ptr<attr::Attribute> addAttribute(
         attr::AttributeOwner owner,
         std::string name,
         attr::AttributeType type,
         bool intrinsic = false,
-        bool isPrivate = false
+        bool isInternal = false
     );
 
     /**
-     * @brief Returns the attribute of this type stored under this name, adding one
-     * when the name is free.
+     * @brief Returns the attribute of this name and type, adding one when the name
+     * is free.
      *
-     * @note An attribute of another type under the same name is replaced, dropping
-     *       its values. An intrinsic of the same name is matched separately and
-     *       left alone.
+     * @return The attribute, or nullptr when the name belongs to an internal attribute
+     *         or to an intrinsic of another type.
+     * @note An ordinary attribute of another type under the same name is replaced,
+     *       dropping its values.
+     */
+    std::shared_ptr<attr::Attribute> tryAddAttribute(
+        attr::AttributeOwner owner,
+        std::string name,
+        attr::AttributeType type,
+        bool intrinsic = false,
+        bool isInternal = false
+    );
+
+    /**
+     * @brief Returns a handle to the attribute of this type stored under this name,
+     * adding one when the name is free.
+     *
+     * @throws std::runtime_error When the name belongs to an internal attribute or to an
+     *         intrinsic of another type.
+     * @note An ordinary attribute of another type under the same name is replaced,
+     *       dropping its values.
      */
     template <typename T>
     attr::AttributeHandle<T> addAttribute(
         attr::AttributeOwner owner,
         std::string name,
         bool intrinsic = false,
-        bool isPrivate = false
+        bool isInternal = false
     )
     {
         return attr::AttributeHandle<T>(addAttribute(
-            owner, std::move(name), attr::getAttributeType<T>(), intrinsic, isPrivate
+            owner, std::move(name), attr::getAttributeType<T>(), intrinsic, isInternal
         ));
+    }
+
+    /**
+     * @brief Returns a handle to the attribute of this type stored under this name,
+     * adding one when the name is free.
+     *
+     * @return The handle, or nothing when the name belongs to an internal attribute
+     *         or to an intrinsic of another type.
+     * @note An ordinary attribute of another type under the same name is replaced,
+     *       dropping its values.
+     */
+    template <typename T>
+    std::optional<attr::AttributeHandle<T>> tryAddAttribute(
+        attr::AttributeOwner owner,
+        std::string name,
+        bool intrinsic = false,
+        bool isInternal = false
+    )
+    {
+        const std::shared_ptr<attr::Attribute> attribute = tryAddAttribute(
+            owner,
+            std::move(name),
+            attr::getAttributeType<T>(),
+            intrinsic,
+            isInternal
+        );
+        if (!attribute) return std::nullopt;
+        return attr::AttributeHandle<T>(attribute);
     }
 
     std::shared_ptr<attr::Attribute>
@@ -168,7 +217,7 @@ class Primitive
     /**
      * @brief Returns every attribute on the owner.
      *
-     * @note Private attributes are left out, like @ref getAttributeByIndex.
+     * @note Internal attributes are left out, like @ref getAttributeByIndex.
      */
     std::vector<std::shared_ptr<const attr::Attribute>>
     getAttributes(attr::AttributeOwner owner, bool includeIntrinsics = false) const;

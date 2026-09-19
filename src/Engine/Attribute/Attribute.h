@@ -47,7 +47,7 @@ class Attribute
         std::string name,
         attr::AttributeType type,
         bool intrinsic = false,
-        bool isPrivate = false
+        bool isInternal = false
     );
     Attribute(const Attribute& other);
     /**
@@ -76,12 +76,11 @@ class Attribute
     bool isIntrinsic() const;
 
     /**
-     * @brief Returns whether the attribute is private.
+     * @brief Returns whether the engine maintains this attribute.
      *
-     * A private attribute is hidden from the user (e.g. not shown in the
-     * spreadsheet). It is engine-internal state used during cooks.
+     * @note Nodes can't write to an internal attribute and it is hidden from the user.
      */
-    bool isPrivate() const;
+    bool isInternal() const;
 
     /**
      *  @brief Changes the number of elements stored
@@ -98,14 +97,7 @@ class Attribute
     template <typename T> friend class AttributeHandleRO;
 
   private:
-    // private attributes are attributes that are hidden from the user
-    // for internal use
-    bool private_ = false;
-    // hidden attributes are user accessible attributes that the user may
-    // or may want to use
-    // bool hidden_=false;
-    // allows the user to read the attribute but not modify it
-    // bool readOnly_=false;
+    bool internal_ = false;
     bool intrinsic_ = false;
 
     attr::AttributeType type_;

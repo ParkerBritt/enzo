@@ -125,7 +125,7 @@ QStringList getAttributeNames(
             for (unsigned int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex)
             {
                 const auto attribute = primitive->getAttributeByIndex(owner, attributeIndex).lock();
-                if (!attribute || attribute->isPrivate()) continue;
+                if (!attribute || attribute->isInternal()) continue;
 
                 const bool typeWanted =
                     std::find(types.begin(), types.end(), attribute->getType()) != types.end();

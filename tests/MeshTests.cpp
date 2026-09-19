@@ -3,6 +3,7 @@
 #include <Engine/Primitives/Mesh.h>
 #include <catch2/catch_test_macros.hpp>
 #include <cmath>
+#include <stdexcept>
 
 using namespace enzo;
 
@@ -556,7 +557,18 @@ TEST_CASE("Adding an attribute of another type replaces the stored one")
     REQUIRE(stored->getSize() == mesh.getNumPoints());
 }
 
-TEST_CASE("Adding an attribute leaves an intrinsic of the same name alone")
+TEST_CASE("Adding an attribute returns the intrinsic of the same name and type")
+{
+    geo::Mesh mesh;
+    mesh.addPoint(Vector3(0, 0, 0));
+
+    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, "P", true);
+    const auto added = mesh.addAttribute(attr::AttrOwner::POINT, "P", attr::AttrType::vectorT);
+
+    REQUIRE(added == positions);
+}
+
+TEST_CASE("Adding an attribute gives nothing when an internal attribute holds the name")
 {
     geo::Mesh mesh;
 
@@ -566,11 +578,26 @@ TEST_CASE("Adding an attribute leaves an intrinsic of the same name alone")
     auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
     mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
 
-    // Add an ordinary P beside the intrinsic P that holds the positions
-    auto ordinary = mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "P");
-    ordinary.setValue(0, Vector3(9, 9, 9));
+    const auto added =
+        mesh.tryAddAttribute(attr::AttrOwner::FACE, "vertexCount", attr::AttrType::intT);
 
-    REQUIRE(mesh.getPointPos(pointOffset0) == Vector3(0, 0, 0));
+    REQUIRE(added == nullptr);
+    REQUIRE_THROWS_AS(
+        mesh.addAttribute(attr::AttrOwner::FACE, "vertexCount", attr::AttrType::intT),
+        std::runtime_error
+    );
+}
+
+TEST_CASE("Adding an attribute of another type gives nothing when an intrinsic holds the name")
+{
+    geo::Mesh mesh;
+    mesh.addPoint(Vector3(0, 0, 0));
+
+    const auto added = mesh.tryAddAttribute(attr::AttrOwner::POINT, "P", attr::AttrType::floatT);
+
+    REQUIRE(added == nullptr);
+    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, "P", true);
+    REQUIRE(positions->getType() == attr::AttrType::vectorT);
 }
 
 TEST_CASE("Creating a group twice keeps a single group")
