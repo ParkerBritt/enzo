@@ -64,7 +64,9 @@ set(ENGINE_SOURCES
     src/Engine/Network/CookContext.cpp
     src/Engine/NetworkGraph/NetworkGraph.cpp
     src/Engine/Expression/DasRuntime.cpp
+    src/Engine/Expression/ExpressionContext.cpp
     src/Engine/Expression/ExpressionEngine.cpp
+    src/Engine/Expression/ScriptEngine.cpp
     src/Engine/Expression/ExpressionFunctions.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
@@ -396,7 +398,9 @@ if(ENZO_BUILD_TESTS)
 
     add_executable(${TestExec}
         tests/main-tests.cpp
+        tests/ExpressionContextTests.cpp
         tests/ExpressionEngineTests.cpp
+        tests/ScriptEngineTests.cpp
         tests/CompiledScriptTests.cpp
         tests/ParameterTests.cpp
         tests/NetworkGraphTests.cpp
