@@ -1,0 +1,20 @@
+version: 1
+
+name: mountain
+namespace: enzo
+label: Mountain
+tags: [mountain, terrain, noise]
+
+implementation:
+  kind: alias
+  type: enzo::attributeNoise
+
+parameterValues:
+  name: Position
+  type: vector
+  fractalType: fbm
+  alongVector: true
+  octaves: 5
+  lacunarity: 0.7
+  gain: 1.5
+
