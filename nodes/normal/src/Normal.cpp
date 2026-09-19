@@ -5,6 +5,7 @@
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Primitives/Mesh.h"
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace {
@@ -39,12 +40,17 @@ void Normal::cook()
                                                  : utils::computePointNormals(*mesh);
 
         const attr::AttrOwner owner = perVertex ? attr::AttrOwner::VERTEX : attr::AttrOwner::POINT;
-        attr::AttributeHandle<Vector3> normalAttribute =
-            mesh->addAttribute<Vector3>(owner, attributeName);
+        std::optional<attr::AttributeHandle<Vector3>> normalAttribute =
+            mesh->tryAddAttribute<Vector3>(owner, attributeName);
+        if (!normalAttribute)
+        {
+            throwError("The attribute " + attributeName + " can't hold normals.");
+            return;
+        }
 
         for (Offset offset = 0; offset < normals.size(); ++offset)
         {
-            normalAttribute.setValue(offset, normals[offset]);
+            normalAttribute->setValue(offset, normals[offset]);
         }
     }
 

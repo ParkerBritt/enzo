@@ -17,9 +17,9 @@
 namespace enzo {
 
 geo::Mesh::Mesh(std::string_view path)
-    : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true)},
-      closedFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "closed", true)},
-      pointOffsetVertexHandle_{addAttribute<intT>(attr::AttrOwner::VERTEX, "point", true)},
+    : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true, true)},
+      closedFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "closed", true, true)},
+      pointOffsetVertexHandle_{addAttribute<intT>(attr::AttrOwner::VERTEX, "point", true, true)},
       posPointHandle_{addAttribute<Vector3>(attr::AttrOwner::POINT, "P", true)},
       validFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "__valid", true, true)},
       validVertexHandle_{addAttribute<boolT>(attr::AttrOwner::VERTEX, "__valid", true, true)},

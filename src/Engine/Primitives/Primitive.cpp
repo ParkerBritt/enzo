@@ -39,7 +39,7 @@ const size_t geo::Primitive::getNumAttributes(const attr::AttributeOwner owner) 
     size_t count = 0;
     for (const auto& attribute : getAttributeStore(owner))
     {
-        if (attribute && !attribute->isPrivate()) ++count;
+        if (attribute && !attribute->isInternal()) ++count;
     }
     return count;
 }
@@ -51,7 +51,7 @@ geo::Primitive::getAttributeByIndex(attr::AttributeOwner owner, unsigned int ind
     unsigned int visibleIndex = 0;
     for (const auto& attribute : attribStore)
     {
-        if (!attribute || attribute->isPrivate()) continue;
+        if (!attribute || attribute->isInternal()) continue;
         if (visibleIndex == index) return attribute;
         ++visibleIndex;
     }
@@ -67,7 +67,7 @@ geo::Primitive::getAttributes(attr::AttributeOwner owner, bool includeIntrinsics
     std::vector<std::shared_ptr<const attr::Attribute>> attributes;
     for (const auto& attribute : getAttributeStore(owner))
     {
-        if (!attribute || attribute->isPrivate()) continue;
+        if (!attribute || attribute->isInternal()) continue;
         if (!includeIntrinsics && attribute->isIntrinsic()) continue;
         attributes.push_back(attribute);
     }
@@ -80,8 +80,10 @@ namespace {
  * @brief Returns the attribute of this name and type from the store, adding one when
  * the name is free.
  *
- * @note An attribute of another type under the same name is replaced, dropping its
- *       values. Intrinsic and ordinary attributes are matched separately.
+ * @return The attribute, or nullptr when the name belongs to an internal attribute
+ *         or to an intrinsic of another type.
+ * @note An ordinary attribute of another type under the same name is replaced,
+ *       dropping its values.
  */
 std::shared_ptr<attr::Attribute> addToStore(
     attr::attribVector& store,
@@ -89,18 +91,25 @@ std::shared_ptr<attr::Attribute> addToStore(
     const std::string& name,
     attr::AttributeType type,
     bool intrinsic,
-    bool isPrivate
+    bool isInternal
 )
 {
     const auto holdsTheName = [&](const std::shared_ptr<attr::Attribute>& stored) {
-        return stored && stored->getName() == name && stored->isIntrinsic() == intrinsic;
+        return stored && stored->getName() == name;
     };
     const auto takenSlot = std::ranges::find_if(store, holdsTheName);
     const bool nameTaken = takenSlot != store.end();
 
-    if (nameTaken && (*takenSlot)->getType() == type) return *takenSlot;
+    if (nameTaken)
+    {
+        const std::shared_ptr<attr::Attribute>& stored = *takenSlot;
+        const bool typeMatches = stored->getType() == type;
+        if (stored->isInternal() && !isInternal) return nullptr;
+        if (typeMatches) return stored;
+        if (stored->isIntrinsic()) return nullptr;
+    }
 
-    auto newAttribute = std::make_shared<attr::Attribute>(name, type, intrinsic, isPrivate);
+    auto newAttribute = std::make_shared<attr::Attribute>(name, type, intrinsic, isInternal);
     // Match the owner's element count so existing elements get a value.
     newAttribute->resize(elementCount);
 
@@ -117,11 +126,26 @@ std::shared_ptr<attr::Attribute> geo::Primitive::addAttribute(
     std::string name,
     attr::AttributeType type,
     bool intrinsic,
-    bool isPrivate
+    bool isInternal
+)
+{
+    std::shared_ptr<attr::Attribute> attribute =
+        tryAddAttribute(owner, name, type, intrinsic, isInternal);
+    if (!attribute)
+        throw std::runtime_error("The attribute " + name + " can't be added as this type.");
+    return attribute;
+}
+
+std::shared_ptr<attr::Attribute> geo::Primitive::tryAddAttribute(
+    attr::AttributeOwner owner,
+    std::string name,
+    attr::AttributeType type,
+    bool intrinsic,
+    bool isInternal
 )
 {
     return addToStore(
-        getAttributeStore(owner), getElementCount(owner), name, type, intrinsic, isPrivate
+        getAttributeStore(owner), getElementCount(owner), name, type, intrinsic, isInternal
     );
 }
 

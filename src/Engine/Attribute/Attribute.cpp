@@ -10,9 +10,9 @@ attr::Attribute::Attribute(
     std::string name,
     attr::AttributeType type,
     bool intrinsic,
-    bool isPrivate
+    bool isInternal
 )
-    : name_{name}, type_{type}, intrinsic_{intrinsic}, private_{isPrivate}
+    : name_{name}, type_{type}, intrinsic_{intrinsic}, internal_{isInternal}
 {
     switch (type_)
     {
@@ -76,14 +76,12 @@ void attr::Attribute::compact(const std::vector<bool>& keep)
 
 bool attr::Attribute::isIntrinsic() const { return intrinsic_; }
 
-bool attr::Attribute::isPrivate() const { return private_; }
+bool attr::Attribute::isInternal() const { return internal_; }
 
 attr::Attribute::Attribute(const Attribute& other)
 {
     type_ = other.type_;
-    private_ = other.private_;
-    // hidden_ = other.hidden_;
-    // readOnly_ = other.readOnly_;
+    internal_ = other.internal_;
     intrinsic_ = other.intrinsic_;
     name_ = other.name_;
     typeSize_ = other.typeSize_;

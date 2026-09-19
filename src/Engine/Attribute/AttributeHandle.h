@@ -166,15 +166,6 @@ template <typename T> class AttributeHandle
     std::string getName() const { return name_; }
 
   private:
-    // private attributes are attributes that are hidden from the user
-    // for internal use
-    bool private_ = false;
-    // hidden attributes are user accessible attributes that the user may
-    // or may want to use
-    bool hidden_ = false;
-    // allows the user to read the attributeHandle but not modify it
-    bool readOnly_ = false;
-
     std::string name_;
 
     std::shared_ptr<StoreContainer<T>> data_;
@@ -237,15 +228,6 @@ class AttributeHandleRO
     std::string getName() const { return name_; }
 
   private:
-    // private attributes are attributes that are hidden from the user
-    // for internal use
-    bool private_ = false;
-    // hidden attributes are user accessible attributes that the user may
-    // or may want to use
-    bool hidden_ = false;
-    // allows the user to read the attributeHandle but not modify it
-    bool readOnly_ = false;
-
     std::string name_;
 
     std::shared_ptr<StoreContainer<T>> data_;
