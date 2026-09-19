@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['folder_0',['folder',['../structenzo_1_1nt_1_1NodeType.html#a1eaf802db4da115c6b0fb48a6b03d4da',1,'enzo::nt::NodeType']]]
+  ['docspath_0',['docsPath',['../structenzo_1_1nt_1_1NodeType.html#a662866f5b9dacf5648f8d811f8997fd6',1,'enzo::nt::NodeType']]]
 ];

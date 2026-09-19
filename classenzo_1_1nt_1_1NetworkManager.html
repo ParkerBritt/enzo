@@ -118,9 +118,9 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>nodes</b> ()</td></tr
 &#160;</td><td class="memItemRight" valign="bottom"><b>NetworkManager</b> (const <a class="el" href="classenzo_1_1nt_1_1NetworkManager.html">NetworkManager</a> &amp;obj)=delete</td></tr>
 <tr class="memdesc:a69ba6571d43eb6a3a331cb96126de57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted the copy constructor for singleton. <br /></td></tr>
 <tr class="separator:a69ba6571d43eb6a3a331cb96126de57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ec491b50ad7c1aea9d1384df63e2fbf" id="r_a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ec491b50ad7c1aea9d1384df63e2fbf">createNode</a> (const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;nodeType, const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;parent=<a class="el" href="classenzo_1_1Path.html">Path</a>(&quot;/&quot;), const std::string &amp;name=&quot;&quot;, Vector2 position={0.f, 0.f})</td></tr>
-<tr class="memdesc:a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node inside a scope.  <br /></td></tr>
-<tr class="separator:a9ec491b50ad7c1aea9d1384df63e2fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a161c11223b7dc21f71c4a6abf6fac025" id="r_a161c11223b7dc21f71c4a6abf6fac025"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a161c11223b7dc21f71c4a6abf6fac025">createNode</a> (const std::string &amp;typeName, const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;parent=<a class="el" href="classenzo_1_1Path.html">Path</a>(&quot;/&quot;), const std::string &amp;name=&quot;&quot;, Vector2 position={0.f, 0.f})</td></tr>
+<tr class="memdesc:a161c11223b7dc21f71c4a6abf6fac025"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new node inside a scope.  <br /></td></tr>
+<tr class="separator:a161c11223b7dc21f71c4a6abf6fac025"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39a60cfc2a94b4ad8fada19b6c15ca4d" id="r_a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39a60cfc2a94b4ad8fada19b6c15ca4d">getNodeAtPath</a> (const <a class="el" href="classenzo_1_1Path.html">Path</a> &amp;path)</td></tr>
 <tr class="memdesc:a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node at an exact path, or null when no node is there.  <br /></td></tr>
 <tr class="separator:a39a60cfc2a94b4ad8fada19b6c15ca4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -333,7 +333,7 @@ boost::signals2::signal&lt; void(floatT fps)&gt;&#160;</td><td class="memItemRig
 </div><div class="memdoc">
 
 <p>For use in unit tests, resets the state of the node. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo</a></b></dt><dd>Find a cleaner way to give tests a fresh manager so this doesn't pollute the public functions. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo</a></b></dt><dd>Find a cleaner way to give tests a fresh manager so this doesn't pollute the public functions. </dd></dl>
 
 </div>
 </div>
@@ -425,8 +425,8 @@ A multi input port makes room, moving the connections from the index onward up o
 
 </div>
 </div>
-<a id="a9ec491b50ad7c1aea9d1384df63e2fbf" name="a9ec491b50ad7c1aea9d1384df63e2fbf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ec491b50ad7c1aea9d1384df63e2fbf">&#9670;&#160;</a></span>createNode()</h2>
+<a id="a161c11223b7dc21f71c4a6abf6fac025" name="a161c11223b7dc21f71c4a6abf6fac025"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a161c11223b7dc21f71c4a6abf6fac025">&#9670;&#160;</a></span>createNode()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -434,7 +434,7 @@ A multi input port makes room, moving the connections from the index onward up o
         <tr>
           <td class="memname"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">nt::NodeId</a> enzo::nt::NetworkManager::createNode </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">nt::NodeType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>nodeType</em></span>, </td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>typeName</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -455,19 +455,23 @@ A multi input port makes room, moving the connections from the index onward up o
 </div><div class="memdoc">
 
 <p>Creates a new node inside a scope. </p>
-<p>A node left unnamed takes the type name followed by the first free number, so the first grid placed in a scope becomes "grid1" and the next becomes "grid2". Only siblings have to differ, so each scope numbers its own nodes.</p>
-<dl class="section note"><dt>Note</dt><dd>The name is in place before the nodeCreated signal fires, so observers see the final name from the start.</dd></dl>
+<p>A node left unnamed takes its type's name without the namespace followed by the first free number, so the first "enzo::grid" placed in a scope becomes "grid1" and the next becomes "grid2". Only siblings have to differ, so each scope numbers its own nodes.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when no node type or alias is registered under typeName.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nodeType</td><td>Data designating the properties of the node. </td></tr>
+    <tr><td class="paramname">typeName</td><td>The full name of a node type such as "enzo::grid", or of an alias such as "enzo::mountain", which creates a node of the type it stands in for with the alias's starting values set. </td></tr>
     <tr><td class="paramname">parent</td><td>The scope to create the node inside. The root holds the top level nodes. </td></tr>
     <tr><td class="paramname">name</td><td>The name to give the node. Left empty a free one is picked, and a name already taken by a sibling has a number appended until it is free. </td></tr>
     <tr><td class="paramname">position</td><td>Where the node sits in the network view.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The node ID of the newly created node</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>Take the type name rather than the whole node type. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The node ID of the newly created node </dd></dl>
 
 </div>
 </div>
@@ -502,9 +506,13 @@ A multi input port makes room, moving the connections from the index onward up o
 
 <p>Creates a node with an identity the caller dictates rather than one picked here. </p>
 <p>Every node enters the network here. createNode picks a free id and name and calls this, while undo brings a deleted node back with the id and path it had, since expressions reference nodes by name and a node returning under a new name would break them.</p>
-<dl class="section note"><dt>Note</dt><dd>Throws std::out_of_range when no scope sits at the path's parent.</dd>
-<dd>
-Only the node itself is created, not the parameter values or connections it had. The undo commands restore those around this call.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>when no scope sits at the path's parent.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Only the node itself is created, not the parameter values or connections it had. The undo commands restore those around this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nodeId</td><td>The node ID to give the node. </td></tr>
@@ -864,7 +872,7 @@ Only the node itself is created, not the parameter values or connections it had.
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo</a></b></dt><dd>remove skipUndo argument in favour of a global undo RAII lock </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo</a></b></dt><dd>remove skipUndo argument in favour of a global undo RAII lock </dd></dl>
 
 </div>
 </div>

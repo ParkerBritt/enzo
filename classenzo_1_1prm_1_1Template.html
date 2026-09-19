@@ -207,6 +207,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isBackgroundEnabled</
 <tr class="memitem:a656c24444e0f851386481497313ff70b" id="r_a656c24444e0f851386481497313ff70b"><td class="memItemLeft" align="right" valign="top"><a id="a656c24444e0f851386481497313ff70b" name="a656c24444e0f851386481497313ff70b"></a>
 <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>addParm</b> (<a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> child)</td></tr>
 <tr class="separator:a656c24444e0f851386481497313ff70b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab61c457c1cc49e671a9aa80a2b38725d" id="r_ab61c457c1cc49e671a9aa80a2b38725d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab61c457c1cc49e671a9aa80a2b38725d">setDefaults</a> (std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> &gt; defaults)</td></tr>
+<tr class="memdesc:ab61c457c1cc49e671a9aa80a2b38725d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the default of every component.  <br /></td></tr>
+<tr class="separator:ab61c457c1cc49e671a9aa80a2b38725d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6c1ae32f3e361199dd4d64775c15550" id="r_ab6c1ae32f3e361199dd4d64775c15550"><td class="memItemLeft" align="right" valign="top"><a id="ab6c1ae32f3e361199dd4d64775c15550" name="ab6c1ae32f3e361199dd4d64775c15550"></a>
 <a class="el" href="classenzo_1_1prm_1_1Template.html">Template</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>setInstanceDefault</b> (std::string fieldToken, std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> &gt; defaults)</td></tr>
 <tr class="separator:ab6c1ae32f3e361199dd4d64775c15550"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -250,7 +253,12 @@ const std::any &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSt
 </div><div class="memdoc">
 
 <p>Returns the child template with the given token. </p>
-<dl class="section note"><dt>Note</dt><dd>Throws std::out_of_range when no child carries the token. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>when no child carries the token. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -355,6 +363,26 @@ const std::any &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getSt
 
 <p>The set of named values this parameter can be set to. </p>
 <p>These are the available entries to pick from, not the value the user has picked. Each entry is a <a class="el" href="classenzo_1_1prm_1_1Name.html">prm::Name</a> carrying a token (the stored value) and a label (the displayed text). A dropdown renders these as a menu. Other enumerated parameters such as radio groups or button strips draw from the same set. </p><dl class="section return"><dt>Returns</dt><dd>The available options, empty when the parameter is not enumerated. </dd></dl>
+
+</div>
+</div>
+<a id="ab61c457c1cc49e671a9aa80a2b38725d" name="ab61c457c1cc49e671a9aa80a2b38725d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab61c457c1cc49e671a9aa80a2b38725d">&#9670;&#160;</a></span>setDefaults()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classenzo_1_1prm_1_1Template.html">prm::Template</a> &amp; enzo::prm::Template::setDefaults </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="classenzo_1_1prm_1_1Default.html">Default</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>defaults</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replaces the default of every component. </p>
+<dl class="section note"><dt>Note</dt><dd>A single default covers every component. </dd></dl>
 
 </div>
 </div>

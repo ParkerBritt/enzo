@@ -119,11 +119,82 @@ static const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a>
 static const std::deque&lt; <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> ()</td></tr>
 <tr class="memdesc:ad112069fa1689cbb662e363cb0c051fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every registered type, in the order they were added. <br /></td></tr>
 <tr class="separator:ad112069fa1689cbb662e363cb0c051fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e36acea74e121d8caeeef499eea033f" id="r_a4e36acea74e121d8caeeef499eea033f"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e36acea74e121d8caeeef499eea033f">addNodeAlias</a> (<a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> nodeAlias)</td></tr>
+<tr class="memdesc:a4e36acea74e121d8caeeef499eea033f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes ownership of an alias and returns the stored copy.  <br /></td></tr>
+<tr class="separator:a4e36acea74e121d8caeeef499eea033f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3afe9b45769a1ff03eb6915415e0a8f7" id="r_a3afe9b45769a1ff03eb6915415e0a8f7"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3afe9b45769a1ff03eb6915415e0a8f7">getNodeAlias</a> (const std::string &amp;fullName)</td></tr>
+<tr class="memdesc:a3afe9b45769a1ff03eb6915415e0a8f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the alias registered under a full name, such as "enzo::mountain".  <br /></td></tr>
+<tr class="separator:a3afe9b45769a1ff03eb6915415e0a8f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86e25215205318cbc142e93b78a2021e" id="r_a86e25215205318cbc142e93b78a2021e"><td class="memItemLeft" align="right" valign="top"><a id="a86e25215205318cbc142e93b78a2021e" name="a86e25215205318cbc142e93b78a2021e"></a>
+static const std::deque&lt; <a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeAliases</b> ()</td></tr>
+<tr class="memdesc:a86e25215205318cbc142e93b78a2021e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every registered alias, in the order they were added. <br /></td></tr>
+<tr class="separator:a86e25215205318cbc142e93b78a2021e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The sole owner of every node type the application knows about. </p>
 <p>The <a class="el" href="classenzo_1_1nt_1_1NodeLoader.html" title="The startup pass that fills the node type table from the node folders on disk.">nt::NodeLoader</a> fills the table at startup and nodes hold references into it, so a type exists once no matter how many nodes are built from it. Entries are never removed, which is what keeps those references valid. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4e36acea74e121d8caeeef499eea033f" name="a4e36acea74e121d8caeeef499eea033f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e36acea74e121d8caeeef499eea033f">&#9670;&#160;</a></span>addNodeAlias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> &amp; enzo::nt::NodeTypeTable::addNodeAlias </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a></td>          <td class="paramname"><span class="paramname"><em>nodeAlias</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Takes ownership of an alias and returns the stored copy. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when a type or another alias already carries its full name. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3afe9b45769a1ff03eb6915415e0a8f7" name="a3afe9b45769a1ff03eb6915415e0a8f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3afe9b45769a1ff03eb6915415e0a8f7">&#9670;&#160;</a></span>getNodeAlias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> * enzo::nt::NodeTypeTable::getNodeAlias </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fullName</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the alias registered under a full name, such as "enzo::mountain". </p>
+<dl class="section return"><dt>Returns</dt><dd>The alias, or nullptr when nothing carries that name. </dd></dl>
+
+</div>
+</div>
 <a id="af77b68cfa6afc52c0a871b80fdc486d6" name="af77b68cfa6afc52c0a871b80fdc486d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af77b68cfa6afc52c0a871b80fdc486d6">&#9670;&#160;</a></span>getNodeType()</h2>
 
@@ -176,7 +247,12 @@ static const std::deque&lt; <a class="el" href="structenzo_1_1nt_1_1NodeType.htm
 </div><div class="memdoc">
 
 <p>Returns the type registered under a full name, for callers that cannot go on without it. </p>
-<dl class="section note"><dt>Note</dt><dd>Throws std::runtime_error when nothing carries that name. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when nothing carries that name. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

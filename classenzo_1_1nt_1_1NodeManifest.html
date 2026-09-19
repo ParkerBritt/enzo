@@ -111,8 +111,14 @@ const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp;&
 <tr class="memdesc:afb3e43a85e1867b3ecaed67c7682c6c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node type this manifest describes, with no constructor or folder filled in yet. <br /></td></tr>
 <tr class="separator:afb3e43a85e1867b3ecaed67c7682c6c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff3df1b4e2ca014cdbd534aaeb0593fd" id="r_aff3df1b4e2ca014cdbd534aaeb0593fd"><td class="memItemLeft" align="right" valign="top"><a id="aff3df1b4e2ca014cdbd534aaeb0593fd" name="aff3df1b4e2ca014cdbd534aaeb0593fd"></a>
-const <a class="el" href="structenzo_1_1nt_1_1NodeImplementation.html">NodeImplementation</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getImplementation</b> () const</td></tr>
+const NodeImplementation &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getImplementation</b> () const</td></tr>
 <tr class="separator:aff3df1b4e2ca014cdbd534aaeb0593fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa88f71dba318448f439146bec246d907" id="r_aa88f71dba318448f439146bec246d907"><td class="memItemLeft" align="right" valign="top">const std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa88f71dba318448f439146bec246d907">getParameterValues</a> () const</td></tr>
+<tr class="memdesc:aa88f71dba318448f439146bec246d907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parameter values an alias sets, as written in the manifest.  <br /></td></tr>
+<tr class="separator:aa88f71dba318448f439146bec246d907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab641e5f96d4c5090f415cba43637b1b8" id="r_ab641e5f96d4c5090f415cba43637b1b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab641e5f96d4c5090f415cba43637b1b8">getNodeAlias</a> (const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp;aliasedType) const</td></tr>
+<tr class="memdesc:ab641e5f96d4c5090f415cba43637b1b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the alias this manifest describes.  <br /></td></tr>
+<tr class="separator:ab641e5f96d4c5090f415cba43637b1b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -128,14 +134,71 @@ Static Public Member Functions</h2></td></tr>
 <p>A node folder holds a node.yaml declaring the label, tags, input and output counts, parameters, and implementation of the node. This class is that file read into memory.</p>
 <p>Example</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NodeManifest.html">NodeManifest</a> manifest = <a class="code hl_function" href="#aa1b52dfede80d2f8f4f2156b3662cd7a">NodeManifest::loadFromFile</a>(<span class="stringliteral">&quot;nodes/sweep/node.yaml&quot;</span>);</div>
-<div class="line">manifest.<a class="code hl_function" href="#afb3e43a85e1867b3ecaed67c7682c6c8">getNodeType</a>().<a class="code hl_function" href="structenzo_1_1nt_1_1NodeType.html#aa9ad3a05fa98ceee839c3e184ceceb8d">getLabel</a>();          <span class="comment">// &quot;Sweep&quot;</span></div>
-<div class="line">manifest.getImplementation().constructor;   <span class="comment">// &quot;sweep&quot;</span></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NodeManifest_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NodeManifest.html">enzo::nt::NodeManifest</a></div><div class="ttdoc">The in memory form of one node's manifest file.</div><div class="ttdef"><b>Definition</b> NodeManifest.h:43</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NodeManifest_html_aa1b52dfede80d2f8f4f2156b3662cd7a"><div class="ttname"><a href="#aa1b52dfede80d2f8f4f2156b3662cd7a">enzo::nt::NodeManifest::loadFromFile</a></div><div class="ttdeci">static NodeManifest loadFromFile(const std::filesystem::path &amp;path)</div><div class="ttdoc">Returns the manifest described by a node.yaml file.</div><div class="ttdef"><b>Definition</b> NodeManifest.cpp:315</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NodeManifest_html_afb3e43a85e1867b3ecaed67c7682c6c8"><div class="ttname"><a href="#afb3e43a85e1867b3ecaed67c7682c6c8">enzo::nt::NodeManifest::getNodeType</a></div><div class="ttdeci">const NodeType &amp; getNodeType() const</div><div class="ttdoc">Returns the node type this manifest describes, with no constructor or folder filled in yet.</div><div class="ttdef"><b>Definition</b> NodeManifest.h:55</div></div>
-<div class="ttc" id="astructenzo_1_1nt_1_1NodeType_html_aa9ad3a05fa98ceee839c3e184ceceb8d"><div class="ttname"><a href="structenzo_1_1nt_1_1NodeType.html#aa9ad3a05fa98ceee839c3e184ceceb8d">enzo::nt::NodeType::getLabel</a></div><div class="ttdeci">const std::string &amp; getLabel() const</div><div class="ttdoc">Returns the human readable type label shown in the UI (eg. &quot;Copy To Points&quot;)</div><div class="ttdef"><b>Definition</b> NodeType.h:82</div></div>
+<div class="line">manifest.getNodeType().getLabel();                                   <span class="comment">// &quot;Sweep&quot;</span></div>
+<div class="line">std::get&lt;CppImplementation&gt;(manifest.getImplementation()).constructor; <span class="comment">// &quot;sweep&quot;</span></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NodeManifest_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NodeManifest.html">enzo::nt::NodeManifest</a></div><div class="ttdoc">The in memory form of one node's manifest file.</div><div class="ttdef"><b>Definition</b> NodeManifest.h:50</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NodeManifest_html_aa1b52dfede80d2f8f4f2156b3662cd7a"><div class="ttname"><a href="#aa1b52dfede80d2f8f4f2156b3662cd7a">enzo::nt::NodeManifest::loadFromFile</a></div><div class="ttdeci">static NodeManifest loadFromFile(const std::filesystem::path &amp;path)</div><div class="ttdoc">Returns the manifest described by a node.yaml file.</div><div class="ttdef"><b>Definition</b> NodeManifest.cpp:471</div></div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Nothing here touches the surrounding folder, which is what lets tests build a node from a string. Scanning directories and resolving the icon and the library against them is the loader's job. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab641e5f96d4c5090f415cba43637b1b8" name="ab641e5f96d4c5090f415cba43637b1b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab641e5f96d4c5090f415cba43637b1b8">&#9670;&#160;</a></span>getNodeAlias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structenzo_1_1nt_1_1NodeAlias.html">NodeAlias</a> enzo::nt::NodeManifest::getNodeAlias </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeType.html">NodeType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>aliasedType</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the alias this manifest describes. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when a value does not fit a parameter of the aliased type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">aliasedType</td><td>The node type the alias stands in for, whose parameters give each value its type. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa88f71dba318448f439146bec246d907" name="aa88f71dba318448f439146bec246d907"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa88f71dba318448f439146bec246d907">&#9670;&#160;</a></span>getParameterValues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp; enzo::nt::NodeManifest::getParameterValues </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the parameter values an alias sets, as written in the manifest. </p>
+<p><code>offset: [0, 1, 0]</code> gives <code>{"offset", {"0", "1", "0"}}</code>. </p>
+
+</div>
+</div>
 <a id="aa1b52dfede80d2f8f4f2156b3662cd7a" name="aa1b52dfede80d2f8f4f2156b3662cd7a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa1b52dfede80d2f8f4f2156b3662cd7a">&#9670;&#160;</a></span>loadFromFile()</h2>
 
@@ -160,7 +223,12 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the manifest described by a node.yaml file. </p>
-<dl class="section note"><dt>Note</dt><dd>Throws std::runtime_error when the file is missing or malformed. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when the file is missing or malformed. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -188,7 +256,12 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the manifest described by a yaml document. </p>
-<dl class="section note"><dt>Note</dt><dd>Throws std::runtime_error when the document is malformed. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>when the document is malformed. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

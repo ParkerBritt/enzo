@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['blend_0',['blend',['../structenzo_1_1utils_1_1ElementBlend.html#a997f64f4588df6da72451c26ac5545bb',1,'enzo::utils::ElementBlend']]]
+  ['aliasedtype_0',['aliasedType',['../structenzo_1_1nt_1_1NodeAlias.html#af857e33146a1b500cfa46bf5c5c5f547',1,'enzo::nt::NodeAlias::aliasedType'],['../structenzo_1_1nt_1_1AliasImplementation.html#a6f26391f0ba822ff8ee26383abfc2367',1,'enzo::nt::AliasImplementation::aliasedType']]]
 ];

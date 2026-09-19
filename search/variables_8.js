@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['parameterchanged_0',['parameterChanged',['../classenzo_1_1nt_1_1Node.html#ae2b94c535b1161f3ab7c8cd969eb4137',1,'enzo::nt::Node']]],
-  ['position_1',['position',['../namespaceenzo_1_1attr_1_1names.html#a0b7eaa2495492d135d432bbc9f2c8c59',1,'enzo::attr::names']]]
+  ['optional_0',['optional',['../structenzo_1_1nt_1_1InputPort.html#a4da3a0434d0f0e2e91d0d4a9afb971df',1,'enzo::nt::InputPort']]]
 ];
