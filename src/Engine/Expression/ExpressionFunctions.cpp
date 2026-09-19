@@ -1,8 +1,6 @@
 #include "Engine/Expression/DasContext.h"
 #include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Network/NetworkManager.h"
-#include "Engine/Network/NetworkPath.h"
-#include "Engine/Parameter/NodeParameter.h"
 #include "daScript/ast/ast_interop.h"
 
 // The daslang module that exposes enzo's functions to expressions. Each one
@@ -19,7 +17,7 @@ const ExpressionContext* expressionContextOf(das::Context* dasContext)
     return static_cast<DasContext*>(dasContext)->expressionContext;
 }
 
-// Returns the parameter a path points at, resolved relative to the node the
+// Returns a parameter's value, with the path resolved relative to the node the
 // running expression belongs to.
 //
 // Raises a daslang error when there is no context or the path matches nothing,
@@ -27,50 +25,40 @@ const ExpressionContext* expressionContextOf(das::Context* dasContext)
 //
 // TODO: when a node error API exists, a failing parameter eval during a node's
 // cook should also raise that node's error, not just the expression's.
-std::shared_ptr<prm::NodeParameter> parameterAt(const char* path, das::Context* dasContext)
+template <typename Value>
+Value readParameter(const char* path, int32_t index, das::Context* dasContext)
 {
     const ExpressionContext* context = expressionContextOf(dasContext);
     if (!context) dasContext->throw_error("parameter functions need a node to resolve against");
 
     const char* safePath = path ? path : "";
-    auto parameter = nt::nm().findParameter(NetworkPath(safePath), context->currentNode()).lock();
-    if (!parameter) dasContext->throw_error_ex("no parameter matches path '%s'", safePath);
+    auto value = context->readParameter<Value>(safePath, static_cast<unsigned int>(index));
+    if (!value) dasContext->throw_error_ex("no parameter matches path '%s'", safePath);
 
-    // Reading a parameter makes its node a dependency, so the expression recooks
-    // when that node changes.
-    context->recordExpressionDependency(nt::Unit{parameter->getNodeId()});
-
-    return parameter;
+    return *value;
 }
 
 // Parameter functions exposed to daslang expressions
 
-/// @brief Evaluates a parameter as a float, one component at a time.
+/// @brief Returns a parameter's value as a float, one component at a time.
 ///
 /// e.g. prm("grid_1.t", 1) reads the second component of a vector, while the
 /// index defaults to 0 so prm("grid_1.tx") reads the first.
-///
-/// @return The float value, or zero when nothing resolves the path.
 floatT prm(const char* path, int32_t index, das::Context* dasContext)
 {
-    auto parameter = parameterAt(path, dasContext);
-    return parameter ? parameter->evalFloat(static_cast<unsigned int>(index)) : 0;
+    return readParameter<floatT>(path, index, dasContext);
 }
 
-/// @brief Evaluates a parameter as an integer, e.g. prmI("copies.count").
-/// @return The integer value, or zero when nothing resolves the path.
+/// @brief Returns a parameter's value as an integer, e.g. prmI("copies.count").
 intT prmI(const char* path, int32_t index, das::Context* dasContext)
 {
-    auto parameter = parameterAt(path, dasContext);
-    return parameter ? parameter->evalInt(static_cast<unsigned int>(index)) : 0;
+    return readParameter<intT>(path, index, dasContext);
 }
 
-/// @brief Evaluates a parameter as a string, e.g. prmS("file.name").
-/// @return The string value, or empty when nothing resolves the path.
+/// @brief Returns a parameter's value as a string, e.g. prmS("file.name").
 char* prmS(const char* path, int32_t index, das::Context* dasContext)
 {
-    auto parameter = parameterAt(path, dasContext);
-    const String value = parameter ? parameter->evalString(static_cast<unsigned int>(index)) : "";
+    const String value = readParameter<String>(path, index, dasContext);
     return dasContext->allocateString(value, nullptr);
 }
 
