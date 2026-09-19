@@ -11,6 +11,8 @@ DECLARE_MODULE(ExpressionModule);
 
 namespace enzo::expr {
 
+static_assert(maxScriptArguments == DAS_MAX_FUNCTION_ARGUMENTS);
+
 // Keeps the daslang objects out of the header so the heavy daslang header is
 // compiled here once, not in every file that uses a script.
 struct CompiledScript::Impl
@@ -19,7 +21,7 @@ struct CompiledScript::Impl
     std::shared_ptr<DasContext> context;
 };
 
-CompiledScript::CompiledScript() : impl_(std::make_unique<Impl>()) {}
+CompiledScript::CompiledScript(Impl impl) : impl_(std::make_unique<Impl>(std::move(impl))) {}
 
 CompiledScript::~CompiledScript() = default;
 
@@ -32,24 +34,6 @@ String collectErrors(const das::ProgramPtr& program)
         message += das::reportError(error.at, error.what, error.extra, error.fixme, error.cerr);
     }
     return message;
-}
-
-bool evalRaw(DasContext& context, const String& functionName, vec4f& result, String& error)
-{
-    das::SimFunction* function = context.findFunction(functionName.c_str());
-    if (!function)
-    {
-        error = "function not found: " + functionName;
-        return false;
-    }
-
-    result = context.evalWithCatch(function, nullptr);
-    if (const char* exception = context.getException())
-    {
-        error = exception;
-        return false;
-    }
-    return true;
 }
 
 // Installs the evaluation world on the context for one run and restores it
@@ -68,6 +52,54 @@ class ScopedExpressionContext
     DasContext& context_;
     const ExpressionContext* previous_;
 };
+
+vec4f toRawArgument(const ScriptArgument& argument)
+{
+    if (const intT* integer = std::get_if<intT>(&argument))
+    {
+        return das::cast<int64_t>::from(*integer);
+    }
+    return das::cast<void*>::from(std::get<void*>(argument));
+}
+
+bool evalRaw(
+    DasContext& context,
+    const String& functionName,
+    std::span<const ScriptArgument> arguments,
+    const ExpressionContext* expressionContext,
+    vec4f& result,
+    String& error
+)
+{
+    ScopedExpressionContext scope(context, expressionContext);
+
+    das::SimFunction* function = context.findFunction(functionName.c_str());
+    if (!function)
+    {
+        error = "function not found: " + functionName;
+        return false;
+    }
+
+    if (arguments.size() > maxScriptArguments)
+    {
+        error = "too many arguments for " + functionName;
+        return false;
+    }
+
+    vec4f rawArguments[maxScriptArguments];
+    for (size_t argumentIndex = 0; argumentIndex < arguments.size(); ++argumentIndex)
+    {
+        rawArguments[argumentIndex] = toRawArgument(arguments[argumentIndex]);
+    }
+
+    result = context.evalWithCatch(function, rawArguments);
+    if (const char* exception = context.getException())
+    {
+        error = exception;
+        return false;
+    }
+    return true;
+}
 } // namespace
 
 bool CompiledScript::evalFloat(
@@ -77,9 +109,8 @@ bool CompiledScript::evalFloat(
     String& error
 )
 {
-    ScopedExpressionContext scope(*impl_->context, context);
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
     result = das::cast<float>::to(raw);
     return true;
 }
@@ -91,9 +122,8 @@ bool CompiledScript::evalInt(
     String& error
 )
 {
-    ScopedExpressionContext scope(*impl_->context, context);
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
     result = das::cast<int64_t>::to(raw);
     return true;
 }
@@ -105,14 +135,35 @@ bool CompiledScript::evalString(
     String& error
 )
 {
-    ScopedExpressionContext scope(*impl_->context, context);
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
 
     // daslang hands back a heap string as a char pointer, null when empty.
     const char* text = das::cast<char*>::to(raw);
     result = text ? text : "";
     return true;
+}
+
+bool CompiledScript::run(
+    const String& functionName,
+    std::span<const ScriptArgument> arguments,
+    const ExpressionContext* context,
+    String& error
+)
+{
+    vec4f raw;
+    return evalRaw(*impl_->context, functionName, arguments, context, raw, error);
+}
+
+std::shared_ptr<CompiledScript> CompiledScript::clone() const
+{
+    auto context = std::make_shared<DasContext>(
+        *impl_->context,
+        uint32_t(das::ContextCategory::thread_clone)
+    );
+    if (context->failed) return nullptr;
+
+    return std::shared_ptr<CompiledScript>(new CompiledScript({impl_->program, context}));
 }
 
 DasRuntime& DasRuntime::instance()
@@ -165,10 +216,7 @@ DasRuntime::compile(const String& name, const String& source, String& error)
         return nullptr;
     }
 
-    std::shared_ptr<CompiledScript> script(new CompiledScript());
-    script->impl_->program = program;
-    script->impl_->context = context;
-    return script;
+    return std::shared_ptr<CompiledScript>(new CompiledScript({program, context}));
 }
 
 } // namespace enzo::expr

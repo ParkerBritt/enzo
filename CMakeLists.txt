@@ -397,6 +397,7 @@ if(ENZO_BUILD_TESTS)
     add_executable(${TestExec}
         tests/main-tests.cpp
         tests/ExpressionEngineTests.cpp
+        tests/CompiledScriptTests.cpp
         tests/ParameterTests.cpp
         tests/NetworkGraphTests.cpp
         tests/RampTests.cpp

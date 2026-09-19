@@ -1,10 +1,18 @@
 #pragma once
 #include "Engine/Core/Types.h"
 #include <memory>
+#include <span>
+#include <variant>
 
 namespace enzo::expr {
 
 class ExpressionContext;
+
+/// @brief An argument to a script function, either an integer or the address a reference parameter writes to.
+using ScriptArgument = std::variant<intT, void*>;
+
+/// @brief The most arguments a script function can take.
+inline constexpr size_t maxScriptArguments = 32;
 
 /**
  * @brief A compiled daslang program ready to run.
@@ -55,11 +63,29 @@ class CompiledScript
         String& error
     );
 
+    /// @brief Runs an exported function for its side effects.
+    /// @return True on success, false when the function is missing or panics.
+    bool run(
+        const String& functionName,
+        std::span<const ScriptArgument> arguments,
+        const ExpressionContext* context,
+        String& error
+    );
+
+    /**
+     * @brief Returns a copy that shares the compiled program and runs in its own context.
+     *
+     * @return The clone, or null when its globals fail to initialise.
+     * @note A context runs one function at a time, so each thread needs its own clone.
+     */
+    std::shared_ptr<CompiledScript> clone() const;
+
   private:
     friend class DasRuntime;
-    CompiledScript();
-
     struct Impl;
+
+    explicit CompiledScript(Impl impl);
+
     std::unique_ptr<Impl> impl_;
 };
 
