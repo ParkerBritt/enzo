@@ -4,6 +4,7 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
+#include "Gui/Style/ThemeViewModel.h"
 #include "Gui/Timeline/TimelineViewModel.h"
 #include "Gui/Viewport/ViewportViewModel.h"
 #include <argparse/argparse.hpp>
@@ -13,6 +14,7 @@
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QFontDatabase>
+#include <QSet>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -100,8 +102,10 @@ QString parseCommandLine(int argc, char** argv)
 namespace {
 
 /// @brief Registers the bundled Public Sans and Inconsolata weights.
-void loadFonts()
+/// @return The font families they belong to, alphabetically.
+QStringList loadFonts()
 {
+    QSet<QString> families;
     QDirIterator it(
         QString::fromStdString((enzo::getStaticDir() / "fonts").string()),
         {"*.ttf"},
@@ -109,7 +113,15 @@ void loadFonts()
         QDirIterator::Subdirectories
     );
     while (it.hasNext())
-        QFontDatabase::addApplicationFont(it.next());
+    {
+        const int font = QFontDatabase::addApplicationFont(it.next());
+        for (const QString& family : QFontDatabase::applicationFontFamilies(font))
+            families.insert(family);
+    }
+
+    QStringList sorted(families.constBegin(), families.constEnd());
+    sorted.sort();
+    return sorted;
 }
 
 } // namespace
@@ -146,7 +158,7 @@ int main(int argc, char** argv)
     app.setOrganizationName("Enzo");
     app.setApplicationName("Enzo");
 
-    loadFonts();
+    const QStringList fontFamilies = loadFonts();
     QQuickStyle::setStyle("Basic");
 
     // The view-models bridge the engine to QML.
@@ -156,6 +168,8 @@ int main(int argc, char** argv)
     enzo::ui::ParametersViewModel parameters;
     enzo::ui::TimelineViewModel timeline;
     enzo::ui::SceneController scene;
+    enzo::ui::ThemeViewModel themeSettings;
+    themeSettings.setFontFamilies(fontFamilies);
 
     enzo::nt::NodeLoader::loadNodes();
 
@@ -186,6 +200,7 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("parameters", &parameters);
     engine.rootContext()->setContextProperty("timeline", &timeline);
     engine.rootContext()->setContextProperty("scene", &scene);
+    engine.rootContext()->setContextProperty("themeSettings", &themeSettings);
 
     // A run from a build directory loads QML straight from the source tree and
     // reloads on edit. An installed run loads the module compiled into the binary.

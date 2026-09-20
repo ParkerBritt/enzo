@@ -209,6 +209,8 @@ target_compile_definitions(enzoEngine PRIVATE
 qt_add_executable(${AppExec}
     src/Gui/main.cpp
     src/Gui/Style/ThemeLoader.cpp
+    src/Gui/Style/ThemeStore.cpp
+    src/Gui/Style/ThemeViewModel.cpp
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
     src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
@@ -316,6 +318,13 @@ qt_add_qml_module(${AppExec}
         src/Gui/Settings/SettingsWindow.qml
         src/Gui/Settings/SettingsPlaceholder.qml
         src/Gui/Settings/ThemePage.qml
+        src/Gui/Settings/ThemeSelector.qml
+        src/Gui/Settings/ThemeSwatch.qml
+        src/Gui/Settings/PaletteRow.qml
+        src/Gui/Settings/NumberTrack.qml
+        src/Gui/Settings/ColorPicker.qml
+        src/Gui/Settings/ColorCompare.qml
+        src/Gui/Settings/SwitchThemePrompt.qml
         src/Gui/Settings/KeymapPage.qml
         src/Gui/Viewport/Viewport.qml
     RESOURCES

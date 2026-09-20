@@ -9,18 +9,30 @@ Window {
 
     property int currentPage: 0
 
+    // The pages listed down the left, each with the footer's actions for the
+    // edits it holds.
     readonly property var pages: [
         {
             title: "Theme",
             icon: "palette",
-            source: "ThemePage.qml"
+            source: "ThemePage.qml",
+            hasPendingChanges: () => themeSettings.hasPendingChanges,
+            apply: () => themeSettings.apply(),
+            revert: () => themeSettings.revert()
         },
         {
             title: "Keymap",
             icon: "keyboard",
-            source: "KeymapPage.qml"
+            source: "KeymapPage.qml",
+            hasPendingChanges: () => false,
+            apply: () => {},
+            revert: () => {}
         },
     ]
+
+    readonly property var page: root.pages[root.currentPage]
+
+    readonly property bool pageHasPendingChanges: root.page.hasPendingChanges()
 
     width: 1040
     height: 720
@@ -86,6 +98,17 @@ Window {
                         }
                     }
 
+                    // Marks a page holding edits that are not written yet.
+                    Icon {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: entry.modelData.hasPendingChanges()
+                        name: "pencil"
+                        size: 12
+                        color: Theme.var.text
+                    }
+
                     HoverHandler {
                         id: hover
                     }
@@ -111,7 +134,7 @@ Window {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: footer.top
-            source: root.pages[root.currentPage].source
+            source: root.page.source
         }
 
         // The bar that applies or discards the current page's edits.
@@ -140,8 +163,8 @@ Window {
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
-                text: "No pending changes"
-                color: Theme.var.textMuted
+                text: root.pageHasPendingChanges ? "Unsaved changes" : "No pending changes"
+                color: root.pageHasPendingChanges ? Theme.var.text : Theme.var.textMuted
                 font.family: Theme.var.fontSans
                 font.pixelSize: 12
             }
@@ -154,13 +177,15 @@ Window {
 
                 TextButton {
                     text: "Revert"
-                    enabled: false
+                    enabled: root.pageHasPendingChanges
+                    onClicked: root.page.revert()
                 }
 
                 TextButton {
                     text: "Apply"
                     variant: "accent"
-                    enabled: false
+                    enabled: root.pageHasPendingChanges
+                    onClicked: root.page.apply()
                 }
             }
         }
