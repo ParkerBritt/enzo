@@ -21,7 +21,7 @@ Item {
             height: 44
             radius: 13
             color: Theme.var.surfaceRaised
-            border.color: Theme.var.fieldBorder
+            border.color: Theme.var.border
 
             Icon {
                 anchors.centerIn: parent

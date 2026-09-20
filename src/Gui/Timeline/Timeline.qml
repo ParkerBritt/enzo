@@ -144,13 +144,13 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width
                     height: 1
-                    color: Theme.var.fieldBorder
+                    color: Theme.var.border
                 }
 
                 Rectangle {
                     width: 1
                     height: parent.height
-                    color: Theme.var.fieldBorder
+                    color: Theme.var.border
                 }
             }
         }
@@ -258,7 +258,7 @@ Item {
         height: 24
         radius: 7
         color: Theme.var.fieldSurface
-        border.color: Theme.var.fieldBorder
+        border.color: Theme.var.border
     }
 
     // One of the buttons that drive playback.
@@ -293,7 +293,7 @@ Item {
             anchors.right: parent.right
             width: 1
             height: parent.height
-            color: Theme.var.fieldBorder
+            color: Theme.var.border
         }
     }
 

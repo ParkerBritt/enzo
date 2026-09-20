@@ -4,11 +4,17 @@
 #include <QColor>
 #include <QVariant>
 
+#include <string>
+
+#include <yaml-cpp/yaml.h>
+
 #include "Gui/Style/ThemeLoader.h"
 
 using enzo::ui::ThemeLoader;
 
 namespace {
+
+const std::string kShippedThemePath = ENZO_DEV_STATIC_DIR "/theme/default.yml";
 
 const QString kDefaultTheme = R"(
 variables:
@@ -51,22 +57,6 @@ components:
 
     REQUIRE(faded.red() == 139);
     REQUIRE(faded.alphaF() == Catch::Approx(0.5).margin(0.01));
-}
-
-TEST_CASE("A list resolves to a list of values")
-{
-    const QString theme = R"(
-components:
-  spreadsheet:
-    attributeOwnerColors:
-      - "#4ea1ff"
-      - "#f0a93b"
-)";
-    const auto tokens = ThemeLoader::loadFromString(theme);
-    const QVariantList colours = tokens.value("spreadsheet.attributeOwnerColors").toList();
-
-    REQUIRE(colours.size() == 2);
-    REQUIRE(colours.at(0).value<QColor>() == QColor("#4ea1ff"));
 }
 
 TEST_CASE("A variable cycle is an error")
@@ -154,10 +144,41 @@ TEST_CASE("An unparseable user theme falls back to the default")
 
 TEST_CASE("The shipped default theme resolves")
 {
-    const auto tokens =
-        ThemeLoader::loadFromFile(QStringLiteral(ENZO_DEV_STATIC_DIR "/theme/default.yml"));
+    const auto tokens = ThemeLoader::loadFromFile(QString::fromStdString(kShippedThemePath));
 
     REQUIRE(tokens.value("var.accent").value<QColor>() == QColor("#8b5cf6"));
-    REQUIRE(tokens.value("node.bodyColor").value<QColor>() == QColor("#1f202a"));
-    REQUIRE(tokens.value("spreadsheet.attributeOwnerColors").toList().size() == 5);
+    REQUIRE(tokens.value("node.bodyColor") == tokens.value("var.selectedFill"));
+    REQUIRE(tokens.value("viewport.backgroundColor") == tokens.value("var.surfaceHeader"));
+}
+
+TEST_CASE("Every colour the shipped theme gives a component comes from a variable")
+{
+    const YAML::Node theme = YAML::LoadFile(kShippedThemePath);
+
+    // The display flag holds its own colour rather than reading a variable.
+    const std::string exemptSlot = "displayFlagColor";
+
+    for (const auto& component : theme["components"])
+        for (const auto& slot : component.second)
+        {
+            const std::string slotName = slot.first.Scalar();
+            if (slotName == exemptSlot) continue;
+
+            const std::string value = slot.second.Scalar();
+            INFO(component.first.Scalar() << '.' << slotName << " is " << value);
+            REQUIRE(value.find('#') == std::string::npos);
+        }
+}
+
+TEST_CASE("Every entry the shipped palette lists names a variable")
+{
+    const YAML::Node theme = YAML::LoadFile(kShippedThemePath);
+
+    for (const auto& section : theme["palette"])
+        for (const auto& entry : section.second)
+        {
+            const std::string name = entry.first.Scalar();
+            INFO(section.first.Scalar() << " lists " << name);
+            REQUIRE(theme["variables"][name]);
+        }
 }

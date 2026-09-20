@@ -9,7 +9,7 @@ namespace enzo::ui {
 /// @brief Resolves a YAML theme into a flat table of design tokens.
 ///
 /// Tokens are keyed `group.slot`, with `var.<name>` for the shared palette. A value
-/// is a colour, a number, a font name, or a list of those.
+/// is a colour, a number or a font name.
 ///
 /// The default theme must define every token, so any fault in it throws. The optional
 /// user theme only overrides, and a faulty entry there falls back to the default.

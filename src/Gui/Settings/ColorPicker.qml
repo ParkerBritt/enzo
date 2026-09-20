@@ -45,7 +45,7 @@ Popup {
 
     background: Rectangle {
         radius: Theme.var.panelRadius
-        color: Theme.var.surfacePanel
+        color: Theme.var.surfaceRaised
         border.color: Theme.var.border
         layer.enabled: true
         layer.effect: MultiEffect {

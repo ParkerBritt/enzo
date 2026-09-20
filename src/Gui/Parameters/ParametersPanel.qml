@@ -9,7 +9,7 @@ Item {
 
     // Layout constants.
     readonly property real defaultWidth: 500
-    readonly property real defaultHeight: Theme.parameter.panelHeight
+    readonly property real defaultHeight: 420
     readonly property real minWidth: 200
     readonly property real minHeight: 120
     // Space above and below the panel's content.

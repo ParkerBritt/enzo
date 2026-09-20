@@ -24,7 +24,7 @@ Rectangle {
 
     implicitWidth: content.implicitWidth + 16
     implicitHeight: content.implicitHeight + 10
-    radius: Theme.parameter.borderRadius
+    radius: Theme.var.controlRadius
     color: mouse.containsMouse && root.enabled ? Theme.iconButton.plainHoverColor : "transparent"
     opacity: root.enabled ? 1 : 0.35
     scale: mouse.pressed && root.enabled ? 0.88 : (mouse.containsMouse && root.enabled ? 1.06 : 1)

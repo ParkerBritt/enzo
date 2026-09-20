@@ -262,7 +262,7 @@ Column {
 
         width: root.width
         height: 132
-        radius: Theme.parameter.borderRadius
+        radius: Theme.var.controlRadius
         color: Theme.ramp.plotColor
         border.color: Theme.ramp.lineColor
 

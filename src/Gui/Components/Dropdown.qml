@@ -87,7 +87,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         visible: root.icon === ""
-        radius: Theme.parameter.borderRadius
+        radius: Theme.var.controlRadius
         color: Theme.parameter.backgroundColor
         border.color: list.visible ? Theme.var.accentLine : Theme.parameter.lineColor
 

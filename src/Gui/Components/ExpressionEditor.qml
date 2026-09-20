@@ -305,7 +305,7 @@ Popup {
 
                             radius: 6
                             color: Theme.var.fieldSurface
-                            border.color: Theme.var.fieldBorder
+                            border.color: Theme.var.border
                             width: chipText.implicitWidth + 14
                             height: 22
 
@@ -348,7 +348,7 @@ Popup {
                     height: 26
                     radius: 7
                     color: revertMouse.containsMouse ? Theme.var.borderSoft : "transparent"
-                    border.color: Theme.var.fieldBorder
+                    border.color: Theme.var.border
 
                     Text {
                         id: revertText

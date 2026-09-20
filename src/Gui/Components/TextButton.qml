@@ -14,7 +14,7 @@ Rectangle {
     // The four colours a variant styles the button with.
     property color surfaceColor: Theme.var.surfaceRaised
     property color hoverColor: Theme.var.selectedFill
-    property color borderColor: Theme.var.fieldBorder
+    property color borderColor: Theme.var.border
     property color labelColor: Theme.var.text
 
     implicitWidth: content.implicitWidth + 24

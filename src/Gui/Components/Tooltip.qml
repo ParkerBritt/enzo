@@ -12,7 +12,7 @@ import Enzo
 ToolTip {
     id: root
 
-    delay: Theme.tooltip.delay
+    delay: 500
 
     background: Rectangle {
         radius: 6
