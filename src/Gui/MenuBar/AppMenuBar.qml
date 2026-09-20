@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Dialogs
 import "../Components"
+import "../Settings"
 
 // The menu bar used at the top of the app.
 MenuBar {
@@ -20,6 +21,15 @@ MenuBar {
     }
     PlaceholderDialog {
         id: placeholder
+    }
+    SettingsWindow {
+        id: settings
+    }
+
+    function showSettings() {
+        settings.show();
+        settings.raise();
+        settings.requestActivate();
     }
 
     // Reading scene.recentFiles inside the entries binding keeps the menu live.
@@ -78,6 +88,10 @@ MenuBar {
                     {
                         text: "Redo",
                         action: () => network.redo()
+                    },
+                    {
+                        text: "Settings…",
+                        action: () => showSettings()
                     },
                 ]
         },
