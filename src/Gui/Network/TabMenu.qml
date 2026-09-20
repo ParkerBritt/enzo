@@ -83,7 +83,7 @@ Popup {
             background: Rectangle {
                 radius: 7
                 color: Theme.var.fieldSurface
-                border.color: search.activeFocus ? Theme.tabMenu.focusBorderColor : Theme.var.fieldBorder
+                border.color: search.activeFocus ? Theme.tabMenu.focusBorderColor : Theme.var.border
             }
 
             // Navigation keys steer the list, every other key edits the text.

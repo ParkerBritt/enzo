@@ -9,7 +9,7 @@ Rectangle {
     required property var item
 
     implicitHeight: Constants.parameterHeight
-    radius: Theme.parameter.borderRadius
+    radius: Theme.var.controlRadius
     color: Theme.parameter.backgroundColor
     border.color: attributeList.visible ? Theme.var.accentLine : Theme.parameter.lineColor
 

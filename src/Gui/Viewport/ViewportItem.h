@@ -96,10 +96,10 @@ class ViewportItem : public QQuickFramebufferObject
   private:
     GLCamera camera_{-10.f, 5.f, -10.f};
     ViewportViewModel* viewModel_ = nullptr;
-    QColor backgroundColor_{"#101015"};
-    QColor gradientCenter_{"#191920"};
-    QColor gradientEdge_{"#0b0b0f"};
-    QColor geometryColor_{"#a8a8b8"};
+    QColor backgroundColor_;
+    QColor gradientCenter_;
+    QColor gradientEdge_;
+    QColor geometryColor_;
     bool wireframeVisible_ = true;
 
     // Geometry handed to the renderer on the next sync. Null once consumed.

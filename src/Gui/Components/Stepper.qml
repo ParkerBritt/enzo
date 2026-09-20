@@ -15,7 +15,7 @@ Rectangle {
 
     implicitWidth: row.implicitWidth + 4
     implicitHeight: 30
-    radius: Theme.parameter.borderRadius
+    radius: Theme.var.controlRadius
     color: Theme.parameter.backgroundColor
     border.color: Theme.parameter.lineColor
 

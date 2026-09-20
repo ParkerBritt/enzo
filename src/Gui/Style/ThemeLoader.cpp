@@ -40,18 +40,10 @@ QColor parseColor(const QString& hex)
     return QColor(channel[0], channel[1], channel[2], channel[3]);
 }
 
-// Resolves one value into a colour, number, font name or list. A $name reads a
+// Resolves one value into a colour, number or font name. A $name reads a
 // variable, optionally faded with $name @ opacity.
 QVariant resolveValue(const YAML::Node& value, const Variables& variables, QSet<QString>& resolving)
 {
-    if (value.IsSequence())
-    {
-        QVariantList list;
-        for (const auto& item : value)
-            list.append(resolveValue(item, variables, resolving));
-        return list;
-    }
-
     const QString text = toQString(value).trimmed();
 
     if (text.startsWith(kColorMarker)) return parseColor(text);

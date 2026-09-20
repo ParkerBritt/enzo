@@ -146,7 +146,7 @@ Item {
     Rectangle {
         id: track
         anchors.fill: parent
-        radius: Theme.parameter.borderRadius
+        radius: Theme.var.controlRadius
         color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBackgroundColor : Theme.expression.backgroundColor) : Theme.parameter.backgroundColor
         border.color: root.expressionStyled ? (root.expressionInvalid ? Theme.expression.invalidBorderColor : Theme.expression.borderColor) : Theme.parameter.lineColor
 
@@ -160,7 +160,7 @@ Item {
             y: fill.inset
             height: parent.height - fill.inset * 2
             width: (parent.width - fill.inset * 2) * root.fraction
-            radius: Theme.parameter.borderRadius - fill.inset
+            radius: Theme.var.controlRadius - fill.inset
             color: Theme.slider.fillColor
         }
 

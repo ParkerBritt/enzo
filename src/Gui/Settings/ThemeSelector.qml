@@ -33,7 +33,7 @@ Item {
         anchors.fill: parent
         radius: 8
         color: Theme.var.fieldSurface
-        border.color: themeSettings.hasPendingChanges ? Theme.var.accentLine : Theme.var.fieldBorder
+        border.color: themeSettings.hasPendingChanges ? Theme.var.accentLine : Theme.var.border
 
         Row {
             anchors.left: parent.left

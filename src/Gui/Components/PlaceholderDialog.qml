@@ -23,7 +23,7 @@ Popup {
     padding: 0
     width: 320
 
-    Overlay.modal: Rectangle { color: "#80000000" }
+    Overlay.modal: Rectangle { color: Theme.var.dialogDim }
 
     background: Rectangle {
         radius: Theme.var.panelRadius

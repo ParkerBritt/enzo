@@ -23,7 +23,7 @@ Item {
 
     // The field colours for an editable theme and for a locked one.
     readonly property color fieldColor: root.editable ? Theme.var.fieldSurface : "transparent"
-    readonly property color fieldBorderColor: root.editable ? Theme.var.fieldBorder : Theme.var.borderSoft
+    readonly property color fieldBorderColor: root.editable ? Theme.var.border : Theme.var.borderSoft
     readonly property color fieldTextColor: root.editable ? Theme.var.text : Theme.var.textLabel
 
     implicitHeight: 28
@@ -68,7 +68,7 @@ Item {
             height: 18
             radius: 5
             color: Theme.var.fieldSurface
-            border.color: Theme.var.fieldBorder
+            border.color: Theme.var.border
 
             Text {
                 anchors.centerIn: parent

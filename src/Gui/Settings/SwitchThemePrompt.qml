@@ -29,12 +29,12 @@ Popup {
     width: 400
 
     Overlay.modal: Rectangle {
-        color: "#80000000"
+        color: Theme.var.dialogDim
     }
 
     background: Rectangle {
         radius: Theme.var.panelRadius
-        color: Theme.var.surfacePanel
+        color: Theme.var.surfaceRaised
         border.color: Theme.var.border
         layer.enabled: true
         layer.effect: MultiEffect {

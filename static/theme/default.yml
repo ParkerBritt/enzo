@@ -11,13 +11,13 @@ palette:
     fieldSurface:  Field surface
     surfaceHeader: Header surface
     surface:       Panel surface
-    surfacePanel:  Floating panel
     surfaceRaised: Raised surface
     selectedFill:  Selected fill
-  Borders:
-    borderSoft:  Soft border
-    fieldBorder: Field border
-    border:      Panel border
+  Lines:
+    borderSoft: Soft border
+    border:     Panel border
+    line:       Line
+    lineBright: Line, bright
   Text:
     textStrong: Strong text
     text:       Body text
@@ -32,6 +32,9 @@ palette:
     success:       Success
     warning:       Warning
     warningBright: Warning, bright
+  Controls:
+    valueFill: Value fill
+    handle:    Handle
   Axes:
     axisX:      X axis
     axisXLight: X axis, light
@@ -39,11 +42,14 @@ palette:
     axisYLight: Y axis, light
     axisZ:      Z axis
     axisZLight: Z axis, light
+  Viewport:
+    geometry: Geometry
   Type:
     fontSans: Interface font
     fontMono: Data font
   Shape:
-    panelRadius: Panel radius
+    panelRadius:   Panel radius
+    controlRadius: Control radius
 
 variables:
   # Surfaces, darkest to lightest
@@ -51,17 +57,19 @@ variables:
   fieldSurface:  "#0d0d11"
   surfaceHeader: "#101015"
   surface:       "#141418"
-  surfacePanel:  "#17171c"
   surfaceRaised: "#191920"
 
-  # Fill behind a selected row or an active parameter value, a touch lighter
-  # than the field surface
+  # The lightest neutral fill, behind a selected row and on a node body
   selectedFill: "#2e2e38"
 
-  # Borders
-  borderSoft:  "#1d1d25"
-  fieldBorder: "#242430"
-  border:      "#262630"
+  # Dimming over the window behind a dialog
+  dialogDim: $background @ 0.5
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#1d1d25"
+  border:     "#262630"
+  line:       "#3d3d4c"
+  lineBright: "#59596b"
 
   # Text, brightest to dimmest
   textStrong: "#f6f6f9"
@@ -80,8 +88,11 @@ variables:
   accentDim:    $accent @ 0.15
   accentLine:   $accent @ 0.45
 
-  # Fill that marks a parameter's value, such as the bar in a slider
-  parameter: $selectedFill
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#2e2e38"
+
+  # The grip a value is dragged by
+  handle: "#c8c8d2"
 
   # Destructive actions, such as deleting a point
   danger: "#c98d92"
@@ -99,57 +110,53 @@ variables:
   axisYLight: "#7fd3a6"
   axisZLight: "#7fb4f2"
 
+  # Flat shading colour of the display geometry
+  geometry: "#a8a8b8"
+
   # Shape
-  panelRadius: 13
+  panelRadius:   13
+  controlRadius: 10
 
 components:
   menu:
-    barColor: "#0e0e12"
+    barColor: $surfaceHeader
   network:
-    dotColor: "#1e1e26"
+    dotColor: $borderSoft
     # The box dragged across the canvas to select nodes.
     selectionColor:       $accentDim
     selectionBorderColor: $accentLine
     selectionRadius:      4
   node:
-    bodyColor:        "#272834"
-    borderColor:      "#3d3d4c"
-    portColor:        "#4a4a54"
+    bodyColor:   $selectedFill
+    borderColor: $line
+    portColor:   $line
+    # Marks the node the viewport draws.
     displayFlagColor: "#4ea1ff"
   nodeLink:
-    inactiveColor: "#3a3a46"
-    activeColor:   "#59596b"
-    cutColor:      "#f5685f"
-    redirectColor: "#59596b"
+    inactiveColor: $line
+    activeColor:   $lineBright
+    cutColor:      $danger
+    redirectColor: $lineBright
   spreadsheet:
-    backgroundColor: $fieldSurface
-    lineColor:       $fieldBorder
+    backgroundColor:  $fieldSurface
+    lineColor:        $border
     selectedRowColor: $selectedFill
-    # Colours per attribute owner, indexed Points Vertices Faces Primitive Node
-    attributeOwnerColors:
-      - "#4ea1ff"
-      - "#f0a93b"
-      - "#46c98a"
-      - "#f5685f"
-      - "#b69bf2"
   parameter:
     # The floating panel container, translucent over the network behind it.
-    panelColor:      $surfacePanel
+    panelColor:      $surfaceRaised
     # The inset fields inside it, such as sliders and text boxes.
     backgroundColor: $fieldSurface
-    lineColor:       $fieldBorder
-    borderRadius:    10
-    panelHeight:     420
+    lineColor:       $border
   slider:
-    fillColor: $parameter
+    fillColor: $valueFill
   rangeDial:
     # The ring
     trackColor: $fieldSurface
-    edgeColor:  $fieldBorder
-    arcColor:   $parameter
+    edgeColor:  $border
+    arcColor:   $valueFill
     tickColor:  $textFaint
     # The two handles
-    handleColor:      "#c8c8d2"
+    handleColor:      $handle
     handleHoverColor: $textStrong
   codeEditor:
     backgroundColor:   $background
@@ -159,7 +166,6 @@ components:
     # A component driven by a formula instead of a literal, tinted in the accent
     backgroundColor:      $accent @ 0.06
     borderColor:          $accent @ 0.35
-    barColor:             $accent
     badgeColor:           $accentBright
     badgeBackgroundColor: $accent @ 0.18
     codeColor:            $textLabel
@@ -167,7 +173,6 @@ components:
     # A formula that failed to evaluate, falls back to the type default
     invalidBackgroundColor: $warning @ 0.06
     invalidBorderColor:     $warning @ 0.35
-    invalidBarColor:        $warning
     invalidResultColor:     $warningBright
   iconButton:
     # Surfaces per button variant, at rest and under the cursor.
@@ -178,31 +183,30 @@ components:
     accentHoverColor: $accentBright
   ramp:
     plotColor:     $fieldSurface
-    lineColor:     $fieldBorder
+    lineColor:     $border
     curveColor:    $accentBright
     fillColor:     $accent @ 0.25
-    pointColor:    "#8a8a94"
+    pointColor:    $textLabel
     selectedColor: $accentBright
   timeline:
-    # The frame scale and its ticks
+    # The frame scale and its ticks, dimmest to brightest
     baselineColor:  $border
-    frameTickColor: $fieldBorder
+    frameTickColor: $borderSoft
     minorTickColor: $selectedFill
-    majorTickColor: "#45454f"
+    majorTickColor: $line
     # The play button
-    playColor:      $parameter
+    playColor:      $valueFill
     playHoverColor: $textFaint
     # The marker on the current frame
     playheadColor: $accent
   toggle:
-    onColor: $parameter
+    onColor: $valueFill
   popup:
     highlightColor: $accentDim
   tooltip:
     backgroundColor: $surfaceRaised
     borderColor:     $border
     textColor:       $text
-    delay:           500
   primitivesTree:
     selectedColor: $accentBright
   tabMenu:
@@ -211,8 +215,7 @@ components:
   viewport:
     # The radial background gradient, from its bright centre through the base
     # colour out to the dark edge.
-    backgroundColor: "#101015"
-    gradientCenter:  "#191920"
-    gradientEdge:    "#0b0b0f"
-    # Flat shading colour of the display geometry.
-    geometryColor:   "#a8a8b8"
+    backgroundColor: $surfaceHeader
+    gradientCenter:  $surfaceRaised
+    gradientEdge:    $background
+    geometryColor:   $geometry

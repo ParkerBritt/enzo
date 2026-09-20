@@ -19,7 +19,7 @@ Rectangle {
 
     width: 30
     height: 30
-    radius: Theme.parameter.borderRadius
+    radius: Theme.var.controlRadius
     color: mouse.containsMouse ? root.hoverColor : root.surfaceColor
     border.color: root.variant === "field" ? Theme.parameter.lineColor : "transparent"
     opacity: enabled ? 1 : 0.35
