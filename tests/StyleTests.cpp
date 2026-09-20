@@ -51,3 +51,12 @@ TEST_CASE("A option written as a literal reads no parameter")
     REQUIRE_FALSE(prm::style::getReferencedParameterName("point vertex").has_value());
     REQUIRE_FALSE(prm::style::getReferencedParameterName("all").has_value());
 }
+
+TEST_CASE("The code style attaches to a parameter and reads back by name")
+{
+    prm::Template parameter(prm::Type::STRING, prm::Name("code", "Code"), prm::Default(""));
+    prm::style::attachStyle(parameter, "code");
+
+    REQUIRE(prm::style::toString(parameter.getStyle()) == "code");
+    REQUIRE(prm::style::options(parameter.getStyle()).empty());
+}

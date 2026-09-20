@@ -1,0 +1,25 @@
+version: 1
+
+name: script
+namespace: enzo
+label: Script
+tags: [script, attribute, expression]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: script
+
+parameters:
+  - name: code
+    label: Code
+    type: string
+    default: ""
+    style: code
+    tooltip: >
+      The code to run once for every point. Point attributes are read and written
+      as @name, and the point offset is pt.

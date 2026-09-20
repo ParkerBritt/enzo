@@ -1,4 +1,5 @@
 #include "Engine/Expression/PointScript.h"
+#include "Engine/Expression/VectorOperators.h"
 #include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Primitives/Primitive.h"
 #include <algorithm>
@@ -13,7 +14,7 @@ constexpr const char* runFunctionName = "enzoRunScript";
 constexpr const char* bindingPrefix = "enzoAttrib_";
 
 // The lines the wrapper adds above the user's code.
-constexpr int headerLineCount = 5;
+constexpr int headerLineCount = 6;
 
 bool isIdentifierStart(char character)
 {
@@ -318,6 +319,8 @@ String wrapScript(const String& code, const std::vector<AttributeBinding>& bindi
     return "options gen2\n"
            "require math\n"
            "require enzo_expression\n"
+           "require " +
+           String(vectorOperatorsModule) + "\n"
            "[export]\n"
            "def " +
            String(runFunctionName) + "(" + arguments + ") {\n" + code + "\n}\n";

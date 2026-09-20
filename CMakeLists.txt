@@ -258,6 +258,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Icon.qml
         src/Gui/Components/IconButton.qml
         src/Gui/Components/Panel.qml
+        src/Gui/Components/ParameterLabel.qml
         src/Gui/Components/ScrollArea.qml
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
@@ -284,6 +285,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/VectorParameter.qml
         src/Gui/Parameters/RangeDial.qml
         src/Gui/Parameters/StringParameter.qml
+        src/Gui/Parameters/CodeParameter.qml
         src/Gui/Parameters/AttributeParameter.qml
         src/Gui/Parameters/DropdownParameter.qml
         src/Gui/Parameters/Group.qml
@@ -402,6 +404,7 @@ if(ENZO_BUILD_TESTS)
         tests/ExpressionContextTests.cpp
         tests/ExpressionEngineTests.cpp
         tests/PointScriptTests.cpp
+        tests/ScriptNodeTests.cpp
         tests/ScriptEngineTests.cpp
         tests/CompiledScriptTests.cpp
         tests/ParameterTests.cpp

@@ -91,6 +91,8 @@ inline void attachStyle(prm::Template& parameter, const std::string& styleName)
         parameter.setStyle(BoolSwitch{});
     else if (styleName == "boolIcon")
         parameter.setStyle(BoolIcon{});
+    else if (styleName == "code")
+        parameter.setStyle(Code{});
     else if (styleName == "xyz")
         parameter.setStyle(Xyz{});
     else if (styleName == "rangeCircle")
@@ -113,6 +115,7 @@ inline std::string toString(const std::any& style)
 {
     if (holds<BoolSwitch>(style)) return "boolSwitch";
     if (holds<BoolIcon>(style)) return "boolIcon";
+    if (holds<Code>(style)) return "code";
     if (holds<Xyz>(style)) return "xyz";
     if (holds<RangeCircle>(style)) return "rangeCircle";
     if (holds<Attribute>(style)) return "attribute";

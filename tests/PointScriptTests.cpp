@@ -253,3 +253,37 @@ TEST_CASE("clone runs with the same bindings")
     geo::Mesh output = runScript(*clone, buildThreePointMesh());
     REQUIRE(getPointFloat(output, "height", 2) == 2.0f);
 }
+
+// Arithmetic between a vector and a single number
+
+TEST_CASE("A vector binding scales by a whole number")
+{
+    auto script = compileScript("@Position *= 5");
+    geo::Mesh output = runScript(*script, buildThreePointMesh());
+
+    REQUIRE(output.getPointPos(2) == Vector3(10, 0, 0));
+}
+
+TEST_CASE("A vector binding adds one number to every component")
+{
+    auto script = compileScript("@Position += 2.5");
+    geo::Mesh output = runScript(*script, buildThreePointMesh());
+
+    REQUIRE(output.getPointPos(1) == Vector3(3.5f, 2.5f, 2.5f));
+}
+
+TEST_CASE("A vector reads either way round in a sum")
+{
+    auto script = compileScript("@Position = 1 + @Position - 1.0");
+    geo::Mesh output = runScript(*script, buildThreePointMesh());
+
+    REQUIRE(output.getPointPos(2) == Vector3(2, 0, 0));
+}
+
+TEST_CASE("A vector binding divides by a whole number")
+{
+    auto script = compileScript("@Position /= 2");
+    geo::Mesh output = runScript(*script, buildThreePointMesh());
+
+    REQUIRE(output.getPointPos(2) == Vector3(1, 0, 0));
+}

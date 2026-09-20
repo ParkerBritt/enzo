@@ -20,6 +20,11 @@ struct BoolSwitch
 {
 };
 
+// A string edited as multi line code.
+struct Code
+{
+};
+
 // A vector whose components read as x, y and z axes, each with its own colour.
 struct Xyz
 {
