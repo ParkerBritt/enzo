@@ -194,11 +194,8 @@ Column {
                 })));
     }
 
-    Text {
-        text: root.item ? root.item.label : ""
-        color: Theme.var.textLabel
-        font.family: Theme.var.fontSans
-        font.pixelSize: 12
+    ParameterLabel {
+        item: root.item
     }
 
     // Point navigation on the left, presets and the point and curve ops on the right.

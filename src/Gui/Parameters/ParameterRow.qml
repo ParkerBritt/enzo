@@ -26,6 +26,9 @@ Item {
     // Kinds that run edge to edge instead of sitting inside the inset.
     readonly property var fullWidthKinds: ["divider"]
 
+    // Whether this row's control spans the panel under its own label.
+    readonly property bool isStacked: item && item.style === "code"
+
     readonly property real bodyInset: (item && fullWidthKinds.includes(item.kind)) ? 0 : contentInset
 
     // Kinds the row adds no side label for, either because the control draws its
@@ -33,7 +36,7 @@ Item {
     readonly property var unlabeledKinds: ["group", "ramp", "divider"]
 
     // Whether this row shows a label beside its control.
-    readonly property bool hasLabel: item && !unlabeledKinds.includes(item.kind) && !item.hidden && !item.labelHidden
+    readonly property bool hasLabel: item && !unlabeledKinds.includes(item.kind) && !isStacked && !item.hidden && !item.labelHidden
 
     // Width this row wants for its label, 0 when it shows none. A group reports
     // its nested rows so the column can span them.
@@ -102,7 +105,7 @@ Item {
 
         Row {
             // Width the control asks for, 0 when it takes whatever it is given.
-            readonly property real controlWidth: control.implicitWidth
+            readonly property real controlWidth: row.isStacked ? 0 : control.implicitWidth
 
             width: parent.width
             spacing: row.hasLabel ? row.labelGap : 0
@@ -137,6 +140,8 @@ Item {
                     case "string":
                         if (row.item.style === "attribute")
                             return attributeComp;
+                        if (row.item.style === "code")
+                            return codeComp;
                         return stringComp;
                     case "dropdown":
                         return dropComp;
@@ -189,6 +194,12 @@ Item {
     Component {
         id: stringComp
         StringParameter {
+            item: row.item
+        }
+    }
+    Component {
+        id: codeComp
+        CodeParameter {
             item: row.item
         }
     }

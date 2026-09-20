@@ -38,6 +38,15 @@ std::optional<Value> ExpressionContext::readParameter(const String& path, unsign
     return value;
 }
 
+void submitExpressionDependencies(const ExpressionContext& context)
+{
+    const nt::Unit unit{context.currentNode()};
+    nt::nm().graph().setCapturedDependencies(unit, context.getExpressionDependencies());
+
+    // The cook clears the node's time dependency before it starts.
+    if (context.dependsOnTime()) nt::nm().graph().setTimeDependent(unit, true);
+}
+
 template std::optional<floatT>
 ExpressionContext::readParameter<floatT>(const String&, unsigned int) const;
 template std::optional<intT>

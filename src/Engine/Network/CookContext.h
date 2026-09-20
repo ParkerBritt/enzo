@@ -23,6 +23,9 @@ class CookContext
 {
   public:
     CookContext(enzo::nt::NodeId nodeId, enzo::nt::NetworkManager& networkManager);
+
+    /// @brief Returns the id of the node being cooked.
+    enzo::nt::NodeId getNodeId() const { return nodeId_; }
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     unsigned int getInputCount();

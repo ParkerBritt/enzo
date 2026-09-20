@@ -69,6 +69,9 @@ class ExpressionContext
     mutable std::atomic<bool> readsTime_ = false;
 };
 
+/// @brief Records everything an expression read as dependencies of the node that ran it.
+void submitExpressionDependencies(const ExpressionContext& context);
+
 extern template std::optional<floatT>
 ExpressionContext::readParameter<floatT>(const String&, unsigned int) const;
 extern template std::optional<intT>

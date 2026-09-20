@@ -1,6 +1,7 @@
 #include "Engine/Expression/DasRuntime.h"
 #include "Engine/Expression/DasContext.h"
 #include "Engine/Expression/ExpressionContext.h"
+#include "Engine/Expression/VectorOperators.h"
 #include "daScript/daScript.h"
 
 // Makes daslang's builtin modules (math, strings, and the rest) available.
@@ -207,14 +208,18 @@ DasRuntime::compile(const String& name, const String& source, String& error)
     // daslang compiles from files, so the source is registered as a virtual file.
     const String fileName = name + ".das";
     auto fileAccess = das::make_smart<das::FsFileAccess>();
-    fileAccess->setFileInfo(
-        fileName.c_str(),
-        das::make_unique<das::TextFileInfo>(
-            source.c_str(),
-            static_cast<uint32_t>(source.size()),
-            false
-        )
-    );
+    const auto addFile = [&fileAccess](const String& path, const char* text) {
+        fileAccess->setFileInfo(
+            path.c_str(),
+            das::make_unique<das::TextFileInfo>(
+                text,
+                static_cast<uint32_t>(std::char_traits<char>::length(text)),
+                false
+            )
+        );
+    };
+    addFile(fileName, source.c_str());
+    addFile(String(vectorOperatorsModule) + ".das", vectorOperatorsSource);
 
     // Parse and type check.
     das::ProgramPtr program =

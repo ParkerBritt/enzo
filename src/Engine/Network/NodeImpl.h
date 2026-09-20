@@ -55,6 +55,9 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     /// @todo Add visual warning to GUI
     void throwWarning(std::string warning);
 
+    /// @brief Returns the id of the node being cooked.
+    NodeId getNodeId() const;
+
     /// @brief Returns the folder the node was loaded from, where its assets live.
     const std::filesystem::path& getNodeFolder() const;
 
