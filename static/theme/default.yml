@@ -1,5 +1,49 @@
-# Default Enzo theme. Ships with the program and defines every token, so a sparse
-# user theme.yml can override any single value and fall back to the rest.
+# The theme Enzo ships with. It defines every token, so a user theme only carries
+# the values it changes and falls back to the rest.
+
+name: Enzo
+
+# The palette the settings theme page lists, section by section. A variable left
+# out here is derived from the ones above it and is only edited in the file.
+palette:
+  Surfaces:
+    background:    Background
+    fieldSurface:  Field surface
+    surfaceHeader: Header surface
+    surface:       Panel surface
+    surfacePanel:  Floating panel
+    surfaceRaised: Raised surface
+    selectedFill:  Selected fill
+  Borders:
+    borderSoft:  Soft border
+    fieldBorder: Field border
+    border:      Panel border
+  Text:
+    textStrong: Strong text
+    text:       Body text
+    textLabel:  Label text
+    textMuted:  Muted text
+    textFaint:  Faint text
+  Accent:
+    accent:       Accent
+    accentBright: Accent, bright
+  Feedback:
+    danger:        Danger
+    success:       Success
+    warning:       Warning
+    warningBright: Warning, bright
+  Axes:
+    axisX:      X axis
+    axisXLight: X axis, light
+    axisY:      Y axis
+    axisYLight: Y axis, light
+    axisZ:      Z axis
+    axisZLight: Z axis, light
+  Type:
+    fontSans: Interface font
+    fontMono: Data font
+  Shape:
+    panelRadius: Panel radius
 
 variables:
   # Surfaces, darkest to lightest

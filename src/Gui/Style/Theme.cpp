@@ -1,9 +1,8 @@
 #include "Gui/Style/Theme.h"
 #include "Engine/Core/InstallPaths.h"
 #include "Gui/Style/ThemeLoader.h"
+#include "Gui/Style/ThemeStore.h"
 
-#include <QCoreApplication>
-#include <QStandardPaths>
 #include <QUrl>
 
 #include <exception>
@@ -12,18 +11,7 @@ namespace enzo::ui {
 
 namespace {
 
-QString defaultThemePath()
-{
-    return QStringLiteral(":/theme/default.yml");
-}
-
-QString userThemePath()
-{
-    // TODO: extract config path
-    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
-    if (dir.isEmpty()) return QString();
-    return dir + QChar(u'/') + QCoreApplication::applicationName() + QStringLiteral("/theme.yml");
-}
+Theme* themeInstance = nullptr;
 
 QString iconsDir()
 {
@@ -35,10 +23,19 @@ QString iconsDir()
 
 Theme::Theme(QObject* parent) : QQmlPropertyMap(this, parent)
 {
+    themeInstance = this;
+    insert(QStringLiteral("iconsDir"), iconsDir());
+    reload(readThemeYaml(activeThemeName()));
+}
+
+Theme* Theme::instance() { return themeInstance; }
+
+void Theme::reload(const QString& themeYaml)
+{
     QHash<QString, QVariant> tokens;
     try
     {
-        tokens = ThemeLoader::loadFromFile(defaultThemePath(), userThemePath());
+        tokens = ThemeLoader::loadFromString(shippedThemeYaml(), themeYaml);
     }
     catch (const std::exception& error)
     {
@@ -53,8 +50,6 @@ Theme::Theme(QObject* parent) : QQmlPropertyMap(this, parent)
         const QString slot = key.section('.', 1);
         getThemePropertyMap(group)->insert(slot, tokens.value(key));
     }
-
-    insert(QStringLiteral("iconsDir"), iconsDir());
 }
 
 QQmlPropertyMap* Theme::getThemePropertyMap(const QString& group)

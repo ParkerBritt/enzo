@@ -15,6 +15,15 @@ class Theme : public QQmlPropertyMap
   public:
     explicit Theme(QObject* parent = nullptr);
 
+    /// @brief Returns the singleton QML draws from.
+    /// @note Null until QML first reads it.
+    static Theme* instance();
+
+    /// @brief Repaints the interface in the shipped theme with the given theme YAML on top.
+    ///
+    /// @note An empty YAML leaves the shipped theme as it is.
+    void reload(const QString& themeYaml);
+
   private:
     /// @brief Returns the style property to value map for a theme group like `parameter`.
     /// @note Creates the group's map on first use, caching it for future calls.
