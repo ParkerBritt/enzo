@@ -121,6 +121,10 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab0af16ee3514b23e593f82a201d5a31a" id="r_ab0af16ee3514b23e593f82a201d5a31a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0af16ee3514b23e593f82a201d5a31a">throwWarning</a> (std::string warning)</td></tr>
 <tr class="memdesc:ab0af16ee3514b23e593f82a201d5a31a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays a warning on the node without interrupting the cook.  <br /></td></tr>
 <tr class="separator:ab0af16ee3514b23e593f82a201d5a31a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a114a843bd26410e4a784f09450ef23a0" id="r_a114a843bd26410e4a784f09450ef23a0"><td class="memItemLeft" align="right" valign="top"><a id="a114a843bd26410e4a784f09450ef23a0" name="a114a843bd26410e4a784f09450ef23a0"></a>
+<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeId</b> () const</td></tr>
+<tr class="memdesc:a114a843bd26410e4a784f09450ef23a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the id of the node being cooked. <br /></td></tr>
+<tr class="separator:a114a843bd26410e4a784f09450ef23a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6111babe8ee89a05ac6c2701a63518e9" id="r_a6111babe8ee89a05ac6c2701a63518e9"><td class="memItemLeft" align="right" valign="top"><a id="a6111babe8ee89a05ac6c2701a63518e9" name="a6111babe8ee89a05ac6c2701a63518e9"></a>
 const std::filesystem::path &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeFolder</b> () const</td></tr>
 <tr class="memdesc:a6111babe8ee89a05ac6c2701a63518e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the folder the node was loaded from, where its assets live. <br /></td></tr>
@@ -193,7 +197,7 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 <div class="line">ENZO_REGISTER_NODE(circle, Circle)</div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NodeImpl.html">enzo::nt::NodeImpl</a></div><div class="ttdoc">The base class a node author subclasses to write a node's behaviour.</div><div class="ttdef"><b>Definition</b> NodeImpl.h:40</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_a65d99c57095048a57d9d50ee31d1209e"><div class="ttname"><a href="#a65d99c57095048a57d9d50ee31d1209e">enzo::nt::NodeImpl::cook</a></div><div class="ttdeci">virtual void cook()=0</div><div class="ttdoc">Produces this node's output packets from its inputs and parameters.</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_abd0fdb11f25c9ff82a366ec807cd4483"><div class="ttname"><a href="#abd0fdb11f25c9ff82a366ec807cd4483">enzo::nt::NodeImpl::setOutputPacket</a></div><div class="ttdeci">void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet)</div><div class="ttdoc">Hands finished geometry to one of the node's outputs.</div><div class="ttdef"><b>Definition</b> NodeImpl.cpp:22</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_abd0fdb11f25c9ff82a366ec807cd4483"><div class="ttname"><a href="#abd0fdb11f25c9ff82a366ec807cd4483">enzo::nt::NodeImpl::setOutputPacket</a></div><div class="ttdeci">void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet)</div><div class="ttdoc">Hands finished geometry to one of the node's outputs.</div><div class="ttdef"><b>Definition</b> NodeImpl.cpp:24</div></div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Every cook time query lives here as a forwarder, so an author writes evalParmFloat("radius") and never names the context behind it. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a65d99c57095048a57d9d50ee31d1209e" name="a65d99c57095048a57d9d50ee31d1209e"></a>

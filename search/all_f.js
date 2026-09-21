@@ -13,11 +13,12 @@ var searchData=
   ['pointnormalhandle_10',['PointNormalHandle',['../classenzo_1_1geo_1_1PointNormalHandle.html',1,'enzo::geo']]],
   ['pointoffsets_11',['PointOffsets',['../structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html',1,'enzo::geo::Primitive']]],
   ['pointposspan_12',['pointPosSpan',['../classenzo_1_1geo_1_1Mesh.html#af1f080815c754dd32e6a7534249126bc',1,'enzo::geo::Mesh']]],
-  ['position_13',['position',['../namespaceenzo_1_1attr_1_1names.html#a0b7eaa2495492d135d432bbc9f2c8c59',1,'enzo::attr::names']]],
-  ['previewfloat_14',['previewFloat',['../classenzo_1_1prm_1_1Parameter.html#a5ddc6a5f8ec9ec032b15868f8f234d31',1,'enzo::prm::Parameter']]],
-  ['previewint_15',['previewInt',['../classenzo_1_1prm_1_1Parameter.html#ad174b728d49fb3504a5d8e7ad5257b76',1,'enzo::prm::Parameter']]],
-  ['previewstring_16',['previewString',['../classenzo_1_1prm_1_1Parameter.html#ad5da85fb04c489301139ca3bffc3b655',1,'enzo::prm::Parameter']]],
-  ['primitive_17',['Primitive',['../classenzo_1_1geo_1_1Primitive.html',1,'enzo::geo']]],
-  ['primpath_18',['PrimPath',['../classenzo_1_1PrimPath.html',1,'enzo']]],
-  ['push_19',['push',['../classenzo_1_1nt_1_1UndoStack.html#a95f61aa99d46de0813f3ea65136bf3bb',1,'enzo::nt::UndoStack']]]
+  ['pointscript_13',['PointScript',['../classenzo_1_1expr_1_1PointScript.html',1,'enzo::expr']]],
+  ['position_14',['position',['../namespaceenzo_1_1attr_1_1names.html#a0b7eaa2495492d135d432bbc9f2c8c59',1,'enzo::attr::names']]],
+  ['previewfloat_15',['previewFloat',['../classenzo_1_1prm_1_1Parameter.html#a5ddc6a5f8ec9ec032b15868f8f234d31',1,'enzo::prm::Parameter']]],
+  ['previewint_16',['previewInt',['../classenzo_1_1prm_1_1Parameter.html#ad174b728d49fb3504a5d8e7ad5257b76',1,'enzo::prm::Parameter']]],
+  ['previewstring_17',['previewString',['../classenzo_1_1prm_1_1Parameter.html#ad5da85fb04c489301139ca3bffc3b655',1,'enzo::prm::Parameter']]],
+  ['primitive_18',['Primitive',['../classenzo_1_1geo_1_1Primitive.html',1,'enzo::geo']]],
+  ['primpath_19',['PrimPath',['../classenzo_1_1PrimPath.html',1,'enzo']]],
+  ['push_20',['push',['../classenzo_1_1nt_1_1UndoStack.html#a95f61aa99d46de0813f3ea65136bf3bb',1,'enzo::nt::UndoStack']]]
 ];
