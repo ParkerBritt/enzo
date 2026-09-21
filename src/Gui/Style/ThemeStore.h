@@ -9,11 +9,19 @@ namespace enzo::ui {
 /// @note Creates the folder when it is missing.
 QString themesDir();
 
-/// @brief Returns the name of the theme that ships with the program.
-QString shippedThemeName();
+/// @brief Returns the YAML of the default theme, which defines every token.
+QString baseThemeYaml();
 
-/// @brief Returns the YAML of the theme that ships with the program.
-QString shippedThemeYaml();
+/// @brief Returns the name of the default theme.
+QString defaultThemeName();
+
+/// @brief Returns the names of the themes that ship with the program, the default first.
+///
+/// @note The rest follow in alphabetical order.
+QStringList builtinThemeNames();
+
+/// @brief Returns whether a theme ships with the program.
+bool isBuiltinTheme(const QString& name);
 
 /// @brief Returns the names of the user's themes, alphabetically.
 QStringList userThemeNames();
@@ -24,7 +32,7 @@ QString activeThemeName();
 /// @brief Records which theme the interface is drawn in.
 void setActiveThemeName(const QString& name);
 
-/// @brief Returns a user theme's YAML, empty for the shipped theme or a missing file.
+/// @brief Returns the YAML a theme lays over the default, empty for the default itself.
 QString readThemeYaml(const QString& name);
 
 /// @brief Writes a user theme's YAML, replacing any file already under that name.

@@ -28,7 +28,7 @@ class ThemeViewModel : public QObject
   public:
     explicit ThemeViewModel(QObject* parent = nullptr);
 
-    /// @brief Returns every theme as `{ name, editable, swatch }`, the shipped one first.
+    /// @brief Returns every theme as `{ name, editable, swatch }`, the built-in ones first.
     QVariantList themes() const;
 
     /// @brief Returns the name of the theme the interface is drawn in.
@@ -73,7 +73,7 @@ class ThemeViewModel : public QObject
     /// @brief Renames the current theme, keeping its edits.
     Q_INVOKABLE void renameTheme(const QString& name);
 
-    /// @brief Deletes the current theme and falls back to the shipped one.
+    /// @brief Deletes the current theme and falls back to the default one.
     Q_INVOKABLE void deleteTheme();
 
     /// @brief Opens the theme folder in the desktop's file browser.

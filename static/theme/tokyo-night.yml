@@ -1,0 +1,61 @@
+# A theme in the Tokyo Night palette. It carries only the values it changes and
+# falls back to the default theme for the rest.
+
+name: Tokyo Night
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#1a1b26"
+  fieldSurface:  "#16161e"
+  surfaceHeader: "#1d1e2b"
+  surface:       "#20212f"
+  surfaceRaised: "#24283b"
+
+  # The lightest neutral fill, behind a selected row and on a node body
+  selectedFill: "#2f334d"
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#222433"
+  border:     "#2c2f44"
+  line:       "#3b3f5c"
+  lineBright: "#565f89"
+
+  # Text, brightest to dimmest
+  textStrong: "#c0caf5"
+  text:       "#a9b1d6"
+  textLabel:  "#787c99"
+  textMuted:  "#565f89"
+  textFaint:  "#3b4261"
+
+  # Accent
+  accent:       "#7aa2f7"
+  accentBright: "#7dcfff"
+
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#2f334d"
+
+  # The grip a value is dragged by
+  handle: "#c0caf5"
+
+  # Destructive actions, such as deleting a point
+  danger: "#f7768e"
+
+  # Feedback states
+  warning:       "#e0af68"
+  warningBright: "#ff9e64"
+  success:       "#9ece6a"
+
+  # Axes
+  axisX:      "#f7768e"
+  axisY:      "#9ece6a"
+  axisZ:      "#7aa2f7"
+  axisXLight: "#f99bab"
+  axisYLight: "#b9dd96"
+  axisZLight: "#a3bdf9"
+
+  # Flat shading colour of the display geometry
+  geometry: "#a9b1d6"
+
+components:
+  node:
+    displayFlagColor: "#7dcfff"

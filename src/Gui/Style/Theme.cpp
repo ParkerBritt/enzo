@@ -35,7 +35,7 @@ void Theme::reload(const QString& themeYaml)
     QHash<QString, QVariant> tokens;
     try
     {
-        tokens = ThemeLoader::loadFromString(shippedThemeYaml(), themeYaml);
+        tokens = ThemeLoader::loadFromString(baseThemeYaml(), themeYaml);
     }
     catch (const std::exception& error)
     {

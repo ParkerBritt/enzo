@@ -1,0 +1,61 @@
+# A theme in the Discord palette. It carries only the values it changes and falls
+# back to the default theme for the rest.
+
+name: Discord
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#1e1f22"
+  fieldSurface:  "#1a1b1e"
+  surfaceHeader: "#232428"
+  surface:       "#2b2d31"
+  surfaceRaised: "#313338"
+
+  # The lightest neutral fill, behind a selected row and on a node body
+  selectedFill: "#404249"
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#26272b"
+  border:     "#3f4147"
+  line:       "#4e5058"
+  lineBright: "#6d6f78"
+
+  # Text, brightest to dimmest
+  textStrong: "#f2f3f5"
+  text:       "#dbdee1"
+  textLabel:  "#b5bac1"
+  textMuted:  "#949ba4"
+  textFaint:  "#5c5e66"
+
+  # Accent
+  accent:       "#5865f2"
+  accentBright: "#7983f5"
+
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#404249"
+
+  # The grip a value is dragged by
+  handle: "#f2f3f5"
+
+  # Destructive actions, such as deleting a point
+  danger: "#f23f43"
+
+  # Feedback states
+  warning:       "#f0b132"
+  warningBright: "#facc50"
+  success:       "#23a55a"
+
+  # Axes
+  axisX:      "#f23f43"
+  axisY:      "#23a55a"
+  axisZ:      "#00a8fc"
+  axisXLight: "#f6777a"
+  axisYLight: "#57c185"
+  axisZLight: "#5cc5fd"
+
+  # Flat shading colour of the display geometry
+  geometry: "#b5bac1"
+
+components:
+  node:
+    displayFlagColor: "#00a8fc"

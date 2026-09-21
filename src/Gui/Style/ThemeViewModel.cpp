@@ -29,12 +29,12 @@ struct PaletteSection
     std::vector<std::pair<QString, QString>> entries;
 };
 
-/// @brief Returns the palette the shipped theme lists, section by section.
+/// @brief Returns the palette the default theme lists, section by section.
 const std::vector<PaletteSection>& paletteSections()
 {
     static const std::vector<PaletteSection> sections = [] {
         std::vector<PaletteSection> parsed;
-        const YAML::Node theme = YAML::Load(shippedThemeYaml().toStdString());
+        const YAML::Node theme = YAML::Load(baseThemeYaml().toStdString());
         for (const auto& section : theme[kPaletteKey])
         {
             PaletteSection built;
@@ -91,7 +91,7 @@ QVariantList themeSwatch(const QString& themeYaml)
     try
     {
         const QHash<QString, QVariant> tokens =
-            ThemeLoader::loadFromString(shippedThemeYaml(), themeYaml);
+            ThemeLoader::loadFromString(baseThemeYaml(), themeYaml);
         for (const QString& token : {"var.background", "var.surface", "var.accent"})
             swatch.append(tokens.value(token));
     }
@@ -115,7 +115,7 @@ void writeThemeAs(const QString& name, const QString& yaml)
 /// @brief Returns a name no theme holds yet, counting up from "<name> (copy)".
 QString unusedThemeName(const QString& name)
 {
-    const QStringList taken = userThemeNames() + QStringList{shippedThemeName()};
+    const QStringList taken = builtinThemeNames() + userThemeNames();
     QString candidate = name + QStringLiteral(" (copy)");
     for (int suffix = 2; taken.contains(candidate); ++suffix)
         candidate = name + QStringLiteral(" (copy %1)").arg(suffix);
@@ -131,13 +131,13 @@ ThemeViewModel::ThemeViewModel(QObject* parent) : QObject(parent)
 
 QVariantList ThemeViewModel::themes() const
 {
-    const QStringList names = QStringList{shippedThemeName()} + userThemeNames();
+    const QStringList names = builtinThemeNames() + userThemeNames();
 
     QVariantList themes;
     for (const QString& name : names)
         themes.append(QVariantMap{
             {"name", name},
-            {"editable", name != shippedThemeName()},
+            {"editable", !isBuiltinTheme(name)},
             {"swatch", themeSwatch(readThemeYaml(name))},
         });
     return themes;
@@ -145,7 +145,7 @@ QVariantList ThemeViewModel::themes() const
 
 QString ThemeViewModel::currentTheme() const { return activeThemeName(); }
 
-bool ThemeViewModel::editable() const { return currentTheme() != shippedThemeName(); }
+bool ThemeViewModel::editable() const { return !isBuiltinTheme(currentTheme()); }
 
 QVariantList ThemeViewModel::sections() const
 {
@@ -233,7 +233,7 @@ void ThemeViewModel::deleteTheme()
 {
     if (!editable()) return;
     deleteThemeFile(currentTheme());
-    switchToTheme(shippedThemeName());
+    switchToTheme(defaultThemeName());
 }
 
 void ThemeViewModel::openThemeFolder()
