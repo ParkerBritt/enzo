@@ -2,9 +2,11 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <QColor>
+#include <QDir>
 #include <QVariant>
 
 #include <string>
+#include <vector>
 
 #include <yaml-cpp/yaml.h>
 
@@ -14,7 +16,21 @@ using enzo::ui::ThemeLoader;
 
 namespace {
 
-const std::string kShippedThemePath = ENZO_DEV_STATIC_DIR "/theme/default.yml";
+const std::string kDefaultThemePath = ENZO_DEV_STATIC_DIR "/theme/default.yml";
+
+/// @brief Returns the path of every theme that ships alongside the default.
+std::vector<std::string> shippedThemePaths()
+{
+    const QDir themes(ENZO_DEV_STATIC_DIR "/theme");
+
+    std::vector<std::string> paths;
+    for (const QString& file : themes.entryList({"*.yml"}, QDir::Files, QDir::Name))
+    {
+        if (file == "default.yml") continue;
+        paths.push_back(themes.filePath(file).toStdString());
+    }
+    return paths;
+}
 
 const QString kDefaultTheme = R"(
 variables:
@@ -142,18 +158,18 @@ TEST_CASE("An unparseable user theme falls back to the default")
     REQUIRE(tokens.value("node.portColor").value<QColor>() == QColor("#4a4a54"));
 }
 
-TEST_CASE("The shipped default theme resolves")
+TEST_CASE("The default theme resolves")
 {
-    const auto tokens = ThemeLoader::loadFromFile(QString::fromStdString(kShippedThemePath));
+    const auto tokens = ThemeLoader::loadFromFile(QString::fromStdString(kDefaultThemePath));
 
     REQUIRE(tokens.value("var.accent").value<QColor>() == QColor("#8b5cf6"));
     REQUIRE(tokens.value("node.bodyColor") == tokens.value("var.selectedFill"));
     REQUIRE(tokens.value("viewport.backgroundColor") == tokens.value("var.surfaceHeader"));
 }
 
-TEST_CASE("Every colour the shipped theme gives a component comes from a variable")
+TEST_CASE("Every colour the default theme gives a component comes from a variable")
 {
-    const YAML::Node theme = YAML::LoadFile(kShippedThemePath);
+    const YAML::Node theme = YAML::LoadFile(kDefaultThemePath);
 
     // The display flag holds its own colour rather than reading a variable.
     const std::string exemptSlot = "displayFlagColor";
@@ -170,9 +186,9 @@ TEST_CASE("Every colour the shipped theme gives a component comes from a variabl
         }
 }
 
-TEST_CASE("Every entry the shipped palette lists names a variable")
+TEST_CASE("Every entry the palette lists names a variable")
 {
-    const YAML::Node theme = YAML::LoadFile(kShippedThemePath);
+    const YAML::Node theme = YAML::LoadFile(kDefaultThemePath);
 
     for (const auto& section : theme["palette"])
         for (const auto& entry : section.second)
@@ -181,4 +197,47 @@ TEST_CASE("Every entry the shipped palette lists names a variable")
             INFO(section.first.Scalar() << " lists " << name);
             REQUIRE(theme["variables"][name]);
         }
+}
+
+TEST_CASE("Every shipped theme resolves over the default")
+{
+    const auto defaultTokens = ThemeLoader::loadFromFile(QString::fromStdString(kDefaultThemePath));
+
+    for (const std::string& path : shippedThemePaths())
+    {
+        INFO(path);
+        const auto tokens = ThemeLoader::loadFromFile(
+            QString::fromStdString(kDefaultThemePath),
+            QString::fromStdString(path)
+        );
+
+        REQUIRE(tokens.value("var.accent") != defaultTokens.value("var.accent"));
+        REQUIRE(tokens.value("node.bodyColor") == tokens.value("var.selectedFill"));
+    }
+}
+
+TEST_CASE("Every value a shipped theme lays over the default is one the default defines")
+{
+    const YAML::Node defaultTheme = YAML::LoadFile(kDefaultThemePath);
+
+    for (const std::string& path : shippedThemePaths())
+    {
+        const YAML::Node theme = YAML::LoadFile(path);
+        INFO(path);
+
+        for (const auto& variable : theme["variables"])
+        {
+            const std::string name = variable.first.Scalar();
+            INFO("sets " << name);
+            REQUIRE(defaultTheme["variables"][name]);
+        }
+
+        for (const auto& component : theme["components"])
+            for (const auto& slot : component.second)
+            {
+                const std::string name = component.first.Scalar();
+                INFO("sets " << name << '.' << slot.first.Scalar());
+                REQUIRE(defaultTheme["components"][name][slot.first.Scalar()]);
+            }
+    }
 }

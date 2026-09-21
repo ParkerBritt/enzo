@@ -338,7 +338,7 @@ qt6_add_shaders(${AppExec} "enzoShaders"
     "src/Gui/Shaders/NetworkDots.frag"
 )
 
-# The theme every token falls back to. It is compiled in so no missing or
+# The themes the program ships with. They are compiled in so no missing or
 # unreadable file can leave the application unstyled.
 qt_add_resources(${AppExec} "enzoTheme"
     PREFIX
@@ -347,6 +347,9 @@ qt_add_resources(${AppExec} "enzoTheme"
     "static"
     FILES
     "static/theme/default.yml"
+    "static/theme/tokyo-night.yml"
+    "static/theme/catppuccin-mocha.yml"
+    "static/theme/discord.yml"
 )
 
 # A run from a build directory loads QML from here, so edits reload without a

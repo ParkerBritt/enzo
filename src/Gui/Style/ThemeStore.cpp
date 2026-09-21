@@ -7,21 +7,67 @@
 #include <QStandardPaths>
 #include <QTextStream>
 
+#include <vector>
+
 #include <yaml-cpp/yaml.h>
 
 namespace enzo::ui {
 
 namespace {
 
-constexpr auto kShippedThemePath = ":/theme/default.yml";
+constexpr auto kThemeResourceDir = ":/theme";
+constexpr auto kDefaultThemeFile = "default.yml";
 constexpr auto kThemeSuffix = ".yml";
+constexpr auto kThemeFilter = "*.yml";
 constexpr auto kActiveThemeSetting = "theme";
+
+/// @brief A theme compiled into the program.
+struct BuiltinTheme
+{
+    QString name;
+    QString yaml;
+};
 
 QString readFile(const QString& path)
 {
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return QString();
     return QString::fromUtf8(file.readAll());
+}
+
+/// @brief Returns a theme file's name without its suffix.
+QString themeNameFromFile(const QString& file)
+{
+    return file.chopped(QString::fromUtf8(kThemeSuffix).size());
+}
+
+/// @brief Returns the name a theme's YAML gives itself, or the fallback when it gives none.
+QString titleOf(const QString& yaml, const QString& fallback)
+{
+    const YAML::Node theme = YAML::Load(yaml.toStdString());
+    const YAML::Node title = theme["name"];
+    return title ? QString::fromStdString(title.Scalar()) : fallback;
+}
+
+/// @brief Returns every theme compiled into the program, the default first and the rest by name.
+const std::vector<BuiltinTheme>& builtinThemes()
+{
+    static const std::vector<BuiltinTheme> themes = [] {
+        const QDir resources(QString::fromUtf8(kThemeResourceDir));
+        QStringList files =
+            resources.entryList({QString::fromUtf8(kThemeFilter)}, QDir::Files, QDir::Name);
+        files.removeAll(QString::fromUtf8(kDefaultThemeFile));
+        files.prepend(QString::fromUtf8(kDefaultThemeFile));
+
+        std::vector<BuiltinTheme> loaded;
+        for (const QString& file : files)
+        {
+            const QString yaml = readFile(resources.filePath(file));
+            loaded.push_back({titleOf(yaml, themeNameFromFile(file)), yaml});
+        }
+        return loaded;
+    }();
+    return themes;
 }
 
 QString themePath(const QString& name) { return themesDir() + QChar(u'/') + name + kThemeSuffix; }
@@ -37,27 +83,31 @@ QString themesDir()
     return dir;
 }
 
-QString shippedThemeName()
+QString baseThemeYaml() { return builtinThemes().front().yaml; }
+
+QString defaultThemeName() { return builtinThemes().front().name; }
+
+QStringList builtinThemeNames()
 {
-    static const QString name = [] {
-        const YAML::Node theme = YAML::Load(shippedThemeYaml().toStdString());
-        const YAML::Node title = theme["name"];
-        return title ? QString::fromStdString(title.Scalar()) : QStringLiteral("Enzo");
-    }();
-    return name;
+    QStringList names;
+    for (const BuiltinTheme& theme : builtinThemes())
+        names << theme.name;
+    return names;
 }
 
-QString shippedThemeYaml()
+bool isBuiltinTheme(const QString& name)
 {
-    static const QString yaml = readFile(QString::fromUtf8(kShippedThemePath));
-    return yaml;
+    for (const BuiltinTheme& theme : builtinThemes())
+        if (theme.name == name) return true;
+    return false;
 }
 
 QStringList userThemeNames()
 {
     QStringList names;
-    for (const QString& file : QDir(themesDir()).entryList({QStringLiteral("*.yml")}, QDir::Files))
-        names << file.chopped(QString(kThemeSuffix).size());
+    const QDir dir(themesDir());
+    for (const QString& file : dir.entryList({QString::fromUtf8(kThemeFilter)}, QDir::Files))
+        names << themeNameFromFile(file);
     names.sort(Qt::CaseInsensitive);
     return names;
 }
@@ -65,8 +115,8 @@ QStringList userThemeNames()
 QString activeThemeName()
 {
     const QString name = QSettings().value(kActiveThemeSetting).toString();
-    if (name.isEmpty()) return shippedThemeName();
-    if (name != shippedThemeName() && !userThemeNames().contains(name)) return shippedThemeName();
+    if (name.isEmpty()) return defaultThemeName();
+    if (!isBuiltinTheme(name) && !userThemeNames().contains(name)) return defaultThemeName();
     return name;
 }
 
@@ -74,7 +124,12 @@ void setActiveThemeName(const QString& name) { QSettings().setValue(kActiveTheme
 
 QString readThemeYaml(const QString& name)
 {
-    if (name == shippedThemeName()) return QString();
+    // Leaves the default theme empty, since it is the base the others lay over.
+    if (name == defaultThemeName()) return QString();
+
+    for (const BuiltinTheme& theme : builtinThemes())
+        if (theme.name == name) return theme.yaml;
+
     return readFile(themePath(name));
 }
 

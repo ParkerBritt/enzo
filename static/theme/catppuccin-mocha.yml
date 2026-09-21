@@ -1,0 +1,61 @@
+# A theme in the Catppuccin Mocha palette. It carries only the values it changes
+# and falls back to the default theme for the rest.
+
+name: Catppuccin Mocha
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#11111b"
+  fieldSurface:  "#181825"
+  surfaceHeader: "#1b1b29"
+  surface:       "#1e1e2e"
+  surfaceRaised: "#252537"
+
+  # The lightest neutral fill, behind a selected row and on a node body
+  selectedFill: "#313244"
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#242436"
+  border:     "#313244"
+  line:       "#45475a"
+  lineBright: "#585b70"
+
+  # Text, brightest to dimmest
+  textStrong: "#cdd6f4"
+  text:       "#bac2de"
+  textLabel:  "#a6adc8"
+  textMuted:  "#6c7086"
+  textFaint:  "#585b70"
+
+  # Accent
+  accent:       "#cba6f7"
+  accentBright: "#dbc2fa"
+
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#313244"
+
+  # The grip a value is dragged by
+  handle: "#cdd6f4"
+
+  # Destructive actions, such as deleting a point
+  danger: "#f38ba8"
+
+  # Feedback states
+  warning:       "#fab387"
+  warningBright: "#f9e2af"
+  success:       "#a6e3a1"
+
+  # Axes
+  axisX:      "#f38ba8"
+  axisY:      "#a6e3a1"
+  axisZ:      "#89b4fa"
+  axisXLight: "#f5a9be"
+  axisYLight: "#bde9b9"
+  axisZLight: "#a9c8fb"
+
+  # Flat shading colour of the display geometry
+  geometry: "#a6adc8"
+
+components:
+  node:
+    displayFlagColor: "#89b4fa"

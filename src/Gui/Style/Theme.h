@@ -19,9 +19,9 @@ class Theme : public QQmlPropertyMap
     /// @note Null until QML first reads it.
     static Theme* instance();
 
-    /// @brief Repaints the interface in the shipped theme with the given theme YAML on top.
+    /// @brief Repaints the interface in the default theme with the given theme YAML on top.
     ///
-    /// @note An empty YAML leaves the shipped theme as it is.
+    /// @note An empty YAML leaves the default theme as it is.
     void reload(const QString& themeYaml);
 
   private:
