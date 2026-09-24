@@ -208,7 +208,7 @@ components:
     borderColor:     $border
     textColor:       $text
   primitivesTree:
-    selectedColor: $accentBright
+    selectedRowColor: $selectedFill
   tabMenu:
     highlightColor:   $accentDim
     focusBorderColor: $accentLine
