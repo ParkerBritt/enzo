@@ -215,7 +215,7 @@ components:
   viewport:
     # The radial background gradient, from its bright centre through the base
     # colour out to the dark edge.
-    backgroundColor: $surfaceHeader
-    gradientCenter:  $surfaceRaised
+    backgroundColor: $background
+    gradientCenter:  $background
     gradientEdge:    $background
     geometryColor:   $geometry
