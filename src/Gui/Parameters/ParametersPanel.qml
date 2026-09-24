@@ -92,13 +92,6 @@ Item {
                 anchors.leftMargin: panel.sideMargin
                 spacing: 8
 
-                Icon {
-                    name: "sliders-horizontal"
-                    size: 15
-                    color: Theme.var.accentBright
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
                 Column {
                     Text {
                         text: parameters.nodeType

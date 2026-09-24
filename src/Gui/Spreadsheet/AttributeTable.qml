@@ -15,17 +15,30 @@ Item {
     readonly property var modeIcons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
 
     function axisColor(axis, light) {
-        if (axis === 0) return light ? Theme.var.axisXLight : Theme.var.axisX;
-        if (axis === 1) return light ? Theme.var.axisYLight : Theme.var.axisY;
-        if (axis === 2) return light ? Theme.var.axisZLight : Theme.var.axisZ;
+        if (axis === 0)
+            return light ? Theme.var.axisXLight : Theme.var.axisX;
+        if (axis === 1)
+            return light ? Theme.var.axisYLight : Theme.var.axisY;
+        if (axis === 2)
+            return light ? Theme.var.axisZLight : Theme.var.axisZ;
         return "#8a8b94";
     }
     function headerAxis(text) {
         switch (text.slice(-1)) {
-        case "x": case "r": case "u": return 0;
-        case "y": case "g": case "v": return 1;
-        case "z": case "b": case "w": return 2;
-        default: return -1;
+        case "x":
+        case "r":
+        case "u":
+            return 0;
+        case "y":
+        case "g":
+        case "v":
+            return 1;
+        case "z":
+        case "b":
+        case "w":
+            return 2;
+        default:
+            return -1;
         }
     }
 
@@ -211,42 +224,43 @@ Item {
             }
         }
 
-        Row {
-            anchors.right: parent.right
-            anchors.rightMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
-
-            Repeater {
-                model: [
-                    { label: "MEMORY", value: "1.42 MB", color: "#cfd0d6" },
-                    { label: "COOK", value: "3.41 ms", color: "#7fd3a6" }
-                ]
-
-                delegate: Row {
-                    id: stat
-
-                    required property var modelData
-                    spacing: 6
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: stat.modelData.label
-                        color: "#5a5a64"
-                        font.family: Theme.var.fontSans
-                        font.pixelSize: 8
-                        font.weight: Font.DemiBold
-                        font.letterSpacing: 0.5
-                    }
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: stat.modelData.value
-                        color: stat.modelData.color
-                        font.family: Theme.var.fontMono
-                        font.pixelSize: 11
-                    }
-                }
-            }
-        }
+        // TODO: implement memory and cook stats
+        // Row {
+        //     anchors.right: parent.right
+        //     anchors.rightMargin: 13
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     spacing: 14
+        //
+        //     Repeater {
+        //         model: [
+        //             { label: "MEMORY", value: "1.42 MB", color: "#cfd0d6" },
+        //             { label: "COOK", value: "3.41 ms", color: "#7fd3a6" }
+        //         ]
+        //
+        //         delegate: Row {
+        //             id: stat
+        //
+        //             required property var modelData
+        //             spacing: 6
+        //
+        //             Text {
+        //                 anchors.verticalCenter: parent.verticalCenter
+        //                 text: stat.modelData.label
+        //                 color: "#5a5a64"
+        //                 font.family: Theme.var.fontSans
+        //                 font.pixelSize: 8
+        //                 font.weight: Font.DemiBold
+        //                 font.letterSpacing: 0.5
+        //             }
+        //             Text {
+        //                 anchors.verticalCenter: parent.verticalCenter
+        //                 text: stat.modelData.value
+        //                 color: stat.modelData.color
+        //                 font.family: Theme.var.fontMono
+        //                 font.pixelSize: 11
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

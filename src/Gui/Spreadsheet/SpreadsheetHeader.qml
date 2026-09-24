@@ -36,13 +36,6 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
 
-        Icon {
-            anchors.verticalCenter: parent.verticalCenter
-            name: "table"
-            size: 15
-            color: Theme.var.accentBright
-        }
-
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: "SPREADSHEET"
@@ -105,64 +98,66 @@ Rectangle {
             onModePicked: mode => root.viewModel.mode = mode
         }
 
-        Rectangle {
-            id: searchButton
+        // TODO: implement search
+        // Rectangle {
+        //     id: searchButton
+        //
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     width: 27
+        //     height: 27
+        //     radius: 7
+        //     color: "transparent"
+        //     border.color: Theme.var.border
+        //
+        //     Icon {
+        //         anchors.centerIn: parent
+        //         name: "search"
+        //         size: 14
+        //         color: Theme.var.textLabel
+        //     }
+        //
+        //     HoverHandler {
+        //         id: searchHover
+        //     }
+        //
+        //     Tooltip {
+        //         text: "Search"
+        //         visible: searchHover.hovered
+        //     }
+        // }
 
-            anchors.verticalCenter: parent.verticalCenter
-            width: 27
-            height: 27
-            radius: 7
-            color: "transparent"
-            border.color: Theme.var.border
-
-            Icon {
-                anchors.centerIn: parent
-                name: "search"
-                size: 14
-                color: Theme.var.textLabel
-            }
-
-            HoverHandler {
-                id: searchHover
-            }
-
-            Tooltip {
-                text: "Search"
-                visible: searchHover.hovered
-            }
-        }
-
-        Rectangle {
-            id: collapseButton
-
-            anchors.verticalCenter: parent.verticalCenter
-            width: collapse.width + 22
-            height: 27
-            radius: 7
-            color: Theme.var.accentDim
-
-            Row {
-                id: collapse
-
-                anchors.centerIn: parent
-                spacing: 7
-
-                Icon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    name: "chevron-down"
-                    size: 13
-                    color: Theme.var.accentBright
-                }
-            }
-
-            HoverHandler {
-                id: collapseHover
-            }
-
-            Tooltip {
-                text: "Collapse"
-                visible: collapseHover.hovered
-            }
-        }
+        // TODO: implement collapse
+        // Rectangle {
+        //     id: collapseButton
+        //
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     width: collapse.width + 22
+        //     height: 27
+        //     radius: 7
+        //     color: Theme.var.accentDim
+        //
+        //     Row {
+        //         id: collapse
+        //
+        //         anchors.centerIn: parent
+        //         spacing: 7
+        //
+        //         Icon {
+        //             anchors.verticalCenter: parent.verticalCenter
+        //             name: "chevron-down"
+        //             size: 13
+        //             color: Theme.var.accentBright
+        //         }
+        //     }
+        //
+        //     HoverHandler {
+        //         id: collapseHover
+        //     }
+        //
+        //     Tooltip {
+        //         text: "Collapse"
+        //         visible: collapseHover.hovered
+        //     }
+        // }
     }
 }
