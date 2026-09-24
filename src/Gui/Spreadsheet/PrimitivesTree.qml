@@ -117,7 +117,7 @@ Rectangle {
             Rectangle {
                 anchors.fill: parent
                 radius: 6
-                color: node.selected ? Qt.rgba(0.545, 0.361, 0.965, 0.13) : "transparent"
+                color: node.selected ? Theme.primitivesTree.selectedRowColor : "transparent"
             }
 
             Row {
@@ -147,7 +147,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     name: node.isLeaf ? (node.typeTag === "CAMERA" ? "camera" : "box") : "layers"
                     size: 15
-                    color: node.selected ? Theme.primitivesTree.selectedColor : "#aab0ba"
+                    color: node.selected ? Theme.var.textStrong : "#aab0ba"
                 }
 
                 Text {
@@ -166,7 +166,7 @@ Rectangle {
                 width: 52
                 horizontalAlignment: Text.AlignRight
                 text: node.tag
-                color: node.selected ? "#b9a3f5" : "#6c6c76"
+                color: node.selected ? Theme.var.textLabel : "#6c6c76"
                 font.family: Theme.var.fontMono
                 font.pixelSize: 8
                 font.weight: Font.Bold
