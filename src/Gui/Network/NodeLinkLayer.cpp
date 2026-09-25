@@ -34,9 +34,16 @@ constexpr int kCornerSegments = 8;
 constexpr qreal kStubLength = 14;
 constexpr qreal kStubRadius = 10;
 
+// How round the two joints are where a link's stubs meet directly on a diagonal.
+constexpr qreal kDiagonalRadius = 40;
+
 // Below this much horizontal distance between output and input, the link renders as a straight
 // line.
 constexpr qreal kMinElbowHorizontalLength = 2 * (kStubRadius + kCornerRadius);
+
+// Below this much distance between output and input, the link renders as a single straight
+// segment with no stubs at all.
+constexpr qreal kMinStubDistance = 2 * kStubLength;
 
 /// @brief Returns the role number a model exposes under @p name, or -1 when absent.
 int findRole(const QHash<int, QByteArray>& roles, const QByteArray& name)
@@ -146,10 +153,14 @@ roundedPath(const std::vector<QPointF>& waypoints, const std::vector<qreal>& rad
 /// straight into each other on a diagonal instead of through a horizontal run.
 /// @note When the input sits above the output, the horizontal run detours upward
 /// halfway across so the final stub still points down into the input.
+/// @note When the output and input line up vertically, or sit within @ref kMinStubDistance
+/// of each other, the link is a single straight segment with no stubs.
 std::vector<QPointF> sampleLinkPath(const NodeLinkLayer::Link& link)
 {
     const qreal horizontalLength = std::abs(link.input.x() - link.output.x());
-    if (horizontalLength <= 0) return {link.output, link.input};
+    const qreal totalDistance = std::hypot(horizontalLength, link.input.y() - link.output.y());
+    if (horizontalLength <= 0 || totalDistance < kMinStubDistance)
+        return {link.output, link.input};
 
     const QPointF down(0, 1.0);
     const QPointF up(0, -1.0);
@@ -157,13 +168,11 @@ std::vector<QPointF> sampleLinkPath(const NodeLinkLayer::Link& link)
 
     if (horizontalLength < kMinElbowHorizontalLength)
     {
-        const qreal totalDistance = std::hypot(horizontalLength, link.input.y() - link.output.y());
-        const qreal stubLength = std::min(kStubLength, totalDistance / 2);
-        const QPointF outputStubEnd = link.output + down * stubLength;
-        const QPointF inputStubStart = link.input - down * stubLength;
+        const QPointF outputStubEnd = link.output + down * kStubLength;
+        const QPointF inputStubStart = link.input - down * kStubLength;
         return roundedPath(
             {link.output, outputStubEnd, inputStubStart, link.input},
-            {kStubRadius, kStubRadius}
+            {kDiagonalRadius, kDiagonalRadius}
         );
     }
 
@@ -218,11 +227,12 @@ qreal distanceToSegment(
 /// @brief Returns which side of line @p lineStart to @p lineEnd the point @p point lies on.
 qreal orientation(const QPointF& lineStart, const QPointF& lineEnd, const QPointF& point)
 {
-    return (lineEnd.x() - lineStart.x()) * (point.y() - lineStart.y())
-        - (lineEnd.y() - lineStart.y()) * (point.x() - lineStart.x());
+    return (lineEnd.x() - lineStart.x()) * (point.y() - lineStart.y()) -
+           (lineEnd.y() - lineStart.y()) * (point.x() - lineStart.x());
 }
 
-/// @brief Whether segment @p firstStart to @p firstEnd crosses segment @p secondStart to @p secondEnd.
+/// @brief Whether segment @p firstStart to @p firstEnd crosses segment @p secondStart to @p
+/// secondEnd.
 bool segmentsIntersect(
     const QPointF& firstStart,
     const QPointF& firstEnd,
@@ -234,7 +244,8 @@ bool segmentsIntersect(
     const qreal firstEndSide = orientation(secondStart, secondEnd, firstEnd);
     const qreal secondStartSide = orientation(firstStart, firstEnd, secondStart);
     const qreal secondEndSide = orientation(firstStart, firstEnd, secondEnd);
-    return ((firstStartSide > 0) != (firstEndSide > 0)) && ((secondStartSide > 0) != (secondEndSide > 0));
+    return ((firstStartSide > 0) != (firstEndSide > 0)) &&
+           ((secondStartSide > 0) != (secondEndSide > 0));
 }
 
 /// @brief Writes a polyline stroke with a color and width into an existing geometry node.
