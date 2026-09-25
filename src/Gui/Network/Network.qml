@@ -117,7 +117,7 @@ Rectangle {
         NodeLinkLayer {
             id: committedLinks
             nodes: network.nodes
-            links: network.edges
+            links: network.nodeLinks
             linkColor: Theme.nodeLink.inactiveColor
             cutColor: Theme.nodeLink.cutColor
             redirectColor: Theme.nodeLink.redirectColor

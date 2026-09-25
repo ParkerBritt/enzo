@@ -16,28 +16,28 @@ namespace enzo::nt {
  * Node 1's first output feeding node 2's second input is
  * {1, 0, 2, 1}.
  */
-struct Connection
+struct NodeLink
 {
     NodeId sourceNode = 0;
     unsigned int sourceOutput = 0;
     NodeId targetNode = 0;
     unsigned int targetInput = 0;
 
-    bool operator==(const Connection& other) const = default;
+    bool operator==(const NodeLink& other) const = default;
 };
 
 } // namespace enzo::nt
 
-// Hashing lives in one place so a Connection can key an unordered container.
-template <> struct std::hash<enzo::nt::Connection>
+// Hashing lives in one place so a Node link can key an unordered container.
+template <> struct std::hash<enzo::nt::NodeLink>
 {
-    std::size_t operator()(const enzo::nt::Connection& connection) const noexcept
+    std::size_t operator()(const enzo::nt::NodeLink& nodeLink) const noexcept
     {
         std::size_t seed = 0;
-        boost::hash_combine(seed, connection.sourceNode);
-        boost::hash_combine(seed, connection.sourceOutput);
-        boost::hash_combine(seed, connection.targetNode);
-        boost::hash_combine(seed, connection.targetInput);
+        boost::hash_combine(seed, nodeLink.sourceNode);
+        boost::hash_combine(seed, nodeLink.sourceOutput);
+        boost::hash_combine(seed, nodeLink.targetNode);
+        boost::hash_combine(seed, nodeLink.targetInput);
         return seed;
     }
 };

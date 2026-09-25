@@ -218,7 +218,7 @@ class NetworkManager
      *
      * @throws std::out_of_range when no scope sits at the path's parent.
      *
-     * @note Only the node itself is created, not the parameter values or connections it had.
+     * @note Only the node itself is created, not the parameter values or node links it had.
      * The undo commands restore those around this call.
      *
      * @param nodeId The node ID to give the node.
@@ -247,7 +247,7 @@ class NetworkManager
     /**
      * @brief Returns a copy of one of a node's outputs.
      *
-     * Naming the node directly reaches geometry that no connection leads to, such as an
+     * Naming the node directly reaches geometry that no node link leads to, such as an
      * output node sitting inside a container's child scope.
      *
      * @note The node cooks first, so the geometry is never stale.
@@ -262,27 +262,27 @@ class NetworkManager
      * @brief Returns how many inputs a node currently takes.
      *
      * @note A single port holds one input. A multi input port holds one input
-     * per connection it has.
+     * per node link it has.
      */
     unsigned int getInputCount(NodeId nodeId);
 
     /// @brief Wires one node's output into another node's input.
-    /// @return The connection that was created.
-    /// @note A single input port holds one connection, so whatever was on it is
+    /// @return The node link that was created.
+    /// @note A single input port holds one node link, so whatever was on it is
     /// replaced.
-    /// @note A multi input port makes room, moving the connections from the index
+    /// @note A multi input port makes room, moving the node links from the index
     /// onward up one.
-    nt::Connection connectNodes(
+    nt::NodeLink connectNodes(
         NodeId inputNodeId,
         unsigned int inputIndex,
         NodeId outputNodeId,
         unsigned int outputIndex
     );
 
-    /// @brief Removes a wired connection between two nodes.
-    /// @note Leaving a multi input port closes the gap, moving the connections
+    /// @brief Removes a node link between two nodes.
+    /// @note Leaving a multi input port closes the gap, moving the node links
     /// above the index down one.
-    void disconnectNodes(const nt::Connection& connection);
+    void disconnectNodes(const nt::NodeLink& nodeLink);
 
     /// @brief Resolves a node reference such as "grid1" or "../grid1" to its node.
     /// @note A relative path is read from the scope holding @p fromNode.
@@ -328,11 +328,11 @@ class NetworkManager
     // @brief A signal emitted when a node is about to be removed from the network
     boost::signals2::signal<void(nt::NodeId)> nodeRemoved;
 
-    // @brief A signal emitted when a connection is created between two nodes
-    boost::signals2::signal<void(nt::Connection)> connectionCreated;
+    // @brief A signal emitted when a node link is created between two nodes
+    boost::signals2::signal<void(nt::NodeLink)> nodeLinkCreated;
 
-    // @brief A signal emitted when a connection is removed between two nodes
-    boost::signals2::signal<void(nt::Connection)> connectionRemoved;
+    // @brief A signal emitted when a node link is removed between two nodes
+    boost::signals2::signal<void(nt::NodeLink)> nodeLinkRemoved;
 
     // @brief A signal emitted when the network is cleared
     boost::signals2::signal<void()> networkCleared;
@@ -361,17 +361,17 @@ class NetworkManager
     NetworkManager() {};
 
     // functions
-    /// @brief Removes all of a node's connections, each as its own undo command.
+    /// @brief Removes all of a node's links, each as its own undo command.
     void disconnectNode(NodeId nodeId);
 
-    /// @brief Moves the connections at or above @p fromIndex up one input.
+    /// @brief Moves the node links at or above @p fromIndex up one input.
     void openInputGap(NodeId nodeId, unsigned int fromIndex);
 
-    /// @brief Moves the connections above @p fromIndex down one input.
+    /// @brief Moves the node links above @p fromIndex down one input.
     void closeInputGap(NodeId nodeId, unsigned int fromIndex);
 
-    /// @brief Moves a connection onto a different input of the same node.
-    void moveInput(const nt::Connection& connection, unsigned int inputIndex);
+    /// @brief Moves a node link onto a different input of the same node.
+    void moveInput(const nt::NodeLink& nodeLink, unsigned int inputIndex);
 
     /**
      * @brief Slot called when a node of @p NodeId is dirtied

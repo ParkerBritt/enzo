@@ -6,7 +6,7 @@
 #include "Engine/Network/NodeTypeTable.h"
 #include "Engine/Network/UpdateLock.h"
 #include "Engine/Serializer/ParameterSerializable.h"
-#include "Engine/UndoRedo/ChangeConnectionCommand.h"
+#include "Engine/UndoRedo/ChangeNodeLinkCommand.h"
 #include "Engine/UndoRedo/CreateNodeCommand.h"
 #include "Engine/UndoRedo/DeleteNodeCommand.h"
 #include "Engine/UndoRedo/MoveNodeCommand.h"
@@ -117,15 +117,15 @@ void nt::NetworkManager::disconnectNode(NodeId nodeId)
 
     // getInputs and getOutputs return copies, so disconnecting while iterating is safe
     // Disconnects from the highest input down, so closing a gap never moves one still to come
-    const std::vector<nt::Connection> inputs = graph().getInputs(nodeId);
+    const std::vector<nt::NodeLink> inputs = graph().getInputs(nodeId);
     for (auto input = inputs.rbegin(); input != inputs.rend(); ++input)
     {
         disconnectNodes(*input);
     }
 
-    for (const nt::Connection& connection : graph().getOutputs(nodeId))
+    for (const nt::NodeLink& nodeLink : graph().getOutputs(nodeId))
     {
-        disconnectNodes(connection);
+        disconnectNodes(nodeLink);
     }
 }
 
@@ -354,14 +354,14 @@ unsigned int nt::NetworkManager::getInputCount(NodeId nodeId)
     const unsigned int singlePortCount = nodeType.getSinglePortCount();
     if (!nodeType.hasMultiInputPort()) return singlePortCount;
 
-    unsigned int multiConnectionCount = 0;
-    for (const nt::Connection& connection : graph().getInputs(nodeId))
-        if (nodeType.isMultiInputPortAt(connection.targetInput)) ++multiConnectionCount;
+    unsigned int multiNodeLinkCount = 0;
+    for (const nt::NodeLink& nodeLink : graph().getInputs(nodeId))
+        if (nodeType.isMultiInputPortAt(nodeLink.targetInput)) ++multiNodeLinkCount;
 
-    return singlePortCount + multiConnectionCount;
+    return singlePortCount + multiNodeLinkCount;
 }
 
-nt::Connection nt::NetworkManager::connectNodes(
+nt::NodeLink nt::NetworkManager::connectNodes(
     NodeId inputNodeId,
     unsigned int inputIndex,
     NodeId outputNodeId,
@@ -374,96 +374,96 @@ nt::Connection nt::NetworkManager::connectNodes(
 
     if (getNode(outputNodeId).getType().isMultiInputPortAt(targetInput))
     {
-        // Clamps an index past the last input so the connection appends
+        // Clamps an index past the last input so the node link appends
         targetInput = std::min(targetInput, getInputCount(outputNodeId));
         openInputGap(outputNodeId, targetInput);
     }
-    else if (auto existing = graph().getInputConnection(outputNodeId, targetInput))
+    else if (auto existing = graph().getInputNodeLink(outputNodeId, targetInput))
     {
-        // Replaces the one connection a single input port holds
+        // Replaces the one node link a single input port holds
         disconnectNodes(*existing);
     }
 
-    nt::Connection connection{inputNodeId, inputIndex, outputNodeId, targetInput};
+    nt::NodeLink nodeLink{inputNodeId, inputIndex, outputNodeId, targetInput};
 
-    graph().connect(connection);
+    graph().connect(nodeLink);
     getNode(outputNodeId).dirtyNode();
-    connectionCreated(connection);
+    nodeLinkCreated(nodeLink);
 
-    auto cmd = std::make_unique<ChangeConnectionCommand>(
-        connection.sourceNode,
-        connection.sourceOutput,
-        connection.targetNode,
-        connection.targetInput,
-        ChangeConnectionCommand::Action::Connect
+    auto cmd = std::make_unique<ChangeNodeLinkCommand>(
+        nodeLink.sourceNode,
+        nodeLink.sourceOutput,
+        nodeLink.targetNode,
+        nodeLink.targetInput,
+        ChangeNodeLinkCommand::Action::Connect
     );
     undoStack_.push(std::move(cmd));
 
-    return connection;
+    return nodeLink;
 }
 
-void nt::NetworkManager::disconnectNodes(const nt::Connection& connection)
+void nt::NetworkManager::disconnectNodes(const nt::NodeLink& nodeLink)
 {
-    auto cmd = std::make_unique<ChangeConnectionCommand>(
-        connection.sourceNode,
-        connection.sourceOutput,
-        connection.targetNode,
-        connection.targetInput,
-        ChangeConnectionCommand::Action::Disconnect
+    auto cmd = std::make_unique<ChangeNodeLinkCommand>(
+        nodeLink.sourceNode,
+        nodeLink.sourceOutput,
+        nodeLink.targetNode,
+        nodeLink.targetInput,
+        ChangeNodeLinkCommand::Action::Disconnect
     );
     undoStack_.push(std::move(cmd));
 
-    graph().disconnect(connection);
+    graph().disconnect(nodeLink);
 
-    const bool targetNodeExists = isValidNode(connection.targetNode);
+    const bool targetNodeExists = isValidNode(nodeLink.targetNode);
 
     // Only the downstream node goes stale, its input changed
     if (targetNodeExists)
     {
-        getNode(connection.targetNode).dirtyNode();
+        getNode(nodeLink.targetNode).dirtyNode();
     }
 
-    connectionRemoved(connection);
+    nodeLinkRemoved(nodeLink);
 
     const bool leftAMultiInputPort =
         targetNodeExists &&
-        getNode(connection.targetNode).getType().isMultiInputPortAt(connection.targetInput);
+        getNode(nodeLink.targetNode).getType().isMultiInputPortAt(nodeLink.targetInput);
     if (leftAMultiInputPort)
     {
-        closeInputGap(connection.targetNode, connection.targetInput);
+        closeInputGap(nodeLink.targetNode, nodeLink.targetInput);
     }
 }
 
 void nt::NetworkManager::openInputGap(NodeId nodeId, unsigned int fromIndex)
 {
-    // Moves the highest input first, so no two connections ever share an index
-    const std::vector<nt::Connection> inputs = graph().getInputs(nodeId);
+    // Moves the highest input first, so no two node links ever share an index
+    const std::vector<nt::NodeLink> inputs = graph().getInputs(nodeId);
     for (auto input = inputs.rbegin(); input != inputs.rend(); ++input)
     {
-        const nt::Connection& connection = *input;
-        if (connection.targetInput >= fromIndex) moveInput(connection, connection.targetInput + 1);
+        const nt::NodeLink& nodeLink = *input;
+        if (nodeLink.targetInput >= fromIndex) moveInput(nodeLink, nodeLink.targetInput + 1);
     }
 }
 
 void nt::NetworkManager::closeInputGap(NodeId nodeId, unsigned int fromIndex)
 {
-    // Moves in index order, so each connection lands on an index just vacated
-    for (const nt::Connection& connection : graph().getInputs(nodeId))
+    // Moves in index order, so each node link lands on an index just vacated
+    for (const nt::NodeLink& nodeLink : graph().getInputs(nodeId))
     {
-        if (connection.targetInput > fromIndex) moveInput(connection, connection.targetInput - 1);
+        if (nodeLink.targetInput > fromIndex) moveInput(nodeLink, nodeLink.targetInput - 1);
     }
 }
 
-void nt::NetworkManager::moveInput(const nt::Connection& connection, unsigned int inputIndex)
+void nt::NetworkManager::moveInput(const nt::NodeLink& nodeLink, unsigned int inputIndex)
 {
-    nt::Connection moved = connection;
+    nt::NodeLink moved = nodeLink;
     moved.targetInput = inputIndex;
 
-    graph().disconnect(connection);
+    graph().disconnect(nodeLink);
     graph().connect(moved);
 
-    connectionRemoved(connection);
-    connectionCreated(moved);
+    nodeLinkRemoved(nodeLink);
+    nodeLinkCreated(moved);
 }
 
 std::optional<nt::NodeId> nt::NetworkManager::getDisplayNode() { return displayNode_; }

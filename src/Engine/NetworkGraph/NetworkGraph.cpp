@@ -5,78 +5,78 @@
 
 namespace enzo::nt {
 
-void NetworkGraph::connect(const Connection& connection)
+void NetworkGraph::connect(const NodeLink& nodeLink)
 {
-    byTarget_[connection.targetNode].push_back(connection);
-    bySource_[connection.sourceNode].push_back(connection);
+    byTarget_[nodeLink.targetNode].push_back(nodeLink);
+    bySource_[nodeLink.sourceNode].push_back(nodeLink);
 }
 
-void NetworkGraph::disconnect(const Connection& connection)
+void NetworkGraph::disconnect(const NodeLink& nodeLink)
 {
-    eraseConnection_(byTarget_, connection.targetNode, connection);
-    eraseConnection_(bySource_, connection.sourceNode, connection);
+    eraseNodeLink_(byTarget_, nodeLink.targetNode, nodeLink);
+    eraseNodeLink_(bySource_, nodeLink.sourceNode, nodeLink);
 }
 
-void NetworkGraph::eraseConnection_(ConnectionMap& side, NodeId key, const Connection& connection)
+void NetworkGraph::eraseNodeLink_(NodeLinkMap& side, NodeId key, const NodeLink& nodeLink)
 {
     auto entry = side.find(key);
     if (entry == side.end()) return;
 
-    std::vector<Connection>& connections = entry->second;
-    for (auto it = connections.begin(); it != connections.end(); ++it)
+    std::vector<NodeLink>& nodeLinks = entry->second;
+    for (auto it = nodeLinks.begin(); it != nodeLinks.end(); ++it)
     {
-        if (*it == connection)
+        if (*it == nodeLink)
         {
-            connections.erase(it);
+            nodeLinks.erase(it);
             break;
         }
     }
 
-    if (connections.empty()) side.erase(entry);
+    if (nodeLinks.empty()) side.erase(entry);
 }
 
 namespace {
-bool orderByInputIndex(const Connection& first, const Connection& second)
+bool orderByInputIndex(const NodeLink& first, const NodeLink& second)
 {
     return first.targetInput < second.targetInput;
 }
 } // namespace
 
-std::vector<Connection> NetworkGraph::getInputs(NodeId target) const
+std::vector<NodeLink> NetworkGraph::getInputs(NodeId target) const
 {
     auto entry = byTarget_.find(target);
     if (entry == byTarget_.end()) return {};
 
-    std::vector<Connection> inputs = entry->second;
+    std::vector<NodeLink> inputs = entry->second;
     std::sort(inputs.begin(), inputs.end(), orderByInputIndex);
     return inputs;
 }
 
-std::optional<Connection>
-NetworkGraph::getInputConnection(NodeId target, unsigned int inputIndex) const
+std::optional<NodeLink>
+NetworkGraph::getInputNodeLink(NodeId target, unsigned int inputIndex) const
 {
     auto entry = byTarget_.find(target);
     if (entry == byTarget_.end()) return std::nullopt;
 
-    for (const Connection& connection : entry->second)
-        if (connection.targetInput == inputIndex) return connection;
+    for (const NodeLink& nodeLink : entry->second)
+        if (nodeLink.targetInput == inputIndex) return nodeLink;
 
     return std::nullopt;
 }
 
-std::vector<Connection> NetworkGraph::getOutputs(NodeId source) const
+std::vector<NodeLink> NetworkGraph::getOutputs(NodeId source) const
 {
     auto entry = bySource_.find(source);
     if (entry == bySource_.end()) return {};
     return entry->second;
 }
 
-std::vector<Connection> NetworkGraph::getConnections() const
+std::vector<NodeLink> NetworkGraph::getNodeLinks() const
 {
-    std::vector<Connection> connections;
+    std::vector<NodeLink> nodeLinks;
     for (const auto& [source, outgoing] : bySource_)
-        connections.insert(connections.end(), outgoing.begin(), outgoing.end());
-    return connections;
+        nodeLinks.insert(nodeLinks.end(), outgoing.begin(), outgoing.end());
+    return nodeLinks;
 }
 
 void NetworkGraph::setCapturedDependencies(
@@ -141,14 +141,14 @@ std::vector<Unit> NetworkGraph::getTimeDependents() const
 
 void NetworkGraph::removeNode(NodeId nodeId)
 {
-    eraseConnectionsTouching_(byTarget_, nodeId);
-    eraseConnectionsTouching_(bySource_, nodeId);
+    eraseNodeLinksTouching_(byTarget_, nodeId);
+    eraseNodeLinksTouching_(bySource_, nodeId);
     eraseCapturedTouching_(capturedDependents_, nodeId);
     eraseCapturedTouching_(capturedDependencies_, nodeId);
     std::erase_if(timeDependents_, [nodeId](const Unit& unit) { return unit.nodeId == nodeId; });
 }
 
-void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId)
+void NetworkGraph::eraseNodeLinksTouching_(NodeLinkMap& side, NodeId nodeId)
 {
     for (auto entry = side.begin(); entry != side.end();)
     {
@@ -159,11 +159,11 @@ void NetworkGraph::eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId)
             continue;
         }
 
-        // Otherwise keep only the connections that do not name the node
-        std::vector<Connection> kept;
-        for (const Connection& connection : entry->second)
-            if (connection.sourceNode != nodeId && connection.targetNode != nodeId)
-                kept.push_back(connection);
+        // Otherwise keep only the node links that do not name the node
+        std::vector<NodeLink> kept;
+        for (const NodeLink& nodeLink : entry->second)
+            if (nodeLink.sourceNode != nodeId && nodeLink.targetNode != nodeId)
+                kept.push_back(nodeLink);
 
         if (kept.empty())
         {
@@ -242,8 +242,8 @@ void NetworkGraph::addToCookOrder_(
     // Place every node feeding an input ahead of this one
     auto entry = byTarget_.find(nodeId);
     if (entry != byTarget_.end())
-        for (const Connection& connection : entry->second)
-            addToCookOrder_(connection.sourceNode, nodeOrder, addedNodes, nodesBeingAdded);
+        for (const NodeLink& nodeLink : entry->second)
+            addToCookOrder_(nodeLink.sourceNode, nodeOrder, addedNodes, nodesBeingAdded);
 
     // Then place this node after them
     nodesBeingAdded.erase(nodeId);
@@ -268,8 +268,8 @@ std::vector<Unit> NetworkGraph::getDependents(const Unit& changed) const
         // Wired readers are the nodes fed by this node's outputs
         auto outputs = bySource_.find(unit.nodeId);
         if (outputs != bySource_.end())
-            for (const Connection& connection : outputs->second)
-                addDependent_(Unit{connection.targetNode}, dependents, seen, pending);
+            for (const NodeLink& nodeLink : outputs->second)
+                addDependent_(Unit{nodeLink.targetNode}, dependents, seen, pending);
 
         // Captured readers are the units whose expressions read this node
         auto captured = capturedDependents_.find(Unit{unit.nodeId});

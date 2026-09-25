@@ -226,7 +226,7 @@ QPointF NodeListModel::getInputPosition(const Node& node, int inputIndex, int mu
     if (inputIndex < singlePortCount)
         return QPointF(left + getPortCenter(inputIndex, portCount), top);
 
-    // Spreads the multi input port's connections evenly across the width it covers.
+    // Spreads the multi input port's node links evenly across the width it covers.
     const qreal barWidth = getPortWidth(portCount);
     const qreal barLeft = left + getPortCenter(portCount - 1, portCount) - barWidth / 2;
     const int barPosition = inputIndex - singlePortCount;
@@ -256,7 +256,7 @@ QVariantMap NodeListModel::getNearestPort(
 
     auto consider = [&](const Node& node, bool isOutput) {
         // Lays the inputs out with one more than the multi input port holds, so a
-        // link can land at either end of the bar or between any two connections.
+        // link can land at either end of the bar or between any two node links.
         const int multiCount = getMultiInputCount(node);
         const int inputDropCount = node.inputPortCount + multiCount;
 

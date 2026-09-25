@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Core/Types.h"
-#include "Engine/NetworkGraph/Connection.h"
+#include "Engine/NetworkGraph/NodeLink.h"
 #include "Engine/NetworkGraph/Unit.h"
 #include <optional>
 #include <unordered_map>
@@ -12,7 +12,7 @@ namespace enzo::nt {
 /**
  * @brief The single owner of the network's wiring and dependencies.
  *
- * Wired connections are the physical links between nodes. They are the ground
+ * Node links are the physical wires between nodes. They are the ground
  * truth of the topology and the only edges the cook order considers. Captured
  * dependencies are expression references seen while a parameter evaluates. They
  * are stored for invalidation and never take part in scheduling.
@@ -23,24 +23,24 @@ namespace enzo::nt {
 class NetworkGraph
 {
   public:
-    /// @brief Records a wired connection between two nodes.
-    void connect(const Connection& connection);
+    /// @brief Records a node link between two nodes.
+    void connect(const NodeLink& nodeLink);
 
-    /// @brief Removes a wired connection between two nodes.
-    void disconnect(const Connection& connection);
+    /// @brief Removes a node link between two nodes.
+    void disconnect(const NodeLink& nodeLink);
 
-    /// @brief Returns the connections feeding @p target, ordered by input index.
-    std::vector<Connection> getInputs(NodeId target) const;
+    /// @brief Returns the node links feeding @p target, ordered by input index.
+    std::vector<NodeLink> getInputs(NodeId target) const;
 
-    /// @brief Returns the connection on one input of @p target, if any.
-    /// @note An input holds at most one connection.
-    std::optional<Connection> getInputConnection(NodeId target, unsigned int inputIndex) const;
+    /// @brief Returns the node link on one input of @p target, if any.
+    /// @note An input holds at most one node link.
+    std::optional<NodeLink> getInputNodeLink(NodeId target, unsigned int inputIndex) const;
 
-    /// @brief Returns the connections leaving @p source.
-    std::vector<Connection> getOutputs(NodeId source) const;
+    /// @brief Returns the node links leaving @p source.
+    std::vector<NodeLink> getOutputs(NodeId source) const;
 
-    /// @brief Returns every wired connection in the graph, in no particular order.
-    std::vector<Connection> getConnections() const;
+    /// @brief Returns every node link in the graph, in no particular order.
+    std::vector<NodeLink> getNodeLinks() const;
 
     /// @brief Replaces every captured dependency of one parameter at once.
     /// @note A parameter rebuilds its full reference set each time it evaluates,
@@ -56,30 +56,30 @@ class NetworkGraph
     /// @note Covers the units that read the time and everything downstream of them.
     std::vector<Unit> getTimeDependents() const;
 
-    /// @brief Removes every connection and captured edge touching the node.
+    /// @brief Removes every node link and captured edge touching the node.
     void removeNode(NodeId nodeId);
 
     /// @brief Empties the graph.
     void clear();
 
     /// @brief Returns the nodes to cook before @p target, in cook order.
-    /// @note Considers wired connections only. Reports a cycle rather than looping.
+    /// @note Considers node links only. Reports a cycle rather than looping.
     std::vector<NodeId> getCookOrder(NodeId target) const;
 
     /// @brief Returns everything that depends on @p changed, directly or through
     /// a chain.
-    /// @note Considers both wired connections and captured edges.
+    /// @note Considers both node links and captured edges.
     std::vector<Unit> getDependents(const Unit& changed) const;
 
   private:
-    using ConnectionMap = std::unordered_map<NodeId, std::vector<Connection>>;
+    using NodeLinkMap = std::unordered_map<NodeId, std::vector<NodeLink>>;
     using CapturedMap = std::unordered_map<Unit, std::vector<Unit>>;
 
-    /// @brief Erases one matching connection from a single node's list.
-    static void eraseConnection_(ConnectionMap& side, NodeId key, const Connection& connection);
+    /// @brief Erases one matching node link from a single node's list.
+    static void eraseNodeLink_(NodeLinkMap& side, NodeId key, const NodeLink& nodeLink);
 
-    /// @brief Drops every connection that names the node, on a single side.
-    static void eraseConnectionsTouching_(ConnectionMap& side, NodeId nodeId);
+    /// @brief Drops every node link that names the node, on a single side.
+    static void eraseNodeLinksTouching_(NodeLinkMap& side, NodeId nodeId);
 
     /// @brief Drops every captured edge that names the node, on a single map.
     static void eraseCapturedTouching_(CapturedMap& map, NodeId nodeId);
@@ -103,10 +103,10 @@ class NetworkGraph
         std::unordered_set<NodeId>& nodesBeingAdded
     ) const;
 
-    // Input connections keyed by the downstream node.
-    ConnectionMap byTarget_;
-    // Output connections keyed by the upstream node.
-    ConnectionMap bySource_;
+    // Input node links keyed by the downstream node.
+    NodeLinkMap byTarget_;
+    // Output node links keyed by the upstream node.
+    NodeLinkMap bySource_;
     // Captured edges are mixed granularity. The source is stored at node level
     // since dirtying is node wide, while the reader is stored per parameter
     // component so re-evaluating one component leaves the others intact.
