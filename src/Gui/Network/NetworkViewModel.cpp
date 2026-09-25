@@ -56,7 +56,7 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
 
     networkClearedSubscription_ = network.networkCleared.connect([this]() {
         nodes_.clear();
-        edges_.clear();
+        nodeLinks_.clear();
     });
 
     selectedNodesSubscription_ =
@@ -79,24 +79,24 @@ NetworkViewModel::NetworkViewModel(QObject* parent) : QObject(parent)
             nodes_.setPosition(nodeId, pos.x(), pos.y());
         });
 
-    connectionCreatedSubscription_ =
-        network.connectionCreated.connect([this](nt::Connection connection) {
-            edges_.addEdge(connection);
+    nodeLinkCreatedSubscription_ =
+        network.nodeLinkCreated.connect([this](nt::NodeLink nodeLink) {
+            nodeLinks_.addNodeLink(nodeLink);
         });
 
-    connectionRemovedSubscription_ =
-        network.connectionRemoved.connect([this](nt::Connection connection) {
-            edges_.removeEdge(connection);
+    nodeLinkRemovedSubscription_ =
+        network.nodeLinkRemoved.connect([this](nt::NodeLink nodeLink) {
+            nodeLinks_.removeNodeLink(nodeLink);
         });
 
     // Catches any graph state that already exists before the subscriptions are live.
     nodes_.resetFromNetwork();
-    edges_.resetFromNetwork();
+    nodeLinks_.resetFromNetwork();
 }
 
 QAbstractListModel* NetworkViewModel::nodes() { return &nodes_; }
 
-QAbstractListModel* NetworkViewModel::edges() { return &edges_; }
+QAbstractListModel* NetworkViewModel::nodeLinks() { return &nodeLinks_; }
 
 qreal NetworkViewModel::getNodeWidth() const { return NodeListModel::nodeWidth; }
 
@@ -279,15 +279,15 @@ void NetworkViewModel::connectNodes(
     // A node cannot feed itself.
     if (sourceNode == targetNode) return;
 
-    // The engine pushes its own undo command and emits connectionCreated, which
-    // the edge model already listens for, so the link appears through that path.
+    // The engine pushes its own undo command and emits nodeLinkCreated, which
+    // the node link model already listens for, so the link appears through that path.
     nt::nm().connectNodes(sourceNode, sourceOutput, targetNode, targetInput);
 }
 
 void NetworkViewModel::removeLink(int linkIndex)
 {
-    // The engine emits connectionRemoved, which the edge model already listens for.
-    if (auto connection = edges_.connectionAt(linkIndex)) nt::nm().disconnectNodes(*connection);
+    // The engine emits nodeLinkRemoved, which the node link model already listens for.
+    if (auto nodeLink = nodeLinks_.nodeLinkAt(linkIndex)) nt::nm().disconnectNodes(*nodeLink);
 }
 
 QVariantMap
@@ -300,8 +300,8 @@ QVariantMap NetworkViewModel::getInsertPreview(qulonglong nodeId, int hoveredLin
 {
     const QVariantMap nothingToDo = makeDropPreview({}, {});
 
-    const std::optional<nt::Connection> connection = edges_.connectionAt(hoveredLink);
-    if (!connection) return nothingToDo;
+    const std::optional<nt::NodeLink> nodeLink = nodeLinks_.nodeLinkAt(hoveredLink);
+    if (!nodeLink) return nothingToDo;
 
     auto& network = nt::nm();
 
@@ -309,18 +309,18 @@ QVariantMap NetworkViewModel::getInsertPreview(qulonglong nodeId, int hoveredLin
     // single meaning.
     if (network.getSelectedNodes().size() > 1) return nothingToDo;
 
-    if (connection->sourceNode == nodeId || connection->targetNode == nodeId) return nothingToDo;
+    if (nodeLink->sourceNode == nodeId || nodeLink->targetNode == nodeId) return nothingToDo;
 
     const nt::Node& node = network.getNode(nodeId);
     if (!node.takesInput() || node.getMaxOutputs() == 0) return nothingToDo;
 
     // Leaves a node that already has an input alone, since the drop would take it over.
-    if (network.graph().getInputConnection(nodeId, 0)) return nothingToDo;
+    if (network.graph().getInputNodeLink(nodeId, 0)) return nothingToDo;
 
     return makeDropPreview(
         {hoveredLink},
-        {makeLink(connection->sourceNode, connection->sourceOutput, nodeId, 0),
-         makeLink(nodeId, 0, connection->targetNode, connection->targetInput)}
+        {makeLink(nodeLink->sourceNode, nodeLink->sourceOutput, nodeId, 0),
+         makeLink(nodeId, 0, nodeLink->targetNode, nodeLink->targetInput)}
     );
 }
 
@@ -335,21 +335,21 @@ QVariantMap NetworkViewModel::getBypassPreview() const
 
     // Cuts every link touching the selection.
     QVariantList cutLinks;
-    for (int linkIndex = 0; linkIndex < edges_.rowCount(); ++linkIndex)
+    for (int linkIndex = 0; linkIndex < nodeLinks_.rowCount(); ++linkIndex)
     {
-        const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
-        if (connection &&
-            (isBypassed(connection->sourceNode) || isBypassed(connection->targetNode)))
+        const std::optional<nt::NodeLink> nodeLink = nodeLinks_.nodeLinkAt(linkIndex);
+        if (nodeLink &&
+            (isBypassed(nodeLink->sourceNode) || isBypassed(nodeLink->targetNode)))
             cutLinks.append(linkIndex);
     }
 
     // Returns the first input above a node that is not itself being pulled out.
     const auto getFeed = [&](nt::NodeId nodeId) {
-        std::optional<nt::Connection> feed = network.graph().getInputConnection(nodeId, 0);
+        std::optional<nt::NodeLink> feed = network.graph().getInputNodeLink(nodeId, 0);
         for (std::size_t step = 0; feed && isBypassed(feed->sourceNode); ++step)
         {
-            if (step > bypassed.size()) return std::optional<nt::Connection>{};
-            feed = network.graph().getInputConnection(feed->sourceNode, 0);
+            if (step > bypassed.size()) return std::optional<nt::NodeLink>{};
+            feed = network.graph().getInputNodeLink(feed->sourceNode, 0);
         }
         return feed;
     };
@@ -357,10 +357,10 @@ QVariantMap NetworkViewModel::getBypassPreview() const
     QVariantList newLinks;
     for (nt::NodeId nodeId : bypassed)
     {
-        const std::optional<nt::Connection> feed = getFeed(nodeId);
+        const std::optional<nt::NodeLink> feed = getFeed(nodeId);
         if (!feed) continue;
 
-        for (const nt::Connection& outgoing : network.graph().getOutputs(nodeId))
+        for (const nt::NodeLink& outgoing : network.graph().getOutputs(nodeId))
         {
             if (isBypassed(outgoing.targetNode)) continue;
             newLinks.append(makeLink(
@@ -376,11 +376,11 @@ QVariantMap NetworkViewModel::getBypassPreview() const
 
 void NetworkViewModel::applyDropPreview(const QVariantMap& preview)
 {
-    // Reads the connections off the model first, since cutting one shifts the index
+    // Reads the node links off the model first, since cutting one shifts the index
     // of every link after it.
-    std::vector<nt::Connection> cut;
+    std::vector<nt::NodeLink> cut;
     for (const QVariant& linkIndex : preview["cutLinks"].toList())
-        if (auto connection = edges_.connectionAt(linkIndex.toInt())) cut.push_back(*connection);
+        if (auto nodeLink = nodeLinks_.nodeLinkAt(linkIndex.toInt())) cut.push_back(*nodeLink);
 
     const QVariantList newLinks = preview["newLinks"].toList();
     if (cut.empty() && newLinks.isEmpty()) return;
@@ -388,8 +388,8 @@ void NetworkViewModel::applyDropPreview(const QVariantMap& preview)
     auto& network = nt::nm();
 
     nt::UndoTransaction transaction(network.undoStack());
-    for (const nt::Connection& connection : cut)
-        network.disconnectNodes(connection);
+    for (const nt::NodeLink& nodeLink : cut)
+        network.disconnectNodes(nodeLink);
     for (const QVariant& link : newLinks)
     {
         const QVariantMap fields = link.toMap();
@@ -404,13 +404,13 @@ void NetworkViewModel::applyDropPreview(const QVariantMap& preview)
 
 QVariantMap NetworkViewModel::getLinkEndpoints(int linkIndex) const
 {
-    const std::optional<nt::Connection> connection = edges_.connectionAt(linkIndex);
-    if (!connection) return {};
+    const std::optional<nt::NodeLink> nodeLink = nodeLinks_.nodeLinkAt(linkIndex);
+    if (!nodeLink) return {};
     return {
-        {"sourceNode", static_cast<qulonglong>(connection->sourceNode)},
-        {"sourceOutput", static_cast<int>(connection->sourceOutput)},
-        {"targetNode", static_cast<qulonglong>(connection->targetNode)},
-        {"targetInput", static_cast<int>(connection->targetInput)},
+        {"sourceNode", static_cast<qulonglong>(nodeLink->sourceNode)},
+        {"sourceOutput", static_cast<int>(nodeLink->sourceOutput)},
+        {"targetNode", static_cast<qulonglong>(nodeLink->targetNode)},
+        {"targetInput", static_cast<int>(nodeLink->targetInput)},
     };
 }
 

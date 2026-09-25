@@ -382,7 +382,7 @@ QStringList ParameterItem::attributeNames() const
     if (!param || !attributeStyle_) return {};
 
     const nt::NodeId nodeId = param->getNodeId();
-    const std::optional<nt::Connection> input = nt::nm().graph().getInputConnection(nodeId, 0);
+    const std::optional<nt::NodeLink> input = nt::nm().graph().getInputNodeLink(nodeId, 0);
     if (!input) return {};
 
     const std::shared_ptr<const NodePacket> packet =

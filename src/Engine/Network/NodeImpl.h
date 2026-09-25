@@ -75,7 +75,7 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     bool hasInput(unsigned int inputIndex);
 
     /// @brief Returns how many inputs the node takes.
-    /// @note A multi input port holds one input per connection it has.
+    /// @note A multi input port holds one input per node link it has.
     unsigned int getInputCount();
 
     /// @brief Returns the frame the scene sits on.

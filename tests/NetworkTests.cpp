@@ -85,10 +85,10 @@ TEST_CASE_METHOD(NMReset, "network")
     REQUIRE(nm.isValidNode(newNodeId2));
 
     nm.connectNodes(newNodeId, 0, newNodeId2, 0);
-    REQUIRE(nm.graph().getInputConnection(newNodeId2, 0).has_value());
+    REQUIRE(nm.graph().getInputNodeLink(newNodeId2, 0).has_value());
 }
 
-TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
+TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its node links")
 {
     using namespace enzo;
     auto& nm = nt::nm();
@@ -103,11 +103,11 @@ TEST_CASE_METHOD(NMReset, "Undoing a node deletion restores its connections")
     nm.deleteNode(downstream);
     REQUIRE_FALSE(nm.isValidNode(downstream));
 
-    // Undo must restore the node and its connection without throwing
+    // Undo must restore the node and its node link without throwing
     nm.undoStack().undo();
 
     REQUIRE(nm.isValidNode(downstream));
-    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
+    REQUIRE(nm.graph().getInputNodeLink(downstream, 0).has_value());
 }
 
 TEST_CASE_METHOD(NMReset, "Cooking a node cooks its whole upstream chain")
@@ -150,7 +150,7 @@ TEST_CASE_METHOD(NMReset, "Dirtying an upstream node restages everything downstr
     REQUIRE(nm.getNode(third).isDirty());
 }
 
-TEST_CASE_METHOD(NMReset, "Cooking pulls geometry across an input connection")
+TEST_CASE_METHOD(NMReset, "Cooking pulls geometry across an input node link")
 {
     using namespace enzo;
     auto& nm = nt::nm();
@@ -408,7 +408,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete brings the node back with its positi
     REQUIRE(nm.getNode(downstream).getPath() == "/transform1");
     REQUIRE(nm.getNode(downstream).getPosition().x() == 5.f);
     REQUIRE(nm.getNode(downstream).getPosition().y() == 7.f);
-    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
+    REQUIRE(nm.graph().getInputNodeLink(downstream, 0).has_value());
 
     // Redo takes it away again, and the stack is still good for another round trip
     nm.undoStack().redo();
@@ -416,7 +416,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete brings the node back with its positi
 
     nm.undoStack().undo();
     REQUIRE(nm.isValidNode(downstream));
-    REQUIRE(nm.graph().getInputConnection(downstream, 0).has_value());
+    REQUIRE(nm.graph().getInputNodeLink(downstream, 0).has_value());
 }
 
 TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes living in it")
@@ -441,7 +441,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes li
     REQUIRE(nm.isValidNode(deeper));
     REQUIRE(nm.getChildNodeIds(Path("/container1")).size() == 2);
     REQUIRE(nm.getNode(deeper).getPosition().x() == 2.f);
-    REQUIRE(nm.graph().getInputConnection(deeper, 0).has_value());
+    REQUIRE(nm.graph().getInputNodeLink(deeper, 0).has_value());
 
     // Redo empties it out again at every depth
     nm.undoStack().redo();
@@ -455,12 +455,12 @@ TEST_CASE_METHOD(NMReset, "Undoing a delete restores a scope before the nodes li
 static std::vector<enzo::nt::NodeId> getInputSources(enzo::nt::NodeId nodeId)
 {
     std::vector<enzo::nt::NodeId> sources;
-    for (const enzo::nt::Connection& connection : enzo::nt::nm().graph().getInputs(nodeId))
-        sources.push_back(connection.sourceNode);
+    for (const enzo::nt::NodeLink& nodeLink : enzo::nt::nm().graph().getInputs(nodeId))
+        sources.push_back(nodeLink.sourceNode);
     return sources;
 }
 
-TEST_CASE_METHOD(NMReset, "Connecting into a multi input port makes room for the connection")
+TEST_CASE_METHOD(NMReset, "Connecting into a multi input port makes room for the node link")
 {
     using namespace enzo;
     auto& nm = nt::nm();
@@ -497,7 +497,7 @@ TEST_CASE_METHOD(NMReset, "Disconnecting from a multi input port closes the gap"
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, third});
 }
 
-TEST_CASE_METHOD(NMReset, "Undoing a connection into a multi input port restores the order")
+TEST_CASE_METHOD(NMReset, "Undoing a node link into a multi input port restores the order")
 {
     using namespace enzo;
     auto& nm = nt::nm();
@@ -520,7 +520,7 @@ TEST_CASE_METHOD(NMReset, "Undoing a connection into a multi input port restores
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{inserted, first, second});
 }
 
-TEST_CASE_METHOD(NMReset, "Connecting into an occupied single input port replaces the connection")
+TEST_CASE_METHOD(NMReset, "Connecting into an occupied single input port replaces the node link")
 {
     using namespace enzo;
     auto& nm = nt::nm();
@@ -544,9 +544,9 @@ TEST_CASE_METHOD(NMReset, "Connecting past the last input of a multi input port 
     nt::NodeId second = nm.createNode("enzo::grid");
 
     nm.connectNodes(first, 0, merge, 0);
-    nt::Connection connection = nm.connectNodes(second, 0, merge, 5);
+    nt::NodeLink nodeLink = nm.connectNodes(second, 0, merge, 5);
 
-    REQUIRE(connection.targetInput == 1);
+    REQUIRE(nodeLink.targetInput == 1);
     REQUIRE(getInputSources(merge) == std::vector<nt::NodeId>{first, second});
     REQUIRE(nm.getInputCount(merge) == 2);
 }

@@ -17,7 +17,7 @@ class Node;
  * Undo captures a snapshot before a node goes away and rebuilds the node from it later, and
  * a saved file is a list of these plus the wiring between them.
  *
- * @note Connections and the nodes living in a child scope are not part of a snapshot. Wiring
+ * @note Node links and the nodes living in a child scope are not part of a snapshot. Wiring
  * belongs to the graph, and children are nodes in their own right, each snapshotted on their
  * own.
  */

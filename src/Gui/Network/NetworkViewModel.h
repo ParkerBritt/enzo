@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gui/Network/EdgeListModel.h"
+#include "Gui/Network/NodeLinkListModel.h"
 #include "Gui/Network/NodeListModel.h"
 #include <QObject>
 #include <QRectF>
@@ -22,7 +22,7 @@ class NetworkViewModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QAbstractListModel* nodes READ nodes CONSTANT)
-    Q_PROPERTY(QAbstractListModel* edges READ edges CONSTANT)
+    Q_PROPERTY(QAbstractListModel* nodeLinks READ nodeLinks CONSTANT)
     Q_PROPERTY(QVariantList nodeTypes READ getNodeTypes CONSTANT)
     Q_PROPERTY(qreal nodeWidth READ getNodeWidth CONSTANT)
     Q_PROPERTY(qreal nodeHeight READ getNodeHeight CONSTANT)
@@ -32,7 +32,7 @@ class NetworkViewModel : public QObject
 
     QAbstractListModel* nodes();
 
-    QAbstractListModel* edges();
+    QAbstractListModel* nodeLinks();
 
     /// @brief Returns the node card width.
     qreal getNodeWidth() const;
@@ -135,7 +135,7 @@ class NetworkViewModel : public QObject
     QVariantMap getBypassPreview() const;
 
     NodeListModel nodes_;
-    EdgeListModel edges_;
+    NodeLinkListModel nodeLinks_;
     boost::signals2::scoped_connection nodeCreatedSubscription_;
     boost::signals2::scoped_connection nodeRemovedSubscription_;
     boost::signals2::scoped_connection networkClearedSubscription_;
@@ -143,8 +143,8 @@ class NetworkViewModel : public QObject
     boost::signals2::scoped_connection primaryNodeSubscription_;
     boost::signals2::scoped_connection displayNodeSubscription_;
     boost::signals2::scoped_connection nodePositionSubscription_;
-    boost::signals2::scoped_connection connectionCreatedSubscription_;
-    boost::signals2::scoped_connection connectionRemovedSubscription_;
+    boost::signals2::scoped_connection nodeLinkCreatedSubscription_;
+    boost::signals2::scoped_connection nodeLinkRemovedSubscription_;
 };
 
 } // namespace enzo::ui

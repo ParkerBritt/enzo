@@ -159,7 +159,7 @@ TEST_CASE_METHOD(NMReset, "A node path round trips through save and load")
         REQUIRE(node.getPath().getString() == savedPath);
 }
 
-TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
+TEST_CASE_METHOD(NMReset, "A node link round trips through save and load")
 {
     auto& nm = nt::nm();
     nt::NodeId grid = nm.createNode("enzo::grid");
@@ -185,7 +185,7 @@ TEST_CASE_METHOD(NMReset, "A connection round trips through save and load")
     REQUIRE(loadedTransform.has_value());
 
     // The transform reads its single input from the grid
-    std::vector<nt::Connection> inputs = nm.graph().getInputs(loadedTransform.value());
+    std::vector<nt::NodeLink> inputs = nm.graph().getInputs(loadedTransform.value());
     REQUIRE(inputs.size() == 1);
     REQUIRE(inputs[0].sourceNode == loadedGrid.value());
 }
@@ -236,7 +236,7 @@ TEST_CASE_METHOD(NMReset, "The timeline round trips through save and load")
 TEST_CASE_METHOD(NMReset, "Loading a file without a timeline fails")
 {
     const std::string path = "/tmp/enzo_serializer_no_timeline.json";
-    std::ofstream(path) << R"({"networkModel": {"nodes": [], "connections": []}})";
+    std::ofstream(path) << R"({"networkModel": {"nodes": [], "nodeLinks": []}})";
 
     nt::Serializer serializer;
     REQUIRE_THROWS(serializer.load(nt::nm(), path));

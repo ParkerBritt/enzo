@@ -9,6 +9,6 @@ enum class UndoCommandType
     ChangeDisplayFlag,
     ChangePrimaryNode,
     ChangeSelection,
-    ChangeConnection,
+    ChangeNodeLink,
     UndoGroup,
 };

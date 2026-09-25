@@ -1,6 +1,6 @@
 #include <cereal/cereal.hpp>
 
-struct ConnectionSerializable
+struct NodeLinkSerializable
 {
     unsigned int inputNodeIndex = 0;
     unsigned int inputSocketIndex = 0;

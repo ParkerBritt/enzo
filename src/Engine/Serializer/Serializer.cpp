@@ -144,17 +144,17 @@ void Serializer::save(NetworkManager& networkManager, std::string filePath)
         networkModel.nodes.push_back(NodeSnapshot::capture(node));
     }
 
-    // Serialize connections (collect from output side to avoid duplicates)
+    // Serialize node links (collect from output side to avoid duplicates)
     for (auto [nodeId, node] : nodes)
     {
-        for (const nt::Connection& conn : network.graph().getOutputs(nodeId))
+        for (const nt::NodeLink& nodeLink : network.graph().getOutputs(nodeId))
         {
-            ConnectionSerializable connModel;
-            connModel.inputNodeIndex = nodeIdToIndex[conn.sourceNode];
-            connModel.inputSocketIndex = conn.sourceOutput;
-            connModel.outputNodeIndex = nodeIdToIndex[conn.targetNode];
-            connModel.outputSocketIndex = conn.targetInput;
-            networkModel.connections.push_back(connModel);
+            NodeLinkSerializable nodeLinkModel;
+            nodeLinkModel.inputNodeIndex = nodeIdToIndex[nodeLink.sourceNode];
+            nodeLinkModel.inputSocketIndex = nodeLink.sourceOutput;
+            nodeLinkModel.outputNodeIndex = nodeIdToIndex[nodeLink.targetNode];
+            nodeLinkModel.outputSocketIndex = nodeLink.targetInput;
+            networkModel.nodeLinks.push_back(nodeLinkModel);
         }
     }
 
@@ -207,14 +207,14 @@ void Serializer::load(NetworkManager& networkManager, std::string filePath)
         nodeIds[nodeIndex] = nodeId;
     }
 
-    // Recreate connections
-    for (const ConnectionSerializable& conn : networkModel.connections)
+    // Recreate node links
+    for (const NodeLinkSerializable& nodeLink : networkModel.nodeLinks)
     {
         nm().connectNodes(
-            nodeIds[conn.inputNodeIndex],
-            conn.inputSocketIndex,
-            nodeIds[conn.outputNodeIndex],
-            conn.outputSocketIndex
+            nodeIds[nodeLink.inputNodeIndex],
+            nodeLink.inputSocketIndex,
+            nodeIds[nodeLink.outputNodeIndex],
+            nodeLink.outputSocketIndex
         );
     }
 }

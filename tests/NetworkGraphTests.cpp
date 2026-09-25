@@ -1,4 +1,4 @@
-#include "Engine/NetworkGraph/Connection.h"
+#include "Engine/NetworkGraph/NodeLink.h"
 #include "Engine/NetworkGraph/NetworkGraph.h"
 #include "Engine/NetworkGraph/Unit.h"
 #include <catch2/catch_test_macros.hpp>
@@ -15,10 +15,10 @@ bool contains(const std::vector<nt::Unit>& units, const nt::Unit& target)
     return false;
 }
 
-// A connection from one node's first output into another node's given input.
-nt::Connection wire(nt::NodeId source, nt::NodeId target, unsigned int targetInput = 0)
+// A node link from one node's first output into another node's given input.
+nt::NodeLink wire(nt::NodeId source, nt::NodeId target, unsigned int targetInput = 0)
 {
-    return nt::Connection{source, 0, target, targetInput};
+    return nt::NodeLink{source, 0, target, targetInput};
 }
 } // namespace
 
@@ -109,7 +109,7 @@ TEST_CASE("A node's inputs come back ordered by input index")
     graph.connect(wire(5, 9, 1));
     graph.connect(wire(6, 9, 0));
 
-    std::vector<nt::Connection> inputs = graph.getInputs(9);
+    std::vector<nt::NodeLink> inputs = graph.getInputs(9);
     REQUIRE(inputs.size() == 2);
     REQUIRE(inputs[0].targetInput == 0);
     REQUIRE(inputs[0].sourceNode == 6);
@@ -117,7 +117,7 @@ TEST_CASE("A node's inputs come back ordered by input index")
     REQUIRE(inputs[1].sourceNode == 5);
 }
 
-TEST_CASE("A node's outputs list every connection leaving it")
+TEST_CASE("A node's outputs list every node link leaving it")
 {
     nt::NetworkGraph graph;
     graph.connect(wire(1, 2));
@@ -126,7 +126,7 @@ TEST_CASE("A node's outputs list every connection leaving it")
     REQUIRE(graph.getOutputs(1).size() == 2);
 }
 
-TEST_CASE("Two connections between the same pair survive removing one")
+TEST_CASE("Two node links between the same pair survive removing one")
 {
     // Node 1 feeds node 2 through two separate inputs.
     nt::NetworkGraph graph;
@@ -135,7 +135,7 @@ TEST_CASE("Two connections between the same pair survive removing one")
 
     graph.disconnect(wire(1, 2, 0));
 
-    // The second connection still keeps 1 ahead of 2.
+    // The second node link still keeps 1 ahead of 2.
     REQUIRE(graph.getCookOrder(2) == std::vector<nt::NodeId>{1, 2});
 }
 

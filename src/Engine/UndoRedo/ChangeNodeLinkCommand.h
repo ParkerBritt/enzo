@@ -6,7 +6,7 @@
 
 namespace enzo::nt {
 
-class ChangeConnectionCommand : public UndoCommand
+class ChangeNodeLinkCommand : public UndoCommand
 {
   public:
     enum class Action
@@ -15,7 +15,7 @@ class ChangeConnectionCommand : public UndoCommand
         Disconnect
     };
 
-    ChangeConnectionCommand(
+    ChangeNodeLinkCommand(
         NodeId inputNodeId,
         unsigned int inputIndex,
         NodeId outputNodeId,
@@ -43,7 +43,7 @@ class ChangeConnectionCommand : public UndoCommand
             disconnect();
     }
 
-    UndoCommandType type() const override { return UndoCommandType::ChangeConnection; }
+    UndoCommandType type() const override { return UndoCommandType::ChangeNodeLink; }
 
   private:
     void connect() { nm().connectNodes(inputNodeId_, inputIndex_, outputNodeId_, outputIndex_); }

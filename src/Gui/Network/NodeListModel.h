@@ -151,13 +151,13 @@ class NodeListModel : public QAbstractListModel
     ///
     /// Every declared port covers an equal share of the edge. A single port sits at
     /// the center of its share, while the multi input port fills its share as a bar
-    /// and spreads @p multiCount connections evenly inside it.
+    /// and spreads @p multiCount node links evenly inside it.
     ///
     /// @note Passing one more than the port holds gives a position at each end of
     /// the bar and one between every adjacent pair, where a new link would insert.
     QPointF getInputPosition(const Node& node, int inputIndex, int multiCount) const;
 
-    /// @brief Returns how many connections @p node's multi input port holds.
+    /// @brief Returns how many node links @p node's multi input port holds.
     int getMultiInputCount(const Node& node) const;
 
     /// @brief Returns the nearest port within @p pickRadius across the chosen edges.

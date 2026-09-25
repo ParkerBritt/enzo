@@ -15,17 +15,17 @@ nt::CookContext::CookContext(nt::NodeId nodeId, nt::NetworkManager& networkManag
 
 NodePacket nt::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
-    auto inputConnection = networkManager_.graph().getInputConnection(nodeId_, inputIndex);
-    if (!inputConnection)
+    auto inputNodeLink = networkManager_.graph().getInputNodeLink(nodeId_, inputIndex);
+    if (!inputNodeLink)
     {
         return NodePacket();
     }
-    return networkManager_.cookOutput(inputConnection->sourceNode, inputConnection->sourceOutput);
+    return networkManager_.cookOutput(inputNodeLink->sourceNode, inputNodeLink->sourceOutput);
 }
 
 bool nt::CookContext::hasInput(unsigned int inputIndex)
 {
-    return networkManager_.graph().getInputConnection(nodeId_, inputIndex).has_value();
+    return networkManager_.graph().getInputNodeLink(nodeId_, inputIndex).has_value();
 }
 
 unsigned int nt::CookContext::getInputCount() { return networkManager_.getInputCount(nodeId_); }
