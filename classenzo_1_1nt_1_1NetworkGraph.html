@@ -105,29 +105,29 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac47dacf27878e7a439179237d03ba7a2" id="r_ac47dacf27878e7a439179237d03ba7a2"><td class="memItemLeft" align="right" valign="top"><a id="ac47dacf27878e7a439179237d03ba7a2" name="ac47dacf27878e7a439179237d03ba7a2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>connect</b> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &amp;connection)</td></tr>
-<tr class="memdesc:ac47dacf27878e7a439179237d03ba7a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records a wired connection between two nodes. <br /></td></tr>
-<tr class="separator:ac47dacf27878e7a439179237d03ba7a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a555a11033ea0bd0707594eff2e85285f" id="r_a555a11033ea0bd0707594eff2e85285f"><td class="memItemLeft" align="right" valign="top"><a id="a555a11033ea0bd0707594eff2e85285f" name="a555a11033ea0bd0707594eff2e85285f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>disconnect</b> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &amp;connection)</td></tr>
-<tr class="memdesc:a555a11033ea0bd0707594eff2e85285f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a wired connection between two nodes. <br /></td></tr>
-<tr class="separator:a555a11033ea0bd0707594eff2e85285f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a736e469e3c049439922c330d32eb982c" id="r_a736e469e3c049439922c330d32eb982c"><td class="memItemLeft" align="right" valign="top"><a id="a736e469e3c049439922c330d32eb982c" name="a736e469e3c049439922c330d32eb982c"></a>
-std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getInputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target) const</td></tr>
-<tr class="memdesc:a736e469e3c049439922c330d32eb982c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connections feeding <code>target</code>, ordered by input index. <br /></td></tr>
-<tr class="separator:a736e469e3c049439922c330d32eb982c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37fa70796a7e8dc359a469a4025f99dd" id="r_a37fa70796a7e8dc359a469a4025f99dd"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37fa70796a7e8dc359a469a4025f99dd">getInputConnection</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target, unsigned int inputIndex) const</td></tr>
-<tr class="memdesc:a37fa70796a7e8dc359a469a4025f99dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connection on one input of <code>target</code>, if any.  <br /></td></tr>
-<tr class="separator:a37fa70796a7e8dc359a469a4025f99dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47df71cc5c3385911f93bd4817ffd920" id="r_a47df71cc5c3385911f93bd4817ffd920"><td class="memItemLeft" align="right" valign="top"><a id="a47df71cc5c3385911f93bd4817ffd920" name="a47df71cc5c3385911f93bd4817ffd920"></a>
-std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> source) const</td></tr>
-<tr class="memdesc:a47df71cc5c3385911f93bd4817ffd920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the connections leaving <code>source</code>. <br /></td></tr>
-<tr class="separator:a47df71cc5c3385911f93bd4817ffd920"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf994950791902e222755a9d71bdab07" id="r_acf994950791902e222755a9d71bdab07"><td class="memItemLeft" align="right" valign="top"><a id="acf994950791902e222755a9d71bdab07" name="acf994950791902e222755a9d71bdab07"></a>
-std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getConnections</b> () const</td></tr>
-<tr class="memdesc:acf994950791902e222755a9d71bdab07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every wired connection in the graph, in no particular order. <br /></td></tr>
-<tr class="separator:acf994950791902e222755a9d71bdab07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae47fdf39c9495fc00aba1010bf337975" id="r_ae47fdf39c9495fc00aba1010bf337975"><td class="memItemLeft" align="right" valign="top"><a id="ae47fdf39c9495fc00aba1010bf337975" name="ae47fdf39c9495fc00aba1010bf337975"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>connect</b> (const <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &amp;nodeLink)</td></tr>
+<tr class="memdesc:ae47fdf39c9495fc00aba1010bf337975"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records a node link between two nodes. <br /></td></tr>
+<tr class="separator:ae47fdf39c9495fc00aba1010bf337975"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a805635d506a07c76cc826b5d49471600" id="r_a805635d506a07c76cc826b5d49471600"><td class="memItemLeft" align="right" valign="top"><a id="a805635d506a07c76cc826b5d49471600" name="a805635d506a07c76cc826b5d49471600"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>disconnect</b> (const <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &amp;nodeLink)</td></tr>
+<tr class="memdesc:a805635d506a07c76cc826b5d49471600"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a node link between two nodes. <br /></td></tr>
+<tr class="separator:a805635d506a07c76cc826b5d49471600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9f8c244d58cec398d23d00b3651b57d" id="r_af9f8c244d58cec398d23d00b3651b57d"><td class="memItemLeft" align="right" valign="top"><a id="af9f8c244d58cec398d23d00b3651b57d" name="af9f8c244d58cec398d23d00b3651b57d"></a>
+std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getInputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target) const</td></tr>
+<tr class="memdesc:af9f8c244d58cec398d23d00b3651b57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node links feeding <code>target</code>, ordered by input index. <br /></td></tr>
+<tr class="separator:af9f8c244d58cec398d23d00b3651b57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9812e3c08c07ed799bb7e305fa671d1" id="r_ae9812e3c08c07ed799bb7e305fa671d1"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9812e3c08c07ed799bb7e305fa671d1">getInputNodeLink</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> target, unsigned int inputIndex) const</td></tr>
+<tr class="memdesc:ae9812e3c08c07ed799bb7e305fa671d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node link on one input of <code>target</code>, if any.  <br /></td></tr>
+<tr class="separator:ae9812e3c08c07ed799bb7e305fa671d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a6c067579aa945dd3d1db18633b674a" id="r_a6a6c067579aa945dd3d1db18633b674a"><td class="memItemLeft" align="right" valign="top"><a id="a6a6c067579aa945dd3d1db18633b674a" name="a6a6c067579aa945dd3d1db18633b674a"></a>
+std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getOutputs</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> source) const</td></tr>
+<tr class="memdesc:a6a6c067579aa945dd3d1db18633b674a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node links leaving <code>source</code>. <br /></td></tr>
+<tr class="separator:a6a6c067579aa945dd3d1db18633b674a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a085daf618fde50b5c9e61546a5ddab" id="r_a6a085daf618fde50b5c9e61546a5ddab"><td class="memItemLeft" align="right" valign="top"><a id="a6a085daf618fde50b5c9e61546a5ddab" name="a6a085daf618fde50b5c9e61546a5ddab"></a>
+std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getNodeLinks</b> () const</td></tr>
+<tr class="memdesc:a6a085daf618fde50b5c9e61546a5ddab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every node link in the graph, in no particular order. <br /></td></tr>
+<tr class="separator:a6a085daf618fde50b5c9e61546a5ddab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1df06034bb66b9d123b14afcd47fc29" id="r_ac1df06034bb66b9d123b14afcd47fc29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1df06034bb66b9d123b14afcd47fc29">setCapturedDependencies</a> (const <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &amp;dependent, const std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Unit.html">Unit</a> &gt; &amp;dependencies)</td></tr>
 <tr class="memdesc:ac1df06034bb66b9d123b14afcd47fc29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every captured dependency of one parameter at once.  <br /></td></tr>
 <tr class="separator:ac1df06034bb66b9d123b14afcd47fc29"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,7 +139,7 @@ std::vector&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connect
 <tr class="separator:a657a5ebc3254ac165feaa05a008833ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add46220c97175ae5ce28d4d2ab9e8401" id="r_add46220c97175ae5ce28d4d2ab9e8401"><td class="memItemLeft" align="right" valign="top"><a id="add46220c97175ae5ce28d4d2ab9e8401" name="add46220c97175ae5ce28d4d2ab9e8401"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>removeNode</b> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId)</td></tr>
-<tr class="memdesc:add46220c97175ae5ce28d4d2ab9e8401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes every connection and captured edge touching the node. <br /></td></tr>
+<tr class="memdesc:add46220c97175ae5ce28d4d2ab9e8401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes every node link and captured edge touching the node. <br /></td></tr>
 <tr class="separator:add46220c97175ae5ce28d4d2ab9e8401"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4060e47c49391fd6dbf0773735b7b08" id="r_af4060e47c49391fd6dbf0773735b7b08"><td class="memItemLeft" align="right" valign="top"><a id="af4060e47c49391fd6dbf0773735b7b08" name="af4060e47c49391fd6dbf0773735b7b08"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
@@ -154,7 +154,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The single owner of the network's wiring and dependencies. </p>
-<p>Wired connections are the physical links between nodes. They are the ground truth of the topology and the only edges the cook order considers. Captured dependencies are expression references seen while a parameter evaluates. They are stored for invalidation and never take part in scheduling.</p>
+<p><a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">Node</a> links are the physical wires between nodes. They are the ground truth of the topology and the only edges the cook order considers. Captured dependencies are expression references seen while a parameter evaluates. They are stored for invalidation and never take part in scheduling.</p>
 <p>Every edge points from the value depended upon to the value that reads it, so the dependents of a unit are everything that must update when it changes. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a160a37d05845f7359036a422a1cb3f33" name="a160a37d05845f7359036a422a1cb3f33"></a>
@@ -173,7 +173,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 </div><div class="memdoc">
 
 <p>Returns the nodes to cook before <code>target</code>, in cook order. </p>
-<dl class="section note"><dt>Note</dt><dd>Considers wired connections only. Reports a cycle rather than looping. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Considers node links only. Reports a cycle rather than looping. </dd></dl>
 
 </div>
 </div>
@@ -193,18 +193,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 </div><div class="memdoc">
 
 <p>Returns everything that depends on <code>changed</code>, directly or through a chain. </p>
-<dl class="section note"><dt>Note</dt><dd>Considers both wired connections and captured edges. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Considers both node links and captured edges. </dd></dl>
 
 </div>
 </div>
-<a id="a37fa70796a7e8dc359a469a4025f99dd" name="a37fa70796a7e8dc359a469a4025f99dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37fa70796a7e8dc359a469a4025f99dd">&#9670;&#160;</a></span>getInputConnection()</h2>
+<a id="ae9812e3c08c07ed799bb7e305fa671d1" name="ae9812e3c08c07ed799bb7e305fa671d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9812e3c08c07ed799bb7e305fa671d1">&#9670;&#160;</a></span>getInputNodeLink()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1Connection.html">Connection</a> &gt; enzo::nt::NetworkGraph::getInputConnection </td>
+          <td class="memname">std::optional&lt; <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">NodeLink</a> &gt; enzo::nt::NetworkGraph::getInputNodeLink </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>target</em></span>, </td>
         </tr>
@@ -216,8 +216,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
       </table>
 </div><div class="memdoc">
 
-<p>Returns the connection on one input of <code>target</code>, if any. </p>
-<dl class="section note"><dt>Note</dt><dd>An input holds at most one connection. </dd></dl>
+<p>Returns the node link on one input of <code>target</code>, if any. </p>
+<dl class="section note"><dt>Note</dt><dd>An input holds at most one node link. </dd></dl>
 
 </div>
 </div>

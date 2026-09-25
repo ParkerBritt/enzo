@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: std::hash&lt; enzo::nt::Connection &gt; Struct Reference</title>
+<title>Enzo: src/Engine/Serializer/NodeLinkSerializable.h Source File</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,28 +86,35 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>std</b></li><li class="navelem"><a class="el" href="structstd_1_1hash_3_01enzo_1_1nt_1_1Connection_01_4.html">hash&lt; enzo::nt::Connection &gt;</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_734c5acde0f53b6a9058c7248ace8abb.html">Serializer</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="structstd_1_1hash_3_01enzo_1_1nt_1_1Connection_01_4-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">std::hash&lt; enzo::nt::Connection &gt; Struct Reference</div></div>
+  <div class="headertitle"><div class="title">NodeLinkSerializable.h</div></div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:a50512a0b00337a64563fd61cd778b8b3" id="r_a50512a0b00337a64563fd61cd778b8b3"><td class="memItemLeft" align="right" valign="top"><a id="a50512a0b00337a64563fd61cd778b8b3" name="a50512a0b00337a64563fd61cd778b8b3"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">enzo::nt::Connection</a> &amp;connection) const noexcept</td></tr>
-<tr class="separator:a50512a0b00337a64563fd61cd778b8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Engine/NetworkGraph/<a class="el" href="Connection_8h_source.html">Connection.h</a></li>
-</ul>
-</div><!-- contents -->
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &lt;cereal/cereal.hpp&gt;</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="foldopen" id="foldopen00003" data-start="{" data-end="};">
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno"><a class="line" href="structNodeLinkSerializable.html">    3</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structNodeLinkSerializable.html">NodeLinkSerializable</a></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>{</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> inputNodeIndex = 0;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> inputSocketIndex = 0;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> outputNodeIndex = 0;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> outputSocketIndex = 0;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt; <span class="keywordtype">void</span> serialize(Archive&amp; ar)</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        ar(CEREAL_NVP(inputNodeIndex),</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>           CEREAL_NVP(inputSocketIndex),</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>           CEREAL_NVP(outputNodeIndex),</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>           CEREAL_NVP(outputSocketIndex));</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    }</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>};</div>
+</div>
+<div class="ttc" id="astructNodeLinkSerializable_html"><div class="ttname"><a href="structNodeLinkSerializable.html">NodeLinkSerializable</a></div><div class="ttdef"><b>Definition</b> NodeLinkSerializable.h:4</div></div>
+</div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

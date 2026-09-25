@@ -5,7 +5,7 @@ var searchData=
   ['deletenode_2',['deleteNode',['../classenzo_1_1nt_1_1Network.html#a2e5718f77f6d1935212721d7966cd760',1,'enzo::nt::Network::deleteNode()'],['../classenzo_1_1nt_1_1NetworkManager.html#a97f7c246b46806e91d317cf4eeafc09c',1,'enzo::nt::NetworkManager::deleteNode()']]],
   ['dependsontime_3',['dependsOnTime',['../classenzo_1_1expr_1_1ExpressionContext.html#ac361a959271365dd1702ee841f5d38d1',1,'enzo::expr::ExpressionContext']]],
   ['dirtynode_4',['dirtyNode',['../classenzo_1_1nt_1_1Node.html#a7c3a97ec17f7f09a42dbcde76e70e86a',1,'enzo::nt::Node']]],
-  ['disconnect_5',['disconnect',['../classenzo_1_1nt_1_1NetworkGraph.html#a555a11033ea0bd0707594eff2e85285f',1,'enzo::nt::NetworkGraph']]],
-  ['disconnectnodes_6',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#a9ee0120a53b7e3dec885444904c0ecb9',1,'enzo::nt::NetworkManager']]],
+  ['disconnect_5',['disconnect',['../classenzo_1_1nt_1_1NetworkGraph.html#a805635d506a07c76cc826b5d49471600',1,'enzo::nt::NetworkGraph']]],
+  ['disconnectnodes_6',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af861822eff417ade04aad9bc3b30acff',1,'enzo::nt::NetworkManager']]],
   ['duplicatepoints_7',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]]
 ];

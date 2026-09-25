@@ -131,7 +131,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>cereal::access</b></
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Everything one node carries, held apart from the network so it can be rebuilt. </p>
 <p>A node's type, where it sits, and the full state of its parameters, taken at one moment. Undo captures a snapshot before a node goes away and rebuilds the node from it later, and a saved file is a list of these plus the wiring between them.</p>
-<dl class="section note"><dt>Note</dt><dd>Connections and the nodes living in a child scope are not part of a snapshot. Wiring belongs to the graph, and children are nodes in their own right, each snapshotted on their own. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">Node</a> links and the nodes living in a child scope are not part of a snapshot. Wiring belongs to the graph, and children are nodes in their own right, each snapshotted on their own. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7cdbf6b4c1b791ed00844e8d2861cdff" name="a7cdbf6b4c1b791ed00844e8d2861cdff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7cdbf6b4c1b791ed00844e8d2861cdff">&#9670;&#160;</a></span>restore()</h2>

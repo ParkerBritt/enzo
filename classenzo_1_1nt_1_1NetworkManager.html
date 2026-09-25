@@ -236,12 +236,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 <tr class="memitem:a86943038b1fd5e45132bd17c625fdcf3" id="r_a86943038b1fd5e45132bd17c625fdcf3"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86943038b1fd5e45132bd17c625fdcf3">getInputCount</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> nodeId)</td></tr>
 <tr class="memdesc:a86943038b1fd5e45132bd17c625fdcf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many inputs a node currently takes.  <br /></td></tr>
 <tr class="separator:a86943038b1fd5e45132bd17c625fdcf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af91834ebedabd29c46231ae35eff879e" id="r_af91834ebedabd29c46231ae35eff879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af91834ebedabd29c46231ae35eff879e">connectNodes</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> inputNodeId, unsigned int inputIndex, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> outputNodeId, unsigned int outputIndex)</td></tr>
-<tr class="memdesc:af91834ebedabd29c46231ae35eff879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wires one node's output into another node's input.  <br /></td></tr>
-<tr class="separator:af91834ebedabd29c46231ae35eff879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee0120a53b7e3dec885444904c0ecb9" id="r_a9ee0120a53b7e3dec885444904c0ecb9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ee0120a53b7e3dec885444904c0ecb9">disconnectNodes</a> (const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;connection)</td></tr>
-<tr class="memdesc:a9ee0120a53b7e3dec885444904c0ecb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a wired connection between two nodes.  <br /></td></tr>
-<tr class="separator:a9ee0120a53b7e3dec885444904c0ecb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ed6f4c58007954d0321843a75f1477a" id="r_a6ed6f4c58007954d0321843a75f1477a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ed6f4c58007954d0321843a75f1477a">connectNodes</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> inputNodeId, unsigned int inputIndex, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> outputNodeId, unsigned int outputIndex)</td></tr>
+<tr class="memdesc:a6ed6f4c58007954d0321843a75f1477a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wires one node's output into another node's input.  <br /></td></tr>
+<tr class="separator:a6ed6f4c58007954d0321843a75f1477a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af861822eff417ade04aad9bc3b30acff" id="r_af861822eff417ade04aad9bc3b30acff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af861822eff417ade04aad9bc3b30acff">disconnectNodes</a> (const <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a> &amp;nodeLink)</td></tr>
+<tr class="memdesc:af861822eff417ade04aad9bc3b30acff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a node link between two nodes.  <br /></td></tr>
+<tr class="separator:af861822eff417ade04aad9bc3b30acff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a103e727d922cbca7a930a51c5cc2f445" id="r_a103e727d922cbca7a930a51c5cc2f445"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1nt_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a103e727d922cbca7a930a51c5cc2f445">findNode</a> (const <a class="el" href="classenzo_1_1NetworkPath.html">NetworkPath</a> &amp;path, <a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> fromNode=<a class="el" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a>)</td></tr>
 <tr class="memdesc:a103e727d922cbca7a930a51c5cc2f445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves a node reference such as "grid1" or "../grid1" to its node.  <br /></td></tr>
 <tr class="separator:a103e727d922cbca7a930a51c5cc2f445"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,12 +289,12 @@ boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39
 <tr class="memitem:a6a54a5bec26e5a7a1207ced5f4be94ae" id="r_a6a54a5bec26e5a7a1207ced5f4be94ae"><td class="memItemLeft" align="right" valign="top"><a id="a6a54a5bec26e5a7a1207ced5f4be94ae" name="a6a54a5bec26e5a7a1207ced5f4be94ae"></a>
 boost::signals2::signal&lt; void(<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">nt::NodeId</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>nodeRemoved</b></td></tr>
 <tr class="separator:a6a54a5bec26e5a7a1207ced5f4be94ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae35dc6ae1a067e113b70adaac550a287" id="r_ae35dc6ae1a067e113b70adaac550a287"><td class="memItemLeft" align="right" valign="top"><a id="ae35dc6ae1a067e113b70adaac550a287" name="ae35dc6ae1a067e113b70adaac550a287"></a>
-boost::signals2::signal&lt; void(<a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>connectionCreated</b></td></tr>
-<tr class="separator:ae35dc6ae1a067e113b70adaac550a287"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46a641cf1b55c81db5a7283ac9914770" id="r_a46a641cf1b55c81db5a7283ac9914770"><td class="memItemLeft" align="right" valign="top"><a id="a46a641cf1b55c81db5a7283ac9914770" name="a46a641cf1b55c81db5a7283ac9914770"></a>
-boost::signals2::signal&lt; void(<a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>connectionRemoved</b></td></tr>
-<tr class="separator:a46a641cf1b55c81db5a7283ac9914770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dbe54406cbaa6e8d309faec3a3905e6" id="r_a0dbe54406cbaa6e8d309faec3a3905e6"><td class="memItemLeft" align="right" valign="top"><a id="a0dbe54406cbaa6e8d309faec3a3905e6" name="a0dbe54406cbaa6e8d309faec3a3905e6"></a>
+boost::signals2::signal&lt; void(<a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>nodeLinkCreated</b></td></tr>
+<tr class="separator:a0dbe54406cbaa6e8d309faec3a3905e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a915b8f0462f364653dd2014430b1aa00" id="r_a915b8f0462f364653dd2014430b1aa00"><td class="memItemLeft" align="right" valign="top"><a id="a915b8f0462f364653dd2014430b1aa00" name="a915b8f0462f364653dd2014430b1aa00"></a>
+boost::signals2::signal&lt; void(<a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>nodeLinkRemoved</b></td></tr>
+<tr class="separator:a915b8f0462f364653dd2014430b1aa00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adeed6babfc1c112751c8a872b1a3793d" id="r_adeed6babfc1c112751c8a872b1a3793d"><td class="memItemLeft" align="right" valign="top"><a id="adeed6babfc1c112751c8a872b1a3793d" name="adeed6babfc1c112751c8a872b1a3793d"></a>
 boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>networkCleared</b></td></tr>
 <tr class="separator:adeed6babfc1c112751c8a872b1a3793d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -337,14 +337,14 @@ boost::signals2::signal&lt; void(floatT fps)&gt;&#160;</td><td class="memItemRig
 
 </div>
 </div>
-<a id="af91834ebedabd29c46231ae35eff879e" name="af91834ebedabd29c46231ae35eff879e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af91834ebedabd29c46231ae35eff879e">&#9670;&#160;</a></span>connectNodes()</h2>
+<a id="a6ed6f4c58007954d0321843a75f1477a" name="a6ed6f4c58007954d0321843a75f1477a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ed6f4c58007954d0321843a75f1477a">&#9670;&#160;</a></span>connectNodes()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> enzo::nt::NetworkManager::connectNodes </td>
+          <td class="memname"><a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a> enzo::nt::NetworkManager::connectNodes </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a></td>          <td class="paramname"><span class="paramname"><em>inputNodeId</em></span>, </td>
         </tr>
@@ -367,10 +367,10 @@ boost::signals2::signal&lt; void(floatT fps)&gt;&#160;</td><td class="memItemRig
 </div><div class="memdoc">
 
 <p>Wires one node's output into another node's input. </p>
-<dl class="section return"><dt>Returns</dt><dd>The connection that was created. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>A single input port holds one connection, so whatever was on it is replaced. </dd>
+<dl class="section return"><dt>Returns</dt><dd>The node link that was created. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>A single input port holds one node link, so whatever was on it is replaced. </dd>
 <dd>
-A multi input port makes room, moving the connections from the index onward up one. </dd></dl>
+A multi input port makes room, moving the node links from the index onward up one. </dd></dl>
 
 </div>
 </div>
@@ -419,7 +419,7 @@ A multi input port makes room, moving the connections from the index onward up o
 </div><div class="memdoc">
 
 <p>Returns a copy of one of a node's outputs. </p>
-<p>Naming the node directly reaches geometry that no connection leads to, such as an output node sitting inside a container's child scope.</p>
+<p>Naming the node directly reaches geometry that no node link leads to, such as an output node sitting inside a container's child scope.</p>
 <dl class="section note"><dt>Note</dt><dd>The node cooks first, so the geometry is never stale. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>A copy the caller owns, so later cooks of the node leave it untouched. </dd></dl>
 
@@ -512,7 +512,7 @@ A multi input port makes room, moving the connections from the index onward up o
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Only the node itself is created, not the parameter values or connections it had. The undo commands restore those around this call.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only the node itself is created, not the parameter values or node links it had. The undo commands restore those around this call.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nodeId</td><td>The node ID to give the node. </td></tr>
@@ -551,8 +551,8 @@ A multi input port makes room, moving the connections from the index onward up o
 
 </div>
 </div>
-<a id="a9ee0120a53b7e3dec885444904c0ecb9" name="a9ee0120a53b7e3dec885444904c0ecb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ee0120a53b7e3dec885444904c0ecb9">&#9670;&#160;</a></span>disconnectNodes()</h2>
+<a id="af861822eff417ade04aad9bc3b30acff" name="af861822eff417ade04aad9bc3b30acff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af861822eff417ade04aad9bc3b30acff">&#9670;&#160;</a></span>disconnectNodes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -560,14 +560,14 @@ A multi input port makes room, moving the connections from the index onward up o
         <tr>
           <td class="memname">void enzo::nt::NetworkManager::disconnectNodes </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1Connection.html">nt::Connection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>connection</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structenzo_1_1nt_1_1NodeLink.html">nt::NodeLink</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>nodeLink</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Removes a wired connection between two nodes. </p>
-<dl class="section note"><dt>Note</dt><dd>Leaving a multi input port closes the gap, moving the connections above the index down one. </dd></dl>
+<p>Removes a node link between two nodes. </p>
+<dl class="section note"><dt>Note</dt><dd>Leaving a multi input port closes the gap, moving the node links above the index down one. </dd></dl>
 
 </div>
 </div>
@@ -707,7 +707,7 @@ A multi input port makes room, moving the connections from the index onward up o
 </div><div class="memdoc">
 
 <p>Returns how many inputs a node currently takes. </p>
-<dl class="section note"><dt>Note</dt><dd>A single port holds one input. A multi input port holds one input per connection it has. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>A single port holds one input. A multi input port holds one input per node link it has. </dd></dl>
 
 </div>
 </div>

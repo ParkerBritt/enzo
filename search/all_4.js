@@ -11,8 +11,8 @@ var searchData=
   ['dependencies_8',['Dependencies',['../index.html#autotoc_md2',1,'']]],
   ['dependsontime_9',['dependsOnTime',['../classenzo_1_1expr_1_1ExpressionContext.html#ac361a959271365dd1702ee841f5d38d1',1,'enzo::expr::ExpressionContext']]],
   ['dirtynode_10',['dirtyNode',['../classenzo_1_1nt_1_1Node.html#a7c3a97ec17f7f09a42dbcde76e70e86a',1,'enzo::nt::Node']]],
-  ['disconnect_11',['disconnect',['../classenzo_1_1nt_1_1NetworkGraph.html#a555a11033ea0bd0707594eff2e85285f',1,'enzo::nt::NetworkGraph']]],
-  ['disconnectnodes_12',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#a9ee0120a53b7e3dec885444904c0ecb9',1,'enzo::nt::NetworkManager']]],
+  ['disconnect_11',['disconnect',['../classenzo_1_1nt_1_1NetworkGraph.html#a805635d506a07c76cc826b5d49471600',1,'enzo::nt::NetworkGraph']]],
+  ['disconnectnodes_12',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af861822eff417ade04aad9bc3b30acff',1,'enzo::nt::NetworkManager']]],
   ['docspath_13',['docsPath',['../structenzo_1_1nt_1_1NodeType.html#a662866f5b9dacf5648f8d811f8997fd6',1,'enzo::nt::NodeType']]],
   ['documentation_14',['Documentation',['../index.html#autotoc_md4',1,'']]],
   ['duplicatepoints_15',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]]

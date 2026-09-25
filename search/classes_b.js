@@ -9,11 +9,13 @@ var searchData=
   ['node_6',['Node',['../classenzo_1_1nt_1_1Node.html',1,'enzo::nt']]],
   ['nodealias_7',['NodeAlias',['../structenzo_1_1nt_1_1NodeAlias.html',1,'enzo::nt']]],
   ['nodeimpl_8',['NodeImpl',['../classenzo_1_1nt_1_1NodeImpl.html',1,'enzo::nt']]],
-  ['nodeloader_9',['NodeLoader',['../classenzo_1_1nt_1_1NodeLoader.html',1,'enzo::nt']]],
-  ['nodemanifest_10',['NodeManifest',['../classenzo_1_1nt_1_1NodeManifest.html',1,'enzo::nt']]],
-  ['nodepacket_11',['NodePacket',['../classenzo_1_1NodePacket.html',1,'enzo']]],
-  ['nodeparameter_12',['NodeParameter',['../classenzo_1_1prm_1_1NodeParameter.html',1,'enzo::prm']]],
-  ['nodesnapshot_13',['NodeSnapshot',['../classenzo_1_1nt_1_1NodeSnapshot.html',1,'enzo::nt']]],
-  ['nodetype_14',['NodeType',['../structenzo_1_1nt_1_1NodeType.html',1,'enzo::nt']]],
-  ['nodetypetable_15',['NodeTypeTable',['../classenzo_1_1nt_1_1NodeTypeTable.html',1,'enzo::nt']]]
+  ['nodelink_9',['NodeLink',['../structenzo_1_1nt_1_1NodeLink.html',1,'enzo::nt']]],
+  ['nodelinkserializable_10',['NodeLinkSerializable',['../structNodeLinkSerializable.html',1,'']]],
+  ['nodeloader_11',['NodeLoader',['../classenzo_1_1nt_1_1NodeLoader.html',1,'enzo::nt']]],
+  ['nodemanifest_12',['NodeManifest',['../classenzo_1_1nt_1_1NodeManifest.html',1,'enzo::nt']]],
+  ['nodepacket_13',['NodePacket',['../classenzo_1_1NodePacket.html',1,'enzo']]],
+  ['nodeparameter_14',['NodeParameter',['../classenzo_1_1prm_1_1NodeParameter.html',1,'enzo::prm']]],
+  ['nodesnapshot_15',['NodeSnapshot',['../classenzo_1_1nt_1_1NodeSnapshot.html',1,'enzo::nt']]],
+  ['nodetype_16',['NodeType',['../structenzo_1_1nt_1_1NodeType.html',1,'enzo::nt']]],
+  ['nodetypetable_17',['NodeTypeTable',['../classenzo_1_1nt_1_1NodeTypeTable.html',1,'enzo::nt']]]
 ];
