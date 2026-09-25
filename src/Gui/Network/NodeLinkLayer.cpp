@@ -5,14 +5,13 @@
 #include <QSGGeometryNode>
 #include <QSGVertexColorMaterial>
 #include <algorithm>
+#include <cmath>
+#include <numbers>
 #include <optional>
 
 namespace enzo::ui {
 
 namespace {
-
-// How many straight segments approximate each bezier link.
-constexpr int kSegmentsPerLink = 24;
 
 // Stroke widths for a normal link, a hovered cut target, a rewire pickup preview,
 // and a link a node drop would wire.
@@ -25,6 +24,20 @@ constexpr float kPreviewWidth = 2;
 constexpr qreal kFadeMs = 150;
 constexpr qreal kFadeSoftness = 0.2;
 
+// How far a link's rounded corners reach from their corner point, and how many
+// segments approximate each one's arc.
+constexpr qreal kCornerRadius = 24;
+constexpr int kCornerSegments = 8;
+
+// How far the link dips straight down out of the output before turning sideways,
+// and how tight that first turn is.
+constexpr qreal kStubLength = 14;
+constexpr qreal kStubRadius = 10;
+
+// Below this much horizontal distance between output and input, the link renders as a straight
+// line.
+constexpr qreal kMinElbowHorizontalLength = 2 * (kStubRadius + kCornerRadius);
+
 /// @brief Returns the role number a model exposes under @p name, or -1 when absent.
 int findRole(const QHash<int, QByteArray>& roles, const QByteArray& name)
 {
@@ -33,40 +46,150 @@ int findRole(const QHash<int, QByteArray>& roles, const QByteArray& name)
     return -1;
 }
 
-/// @brief Returns a point on the cubic bezier through the four control points.
-QPointF cubicBezier(
-    const QPointF& start,
-    const QPointF& control1,
-    const QPointF& control2,
-    const QPointF& end,
-    qreal t
+/// @brief Appends the rounded turn at a corner where travel switches from @p directionIn
+/// to @p directionOut.
+///
+/// @param maxTangentLength Cap on how far the arc reaches along either straight segment.
+/// @note Leaves out the corner point itself. The caller supplies the straight segments
+/// on either side, connecting to the point before and the point after this call.
+void appendCorner(
+    std::vector<QPointF>& points,
+    const QPointF& corner,
+    const QPointF& directionIn,
+    const QPointF& directionOut,
+    qreal radius,
+    qreal maxTangentLength
 )
 {
-    const qreal inv = 1 - t;
-    const qreal a = inv * inv * inv;
-    const qreal b = 3 * inv * inv * t;
-    const qreal c = 3 * inv * t * t;
-    const qreal d = t * t * t;
-    return a * start + b * control1 + c * control2 + d * end;
+    const QPointF towardBend = -directionIn;
+    const qreal turnAngle = std::atan2(
+        std::abs(towardBend.x() * directionOut.y() - towardBend.y() * directionOut.x()),
+        towardBend.x() * directionOut.x() + towardBend.y() * directionOut.y()
+    );
+
+    if (radius <= 0 || turnAngle <= 0)
+    {
+        points.push_back(corner);
+        return;
+    }
+
+    const qreal tangentLength = std::min(radius / std::tan(turnAngle / 2), maxTangentLength);
+    const qreal arcRadius = tangentLength * std::tan(turnAngle / 2);
+
+    const QPointF arcStart = corner - directionIn * tangentLength;
+    const QPointF arcEnd = corner + directionOut * tangentLength;
+    const QPointF bisector = towardBend + directionOut;
+    const qreal bisectorLength = std::hypot(bisector.x(), bisector.y());
+    const QPointF center =
+        corner + bisector * (arcRadius / (std::sin(turnAngle / 2) * bisectorLength));
+
+    const qreal startAngle = std::atan2(arcStart.y() - center.y(), arcStart.x() - center.x());
+    const qreal endAngle = std::atan2(arcEnd.y() - center.y(), arcEnd.x() - center.x());
+    qreal sweep = endAngle - startAngle;
+    if (sweep > std::numbers::pi)
+        sweep -= 2 * std::numbers::pi;
+    else if (sweep < -std::numbers::pi)
+        sweep += 2 * std::numbers::pi;
+
+    points.push_back(arcStart);
+    for (int segment = 1; segment <= kCornerSegments; ++segment)
+    {
+        const qreal angle = startAngle + sweep * static_cast<qreal>(segment) / kCornerSegments;
+        points.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * arcRadius);
+    }
 }
 
-/// @brief Returns the points sampled along one link's bezier from output to input.
-std::vector<QPointF> samplePolyline(const NodeLinkLayer::Link& link)
+/// @brief Returns the points sampled along a route through a sequence of waypoints,
+/// rounding every interior waypoint by its paired radius in @p radii.
+///
+/// @note A corner's reach along a neighboring leg is capped at half that leg's length
+/// when the leg's other end is itself a rounded corner, and at the leg's full length
+/// when that end is the route's start or end.
+std::vector<QPointF>
+roundedPath(const std::vector<QPointF>& waypoints, const std::vector<qreal>& radii)
 {
-    // Pull the controls vertically so the curve leaves and enters straight.
-    const qreal slack = std::max<qreal>(36, std::abs(link.input.y() - link.output.y()) * 0.5);
-    const QPointF control1(link.output.x(), link.output.y() + slack);
-    const QPointF control2(link.input.x(), link.input.y() - slack);
-
     std::vector<QPointF> points;
-    points.reserve(kSegmentsPerLink + 1);
-    points.push_back(link.output);
-    for (int segment = 1; segment <= kSegmentsPerLink; ++segment)
+    points.push_back(waypoints.front());
+    for (std::size_t cornerIndex = 1; cornerIndex + 1 < waypoints.size(); ++cornerIndex)
     {
-        const qreal t = static_cast<qreal>(segment) / kSegmentsPerLink;
-        points.push_back(cubicBezier(link.output, control1, control2, link.input, t));
+        const QPointF legIn = waypoints[cornerIndex] - waypoints[cornerIndex - 1];
+        const QPointF legOut = waypoints[cornerIndex + 1] - waypoints[cornerIndex];
+        const qreal legInLength = std::hypot(legIn.x(), legIn.y());
+        const qreal legOutLength = std::hypot(legOut.x(), legOut.y());
+        const QPointF directionIn = legInLength > 0 ? legIn / legInLength : QPointF(0, 1);
+        const QPointF directionOut = legOutLength > 0 ? legOut / legOutLength : QPointF(0, 1);
+
+        const bool legInShared = cornerIndex > 1;
+        const bool legOutShared = cornerIndex + 2 < waypoints.size();
+        const qreal maxTangentLength =
+            std::min(legInLength / (legInShared ? 2 : 1), legOutLength / (legOutShared ? 2 : 1));
+
+        appendCorner(
+            points,
+            waypoints[cornerIndex],
+            directionIn,
+            directionOut,
+            radii[cornerIndex - 1],
+            maxTangentLength
+        );
     }
+    points.push_back(waypoints.back());
     return points;
+}
+
+/// @brief Returns the points sampled along one link's route from output to input.
+///
+/// The link dips a stub straight down out of the output and arrives through a matching
+/// stub straight down into the input, joined either directly or through a horizontal run.
+///
+/// @note Below @ref kMinElbowHorizontalLength of sideways distance, the two stubs run
+/// straight into each other on a diagonal instead of through a horizontal run.
+/// @note When the input sits above the output, the horizontal run detours upward
+/// halfway across so the final stub still points down into the input.
+std::vector<QPointF> sampleLinkPath(const NodeLinkLayer::Link& link)
+{
+    const qreal horizontalLength = std::abs(link.input.x() - link.output.x());
+    if (horizontalLength <= 0) return {link.output, link.input};
+
+    const QPointF down(0, 1.0);
+    const QPointF up(0, -1.0);
+    const QPointF sideways(link.input.x() >= link.output.x() ? 1.0 : -1.0, 0);
+
+    if (horizontalLength < kMinElbowHorizontalLength)
+    {
+        const qreal totalDistance = std::hypot(horizontalLength, link.input.y() - link.output.y());
+        const qreal stubLength = std::min(kStubLength, totalDistance / 2);
+        const QPointF outputStubEnd = link.output + down * stubLength;
+        const QPointF inputStubStart = link.input - down * stubLength;
+        return roundedPath(
+            {link.output, outputStubEnd, inputStubStart, link.input},
+            {kStubRadius, kStubRadius}
+        );
+    }
+
+    if (link.input.y() >= link.output.y())
+    {
+        const qreal stubLength = std::min(kStubLength, link.input.y() - link.output.y());
+        const QPointF stubEnd = link.output + down * stubLength;
+        const QPointF corner(link.input.x(), stubEnd.y());
+        return roundedPath(
+            {link.output, stubEnd, corner, link.input},
+            {kStubRadius, kCornerRadius}
+        );
+    }
+
+    const qreal halfHorizontalLength = horizontalLength / 2;
+    const QPointF outputStubEnd = link.output + down * kStubLength;
+    const QPointF inputStubStart = link.input + up * kStubLength;
+    const QPointF riseStart(
+        link.output.x() + sideways.x() * halfHorizontalLength,
+        outputStubEnd.y()
+    );
+    const QPointF riseEnd(riseStart.x(), inputStubStart.y());
+    return roundedPath(
+        {link.output, outputStubEnd, riseStart, riseEnd, inputStubStart, link.input},
+        {kStubRadius, kCornerRadius, kCornerRadius, kStubRadius}
+    );
 }
 
 /// @brief Returns the distance from a point to the nearest position on one segment.
@@ -92,20 +215,26 @@ qreal distanceToSegment(
     return std::hypot(offset.x(), offset.y());
 }
 
-/// @brief Returns which side of line @p a to @p b the point @p c lies on.
-qreal orientation(const QPointF& a, const QPointF& b, const QPointF& c)
+/// @brief Returns which side of line @p lineStart to @p lineEnd the point @p point lies on.
+qreal orientation(const QPointF& lineStart, const QPointF& lineEnd, const QPointF& point)
 {
-    return (b.x() - a.x()) * (c.y() - a.y()) - (b.y() - a.y()) * (c.x() - a.x());
+    return (lineEnd.x() - lineStart.x()) * (point.y() - lineStart.y())
+        - (lineEnd.y() - lineStart.y()) * (point.x() - lineStart.x());
 }
 
-/// @brief Whether segment @p p1 to @p p2 crosses segment @p q1 to @p q2.
-bool segmentsIntersect(const QPointF& p1, const QPointF& p2, const QPointF& q1, const QPointF& q2)
+/// @brief Whether segment @p firstStart to @p firstEnd crosses segment @p secondStart to @p secondEnd.
+bool segmentsIntersect(
+    const QPointF& firstStart,
+    const QPointF& firstEnd,
+    const QPointF& secondStart,
+    const QPointF& secondEnd
+)
 {
-    const qreal d1 = orientation(q1, q2, p1);
-    const qreal d2 = orientation(q1, q2, p2);
-    const qreal d3 = orientation(p1, p2, q1);
-    const qreal d4 = orientation(p1, p2, q2);
-    return ((d1 > 0) != (d2 > 0)) && ((d3 > 0) != (d4 > 0));
+    const qreal firstStartSide = orientation(secondStart, secondEnd, firstStart);
+    const qreal firstEndSide = orientation(secondStart, secondEnd, firstEnd);
+    const qreal secondStartSide = orientation(firstStart, firstEnd, secondStart);
+    const qreal secondEndSide = orientation(firstStart, firstEnd, secondEnd);
+    return ((firstStartSide > 0) != (firstEndSide > 0)) && ((secondStartSide > 0) != (secondEndSide > 0));
 }
 
 /// @brief Writes a polyline stroke with a color and width into an existing geometry node.
@@ -343,7 +472,7 @@ QVariantMap NodeLinkLayer::linkAt(QPointF canvasPoint, qreal radius) const
     qreal nearestDistance = radius;
     for (const Link& link : collectLinks())
     {
-        const std::vector<QPointF> points = samplePolyline(link);
+        const std::vector<QPointF> points = sampleLinkPath(link);
         for (std::size_t i = 1; i < points.size(); ++i)
         {
             const qreal distance = distanceToSegment(canvasPoint, points[i - 1], points[i]);
@@ -374,7 +503,7 @@ int NodeLinkLayer::linkCrossing(QPointF from, QPointF to) const
 {
     for (const Link& link : collectLinks())
     {
-        const std::vector<QPointF> points = samplePolyline(link);
+        const std::vector<QPointF> points = sampleLinkPath(link);
         for (std::size_t i = 1; i < points.size(); ++i)
             if (segmentsIntersect(from, to, points[i - 1], points[i])) return link.linkIndex;
     }
@@ -430,12 +559,12 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         const bool cutHovered = hoverKind_ == LinkHover::Cut && link.linkIndex == hoverLink_;
         const QColor& color = cutHovered ? cutColor_ : linkColor_;
         const float width = cutHovered ? kCutWidth : kLinkWidth;
-        updateLinkNode(claimNode(), samplePolyline(link), color, width, QPointF(), -1);
+        updateLinkNode(claimNode(), sampleLinkPath(link), color, width, QPointF(), -1);
 
         // The half a press would pick up draws tinted over the hovered link.
         if (hoverKind_ == LinkHover::Redirect && link.linkIndex == hoverLink_)
         {
-            const std::vector<QPointF> points = samplePolyline(link);
+            const std::vector<QPointF> points = sampleLinkPath(link);
             const auto middle = points.begin() + points.size() / 2;
             const std::vector<QPointF> half = hoverAtOutputEnd_
                                                   ? std::vector<QPointF>(points.begin(), middle + 1)
@@ -462,7 +591,7 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 
         updateLinkNode(
             claimNode(),
-            samplePolyline(Link{*output, *input}),
+            sampleLinkPath(Link{*output, *input}),
             previewColor_,
             kPreviewWidth,
             QPointF(),
@@ -474,7 +603,7 @@ QSGNode* NodeLinkLayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     for (const FadingLink& fade : fadingLinks_)
         updateLinkNode(
             claimNode(),
-            samplePolyline(fade.link),
+            sampleLinkPath(fade.link),
             cutColor_,
             kLinkWidth,
             fade.cutPoint,
