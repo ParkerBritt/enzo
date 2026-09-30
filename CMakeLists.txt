@@ -267,6 +267,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Dropdown.qml
         src/Gui/Components/ExpressionEditor.qml
         src/Gui/Components/FocusReclaimer.qml
+        src/Gui/Components/EditDismisser.qml
         src/Gui/Components/Stepper.qml
         src/Gui/Components/TextButton.qml
         src/Gui/Components/Tooltip.qml

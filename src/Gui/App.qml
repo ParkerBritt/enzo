@@ -94,6 +94,11 @@ ApplicationWindow {
         }
     }
 
+    EditDismisser {
+        anchors.fill: parent
+        z: 1000
+    }
+
     Panel {
         id: timelinePanel
 
