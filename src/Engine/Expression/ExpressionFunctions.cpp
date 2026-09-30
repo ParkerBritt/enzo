@@ -2,9 +2,10 @@
 #include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Network/NetworkManager.h"
 #include "daScript/ast/ast_interop.h"
+#include <bit>
 
 // The daslang module that exposes enzo's functions to expressions. Each one
-// reads live data and returns a single value.
+// returns a single value.
 
 namespace enzo::expr {
 
@@ -87,6 +88,119 @@ floatT time(das::Context* dasContext)
     return nt::nm().getTime();
 }
 
+// Random functions exposed to daslang expressions
+
+// Mixes a value into a running hash so nearby inputs give unrelated outputs.
+uint32_t hashCombine(uint32_t hash, uint32_t value)
+{
+    hash = (hash ^ value) + 0x9e3779b9u;
+    hash ^= hash >> 16;
+    hash *= 0x7feb352du;
+    hash ^= hash >> 15;
+    hash *= 0x846ca68bu;
+    hash ^= hash >> 16;
+    return hash;
+}
+
+// Returns the bits of a float as a hash input, with -0 and 0 giving the same bits.
+uint32_t getFloatBits(floatT value)
+{
+    return std::bit_cast<uint32_t>(value + 0.0f);
+}
+
+// Returns the top 24 bits of a hash as a value in [0, 1), since a float holds 24 bits exactly.
+floatT hashToUnit(uint32_t hash)
+{
+    return static_cast<floatT>(hash >> 8) / 16777216.0f;
+}
+
+// Returns the hash of a seed.
+uint32_t hashSeed(intT seed)
+{
+    const uint64_t seedBits = static_cast<uint64_t>(seed);
+    const uint32_t lowBits = static_cast<uint32_t>(seedBits);
+    const uint32_t highBits = static_cast<uint32_t>(seedBits >> 32);
+    return hashCombine(hashCombine(0, lowBits), highBits);
+}
+
+uint32_t hashSeed(floatT seed)
+{
+    return hashCombine(0, getFloatBits(seed));
+}
+
+uint32_t hashSeed(das::float3 seed)
+{
+    uint32_t hash = hashCombine(0, getFloatBits(seed.x));
+    hash = hashCombine(hash, getFloatBits(seed.y));
+    hash = hashCombine(hash, getFloatBits(seed.z));
+    return hash;
+}
+
+// Returns a vector in [0, 1) on each axis, with the axis index mixed into the
+// hash so the axes are unrelated.
+das::float3 hashToUnitVector(uint32_t hash)
+{
+    return das::float3(
+        hashToUnit(hashCombine(hash, 0)),
+        hashToUnit(hashCombine(hash, 1)),
+        hashToUnit(hashCombine(hash, 2))
+    );
+}
+
+/// @brief Returns a random value in [0, 1) that is always the same for a seed.
+/// @note Gives the same value as the int64 seed of the same number.
+floatT randFromInt32(int32_t seed)
+{
+    return hashToUnit(hashSeed(intT(seed)));
+}
+
+/// @brief Returns a random value in [0, 1) that is always the same for a seed.
+floatT randFromInt64(intT seed)
+{
+    return hashToUnit(hashSeed(seed));
+}
+
+/// @brief Returns a random value in [0, 1) that is always the same for a seed.
+floatT randFromFloat(floatT seed)
+{
+    return hashToUnit(hashSeed(seed));
+}
+
+/// @brief Returns a random value in [0, 1) that is always the same for a seed.
+///
+/// e.g. rand(@Position) gives each point a value tied to where it sits.
+floatT randFromVector(das::float3 seed)
+{
+    return hashToUnit(hashSeed(seed));
+}
+
+/// @brief Returns a random vector in [0, 1) on each axis that is always the same for a seed.
+/// @note Gives the same value as the int64 seed of the same number.
+das::float3 randVectorFromInt32(int32_t seed)
+{
+    return hashToUnitVector(hashSeed(intT(seed)));
+}
+
+/// @brief Returns a random vector in [0, 1) on each axis that is always the same for a seed.
+///
+/// e.g. randVector(pt) gives each point its own colour.
+das::float3 randVectorFromInt64(intT seed)
+{
+    return hashToUnitVector(hashSeed(seed));
+}
+
+/// @brief Returns a random vector in [0, 1) on each axis that is always the same for a seed.
+das::float3 randVectorFromFloat(floatT seed)
+{
+    return hashToUnitVector(hashSeed(seed));
+}
+
+/// @brief Returns a random vector in [0, 1) on each axis that is always the same for a seed.
+das::float3 randVectorFromVector(das::float3 seed)
+{
+    return hashToUnitVector(hashSeed(seed));
+}
+
 } // namespace
 
 class ExpressionModule : public das::Module
@@ -146,6 +260,79 @@ class ExpressionModule : public das::Module
             "enzo::expr::time"
         )
             ->args({"context"});
+
+        // Marks the random functions pure so daslang can fold a constant seed.
+        das::addExtern<DAS_BIND_FUN(randFromInt32)>(
+            *this,
+            lib,
+            "rand",
+            das::SideEffects::none,
+            "enzo::expr::randFromInt32"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randFromInt64)>(
+            *this,
+            lib,
+            "rand",
+            das::SideEffects::none,
+            "enzo::expr::randFromInt64"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randFromFloat)>(
+            *this,
+            lib,
+            "rand",
+            das::SideEffects::none,
+            "enzo::expr::randFromFloat"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randFromVector)>(
+            *this,
+            lib,
+            "rand",
+            das::SideEffects::none,
+            "enzo::expr::randFromVector"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randVectorFromInt32)>(
+            *this,
+            lib,
+            "randVector",
+            das::SideEffects::none,
+            "enzo::expr::randVectorFromInt32"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randVectorFromInt64)>(
+            *this,
+            lib,
+            "randVector",
+            das::SideEffects::none,
+            "enzo::expr::randVectorFromInt64"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randVectorFromFloat)>(
+            *this,
+            lib,
+            "randVector",
+            das::SideEffects::none,
+            "enzo::expr::randVectorFromFloat"
+        )
+            ->args({"seed"});
+
+        das::addExtern<DAS_BIND_FUN(randVectorFromVector)>(
+            *this,
+            lib,
+            "randVector",
+            das::SideEffects::none,
+            "enzo::expr::randVectorFromVector"
+        )
+            ->args({"seed"});
     }
 };
 
