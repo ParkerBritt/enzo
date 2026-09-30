@@ -49,7 +49,7 @@ Column {
     Rectangle {
         width: parameter.width
         height: parameter.lineCount * parameter.lineHeight + 2 * parameter.padding
-        radius: Theme.parameter.borderRadius
+        radius: Theme.var.controlRadius
         color: Theme.parameter.backgroundColor
         border.color: Theme.parameter.lineColor
 
