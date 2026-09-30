@@ -1,3 +1,4 @@
+#include "Engine/Expression/DasRuntime.h"
 #include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Network/NetworkManager.h"
@@ -226,4 +227,159 @@ TEST_CASE_METHOD(NMReset, "Reading the frame makes the expression time dependent
 
     REQUIRE(engine.evalFloat("frame()", &context, result, error));
     REQUIRE(context.dependsOnTime());
+}
+
+namespace {
+floatT evalFloatExpression(const String& expression)
+{
+    floatT result = -1.0f;
+    String error;
+    const bool evaluated = expr::ExpressionEngine::instance().evalFloat(expression, nullptr, result, error);
+    INFO(error);
+    REQUIRE(evaluated);
+    return result;
+}
+} // namespace
+
+TEST_CASE("Rand returns the same value for the same seed")
+{
+    REQUIRE(evalFloatExpression("rand(7)") == evalFloatExpression("rand(7)"));
+    REQUIRE(evalFloatExpression("rand(2.5)") == evalFloatExpression("rand(2.5)"));
+}
+
+TEST_CASE("Rand returns different values for neighbouring seeds")
+{
+    REQUIRE(evalFloatExpression("rand(1)") != evalFloatExpression("rand(2)"));
+    REQUIRE(evalFloatExpression("rand(1.0)") != evalFloatExpression("rand(1.5)"));
+    REQUIRE(evalFloatExpression("rand(float3(1.0, 2.0, 3.0))") != evalFloatExpression("rand(float3(1.0, 2.0, 4.0))"));
+    REQUIRE(evalFloatExpression("rand(float3(1.0, 2.0, 3.0))") != evalFloatExpression("rand(float3(3.0, 2.0, 1.0))"));
+}
+
+TEST_CASE("Rand gives an int and an int64 seed the same value")
+{
+    REQUIRE(evalFloatExpression("rand(12)") == evalFloatExpression("rand(12l)"));
+}
+
+TEST_CASE("Rand spreads many seeds evenly between zero and one")
+{
+    String error;
+    auto script = expr::DasRuntime::instance().compile(
+        "randSpreadTest",
+        R"(options gen2
+require enzo_expression
+[export]
+def sample(seed : int64; var result : float&) {
+    result = rand(seed)
+}
+)",
+        error
+    );
+    INFO(error);
+    REQUIRE(script);
+
+    // Buckets the values into tenths, so a clumped hash leaves one bucket short
+    constexpr int sampleCount = 10000;
+    constexpr int bucketCount = 10;
+    int bucketSizes[bucketCount] = {};
+    for (intT seed = 0; seed < sampleCount; ++seed)
+    {
+        floatT value = -1.0f;
+        const expr::ScriptArgument arguments[] = {seed, &value};
+        REQUIRE(script->run("sample", arguments, nullptr, error));
+        REQUIRE(value >= 0.0f);
+        REQUIRE(value < 1.0f);
+        ++bucketSizes[static_cast<int>(value * bucketCount)];
+    }
+
+    for (int bucketSize : bucketSizes)
+    {
+        REQUIRE(bucketSize > 900);
+        REQUIRE(bucketSize < 1100);
+    }
+}
+
+TEST_CASE("Rand keeps the values that saved scenes were built with")
+{
+    // Fails when the hash changes, since every scene using rand would change with it
+    REQUIRE(evalFloatExpression("rand(0)") == 0.625266731f);
+    REQUIRE(evalFloatExpression("rand(7)") == 0.484932601f);
+    REQUIRE(evalFloatExpression("rand(-3)") == 0.0577041507f);
+    REQUIRE(evalFloatExpression("rand(5000000000l)") == 0.299867272f);
+    REQUIRE(evalFloatExpression("rand(0.0)") == 0.00776511431f);
+    REQUIRE(evalFloatExpression("rand(-0.0)") == 0.00776511431f);
+    REQUIRE(evalFloatExpression("rand(1.5)") == 0.0227157474f);
+    REQUIRE(evalFloatExpression("rand(float3(1.0, 2.0, 3.0))") == 0.95123148f);
+}
+
+TEST_CASE("RandVector gives each component its own value")
+{
+    const floatT x = evalFloatExpression("randVector(7).x");
+    const floatT y = evalFloatExpression("randVector(7).y");
+    const floatT z = evalFloatExpression("randVector(7).z");
+    REQUIRE(x != y);
+    REQUIRE(y != z);
+    REQUIRE(x != z);
+}
+
+TEST_CASE("RandVector gives an int and an int64 seed the same value")
+{
+    REQUIRE(evalFloatExpression("randVector(12).y") == evalFloatExpression("randVector(12l).y"));
+}
+
+TEST_CASE("RandVector spreads many seeds evenly between zero and one")
+{
+    String error;
+    auto script = expr::DasRuntime::instance().compile(
+        "randVectorSpreadTest",
+        R"(options gen2
+require enzo_expression
+[export]
+def sample(seed : int64; var result : float3&) {
+    result = randVector(seed)
+}
+)",
+        error
+    );
+    INFO(error);
+    REQUIRE(script);
+
+    // Buckets every component into tenths, so a clumped component leaves one bucket short
+    constexpr int sampleCount = 10000;
+    constexpr int bucketCount = 10;
+    int bucketSizes[3][bucketCount] = {};
+    for (intT seed = 0; seed < sampleCount; ++seed)
+    {
+        Vector3 value(-1.0f, -1.0f, -1.0f);
+        const expr::ScriptArgument arguments[] = {seed, value.data()};
+        REQUIRE(script->run("sample", arguments, nullptr, error));
+        for (int component = 0; component < 3; ++component)
+        {
+            REQUIRE(value[component] >= 0.0f);
+            REQUIRE(value[component] < 1.0f);
+            ++bucketSizes[component][static_cast<int>(value[component] * bucketCount)];
+        }
+    }
+
+    for (const auto& componentBuckets : bucketSizes)
+    {
+        for (int bucketSize : componentBuckets)
+        {
+            REQUIRE(bucketSize > 900);
+            REQUIRE(bucketSize < 1100);
+        }
+    }
+}
+
+TEST_CASE("RandVector keeps the values that saved scenes were built with")
+{
+    // Fails when the hash changes, since every scene using randVector would change with it
+    REQUIRE(evalFloatExpression("randVector(7).x") == 0.219825983f);
+    REQUIRE(evalFloatExpression("randVector(7).y") == 0.370548546f);
+    REQUIRE(evalFloatExpression("randVector(7).z") == 0.597892702f);
+    REQUIRE(evalFloatExpression("randVector(1.5).x") == 0.769698501f);
+    REQUIRE(evalFloatExpression("randVector(1.5).y") == 0.570456207f);
+    REQUIRE(evalFloatExpression("randVector(1.5).z") == 0.0621376634f);
+    REQUIRE(evalFloatExpression("randVector(float3(1.0, 2.0, 3.0)).x") == 0.050245285f);
+    REQUIRE(evalFloatExpression("randVector(float3(1.0, 2.0, 3.0)).y") == 0.272974133f);
+    REQUIRE(evalFloatExpression("randVector(float3(1.0, 2.0, 3.0)).z") == 0.590052545f);
 }
