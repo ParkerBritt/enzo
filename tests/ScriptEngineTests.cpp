@@ -23,8 +23,8 @@ struct NMReset
 TEST_CASE("compile reuses the compiled script for the same code")
 {
     String error;
-    auto first = expr::ScriptEngine::instance().compile("@doubled = float(pt * 2l)", error);
-    auto second = expr::ScriptEngine::instance().compile("@doubled = float(pt * 2l)", error);
+    auto first = expr::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
+    auto second = expr::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
     REQUIRE(first);
     REQUIRE(first == second);
 }
@@ -55,7 +55,7 @@ TEST_CASE_METHOD(NMReset, "A script run over many points reads a parameter once"
     auto instance = script->clone();
     expr::ExpressionContext context(source);
     REQUIRE(instance->addWrittenAttributes(output, error));
-    REQUIRE(instance->run(input, output, 0, input.getNumPoints(), &context, error));
+    REQUIRE(instance->run(input, output, 0, input.getNumPoints(), 0, 100, &context, error));
 
     auto offsets = output.getAttribByName(attr::AttributeOwner::POINT, "offset");
     REQUIRE(attr::AttributeHandleRO<floatT>(offsets).getValue(99) == 7.0f);

@@ -26,12 +26,13 @@ struct AttributeBinding
 /**
  * @brief A compiled script that runs once per point and edits the point's attributes.
  *
- * The user's code is the body of a function that takes the point offset as `pt`
- * and reads and writes the point's attributes as `@name`.
+ * The user's code is the body of a function that reads and writes the point's
+ * attributes as `@name`. `curPt()` returns the point's index among the live points
+ * and `ptCount()` returns how many live points there are.
  *
  * @code
  * @Position.y += sin(@Position.x) * prm("amplitude")
- * i@id = pt
+ * i@id = curPt()
  * @endcode
  *
  * @note Each thread runs its own clone over its own range of points.
@@ -59,6 +60,8 @@ class PointScript
      *
      * Reads bindings from the input and stores written ones to the output.
      *
+     * @param firstIndex The index of the first live point in the range.
+     * @param pointCount The number of live points in the whole input.
      * @return False when the script fails on a point.
      * @note The output needs the written attributes added first.
      */
@@ -67,6 +70,8 @@ class PointScript
         geo::Primitive& output,
         Offset begin,
         Offset end,
+        intT firstIndex,
+        intT pointCount,
         const ExpressionContext* context,
         String& error
     );
@@ -114,7 +119,7 @@ class PointScript
     BindingValues<Vector3> vectors_;
     BindingValues<boolT> bools_;
 
-    // The point offset followed by a pointer to each binding's value.
+    // The point's index and the point count, followed by a pointer to each binding's value.
     std::vector<ScriptArgument> arguments_;
 };
 

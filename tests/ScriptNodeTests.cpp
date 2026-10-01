@@ -80,7 +80,7 @@ TEST_CASE_METHOD(NMReset, "A script writes a new attribute on every point")
 
 TEST_CASE_METHOD(NMReset, "A script writes a different value for each point")
 {
-    const ScriptGraph graph("i@id = pt * 2");
+    const ScriptGraph graph("i@id = curPt() * 2");
     const auto mesh = graph.getOutput();
 
     const auto id = getPointAttribute<intT>(*mesh, "id");
@@ -124,7 +124,7 @@ TEST_CASE_METHOD(NMReset, "A script over many points matches a serial run")
 
     const nt::NodeId script = nm.createNode("enzo::script");
     nm.connectNodes(grid, 0, script, 0);
-    nm.getNode(script).getParameter("code").lock()->setString("@height = float(pt) * 0.5");
+    nm.getNode(script).getParameter("code").lock()->setString("@height = float(curPt()) * 0.5");
     nm.cook(script);
 
     const auto mesh = getMesh(nm.getNode(script));
@@ -133,6 +133,38 @@ TEST_CASE_METHOD(NMReset, "A script over many points matches a serial run")
     const auto height = getPointAttribute<floatT>(*mesh, "height");
     for (Offset pointOffset = 0; pointOffset < mesh->getNumPoints(); ++pointOffset)
         REQUIRE(height[pointOffset] == Catch::Approx(floatT(pointOffset) * 0.5));
+}
+
+TEST_CASE_METHOD(NMReset, "A script numbers the points left after a delete in order")
+{
+    auto& nm = nt::nm();
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    nm.getNode(grid).getParameter("rows").lock()->setInt(200);
+    nm.getNode(grid).getParameter("columns").lock()->setInt(200);
+
+    const nt::NodeId deleteNode = nm.createNode("enzo::delete");
+    nm.connectNodes(grid, 0, deleteNode, 0);
+    nm.getNode(deleteNode).getParameter("selection").lock()->setString("p{0}");
+
+    const nt::NodeId script = nm.createNode("enzo::script");
+    nm.connectNodes(deleteNode, 0, script, 0);
+    nm.getNode(script).getParameter("code").lock()->setString(R"(i@index = curPt()
+i@count = ptCount())");
+    nm.cook(script);
+
+    const auto mesh = getMesh(nm.getNode(script));
+    const auto index = getPointAttribute<intT>(*mesh, "index");
+    const auto count = getPointAttribute<intT>(*mesh, "count");
+
+    intT expectedIndex = 0;
+    for (Offset pointOffset = 0; pointOffset < mesh->getNumPoints(); ++pointOffset)
+    {
+        if (!mesh->isValidPoint(pointOffset)) continue;
+        REQUIRE(index[pointOffset] == expectedIndex);
+        ++expectedIndex;
+    }
+    REQUIRE(expectedIndex > 1024);
+    REQUIRE(count[mesh->getNumPoints() - 1] == expectedIndex);
 }
 
 // Recooking

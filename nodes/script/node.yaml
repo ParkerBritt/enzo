@@ -22,4 +22,5 @@ parameters:
     style: code
     tooltip: >
       The code to run once for every point. Point attributes are read and written
-      as @name, and the point offset is pt.
+      as @name. curPt() returns the index of the point being run and ptCount()
+      returns the number of points.
