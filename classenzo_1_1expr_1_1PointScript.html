@@ -116,9 +116,9 @@ const std::vector&lt; <a class="el" href="structenzo_1_1expr_1_1AttributeBinding
 <tr class="memitem:a5283bd9a7184a074fc010a527b82ba49" id="r_a5283bd9a7184a074fc010a527b82ba49"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5283bd9a7184a074fc010a527b82ba49">addWrittenAttributes</a> (<a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, String &amp;error) const</td></tr>
 <tr class="memdesc:a5283bd9a7184a074fc010a527b82ba49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds every attribute the script writes to the output, filled with the default value.  <br /></td></tr>
 <tr class="separator:a5283bd9a7184a074fc010a527b82ba49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4a751be7e5d225871d538497dc45f2c" id="r_ae4a751be7e5d225871d538497dc45f2c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4a751be7e5d225871d538497dc45f2c">run</a> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;input, <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> begin, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> end, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, String &amp;error)</td></tr>
-<tr class="memdesc:ae4a751be7e5d225871d538497dc45f2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the script for each valid point in a range.  <br /></td></tr>
-<tr class="separator:ae4a751be7e5d225871d538497dc45f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6432efa632eff95aa39765da18d830ce" id="r_a6432efa632eff95aa39765da18d830ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6432efa632eff95aa39765da18d830ce">run</a> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;input, <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> begin, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> end, intT firstIndex, intT pointCount, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, String &amp;error)</td></tr>
+<tr class="memdesc:a6432efa632eff95aa39765da18d830ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the script for each valid point in a range.  <br /></td></tr>
+<tr class="separator:a6432efa632eff95aa39765da18d830ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -128,9 +128,9 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A compiled script that runs once per point and edits the point's attributes. </p>
-<p>The user's code is the body of a function that takes the point offset as <code>pt</code> and reads and writes the point's attributes as <code>@name</code>.</p>
+<p>The user's code is the body of a function that reads and writes the point's attributes as <code>@name</code>. <code>curPt()</code> returns the point's index among the live points and <code>ptCount()</code> returns how many live points there are.</p>
 <div class="fragment"><div class="line">@Position.y += sin(@Position.x) * prm(<span class="stringliteral">&quot;amplitude&quot;</span>)</div>
-<div class="line">i@<span class="keywordtype">id</span> = pt</div>
+<div class="line">i@<span class="keywordtype">id</span> = curPt()</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Each thread runs its own clone over its own range of points. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a5283bd9a7184a074fc010a527b82ba49" name="a5283bd9a7184a074fc010a527b82ba49"></a>
@@ -209,8 +209,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ae4a751be7e5d225871d538497dc45f2c" name="ae4a751be7e5d225871d538497dc45f2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4a751be7e5d225871d538497dc45f2c">&#9670;&#160;</a></span>run()</h2>
+<a id="a6432efa632eff95aa39765da18d830ce" name="a6432efa632eff95aa39765da18d830ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6432efa632eff95aa39765da18d830ce">&#9670;&#160;</a></span>run()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,6 +238,16 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">intT</td>          <td class="paramname"><span class="paramname"><em>firstIndex</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">intT</td>          <td class="paramname"><span class="paramname"><em>pointCount</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
         </tr>
         <tr>
@@ -250,6 +260,13 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Runs the script for each valid point in a range. </p>
 <p>Reads bindings from the input and stores written ones to the output.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">firstIndex</td><td>The index of the first live point in the range. </td></tr>
+    <tr><td class="paramname">pointCount</td><td>The number of live points in the whole input. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>False when the script fails on a point. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The output needs the written attributes added first. </dd></dl>
 

@@ -125,9 +125,9 @@ static <a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine<
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compiler for the per point scripts a script node runs. </p>
 <div class="fragment"><div class="line">String error;</div>
-<div class="line"><span class="keyword">auto</span> script = ScriptEngine::instance().compile(<span class="stringliteral">&quot;@height = pt&quot;</span>, error)-&gt;clone();</div>
+<div class="line"><span class="keyword">auto</span> script = ScriptEngine::instance().compile(<span class="stringliteral">&quot;@height = curPt()&quot;</span>, error)-&gt;clone();</div>
 <div class="line">script-&gt;addWrittenAttributes(output, error);</div>
-<div class="line">script-&gt;run(input, output, 0, input.getNumPoints(), &amp;context, error);</div>
+<div class="line">script-&gt;run(input, output, 0, input.getNumPoints(), 0, pointCount, &amp;context, error);</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Compiled scripts are cached by their code. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a250fbfe185c0595bba83eeb0dd2d33fc" name="a250fbfe185c0595bba83eeb0dd2d33fc"></a>
