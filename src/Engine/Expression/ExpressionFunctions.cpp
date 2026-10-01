@@ -183,7 +183,7 @@ das::float3 randVectorFromInt32(int32_t seed)
 
 /// @brief Returns a random vector in [0, 1) on each axis that is always the same for a seed.
 ///
-/// e.g. randVector(pt) gives each point its own colour.
+/// e.g. randVector(curPt()) gives each point its own colour.
 das::float3 randVectorFromInt64(intT seed)
 {
     return hashToUnitVector(hashSeed(seed));

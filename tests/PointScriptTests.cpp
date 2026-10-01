@@ -30,6 +30,16 @@ geo::Mesh buildThreePointMesh()
     return mesh;
 }
 
+intT countLivePoints(const geo::Mesh& mesh)
+{
+    intT livePointCount = 0;
+    for (Offset pointOffset = 0; pointOffset < mesh.getNumPoints(); ++pointOffset)
+    {
+        if (mesh.isValidPoint(pointOffset)) ++livePointCount;
+    }
+    return livePointCount;
+}
+
 // Runs the script over every point of the input into a copy of it.
 geo::Mesh runScript(expr::PointScript& script, const geo::Mesh& input)
 {
@@ -37,7 +47,9 @@ geo::Mesh runScript(expr::PointScript& script, const geo::Mesh& input)
     String error;
     REQUIRE(script.addWrittenAttributes(output, error));
     INFO(error);
-    REQUIRE(script.run(input, output, 0, input.getNumPoints(), nullptr, error));
+    REQUIRE(script.run(
+        input, output, 0, input.getNumPoints(), 0, countLivePoints(input), nullptr, error
+    ));
     return output;
 }
 
@@ -65,7 +77,7 @@ TEST_CASE("compile finds each binding with the type of its prefix")
 {
     auto script = compileScript(R"(@plain = 1.0
 f@weight = 1.0
-i@id = pt
+i@id = curPt()
 v@dir = float3(1.0)
 b@selected = true
 @Position.y = 1.0)");
@@ -150,7 +162,7 @@ TEST_CASE("compile marks a field assignment and a compound assignment as writes"
 
 TEST_CASE("compile marks a binding written inside a branch that never runs")
 {
-    auto script = compileScript(R"(if (pt < 0l) {
+    auto script = compileScript(R"(if (curPt() < 0l) {
     @never = 1.0
 })");
     REQUIRE(getBinding(*script, "never").written);
@@ -185,12 +197,48 @@ TEST_CASE("compile shows bindings in errors as @name")
 
 TEST_CASE("run writes a binding on every point")
 {
-    auto script = compileScript("@height = float(pt)");
+    auto script = compileScript("@height = float(curPt())");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
 
     REQUIRE(getPointFloat(output, "height", 0) == 0.0f);
     REQUIRE(getPointFloat(output, "height", 1) == 1.0f);
     REQUIRE(getPointFloat(output, "height", 2) == 2.0f);
+}
+
+TEST_CASE("run counts the current point past deleted points")
+{
+    auto script = compileScript("@index = float(curPt())");
+    geo::Mesh input = buildThreePointMesh();
+    input.deletePoints({1});
+    geo::Mesh output = runScript(*script, input);
+
+    REQUIRE(getPointFloat(output, "index", 0) == 0.0f);
+    REQUIRE(getPointFloat(output, "index", 2) == 1.0f);
+}
+
+TEST_CASE("run starts the current point at the first index of the range")
+{
+    auto script = compileScript("@index = float(curPt())");
+    const geo::Mesh input = buildThreePointMesh();
+    geo::Mesh output = input;
+
+    String error;
+    REQUIRE(script->addWrittenAttributes(output, error));
+    REQUIRE(script->run(input, output, 1, 3, 10, 12, nullptr, error));
+
+    REQUIRE(getPointFloat(output, "index", 1) == 10.0f);
+    REQUIRE(getPointFloat(output, "index", 2) == 11.0f);
+}
+
+TEST_CASE("run gives every point the number of live points")
+{
+    auto script = compileScript("@count = float(ptCount())");
+    geo::Mesh input = buildThreePointMesh();
+    input.deletePoints({1});
+    geo::Mesh output = runScript(*script, input);
+
+    REQUIRE(getPointFloat(output, "count", 0) == 2.0f);
+    REQUIRE(getPointFloat(output, "count", 2) == 2.0f);
 }
 
 TEST_CASE("run reads the input and writes the output")
@@ -205,7 +253,7 @@ TEST_CASE("run reads the input and writes the output")
 
 TEST_CASE("run creates an attribute written only in a branch that never runs")
 {
-    auto script = compileScript(R"(if (pt < 0l) {
+    auto script = compileScript(R"(if (curPt() < 0l) {
     @never = 1.0
 })");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
@@ -232,13 +280,13 @@ return)");
 TEST_CASE("run reports a panic on the line of the user's code")
 {
     auto script = compileScript(R"(@value = 1.0
-panic("failed on {pt}"))");
+panic("failed on {curPt()}"))");
     const geo::Mesh input = buildThreePointMesh();
     geo::Mesh output = input;
 
     String error;
     REQUIRE(script->addWrittenAttributes(output, error));
-    REQUIRE_FALSE(script->run(input, output, 0, input.getNumPoints(), nullptr, error));
+    REQUIRE_FALSE(script->run(input, output, 0, input.getNumPoints(), 0, 3, nullptr, error));
     INFO(error);
     REQUIRE(error.find("failed on 0") != String::npos);
     REQUIRE(error.find("line 2:") != String::npos);
@@ -246,7 +294,7 @@ panic("failed on {pt}"))");
 
 TEST_CASE("clone runs with the same bindings")
 {
-    auto script = compileScript("@height = float(pt)");
+    auto script = compileScript("@height = float(curPt())");
     auto clone = script->clone();
     REQUIRE(clone);
 

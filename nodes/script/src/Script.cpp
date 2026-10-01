@@ -7,6 +7,7 @@
 #include "Engine/Primitives/Mesh.h"
 #include <memory>
 #include <mutex>
+#include <vector>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
@@ -44,8 +45,17 @@ enzo::String runOverPoints(
 
         if (!script.addWrittenAttributes(*mesh, error)) return error;
 
-        const Offset pointCount = mesh->getNumPoints();
-        const Offset chunkCount = (pointCount + pointsPerChunk - 1) / pointsPerChunk;
+        const Offset offsetCount = mesh->getNumPoints();
+        const Offset chunkCount = (offsetCount + pointsPerChunk - 1) / pointsPerChunk;
+
+        // Counts the live points before each chunk, which gives the index of its first live point.
+        std::vector<intT> chunkFirstIndices;
+        intT pointCount = 0;
+        for (Offset point = 0; point < offsetCount; ++point)
+        {
+            if (point % pointsPerChunk == 0) chunkFirstIndices.push_back(pointCount);
+            if (mesh->isValidPoint(point)) ++pointCount;
+        }
 
         tbb::parallel_for(Offset(0), chunkCount, [&](const Offset chunk) {
             const std::shared_ptr<expr::PointScript>& threadScript = threadScripts.local();
@@ -56,8 +66,17 @@ enzo::String runOverPoints(
             else
             {
                 const Offset begin = chunk * pointsPerChunk;
-                const Offset end = std::min(begin + pointsPerChunk, pointCount);
-                threadScript->run(*mesh, *mesh, begin, end, &context, chunkError);
+                const Offset end = std::min(begin + pointsPerChunk, offsetCount);
+                threadScript->run(
+                    *mesh,
+                    *mesh,
+                    begin,
+                    end,
+                    chunkFirstIndices[chunk],
+                    pointCount,
+                    &context,
+                    chunkError
+                );
             }
 
             if (chunkError.empty()) return;

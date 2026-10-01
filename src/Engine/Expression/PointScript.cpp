@@ -13,8 +13,11 @@ namespace {
 constexpr const char* runFunctionName = "enzoRunScript";
 constexpr const char* bindingPrefix = "enzoAttrib_";
 
+// The number of arguments before the bindings, which are the point's index and the point count.
+constexpr size_t pointArgumentCount = 2;
+
 // The lines the wrapper adds above the user's code.
-constexpr int headerLineCount = 6;
+constexpr int headerLineCount = 12;
 
 bool isIdentifierStart(char character)
 {
@@ -305,11 +308,11 @@ class BindingRewriter
     String error_;
 };
 
-// Returns the user's code wrapped in an exported function that takes the point
-// offset and a reference to each binding.
+// Returns the user's code wrapped in an exported function that takes the point's
+// index, the point count and a reference to each binding.
 String wrapScript(const String& code, const std::vector<AttributeBinding>& bindings)
 {
-    String arguments = "pt : int64";
+    String arguments = "enzoCurPtArgument : int64; enzoPtCountArgument : int64";
     for (const AttributeBinding& binding : bindings)
     {
         arguments += "; var " + String(bindingPrefix) + binding.name + " : " +
@@ -321,9 +324,16 @@ String wrapScript(const String& code, const std::vector<AttributeBinding>& bindi
            "require enzo_expression\n"
            "require " +
            String(vectorOperatorsModule) + "\n"
+           "var private enzoCurPt : int64\n"
+           "var private enzoPtCount : int64\n"
+           "def curPt() : int64 { return enzoCurPt; }\n"
+           "def ptCount() : int64 { return enzoPtCount; }\n"
            "[export]\n"
            "def " +
-           String(runFunctionName) + "(" + arguments + ") {\n" + code + "\n}\n";
+           String(runFunctionName) + "(" + arguments + ") {\n"
+           "enzoCurPt = enzoCurPtArgument\n"
+           "enzoPtCount = enzoPtCountArgument\n" +
+           code + "\n}\n";
 }
 
 // Returns an error with line numbers counted from the user's first line and
@@ -354,7 +364,7 @@ PointScript::PointScript(
 )
     : compiled_(std::move(compiled)), bindings_(std::move(bindings))
 {
-    arguments_.push_back(intT(0));
+    arguments_.assign(pointArgumentCount, intT(0));
     for (const AttributeBinding& binding : bindings_)
     {
         visitBindingValues(binding.type, [&]<typename Value>(BindingValues<Value>& bindingValues) {
@@ -398,9 +408,10 @@ std::shared_ptr<PointScript> PointScript::compile(const String& code, String& er
     std::optional<String> rewrittenCode = BindingRewriter(code).rewrite(bindings, error);
     if (!rewrittenCode) return nullptr;
 
-    if (bindings.size() + 1 > maxScriptArguments)
+    if (bindings.size() + pointArgumentCount > maxScriptArguments)
     {
-        error = "a script can use at most " + std::to_string(maxScriptArguments - 1) +
+        error = "a script can use at most " +
+                std::to_string(maxScriptArguments - pointArgumentCount) +
                 " attributes";
         return nullptr;
     }
@@ -413,11 +424,11 @@ std::shared_ptr<PointScript> PointScript::compile(const String& code, String& er
         return nullptr;
     }
 
-    // Marks the bindings the code assigns to, skipping the point offset argument.
+    // Marks the bindings the code assigns to, skipping the point's index and count.
     const std::vector<bool> writtenArguments = compiled->getWrittenArguments(runFunctionName);
     for (size_t bindingIndex = 0; bindingIndex < bindings.size(); ++bindingIndex)
     {
-        bindings[bindingIndex].written = writtenArguments.at(bindingIndex + 1);
+        bindings[bindingIndex].written = writtenArguments.at(bindingIndex + pointArgumentCount);
     }
 
     return std::shared_ptr<PointScript>(new PointScript(compiled, std::move(bindings)));
@@ -491,19 +502,23 @@ bool PointScript::run(
     geo::Primitive& output,
     Offset begin,
     Offset end,
+    intT firstIndex,
+    intT pointCount,
     const ExpressionContext* context,
     String& error
 )
 {
     if (!resolveAttributes(input, output, error)) return false;
 
+    arguments_[1] = pointCount;
+    intT pointIndex = firstIndex;
     for (Offset point = begin; point < end; ++point)
     {
         if (!input.isValidPoint(point)) continue;
 
         visitAllBindingValues([point](auto& bindingValues) { bindingValues.loadFrom(point); });
 
-        arguments_[0] = intT(point);
+        arguments_[0] = pointIndex;
         if (!compiled_->run(runFunctionName, arguments_, context, error))
         {
             error = toUserError(error);
@@ -511,6 +526,7 @@ bool PointScript::run(
         }
 
         visitAllBindingValues([point](auto& bindingValues) { bindingValues.storeTo(point); });
+        ++pointIndex;
     }
     return true;
 }

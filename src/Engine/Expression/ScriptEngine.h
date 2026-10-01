@@ -12,9 +12,9 @@ class PointScript;
  *
  * @code
  * String error;
- * auto script = ScriptEngine::instance().compile("@height = pt", error)->clone();
+ * auto script = ScriptEngine::instance().compile("@height = curPt()", error)->clone();
  * script->addWrittenAttributes(output, error);
- * script->run(input, output, 0, input.getNumPoints(), &context, error);
+ * script->run(input, output, 0, input.getNumPoints(), 0, pointCount, &context, error);
  * @endcode
  *
  * @note Compiled scripts are cached by their code.
