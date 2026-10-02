@@ -1,6 +1,6 @@
-#include "Engine/Expression/PointScript.h"
-#include "Engine/Expression/ScriptContext.h"
-#include "Engine/Expression/ScriptEngine.h"
+#include "Engine/Script/PointScript.h"
+#include "Engine/Script/ScriptContext.h"
+#include "Engine/Script/ScriptEngine.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
@@ -24,8 +24,8 @@ struct NMReset
 TEST_CASE("compile reuses the compiled script for the same code")
 {
     String error;
-    auto first = expr::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
-    auto second = expr::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
+    auto first = script::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
+    auto second = script::ScriptEngine::instance().compile("@doubled = float(curPt() * 2l)", error);
     REQUIRE(first);
     REQUIRE(first == second);
 }
@@ -33,7 +33,7 @@ TEST_CASE("compile reuses the compiled script for the same code")
 TEST_CASE("compile reports code that does not compile")
 {
     String error;
-    REQUIRE_FALSE(expr::ScriptEngine::instance().compile("let broken = ", error));
+    REQUIRE_FALSE(script::ScriptEngine::instance().compile("let broken = ", error));
     REQUIRE_FALSE(error.empty());
 }
 
@@ -44,7 +44,7 @@ TEST_CASE_METHOD(NMReset, "A script run over many points reads a parameter once"
     nm.getNode(source).getParameter("translate").lock()->setFloat(7.0f);
 
     String error;
-    auto script = expr::ScriptEngine::instance().compile(R"(@offset = prm("transform1.translate"))", error);
+    auto script = script::ScriptEngine::instance().compile(R"(@offset = prm("transform1.translate"))", error);
     INFO(error);
     REQUIRE(script);
 
@@ -56,7 +56,7 @@ TEST_CASE_METHOD(NMReset, "A script run over many points reads a parameter once"
 
     // Runs the whole point range against one context, as a single cook does
     auto instance = script->clone();
-    const expr::ScriptContext context(source, packet);
+    const script::ScriptContext context(source, packet);
     REQUIRE(instance->addWrittenAttributes(output, error));
     REQUIRE(instance->run(context, 0, output, 0, input->getNumPoints(), error));
 

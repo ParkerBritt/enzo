@@ -1,7 +1,7 @@
 #include "Engine/Core/Types.h"
-#include "Engine/Expression/PointScript.h"
-#include "Engine/Expression/ScriptContext.h"
-#include "Engine/Expression/ScriptEngine.h"
+#include "Engine/Script/PointScript.h"
+#include "Engine/Script/ScriptContext.h"
+#include "Engine/Script/ScriptEngine.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Primitives/Mesh.h"
@@ -23,15 +23,15 @@ static_assert(pointsPerChunk % 64 == 0);
 /// @note The output needs to start as a copy of the input.
 /// @return The first error a mesh or a point produced, or an empty string.
 enzo::String runOverPoints(
-    const enzo::expr::PointScript& script,
-    const enzo::expr::ScriptContext& context,
+    const enzo::script::PointScript& script,
+    const enzo::script::ScriptContext& context,
     enzo::NodePacket& output
 )
 {
     using namespace enzo;
 
     // Clones the script for each thread, since one script runs a single point at a time.
-    tbb::enumerable_thread_specific<std::shared_ptr<expr::PointScript>> threadScripts(
+    tbb::enumerable_thread_specific<std::shared_ptr<script::PointScript>> threadScripts(
         [&script] { return script.clone(); }
     );
 
@@ -50,7 +50,7 @@ enzo::String runOverPoints(
         const Offset chunkCount = (offsetCount + pointsPerChunk - 1) / pointsPerChunk;
 
         tbb::parallel_for(Offset(0), chunkCount, [&](const Offset chunk) {
-            const std::shared_ptr<expr::PointScript>& threadScript = threadScripts.local();
+            const std::shared_ptr<script::PointScript>& threadScript = threadScripts.local();
 
             String chunkError;
             if (!threadScript)
@@ -100,8 +100,8 @@ void Script::cook()
     }
 
     String error;
-    const std::shared_ptr<const expr::PointScript> script =
-        expr::ScriptEngine::instance().compile(code, error);
+    const std::shared_ptr<const script::PointScript> script =
+        script::ScriptEngine::instance().compile(code, error);
     if (!script)
     {
         throwError(error);
@@ -110,7 +110,7 @@ void Script::cook()
 
     // Shares one context across the cook, so a parameter the script reads is
     // evaluated and recorded as a dependency once.
-    expr::ScriptContext context(getNodeId(), *input);
+    script::ScriptContext context(getNodeId(), *input);
     error = runOverPoints(*script, context, output);
 
     // Records what the script read even when it failed, so changing one of those

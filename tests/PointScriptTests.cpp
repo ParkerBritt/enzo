@@ -1,5 +1,5 @@
-#include "Engine/Expression/PointScript.h"
-#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Script/PointScript.h"
+#include "Engine/Script/ScriptContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -7,10 +7,10 @@
 using namespace enzo;
 
 namespace {
-std::shared_ptr<expr::PointScript> compileScript(const String& code)
+std::shared_ptr<script::PointScript> compileScript(const String& code)
 {
     String error;
-    auto script = expr::PointScript::compile(code, error);
+    auto script = script::PointScript::compile(code, error);
     INFO(error);
     REQUIRE(script);
     return script;
@@ -19,7 +19,7 @@ std::shared_ptr<expr::PointScript> compileScript(const String& code)
 String getCompileError(const String& code)
 {
     String error;
-    REQUIRE_FALSE(expr::PointScript::compile(code, error));
+    REQUIRE_FALSE(script::PointScript::compile(code, error));
     return error;
 }
 
@@ -40,9 +40,9 @@ NodePacket packMesh(const geo::Mesh& mesh)
 }
 
 // Runs the script over every point of the input into a copy of it.
-geo::Mesh runScript(expr::PointScript& script, const geo::Mesh& input)
+geo::Mesh runScript(script::PointScript& script, const geo::Mesh& input)
 {
-    const expr::ScriptContext context(0, packMesh(input));
+    const script::ScriptContext context(0, packMesh(input));
     geo::Mesh output = input;
     String error;
     REQUIRE(script.addWrittenAttributes(output, error));
@@ -58,9 +58,9 @@ floatT getPointFloat(const geo::Mesh& mesh, const String& name, Offset point)
     return attr::AttributeHandleRO<floatT>(attribute).getValue(point);
 }
 
-const expr::AttributeBinding& getBinding(const expr::PointScript& script, const String& name)
+const script::AttributeBinding& getBinding(const script::PointScript& script, const String& name)
 {
-    for (const expr::AttributeBinding& binding : script.getBindings())
+    for (const script::AttributeBinding& binding : script.getBindings())
     {
         if (binding.name == name) return binding;
     }
@@ -253,7 +253,7 @@ TEST_CASE("run reports a panic on the line of the user's code")
     auto script = compileScript(R"(@value = 1.0
 panic("failed on {curPt()}"))");
     const geo::Mesh input = buildThreePointMesh();
-    const expr::ScriptContext context(0, packMesh(input));
+    const script::ScriptContext context(0, packMesh(input));
     geo::Mesh output = input;
 
     String error;

@@ -1,4 +1,4 @@
-#include "Engine/Expression/MeshAttributeReader.h"
+#include "Engine/Script/MeshAttributeReader.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -21,7 +21,7 @@ geo::Mesh buildQuad()
 TEST_CASE("hasElement finds every element of each owner")
 {
     const geo::Mesh mesh = buildQuad();
-    const expr::MeshAttributeReader reader(mesh);
+    const script::MeshAttributeReader reader(mesh);
 
     REQUIRE(reader.hasElement(attr::AttributeOwner::POINT, 3));
     REQUIRE(reader.hasElement(attr::AttributeOwner::VERTEX, 2));
@@ -32,7 +32,7 @@ TEST_CASE("hasElement finds every element of each owner")
 TEST_CASE("hasElement rejects an index outside the elements")
 {
     const geo::Mesh mesh = buildQuad();
-    const expr::MeshAttributeReader reader(mesh);
+    const script::MeshAttributeReader reader(mesh);
 
     REQUIRE_FALSE(reader.hasElement(attr::AttributeOwner::POINT, 4));
     REQUIRE_FALSE(reader.hasElement(attr::AttributeOwner::POINT, -1));
@@ -46,9 +46,9 @@ TEST_CASE("getAttribute finds an attribute only on its own owner")
 {
     geo::Mesh mesh = buildQuad();
     mesh.addAttribute<floatT>(attr::AttributeOwner::FACE, "area");
-    const expr::MeshAttributeReader reader(mesh);
+    const script::MeshAttributeReader reader(mesh);
 
-    const expr::ScriptAttribute* area = reader.getAttribute(attr::AttributeOwner::FACE, "area");
+    const script::ScriptAttribute* area = reader.getAttribute(attr::AttributeOwner::FACE, "area");
     REQUIRE(area);
     REQUIRE(area->type == attr::AttributeType::floatT);
     REQUIRE_FALSE(reader.getAttribute(attr::AttributeOwner::POINT, "area"));
@@ -57,9 +57,9 @@ TEST_CASE("getAttribute finds an attribute only on its own owner")
 TEST_CASE("getAttribute finds an intrinsic attribute")
 {
     const geo::Mesh mesh = buildQuad();
-    const expr::MeshAttributeReader reader(mesh);
+    const script::MeshAttributeReader reader(mesh);
 
-    const expr::ScriptAttribute* position =
+    const script::ScriptAttribute* position =
         reader.getAttribute(attr::AttributeOwner::POINT, "Position");
     REQUIRE(position);
     REQUIRE(position->type == attr::AttributeType::vectorT);

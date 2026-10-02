@@ -1,6 +1,6 @@
 #pragma once
 
-namespace enzo::expr {
+namespace enzo::daslang {
 
 /// @brief The module name a script requires for the vector operators.
 inline constexpr const char* vectorOperatorsModule = "enzo_vector";
@@ -39,4 +39,4 @@ def public operator *= (var a : float3&; b : int) { a *= float(b) }
 def public operator /= (var a : float3&; b : int) { a /= float(b) }
 )das";
 
-} // namespace enzo::expr
+} // namespace enzo::daslang

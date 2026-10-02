@@ -6,9 +6,14 @@
 #include <vector>
 
 namespace enzo::expr {
-
 class ExpressionContext;
+}
+
+namespace enzo::script {
 class ScriptContext;
+}
+
+namespace enzo::daslang {
 
 /// @brief An argument to a script function, either an integer or the address a reference parameter writes to.
 using ScriptArgument = std::variant<intT, void*>;
@@ -25,7 +30,7 @@ inline constexpr size_t maxScriptArguments = 32;
  * Example
  * @code
  * String error;
- * auto script = DasRuntime::instance().compile("expr", source, error);
+ * auto script = Runtime::instance().compile("expr", source, error);
  * floatT result = 0;
  * script->evalFloat("__eval__", result, error);
  * @endcode
@@ -33,16 +38,16 @@ inline constexpr size_t maxScriptArguments = 32;
  * @note daslang types stay inside the implementation so consumers never include
  * daslang headers.
  */
-class CompiledScript
+class CompiledProgram
 {
   public:
-    ~CompiledScript();
+    ~CompiledProgram();
 
     /// @brief Evaluates an exported function as a float.
     /// @return True on success, false when the function is missing or panics.
     bool evalFloat(
         const String& functionName,
-        const ExpressionContext* context,
+        const expr::ExpressionContext* context,
         floatT& result,
         String& error
     );
@@ -51,7 +56,7 @@ class CompiledScript
     /// @return True on success, false when the function is missing or panics.
     bool evalInt(
         const String& functionName,
-        const ExpressionContext* context,
+        const expr::ExpressionContext* context,
         intT& result,
         String& error
     );
@@ -60,7 +65,7 @@ class CompiledScript
     /// @return True on success, false when the function is missing or panics.
     bool evalString(
         const String& functionName,
-        const ExpressionContext* context,
+        const expr::ExpressionContext* context,
         String& result,
         String& error
     );
@@ -71,7 +76,7 @@ class CompiledScript
     bool run(
         const String& functionName,
         std::span<const ScriptArgument> arguments,
-        const ScriptContext* context,
+        const script::ScriptContext* context,
         size_t primitiveIndex,
         String& error
     );
@@ -89,13 +94,13 @@ class CompiledScript
      * @return The clone, or null when its globals fail to initialise.
      * @note A context runs one function at a time, so each thread needs its own clone.
      */
-    std::shared_ptr<CompiledScript> clone() const;
+    std::shared_ptr<CompiledProgram> clone() const;
 
   private:
-    friend class DasRuntime;
+    friend class Runtime;
     struct Impl;
 
-    explicit CompiledScript(Impl impl);
+    explicit CompiledProgram(Impl impl);
 
     std::unique_ptr<Impl> impl_;
 };
@@ -110,25 +115,25 @@ class CompiledScript
  * directly, so parameter expressions today and geometry script nodes later
  * share one runtime and one place that knows how to compile.
  */
-class DasRuntime
+class Runtime
 {
   public:
-    static DasRuntime& instance();
+    static Runtime& instance();
 
     /**
      * @brief Compiles source text into a reusable script.
      * @return The compiled script, or null when compilation fails.
      * @note On failure the daslang diagnostics are written to @p error.
      */
-    std::shared_ptr<CompiledScript>
+    std::shared_ptr<CompiledProgram>
     compile(const String& name, const String& source, String& error);
 
-    DasRuntime(const DasRuntime&) = delete;
-    DasRuntime& operator=(const DasRuntime&) = delete;
+    Runtime(const Runtime&) = delete;
+    Runtime& operator=(const Runtime&) = delete;
 
   private:
-    DasRuntime();
-    ~DasRuntime();
+    Runtime();
+    ~Runtime();
 };
 
-} // namespace enzo::expr
+} // namespace enzo::daslang

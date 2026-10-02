@@ -10,7 +10,7 @@ namespace enzo::geo {
 class Mesh;
 }
 
-namespace enzo::expr {
+namespace enzo::script {
 
 /// @brief A read handle for an attribute, empty for a type scripts can't read.
 using ScriptAttributeHandle = std::variant<
@@ -57,4 +57,4 @@ class MeshAttributeReader
     std::array<std::vector<ScriptAttribute>, ownerCount> attributes_;
 };
 
-} // namespace enzo::expr
+} // namespace enzo::script

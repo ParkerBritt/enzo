@@ -1,5 +1,5 @@
-#include "Engine/Expression/PointScript.h"
-#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Script/PointScript.h"
+#include "Engine/Script/ScriptContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -41,13 +41,13 @@ geo::Mesh buildQuad()
 geo::Mesh runScript(const String& code, const geo::Mesh& input, std::vector<String>& warnings)
 {
     String error;
-    auto script = expr::PointScript::compile(code, error);
+    auto script = script::PointScript::compile(code, error);
     INFO(error);
     REQUIRE(script);
 
     NodePacket packet;
     packet.addPrimitive(std::make_shared<geo::Mesh>(input));
-    const expr::ScriptContext context(0, packet);
+    const script::ScriptContext context(0, packet);
 
     geo::Mesh output = input;
     REQUIRE(script->addWrittenAttributes(output, error));

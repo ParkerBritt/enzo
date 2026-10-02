@@ -1,13 +1,13 @@
-#include "Engine/Expression/DasRuntime.h"
+#include "Engine/Daslang/Runtime.h"
 #include <catch2/catch_test_macros.hpp>
 
 using namespace enzo;
 
 namespace {
-std::shared_ptr<expr::CompiledScript> compileScript(const String& source)
+std::shared_ptr<daslang::CompiledProgram> compileScript(const String& source)
 {
     String error;
-    auto script = expr::DasRuntime::instance().compile("compiledScriptTest", source, error);
+    auto script = daslang::Runtime::instance().compile("compiledScriptTest", source, error);
     INFO(error);
     REQUIRE(script);
     return script;
@@ -24,7 +24,7 @@ def double(value : int64; var result : int64&) {
 )");
 
     intT result = 0;
-    const expr::ScriptArgument arguments[] = {intT(21), &result};
+    const daslang::ScriptArgument arguments[] = {intT(21), &result};
     String error;
     REQUIRE(script->run("double", arguments, nullptr, 0, error));
     REQUIRE(result == 42);
@@ -39,7 +39,7 @@ def fail(value : int64) {
 }
 )");
 
-    const expr::ScriptArgument arguments[] = {intT(3)};
+    const daslang::ScriptArgument arguments[] = {intT(3)};
     String error;
     REQUIRE_FALSE(script->run("fail", arguments, nullptr, 0, error));
     REQUIRE(error.find("failed on 3") != String::npos);
@@ -66,7 +66,7 @@ def present() {
 }
 )");
 
-    const std::vector<expr::ScriptArgument> arguments(expr::maxScriptArguments + 1, intT(0));
+    const std::vector<daslang::ScriptArgument> arguments(daslang::maxScriptArguments + 1, intT(0));
     String error;
     REQUIRE_FALSE(script->run("present", arguments, nullptr, 0, error));
     REQUIRE(error.find("too many arguments") != String::npos);
@@ -86,7 +86,7 @@ def countCalls(var result : int64&) {
 
     // Runs the original twice, leaving its count at 2
     intT result = 0;
-    const expr::ScriptArgument arguments[] = {&result};
+    const daslang::ScriptArgument arguments[] = {&result};
     String error;
     REQUIRE(script->run("countCalls", arguments, nullptr, 0, error));
     REQUIRE(script->run("countCalls", arguments, nullptr, 0, error));

@@ -1,12 +1,12 @@
-#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Script/ScriptContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include <algorithm>
 
-namespace enzo::expr {
+namespace enzo::script {
 
 ScriptContext::ScriptContext(nt::NodeId currentNode, const NodePacket& input)
-    : ExpressionContext(currentNode)
+    : expr::ExpressionContext(currentNode)
 {
     for (const std::shared_ptr<geo::Primitive>& primitive : input.getPrimitives())
     {
@@ -40,4 +40,4 @@ void ScriptContext::addWarning(const String& warning) const
     warnings_.push_back(warning);
 }
 
-} // namespace enzo::expr
+} // namespace enzo::script

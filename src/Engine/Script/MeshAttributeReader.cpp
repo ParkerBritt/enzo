@@ -1,7 +1,7 @@
-#include "Engine/Expression/MeshAttributeReader.h"
+#include "Engine/Script/MeshAttributeReader.h"
 #include "Engine/Primitives/Mesh.h"
 
-namespace enzo::expr {
+namespace enzo::script {
 
 namespace {
 size_t getOwnerSlot(attr::AttributeOwner owner) { return static_cast<size_t>(owner); }
@@ -70,4 +70,4 @@ MeshAttributeReader::getAttribute(attr::AttributeOwner owner, std::string_view n
     return nullptr;
 }
 
-} // namespace enzo::expr
+} // namespace enzo::script

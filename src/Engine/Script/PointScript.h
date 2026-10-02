@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Expression/DasRuntime.h"
+#include "Engine/Daslang/Runtime.h"
 #include <deque>
 #include <memory>
 #include <optional>
@@ -12,7 +12,7 @@ class Mesh;
 class Primitive;
 }
 
-namespace enzo::expr {
+namespace enzo::script {
 
 class ScriptContext;
 
@@ -105,13 +105,13 @@ class PointScript
         }
     };
 
-    PointScript(std::shared_ptr<CompiledScript> compiled, std::vector<AttributeBinding> bindings);
+    PointScript(std::shared_ptr<daslang::CompiledProgram> compiled, std::vector<AttributeBinding> bindings);
 
     template <typename Action> void visitBindingValues(attr::AttributeType type, Action&& action);
     template <typename Action> void visitAllBindingValues(Action&& action);
     bool resolveAttributes(const geo::Primitive& input, geo::Primitive& output, String& error);
 
-    std::shared_ptr<CompiledScript> compiled_;
+    std::shared_ptr<daslang::CompiledProgram> compiled_;
     std::vector<AttributeBinding> bindings_;
 
     BindingValues<floatT> floats_;
@@ -120,7 +120,7 @@ class PointScript
     BindingValues<boolT> bools_;
 
     // The point's index and the point count, followed by a pointer to each binding's value.
-    std::vector<ScriptArgument> arguments_;
+    std::vector<daslang::ScriptArgument> arguments_;
 };
 
-} // namespace enzo::expr
+} // namespace enzo::script

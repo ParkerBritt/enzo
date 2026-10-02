@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-namespace enzo::expr {
+namespace enzo::script {
 
 class PointScript;
 
@@ -37,4 +37,4 @@ class ScriptEngine
     std::unordered_map<String, std::shared_ptr<const PointScript>> cache_;
 };
 
-} // namespace enzo::expr
+} // namespace enzo::script

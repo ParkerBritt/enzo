@@ -1,7 +1,7 @@
-#include "Engine/Expression/ScriptEngine.h"
-#include "Engine/Expression/PointScript.h"
+#include "Engine/Script/ScriptEngine.h"
+#include "Engine/Script/PointScript.h"
 
-namespace enzo::expr {
+namespace enzo::script {
 
 ScriptEngine& ScriptEngine::instance()
 {
@@ -19,4 +19,4 @@ std::shared_ptr<const PointScript> ScriptEngine::compile(const String& code, Str
     return script;
 }
 
-} // namespace enzo::expr
+} // namespace enzo::script

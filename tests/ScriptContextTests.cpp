@@ -1,4 +1,4 @@
-#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Script/ScriptContext.h"
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -22,7 +22,7 @@ TEST_CASE("getInputMesh returns the mesh at each primitive index")
     input.addPrimitive(first);
     input.addPrimitive(second);
 
-    const expr::ScriptContext context(0, input);
+    const script::ScriptContext context(0, input);
 
     REQUIRE(&context.getInputMesh(0) == first.get());
     REQUIRE(&context.getInputMesh(1) == second.get());
@@ -34,7 +34,7 @@ TEST_CASE("getAttributeReader reads the mesh at each primitive index")
     input.addPrimitive(buildMesh(2));
     input.addPrimitive(buildMesh(5));
 
-    const expr::ScriptContext context(0, input);
+    const script::ScriptContext context(0, input);
 
     REQUIRE_FALSE(context.getAttributeReader(0).hasElement(attr::AttributeOwner::POINT, 4));
     REQUIRE(context.getAttributeReader(1).hasElement(attr::AttributeOwner::POINT, 4));
