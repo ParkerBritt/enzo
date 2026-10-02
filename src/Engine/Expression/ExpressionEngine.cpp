@@ -1,5 +1,5 @@
 #include "Engine/Expression/ExpressionEngine.h"
-#include "Engine/Expression/DasRuntime.h"
+#include "Engine/Daslang/Runtime.h"
 
 namespace enzo::expr {
 
@@ -30,13 +30,13 @@ ExpressionEngine& ExpressionEngine::instance()
     return engine;
 }
 
-std::shared_ptr<CompiledScript>
+std::shared_ptr<daslang::CompiledProgram>
 ExpressionEngine::compileCached_(const String& source, String& error)
 {
     auto cached = cache_.find(source);
     if (cached != cache_.end()) return cached->second;
 
-    auto script = DasRuntime::instance().compile("expression", source, error);
+    auto script = daslang::Runtime::instance().compile("expression", source, error);
     if (script) cache_[source] = script;
     return script;
 }

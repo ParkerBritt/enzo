@@ -1,12 +1,12 @@
-#include "Engine/Expression/DasContext.h"
-#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Daslang/ThreadState.h"
+#include "Engine/Script/ScriptContext.h"
 #include "daScript/ast/ast_interop.h"
 #include <algorithm>
 #include <cctype>
 
 // The daslang module that lets scripts read the attributes of their input mesh.
 
-namespace enzo::expr {
+namespace enzo::script {
 
 namespace {
 
@@ -49,7 +49,7 @@ String getReadName(attr::AttributeOwner owner, attr::AttributeType type)
 
 const MeshAttributeReader& getAttributeReader(das::Context* dasContext)
 {
-    const auto* threadState = static_cast<DasContext*>(dasContext);
+    const auto* threadState = static_cast<daslang::ThreadState*>(dasContext);
     if (!threadState->primitiveIndex)
         dasContext->throw_error("attribute functions only run inside a script node");
 
@@ -62,7 +62,7 @@ const MeshAttributeReader& getAttributeReader(das::Context* dasContext)
 template <typename Value>
 typename ScriptValue<Value>::Type failRead(das::Context* dasContext, const String& warning)
 {
-    std::vector<String>& warnings = static_cast<DasContext*>(dasContext)->warnings;
+    std::vector<String>& warnings = static_cast<daslang::ThreadState*>(dasContext)->warnings;
     if (std::ranges::find(warnings, warning) == warnings.end()) warnings.push_back(warning);
 
     if constexpr (std::is_same_v<Value, Vector3>) return das::float3(0.0f, 0.0f, 0.0f);
@@ -197,6 +197,6 @@ class GeometryModule : public das::Module
     }
 };
 
-} // namespace enzo::expr
+} // namespace enzo::script
 
-REGISTER_MODULE_IN_NAMESPACE(GeometryModule, enzo::expr);
+REGISTER_MODULE_IN_NAMESPACE(GeometryModule, enzo::script);

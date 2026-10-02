@@ -1,6 +1,6 @@
-#include "Engine/Expression/PointScript.h"
-#include "Engine/Expression/ScriptContext.h"
-#include "Engine/Expression/VectorOperators.h"
+#include "Engine/Script/PointScript.h"
+#include "Engine/Script/ScriptContext.h"
+#include "Engine/Daslang/VectorOperators.h"
 #include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Primitives/Mesh.h"
 #include <algorithm>
@@ -8,7 +8,7 @@
 #include <cstring>
 #include <regex>
 
-namespace enzo::expr {
+namespace enzo::script {
 
 namespace {
 constexpr const char* runFunctionName = "enzoRunScript";
@@ -325,7 +325,7 @@ String wrapScript(const String& code, const std::vector<AttributeBinding>& bindi
            "require enzo_expression\n"
            "require enzo_geometry\n"
            "require " +
-           String(vectorOperatorsModule) + "\n"
+           String(daslang::vectorOperatorsModule) + "\n"
            "var private enzoCurPt : int64\n"
            "var private enzoPtCount : int64\n"
            "def curPt() : int64 { return enzoCurPt; }\n"
@@ -361,7 +361,7 @@ String toUserError(const String& error)
 } // namespace
 
 PointScript::PointScript(
-    std::shared_ptr<CompiledScript> compiled,
+    std::shared_ptr<daslang::CompiledProgram> compiled,
     std::vector<AttributeBinding> bindings
 )
     : compiled_(std::move(compiled)), bindings_(std::move(bindings))
@@ -410,16 +410,16 @@ std::shared_ptr<PointScript> PointScript::compile(const String& code, String& er
     std::optional<String> rewrittenCode = BindingRewriter(code).rewrite(bindings, error);
     if (!rewrittenCode) return nullptr;
 
-    if (bindings.size() + pointArgumentCount > maxScriptArguments)
+    if (bindings.size() + pointArgumentCount > daslang::maxScriptArguments)
     {
         error = "a script can use at most " +
-                std::to_string(maxScriptArguments - pointArgumentCount) +
+                std::to_string(daslang::maxScriptArguments - pointArgumentCount) +
                 " attributes";
         return nullptr;
     }
 
     auto compiled =
-        DasRuntime::instance().compile("script", wrapScript(*rewrittenCode, bindings), error);
+        daslang::Runtime::instance().compile("script", wrapScript(*rewrittenCode, bindings), error);
     if (!compiled)
     {
         error = toUserError(error);
@@ -438,7 +438,7 @@ std::shared_ptr<PointScript> PointScript::compile(const String& code, String& er
 
 std::shared_ptr<PointScript> PointScript::clone() const
 {
-    std::shared_ptr<CompiledScript> compiledClone = compiled_->clone();
+    std::shared_ptr<daslang::CompiledProgram> compiledClone = compiled_->clone();
     if (!compiledClone) return nullptr;
     return std::shared_ptr<PointScript>(new PointScript(compiledClone, bindings_));
 }
@@ -533,4 +533,4 @@ bool PointScript::run(
     return true;
 }
 
-} // namespace enzo::expr
+} // namespace enzo::script

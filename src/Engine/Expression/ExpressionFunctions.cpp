@@ -1,4 +1,4 @@
-#include "Engine/Expression/DasContext.h"
+#include "Engine/Daslang/ThreadState.h"
 #include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Network/NetworkManager.h"
 #include "daScript/ast/ast_interop.h"
@@ -15,7 +15,7 @@ namespace {
 // evaluation that has none.
 const ExpressionContext* expressionContextOf(das::Context* dasContext)
 {
-    return static_cast<DasContext*>(dasContext)->expressionContext;
+    return static_cast<daslang::ThreadState*>(dasContext)->expressionContext;
 }
 
 // Returns a parameter's value, with the path resolved relative to the node the

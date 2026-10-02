@@ -63,15 +63,15 @@ set(ENGINE_SOURCES
     src/Engine/Network/NodeTypeTable.cpp
     src/Engine/Network/CookContext.cpp
     src/Engine/NetworkGraph/NetworkGraph.cpp
-    src/Engine/Expression/DasRuntime.cpp
+    src/Engine/Daslang/Runtime.cpp
     src/Engine/Expression/ExpressionContext.cpp
     src/Engine/Expression/ExpressionEngine.cpp
-    src/Engine/Expression/ScriptEngine.cpp
+    src/Engine/Script/ScriptEngine.cpp
     src/Engine/Expression/ExpressionFunctions.cpp
-    src/Engine/Expression/GeometryFunctions.cpp
-    src/Engine/Expression/PointScript.cpp
-    src/Engine/Expression/MeshAttributeReader.cpp
-    src/Engine/Expression/ScriptContext.cpp
+    src/Engine/Script/GeometryFunctions.cpp
+    src/Engine/Script/PointScript.cpp
+    src/Engine/Script/MeshAttributeReader.cpp
+    src/Engine/Script/ScriptContext.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -185,9 +185,9 @@ file(COPY ${DAS_DASLIB_DIR} DESTINATION ${ENZO_DEV_STAGE_DIR})
 # check Boost.TypeIndex plants in every object.
 if(NOT MSVC)
     set_source_files_properties(
-        src/Engine/Expression/DasRuntime.cpp
+        src/Engine/Daslang/Runtime.cpp
         src/Engine/Expression/ExpressionFunctions.cpp
-        src/Engine/Expression/GeometryFunctions.cpp
+        src/Engine/Script/GeometryFunctions.cpp
         PROPERTIES COMPILE_OPTIONS "-fno-rtti"
     )
 endif()
@@ -431,7 +431,7 @@ if(ENZO_BUILD_TESTS)
         tests/GeometryFunctionsTests.cpp
         tests/ScriptNodeTests.cpp
         tests/ScriptEngineTests.cpp
-        tests/CompiledScriptTests.cpp
+        tests/CompiledProgramTests.cpp
         tests/ParameterTests.cpp
         tests/NetworkGraphTests.cpp
         tests/RampTests.cpp

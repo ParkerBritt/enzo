@@ -1,4 +1,4 @@
-#include "Engine/Expression/DasRuntime.h"
+#include "Engine/Daslang/Runtime.h"
 #include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/ExpressionEngine.h"
 #include "Engine/Network/NetworkManager.h"
@@ -263,7 +263,7 @@ TEST_CASE("Rand gives an int and an int64 seed the same value")
 TEST_CASE("Rand spreads many seeds evenly between zero and one")
 {
     String error;
-    auto script = expr::DasRuntime::instance().compile(
+    auto script = daslang::Runtime::instance().compile(
         "randSpreadTest",
         R"(options gen2
 require enzo_expression
@@ -284,7 +284,7 @@ def sample(seed : int64; var result : float&) {
     for (intT seed = 0; seed < sampleCount; ++seed)
     {
         floatT value = -1.0f;
-        const expr::ScriptArgument arguments[] = {seed, &value};
+        const daslang::ScriptArgument arguments[] = {seed, &value};
         REQUIRE(script->run("sample", arguments, nullptr, 0, error));
         REQUIRE(value >= 0.0f);
         REQUIRE(value < 1.0f);
@@ -329,7 +329,7 @@ TEST_CASE("RandVector gives an int and an int64 seed the same value")
 TEST_CASE("RandVector spreads many seeds evenly between zero and one")
 {
     String error;
-    auto script = expr::DasRuntime::instance().compile(
+    auto script = daslang::Runtime::instance().compile(
         "randVectorSpreadTest",
         R"(options gen2
 require enzo_expression
@@ -350,7 +350,7 @@ def sample(seed : int64; var result : float3&) {
     for (intT seed = 0; seed < sampleCount; ++seed)
     {
         Vector3 value(-1.0f, -1.0f, -1.0f);
-        const expr::ScriptArgument arguments[] = {seed, value.data()};
+        const daslang::ScriptArgument arguments[] = {seed, value.data()};
         REQUIRE(script->run("sample", arguments, nullptr, 0, error));
         for (int component = 0; component < 3; ++component)
         {

@@ -5,8 +5,10 @@
 #include <vector>
 
 namespace enzo::expr {
-
 class ExpressionContext;
+}
+
+namespace enzo::daslang {
 
 /**
  * @brief A daslang runtime context that also carries our evaluation world.
@@ -16,13 +18,13 @@ class ExpressionContext;
  * without a global. The pointer is set for the span of one evaluation and
  * restored after, since evaluations nest.
  */
-struct DasContext : das::Context
+struct ThreadState : das::Context
 {
-    DasContext(uint32_t stackSize) : das::Context(stackSize) {}
-    DasContext(const DasContext& other, uint32_t category) : das::Context(other, category) {}
+    ThreadState(uint32_t stackSize) : das::Context(stackSize) {}
+    ThreadState(const ThreadState& other, uint32_t category) : das::Context(other, category) {}
 
     /// @brief The world the running function reads, a ScriptContext when primitiveIndex is set.
-    const ExpressionContext* expressionContext = nullptr;
+    const expr::ExpressionContext* expressionContext = nullptr;
 
     /// @brief The input primitive the running script works on, empty outside a script run.
     std::optional<size_t> primitiveIndex;
@@ -31,4 +33,4 @@ struct DasContext : das::Context
     std::vector<String> warnings;
 };
 
-} // namespace enzo::expr
+} // namespace enzo::daslang

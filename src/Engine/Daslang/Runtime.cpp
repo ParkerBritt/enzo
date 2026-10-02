@@ -1,7 +1,7 @@
-#include "Engine/Expression/DasRuntime.h"
-#include "Engine/Expression/DasContext.h"
-#include "Engine/Expression/ScriptContext.h"
-#include "Engine/Expression/VectorOperators.h"
+#include "Engine/Daslang/Runtime.h"
+#include "Engine/Daslang/ThreadState.h"
+#include "Engine/Script/ScriptContext.h"
+#include "Engine/Daslang/VectorOperators.h"
 #include "daScript/daScript.h"
 #include <mutex>
 #include <optional>
@@ -16,23 +16,23 @@ DECLARE_MODULE(ExpressionModule);
 // Makes our geometry functions module (pointAttr and friends) available.
 DECLARE_MODULE(GeometryModule);
 
-namespace enzo::expr {
+namespace enzo::daslang {
 
 static_assert(maxScriptArguments == DAS_MAX_FUNCTION_ARGUMENTS);
 
 // Keeps the daslang objects out of the header so the heavy daslang header is
 // compiled here once, not in every file that uses a script.
-struct CompiledScript::Impl
+struct CompiledProgram::Impl
 {
     // The source file that error locations point into.
     das::FileAccessPtr fileAccess;
     das::ProgramPtr program;
-    std::shared_ptr<DasContext> context;
+    std::shared_ptr<ThreadState> context;
 };
 
-CompiledScript::CompiledScript(Impl impl) : impl_(std::make_unique<Impl>(std::move(impl))) {}
+CompiledProgram::CompiledProgram(Impl impl) : impl_(std::make_unique<Impl>(std::move(impl))) {}
 
-CompiledScript::~CompiledScript() = default;
+CompiledProgram::~CompiledProgram() = default;
 
 namespace {
 String collectErrors(const das::ProgramPtr& program)
@@ -55,10 +55,10 @@ vec4f toRawArgument(const ScriptArgument& argument)
 }
 
 bool evalRaw(
-    DasContext& context,
+    ThreadState& context,
     const String& functionName,
     std::span<const ScriptArgument> arguments,
-    const ExpressionContext* expressionContext,
+    const expr::ExpressionContext* expressionContext,
     std::optional<size_t> primitiveIndex,
     vec4f& result,
     String& error
@@ -85,7 +85,7 @@ bool evalRaw(
 
     // Swaps in this run's world and restores the outer one after,
     // since a nested prm() can run on this same context.
-    const ExpressionContext* outerExpressionContext =
+    const expr::ExpressionContext* outerExpressionContext =
         std::exchange(context.expressionContext, expressionContext);
     const std::optional<size_t> outerPrimitiveIndex =
         std::exchange(context.primitiveIndex, primitiveIndex);
@@ -103,9 +103,9 @@ bool evalRaw(
 }
 } // namespace
 
-bool CompiledScript::evalFloat(
+bool CompiledProgram::evalFloat(
     const String& functionName,
-    const ExpressionContext* context,
+    const expr::ExpressionContext* context,
     floatT& result,
     String& error
 )
@@ -116,9 +116,9 @@ bool CompiledScript::evalFloat(
     return true;
 }
 
-bool CompiledScript::evalInt(
+bool CompiledProgram::evalInt(
     const String& functionName,
-    const ExpressionContext* context,
+    const expr::ExpressionContext* context,
     intT& result,
     String& error
 )
@@ -129,9 +129,9 @@ bool CompiledScript::evalInt(
     return true;
 }
 
-bool CompiledScript::evalString(
+bool CompiledProgram::evalString(
     const String& functionName,
-    const ExpressionContext* context,
+    const expr::ExpressionContext* context,
     String& result,
     String& error
 )
@@ -145,10 +145,10 @@ bool CompiledScript::evalString(
     return true;
 }
 
-bool CompiledScript::run(
+bool CompiledProgram::run(
     const String& functionName,
     std::span<const ScriptArgument> arguments,
-    const ScriptContext* context,
+    const script::ScriptContext* context,
     size_t primitiveIndex,
     String& error
 )
@@ -161,7 +161,7 @@ bool CompiledScript::run(
     return evalRaw(*impl_->context, functionName, arguments, context, scriptPrimitiveIndex, raw, error);
 }
 
-std::vector<bool> CompiledScript::getWrittenArguments(const String& functionName) const
+std::vector<bool> CompiledProgram::getWrittenArguments(const String& functionName) const
 {
     das::FunctionPtr function =
         impl_->program->getThisModule()->findUniqueFunction(functionName);
@@ -175,30 +175,30 @@ std::vector<bool> CompiledScript::getWrittenArguments(const String& functionName
     return written;
 }
 
-std::vector<String> CompiledScript::takeWarnings() { return std::exchange(impl_->context->warnings, {}); }
+std::vector<String> CompiledProgram::takeWarnings() { return std::exchange(impl_->context->warnings, {}); }
 
-std::shared_ptr<CompiledScript> CompiledScript::clone() const
+std::shared_ptr<CompiledProgram> CompiledProgram::clone() const
 {
     // Clones one at a time, since daslang counts references to the program without atomics.
     static std::mutex cloneMutex;
     std::lock_guard lock(cloneMutex);
 
-    auto context = std::make_shared<DasContext>(
+    auto context = std::make_shared<ThreadState>(
         *impl_->context,
         uint32_t(das::ContextCategory::thread_clone)
     );
     if (context->failed) return nullptr;
 
-    return std::shared_ptr<CompiledScript>(new CompiledScript({impl_->fileAccess, impl_->program, context}));
+    return std::shared_ptr<CompiledProgram>(new CompiledProgram({impl_->fileAccess, impl_->program, context}));
 }
 
-DasRuntime& DasRuntime::instance()
+Runtime& Runtime::instance()
 {
-    static DasRuntime runtime;
+    static Runtime runtime;
     return runtime;
 }
 
-DasRuntime::DasRuntime()
+Runtime::Runtime()
 {
     PULL_ALL_DEFAULT_MODULES;
     PULL_MODULE(ExpressionModule);
@@ -206,10 +206,10 @@ DasRuntime::DasRuntime()
     das::Module::Initialize();
 }
 
-DasRuntime::~DasRuntime() { das::Module::ShutdownStandalone(); }
+Runtime::~Runtime() { das::Module::ShutdownStandalone(); }
 
-std::shared_ptr<CompiledScript>
-DasRuntime::compile(const String& name, const String& source, String& error)
+std::shared_ptr<CompiledProgram>
+Runtime::compile(const String& name, const String& source, String& error)
 {
     das::TextPrinter logs;
     das::ModuleGroup libraryGroup;
@@ -240,14 +240,14 @@ DasRuntime::compile(const String& name, const String& source, String& error)
     }
 
     // Build the runtime context that runs the program.
-    auto context = std::make_shared<DasContext>(program->getContextStackSize());
+    auto context = std::make_shared<ThreadState>(program->getContextStackSize());
     if (!program->simulate(*context, logs))
     {
         error = collectErrors(program);
         return nullptr;
     }
 
-    return std::shared_ptr<CompiledScript>(new CompiledScript({fileAccess, program, context}));
+    return std::shared_ptr<CompiledProgram>(new CompiledProgram({fileAccess, program, context}));
 }
 
-} // namespace enzo::expr
+} // namespace enzo::daslang

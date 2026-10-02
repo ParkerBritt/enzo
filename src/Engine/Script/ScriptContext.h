@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Expression/ExpressionContext.h"
-#include "Engine/Expression/MeshAttributeReader.h"
+#include "Engine/Script/MeshAttributeReader.h"
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -14,7 +14,7 @@ namespace enzo::geo {
 class Mesh;
 }
 
-namespace enzo::expr {
+namespace enzo::script {
 
 /**
  * @brief The world a script reads during one cook of a node.
@@ -24,7 +24,7 @@ namespace enzo::expr {
  *
  * @note Every mesh in the input needs to be defragmented.
  */
-class ScriptContext : public ExpressionContext
+class ScriptContext : public expr::ExpressionContext
 {
   public:
     ScriptContext(nt::NodeId currentNode, const NodePacket& input);
@@ -50,4 +50,4 @@ class ScriptContext : public ExpressionContext
     mutable std::vector<String> warnings_;
 };
 
-} // namespace enzo::expr
+} // namespace enzo::script
