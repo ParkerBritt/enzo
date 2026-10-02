@@ -15,12 +15,17 @@ nt::CookContext::CookContext(nt::NodeId nodeId, nt::NetworkManager& networkManag
 
 NodePacket nt::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
+    return getInputPacket(inputIndex)->deepCopy();
+}
+
+std::shared_ptr<const NodePacket> nt::CookContext::getInputPacket(unsigned int inputIndex)
+{
     auto inputNodeLink = networkManager_.graph().getInputNodeLink(nodeId_, inputIndex);
-    if (!inputNodeLink)
-    {
-        return NodePacket();
-    }
-    return networkManager_.cookOutput(inputNodeLink->sourceNode, inputNodeLink->sourceOutput);
+    if (!inputNodeLink) return std::make_shared<const NodePacket>();
+
+    networkManager_.cook(inputNodeLink->sourceNode);
+    return networkManager_.getNode(inputNodeLink->sourceNode)
+        .getOutputPacket(inputNodeLink->sourceOutput);
 }
 
 bool nt::CookContext::hasInput(unsigned int inputIndex)

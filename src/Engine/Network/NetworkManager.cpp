@@ -342,12 +342,6 @@ void nt::NetworkManager::cook(nt::NodeId nodeId)
     }
 }
 
-NodePacket nt::NetworkManager::cookOutput(nt::NodeId nodeId, unsigned int outputIndex)
-{
-    cook(nodeId);
-    return getNode(nodeId).getOutputPacket(outputIndex)->deepCopy();
-}
-
 unsigned int nt::NetworkManager::getInputCount(NodeId nodeId)
 {
     const nt::NodeType& nodeType = getNode(nodeId).getType();

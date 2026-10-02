@@ -1,9 +1,10 @@
-#include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/PointScript.h"
+#include "Engine/Expression/ScriptContext.h"
 #include "Engine/Expression/ScriptEngine.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
+#include "Engine/Network/NodePacket.h"
 #include "Engine/Parameter/NodeParameter.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
@@ -47,15 +48,17 @@ TEST_CASE_METHOD(NMReset, "A script run over many points reads a parameter once"
     INFO(error);
     REQUIRE(script);
 
-    geo::Mesh input;
-    for (int point = 0; point < 100; ++point) input.addPoint(Vector3::Zero());
-    geo::Mesh output = input;
+    auto input = std::make_shared<geo::Mesh>();
+    for (int point = 0; point < 100; ++point) input->addPoint(Vector3::Zero());
+    NodePacket packet;
+    packet.addPrimitive(input);
+    geo::Mesh output = *input;
 
     // Runs the whole point range against one context, as a single cook does
     auto instance = script->clone();
-    expr::ExpressionContext context(source);
+    const expr::ScriptContext context(source, packet);
     REQUIRE(instance->addWrittenAttributes(output, error));
-    REQUIRE(instance->run(input, output, 0, input.getNumPoints(), 0, 100, &context, error));
+    REQUIRE(instance->run(context, 0, output, 0, input->getNumPoints(), error));
 
     auto offsets = output.getAttribByName(attr::AttributeOwner::POINT, "offset");
     REQUIRE(attr::AttributeHandleRO<floatT>(offsets).getValue(99) == 7.0f);

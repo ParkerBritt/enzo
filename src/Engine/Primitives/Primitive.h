@@ -199,7 +199,7 @@ class Primitive
     }
 
     std::shared_ptr<attr::Attribute>
-    getAttribByName(attr::AttributeOwner owner, std::string name, bool includeIntrinsics = false);
+    getAttribByName(attr::AttributeOwner owner, std::string_view name, bool includeIntrinsics = false);
     /**
      * @brief Const counterpart of @ref getAttribByName.
      *
@@ -208,7 +208,7 @@ class Primitive
      */
     std::shared_ptr<const attr::Attribute> getAttribByName(
         attr::AttributeOwner owner,
-        std::string name,
+        std::string_view name,
         bool includeIntrinsics = false
     ) const;
     const size_t getNumAttributes(const attr::AttributeOwner owner) const;
@@ -221,7 +221,7 @@ class Primitive
      */
     std::vector<std::shared_ptr<const attr::Attribute>>
     getAttributes(attr::AttributeOwner owner, bool includeIntrinsics = false) const;
-    bool attributeExists(attr::AttributeOwner owner, std::string name);
+    bool attributeExists(attr::AttributeOwner owner, std::string_view name);
 
     /**
      * @brief Returns the group of this name on the given owner, adding one when the

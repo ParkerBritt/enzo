@@ -285,7 +285,7 @@ def sample(seed : int64; var result : float&) {
     {
         floatT value = -1.0f;
         const expr::ScriptArgument arguments[] = {seed, &value};
-        REQUIRE(script->run("sample", arguments, nullptr, error));
+        REQUIRE(script->run("sample", arguments, nullptr, 0, error));
         REQUIRE(value >= 0.0f);
         REQUIRE(value < 1.0f);
         ++bucketSizes[static_cast<int>(value * bucketCount)];
@@ -351,7 +351,7 @@ def sample(seed : int64; var result : float3&) {
     {
         Vector3 value(-1.0f, -1.0f, -1.0f);
         const expr::ScriptArgument arguments[] = {seed, value.data()};
-        REQUIRE(script->run("sample", arguments, nullptr, error));
+        REQUIRE(script->run("sample", arguments, nullptr, 0, error));
         for (int component = 0; component < 3; ++component)
         {
             REQUIRE(value[component] >= 0.0f);

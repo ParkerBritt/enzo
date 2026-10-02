@@ -57,7 +57,7 @@ class Attribute
     /**
      * @brief Returns the name of this attribute.
      */
-    std::string getName() const;
+    const std::string& getName() const;
 
     Vector3 getVector3(Offset offset) const;
     Matrix4 getMatrix4(Offset offset) const;

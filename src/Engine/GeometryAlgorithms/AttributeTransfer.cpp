@@ -37,12 +37,6 @@ getAttributePairs(const geo::Primitive& source, geo::Primitive& dest, attr::Attr
     return pairs;
 }
 
-// Returns the source element nearer to where a blend lands.
-Offset getNearerSourceOffset(const ElementBlend& elementBlend)
-{
-    return elementBlend.blend < 0.5 ? elementBlend.sourceOffset0 : elementBlend.sourceOffset1;
-}
-
 // Copies each source element's value into its destination element.
 template <typename T>
 void copyValues(
@@ -60,17 +54,24 @@ void copyValues(
     }
 }
 
-// Writes the value of each blend's nearer source element into its destination element.
-template <typename T>
-void copyNearerValues(const AttributePair& pair, std::span<const ElementBlend> elementBlends)
+// Returns the mix of two values at a blend between zero and one.
+template <typename T> T blendValues(const T& value0, const T& value1, double blend)
 {
-    attr::AttributeHandleRO<T> sourceHandle(pair.source);
-    attr::AttributeHandle<T> destHandle(pair.dest);
-    for (const ElementBlend& elementBlend : elementBlends)
-    {
-        const T value = sourceHandle.getValue(getNearerSourceOffset(elementBlend));
-        destHandle.setValue(elementBlend.destOffset, value);
-    }
+    return value0 * (1.0 - blend) + value1 * blend;
+}
+
+// Returns the mix of two integers, rounded to the nearest whole number.
+intT blendValues(intT value0, intT value1, double blend)
+{
+    return static_cast<intT>(std::llround(value0 * (1.0 - blend) + value1 * blend));
+}
+
+// Returns the value nearer to where the blend lands, for types that can't be mixed.
+boolT blendValues(boolT value0, boolT value1, double blend) { return blend < 0.5 ? value0 : value1; }
+
+Matrix4 blendValues(const Matrix4& value0, const Matrix4& value1, double blend)
+{
+    return blend < 0.5 ? value0 : value1;
 }
 
 // Writes each blend of two source values into its destination element.
@@ -83,23 +84,7 @@ void interpolateValues(const AttributePair& pair, std::span<const ElementBlend> 
     {
         const T value0 = sourceHandle.getValue(elementBlend.sourceOffset0);
         const T value1 = sourceHandle.getValue(elementBlend.sourceOffset1);
-        const T blended = value0 * (1.0 - elementBlend.blend) + value1 * elementBlend.blend;
-        destHandle.setValue(elementBlend.destOffset, blended);
-    }
-}
-
-// Writes each blend of two source integers into its destination element, rounded to the nearest
-// whole number.
-void interpolateIntegerValues(const AttributePair& pair, std::span<const ElementBlend> elementBlends)
-{
-    attr::AttributeHandleRO<intT> sourceHandle(pair.source);
-    attr::AttributeHandle<intT> destHandle(pair.dest);
-    for (const ElementBlend& elementBlend : elementBlends)
-    {
-        const intT value0 = sourceHandle.getValue(elementBlend.sourceOffset0);
-        const intT value1 = sourceHandle.getValue(elementBlend.sourceOffset1);
-        const double blended = value0 * (1.0 - elementBlend.blend) + value1 * elementBlend.blend;
-        destHandle.setValue(elementBlend.destOffset, static_cast<intT>(std::llround(blended)));
+        destHandle.setValue(elementBlend.destOffset, blendValues(value0, value1, elementBlend.blend));
     }
 }
 
@@ -115,26 +100,9 @@ void copyAttributeValues(
 {
     for (const AttributePair& pair : getAttributePairs(source, dest, owner))
     {
-        switch (pair.source->getType())
-        {
-        case attr::AttributeType::intT:
-            copyValues<intT>(pair, sourceOffsets, destOffsets);
-            break;
-        case attr::AttributeType::floatT:
-            copyValues<floatT>(pair, sourceOffsets, destOffsets);
-            break;
-        case attr::AttributeType::vectorT:
-            copyValues<Vector3>(pair, sourceOffsets, destOffsets);
-            break;
-        case attr::AttributeType::boolT:
-            copyValues<boolT>(pair, sourceOffsets, destOffsets);
-            break;
-        case attr::AttributeType::matrixT:
-            copyValues<Matrix4>(pair, sourceOffsets, destOffsets);
-            break;
-        default:
-            break;
-        }
+        attr::visitType(pair.source->getType(), [&]<typename Value>() {
+            copyValues<Value>(pair, sourceOffsets, destOffsets);
+        });
     }
 }
 
@@ -147,26 +115,9 @@ void interpolateAttributeValues(
 {
     for (const AttributePair& pair : getAttributePairs(source, dest, owner))
     {
-        switch (pair.source->getType())
-        {
-        case attr::AttributeType::intT:
-            interpolateIntegerValues(pair, elementBlends);
-            break;
-        case attr::AttributeType::floatT:
-            interpolateValues<floatT>(pair, elementBlends);
-            break;
-        case attr::AttributeType::vectorT:
-            interpolateValues<Vector3>(pair, elementBlends);
-            break;
-        case attr::AttributeType::boolT:
-            copyNearerValues<boolT>(pair, elementBlends);
-            break;
-        case attr::AttributeType::matrixT:
-            copyNearerValues<Matrix4>(pair, elementBlends);
-            break;
-        default:
-            break;
-        }
+        attr::visitType(pair.source->getType(), [&]<typename Value>() {
+            interpolateValues<Value>(pair, elementBlends);
+        });
     }
 }
 

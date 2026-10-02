@@ -8,12 +8,13 @@
 #include <vector>
 
 namespace enzo::geo {
+class Mesh;
 class Primitive;
 }
 
 namespace enzo::expr {
 
-class ExpressionContext;
+class ScriptContext;
 
 /// @brief A point attribute the script reads or writes as `@name`.
 struct AttributeBinding
@@ -28,11 +29,13 @@ struct AttributeBinding
  *
  * The user's code is the body of a function that reads and writes the point's
  * attributes as `@name`. `curPt()` returns the point's index among the live points
- * and `ptCount()` returns how many live points there are.
+ * and `ptCount()` returns how many live points there are. Functions like
+ * `pointAttr()` read any element of the input by index.
  *
  * @code
  * @Position.y += sin(@Position.x) * prm("amplitude")
  * i@id = curPt()
+ * @height = pointAttr("height", curPt() + 1l)
  * @endcode
  *
  * @note Each thread runs its own clone over its own range of points.
@@ -56,23 +59,20 @@ class PointScript
     bool addWrittenAttributes(geo::Primitive& output, String& error) const;
 
     /**
-     * @brief Runs the script for each valid point in a range.
+     * @brief Runs the script on the points in an offset range.
      *
-     * Reads bindings from the input and stores written ones to the output.
+     * Reads bindings from the context's input mesh at `primitiveIndex` and
+     * stores written ones to the output.
      *
-     * @param firstIndex The index of the first live point in the range.
-     * @param pointCount The number of live points in the whole input.
      * @return False when the script fails on a point.
      * @note The output needs the written attributes added first.
      */
     bool run(
-        const geo::Primitive& input,
+        const ScriptContext& context,
+        size_t primitiveIndex,
         geo::Primitive& output,
         Offset begin,
         Offset end,
-        intT firstIndex,
-        intT pointCount,
-        const ExpressionContext* context,
         String& error
     );
 

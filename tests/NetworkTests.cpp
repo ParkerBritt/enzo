@@ -169,36 +169,6 @@ TEST_CASE_METHOD(NMReset, "Cooking pulls geometry across an input node link")
     REQUIRE(transformSize == gridSize);
 }
 
-TEST_CASE_METHOD(NMReset, "Cooking an output reaches a node nothing is wired to")
-{
-    using namespace enzo;
-    auto& nm = nt::nm();
-
-    // Nothing is wired to the grid, so naming it is the only way to its geometry
-    nt::NodeId grid = nm.createNode("enzo::grid");
-
-    NodePacket packet = nm.cookOutput(grid, 0);
-
-    REQUIRE_FALSE(nm.getNode(grid).isDirty());
-    REQUIRE(packet.size() > 0);
-}
-
-TEST_CASE_METHOD(NMReset, "A cooked output is a copy the caller owns")
-{
-    using namespace enzo;
-    auto& nm = nt::nm();
-
-    nt::NodeId grid = nm.createNode("enzo::grid");
-
-    NodePacket packet = nm.cookOutput(grid, 0);
-    size_t originalSize = packet.size();
-    packet.removePrim(packet.getPrimitives().front()->getPath());
-
-    // Taking a primitive out of the copy must leave the node's own output untouched
-    REQUIRE(packet.size() == originalSize - 1);
-    REQUIRE(nm.getNode(grid).getOutputPacket(0)->size() == originalSize);
-}
-
 TEST_CASE_METHOD(NMReset, "A node with no input cooks to an empty output")
 {
     using namespace enzo;

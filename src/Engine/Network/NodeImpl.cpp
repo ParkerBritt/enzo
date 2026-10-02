@@ -31,6 +31,11 @@ NodePacket NodeImpl::cloneInputPacket(unsigned int inputIndex)
     return context_.cloneInputPacket(inputIndex);
 }
 
+std::shared_ptr<const NodePacket> NodeImpl::getInputPacket(unsigned int inputIndex)
+{
+    return context_.getInputPacket(inputIndex);
+}
+
 bool NodeImpl::hasInput(unsigned int inputIndex) { return context_.hasInput(inputIndex); }
 
 unsigned int NodeImpl::getInputCount() { return context_.getInputCount(); }

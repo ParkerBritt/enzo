@@ -71,26 +71,9 @@ void repeatAttribute(
     Offset copyCount
 )
 {
-    switch (source->getType())
-    {
-    case attr::AttrType::intT:
-        repeatAttributeValues<intT>(source, destination, copyCount);
-        break;
-    case attr::AttrType::floatT:
-        repeatAttributeValues<floatT>(source, destination, copyCount);
-        break;
-    case attr::AttrType::vectorT:
-        repeatAttributeValues<Vector3>(source, destination, copyCount);
-        break;
-    case attr::AttrType::boolT:
-        repeatAttributeValues<boolT>(source, destination, copyCount);
-        break;
-    case attr::AttrType::matrixT:
-        repeatAttributeValues<Matrix4>(source, destination, copyCount);
-        break;
-    default:
-        break;
-    }
+    attr::visitType(source->getType(), [&]<typename Value>() {
+        repeatAttributeValues<Value>(source, destination, copyCount);
+    });
 }
 
 // Adds every attribute and group the prototype holds on this owner to the copies and repeats their

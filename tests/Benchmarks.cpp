@@ -301,3 +301,31 @@ TEST_CASE("Ramp sampling")
         return total;
     };
 }
+
+TEST_CASE_METHOD(NMReset, "Script attribute reads")
+{
+    using namespace enzo;
+    auto& nm = nt::nm();
+
+    const nt::NodeId grid = addGrid(1000, 1000);
+    const nt::NodeId script = nm.createNode("enzo::script");
+    nm.connectNodes(grid, 0, script, 0);
+    nm.cook(script);
+    printMeshShape("script input", grid);
+
+    // Cooks only the script each run, since the grid above it stays clean.
+    const auto benchmarkCode = [&](const std::string& name, const std::string& code) {
+        nm.getNode(script).getParameter("code").lock()->setString(code);
+        BENCHMARK(name.c_str())
+        {
+            nm.getNode(script).dirtyNode(false);
+            nm.cook(script);
+        };
+    };
+
+    benchmarkCode("Write a constant", "@height = 1.0");
+    benchmarkCode("Move every position", "v@Position += 0.1");
+    benchmarkCode("Read every point", R"(v@copy = pointAttrVector("Position", curPt()))");
+    benchmarkCode("Read the wrong type on every point", R"(@copy = pointAttr("Position", curPt()))");
+    benchmarkCode("Read a missing attribute on every point", R"(@copy = pointAttr("missing", curPt()))");
+}

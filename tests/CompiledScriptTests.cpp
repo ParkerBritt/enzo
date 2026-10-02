@@ -26,7 +26,7 @@ def double(value : int64; var result : int64&) {
     intT result = 0;
     const expr::ScriptArgument arguments[] = {intT(21), &result};
     String error;
-    REQUIRE(script->run("double", arguments, nullptr, error));
+    REQUIRE(script->run("double", arguments, nullptr, 0, error));
     REQUIRE(result == 42);
 }
 
@@ -41,7 +41,7 @@ def fail(value : int64) {
 
     const expr::ScriptArgument arguments[] = {intT(3)};
     String error;
-    REQUIRE_FALSE(script->run("fail", arguments, nullptr, error));
+    REQUIRE_FALSE(script->run("fail", arguments, nullptr, 0, error));
     REQUIRE(error.find("failed on 3") != String::npos);
 }
 
@@ -54,7 +54,7 @@ def present() {
 )");
 
     String error;
-    REQUIRE_FALSE(script->run("missing", {}, nullptr, error));
+    REQUIRE_FALSE(script->run("missing", {}, nullptr, 0, error));
     REQUIRE_FALSE(error.empty());
 }
 
@@ -68,7 +68,7 @@ def present() {
 
     const std::vector<expr::ScriptArgument> arguments(expr::maxScriptArguments + 1, intT(0));
     String error;
-    REQUIRE_FALSE(script->run("present", arguments, nullptr, error));
+    REQUIRE_FALSE(script->run("present", arguments, nullptr, 0, error));
     REQUIRE(error.find("too many arguments") != String::npos);
 }
 
@@ -88,13 +88,13 @@ def countCalls(var result : int64&) {
     intT result = 0;
     const expr::ScriptArgument arguments[] = {&result};
     String error;
-    REQUIRE(script->run("countCalls", arguments, nullptr, error));
-    REQUIRE(script->run("countCalls", arguments, nullptr, error));
+    REQUIRE(script->run("countCalls", arguments, nullptr, 0, error));
+    REQUIRE(script->run("countCalls", arguments, nullptr, 0, error));
     REQUIRE(result == 2);
 
     // Runs the clone, which starts from the initial globals rather than the original's
     auto clone = script->clone();
     REQUIRE(clone);
-    REQUIRE(clone->run("countCalls", arguments, nullptr, error));
+    REQUIRE(clone->run("countCalls", arguments, nullptr, 0, error));
     REQUIRE(result == 1);
 }
