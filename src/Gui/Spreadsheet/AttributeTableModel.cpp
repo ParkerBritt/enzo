@@ -10,6 +10,16 @@ namespace {
 /// @brief Formats a float with a fixed number of decimals for the cell text.
 QString formatFloat(float value) { return QString::number(value, 'f', 3); }
 
+/// @brief Returns the text for one component of a value in a cell.
+QVariant formatValue(intT value, unsigned int) { return static_cast<qlonglong>(value); }
+QVariant formatValue(floatT value, unsigned int) { return formatFloat(value); }
+QVariant formatValue(boolT value, unsigned int) { return value ? "true" : "false"; }
+QVariant formatValue(const Vector3& value, unsigned int component) { return formatFloat(value[component]); }
+QVariant formatValue(const Matrix4& value, unsigned int component)
+{
+    return formatFloat(value(component / 4, component % 4));
+}
+
 /// @brief Builds the column label for one component of an attribute.
 ///
 /// Single component attributes use the bare name. Three component attributes
@@ -152,25 +162,9 @@ QVariant AttributeTableModel::data(const QModelIndex& index, int role) const
     if (!attribute) return {};
 
     const size_t row = index.row();
-    using namespace enzo::attr;
-    switch (attribute->getType())
-    {
-    case AttributeType::intT:
-        return static_cast<qlonglong>(AttributeHandleRO<intT>(attribute).getValue(row));
-    case AttributeType::floatT:
-        return formatFloat(AttributeHandleRO<floatT>(attribute).getValue(row));
-    case AttributeType::boolT:
-        return AttributeHandleRO<boolT>(attribute).getValue(row) ? "true" : "false";
-    case AttributeType::vectorT:
-        return formatFloat(AttributeHandleRO<Vector3>(attribute).getValue(row)[column.component]);
-    case AttributeType::matrixT:
-    {
-        const auto& matrix = AttributeHandleRO<Matrix4>(attribute).getValue(row);
-        return formatFloat(matrix(column.component / 4, column.component % 4));
-    }
-    default:
-        return {};
-    }
+    return attr::visitType(attribute->getType(), [&]<typename Value>() {
+        return formatValue(attr::AttributeHandleRO<Value>(attribute).getValue(row), column.component);
+    });
 }
 
 QVariant AttributeTableModel::headerData(int section, Qt::Orientation orientation, int role) const

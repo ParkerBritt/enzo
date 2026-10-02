@@ -8,6 +8,7 @@
 namespace enzo::expr {
 
 class ExpressionContext;
+class ScriptContext;
 
 /// @brief An argument to a script function, either an integer or the address a reference parameter writes to.
 using ScriptArgument = std::variant<intT, void*>;
@@ -65,17 +66,22 @@ class CompiledScript
     );
 
     /// @brief Runs an exported function for its side effects.
+    /// @param primitiveIndex The input primitive the function's attribute reads go to.
     /// @return True on success, false when the function is missing or panics.
     bool run(
         const String& functionName,
         std::span<const ScriptArgument> arguments,
-        const ExpressionContext* context,
+        const ScriptContext* context,
+        size_t primitiveIndex,
         String& error
     );
 
     /// @brief Returns whether the function writes each of its arguments, in argument order.
     /// @return One flag per argument, or empty when the function is missing.
     std::vector<bool> getWrittenArguments(const String& functionName) const;
+
+    /// @brief Returns the warnings the runs added and clears them.
+    std::vector<String> takeWarnings();
 
     /**
      * @brief Returns a copy that shares the compiled program and runs in its own context.

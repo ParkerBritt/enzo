@@ -191,6 +191,34 @@ template <typename T> constexpr AttributeType getAttributeType()
     else if constexpr (std::is_same_v<T, Matrix4>) return AttributeType::matrixT;
     else static_assert(sizeof(T) == 0, "No attribute type stores this C++ type");
 }
+
+/**
+ * @brief Calls an action with the C++ type that stores an attribute type.
+ *
+ * visitType(vectorT, action) returns action.template operator()<Vector3>().
+ *
+ * @return The action's result, or a default result for a type with no C++ storage.
+ */
+template <typename Action> auto visitType(AttributeType type, Action&& action)
+{
+    using Result = decltype(action.template operator()<intT>());
+    switch (type)
+    {
+    case AttributeType::intT:
+        return action.template operator()<intT>();
+    case AttributeType::floatT:
+        return action.template operator()<floatT>();
+    case AttributeType::vectorT:
+        return action.template operator()<Vector3>();
+    case AttributeType::boolT:
+        return action.template operator()<boolT>();
+    case AttributeType::matrixT:
+        return action.template operator()<Matrix4>();
+    case AttributeType::listT:
+        break;
+    }
+    return Result();
+}
 } // namespace attr
 
 namespace prm {

@@ -1,4 +1,6 @@
 #include "Engine/Expression/PointScript.h"
+#include "Engine/Expression/ScriptContext.h"
+#include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Mesh.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -30,26 +32,22 @@ geo::Mesh buildThreePointMesh()
     return mesh;
 }
 
-intT countLivePoints(const geo::Mesh& mesh)
+NodePacket packMesh(const geo::Mesh& mesh)
 {
-    intT livePointCount = 0;
-    for (Offset pointOffset = 0; pointOffset < mesh.getNumPoints(); ++pointOffset)
-    {
-        if (mesh.isValidPoint(pointOffset)) ++livePointCount;
-    }
-    return livePointCount;
+    NodePacket packet;
+    packet.addPrimitive(std::make_shared<geo::Mesh>(mesh));
+    return packet;
 }
 
 // Runs the script over every point of the input into a copy of it.
 geo::Mesh runScript(expr::PointScript& script, const geo::Mesh& input)
 {
+    const expr::ScriptContext context(0, packMesh(input));
     geo::Mesh output = input;
     String error;
     REQUIRE(script.addWrittenAttributes(output, error));
     INFO(error);
-    REQUIRE(script.run(
-        input, output, 0, input.getNumPoints(), 0, countLivePoints(input), nullptr, error
-    ));
+    REQUIRE(script.run(context, 0, output, 0, input.getNumPoints(), error));
     return output;
 }
 
@@ -205,40 +203,13 @@ TEST_CASE("run writes a binding on every point")
     REQUIRE(getPointFloat(output, "height", 2) == 2.0f);
 }
 
-TEST_CASE("run counts the current point past deleted points")
-{
-    auto script = compileScript("@index = float(curPt())");
-    geo::Mesh input = buildThreePointMesh();
-    input.deletePoints({1});
-    geo::Mesh output = runScript(*script, input);
-
-    REQUIRE(getPointFloat(output, "index", 0) == 0.0f);
-    REQUIRE(getPointFloat(output, "index", 2) == 1.0f);
-}
-
-TEST_CASE("run starts the current point at the first index of the range")
-{
-    auto script = compileScript("@index = float(curPt())");
-    const geo::Mesh input = buildThreePointMesh();
-    geo::Mesh output = input;
-
-    String error;
-    REQUIRE(script->addWrittenAttributes(output, error));
-    REQUIRE(script->run(input, output, 1, 3, 10, 12, nullptr, error));
-
-    REQUIRE(getPointFloat(output, "index", 1) == 10.0f);
-    REQUIRE(getPointFloat(output, "index", 2) == 11.0f);
-}
-
-TEST_CASE("run gives every point the number of live points")
+TEST_CASE("run gives every point the number of points")
 {
     auto script = compileScript("@count = float(ptCount())");
-    geo::Mesh input = buildThreePointMesh();
-    input.deletePoints({1});
-    geo::Mesh output = runScript(*script, input);
+    geo::Mesh output = runScript(*script, buildThreePointMesh());
 
-    REQUIRE(getPointFloat(output, "count", 0) == 2.0f);
-    REQUIRE(getPointFloat(output, "count", 2) == 2.0f);
+    REQUIRE(getPointFloat(output, "count", 0) == 3.0f);
+    REQUIRE(getPointFloat(output, "count", 2) == 3.0f);
 }
 
 TEST_CASE("run reads the input and writes the output")
@@ -282,11 +253,12 @@ TEST_CASE("run reports a panic on the line of the user's code")
     auto script = compileScript(R"(@value = 1.0
 panic("failed on {curPt()}"))");
     const geo::Mesh input = buildThreePointMesh();
+    const expr::ScriptContext context(0, packMesh(input));
     geo::Mesh output = input;
 
     String error;
     REQUIRE(script->addWrittenAttributes(output, error));
-    REQUIRE_FALSE(script->run(input, output, 0, input.getNumPoints(), 0, 3, nullptr, error));
+    REQUIRE_FALSE(script->run(context, 0, output, 0, input.getNumPoints(), error));
     INFO(error);
     REQUIRE(error.find("failed on 0") != String::npos);
     REQUIRE(error.find("line 2:") != String::npos);

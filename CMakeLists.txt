@@ -68,7 +68,10 @@ set(ENGINE_SOURCES
     src/Engine/Expression/ExpressionEngine.cpp
     src/Engine/Expression/ScriptEngine.cpp
     src/Engine/Expression/ExpressionFunctions.cpp
+    src/Engine/Expression/GeometryFunctions.cpp
     src/Engine/Expression/PointScript.cpp
+    src/Engine/Expression/MeshAttributeReader.cpp
+    src/Engine/Expression/ScriptContext.cpp
     src/Engine/Parameter/Template.cpp
     src/Engine/Parameter/Parameter.cpp
     src/Engine/Parameter/Ramp.cpp
@@ -184,6 +187,7 @@ if(NOT MSVC)
     set_source_files_properties(
         src/Engine/Expression/DasRuntime.cpp
         src/Engine/Expression/ExpressionFunctions.cpp
+        src/Engine/Expression/GeometryFunctions.cpp
         PROPERTIES COMPILE_OPTIONS "-fno-rtti"
     )
 endif()
@@ -422,6 +426,9 @@ if(ENZO_BUILD_TESTS)
         tests/ExpressionContextTests.cpp
         tests/ExpressionEngineTests.cpp
         tests/PointScriptTests.cpp
+        tests/MeshAttributeReaderTests.cpp
+        tests/ScriptContextTests.cpp
+        tests/GeometryFunctionsTests.cpp
         tests/ScriptNodeTests.cpp
         tests/ScriptEngineTests.cpp
         tests/CompiledScriptTests.cpp

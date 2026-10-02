@@ -71,6 +71,10 @@ class BOOST_SYMBOL_EXPORT NodeImpl
 
     /// @brief Returns a writable copy of the geometry arriving at one input.
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
+
+    /// @brief Returns the geometry arriving at an input, read only.
+    std::shared_ptr<const enzo::NodePacket> getInputPacket(unsigned int inputIndex);
+
     /// @brief Returns whether an input has anything connected to it.
     bool hasInput(unsigned int inputIndex);
 

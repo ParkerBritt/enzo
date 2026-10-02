@@ -208,3 +208,30 @@ TEST_CASE_METHOD(NMReset, "A script that fails to compile leaves the geometry al
 
     REQUIRE(nm.getNode(graph.script).getOutputPacket(0)->size() == 0);
 }
+
+// Reading the input
+
+TEST_CASE_METHOD(NMReset, "A script reads its input while writing the same attribute")
+{
+    auto& nm = nt::nm();
+    const nt::NodeId grid = nm.createNode("enzo::grid");
+    nm.getNode(grid).getParameter("rows").lock()->setInt(200);
+    nm.getNode(grid).getParameter("columns").lock()->setInt(200);
+
+    const nt::NodeId script = nm.createNode("enzo::script");
+    nm.connectNodes(grid, 0, script, 0);
+    nm.getNode(script).getParameter("code").lock()->setString(
+        R"(@Position = pointAttrVector("Position", (curPt() + 1l) % ptCount()))"
+    );
+    nm.cook(script);
+
+    const auto input = getMesh(nm.getNode(grid));
+    const auto output = getMesh(nm.getNode(script));
+    const Offset pointCount = input->getNumPoints();
+    REQUIRE(pointCount > 1024);
+    for (Offset pointOffset = 0; pointOffset < pointCount; ++pointOffset)
+    {
+        const Offset nextOffset = (pointOffset + 1) % pointCount;
+        REQUIRE(output->getPointPos(pointOffset) == input->getPointPos(nextOffset));
+    }
+}

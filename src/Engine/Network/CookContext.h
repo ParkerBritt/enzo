@@ -27,6 +27,9 @@ class CookContext
     /// @brief Returns the id of the node being cooked.
     enzo::nt::NodeId getNodeId() const { return nodeId_; }
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);
+
+    /// @brief Returns the geometry arriving at an input, read only.
+    std::shared_ptr<const enzo::NodePacket> getInputPacket(unsigned int inputIndex);
     bool hasInput(unsigned int inputIndex);
     unsigned int getInputCount();
 

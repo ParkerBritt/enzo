@@ -124,25 +124,7 @@ void geo::Mesh::mergeAppend(
 
     if (dstType != srcType) throw std::runtime_error("mergeAppend type missmatch.");
 
-    switch (srcType)
-    {
-    case attr::AttributeType::intT:
-        mergeAppendImpl<intT>(dst, src);
-        break;
-    case attr::AttributeType::floatT:
-        mergeAppendImpl<floatT>(dst, src);
-        break;
-    case attr::AttributeType::listT:
-        break;
-    case attr::AttributeType::vectorT:
-        // mergeAppendImpl<vector3>(dst, src);
-        break;
-    case attr::AttributeType::boolT:
-        mergeAppendImpl<boolT>(dst, src);
-        break;
-    default:
-        throw std::runtime_error("mergeAppend: Attribute type not accounted for.");
-    }
+    attr::visitType(srcType, [&]<typename Value>() { mergeAppendImpl<Value>(dst, src); });
 }
 
 void geo::Mesh::applyTransform(const Matrix4& mat, TransformClass transformClass)

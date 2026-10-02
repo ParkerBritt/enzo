@@ -1,14 +1,20 @@
 #include "Engine/Expression/DasRuntime.h"
 #include "Engine/Expression/DasContext.h"
-#include "Engine/Expression/ExpressionContext.h"
+#include "Engine/Expression/ScriptContext.h"
 #include "Engine/Expression/VectorOperators.h"
 #include "daScript/daScript.h"
+#include <mutex>
+#include <optional>
+#include <utility>
 
 // Makes daslang's builtin modules (math, strings, and the rest) available.
 DECLARE_ALL_DEFAULT_MODULES;
 
 // Makes our expression functions module (prm, frame and friends) available.
 DECLARE_MODULE(ExpressionModule);
+
+// Makes our geometry functions module (pointAttr and friends) available.
+DECLARE_MODULE(GeometryModule);
 
 namespace enzo::expr {
 
@@ -39,23 +45,6 @@ String collectErrors(const das::ProgramPtr& program)
     return message;
 }
 
-// Installs the evaluation world on the context for one run and restores it
-// after, so a nested prm() call leaves the outer evaluation's world intact.
-class ScopedExpressionContext
-{
-  public:
-    ScopedExpressionContext(DasContext& context, const ExpressionContext* expressionContext)
-        : context_(context), previous_(context.expressionContext)
-    {
-        context_.expressionContext = expressionContext;
-    }
-    ~ScopedExpressionContext() { context_.expressionContext = previous_; }
-
-  private:
-    DasContext& context_;
-    const ExpressionContext* previous_;
-};
-
 vec4f toRawArgument(const ScriptArgument& argument)
 {
     if (const intT* integer = std::get_if<intT>(&argument))
@@ -70,12 +59,11 @@ bool evalRaw(
     const String& functionName,
     std::span<const ScriptArgument> arguments,
     const ExpressionContext* expressionContext,
+    std::optional<size_t> primitiveIndex,
     vec4f& result,
     String& error
 )
 {
-    ScopedExpressionContext scope(context, expressionContext);
-
     das::SimFunction* function = context.findFunction(functionName.c_str());
     if (!function)
     {
@@ -95,7 +83,16 @@ bool evalRaw(
         rawArguments[argumentIndex] = toRawArgument(arguments[argumentIndex]);
     }
 
+    // Swaps in this run's world and restores the outer one after,
+    // since a nested prm() can run on this same context.
+    const ExpressionContext* outerExpressionContext =
+        std::exchange(context.expressionContext, expressionContext);
+    const std::optional<size_t> outerPrimitiveIndex =
+        std::exchange(context.primitiveIndex, primitiveIndex);
     result = context.evalWithCatch(function, rawArguments);
+    context.expressionContext = outerExpressionContext;
+    context.primitiveIndex = outerPrimitiveIndex;
+
     if (const char* exception = context.getException())
     {
         const das::LineInfo& location = context.exceptionAt;
@@ -114,7 +111,7 @@ bool CompiledScript::evalFloat(
 )
 {
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, std::nullopt, raw, error)) return false;
     result = das::cast<float>::to(raw);
     return true;
 }
@@ -127,7 +124,7 @@ bool CompiledScript::evalInt(
 )
 {
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, std::nullopt, raw, error)) return false;
     result = das::cast<int64_t>::to(raw);
     return true;
 }
@@ -140,7 +137,7 @@ bool CompiledScript::evalString(
 )
 {
     vec4f raw;
-    if (!evalRaw(*impl_->context, functionName, {}, context, raw, error)) return false;
+    if (!evalRaw(*impl_->context, functionName, {}, context, std::nullopt, raw, error)) return false;
 
     // daslang hands back a heap string as a char pointer, null when empty.
     const char* text = das::cast<char*>::to(raw);
@@ -151,12 +148,17 @@ bool CompiledScript::evalString(
 bool CompiledScript::run(
     const String& functionName,
     std::span<const ScriptArgument> arguments,
-    const ExpressionContext* context,
+    const ScriptContext* context,
+    size_t primitiveIndex,
     String& error
 )
 {
+    // Leaves the primitive unset without a context, so attribute reads fail cleanly.
+    const std::optional<size_t> scriptPrimitiveIndex =
+        context ? std::optional(primitiveIndex) : std::nullopt;
+
     vec4f raw;
-    return evalRaw(*impl_->context, functionName, arguments, context, raw, error);
+    return evalRaw(*impl_->context, functionName, arguments, context, scriptPrimitiveIndex, raw, error);
 }
 
 std::vector<bool> CompiledScript::getWrittenArguments(const String& functionName) const
@@ -173,8 +175,14 @@ std::vector<bool> CompiledScript::getWrittenArguments(const String& functionName
     return written;
 }
 
+std::vector<String> CompiledScript::takeWarnings() { return std::exchange(impl_->context->warnings, {}); }
+
 std::shared_ptr<CompiledScript> CompiledScript::clone() const
 {
+    // Clones one at a time, since daslang counts references to the program without atomics.
+    static std::mutex cloneMutex;
+    std::lock_guard lock(cloneMutex);
+
     auto context = std::make_shared<DasContext>(
         *impl_->context,
         uint32_t(das::ContextCategory::thread_clone)
@@ -194,6 +202,7 @@ DasRuntime::DasRuntime()
 {
     PULL_ALL_DEFAULT_MODULES;
     PULL_MODULE(ExpressionModule);
+    PULL_MODULE(GeometryModule);
     das::Module::Initialize();
 }
 

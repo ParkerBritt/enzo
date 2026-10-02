@@ -1,7 +1,8 @@
 #include "Engine/Expression/PointScript.h"
+#include "Engine/Expression/ScriptContext.h"
 #include "Engine/Expression/VectorOperators.h"
 #include "Engine/Attribute/AttributeNames.h"
-#include "Engine/Primitives/Primitive.h"
+#include "Engine/Primitives/Mesh.h"
 #include <algorithm>
 #include <cctype>
 #include <cstring>
@@ -17,7 +18,7 @@ constexpr const char* bindingPrefix = "enzoAttrib_";
 constexpr size_t pointArgumentCount = 2;
 
 // The lines the wrapper adds above the user's code.
-constexpr int headerLineCount = 12;
+constexpr int headerLineCount = 13;
 
 bool isIdentifierStart(char character)
 {
@@ -322,6 +323,7 @@ String wrapScript(const String& code, const std::vector<AttributeBinding>& bindi
     return "options gen2\n"
            "require math\n"
            "require enzo_expression\n"
+           "require enzo_geometry\n"
            "require " +
            String(vectorOperatorsModule) + "\n"
            "var private enzoCurPt : int64\n"
@@ -498,35 +500,35 @@ bool PointScript::resolveAttributes(
 }
 
 bool PointScript::run(
-    const geo::Primitive& input,
+    const ScriptContext& context,
+    size_t primitiveIndex,
     geo::Primitive& output,
     Offset begin,
     Offset end,
-    intT firstIndex,
-    intT pointCount,
-    const ExpressionContext* context,
     String& error
 )
 {
+    const geo::Mesh& input = context.getInputMesh(primitiveIndex);
     if (!resolveAttributes(input, output, error)) return false;
 
-    arguments_[1] = pointCount;
-    intT pointIndex = firstIndex;
+    arguments_[1] = static_cast<intT>(input.getNumPoints());
     for (Offset point = begin; point < end; ++point)
     {
-        if (!input.isValidPoint(point)) continue;
-
         visitAllBindingValues([point](auto& bindingValues) { bindingValues.loadFrom(point); });
 
-        arguments_[0] = pointIndex;
-        if (!compiled_->run(runFunctionName, arguments_, context, error))
+        arguments_[0] = static_cast<intT>(point);
+        if (!compiled_->run(runFunctionName, arguments_, &context, primitiveIndex, error))
         {
             error = toUserError(error);
             return false;
         }
 
         visitAllBindingValues([point](auto& bindingValues) { bindingValues.storeTo(point); });
-        ++pointIndex;
+    }
+
+    for (const String& warning : compiled_->takeWarnings())
+    {
+        context.addWarning(warning);
     }
     return true;
 }

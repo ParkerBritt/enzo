@@ -113,6 +113,6 @@ size_t attr::Attribute::getSize() const
 
 attr::AttributeType attr::Attribute::getType() const { return type_; }
 
-std::string attr::Attribute::getName() const { return name_; }
+const std::string& attr::Attribute::getName() const { return name_; }
 
 } // namespace enzo

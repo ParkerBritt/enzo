@@ -282,14 +282,14 @@ void geo::Primitive::addAttributesFrom(const Primitive& source, attr::AttributeO
         addGroup(owner, sourceGroup->getName());
 }
 
-bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string name)
+bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string_view name)
 {
     return static_cast<bool>(getAttribByName(owner, name));
 }
 
 std::shared_ptr<attr::Attribute> geo::Primitive::getAttribByName(
     attr::AttributeOwner owner,
-    std::string name,
+    std::string_view name,
     bool includeIntrinsics
 )
 {
@@ -308,7 +308,7 @@ std::shared_ptr<attr::Attribute> geo::Primitive::getAttribByName(
 
 std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(
     attr::AttributeOwner owner,
-    std::string name,
+    std::string_view name,
     bool includeIntrinsics
 ) const
 {

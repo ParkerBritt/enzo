@@ -1,13 +1,12 @@
 #include "Engine/Core/Types.h"
-#include "Engine/Expression/ExpressionContext.h"
 #include "Engine/Expression/PointScript.h"
+#include "Engine/Expression/ScriptContext.h"
 #include "Engine/Expression/ScriptEngine.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Primitives/Mesh.h"
 #include <memory>
 #include <mutex>
-#include <vector>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
@@ -19,13 +18,14 @@ constexpr enzo::Offset pointsPerChunk = 1024;
 
 static_assert(pointsPerChunk % 64 == 0);
 
-/// @brief Runs a compiled script over every point of every mesh in the packet, in parallel.
+/// @brief Runs a compiled script over every point of every mesh in the context's input, in parallel.
 ///
+/// @note The output needs to start as a copy of the input.
 /// @return The first error a mesh or a point produced, or an empty string.
 enzo::String runOverPoints(
     const enzo::expr::PointScript& script,
-    enzo::NodePacket& packet,
-    const enzo::expr::ExpressionContext& context
+    const enzo::expr::ScriptContext& context,
+    enzo::NodePacket& output
 )
 {
     using namespace enzo;
@@ -38,24 +38,16 @@ enzo::String runOverPoints(
     std::mutex errorMutex;
     String error;
 
-    for (const geo::PrimPtr& prim : packet.getPrimitives())
+    for (size_t primitiveIndex = 0; primitiveIndex < output.getPrimitives().size(); ++primitiveIndex)
     {
-        if (prim->getType() != geo::PrimType::MESH) continue;
-        const auto mesh = std::static_pointer_cast<geo::Mesh>(prim);
+        const std::shared_ptr<geo::Primitive> outputPrim = output.getPrimitive(primitiveIndex);
+        if (outputPrim->getType() != geo::PrimType::MESH) continue;
+        const auto outputMesh = std::static_pointer_cast<geo::Mesh>(outputPrim);
 
-        if (!script.addWrittenAttributes(*mesh, error)) return error;
+        if (!script.addWrittenAttributes(*outputMesh, error)) return error;
 
-        const Offset offsetCount = mesh->getNumPoints();
+        const Offset offsetCount = outputMesh->getNumPoints();
         const Offset chunkCount = (offsetCount + pointsPerChunk - 1) / pointsPerChunk;
-
-        // Counts the live points before each chunk, which gives the index of its first live point.
-        std::vector<intT> chunkFirstIndices;
-        intT pointCount = 0;
-        for (Offset point = 0; point < offsetCount; ++point)
-        {
-            if (point % pointsPerChunk == 0) chunkFirstIndices.push_back(pointCount);
-            if (mesh->isValidPoint(point)) ++pointCount;
-        }
 
         tbb::parallel_for(Offset(0), chunkCount, [&](const Offset chunk) {
             const std::shared_ptr<expr::PointScript>& threadScript = threadScripts.local();
@@ -67,16 +59,7 @@ enzo::String runOverPoints(
             {
                 const Offset begin = chunk * pointsPerChunk;
                 const Offset end = std::min(begin + pointsPerChunk, offsetCount);
-                threadScript->run(
-                    *mesh,
-                    *mesh,
-                    begin,
-                    end,
-                    chunkFirstIndices[chunk],
-                    pointCount,
-                    &context,
-                    chunkError
-                );
+                threadScript->run(context, primitiveIndex, *outputMesh, begin, end, chunkError);
             }
 
             if (chunkError.empty()) return;
@@ -107,11 +90,12 @@ void Script::cook()
 
     const String code = evalParmString("code");
 
-    NodePacket packet = cloneInputPacket(0);
+    const std::shared_ptr<const NodePacket> input = getInputPacket(0);
+    NodePacket output = input->deepCopy();
 
     if (code.empty())
     {
-        setOutputPacket(0, packet);
+        setOutputPacket(0, output);
         return;
     }
 
@@ -126,12 +110,13 @@ void Script::cook()
 
     // Shares one context across the cook, so a parameter the script reads is
     // evaluated and recorded as a dependency once.
-    expr::ExpressionContext context(getNodeId());
-    error = runOverPoints(*script, packet, context);
+    expr::ScriptContext context(getNodeId(), *input);
+    error = runOverPoints(*script, context, output);
 
     // Records what the script read even when it failed, so changing one of those
     // parameters cooks the node again.
     expr::submitExpressionDependencies(context);
+    for (const String& warning : context.getWarnings()) throwWarning(warning);
 
     if (!error.empty())
     {
@@ -139,7 +124,7 @@ void Script::cook()
         return;
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, output);
 }
 
 } // namespace
