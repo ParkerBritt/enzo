@@ -4,5 +4,6 @@ var searchData=
   ['validateoptions_1',['validateOptions',['../StyleAccess_8h.html#a4bc9e7aa7bba53fb977a0eea696991ae',1,'enzo::prm::style']]],
   ['valuetype_2',['ValueType',['../Types_8h.html#adde04662eb0d43a49d07351fd9439686',1,'enzo::prm']]],
   ['vertexnormalhandle_3',['VertexNormalHandle',['../classenzo_1_1geo_1_1VertexNormalHandle.html',1,'enzo::geo']]],
-  ['vertexpointspan_4',['vertexPointSpan',['../classenzo_1_1geo_1_1Mesh.html#a69c672dd15eedda5e0084b22217e1c8a',1,'enzo::geo::Mesh']]]
+  ['vertexpointspan_4',['vertexPointSpan',['../classenzo_1_1geo_1_1Mesh.html#a69c672dd15eedda5e0084b22217e1c8a',1,'enzo::geo::Mesh']]],
+  ['visittype_5',['visitType',['../Types_8h.html#ae7bc3b73326d2e90bff12d6d31d3db24',1,'enzo::attr']]]
 ];

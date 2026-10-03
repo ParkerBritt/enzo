@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: src/Engine/Expression/ScriptEngine.h Source File</title>
+<title>Enzo: src/Engine/Script/ScriptEngine.h Source File</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_86c77874b8c2a247e35e1b9f3d77e9ea.html">Expression</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3072bc1f55ed1280fe4fbe6b21c78379.html">Engine</a></li><li class="navelem"><a class="el" href="dir_3988922bc797ba28169c179d61ecc0a9.html">Script</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -99,32 +99,32 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span>enzo::expr {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span>enzo::script {</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">class </span>PointScript;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="foldopen" id="foldopen00022" data-start="{" data-end="};">
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classenzo_1_1expr_1_1ScriptEngine.html">   22</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classenzo_1_1script_1_1ScriptEngine.html">   22</a></span><span class="keyword">class </span><a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">static</span> <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>&amp; instance();</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">static</span> <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>&amp; instance();</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    std::shared_ptr&lt;const PointScript&gt; <a class="code hl_function" href="classenzo_1_1expr_1_1ScriptEngine.html#a250fbfe185c0595bba83eeb0dd2d33fc">compile</a>(<span class="keyword">const</span> String&amp; code, String&amp; error);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    std::shared_ptr&lt;const PointScript&gt; <a class="code hl_function" href="classenzo_1_1script_1_1ScriptEngine.html#a3c56a7cd1e0f454c78dc916e3f3aec1b">compile</a>(<span class="keyword">const</span> String&amp; code, String&amp; error);</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>&amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <a class="code hl_class" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <a class="code hl_class" href="classenzo_1_1script_1_1ScriptEngine.html">ScriptEngine</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::unordered_map&lt;String, std::shared_ptr&lt;const PointScript&gt;&gt; cache_;</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>};</div>
 </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <span class="comment">// namespace enzo::expr</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <span class="comment">// namespace enzo::script</span></div>
 <div class="ttc" id="aTypes_8h_html"><div class="ttname"><a href="Types_8h.html">Types.h</a></div><div class="ttdoc">Basic attribute, parameter, and node types for Enzo.</div></div>
-<div class="ttc" id="aclassenzo_1_1expr_1_1ScriptEngine_html"><div class="ttname"><a href="classenzo_1_1expr_1_1ScriptEngine.html">enzo::expr::ScriptEngine</a></div><div class="ttdoc">Compiler for the per point scripts a script node runs.</div><div class="ttdef"><b>Definition</b> ScriptEngine.h:23</div></div>
-<div class="ttc" id="aclassenzo_1_1expr_1_1ScriptEngine_html_a250fbfe185c0595bba83eeb0dd2d33fc"><div class="ttname"><a href="classenzo_1_1expr_1_1ScriptEngine.html#a250fbfe185c0595bba83eeb0dd2d33fc">enzo::expr::ScriptEngine::compile</a></div><div class="ttdeci">std::shared_ptr&lt; const PointScript &gt; compile(const String &amp;code, String &amp;error)</div><div class="ttdoc">Returns the compiled script for the user's code.</div><div class="ttdef"><b>Definition</b> ScriptEngine.cpp:12</div></div>
+<div class="ttc" id="aclassenzo_1_1script_1_1ScriptEngine_html"><div class="ttname"><a href="classenzo_1_1script_1_1ScriptEngine.html">enzo::script::ScriptEngine</a></div><div class="ttdoc">Compiler for the per point scripts a script node runs.</div><div class="ttdef"><b>Definition</b> ScriptEngine.h:23</div></div>
+<div class="ttc" id="aclassenzo_1_1script_1_1ScriptEngine_html_a3c56a7cd1e0f454c78dc916e3f3aec1b"><div class="ttname"><a href="classenzo_1_1script_1_1ScriptEngine.html#a3c56a7cd1e0f454c78dc916e3f3aec1b">enzo::script::ScriptEngine::compile</a></div><div class="ttdeci">std::shared_ptr&lt; const PointScript &gt; compile(const String &amp;code, String &amp;error)</div><div class="ttdoc">Returns the compiled script for the user's code.</div><div class="ttdef"><b>Definition</b> ScriptEngine.cpp:12</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

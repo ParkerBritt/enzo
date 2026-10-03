@@ -257,6 +257,10 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a5f01d7c52589a829ea43fe104e06dca4"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><b>enzo::attr::getAttributeType</b> ()</td></tr>
 <tr class="memdesc:a5f01d7c52589a829ea43fe104e06dca4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute type that stores values of the given C++ type. <br /></td></tr>
 <tr class="separator:a5f01d7c52589a829ea43fe104e06dca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7bc3b73326d2e90bff12d6d31d3db24" id="r_ae7bc3b73326d2e90bff12d6d31d3db24"><td class="memTemplParams" colspan="2">template&lt;typename Action &gt; </td></tr>
+<tr class="memitem:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae7bc3b73326d2e90bff12d6d31d3db24">enzo::attr::visitType</a> (<a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> type, Action &amp;&amp;action)</td></tr>
+<tr class="memdesc:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls an action with the C++ type that stores an attribute type.  <br /></td></tr>
+<tr class="separator:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa747b7a013ecc2df775727846306bb4b" id="r_aa747b7a013ecc2df775727846306bb4b"><td class="memItemLeft" align="right" valign="top"><a id="aa747b7a013ecc2df775727846306bb4b" name="aa747b7a013ecc2df775727846306bb4b"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toString</b> (Type type)</td></tr>
 <tr class="memdesc:aa747b7a013ecc2df775727846306bb4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lowercase canonical name of a parameter type, e.g. "dropdown". <br /></td></tr>
@@ -454,6 +458,33 @@ constexpr <a class="el" href="#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a>&#16
 
 <p>Returns the parameter type a canonical name stands for, e.g. "dropdown". </p>
 <dl class="section return"><dt>Returns</dt><dd>The type, or nullopt when no type carries that name. </dd></dl>
+
+</div>
+</div>
+<a id="ae7bc3b73326d2e90bff12d6d31d3db24" name="ae7bc3b73326d2e90bff12d6d31d3db24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7bc3b73326d2e90bff12d6d31d3db24">&#9670;&#160;</a></span>visitType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Action &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto enzo::attr::visitType </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Action &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>action</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calls an action with the C++ type that stores an attribute type. </p>
+<p>visitType(vectorT, action) returns action.template operator()&lt;Vector3&gt;().</p>
+<dl class="section return"><dt>Returns</dt><dd>The action's result, or a default result for a type with no C++ storage. </dd></dl>
 
 </div>
 </div>

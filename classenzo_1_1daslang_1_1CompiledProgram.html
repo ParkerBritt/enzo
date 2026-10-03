@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::expr::CompiledScript Class Reference</title>
+<title>Enzo: enzo::daslang::CompiledProgram Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>expr</b></li><li class="navelem"><a class="el" href="classenzo_1_1expr_1_1CompiledScript.html">CompiledScript</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>daslang</b></li><li class="navelem"><a class="el" href="classenzo_1_1daslang_1_1CompiledProgram.html">CompiledProgram</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -95,65 +95,69 @@ $(function(){ initResizable(false); });
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="classenzo_1_1expr_1_1CompiledScript-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::expr::CompiledScript Class Reference</div></div>
+<a href="classenzo_1_1daslang_1_1CompiledProgram-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::daslang::CompiledProgram Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>A compiled daslang program ready to run.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="DasRuntime_8h_source.html">DasRuntime.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="Runtime_8h_source.html">Runtime.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structenzo_1_1expr_1_1CompiledScript_1_1Impl.html">Impl</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structenzo_1_1daslang_1_1CompiledProgram_1_1Impl.html">Impl</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a03dc2677166cb24bf8a5a62c922a83d9" id="r_a03dc2677166cb24bf8a5a62c922a83d9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03dc2677166cb24bf8a5a62c922a83d9">evalFloat</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, floatT &amp;result, String &amp;error)</td></tr>
-<tr class="memdesc:a03dc2677166cb24bf8a5a62c922a83d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as a float.  <br /></td></tr>
-<tr class="separator:a03dc2677166cb24bf8a5a62c922a83d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd6860d7cb8cae4a10918c47dea6864d" id="r_acd6860d7cb8cae4a10918c47dea6864d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd6860d7cb8cae4a10918c47dea6864d">evalInt</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, intT &amp;result, String &amp;error)</td></tr>
-<tr class="memdesc:acd6860d7cb8cae4a10918c47dea6864d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as an integer.  <br /></td></tr>
-<tr class="separator:acd6860d7cb8cae4a10918c47dea6864d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca7f4b1741acfe5fe19c7a09f5187784" id="r_aca7f4b1741acfe5fe19c7a09f5187784"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca7f4b1741acfe5fe19c7a09f5187784">evalString</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, String &amp;result, String &amp;error)</td></tr>
-<tr class="memdesc:aca7f4b1741acfe5fe19c7a09f5187784"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as a string.  <br /></td></tr>
-<tr class="separator:aca7f4b1741acfe5fe19c7a09f5187784"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24a1c6c1b50ce0544e5f72563af9c92f" id="r_a24a1c6c1b50ce0544e5f72563af9c92f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24a1c6c1b50ce0544e5f72563af9c92f">run</a> (const String &amp;functionName, std::span&lt; const ScriptArgument &gt; arguments, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, String &amp;error)</td></tr>
-<tr class="memdesc:a24a1c6c1b50ce0544e5f72563af9c92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs an exported function for its side effects.  <br /></td></tr>
-<tr class="separator:a24a1c6c1b50ce0544e5f72563af9c92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcde1bff7645bdbbe704e7386e773123" id="r_adcde1bff7645bdbbe704e7386e773123"><td class="memItemLeft" align="right" valign="top">std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adcde1bff7645bdbbe704e7386e773123">getWrittenArguments</a> (const String &amp;functionName) const</td></tr>
-<tr class="memdesc:adcde1bff7645bdbbe704e7386e773123"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the function writes each of its arguments, in argument order.  <br /></td></tr>
-<tr class="separator:adcde1bff7645bdbbe704e7386e773123"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1229f6cf09e12e3f9e910de5c91f3e00" id="r_a1229f6cf09e12e3f9e910de5c91f3e00"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1CompiledScript.html">CompiledScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1229f6cf09e12e3f9e910de5c91f3e00">clone</a> () const</td></tr>
-<tr class="memdesc:a1229f6cf09e12e3f9e910de5c91f3e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy that shares the compiled program and runs in its own context.  <br /></td></tr>
-<tr class="separator:a1229f6cf09e12e3f9e910de5c91f3e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ce436749887f92519c18e6b68bad657" id="r_a8ce436749887f92519c18e6b68bad657"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ce436749887f92519c18e6b68bad657">evalFloat</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *context, floatT &amp;result, String &amp;error)</td></tr>
+<tr class="memdesc:a8ce436749887f92519c18e6b68bad657"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as a float.  <br /></td></tr>
+<tr class="separator:a8ce436749887f92519c18e6b68bad657"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e098dba0e6775cbc139c38e2484399c" id="r_a2e098dba0e6775cbc139c38e2484399c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e098dba0e6775cbc139c38e2484399c">evalInt</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *context, intT &amp;result, String &amp;error)</td></tr>
+<tr class="memdesc:a2e098dba0e6775cbc139c38e2484399c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as an integer.  <br /></td></tr>
+<tr class="separator:a2e098dba0e6775cbc139c38e2484399c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06accd5748bcd47c3c0be7a9024ad284" id="r_a06accd5748bcd47c3c0be7a9024ad284"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06accd5748bcd47c3c0be7a9024ad284">evalString</a> (const String &amp;functionName, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *context, String &amp;result, String &amp;error)</td></tr>
+<tr class="memdesc:a06accd5748bcd47c3c0be7a9024ad284"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates an exported function as a string.  <br /></td></tr>
+<tr class="separator:a06accd5748bcd47c3c0be7a9024ad284"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15415cc11932125a812d96f796f7ece0" id="r_a15415cc11932125a812d96f796f7ece0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15415cc11932125a812d96f796f7ece0">run</a> (const String &amp;functionName, std::span&lt; const ScriptArgument &gt; arguments, const <a class="el" href="classenzo_1_1script_1_1ScriptContext.html">script::ScriptContext</a> *context, size_t primitiveIndex, String &amp;error)</td></tr>
+<tr class="memdesc:a15415cc11932125a812d96f796f7ece0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs an exported function for its side effects.  <br /></td></tr>
+<tr class="separator:a15415cc11932125a812d96f796f7ece0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a008c7df9b6c7f1e409902b2c87495eb1" id="r_a008c7df9b6c7f1e409902b2c87495eb1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a008c7df9b6c7f1e409902b2c87495eb1">getWrittenArguments</a> (const String &amp;functionName) const</td></tr>
+<tr class="memdesc:a008c7df9b6c7f1e409902b2c87495eb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the function writes each of its arguments, in argument order.  <br /></td></tr>
+<tr class="separator:a008c7df9b6c7f1e409902b2c87495eb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa678079bcf0db964e6b0b2ad7b0bdb69" id="r_aa678079bcf0db964e6b0b2ad7b0bdb69"><td class="memItemLeft" align="right" valign="top"><a id="aa678079bcf0db964e6b0b2ad7b0bdb69" name="aa678079bcf0db964e6b0b2ad7b0bdb69"></a>
+std::vector&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>takeWarnings</b> ()</td></tr>
+<tr class="memdesc:aa678079bcf0db964e6b0b2ad7b0bdb69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the warnings the runs added and clears them. <br /></td></tr>
+<tr class="separator:aa678079bcf0db964e6b0b2ad7b0bdb69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fb8885c5781445c826a378457acad52" id="r_a2fb8885c5781445c826a378457acad52"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1daslang_1_1CompiledProgram.html">CompiledProgram</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fb8885c5781445c826a378457acad52">clone</a> () const</td></tr>
+<tr class="memdesc:a2fb8885c5781445c826a378457acad52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy that shares the compiled program and runs in its own context.  <br /></td></tr>
+<tr class="separator:a2fb8885c5781445c826a378457acad52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:ac70cda3233424a073be4a4cfb3180e23" id="r_ac70cda3233424a073be4a4cfb3180e23"><td class="memItemLeft" align="right" valign="top"><a id="ac70cda3233424a073be4a4cfb3180e23" name="ac70cda3233424a073be4a4cfb3180e23"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td></tr>
-<tr class="separator:ac70cda3233424a073be4a4cfb3180e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3d14e26ba8af9e6cc5a32aad8446de7" id="r_af3d14e26ba8af9e6cc5a32aad8446de7"><td class="memItemLeft" align="right" valign="top"><a id="af3d14e26ba8af9e6cc5a32aad8446de7" name="af3d14e26ba8af9e6cc5a32aad8446de7"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Runtime</b></td></tr>
+<tr class="separator:af3d14e26ba8af9e6cc5a32aad8446de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A compiled daslang program ready to run. </p>
 <p>Reused across many evaluations so the cost of compiling is paid once. Each eval helper runs an exported function by name and returns its result.</p>
 <p>Example </p><div class="fragment"><div class="line">String error;</div>
-<div class="line"><span class="keyword">auto</span> script = DasRuntime::instance().compile(<span class="stringliteral">&quot;expr&quot;</span>, source, error);</div>
+<div class="line"><span class="keyword">auto</span> script = Runtime::instance().compile(<span class="stringliteral">&quot;expr&quot;</span>, source, error);</div>
 <div class="line">floatT result = 0;</div>
 <div class="line">script-&gt;evalFloat(<span class="stringliteral">&quot;__eval__&quot;</span>, result, error);</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>daslang types stay inside the implementation so consumers never include daslang headers. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1229f6cf09e12e3f9e910de5c91f3e00" name="a1229f6cf09e12e3f9e910de5c91f3e00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1229f6cf09e12e3f9e910de5c91f3e00">&#9670;&#160;</a></span>clone()</h2>
+<a id="a2fb8885c5781445c826a378457acad52" name="a2fb8885c5781445c826a378457acad52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fb8885c5781445c826a378457acad52">&#9670;&#160;</a></span>clone()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1CompiledScript.html">CompiledScript</a> &gt; enzo::expr::CompiledScript::clone </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1daslang_1_1CompiledProgram.html">CompiledProgram</a> &gt; enzo::daslang::CompiledProgram::clone </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -167,21 +171,21 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 
 </div>
 </div>
-<a id="a03dc2677166cb24bf8a5a62c922a83d9" name="a03dc2677166cb24bf8a5a62c922a83d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03dc2677166cb24bf8a5a62c922a83d9">&#9670;&#160;</a></span>evalFloat()</h2>
+<a id="a8ce436749887f92519c18e6b68bad657" name="a8ce436749887f92519c18e6b68bad657"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ce436749887f92519c18e6b68bad657">&#9670;&#160;</a></span>evalFloat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::CompiledScript::evalFloat </td>
+          <td class="memname">bool enzo::daslang::CompiledProgram::evalFloat </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>functionName</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -201,21 +205,21 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 
 </div>
 </div>
-<a id="acd6860d7cb8cae4a10918c47dea6864d" name="acd6860d7cb8cae4a10918c47dea6864d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd6860d7cb8cae4a10918c47dea6864d">&#9670;&#160;</a></span>evalInt()</h2>
+<a id="a2e098dba0e6775cbc139c38e2484399c" name="a2e098dba0e6775cbc139c38e2484399c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e098dba0e6775cbc139c38e2484399c">&#9670;&#160;</a></span>evalInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::CompiledScript::evalInt </td>
+          <td class="memname">bool enzo::daslang::CompiledProgram::evalInt </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>functionName</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -235,21 +239,21 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 
 </div>
 </div>
-<a id="aca7f4b1741acfe5fe19c7a09f5187784" name="aca7f4b1741acfe5fe19c7a09f5187784"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca7f4b1741acfe5fe19c7a09f5187784">&#9670;&#160;</a></span>evalString()</h2>
+<a id="a06accd5748bcd47c3c0be7a9024ad284" name="a06accd5748bcd47c3c0be7a9024ad284"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06accd5748bcd47c3c0be7a9024ad284">&#9670;&#160;</a></span>evalString()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::CompiledScript::evalString </td>
+          <td class="memname">bool enzo::daslang::CompiledProgram::evalString </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>functionName</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">expr::ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -269,14 +273,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 
 </div>
 </div>
-<a id="adcde1bff7645bdbbe704e7386e773123" name="adcde1bff7645bdbbe704e7386e773123"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcde1bff7645bdbbe704e7386e773123">&#9670;&#160;</a></span>getWrittenArguments()</h2>
+<a id="a008c7df9b6c7f1e409902b2c87495eb1" name="a008c7df9b6c7f1e409902b2c87495eb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a008c7df9b6c7f1e409902b2c87495eb1">&#9670;&#160;</a></span>getWrittenArguments()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; bool &gt; enzo::expr::CompiledScript::getWrittenArguments </td>
+          <td class="memname">std::vector&lt; bool &gt; enzo::daslang::CompiledProgram::getWrittenArguments </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>functionName</em></span></td><td>)</td>
           <td> const</td>
@@ -289,14 +293,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 
 </div>
 </div>
-<a id="a24a1c6c1b50ce0544e5f72563af9c92f" name="a24a1c6c1b50ce0544e5f72563af9c92f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24a1c6c1b50ce0544e5f72563af9c92f">&#9670;&#160;</a></span>run()</h2>
+<a id="a15415cc11932125a812d96f796f7ece0" name="a15415cc11932125a812d96f796f7ece0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15415cc11932125a812d96f796f7ece0">&#9670;&#160;</a></span>run()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::CompiledScript::run </td>
+          <td class="memname">bool enzo::daslang::CompiledProgram::run </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>functionName</em></span>, </td>
         </tr>
@@ -308,7 +312,12 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1script_1_1ScriptContext.html">script::ScriptContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>primitiveIndex</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -319,13 +328,19 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>DasRuntime</b></td><
 </div><div class="memdoc">
 
 <p>Runs an exported function for its side effects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">primitiveIndex</td><td>The input primitive the function's attribute reads go to. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success, false when the function is missing or panics. </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/Engine/Expression/<a class="el" href="DasRuntime_8h_source.html">DasRuntime.h</a></li>
-<li>src/Engine/Expression/<b>DasRuntime.cpp</b></li>
+<li>src/Engine/Daslang/<a class="el" href="Runtime_8h_source.html">Runtime.h</a></li>
+<li>src/Engine/Daslang/<b>Runtime.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::expr::ScriptEngine Class Reference</title>
+<title>Enzo: enzo::daslang::Runtime Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>expr</b></li><li class="navelem"><a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>daslang</b></li><li class="navelem"><a class="el" href="classenzo_1_1daslang_1_1Runtime.html">Runtime</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -94,52 +94,54 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="classenzo_1_1expr_1_1ScriptEngine-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::expr::ScriptEngine Class Reference</div></div>
+<a href="classenzo_1_1daslang_1_1Runtime-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::daslang::Runtime Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Compiler for the per point scripts a script node runs.  
+<p>Shared host for the daslang runtime.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="Runtime_8h_source.html">Runtime.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a250fbfe185c0595bba83eeb0dd2d33fc" id="r_a250fbfe185c0595bba83eeb0dd2d33fc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a250fbfe185c0595bba83eeb0dd2d33fc">compile</a> (const String &amp;code, String &amp;error)</td></tr>
-<tr class="memdesc:a250fbfe185c0595bba83eeb0dd2d33fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the compiled script for the user's code.  <br /></td></tr>
-<tr class="separator:a250fbfe185c0595bba83eeb0dd2d33fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a668c33e3ffe38391a08fbe674d9f3d04" id="r_a668c33e3ffe38391a08fbe674d9f3d04"><td class="memItemLeft" align="right" valign="top"><a id="a668c33e3ffe38391a08fbe674d9f3d04" name="a668c33e3ffe38391a08fbe674d9f3d04"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ScriptEngine</b> (const <a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a> &amp;)=delete</td></tr>
-<tr class="separator:a668c33e3ffe38391a08fbe674d9f3d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a302cb1b66690fcb80bb6ce24b90d99" id="r_a1a302cb1b66690fcb80bb6ce24b90d99"><td class="memItemLeft" align="right" valign="top"><a id="a1a302cb1b66690fcb80bb6ce24b90d99" name="a1a302cb1b66690fcb80bb6ce24b90d99"></a>
-<a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a> &amp;)=delete</td></tr>
-<tr class="separator:a1a302cb1b66690fcb80bb6ce24b90d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb845d90fc24cc719b58d10bb2865b42" id="r_aeb845d90fc24cc719b58d10bb2865b42"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1daslang_1_1CompiledProgram.html">CompiledProgram</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb845d90fc24cc719b58d10bb2865b42">compile</a> (const String &amp;name, const String &amp;source, String &amp;error)</td></tr>
+<tr class="memdesc:aeb845d90fc24cc719b58d10bb2865b42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiles source text into a reusable script.  <br /></td></tr>
+<tr class="separator:aeb845d90fc24cc719b58d10bb2865b42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42f99a4df9332eb238a55fa7f0daed2d" id="r_a42f99a4df9332eb238a55fa7f0daed2d"><td class="memItemLeft" align="right" valign="top"><a id="a42f99a4df9332eb238a55fa7f0daed2d" name="a42f99a4df9332eb238a55fa7f0daed2d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Runtime</b> (const <a class="el" href="classenzo_1_1daslang_1_1Runtime.html">Runtime</a> &amp;)=delete</td></tr>
+<tr class="separator:a42f99a4df9332eb238a55fa7f0daed2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ca7369f91dfd975bc65aef5ddd49e97" id="r_a2ca7369f91dfd975bc65aef5ddd49e97"><td class="memItemLeft" align="right" valign="top"><a id="a2ca7369f91dfd975bc65aef5ddd49e97" name="a2ca7369f91dfd975bc65aef5ddd49e97"></a>
+<a class="el" href="classenzo_1_1daslang_1_1Runtime.html">Runtime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1daslang_1_1Runtime.html">Runtime</a> &amp;)=delete</td></tr>
+<tr class="separator:a2ca7369f91dfd975bc65aef5ddd49e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a8f9ee2397d56bd369766136b0b04788a" id="r_a8f9ee2397d56bd369766136b0b04788a"><td class="memItemLeft" align="right" valign="top"><a id="a8f9ee2397d56bd369766136b0b04788a" name="a8f9ee2397d56bd369766136b0b04788a"></a>
-static <a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>instance</b> ()</td></tr>
-<tr class="separator:a8f9ee2397d56bd369766136b0b04788a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3daea5d1be6fe00c4887c6290ae4cb6" id="r_ab3daea5d1be6fe00c4887c6290ae4cb6"><td class="memItemLeft" align="right" valign="top"><a id="ab3daea5d1be6fe00c4887c6290ae4cb6" name="ab3daea5d1be6fe00c4887c6290ae4cb6"></a>
+static <a class="el" href="classenzo_1_1daslang_1_1Runtime.html">Runtime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>instance</b> ()</td></tr>
+<tr class="separator:ab3daea5d1be6fe00c4887c6290ae4cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Compiler for the per point scripts a script node runs. </p>
-<div class="fragment"><div class="line">String error;</div>
-<div class="line"><span class="keyword">auto</span> script = ScriptEngine::instance().compile(<span class="stringliteral">&quot;@height = curPt()&quot;</span>, error)-&gt;clone();</div>
-<div class="line">script-&gt;addWrittenAttributes(output, error);</div>
-<div class="line">script-&gt;run(input, output, 0, input.getNumPoints(), 0, pointCount, &amp;context, error);</div>
-</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Compiled scripts are cached by their code. </dd></dl>
+<div class="textblock"><p>Shared host for the daslang runtime. </p>
+<p>Owns the one time setup of the daslang module system and turns source text into reusable compiled scripts.</p>
+<dl class="section note"><dt>Note</dt><dd>Every daslang consumer builds on this rather than touching daslang directly, so parameter expressions today and geometry script nodes later share one runtime and one place that knows how to compile. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a250fbfe185c0595bba83eeb0dd2d33fc" name="a250fbfe185c0595bba83eeb0dd2d33fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a250fbfe185c0595bba83eeb0dd2d33fc">&#9670;&#160;</a></span>compile()</h2>
+<a id="aeb845d90fc24cc719b58d10bb2865b42" name="aeb845d90fc24cc719b58d10bb2865b42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb845d90fc24cc719b58d10bb2865b42">&#9670;&#160;</a></span>compile()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt; enzo::expr::ScriptEngine::compile </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1daslang_1_1CompiledProgram.html">CompiledProgram</a> &gt; enzo::daslang::Runtime::compile </td>
           <td>(</td>
-          <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>code</em></span>, </td>
+          <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -149,14 +151,15 @@ static <a class="el" href="classenzo_1_1expr_1_1ScriptEngine.html">ScriptEngine<
       </table>
 </div><div class="memdoc">
 
-<p>Returns the compiled script for the user's code. </p>
-<dl class="section return"><dt>Returns</dt><dd>The compiled script, or null when the code fails to compile. </dd></dl>
+<p>Compiles source text into a reusable script. </p>
+<dl class="section return"><dt>Returns</dt><dd>The compiled script, or null when compilation fails. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>On failure the daslang diagnostics are written to <code>error</code>. </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/Engine/Expression/<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a></li>
-<li>src/Engine/Expression/<b>ScriptEngine.cpp</b></li>
+<li>src/Engine/Daslang/<a class="el" href="Runtime_8h_source.html">Runtime.h</a></li>
+<li>src/Engine/Daslang/<b>Runtime.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

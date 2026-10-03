@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enzo: enzo::expr::PointScript Class Reference</title>
+<title>Enzo: enzo::script::PointScript Class Reference</title>
 <link rel="icon" href="icon-main-white.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -86,7 +86,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>enzo</b></li><li class="navelem"><b>expr</b></li><li class="navelem"><a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a></li>  </ul>
+<li class="navelem"><b>enzo</b></li><li class="navelem"><b>script</b></li><li class="navelem"><a class="el" href="classenzo_1_1script_1_1PointScript.html">PointScript</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -94,8 +94,8 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="classenzo_1_1expr_1_1PointScript-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">enzo::expr::PointScript Class Reference</div></div>
+<a href="classenzo_1_1script_1_1PointScript-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">enzo::script::PointScript Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -106,41 +106,42 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afac042b2d0ff1e9293e89b3dc82aafef" id="r_afac042b2d0ff1e9293e89b3dc82aafef"><td class="memItemLeft" align="right" valign="top"><a id="afac042b2d0ff1e9293e89b3dc82aafef" name="afac042b2d0ff1e9293e89b3dc82aafef"></a>
-const std::vector&lt; <a class="el" href="structenzo_1_1expr_1_1AttributeBinding.html">AttributeBinding</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBindings</b> () const</td></tr>
-<tr class="memdesc:afac042b2d0ff1e9293e89b3dc82aafef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute the code binds, in the order they first appear. <br /></td></tr>
-<tr class="separator:afac042b2d0ff1e9293e89b3dc82aafef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd4d9c097105a27c1f963a56d9300717" id="r_acd4d9c097105a27c1f963a56d9300717"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd4d9c097105a27c1f963a56d9300717">clone</a> () const</td></tr>
-<tr class="memdesc:acd4d9c097105a27c1f963a56d9300717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy that runs in its own context.  <br /></td></tr>
-<tr class="separator:acd4d9c097105a27c1f963a56d9300717"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5283bd9a7184a074fc010a527b82ba49" id="r_a5283bd9a7184a074fc010a527b82ba49"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5283bd9a7184a074fc010a527b82ba49">addWrittenAttributes</a> (<a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, String &amp;error) const</td></tr>
-<tr class="memdesc:a5283bd9a7184a074fc010a527b82ba49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds every attribute the script writes to the output, filled with the default value.  <br /></td></tr>
-<tr class="separator:a5283bd9a7184a074fc010a527b82ba49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6432efa632eff95aa39765da18d830ce" id="r_a6432efa632eff95aa39765da18d830ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6432efa632eff95aa39765da18d830ce">run</a> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;input, <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> begin, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> end, intT firstIndex, intT pointCount, const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *context, String &amp;error)</td></tr>
-<tr class="memdesc:a6432efa632eff95aa39765da18d830ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the script for each valid point in a range.  <br /></td></tr>
-<tr class="separator:a6432efa632eff95aa39765da18d830ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06e2dfa2e924cbc37b8541e8caf53077" id="r_a06e2dfa2e924cbc37b8541e8caf53077"><td class="memItemLeft" align="right" valign="top"><a id="a06e2dfa2e924cbc37b8541e8caf53077" name="a06e2dfa2e924cbc37b8541e8caf53077"></a>
+const std::vector&lt; <a class="el" href="structenzo_1_1script_1_1AttributeBinding.html">AttributeBinding</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBindings</b> () const</td></tr>
+<tr class="memdesc:a06e2dfa2e924cbc37b8541e8caf53077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute the code binds, in the order they first appear. <br /></td></tr>
+<tr class="separator:a06e2dfa2e924cbc37b8541e8caf53077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafaf035a2d5473fb45db152741920f70" id="r_aafaf035a2d5473fb45db152741920f70"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1script_1_1PointScript.html">PointScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafaf035a2d5473fb45db152741920f70">clone</a> () const</td></tr>
+<tr class="memdesc:aafaf035a2d5473fb45db152741920f70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy that runs in its own context.  <br /></td></tr>
+<tr class="separator:aafaf035a2d5473fb45db152741920f70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae82ebb4e065a3bd45d02990a9d3a63f0" id="r_ae82ebb4e065a3bd45d02990a9d3a63f0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae82ebb4e065a3bd45d02990a9d3a63f0">addWrittenAttributes</a> (<a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, String &amp;error) const</td></tr>
+<tr class="memdesc:ae82ebb4e065a3bd45d02990a9d3a63f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds every attribute the script writes to the output, filled with the default value.  <br /></td></tr>
+<tr class="separator:ae82ebb4e065a3bd45d02990a9d3a63f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1130b1ef933c5feacd56e612ea35cc95" id="r_a1130b1ef933c5feacd56e612ea35cc95"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1130b1ef933c5feacd56e612ea35cc95">run</a> (const <a class="el" href="classenzo_1_1script_1_1ScriptContext.html">ScriptContext</a> &amp;context, size_t primitiveIndex, <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;output, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> begin, <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> end, String &amp;error)</td></tr>
+<tr class="memdesc:a1130b1ef933c5feacd56e612ea35cc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the script on the points in an offset range.  <br /></td></tr>
+<tr class="separator:a1130b1ef933c5feacd56e612ea35cc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a5f73c8f4969a2b50ab19cb9bb9fd55df" id="r_a5f73c8f4969a2b50ab19cb9bb9fd55df"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f73c8f4969a2b50ab19cb9bb9fd55df">compile</a> (const String &amp;code, String &amp;error)</td></tr>
-<tr class="memdesc:a5f73c8f4969a2b50ab19cb9bb9fd55df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the compiled script for the user's code.  <br /></td></tr>
-<tr class="separator:a5f73c8f4969a2b50ab19cb9bb9fd55df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4985ce8a74ffc0a130d0bbcd4a09b8c7" id="r_a4985ce8a74ffc0a130d0bbcd4a09b8c7"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classenzo_1_1script_1_1PointScript.html">PointScript</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4985ce8a74ffc0a130d0bbcd4a09b8c7">compile</a> (const String &amp;code, String &amp;error)</td></tr>
+<tr class="memdesc:a4985ce8a74ffc0a130d0bbcd4a09b8c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the compiled script for the user's code.  <br /></td></tr>
+<tr class="separator:a4985ce8a74ffc0a130d0bbcd4a09b8c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A compiled script that runs once per point and edits the point's attributes. </p>
-<p>The user's code is the body of a function that reads and writes the point's attributes as <code>@name</code>. <code>curPt()</code> returns the point's index among the live points and <code>ptCount()</code> returns how many live points there are.</p>
+<p>The user's code is the body of a function that reads and writes the point's attributes as <code>@name</code>. <code>curPt()</code> returns the point's index among the live points and <code>ptCount()</code> returns how many live points there are. Functions like <code>pointAttr()</code> read any element of the input by index.</p>
 <div class="fragment"><div class="line">@Position.y += sin(@Position.x) * prm(<span class="stringliteral">&quot;amplitude&quot;</span>)</div>
 <div class="line">i@<span class="keywordtype">id</span> = curPt()</div>
+<div class="line">@height = pointAttr(&quot;height&quot;, curPt() + 1l)</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Each thread runs its own clone over its own range of points. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5283bd9a7184a074fc010a527b82ba49" name="a5283bd9a7184a074fc010a527b82ba49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5283bd9a7184a074fc010a527b82ba49">&#9670;&#160;</a></span>addWrittenAttributes()</h2>
+<a id="ae82ebb4e065a3bd45d02990a9d3a63f0" name="ae82ebb4e065a3bd45d02990a9d3a63f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae82ebb4e065a3bd45d02990a9d3a63f0">&#9670;&#160;</a></span>addWrittenAttributes()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::PointScript::addWrittenAttributes </td>
+          <td class="memname">bool enzo::script::PointScript::addWrittenAttributes </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>output</em></span>, </td>
         </tr>
@@ -157,14 +158,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="acd4d9c097105a27c1f963a56d9300717" name="acd4d9c097105a27c1f963a56d9300717"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd4d9c097105a27c1f963a56d9300717">&#9670;&#160;</a></span>clone()</h2>
+<a id="aafaf035a2d5473fb45db152741920f70" name="aafaf035a2d5473fb45db152741920f70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafaf035a2d5473fb45db152741920f70">&#9670;&#160;</a></span>clone()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt; enzo::expr::PointScript::clone </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1script_1_1PointScript.html">PointScript</a> &gt; enzo::script::PointScript::clone </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -177,8 +178,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a5f73c8f4969a2b50ab19cb9bb9fd55df" name="a5f73c8f4969a2b50ab19cb9bb9fd55df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f73c8f4969a2b50ab19cb9bb9fd55df">&#9670;&#160;</a></span>compile()</h2>
+<a id="a4985ce8a74ffc0a130d0bbcd4a09b8c7" name="a4985ce8a74ffc0a130d0bbcd4a09b8c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4985ce8a74ffc0a130d0bbcd4a09b8c7">&#9670;&#160;</a></span>compile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,7 +188,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1expr_1_1PointScript.html">PointScript</a> &gt; enzo::expr::PointScript::compile </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1script_1_1PointScript.html">PointScript</a> &gt; enzo::script::PointScript::compile </td>
           <td>(</td>
           <td class="paramtype">const String &amp;</td>          <td class="paramname"><span class="paramname"><em>code</em></span>, </td>
         </tr>
@@ -209,16 +210,21 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6432efa632eff95aa39765da18d830ce" name="a6432efa632eff95aa39765da18d830ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6432efa632eff95aa39765da18d830ce">&#9670;&#160;</a></span>run()</h2>
+<a id="a1130b1ef933c5feacd56e612ea35cc95" name="a1130b1ef933c5feacd56e612ea35cc95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1130b1ef933c5feacd56e612ea35cc95">&#9670;&#160;</a></span>run()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::expr::PointScript::run </td>
+          <td class="memname">bool enzo::script::PointScript::run </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>input</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classenzo_1_1script_1_1ScriptContext.html">ScriptContext</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>primitiveIndex</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -238,43 +244,21 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">intT</td>          <td class="paramname"><span class="paramname"><em>firstIndex</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">intT</td>          <td class="paramname"><span class="paramname"><em>pointCount</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classenzo_1_1expr_1_1ExpressionContext.html">ExpressionContext</a> *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">String &amp;</td>          <td class="paramname"><span class="paramname"><em>error</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Runs the script for each valid point in a range. </p>
-<p>Reads bindings from the input and stores written ones to the output.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">firstIndex</td><td>The index of the first live point in the range. </td></tr>
-    <tr><td class="paramname">pointCount</td><td>The number of live points in the whole input. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Runs the script on the points in an offset range. </p>
+<p>Reads bindings from the context's input mesh at <code>primitiveIndex</code> and stores written ones to the output.</p>
 <dl class="section return"><dt>Returns</dt><dd>False when the script fails on a point. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The output needs the written attributes added first. </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/Engine/Expression/<a class="el" href="PointScript_8h_source.html">PointScript.h</a></li>
-<li>src/Engine/Expression/<b>PointScript.cpp</b></li>
+<li>src/Engine/Script/<a class="el" href="PointScript_8h_source.html">PointScript.h</a></li>
+<li>src/Engine/Script/<b>PointScript.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

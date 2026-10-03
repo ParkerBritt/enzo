@@ -267,141 +267,165 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <span class="keywordflow">else</span> <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>(T) == 0, <span class="stringliteral">&quot;No attribute type stores this C++ type&quot;</span>);</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>}</div>
 </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>} <span class="comment">// namespace attr</span></div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="keyword">namespace </span>prm {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="keyword">enum class</span> Type</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>{</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    STRING,</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    FLOAT,</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    BOOL,</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    INT,</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    TOGGLE,</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    GROUP,</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    DROPDOWN,</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    RAMP,</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    DIVIDER</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>};</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="keyword">enum class</span> Direction</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>{</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    HORIZONTAL,</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    VERTICAL</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>};</div>
-<div class="foldopen" id="foldopen00220" data-start="{" data-end="};">
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">  220</a></span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">ValueType</a></div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>{</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    Float,</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    Int,</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    String</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>};</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
+<div class="foldopen" id="foldopen00202" data-start="{" data-end="}">
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno"><a class="line" href="Types_8h.html#ae7bc3b73326d2e90bff12d6d31d3db24">  202</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Action&gt; <span class="keyword">auto</span> <a class="code hl_function" href="Types_8h.html#ae7bc3b73326d2e90bff12d6d31d3db24">visitType</a>(<a class="code hl_enumeration" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> type, Action&amp;&amp; action)</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>{</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keyword">using </span>Result = <span class="keyword">decltype</span>(action.template operator()&lt;intT&gt;());</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keywordflow">switch</span> (type)</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keywordflow">case</span> AttributeType::intT:</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        <span class="keywordflow">return</span> action.template operator()&lt;intT&gt;();</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordflow">case</span> AttributeType::floatT:</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        <span class="keywordflow">return</span> action.template operator()&lt;floatT&gt;();</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="keywordflow">case</span> AttributeType::vectorT:</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">return</span> action.template operator()&lt;Vector3&gt;();</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    <span class="keywordflow">case</span> AttributeType::boolT:</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        <span class="keywordflow">return</span> action.template operator()&lt;boolT&gt;();</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">case</span> AttributeType::matrixT:</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        <span class="keywordflow">return</span> action.template operator()&lt;Matrix4&gt;();</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keywordflow">case</span> AttributeType::listT:</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    }</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">return</span> Result();</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>}</div>
 </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
-<div class="foldopen" id="foldopen00228" data-start="{" data-end="}">
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno"><a class="line" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">  228</a></span><span class="keyword">inline</span> std::string <a class="code hl_function" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">toString</a>(Type type)</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>{</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    <span class="comment">// Using a switch to catch missing cases at compile time.</span></div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    <span class="keywordflow">switch</span> (type)</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    {</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    <span class="keywordflow">case</span> Type::STRING:</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;string&quot;</span>;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    <span class="keywordflow">case</span> Type::FLOAT:</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;float&quot;</span>;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    <span class="keywordflow">case</span> Type::BOOL:</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;bool&quot;</span>;</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    <span class="keywordflow">case</span> Type::INT:</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;int&quot;</span>;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keywordflow">case</span> Type::TOGGLE:</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;toggle&quot;</span>;</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    <span class="keywordflow">case</span> Type::GROUP:</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;group&quot;</span>;</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <span class="keywordflow">case</span> Type::DROPDOWN:</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;dropdown&quot;</span>;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keywordflow">case</span> Type::RAMP:</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;ramp&quot;</span>;</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <span class="keywordflow">case</span> Type::DIVIDER:</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;divider&quot;</span>;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    }</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>}</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>} <span class="comment">// namespace attr</span></div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="keyword">namespace </span>prm {</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span><span class="keyword">enum class</span> Type</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>{</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    STRING,</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    FLOAT,</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    BOOL,</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    INT,</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    TOGGLE,</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    GROUP,</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    DROPDOWN,</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    RAMP,</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    DIVIDER</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>};</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="keyword">enum class</span> Direction</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>{</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    HORIZONTAL,</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    VERTICAL</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>};</div>
+<div class="foldopen" id="foldopen00248" data-start="{" data-end="};">
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno"><a class="line" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">  248</a></span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">ValueType</a></div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>{</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    Float,</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    Int,</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    String</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>};</div>
 </div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="foldopen" id="foldopen00256" data-start="{" data-end="};">
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno"><a class="line" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">  256</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> std::array <a class="code hl_variable" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">kAllTypes</a> = {</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    Type::STRING,</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    Type::FLOAT,</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    Type::BOOL,</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    Type::INT,</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    Type::TOGGLE,</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    Type::GROUP,</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    Type::DROPDOWN,</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    Type::RAMP,</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    Type::DIVIDER</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>};</div>
+<div class="foldopen" id="foldopen00256" data-start="{" data-end="}">
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno"><a class="line" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">  256</a></span><span class="keyword">inline</span> std::string <a class="code hl_function" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">toString</a>(Type type)</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>{</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="comment">// Using a switch to catch missing cases at compile time.</span></div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keywordflow">switch</span> (type)</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    {</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keywordflow">case</span> Type::STRING:</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;string&quot;</span>;</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    <span class="keywordflow">case</span> Type::FLOAT:</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;float&quot;</span>;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keywordflow">case</span> Type::BOOL:</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;bool&quot;</span>;</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    <span class="keywordflow">case</span> Type::INT:</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;int&quot;</span>;</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <span class="keywordflow">case</span> Type::TOGGLE:</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;toggle&quot;</span>;</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    <span class="keywordflow">case</span> Type::GROUP:</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;group&quot;</span>;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    <span class="keywordflow">case</span> Type::DROPDOWN:</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;dropdown&quot;</span>;</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    <span class="keywordflow">case</span> Type::RAMP:</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;ramp&quot;</span>;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    <span class="keywordflow">case</span> Type::DIVIDER:</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;divider&quot;</span>;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    }</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>}</div>
 </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="foldopen" id="foldopen00270" data-start="{" data-end="}">
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno"><a class="line" href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">  270</a></span><span class="keyword">inline</span> std::optional&lt;Type&gt; <a class="code hl_function" href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">toType</a>(<span class="keyword">const</span> std::string&amp; name)</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>{</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keywordflow">for</span> (Type type : <a class="code hl_variable" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">kAllTypes</a>)</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">toString</a>(type) == name) <span class="keywordflow">return</span> type;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    <span class="keywordflow">return</span> std::nullopt;</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>}</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="foldopen" id="foldopen00284" data-start="{" data-end="};">
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno"><a class="line" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">  284</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> std::array <a class="code hl_variable" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">kAllTypes</a> = {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    Type::STRING,</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    Type::FLOAT,</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    Type::BOOL,</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    Type::INT,</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    Type::TOGGLE,</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    Type::GROUP,</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    Type::DROPDOWN,</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    Type::RAMP,</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    Type::DIVIDER</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>};</div>
 </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
-<div class="foldopen" id="foldopen00278" data-start="{" data-end="}">
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno"><a class="line" href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">  278</a></span><span class="keyword">inline</span> <a class="code hl_enumeration" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">ValueType</a> <a class="code hl_function" href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">toValueType</a>(Type type)</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>{</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keywordflow">switch</span> (type)</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    {</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <span class="keywordflow">case</span> Type::FLOAT:</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="keywordflow">return</span> ValueType::Float;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    <span class="keywordflow">case</span> Type::INT:</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    <span class="keywordflow">case</span> Type::BOOL:</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keywordflow">case</span> Type::TOGGLE:</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <span class="comment">// Multiparm parameters (like ramp) use integers to represent their instance</span></div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <span class="comment">// count and store the actual data in their instances.</span></div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <span class="keywordflow">case</span> Type::RAMP:</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    <span class="comment">// Dividers are purely visual and store an int nobody reads.</span></div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keywordflow">case</span> Type::DIVIDER:</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        <span class="keywordflow">return</span> ValueType::Int;</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <span class="keywordflow">case</span> Type::STRING:</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    <span class="keywordflow">case</span> Type::DROPDOWN:</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <span class="keywordflow">return</span> ValueType::String;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>    <span class="keywordflow">case</span> Type::GROUP:</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="keywordflow">return</span> ValueType::Float;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    }</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>    <span class="keywordflow">return</span> ValueType::Float;</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>}</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
+<div class="foldopen" id="foldopen00298" data-start="{" data-end="}">
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno"><a class="line" href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">  298</a></span><span class="keyword">inline</span> std::optional&lt;Type&gt; <a class="code hl_function" href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">toType</a>(<span class="keyword">const</span> std::string&amp; name)</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>{</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    <span class="keywordflow">for</span> (Type type : <a class="code hl_variable" href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">kAllTypes</a>)</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">toString</a>(type) == name) <span class="keywordflow">return</span> type;</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>}</div>
 </div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>} <span class="comment">// namespace prm</span></div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="keyword">namespace </span>nt {</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno"><a class="line" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">  306</a></span><span class="keyword">using </span><a class="code hl_typedef" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> = uint64_t;</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno"><a class="line" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">  309</a></span><span class="keyword">constexpr</span> <a class="code hl_typedef" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> <a class="code hl_variable" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a> = 0;</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span><span class="keyword">enum class</span> SocketIOType</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>{</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    Input,</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    Output</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>};</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>} <span class="comment">// namespace nt</span></div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>} <span class="comment">// namespace enzo</span></div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
+<div class="foldopen" id="foldopen00306" data-start="{" data-end="}">
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno"><a class="line" href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">  306</a></span><span class="keyword">inline</span> <a class="code hl_enumeration" href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">ValueType</a> <a class="code hl_function" href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">toValueType</a>(Type type)</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>{</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    <span class="keywordflow">switch</span> (type)</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    {</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    <span class="keywordflow">case</span> Type::FLOAT:</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        <span class="keywordflow">return</span> ValueType::Float;</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    <span class="keywordflow">case</span> Type::INT:</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    <span class="keywordflow">case</span> Type::BOOL:</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <span class="keywordflow">case</span> Type::TOGGLE:</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>    <span class="comment">// Multiparm parameters (like ramp) use integers to represent their instance</span></div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    <span class="comment">// count and store the actual data in their instances.</span></div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keywordflow">case</span> Type::RAMP:</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    <span class="comment">// Dividers are purely visual and store an int nobody reads.</span></div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <span class="keywordflow">case</span> Type::DIVIDER:</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        <span class="keywordflow">return</span> ValueType::Int;</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    <span class="keywordflow">case</span> Type::STRING:</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    <span class="keywordflow">case</span> Type::DROPDOWN:</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        <span class="keywordflow">return</span> ValueType::String;</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    <span class="keywordflow">case</span> Type::GROUP:</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        <span class="keywordflow">return</span> ValueType::Float;</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    }</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    <span class="keywordflow">return</span> ValueType::Float;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>}</div>
+</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>} <span class="comment">// namespace prm</span></div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span><span class="keyword">namespace </span>nt {</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno"><a class="line" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">  334</a></span><span class="keyword">using </span><a class="code hl_typedef" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> = uint64_t;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno"><a class="line" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">  337</a></span><span class="keyword">constexpr</span> <a class="code hl_typedef" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">NodeId</a> <a class="code hl_variable" href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">nullNode</a> = 0;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="keyword">enum class</span> SocketIOType</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>{</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    Input,</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    Output</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>};</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>} <span class="comment">// namespace nt</span></div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>} <span class="comment">// namespace enzo</span></div>
 <div class="ttc" id="aTypes_8h_html_a2b9e720fc80cc45d06a8a364d4e87eb2"><div class="ttname"><a href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">enzo::Offset</a></div><div class="ttdeci">size_t Offset</div><div class="ttdoc">enzo::Offset is the internal discontinuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:181</div></div>
 <div class="ttc" id="aTypes_8h_html_a34d77beea9393d65a26e200d5ca795e5"><div class="ttname"><a href="Types_8h.html#a34d77beea9393d65a26e200d5ca795e5">enzo::attr::getOwnerName</a></div><div class="ttdeci">std::string getOwnerName(AttributeOwner owner)</div><div class="ttdoc">Returns the name of a part of the geometry, e.g. &quot;point&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:69</div></div>
-<div class="ttc" id="aTypes_8h_html_a354280b56bee0c17f37514110b8d76dc"><div class="ttname"><a href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">enzo::prm::toValueType</a></div><div class="ttdeci">ValueType toValueType(Type type)</div><div class="ttdoc">Returns the kind of value a parameter of this type stores.</div><div class="ttdef"><b>Definition</b> Types.h:278</div></div>
+<div class="ttc" id="aTypes_8h_html_a354280b56bee0c17f37514110b8d76dc"><div class="ttname"><a href="Types_8h.html#a354280b56bee0c17f37514110b8d76dc">enzo::prm::toValueType</a></div><div class="ttdeci">ValueType toValueType(Type type)</div><div class="ttdoc">Returns the kind of value a parameter of this type stores.</div><div class="ttdef"><b>Definition</b> Types.h:306</div></div>
 <div class="ttc" id="aTypes_8h_html_a56ca0b00e293beacc2733564a2bce4e3"><div class="ttname"><a href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">enzo::attr::AttributeType</a></div><div class="ttdeci">AttributeType</div><div class="ttdoc">Data types available to store attribute values in.</div><div class="ttdef"><b>Definition</b> Types.h:37</div></div>
 <div class="ttc" id="aTypes_8h_html_a5f01d7c52589a829ea43fe104e06dca4"><div class="ttname"><a href="Types_8h.html#a5f01d7c52589a829ea43fe104e06dca4">enzo::attr::getAttributeType</a></div><div class="ttdeci">constexpr AttributeType getAttributeType()</div><div class="ttdoc">Returns the attribute type that stores values of the given C++ type.</div><div class="ttdef"><b>Definition</b> Types.h:185</div></div>
 <div class="ttc" id="aTypes_8h_html_a6dd18968d62c32dad4f34cfa525adc63"><div class="ttname"><a href="Types_8h.html#a6dd18968d62c32dad4f34cfa525adc63">enzo::attr::getAllTypes</a></div><div class="ttdeci">std::vector&lt; AttributeType &gt; getAllTypes()</div><div class="ttdoc">Returns every type an attribute can store.</div><div class="ttdef"><b>Definition</b> Types.h:58</div></div>
 <div class="ttc" id="aTypes_8h_html_aa45841427fe0f79c22512a0d5a059f25"><div class="ttname"><a href="Types_8h.html#aa45841427fe0f79c22512a0d5a059f25">enzo::attr::getAllOwners</a></div><div class="ttdeci">std::vector&lt; AttributeOwner &gt; getAllOwners()</div><div class="ttdoc">Returns every part of the geometry that can own an attribute.</div><div class="ttdef"><b>Definition</b> Types.h:49</div></div>
-<div class="ttc" id="aTypes_8h_html_aa4a6ad74de0b595a395881a047a2c2c0"><div class="ttname"><a href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">enzo::nt::nullNode</a></div><div class="ttdeci">constexpr NodeId nullNode</div><div class="ttdoc">The id that names no node, since real ids start at 1.</div><div class="ttdef"><b>Definition</b> Types.h:309</div></div>
-<div class="ttc" id="aTypes_8h_html_aa747b7a013ecc2df775727846306bb4b"><div class="ttname"><a href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">enzo::prm::toString</a></div><div class="ttdeci">std::string toString(Type type)</div><div class="ttdoc">The lowercase canonical name of a parameter type, e.g. &quot;dropdown&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:228</div></div>
-<div class="ttc" id="aTypes_8h_html_aab12bf4b9a39db7c3a93f15e7e6f10f9"><div class="ttname"><a href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a></div><div class="ttdeci">uint64_t NodeId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:306</div></div>
-<div class="ttc" id="aTypes_8h_html_aab198ecae889a43d6ee5dd19bd9dac0b"><div class="ttname"><a href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">enzo::prm::kAllTypes</a></div><div class="ttdeci">constexpr std::array kAllTypes</div><div class="ttdoc">Every parameter type, in declaration order.</div><div class="ttdef"><b>Definition</b> Types.h:256</div></div>
+<div class="ttc" id="aTypes_8h_html_aa4a6ad74de0b595a395881a047a2c2c0"><div class="ttname"><a href="Types_8h.html#aa4a6ad74de0b595a395881a047a2c2c0">enzo::nt::nullNode</a></div><div class="ttdeci">constexpr NodeId nullNode</div><div class="ttdoc">The id that names no node, since real ids start at 1.</div><div class="ttdef"><b>Definition</b> Types.h:337</div></div>
+<div class="ttc" id="aTypes_8h_html_aa747b7a013ecc2df775727846306bb4b"><div class="ttname"><a href="Types_8h.html#aa747b7a013ecc2df775727846306bb4b">enzo::prm::toString</a></div><div class="ttdeci">std::string toString(Type type)</div><div class="ttdoc">The lowercase canonical name of a parameter type, e.g. &quot;dropdown&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:256</div></div>
+<div class="ttc" id="aTypes_8h_html_aab12bf4b9a39db7c3a93f15e7e6f10f9"><div class="ttname"><a href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a></div><div class="ttdeci">uint64_t NodeId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:334</div></div>
+<div class="ttc" id="aTypes_8h_html_aab198ecae889a43d6ee5dd19bd9dac0b"><div class="ttname"><a href="Types_8h.html#aab198ecae889a43d6ee5dd19bd9dac0b">enzo::prm::kAllTypes</a></div><div class="ttdeci">constexpr std::array kAllTypes</div><div class="ttdoc">Every parameter type, in declaration order.</div><div class="ttdef"><b>Definition</b> Types.h:284</div></div>
 <div class="ttc" id="aTypes_8h_html_ab7dcfb86b7eac8d93e460f34bc678303"><div class="ttname"><a href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">enzo::attr::AttributeOwner</a></div><div class="ttdeci">AttributeOwner</div><div class="ttdoc">The segment of geometry that owns a particular attribute.</div><div class="ttdef"><b>Definition</b> Types.h:27</div></div>
 <div class="ttc" id="aTypes_8h_html_ac5499b0fee1c8686a8a840a4e7209a09"><div class="ttname"><a href="Types_8h.html#ac5499b0fee1c8686a8a840a4e7209a09">enzo::Index</a></div><div class="ttdeci">size_t Index</div><div class="ttdoc">enzo::Index is the continuous index of an element in a given AttributeOwner.</div><div class="ttdef"><b>Definition</b> Types.h:172</div></div>
 <div class="ttc" id="aTypes_8h_html_ad08c5e997b4cc57146870476ad548951"><div class="ttname"><a href="Types_8h.html#ad08c5e997b4cc57146870476ad548951">enzo::attr::getType</a></div><div class="ttdeci">std::optional&lt; AttributeType &gt; getType(const std::string &amp;name)</div><div class="ttdoc">Returns the type a name stands for, e.g. &quot;vector&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:117</div></div>
-<div class="ttc" id="aTypes_8h_html_adde04662eb0d43a49d07351fd9439686"><div class="ttname"><a href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">enzo::prm::ValueType</a></div><div class="ttdeci">ValueType</div><div class="ttdoc">Which kind of value a parameter stores.</div><div class="ttdef"><b>Definition</b> Types.h:221</div></div>
-<div class="ttc" id="aTypes_8h_html_aee1c0fcff4b265e7ca4e8ee24795fee8"><div class="ttname"><a href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">enzo::prm::toType</a></div><div class="ttdeci">std::optional&lt; Type &gt; toType(const std::string &amp;name)</div><div class="ttdoc">Returns the parameter type a canonical name stands for, e.g. &quot;dropdown&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:270</div></div>
+<div class="ttc" id="aTypes_8h_html_adde04662eb0d43a49d07351fd9439686"><div class="ttname"><a href="Types_8h.html#adde04662eb0d43a49d07351fd9439686">enzo::prm::ValueType</a></div><div class="ttdeci">ValueType</div><div class="ttdoc">Which kind of value a parameter stores.</div><div class="ttdef"><b>Definition</b> Types.h:249</div></div>
+<div class="ttc" id="aTypes_8h_html_ae7bc3b73326d2e90bff12d6d31d3db24"><div class="ttname"><a href="Types_8h.html#ae7bc3b73326d2e90bff12d6d31d3db24">enzo::attr::visitType</a></div><div class="ttdeci">auto visitType(AttributeType type, Action &amp;&amp;action)</div><div class="ttdoc">Calls an action with the C++ type that stores an attribute type.</div><div class="ttdef"><b>Definition</b> Types.h:202</div></div>
+<div class="ttc" id="aTypes_8h_html_aee1c0fcff4b265e7ca4e8ee24795fee8"><div class="ttname"><a href="Types_8h.html#aee1c0fcff4b265e7ca4e8ee24795fee8">enzo::prm::toType</a></div><div class="ttdeci">std::optional&lt; Type &gt; toType(const std::string &amp;name)</div><div class="ttdoc">Returns the parameter type a canonical name stands for, e.g. &quot;dropdown&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:298</div></div>
 <div class="ttc" id="aTypes_8h_html_af20e38dee60c8a99ae8dd4d28554c8d3"><div class="ttname"><a href="Types_8h.html#af20e38dee60c8a99ae8dd4d28554c8d3">enzo::attr::getTypeName</a></div><div class="ttdeci">std::string getTypeName(AttributeType type)</div><div class="ttdoc">Returns the name of a type an attribute can store, e.g. &quot;vector&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:86</div></div>
 <div class="ttc" id="aTypes_8h_html_afb23b24839cd7c1721663bcb944907e8"><div class="ttname"><a href="Types_8h.html#afb23b24839cd7c1721663bcb944907e8">enzo::attr::getOwner</a></div><div class="ttdeci">std::optional&lt; AttributeOwner &gt; getOwner(const std::string &amp;name)</div><div class="ttdoc">Returns the part of the geometry a name stands for, e.g. &quot;point&quot;.</div><div class="ttdef"><b>Definition</b> Types.h:108</div></div>
 </div><!-- fragment --></div><!-- contents -->

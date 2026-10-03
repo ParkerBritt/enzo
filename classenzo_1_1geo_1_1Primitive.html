@@ -188,12 +188,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>deletePoints<
 <tr class="memitem:a8a7f563f18c19e9449569a538144bbf6"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandle</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8a7f563f18c19e9449569a538144bbf6">tryAddAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, bool intrinsic=false, bool isInternal=false)</td></tr>
 <tr class="memdesc:a8a7f563f18c19e9449569a538144bbf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle to the attribute of this type stored under this name, adding one when the name is free.  <br /></td></tr>
 <tr class="separator:a8a7f563f18c19e9449569a538144bbf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a022279872d9b64b83d3f7ad680369e5f" id="r_a022279872d9b64b83d3f7ad680369e5f"><td class="memItemLeft" align="right" valign="top"><a id="a022279872d9b64b83d3f7ad680369e5f" name="a022279872d9b64b83d3f7ad680369e5f"></a>
-std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, bool includeIntrinsics=false)</td></tr>
-<tr class="separator:a022279872d9b64b83d3f7ad680369e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad01b0c72577d3f92e577de94f247138e" id="r_ad01b0c72577d3f92e577de94f247138e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad01b0c72577d3f92e577de94f247138e">getAttribByName</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, bool includeIntrinsics=false) const</td></tr>
-<tr class="memdesc:ad01b0c72577d3f92e577de94f247138e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const counterpart of getAttribByName.  <br /></td></tr>
-<tr class="separator:ad01b0c72577d3f92e577de94f247138e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefccd8f8096b68e56e282c44049d2062" id="r_aefccd8f8096b68e56e282c44049d2062"><td class="memItemLeft" align="right" valign="top"><a id="aefccd8f8096b68e56e282c44049d2062" name="aefccd8f8096b68e56e282c44049d2062"></a>
+std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false)</td></tr>
+<tr class="separator:aefccd8f8096b68e56e282c44049d2062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac611a4a31ebca9d7a235e363f0ad7043" id="r_ac611a4a31ebca9d7a235e363f0ad7043"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac611a4a31ebca9d7a235e363f0ad7043">getAttribByName</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false) const</td></tr>
+<tr class="memdesc:ac611a4a31ebca9d7a235e363f0ad7043"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const counterpart of getAttribByName.  <br /></td></tr>
+<tr class="separator:ac611a4a31ebca9d7a235e363f0ad7043"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add22aecbe7fa31aee30015077dd68314" id="r_add22aecbe7fa31aee30015077dd68314"><td class="memItemLeft" align="right" valign="top"><a id="add22aecbe7fa31aee30015077dd68314" name="add22aecbe7fa31aee30015077dd68314"></a>
 const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumAttributes</b> (const <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner) const</td></tr>
 <tr class="separator:add22aecbe7fa31aee30015077dd68314"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,9 +203,9 @@ std::weak_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html"
 <tr class="memitem:a486a4d4b497a4960a91bae835e3e93c7" id="r_a486a4d4b497a4960a91bae835e3e93c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a486a4d4b497a4960a91bae835e3e93c7">getAttributes</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, bool includeIntrinsics=false) const</td></tr>
 <tr class="memdesc:a486a4d4b497a4960a91bae835e3e93c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute on the owner.  <br /></td></tr>
 <tr class="separator:a486a4d4b497a4960a91bae835e3e93c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a527a9caf266b296cb6ac7945b88f18ad" id="r_a527a9caf266b296cb6ac7945b88f18ad"><td class="memItemLeft" align="right" valign="top"><a id="a527a9caf266b296cb6ac7945b88f18ad" name="a527a9caf266b296cb6ac7945b88f18ad"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name)</td></tr>
-<tr class="separator:a527a9caf266b296cb6ac7945b88f18ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a791bd8aeeb996c2284d9aa4b9d88e7b8" id="r_a791bd8aeeb996c2284d9aa4b9d88e7b8"><td class="memItemLeft" align="right" valign="top"><a id="a791bd8aeeb996c2284d9aa4b9d88e7b8" name="a791bd8aeeb996c2284d9aa4b9d88e7b8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name)</td></tr>
+<tr class="separator:a791bd8aeeb996c2284d9aa4b9d88e7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f9ebcf823dc0f40528be39d1dcbca7f" id="r_a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f9ebcf823dc0f40528be39d1dcbca7f">addGroup</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name)</td></tr>
 <tr class="memdesc:a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the group of this name on the given owner, adding one when the name is free.  <br /></td></tr>
 <tr class="separator:a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -471,8 +471,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ad01b0c72577d3f92e577de94f247138e" name="ad01b0c72577d3f92e577de94f247138e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad01b0c72577d3f92e577de94f247138e">&#9670;&#160;</a></span>getAttribByName()</h2>
+<a id="ac611a4a31ebca9d7a235e363f0ad7043" name="ac611a4a31ebca9d7a235e363f0ad7043"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac611a4a31ebca9d7a235e363f0ad7043">&#9670;&#160;</a></span>getAttribByName()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -485,7 +485,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

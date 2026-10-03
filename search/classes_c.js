@@ -8,7 +8,7 @@ var searchData=
   ['point_5',['Point',['../classenzo_1_1Point.html',1,'enzo']]],
   ['pointnormalhandle_6',['PointNormalHandle',['../classenzo_1_1geo_1_1PointNormalHandle.html',1,'enzo::geo']]],
   ['pointoffsets_7',['PointOffsets',['../structenzo_1_1geo_1_1Primitive_1_1PointOffsets.html',1,'enzo::geo::Primitive']]],
-  ['pointscript_8',['PointScript',['../classenzo_1_1expr_1_1PointScript.html',1,'enzo::expr']]],
+  ['pointscript_8',['PointScript',['../classenzo_1_1script_1_1PointScript.html',1,'enzo::script']]],
   ['primitive_9',['Primitive',['../classenzo_1_1geo_1_1Primitive.html',1,'enzo::geo']]],
   ['primpath_10',['PrimPath',['../classenzo_1_1PrimPath.html',1,'enzo']]]
 ];

@@ -226,9 +226,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr
 <tr class="memitem:a2df671a62df60d8df53c0bed27c460cd" id="r_a2df671a62df60d8df53c0bed27c460cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2df671a62df60d8df53c0bed27c460cd">cook</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId)</td></tr>
 <tr class="memdesc:a2df671a62df60d8df53c0bed27c460cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooks the given node.  <br /></td></tr>
 <tr class="separator:a2df671a62df60d8df53c0bed27c460cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a694b54104642d1085960f61f5e32c2ee" id="r_a694b54104642d1085960f61f5e32c2ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a694b54104642d1085960f61f5e32c2ee">cookOutput</a> (<a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a> nodeId, unsigned int outputIndex)</td></tr>
-<tr class="memdesc:a694b54104642d1085960f61f5e32c2ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy of one of a node's outputs.  <br /></td></tr>
-<tr class="separator:a694b54104642d1085960f61f5e32c2ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5480672d5e68e00d81c6af4cb2e08d4" id="r_ae5480672d5e68e00d81c6af4cb2e08d4"><td class="memItemLeft" align="right" valign="top"><a id="ae5480672d5e68e00d81c6af4cb2e08d4" name="ae5480672d5e68e00d81c6af4cb2e08d4"></a>
 <a class="el" href="classenzo_1_1nt_1_1NetworkGraph.html">nt::NetworkGraph</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>graph</b> ()</td></tr>
 <tr class="memdesc:ae5480672d5e68e00d81c6af4cb2e08d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the graph that owns the network's wiring and dependencies. <br /></td></tr>
@@ -396,32 +393,6 @@ A multi input port makes room, moving the node links from the index onward up on
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="a694b54104642d1085960f61f5e32c2ee" name="a694b54104642d1085960f61f5e32c2ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a694b54104642d1085960f61f5e32c2ee">&#9670;&#160;</a></span>cookOutput()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> enzo::nt::NetworkManager::cookOutput </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a></td>          <td class="paramname"><span class="paramname"><em>nodeId</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns a copy of one of a node's outputs. </p>
-<p>Naming the node directly reaches geometry that no node link leads to, such as an output node sitting inside a container's child scope.</p>
-<dl class="section note"><dt>Note</dt><dd>The node cooks first, so the geometry is never stale. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>A copy the caller owns, so later cooks of the node leave it untouched. </dd></dl>
 
 </div>
 </div>
