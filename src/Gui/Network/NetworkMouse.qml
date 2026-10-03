@@ -9,6 +9,9 @@ MouseArea {
     // The pan and zoom the cursor is mapped through.
     property var viewTransform
 
+    // The link layer whose hover mark the cursor drives.
+    property var links
+
     // The tools a left press can hand the drag to.
     property var linkDrag
     property var cutter
@@ -114,10 +117,29 @@ MouseArea {
         activeTool = null;
     }
 
+    // Marks what a press at a canvas point would do.
+    function updateHover(canvasPoint) {
+        if (cutter.held)
+            cutter.hover(canvasPoint);
+        else if (selection.sweeping || draggingLink || linkDrag.linking || network.nodes.isOverNodeOrPort(canvasPoint))
+            links.clearHover();
+        else
+            redirect.hover(canvasPoint);
+    }
+
+    // Refreshes the hover mark when the cut key changes under a still cursor.
+    Connections {
+        target: root.cutter
+        function onHeldChanged() {
+            if (root.containsMouse)
+                root.updateHover(root.cursorPoint);
+        }
+    }
+
     onReleased: endPress()
     onCanceled: endPress()
 
-    onExited: redirect.clearHover()
+    onExited: links.clearHover()
 
     onPositionChanged: mouse => {
         const canvasPoint = canvasPointOf(mouse);
@@ -129,13 +151,7 @@ MouseArea {
         else if (linkDrag.linking)
             linkDrag.update(canvasPoint);
 
-        // The hover preview mirrors what a press at this point would do.
-        if (cutter.held)
-            cutter.hover(canvasPoint);
-        else if (selection.sweeping || draggingLink || linkDrag.linking || network.nodes.isOverNodeOrPort(canvasPoint))
-            redirect.clearHover();
-        else
-            redirect.hover(canvasPoint);
+        updateHover(canvasPoint);
 
         if (!(mouse.buttons & Qt.MiddleButton))
             return;

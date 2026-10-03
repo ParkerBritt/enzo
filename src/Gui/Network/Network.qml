@@ -20,7 +20,7 @@ Rectangle {
         links: committedLinks
         linkDrag: linkController
         hitRadius: root.linkHitRadius
-        enabled: !cutController.held
+        enabled: false
     }
 
     LinkCutController {
@@ -72,6 +72,7 @@ Rectangle {
     NetworkMouse {
         id: mouseInput
         viewTransform: view
+        links: committedLinks
         linkDrag: linkController
         cutter: cutController
         redirect: redirectController

@@ -16,11 +16,8 @@ QtObject {
 
     property bool enabled: true
 
-    // The link under the cursor, -1 when there is none.
-    property int hoveredLink: -1
-
     // True while the cursor rests on a link a press would pick up.
-    readonly property bool overLink: enabled && hoveredLink >= 0
+    readonly property bool overLink: links.hoverKind === NodeLinkLayer.Redirect
 
     // Detaches the pressed end of the link under the cursor and hands it to the
     // link controller. Returns true when a link was picked up.
@@ -46,16 +43,11 @@ QtObject {
 
     // Marks the link a press would pick up and the end it would detach.
     function hover(canvasPoint) {
-        if (!enabled)
+        if (!enabled) {
+            links.clearHover();
             return;
+        }
         const hit = links.linkAt(canvasPoint, hitRadius);
-        hoveredLink = hit.linkIndex;
         links.setHover(hit.linkIndex, NodeLinkLayer.Redirect, hit.atOutputEnd === true);
-    }
-
-    // Clears the hover mark.
-    function clearHover() {
-        hoveredLink = -1;
-        links.setHover(-1, NodeLinkLayer.None);
     }
 }
