@@ -4,6 +4,9 @@ import QtQuick
 MouseArea {
     id: root
 
+    // Clears the cursor so the items underneath set their own.
+    cursorShape: undefined
+
     function isEditingText(item) {
         return item instanceof TextInput || item instanceof TextEdit;
     }
