@@ -135,7 +135,7 @@ components:
   nodeLink:
     inactiveColor: $line
     activeColor:   $lineBright
-    cutColor:      $danger
+    cutColor:      "#f5685f"
     redirectColor: $lineBright
   spreadsheet:
     backgroundColor:  $fieldSurface
