@@ -378,8 +378,13 @@ void NodeLinkLayer::setHover(int linkIndex, LinkHover kind, bool atOutputEnd)
     hoverLink_ = linkIndex;
     hoverKind_ = kind;
     hoverAtOutputEnd_ = atOutputEnd;
+    Q_EMIT hoverChanged();
     update();
 }
+
+void NodeLinkLayer::clearHover() { setHover(-1, LinkHover::None); }
+
+NodeLinkLayer::LinkHover NodeLinkLayer::hoverKind() const { return hoverKind_; }
 
 bool NodeLinkLayer::floatingActive() const { return floatingActive_; }
 

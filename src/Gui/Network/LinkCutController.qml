@@ -42,7 +42,7 @@ QtObject {
     // Cuts the link under the cursor.
     function click(canvasPoint) {
         cut(links.linkAt(canvasPoint, hitRadius).linkIndex, canvasPoint);
-        links.setHover(-1, NodeLinkLayer.None);
+        links.clearHover();
     }
 
     // Marks the link a click would cut.

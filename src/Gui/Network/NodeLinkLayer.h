@@ -30,6 +30,9 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(QColor cutColor MEMBER cutColor_ NOTIFY cutColorChanged)
     Q_PROPERTY(QColor redirectColor MEMBER redirectColor_ NOTIFY redirectColorChanged)
 
+    // What hovering the link under the cursor previews.
+    Q_PROPERTY(LinkHover hoverKind READ hoverKind NOTIFY hoverChanged)
+
     // The preview of what releasing a node drag would rewire, the link model indices
     // it cuts in previewCutLinks and the links that replace them in previewLinks.
     Q_PROPERTY(
@@ -90,6 +93,11 @@ class NodeLinkLayer : public QQuickItem
     /// @note A redirect hover names the end a press would pick up via @p atOutputEnd.
     Q_INVOKABLE void setHover(int linkIndex, LinkHover kind, bool atOutputEnd = false);
 
+    /// @brief Clears the hover mark.
+    Q_INVOKABLE void clearHover();
+
+    LinkHover hoverKind() const;
+
     NodeListModel* nodes() const;
     void setNodes(NodeListModel* model);
 
@@ -117,6 +125,7 @@ class NodeLinkLayer : public QQuickItem
     void linkColorChanged();
     void cutColorChanged();
     void redirectColorChanged();
+    void hoverChanged();
     void floatingChanged();
     void previewChanged();
     void previewColorChanged();
