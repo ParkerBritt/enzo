@@ -357,9 +357,10 @@ qt_add_resources(${AppExec} "enzoTheme"
     "static"
     FILES
     "static/theme/default.yml"
+    "static/theme/dark.yml"
+    "static/theme/grey.yml"
     "static/theme/tokyo-night.yml"
     "static/theme/catppuccin-mocha.yml"
-    "static/theme/discord.yml"
 )
 
 # A run from a build directory loads QML from here, so edits reload without a

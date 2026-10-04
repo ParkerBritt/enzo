@@ -1,0 +1,34 @@
+# The dark theme lifted to lighter greys, with the accent kept. It carries only
+# the values it changes and falls back to the default theme for the rest.
+
+name: Grey
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#191919"
+  fieldSurface:  "#1e1e1e"
+  surfaceHeader: "#232323"
+  surface:       "#292929"
+  surfaceRaised: "#323232"
+
+  # The lightest neutral fill, behind a selected row and on a node body
+  selectedFill: "#4c4c4c"
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#373737"
+  border:     "#424242"
+  line:       "#5d5d5d"
+  lineBright: "#797979"
+
+  # Text, brightest to dimmest
+  textStrong: "#f9f9f9"
+  text:       "#eeeeee"
+  textLabel:  "#b3b3b3"
+  textMuted:  "#828282"
+  textFaint:  "#595959"
+
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#4c4c4c"
+
+  # The grip a value is dragged by
+  handle: "#d7d7d7"

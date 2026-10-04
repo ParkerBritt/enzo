@@ -1,0 +1,34 @@
+# The default theme in pure greys, with the accent kept. It carries only the
+# values it changes and falls back to the default theme for the rest.
+
+name: Dark
+
+variables:
+  # Surfaces, darkest to lightest
+  background:    "#0a0a0a"
+  fieldSurface:  "#0d0d0d"
+  surfaceHeader: "#101010"
+  surface:       "#141414"
+  surfaceRaised: "#1a1a1a"
+
+  # The lightest neutral fill, behind a selected row and on a node body
+  selectedFill: "#2f2f2f"
+
+  # Lines, from the faintest divider to the brightest stroke
+  borderSoft: "#1e1e1e"
+  border:     "#272727"
+  line:       "#3e3e3e"
+  lineBright: "#5a5a5a"
+
+  # Text, brightest to dimmest
+  textStrong: "#f6f6f6"
+  text:       "#e8e8e8"
+  textLabel:  "#9b9b9b"
+  textMuted:  "#646464"
+  textFaint:  "#3b3b3b"
+
+  # Fill that marks a value, such as the bar in a slider
+  valueFill: "#2f2f2f"
+
+  # The grip a value is dragged by
+  handle: "#c9c9c9"
