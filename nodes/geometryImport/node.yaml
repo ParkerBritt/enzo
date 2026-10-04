@@ -12,6 +12,8 @@ implementation:
   library: enzoOps
   constructor: geometryImport
 
+icon: icon.svg
+
 parameters:
   - name: filePath
     label: File Path

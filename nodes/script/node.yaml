@@ -14,6 +14,8 @@ implementation:
   library: enzoOps
   constructor: script
 
+icon: icon.svg
+
 parameters:
   - name: code
     label: Code

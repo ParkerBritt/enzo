@@ -15,4 +15,6 @@ implementation:
   library: enzoOps
   constructor: merge
 
+icon: icon.svg
+
 parameters: []

@@ -12,6 +12,8 @@ implementation:
   library: enzoOps
   constructor: modelRat
 
+icon: icon.svg
+
 parameters:
   - name: detail
     label: Detail

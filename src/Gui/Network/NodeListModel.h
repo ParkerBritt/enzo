@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QPointF>
 #include <QRectF>
+#include <QUrl>
 #include <QVariant>
 #include <QVariantMap>
 #include <functional>
@@ -103,6 +104,7 @@ class NodeListModel : public QAbstractListModel
         nt::NodeId nodeId;
         QString name;
         QString type;
+        QUrl iconUrl;
         float x;
         float y;
         int inputPortCount;

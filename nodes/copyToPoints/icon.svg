@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f6f6f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4.666 10.23L1.67 8.5L1.67 3.5L6 1L10.33 3.5L10.33 4.5L10.5 4.402L6.003 7.006L5.692 7.244L5.414 7.522L5.175 7.833L4.979 8.173L4.829 8.536L4.728 8.915L4.676 9.304L4.67 9.5Z" fill-rule="evenodd" fill="#5a5a62" stroke="none" />
+  <path d="M10.666 16.23L7.67 14.5L7.67 9.5L12 7L16.33 9.5L16.33 10.5L16.5 10.402L12.003 13.006L11.692 13.244L11.414 13.522L11.175 13.833L10.979 14.173L10.829 14.536L10.728 14.915L10.676 15.304L10.67 15.5Z" fill-rule="evenodd" fill="#5a5a62" stroke="none" />
+  <path d="M18 13L22.33 15.5L22.33 20.5L18 23L13.67 20.5L13.67 15.5Z" fill-rule="evenodd" fill="#5a5a62" stroke="none" />
+  <g stroke-width="1" stroke="#a6a6ac">
+    <path d="M1.67 3.5L3.618 4.624M8.382 4.624L10.33 3.5" />
+    <path d="M7.67 9.5L9.618 10.624M14.382 10.624L16.33 9.5" />
+    <path d="M13.67 15.5L15.618 16.624M20.382 16.624L22.33 15.5" />
+    <path d="M18 20.76L18 23" />
+  </g>
+  <path d="M3.662 9.65L1.67 8.5L1.67 3.5L6 1L10.192 3.42" />
+  <path d="M9.662 15.65L7.67 14.5L7.67 9.5L12 7L16.192 9.42" />
+  <path d="M18 13L22.33 15.5L22.33 20.5L18 23L13.67 20.5L13.67 15.5Z" />
+  <circle cx="6" cy="6" r="1.25" fill="#f6f6f9" stroke="none" />
+  <circle cx="12" cy="12" r="1.25" fill="#f6f6f9" stroke="none" />
+  <circle cx="18" cy="18" r="1.25" fill="#f6f6f9" stroke="none" />
+</svg>

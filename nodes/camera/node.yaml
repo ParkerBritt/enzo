@@ -12,6 +12,8 @@ implementation:
   library: enzoOps
   constructor: camera
 
+icon: icon.svg
+
 parameters:
   - name: transform
     label: Transform

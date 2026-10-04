@@ -1,4 +1,5 @@
 #include "Gui/Network/NodeListModel.h"
+#include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include <QLineF>
@@ -24,6 +25,14 @@ qreal getPortCenter(int portIndex, int portCount)
     return getPortWidth(portCount) * (portIndex + 1);
 }
 
+// Returns the icon a node type ships, or the default cube when it ships none.
+QUrl getIconUrl(const nt::NodeType& nodeType)
+{
+    std::filesystem::path iconFile = nodeType.getIconFile();
+    if (iconFile.empty()) iconFile = getStaticDir() / "icons" / "nodeDefault.svg";
+    return QUrl::fromLocalFile(QString::fromStdString(iconFile.string()));
+}
+
 } // namespace
 
 NodeListModel::NodeListModel(QObject* parent) : QAbstractListModel(parent) {}
@@ -34,6 +43,7 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"nodeId", [](const Node& node) { return QVariant::fromValue(node.nodeId); }},
         {"name", [](const Node& node) { return QVariant(node.name); }},
         {"type", [](const Node& node) { return QVariant(node.type); }},
+        {"iconUrl", [](const Node& node) { return QVariant(node.iconUrl); }},
         {"x", [](const Node& node) { return QVariant(node.x); }},
         {"y", [](const Node& node) { return QVariant(node.y); }},
         {"inputPortCount", [](const Node& node) { return QVariant(node.inputPortCount); }},
@@ -340,6 +350,7 @@ NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
         nodeId,
         QString::fromStdString(node.getName()),
         QString::fromStdString(node.getType().getLabel()),
+        getIconUrl(node.getType()),
         position.x(),
         position.y(),
         static_cast<int>(node.getType().inputPorts.size()),
