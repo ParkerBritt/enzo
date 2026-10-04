@@ -48,6 +48,7 @@ Repeater {
         z: linkEndpoint ? 2 : 0
         nodeId: model.nodeId
         label: model.name
+        typeLabel: model.type
         iconUrl: model.iconUrl
         selected: model.selected
         primary: model.primary
