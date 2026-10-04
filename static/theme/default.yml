@@ -18,6 +18,7 @@ palette:
     border:     Panel border
     line:       Line
     lineBright: Line, bright
+    gridDot:    Grid dot
   Text:
     textStrong: Strong text
     text:       Body text
@@ -71,6 +72,9 @@ variables:
   line:       "#3d3d4c"
   lineBright: "#59596b"
 
+  # The dots across the network canvas
+  gridDot: $borderSoft
+
   # Text, brightest to dimmest
   textStrong: "#f6f6f9"
   text:       "#e7e8ec"
@@ -121,7 +125,7 @@ components:
   menu:
     barColor: $surfaceHeader
   network:
-    dotColor: $borderSoft
+    dotColor: $gridDot
     # The box dragged across the canvas to select nodes.
     selectionColor:       $accentDim
     selectionBorderColor: $accentLine

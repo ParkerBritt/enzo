@@ -5,25 +5,26 @@ name: Tokyo Night
 
 variables:
   # Surfaces, darkest to lightest
-  background:    "#1a1b26"
+  background:    "#121219"
   fieldSurface:  "#16161e"
-  surfaceHeader: "#1d1e2b"
-  surface:       "#20212f"
-  surfaceRaised: "#24283b"
+  surfaceHeader: "#16161e"
+  surface:       "#1a1b26"
+  surfaceRaised: "#1c1d29"
 
   # The lightest neutral fill, behind a selected row and on a node body
-  selectedFill: "#2f334d"
+  selectedFill: "#292e42"
 
   # Lines, from the faintest divider to the brightest stroke
-  borderSoft: "#222433"
-  border:     "#2c2f44"
-  line:       "#3b3f5c"
-  lineBright: "#565f89"
+  borderSoft: "#24293d"
+  border:     "#292e42"
+  line:       "#3b4261"
+  lineBright: "#545c7e"
+  gridDot:    "#222433"
 
   # Text, brightest to dimmest
   textStrong: "#c0caf5"
   text:       "#a9b1d6"
-  textLabel:  "#787c99"
+  textLabel:  "#737aa2"
   textMuted:  "#565f89"
   textFaint:  "#3b4261"
 
@@ -32,7 +33,7 @@ variables:
   accentBright: "#7dcfff"
 
   # Fill that marks a value, such as the bar in a slider
-  valueFill: "#2f334d"
+  valueFill: "#292e42"
 
   # The grip a value is dragged by
   handle: "#c0caf5"
@@ -52,9 +53,6 @@ variables:
   axisXLight: "#f99bab"
   axisYLight: "#b9dd96"
   axisZLight: "#a3bdf9"
-
-  # Flat shading colour of the display geometry
-  geometry: "#a9b1d6"
 
 components:
   node:

@@ -7,9 +7,9 @@ variables:
   # Surfaces, darkest to lightest
   background:    "#11111b"
   fieldSurface:  "#181825"
-  surfaceHeader: "#1b1b29"
-  surface:       "#1e1e2e"
-  surfaceRaised: "#252537"
+  surfaceHeader: "#161621"
+  surface:       "#191926"
+  surfaceRaised: "#11111b"
 
   # The lightest neutral fill, behind a selected row and on a node body
   selectedFill: "#313244"
@@ -19,6 +19,7 @@ variables:
   border:     "#313244"
   line:       "#45475a"
   lineBright: "#585b70"
+  gridDot:    "#1f1f33"
 
   # Text, brightest to dimmest
   textStrong: "#cdd6f4"
@@ -29,7 +30,7 @@ variables:
 
   # Accent
   accent:       "#cba6f7"
-  accentBright: "#dbc2fa"
+  accentBright: "#b4befe"
 
   # Fill that marks a value, such as the bar in a slider
   valueFill: "#313244"
@@ -49,13 +50,12 @@ variables:
   axisX:      "#f38ba8"
   axisY:      "#a6e3a1"
   axisZ:      "#89b4fa"
-  axisXLight: "#f5a9be"
-  axisYLight: "#bde9b9"
-  axisZLight: "#a9c8fb"
-
-  # Flat shading colour of the display geometry
-  geometry: "#a6adc8"
+  axisXLight: "#eba0ac"
+  axisYLight: "#94e2d5"
+  axisZLight: "#b4befe"
 
 components:
   node:
     displayFlagColor: "#89b4fa"
+  nodeLink:
+    cutColor: "#f38ba8"
