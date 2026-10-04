@@ -12,6 +12,8 @@ implementation:
   library: enzoOps
   constructor: cylinder
 
+icon: icon.svg
+
 parameters:
   - name: placement_divider
     label: Placement

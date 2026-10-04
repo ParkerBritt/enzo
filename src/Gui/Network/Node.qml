@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import QtQuick.VectorImage
 import Enzo
 
 Item {
@@ -20,6 +21,7 @@ Item {
 
     property var nodeId
     property string label: "Grid"
+    property url iconUrl
     property real radius: 5
     property real viewZoom: 1
     property bool selected: false
@@ -169,12 +171,24 @@ Item {
             }
         }
 
+        VectorImage {
+            width: 14
+            height: 14
+            anchors.verticalCenter: parent.verticalCenter
+            x: 8
+            preferredRendererType: VectorImage.CurveRenderer
+            fillMode: VectorImage.PreserveAspectFit
+            source: root.iconUrl
+        }
+
         Text {
             text: root.label
             color: Theme.var.textStrong
             font.pointSize: 5
             anchors.verticalCenter: parent.verticalCenter
-            x: 10
+            x: 28
+            width: displayTab.x - x - 6
+            elide: Text.ElideRight
         }
     }
 

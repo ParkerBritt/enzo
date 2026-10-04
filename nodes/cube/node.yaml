@@ -12,6 +12,8 @@ implementation:
   library: enzoOps
   constructor: cube
 
+icon: icon.svg
+
 parameters:
   - name: size
     label: Size

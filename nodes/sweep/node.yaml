@@ -16,6 +16,8 @@ implementation:
   library: enzoOps
   constructor: sweep
 
+icon: icon.svg
+
 parameters:
   - name: profile_divider
     label: Profile

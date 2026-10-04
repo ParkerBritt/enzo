@@ -15,4 +15,6 @@ implementation:
   library: enzoOps
   constructor: copyToPoints
 
+icon: icon.svg
+
 parameters: []
