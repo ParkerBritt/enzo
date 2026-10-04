@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import QtQuick.VectorImage
 import Enzo
 import "../Components"
 
@@ -90,7 +91,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: panel.sideMargin
-                spacing: 8
+                spacing: 10
+
+                VectorImage {
+                    width: 22
+                    height: 22
+                    anchors.verticalCenter: parent.verticalCenter
+                    preferredRendererType: VectorImage.CurveRenderer
+                    fillMode: VectorImage.PreserveAspectFit
+                    source: parameters.nodeIconUrl
+                }
 
                 Column {
                     Text {
