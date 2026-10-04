@@ -1,5 +1,4 @@
 #include "Gui/Network/NodeListModel.h"
-#include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include <QLineF>
@@ -25,12 +24,10 @@ qreal getPortCenter(int portIndex, int portCount)
     return getPortWidth(portCount) * (portIndex + 1);
 }
 
-// Returns the icon a node type ships, or the default cube when it ships none.
+// Returns the icon file a node type shows on its card.
 QUrl getIconUrl(const nt::NodeType& nodeType)
 {
-    std::filesystem::path iconFile = nodeType.getIconFile();
-    if (iconFile.empty()) iconFile = getStaticDir() / "icons" / "nodeDefault.svg";
-    return QUrl::fromLocalFile(QString::fromStdString(iconFile.string()));
+    return QUrl::fromLocalFile(QString::fromStdString(nodeType.getIconFile().string()));
 }
 
 } // namespace

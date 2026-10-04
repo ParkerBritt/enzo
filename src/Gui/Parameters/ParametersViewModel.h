@@ -3,6 +3,7 @@
 #include "Engine/Core/Types.h"
 #include <QList>
 #include <QObject>
+#include <QUrl>
 #include <boost/signals2/connection.hpp>
 #include <optional>
 
@@ -29,6 +30,7 @@ class ParametersViewModel : public QObject
     Q_PROPERTY(bool hasNode READ hasNode NOTIFY parametersChanged)
     Q_PROPERTY(QString nodeName READ nodeName NOTIFY parametersChanged)
     Q_PROPERTY(QString nodeType READ nodeType NOTIFY parametersChanged)
+    Q_PROPERTY(QUrl nodeIconUrl READ nodeIconUrl NOTIFY parametersChanged)
 
   public:
     explicit ParametersViewModel(QObject* parent = nullptr);
@@ -37,6 +39,7 @@ class ParametersViewModel : public QObject
     bool hasNode() const { return nodeId_.has_value(); }
     QString nodeName() const { return nodeName_; }
     QString nodeType() const { return nodeType_; }
+    QUrl nodeIconUrl() const { return nodeIconUrl_; }
 
   Q_SIGNALS:
     void parametersChanged();
@@ -64,6 +67,7 @@ class ParametersViewModel : public QObject
     QList<ParameterItem*> allItems_;
     QString nodeName_;
     QString nodeType_;
+    QUrl nodeIconUrl_;
 
     boost::signals2::scoped_connection primaryNodeSubscription_;
     boost::signals2::scoped_connection parameterChangedSubscription_;

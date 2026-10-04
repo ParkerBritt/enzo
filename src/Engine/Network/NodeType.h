@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/InstallPaths.h"
 #include "Engine/Parameter/Template.h"
 #include <filesystem>
 #include <string>
@@ -111,10 +112,10 @@ struct NodeType
     }
 
     /// @brief Returns the icon file on disk.
-    /// @return The full path, empty when the node ships no icon.
+    /// @return The full path, or the default cube when the node ships no icon.
     std::filesystem::path getIconFile() const
     {
-        if (iconPath.empty()) return {};
+        if (iconPath.empty()) return getStaticDir() / "icons" / "nodeDefault.svg";
         return folder / iconPath;
     }
 };
