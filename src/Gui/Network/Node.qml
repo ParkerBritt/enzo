@@ -21,6 +21,7 @@ Item {
 
     property var nodeId
     property string label: "Grid"
+    property string typeLabel
     property url iconUrl
     property real radius: 5
     property real viewZoom: 1
@@ -181,14 +182,25 @@ Item {
             source: root.iconUrl
         }
 
-        Text {
-            text: root.label
-            color: Theme.var.textStrong
-            font.pointSize: 5
+        Column {
             anchors.verticalCenter: parent.verticalCenter
             x: 28
             width: displayTab.x - x - 6
-            elide: Text.ElideRight
+
+            Text {
+                width: parent.width
+                text: root.typeLabel
+                color: Theme.var.textLabel
+                font.pointSize: 3.5
+                elide: Text.ElideRight
+            }
+            Text {
+                width: parent.width
+                text: root.label
+                color: Theme.var.textStrong
+                font.pointSize: 5
+                elide: Text.ElideRight
+            }
         }
     }
 
