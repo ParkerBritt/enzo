@@ -1,0 +1,102 @@
+version: 1
+
+name: spiral
+namespace: enzo
+label: Spiral
+tags: [primitive, curve, helix]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: spiral
+
+icon: icon.svg
+
+parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
+  - name: axis
+    label: Axis
+    type: dropdown
+    default: y
+    tooltip: The axis the spiral winds around.
+    options:
+      - {value: x, label: X Axis}
+      - {value: y, label: Y Axis}
+      - {value: z, label: Z Axis}
+
+  - name: center
+    label: Center
+    type: float
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+    style: xyz
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+    style: xyz
+
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
+
+  - name: uniformScale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: radius
+    label: Radius
+    type: float
+    size: 2
+    default: 1
+    range: {min: 0, max: 10, minLocked: true}
+    tooltip: >
+      The radius at the start and at the end. Set them to different values
+      to make the spiral widen or narrow as it turns.
+
+  - name: height
+    label: Height
+    type: float
+    default: 2
+    range: {min: 0, max: 10}
+    tooltip: The distance from the start to the end along the axis. Zero gives a flat spiral.
+
+  - name: turns_divider
+    label: Turns
+    type: divider
+    icon: spline
+
+  - name: turns
+    label: Turns
+    type: float
+    default: 3
+    range: {min: 0, max: 20, minLocked: true}
+    tooltip: How many times the spiral goes around the axis.
+
+  - name: turnDirection
+    label: Turn Direction
+    type: dropdown
+    default: counterclockwise
+    tooltip: Which way the spiral turns when seen from the end it rises towards.
+    options:
+      - {value: counterclockwise, label: Counterclockwise}
+      - {value: clockwise, label: Clockwise}
+
+  - name: pointsPerTurn
+    label: Points Per Turn
+    type: int
+    default: 24
+    range: {min: 3, max: 100, minLocked: true}
