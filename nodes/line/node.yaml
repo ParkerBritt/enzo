@@ -1,0 +1,62 @@
+version: 1
+
+name: line
+namespace: enzo
+label: Line
+tags: [primitive, curve]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: line
+
+icon: icon.svg
+
+parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
+  - name: origin
+    label: Origin
+    type: float
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+    style: xyz
+    tooltip: Where the line starts.
+
+  - name: direction
+    label: Direction
+    type: float
+    size: 3
+    default: [0, 1, 0]
+    range: {min: -1, max: 1}
+    style: xyz
+    tooltip: The way the line runs from the origin. Only the direction counts, not the length.
+
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
+
+  - name: length
+    label: Length
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: divisions_divider
+    label: Divisions
+    type: divider
+    icon: spline
+
+  - name: points
+    label: Points
+    type: int
+    default: 2
+    range: {min: 2, max: 100, minLocked: true}
+    tooltip: How many points are spread evenly along the line, including both ends.
