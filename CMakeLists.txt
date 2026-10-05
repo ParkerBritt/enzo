@@ -459,6 +459,9 @@ if(ENZO_BUILD_TESTS)
         tests/AttributeCreateNodeTests.cpp
         tests/CylinderNodeTests.cpp
         tests/SphereNodeTests.cpp
+        tests/TorusNodeTests.cpp
+        tests/LineNodeTests.cpp
+        tests/SpiralNodeTests.cpp
         tests/DuplicateNodeTests.cpp
         tests/CopyToPointsNodeTests.cpp
         tests/TransformTests.cpp
