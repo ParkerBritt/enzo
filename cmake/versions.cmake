@@ -51,6 +51,11 @@ set(ENZO_FASTNOISE2_URL
 set(ENZO_FASTNOISE2_SHA256
     e460592c32e9b1a2cf6e6f6aea5e16c9fe23c68bd185adb315202a5a993656b9)
 
+# Pins a commit since no release tag is newer than 2024. Clones the repository
+# since the source archive leaves out the submodules DiligentCore builds from.
+set(ENZO_DILIGENT_CORE_REPOSITORY https://github.com/DiligentGraphics/DiligentCore.git)
+set(ENZO_DILIGENT_CORE_COMMIT 18bfa7b7563a0ef5b5fe074d37c2e8304100e965)
+
 set(ENZO_YAML_CPP_VERSION 0.8.0)
 set(ENZO_YAML_CPP_URL
     https://github.com/jbeder/yaml-cpp/archive/refs/tags/${ENZO_YAML_CPP_VERSION}.tar.gz)
