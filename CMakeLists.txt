@@ -139,6 +139,16 @@ FetchContent_Declare(
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(yaml-cpp)
 
+# DiligentCore (viewport renderer), built with only its Vulkan backend
+FetchContent_Declare(
+  DiligentCore
+  GIT_REPOSITORY ${ENZO_DILIGENT_CORE_REPOSITORY}
+  GIT_TAG        ${ENZO_DILIGENT_CORE_COMMIT}
+)
+set(DILIGENT_NO_OPENGL ON CACHE BOOL "" FORCE)
+set(DILIGENT_INSTALL_CORE OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(DiligentCore)
+
 # daslang (das scripting language), built from the vendored submodule
 set(DASLANG_DIR "${CMAKE_SOURCE_DIR}/extern/daslang")
 
@@ -207,6 +217,12 @@ target_compile_definitions(enzoEngine PRIVATE
 
 
 
+# Renders the viewport without depending on Qt.
+add_library(enzoGraphics STATIC
+    src/Graphics/GraphicsDevice.cpp
+)
+target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common Vulkan::Headers)
+target_include_directories(enzoGraphics PUBLIC src)
 
 
 # QML application
@@ -469,10 +485,11 @@ if(ENZO_BUILD_TESTS)
         tests/StyleTests.cpp
         tests/AttributeNoiseNodeTests.cpp
         tests/MountainNodeTests.cpp
+        tests/GraphicsDeviceTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
-    target_link_libraries(${TestExec} PRIVATE enzoEngine Qt6::Core Catch2::Catch2WithMain)
+    target_link_libraries(${TestExec} PRIVATE enzoEngine enzoGraphics Qt6::Core Catch2::Catch2WithMain)
     target_include_directories(${TestExec} PRIVATE src)
 
     # Stage the test binary next to daslib so daslang resolves its standard
