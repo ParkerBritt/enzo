@@ -25,7 +25,7 @@ class NodeListModel : public QAbstractListModel
 
   public:
     /// The node card dimensions, the single source for the port geometry and the card.
-    static constexpr qreal nodeWidth = 80;
+    static constexpr qreal nodeWidth = 90;
     static constexpr qreal nodeHeight = 25;
 
     explicit NodeListModel(QObject* parent = nullptr);
