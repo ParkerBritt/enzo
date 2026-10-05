@@ -1,0 +1,87 @@
+version: 1
+
+name: torus
+namespace: enzo
+label: Torus
+tags: [primitive, surface, polygon]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: torus
+
+icon: icon.svg
+
+parameters:
+  - name: placement_divider
+    label: Placement
+    type: divider
+    icon: axis-3d
+
+  - name: axis
+    label: Axis
+    type: dropdown
+    default: y
+    tooltip: The axis running through the hole of the torus.
+    options:
+      - {value: x, label: X Axis}
+      - {value: y, label: Y Axis}
+      - {value: z, label: Z Axis}
+
+  - name: center
+    label: Center
+    type: float
+    size: 3
+    default: 0
+    range: {min: -10, max: 10}
+    style: xyz
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    default: 0
+    range: {min: -360, max: 360}
+    style: xyz
+
+  - name: dimensions_divider
+    label: Dimensions
+    type: divider
+    icon: scaling
+
+  - name: uniformScale
+    label: Uniform Scale
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+
+  - name: radius
+    label: Radius
+    type: float
+    size: 2
+    default: [1, 0.5]
+    range: {min: 0, max: 10, minLocked: true}
+    tooltip: >
+      The distance from the center to the middle of the tube, and the radius of
+      the tube itself.
+
+  - name: divisions_divider
+    label: Divisions
+    type: divider
+    icon: spline
+
+  - name: columns
+    label: Columns
+    type: int
+    default: 24
+    range: {min: 3, max: 64, minLocked: true}
+    tooltip: How many faces go around the hole of the torus.
+
+  - name: rows
+    label: Rows
+    type: int
+    default: 12
+    range: {min: 3, max: 64, minLocked: true}
+    tooltip: How many faces go around the tube.
