@@ -217,13 +217,33 @@ target_compile_definitions(enzoEngine PRIVATE
 
 
 
+# Embeds each viewport shader as a string in a header named after the file,
+# so Grid.hlsl becomes Graphics/Shaders/Grid.h holding shaders::gridSource.
+set(GRAPHICS_SHADERS
+    src/Graphics/Shaders/Grid.hlsl
+)
+set(GRAPHICS_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
+foreach(shaderPath ${GRAPHICS_SHADERS})
+    get_filename_component(shaderFile ${shaderPath} NAME_WE)
+    string(SUBSTRING ${shaderFile} 0 1 shaderFirstLetter)
+    string(SUBSTRING ${shaderFile} 1 -1 shaderRest)
+    string(TOLOWER ${shaderFirstLetter} shaderFirstLetter)
+    set(shaderName "${shaderFirstLetter}${shaderRest}")
+    file(READ ${shaderPath} shaderSource)
+    # Reconfigures when the shader changes.
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${shaderPath})
+    configure_file(cmake/ShaderSource.h.in "${GRAPHICS_GENERATED_DIR}/Graphics/Shaders/${shaderFile}.h" @ONLY)
+endforeach()
+
 # Renders the viewport without depending on Qt.
 add_library(enzoGraphics STATIC
     src/Graphics/GraphicsDevice.cpp
+    src/Graphics/ViewportCamera.cpp
     src/Graphics/ViewportRenderer.cpp
+    src/Graphics/Passes/GridPass.cpp
 )
 target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common Vulkan::Headers)
-target_include_directories(enzoGraphics PUBLIC src)
+target_include_directories(enzoGraphics PUBLIC src PRIVATE ${GRAPHICS_GENERATED_DIR})
 
 
 # QML application
@@ -480,6 +500,7 @@ if(ENZO_BUILD_TESTS)
         tests/AttributeNoiseNodeTests.cpp
         tests/MountainNodeTests.cpp
         tests/GraphicsDeviceTests.cpp
+        tests/ViewportCameraTests.cpp
         tests/ViewportRendererTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
