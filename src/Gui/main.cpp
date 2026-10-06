@@ -6,7 +6,9 @@
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Style/ThemeViewModel.h"
 #include "Gui/Timeline/TimelineViewModel.h"
+#include "Gui/Viewport/QtGraphicsBridge.h"
 #include "Gui/Viewport/ViewportViewModel.h"
+#include "Graphics/GraphicsDevice.h"
 #include <argparse/argparse.hpp>
 
 #include <QDir>
@@ -24,6 +26,7 @@
 #include <QUrl>
 
 #include <iostream>
+#include <memory>
 
 namespace {
 
@@ -130,9 +133,7 @@ int main(int argc, char** argv)
 {
     const QString scenePath = parseCommandLine(argc, argv);
 
-    // The viewport composites a legacy OpenGL renderer, so the scene graph runs
-    // on the OpenGL backend.
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::Vulkan);
 
     // Icons recolour their SVG markup through a local file XMLHttpRequest.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
@@ -145,12 +146,8 @@ int main(int argc, char** argv)
     // Send Qt and QML debug logging to the terminal.
     qputenv("QT_LOGGING_RULES", "default.debug=true;qml.debug=true;js.debug=true");
 
-    // The viewport renderer needs a 3.3 core context for instanced points.
     // Multisampling smooths the scene graph geometry, including the link curves.
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-    format.setRenderableType(QSurfaceFormat::OpenGL);
-    format.setVersion(3, 3);
-    format.setProfile(QSurfaceFormat::CoreProfile);
     format.setSamples(4);
     QSurfaceFormat::setDefaultFormat(format);
 
@@ -193,7 +190,36 @@ int main(int argc, char** argv)
         }
     }
 
+    // Creates the one graphics device before any window, so the main window can draw with it.
+    std::unique_ptr<enzo::gfx::GraphicsDevice> graphicsDevice;
+    std::unique_ptr<enzo::ui::QtGraphicsBridge> graphicsBridge;
+    try
+    {
+        graphicsDevice = std::make_unique<enzo::gfx::GraphicsDevice>(
+            enzo::ui::QtGraphicsBridge::getInstanceExtensions()
+        );
+        graphicsBridge =
+            std::make_unique<enzo::ui::QtGraphicsBridge>(graphicsDevice->getVulkanHandles());
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr << "could not start the graphics device: " << error.what() << "\n";
+        return 1;
+    }
+
     QQmlApplicationEngine engine;
+
+    // Hands the device to each root window the engine loads, before it first renders.
+    // Other windows keep their own device, since each window renders on its own thread
+    // and two threads cannot submit to one queue.
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreated,
+        &engine,
+        [&graphicsBridge](QObject* root) {
+            if (auto* window = qobject_cast<QQuickWindow*>(root)) graphicsBridge->adoptDevice(window);
+        }
+    );
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
     engine.rootContext()->setContextProperty("network", &network);
     engine.rootContext()->setContextProperty("viewport", &viewport);

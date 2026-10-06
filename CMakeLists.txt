@@ -105,7 +105,7 @@ set(ENGINE_INCLUDE_DIRECTORIES
 
 
 # qt
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets OpenGLWidgets OpenGL Quick Qml QuickControls2 ShaderTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets SvgWidgets Quick Qml QuickControls2 ShaderTools)
 qt_standard_project_setup()
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -220,6 +220,7 @@ target_compile_definitions(enzoEngine PRIVATE
 # Renders the viewport without depending on Qt.
 add_library(enzoGraphics STATIC
     src/Graphics/GraphicsDevice.cpp
+    src/Graphics/ViewportRenderer.cpp
 )
 target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common Vulkan::Headers)
 target_include_directories(enzoGraphics PUBLIC src)
@@ -241,16 +242,9 @@ qt_add_executable(${AppExec}
     src/Gui/Parameters/ParametersViewModel.cpp
     src/Gui/Timeline/TimelineViewModel.cpp
     src/Gui/Controllers/SceneController.cpp
-
-    # --- Viewport placeholder (throwaway, replaced by the Diligent rebuild).
-    # Self-contained under src/Gui/Viewport; delete this block to remove it.
     src/Gui/Viewport/ViewportViewModel.cpp
-    src/Gui/Viewport/GLMesh.cpp
-    src/Gui/Viewport/GLGrid.cpp
-    src/Gui/Viewport/GLPoints.cpp
-    src/Gui/Viewport/GLCamera.cpp
-    src/Gui/Viewport/GLCameraPrim.cpp
-    # --- end viewport placeholder
+    src/Gui/Viewport/QtGraphicsBridge.cpp
+    src/Gui/Viewport/ViewportNode.cpp
 )
 
 # Register Constants.qml and ParameterClipboard.qml as singletons
@@ -391,7 +385,7 @@ set_target_properties(${AppExec} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${ENZO_DEV_STAGE_DIR}/bin"
 )
 
-target_link_libraries(${AppExec} PRIVATE enzoEngine argparse::argparse Qt6::Quick Qt6::QuickControls2 Qt6::OpenGL)
+target_link_libraries(${AppExec} PRIVATE enzoEngine enzoGraphics argparse::argparse Qt6::Quick Qt6::QuickControls2 Vulkan::Headers)
 target_include_directories(${AppExec} PRIVATE
     ${ENGINE_INCLUDE_DIRECTORIES}
     # Folders holding QML_ELEMENT types, whose headers the generated type
@@ -486,6 +480,7 @@ if(ENZO_BUILD_TESTS)
         tests/AttributeNoiseNodeTests.cpp
         tests/MountainNodeTests.cpp
         tests/GraphicsDeviceTests.cpp
+        tests/ViewportRendererTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)

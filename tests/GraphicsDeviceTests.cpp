@@ -1,27 +1,10 @@
 #include "Graphics/GraphicsDevice.h"
+#include "GraphicsTestUtils.h"
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
 #include <stdexcept>
 
 using namespace enzo::gfx;
-
-namespace {
-
-// Returns a new device, or skips the test on a machine with no Vulkan device.
-std::unique_ptr<GraphicsDevice> createDeviceOrSkip()
-{
-    try
-    {
-        return std::make_unique<GraphicsDevice>();
-    }
-    catch (const std::runtime_error& error)
-    {
-        SKIP(error.what());
-    }
-    return nullptr;
-}
-
-} // namespace
 
 TEST_CASE("A graphics device hands out the handles a host adopts")
 {
