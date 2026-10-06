@@ -31,8 +31,14 @@ class GraphicsDevice
     /// @brief Returns the handles a host adopts to share the device.
     VulkanHandles getVulkanHandles() const;
 
-  private:
     struct DiligentObjects;
+
+    /// @brief Returns the Diligent device and context the renderer draws with.
+    ///
+    /// @note The type is complete only inside enzoGraphics, through `Graphics/DiligentObjects.h`.
+    DiligentObjects& getDiligentObjects() const;
+
+  private:
     std::unique_ptr<DiligentObjects> diligent_;
 };
 

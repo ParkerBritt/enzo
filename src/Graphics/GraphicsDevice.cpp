@@ -1,10 +1,8 @@
 #include "Graphics/GraphicsDevice.h"
+#include "Graphics/DiligentObjects.h"
+#include <iostream>
 #include <stdexcept>
 
-// Includes Vulkan first since DiligentCore's Vulkan headers use its types without including them.
-#include <vulkan/vulkan.h>
-
-#include <RefCntAutoPtr.hpp>
 #include <CommandQueueVk.h>
 #include <EngineFactoryVk.h>
 #include <RenderDeviceVk.h>
@@ -15,13 +13,20 @@ namespace {
 
 GraphicsDevice* processDevice = nullptr;
 
-} // namespace
-
-struct GraphicsDevice::DiligentObjects
+/// @brief Prints Diligent's warnings and errors, and drops its info messages.
+void printDiligentMessage(
+    Diligent::DEBUG_MESSAGE_SEVERITY severity,
+    const Diligent::Char* message,
+    const Diligent::Char*,
+    const Diligent::Char*,
+    int
+)
 {
-    Diligent::RefCntAutoPtr<Diligent::IRenderDevice> device;
-    Diligent::RefCntAutoPtr<Diligent::IDeviceContext> context;
-};
+    if (severity == Diligent::DEBUG_MESSAGE_SEVERITY_INFO) return;
+    std::cerr << "graphics device: " << message << "\n";
+}
+
+} // namespace
 
 GraphicsDevice::GraphicsDevice(const std::vector<std::string>& instanceExtensions)
 {
@@ -43,6 +48,7 @@ GraphicsDevice::GraphicsDevice(const std::vector<std::string>& instanceExtension
 
     diligent_ = std::make_unique<DiligentObjects>();
     Diligent::IEngineFactoryVk* factory = Diligent::GetEngineFactoryVk();
+    factory->SetMessageCallback(printDiligentMessage);
     factory->CreateDeviceAndContextsVk(createInfo, &diligent_->device, &diligent_->context);
     if (!diligent_->device)
     {
@@ -68,6 +74,8 @@ GraphicsDevice& GraphicsDevice::get()
     }
     return *processDevice;
 }
+
+GraphicsDevice::DiligentObjects& GraphicsDevice::getDiligentObjects() const { return *diligent_; }
 
 VulkanHandles GraphicsDevice::getVulkanHandles() const
 {
