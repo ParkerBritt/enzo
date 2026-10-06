@@ -1,4 +1,5 @@
 #pragma once
+#include "Graphics/ViewportCamera.h"
 #include <QColor>
 #include <QQuickItem>
 
@@ -19,6 +20,15 @@ class ViewportItem : public QQuickItem
     QColor backgroundColor() const { return backgroundColor_; }
     void setBackgroundColor(const QColor& colour);
 
+    /// @brief Turns the camera around its centre by a pointer drag.
+    Q_INVOKABLE void orbit(qreal dx, qreal dy);
+
+    /// @brief Slides the camera and its centre across the view by a pointer drag.
+    Q_INVOKABLE void pan(qreal dx, qreal dy);
+
+    /// @brief Moves the camera toward its centre for a negative amount and away for a positive one.
+    Q_INVOKABLE void dolly(qreal amount);
+
   Q_SIGNALS:
     void backgroundColorChanged();
 
@@ -28,6 +38,7 @@ class ViewportItem : public QQuickItem
 
   private:
     QColor backgroundColor_;
+    gfx::ViewportCamera camera_;
 };
 
 } // namespace enzo::ui

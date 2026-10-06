@@ -1,17 +1,50 @@
 #include "Graphics/ViewportRenderer.h"
 #include "Graphics/DiligentObjects.h"
+#include "Graphics/Passes/GridPass.h"
 
 #include <TextureVk.h>
 
 namespace enzo::gfx {
 
+namespace {
+
+constexpr Diligent::TEXTURE_FORMAT colorFormat = Diligent::TEX_FORMAT_RGBA8_UNORM;
+constexpr Diligent::Uint8 sampleCount = 4;
+
+Diligent::RefCntAutoPtr<Diligent::ITexture> createColorTexture(
+    Diligent::IRenderDevice* device, glm::uvec2 size, Diligent::Uint8 textureSampleCount, const char* name
+)
+{
+    Diligent::TextureDesc textureDesc;
+    textureDesc.Name = name;
+    textureDesc.Type = Diligent::RESOURCE_DIM_TEX_2D;
+    textureDesc.Width = size.x;
+    textureDesc.Height = size.y;
+    textureDesc.Format = colorFormat;
+    textureDesc.SampleCount = textureSampleCount;
+    textureDesc.BindFlags = Diligent::BIND_RENDER_TARGET | Diligent::BIND_SHADER_RESOURCE;
+
+    Diligent::RefCntAutoPtr<Diligent::ITexture> texture;
+    device->CreateTexture(textureDesc, nullptr, &texture);
+    return texture;
+}
+
+} // namespace
+
 struct ViewportRenderer::DiligentObjects
 {
+    GridPass gridPass;
+    /// @brief The multisampled target the passes draw into.
+    Diligent::RefCntAutoPtr<Diligent::ITexture> multisampleTexture;
+    /// @brief The single sample texture the host samples.
     Diligent::RefCntAutoPtr<Diligent::ITexture> colorTexture;
 };
 
 ViewportRenderer::ViewportRenderer(GraphicsDevice& device)
-    : device_(device), diligent_(std::make_unique<DiligentObjects>())
+    : device_(device),
+      diligent_(std::make_unique<DiligentObjects>(
+          GridPass(device.getDiligentObjects().device, colorFormat, sampleCount)
+      ))
 {
 }
 
@@ -29,19 +62,14 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
                               diligent_->colorTexture->GetDesc().Height != frame.pixelSize.y);
     if (!hasTexture || sizeChanged)
     {
-        Diligent::TextureDesc textureDesc;
-        textureDesc.Name = "Viewport colour";
-        textureDesc.Type = Diligent::RESOURCE_DIM_TEX_2D;
-        textureDesc.Width = frame.pixelSize.x;
-        textureDesc.Height = frame.pixelSize.y;
-        textureDesc.Format = Diligent::TEX_FORMAT_RGBA8_UNORM;
-        textureDesc.BindFlags = Diligent::BIND_RENDER_TARGET | Diligent::BIND_SHADER_RESOURCE;
-        diligent_->colorTexture.Release();
-        device->CreateTexture(textureDesc, nullptr, &diligent_->colorTexture);
+        diligent_->multisampleTexture =
+            createColorTexture(device, frame.pixelSize, sampleCount, "Viewport multisample colour");
+        diligent_->colorTexture = createColorTexture(device, frame.pixelSize, 1, "Viewport colour");
     }
 
+    // Draws the frame.
     Diligent::ITextureView* renderTarget =
-        diligent_->colorTexture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
+        diligent_->multisampleTexture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
     context->SetRenderTargets(
         1, &renderTarget, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
@@ -49,7 +77,16 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
     context->ClearRenderTarget(
         renderTarget, backgroundColor, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
+    diligent_->gridPass.draw(context, frame);
     context->SetRenderTargets(0, nullptr, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
+
+    // Resolves the samples into the shown texture.
+    Diligent::ResolveTextureSubresourceAttribs resolveAttribs;
+    resolveAttribs.SrcTextureTransitionMode = Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION;
+    resolveAttribs.DstTextureTransitionMode = Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION;
+    context->ResolveTextureSubresource(
+        diligent_->multisampleTexture, diligent_->colorTexture, resolveAttribs
+    );
 
     // Leaves the image ready for the host to sample.
     Diligent::StateTransitionDesc toShaderResource{

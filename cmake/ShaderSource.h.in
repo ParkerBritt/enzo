@@ -1,0 +1,8 @@
+#pragma once
+
+// Generated from @shaderPath@ when CMake configures.
+namespace enzo::gfx::shaders {
+
+inline constexpr char @shaderName@Source[] = R"hlsl(@shaderSource@)hlsl";
+
+} // namespace enzo::gfx::shaders

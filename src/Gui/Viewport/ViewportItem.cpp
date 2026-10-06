@@ -17,6 +17,24 @@ void ViewportItem::setBackgroundColor(const QColor& colour)
     Q_EMIT backgroundColorChanged();
 }
 
+void ViewportItem::orbit(qreal dx, qreal dy)
+{
+    camera_.orbit(glm::vec2(dx, dy));
+    update();
+}
+
+void ViewportItem::pan(qreal dx, qreal dy)
+{
+    camera_.pan(glm::vec2(dx, dy));
+    update();
+}
+
+void ViewportItem::dolly(qreal amount)
+{
+    camera_.dolly(float(amount));
+    update();
+}
+
 QSGNode* ViewportItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     auto* node = static_cast<ViewportNode*>(oldNode);
@@ -31,6 +49,7 @@ QSGNode* ViewportItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         backgroundColor_.blueF(),
         backgroundColor_.alphaF()
     );
+    frame.camera = camera_;
     node->sync(frame, boundingRect());
     return node;
 }
