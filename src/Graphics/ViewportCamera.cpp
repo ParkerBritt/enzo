@@ -66,6 +66,17 @@ void ViewportCamera::dolly(float amount)
     distance_ = minDistance;
 }
 
+void ViewportCamera::placeAt(const glm::mat4& transform)
+{
+    const glm::vec3 position{transform[3]};
+    const glm::vec3 forward = glm::normalize(-glm::vec3(transform[2]));
+
+    // Solves getForward for the yaw and pitch that give this direction.
+    yaw_ = std::atan2(-forward.x, -forward.z);
+    pitch_ = std::clamp(std::asin(-forward.y), -maxPitch, maxPitch);
+    center_ = position + getForward() * distance_;
+}
+
 glm::vec3 ViewportCamera::getForward() const
 {
     const glm::vec3 centerToCamera{

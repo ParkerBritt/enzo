@@ -87,6 +87,16 @@ void writeVertices(DisplayGeometry& geometry, const geo::Mesh& mesh, std::uint32
     );
 }
 
+/// @brief Appends the positions of every point of one mesh.
+void appendPoints(std::vector<glm::vec3>& pointPositions, const geo::Mesh& mesh)
+{
+    for (Offset pointOffset = 0; pointOffset < mesh.getNumPoints(); ++pointOffset)
+    {
+        if (!mesh.isValidPoint(pointOffset)) continue;
+        pointPositions.push_back(toGlm(mesh.getPointPos(pointOffset)));
+    }
+}
+
 /// @brief Appends the positions of the points of one mesh that belong to no face.
 void appendSoloPoints(std::vector<glm::vec3>& soloPointPositions, const geo::Mesh& mesh)
 {
@@ -114,6 +124,7 @@ std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& pa
         const auto mesh = std::static_pointer_cast<const geo::Mesh>(prim);
         appendTopology(geometry->topology, *mesh, firstVertex);
         writeVertices(*geometry, *mesh, firstVertex);
+        appendPoints(geometry->pointPositions, *mesh);
         appendSoloPoints(geometry->soloPointPositions, *mesh);
         firstVertex += std::uint32_t(mesh->getNumVerts());
     }
@@ -122,6 +133,7 @@ std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& pa
     {
         const auto camera = std::static_pointer_cast<const geo::Camera>(prim);
         geometry->cameraTransforms.push_back(toGlm(camera->getTransform()));
+        geometry->cameraPaths.push_back(camera->getPath());
     }
     return geometry;
 }

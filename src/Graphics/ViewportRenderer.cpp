@@ -9,6 +9,7 @@
 #include <TextureVk.h>
 #include <algorithm>
 #include <glm/mat4x4.hpp>
+#include <glm/matrix.hpp>
 #include <glm/vec4.hpp>
 
 namespace enzo::gfx {
@@ -19,9 +20,11 @@ namespace {
 struct FrameConstants
 {
     glm::mat4 viewProjection;
-    glm::mat4 view;
     glm::vec4 cameraPosition;
     glm::vec4 geometryColor;
+    glm::vec2 viewportPixelSize;
+    float pixelRatio;
+    float padding;
 };
 
 Diligent::RefCntAutoPtr<Diligent::IBuffer> createFrameConstantsBuffer(Diligent::IRenderDevice* device)
@@ -39,11 +42,21 @@ Diligent::RefCntAutoPtr<Diligent::IBuffer> createFrameConstantsBuffer(Diligent::
 
 FrameConstants getFrameConstants(const FrameState& frame)
 {
+    glm::mat4 view = frame.camera.getViewMatrix();
+    glm::vec4 cameraPosition{frame.camera.getPosition(), 1.f};
+    if (frame.viewCameraIndex.has_value())
+    {
+        const glm::mat4& viewCameraTransform = frame.geometry->cameraTransforms[*frame.viewCameraIndex];
+        view = glm::inverse(viewCameraTransform);
+        cameraPosition = viewCameraTransform[3];
+    }
+
     const float aspect = float(frame.pixelSize.x) / float(std::max(frame.pixelSize.y, 1u));
-    const glm::mat4 view = frame.camera.getViewMatrix();
     const glm::mat4 viewProjection = frame.camera.getProjectionMatrix(aspect) * view;
-    const glm::vec4 cameraPosition{frame.camera.getPosition(), 1.f};
-    return FrameConstants{viewProjection, view, cameraPosition, frame.geometryColor};
+    const glm::vec2 viewportPixelSize{frame.pixelSize};
+    return FrameConstants{
+        viewProjection, cameraPosition, frame.geometryColor, viewportPixelSize, frame.pixelRatio, 0.f
+    };
 }
 
 Diligent::RefCntAutoPtr<Diligent::ITexture> createTargetTexture(
@@ -170,8 +183,8 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
     );
     diligent_->gridPass.draw(context);
     diligent_->meshPass.draw(context, frame.wireframeVisible);
-    diligent_->pointPass.draw(context);
-    diligent_->cameraPrimPass.draw(context);
+    diligent_->pointPass.draw(context, frame.pointsVisible);
+    diligent_->cameraPrimPass.draw(context, frame.viewCameraIndex);
     context->SetRenderTargets(0, nullptr, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
 
     // Resolves the samples into the shown texture.

@@ -6,7 +6,7 @@ Item {
     id: root
 
     ViewportItem {
-        id: surface
+        id: viewportSurface
 
         anchors.fill: parent
         viewModel: viewport
@@ -14,36 +14,20 @@ Item {
         geometryColor: Theme.viewport.geometryColor
     }
 
-    Shortcut {
-        sequence: "w"
-        onActivated: surface.toggleWireframe()
+    ViewportMouse {
+        anchors.fill: parent
+        surface: viewportSurface
     }
 
-    // Orbits on left drag, pans on middle drag, and dollies on horizontal right drag or the wheel.
-    MouseArea {
+    ViewportHud {
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        surface: viewportSurface
+        nodePath: viewport.nodePath
+        cameraPaths: viewport.cameraPaths
+    }
 
-        property real lastX: 0
-        property real lastY: 0
-
-        onPressed: mouse => {
-            lastX = mouse.x;
-            lastY = mouse.y;
-        }
-        onPositionChanged: mouse => {
-            const dx = mouse.x - lastX;
-            const dy = mouse.y - lastY;
-            lastX = mouse.x;
-            lastY = mouse.y;
-
-            if (mouse.buttons & Qt.MiddleButton)
-                surface.pan(dx, dy);
-            else if (mouse.buttons & Qt.RightButton)
-                surface.dolly(-dx * 0.05);
-            else
-                surface.orbit(dx, dy);
-        }
-        onWheel: wheel => surface.dolly(-wheel.angleDelta.y / 120)
+    Shortcut {
+        sequence: "w"
+        onActivated: viewportSurface.wireframeVisible = !viewportSurface.wireframeVisible
     }
 }

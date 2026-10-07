@@ -9,7 +9,7 @@
 
 namespace enzo::gfx {
 
-/// @brief The solo points, drawn as discs facing the camera.
+/// @brief The mesh points, drawn as discs facing the camera.
 class PointPass
 {
   public:
@@ -18,16 +18,20 @@ class PointPass
     /// @param frameConstants the buffer the renderer fills with the frame constants.
     PointPass(Diligent::IRenderDevice* device, Diligent::IBuffer* frameConstants);
 
-    /// @brief Replaces the drawn points with the solo points of the geometry.
+    /// @brief Replaces the drawn points with the points of the geometry.
     void upload(Diligent::IRenderDevice* device, const DisplayGeometry& geometry);
 
     /// @brief Draws the points into the bound targets.
-    void draw(Diligent::IDeviceContext* context);
+    ///
+    /// @param pointsVisible whether every point is drawn. The points that belong to no face are
+    /// always drawn.
+    void draw(Diligent::IDeviceContext* context, bool pointsVisible);
 
   private:
     Pipeline pipeline_;
     GpuArray corners_;
-    GpuArray positions_;
+    GpuArray pointPositions_;
+    GpuArray soloPointPositions_;
 };
 
 } // namespace enzo::gfx

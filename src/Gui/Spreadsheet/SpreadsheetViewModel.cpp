@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodePacket.h"
+#include "Gui/PathNames.h"
 
 namespace enzo::ui {
 
@@ -21,9 +22,7 @@ SpreadsheetViewModel::SpreadsheetViewModel(QObject* parent) : QObject(parent)
                 return;
             }
             auto& node = nt::nm().getNode(*primaryId);
-            nodePath_.clear();
-            for (const auto& component : node.getPath().split())
-                nodePath_.append(QString::fromStdString(component));
+            nodePath_ = getPathNames(node.getPath());
             Q_EMIT nodePathChanged();
             showPacket(node.getOutputPacket(0));
         });
