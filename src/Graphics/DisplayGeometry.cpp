@@ -30,6 +30,8 @@ glm::mat4 toGlm(const Matrix4& matrix)
 void appendTopology(DisplayTopology& topology, const geo::Mesh& mesh, std::uint32_t firstVertex)
 {
     std::vector<Offset> closedFaceOffsets;
+    closedFaceOffsets.reserve(mesh.getNumFaces());
+    topology.edgeIndices.reserve(topology.edgeIndices.size() + 2 * mesh.getNumVerts());
     const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
     for (Offset faceOffset = 0; faceOffset < mesh.getNumFaces(); ++faceOffset)
     {
@@ -60,7 +62,10 @@ void appendTopology(DisplayTopology& topology, const geo::Mesh& mesh, std::uint3
     }
 
     // Ear clips the closed faces so concave faces fill correctly.
-    for (const std::array<Offset, 3>& triangle : utils::earClipTriangleIndices(mesh, closedFaceOffsets))
+    const std::vector<std::array<Offset, 3>> triangles =
+        utils::earClipTriangleIndices(mesh, closedFaceOffsets);
+    topology.triangleIndices.reserve(topology.triangleIndices.size() + 3 * triangles.size());
+    for (const std::array<Offset, 3>& triangle : triangles)
     {
         for (const Offset vertexOffset : triangle)
             topology.triangleIndices.push_back(firstVertex + std::uint32_t(vertexOffset));

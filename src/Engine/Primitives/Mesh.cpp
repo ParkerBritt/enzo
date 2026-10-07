@@ -590,19 +590,21 @@ void geo::Mesh::rebuildSoloPoints() const
 {
     soloPoints_.clear();
 
-    // Seed with every valid point
+    // Marks every point a valid vertex uses
     const Offset pointCount = posPointHandle_.getSize();
-    for (Offset p = 0; p < pointCount; ++p)
+    std::vector<char> pointUsed(pointCount, false);
+    const Offset vertCount = pointOffsetVertexHandle_.getSize();
+    for (Offset vertexOffset = 0; vertexOffset < vertCount; ++vertexOffset)
     {
-        if (validPointHandle_.getValue(p)) soloPoints_.insert(p);
+        if (!validVertexHandle_.getValue(vertexOffset)) continue;
+        pointUsed[pointOffsetVertexHandle_.getValue(vertexOffset)] = true;
     }
 
-    // Drop any point referenced by a valid vertex
-    const Offset vertCount = pointOffsetVertexHandle_.getSize();
-    for (Offset v = 0; v < vertCount; ++v)
+    // Keeps the valid points no vertex uses
+    for (Offset pointOffset = 0; pointOffset < pointCount; ++pointOffset)
     {
-        if (!validVertexHandle_.getValue(v)) continue;
-        soloPoints_.erase(pointOffsetVertexHandle_.getValue(v));
+        if (!pointUsed[pointOffset] && validPointHandle_.getValue(pointOffset))
+            soloPoints_.insert(pointOffset);
     }
 
     soloPointsDirty_ = false;
