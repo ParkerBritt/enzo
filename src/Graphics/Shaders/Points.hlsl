@@ -1,4 +1,5 @@
-// Draws each solo point as a white disc facing the camera.
+// Draws each point as a white disc flat to the screen. The whole disc takes the depth of its
+// centre, so a surface the point sits on never cuts through it.
 
 struct VertexOutput
 {
@@ -6,18 +7,23 @@ struct VertexOutput
     float2 corner : CORNER;
 };
 
-// World size of a disc per unit of distance from the camera, which keeps discs one size on screen.
-static const float sizePerDistance = 0.005;
+// Diameter of a disc in interface pixels.
+static const float discDiameter = 3.5;
+
+// Fraction of the distance to the camera a disc is moved toward it, so a point on a face draws over it.
+static const float cameraPull = 0.01;
 
 VertexOutput vertexMain(float2 corner : ATTRIB0, float3 pointPosition : ATTRIB1)
 {
-    float3 cameraRight = view[0].xyz;
-    float3 cameraUp = view[1].xyz;
-    float size = distance(pointPosition, cameraPosition.xyz) * sizePerDistance;
-    float3 worldPosition = pointPosition + (cameraRight * corner.x + cameraUp * corner.y) * size;
+    float3 pulledPosition = lerp(pointPosition, cameraPosition.xyz, cameraPull);
+    float4 centreClipPosition = mul(viewProjection, float4(pulledPosition, 1.0));
+
+    // Converts the corner from pixels to clip units, which span 2 across the viewport.
+    float2 cornerPixels = corner * discDiameter * pixelRatio;
+    float2 cornerClipOffset = cornerPixels * 2.0 / viewportPixelSize * centreClipPosition.w;
 
     VertexOutput output;
-    output.clipPosition = mul(viewProjection, float4(worldPosition, 1.0));
+    output.clipPosition = centreClipPosition + float4(cornerClipOffset, 0.0, 0.0);
     output.corner = corner;
     return output;
 }

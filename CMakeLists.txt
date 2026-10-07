@@ -314,6 +314,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Stepper.qml
         src/Gui/Components/TextButton.qml
         src/Gui/Components/Tooltip.qml
+        src/Gui/Components/NodePathLabel.qml
         src/Gui/Components/PlaceholderDialog.qml
         src/Gui/Components/ParameterClipboard.qml
         src/Gui/Components/ParameterContextMenu.qml
@@ -371,6 +372,8 @@ qt_add_qml_module(${AppExec}
         src/Gui/Settings/SwitchThemePrompt.qml
         src/Gui/Settings/KeymapPage.qml
         src/Gui/Viewport/Viewport.qml
+        src/Gui/Viewport/ViewportHud.qml
+        src/Gui/Viewport/ViewportMouse.qml
     RESOURCES
         # Declares Constants.qml a singleton for the directory import.
         src/Gui/Style/qmldir

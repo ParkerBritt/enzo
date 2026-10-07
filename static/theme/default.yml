@@ -216,6 +216,11 @@ components:
   tabMenu:
     highlightColor:   $accentDim
     focusBorderColor: $accentLine
+  nodePath:
+    nameColor:      $textMuted
+    separatorColor: $textFaint
+    # The node the path leads to.
+    nodeColor:      $accentBright
   viewport:
     # The radial background gradient, from its bright centre through the base
     # colour out to the dark edge.
@@ -223,3 +228,7 @@ components:
     gradientCenter:  $background
     gradientEdge:    $background
     geometryColor:   $geometry
+    # The panel holding the display toggles, and a toggle that is on.
+    hudColor:       $fieldSurface @ 0.72
+    hudBorderColor: $border
+    toggleOnColor:  $textStrong @ 0.12

@@ -38,20 +38,24 @@ PointPass::PointPass(Diligent::IRenderDevice* device, Diligent::IBuffer* frameCo
 
 void PointPass::upload(Diligent::IRenderDevice* device, const DisplayGeometry& geometry)
 {
-    positions_ =
-        createGpuArray(device, "Point positions", Diligent::BIND_VERTEX_BUFFER, geometry.soloPointPositions);
+    pointPositions_ =
+        createGpuArray(device, "Point positions", Diligent::BIND_VERTEX_BUFFER, geometry.pointPositions);
+    soloPointPositions_ = createGpuArray(
+        device, "Solo point positions", Diligent::BIND_VERTEX_BUFFER, geometry.soloPointPositions
+    );
 }
 
-void PointPass::draw(Diligent::IDeviceContext* context)
+void PointPass::draw(Diligent::IDeviceContext* context, bool pointsVisible)
 {
-    if (!positions_.buffer) return;
+    const GpuArray& positions = pointsVisible ? pointPositions_ : soloPointPositions_;
+    if (!positions.buffer) return;
 
-    setVertexBuffers(context, {corners_.buffer, positions_.buffer});
+    setVertexBuffers(context, {corners_.buffer, positions.buffer});
     setPipeline(context, pipeline_);
 
     Diligent::DrawAttribs drawAttribs;
     drawAttribs.NumVertices = corners_.count;
-    drawAttribs.NumInstances = positions_.count;
+    drawAttribs.NumInstances = positions.count;
     context->Draw(drawAttribs);
 }
 

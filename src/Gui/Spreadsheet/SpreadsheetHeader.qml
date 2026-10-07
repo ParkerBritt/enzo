@@ -12,14 +12,6 @@ Rectangle {
 
     color: Theme.var.surfaceHeader
 
-    function pathColor(index) {
-        if (index === 0)
-            return "#6a6a74";
-        if (index === path.length - 1)
-            return Theme.var.accentBright;
-        return "#aaaab2";
-    }
-
     Rectangle {
         anchors.bottom: parent.bottom
         width: parent.width
@@ -52,34 +44,9 @@ Rectangle {
             height: 1
         }
 
-        Row {
+        NodePathLabel {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 5
-
-            Repeater {
-                model: root.path
-
-                delegate: Row {
-                    id: crumb
-
-                    required property int index
-                    required property string modelData
-                    spacing: 5
-
-                    Text {
-                        text: "/"
-                        color: "#39394a"
-                        font.family: Theme.var.fontMono
-                        font.pixelSize: 11
-                    }
-                    Text {
-                        text: crumb.modelData
-                        color: pathColor(crumb.index)
-                        font.family: Theme.var.fontMono
-                        font.pixelSize: 11
-                    }
-                }
-            }
+            path: root.path
         }
     }
 

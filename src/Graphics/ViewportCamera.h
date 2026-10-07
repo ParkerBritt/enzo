@@ -21,6 +21,12 @@ class ViewportCamera
     /// @note Close to the centre the camera keeps moving forward and carries the centre with it.
     void dolly(float amount);
 
+    /// @brief Moves the camera to a transform, looking down its negative z axis with the centre at
+    /// the current distance.
+    ///
+    /// @note The camera stays level, so any roll in the transform is dropped.
+    void placeAt(const glm::mat4& transform);
+
     /// @brief Returns the camera position in world space.
     glm::vec3 getPosition() const;
 

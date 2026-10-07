@@ -63,16 +63,30 @@ void CameraPrimPass::upload(Diligent::IRenderDevice* device, const DisplayGeomet
         createGpuArray(device, "Camera transforms", Diligent::BIND_VERTEX_BUFFER, geometry.cameraTransforms);
 }
 
-void CameraPrimPass::draw(Diligent::IDeviceContext* context)
+void CameraPrimPass::draw(Diligent::IDeviceContext* context, std::optional<std::size_t> hiddenCamera)
 {
     if (!transforms_.buffer) return;
 
     setVertexBuffers(context, {frameVertices_.buffer, transforms_.buffer});
     setPipeline(context, pipeline_);
 
+    if (!hiddenCamera.has_value())
+    {
+        drawRange(context, 0, transforms_.count);
+        return;
+    }
+    drawRange(context, 0, *hiddenCamera);
+    drawRange(context, *hiddenCamera + 1, transforms_.count);
+}
+
+void CameraPrimPass::drawRange(Diligent::IDeviceContext* context, std::size_t first, std::size_t end)
+{
+    if (first >= end) return;
+
     Diligent::DrawAttribs drawAttribs;
     drawAttribs.NumVertices = frameVertices_.count;
-    drawAttribs.NumInstances = transforms_.count;
+    drawAttribs.FirstInstanceLocation = Diligent::Uint32(first);
+    drawAttribs.NumInstances = Diligent::Uint32(end - first);
     context->Draw(drawAttribs);
 }
 
