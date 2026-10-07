@@ -36,3 +36,20 @@ TEST_CASE("A viewport renderer keeps its image until the frame size changes")
     REQUIRE(resized.image != first.image);
     REQUIRE(resized.size == frame.pixelSize);
 }
+
+TEST_CASE("A viewport renderer draws geometry with its wireframe")
+{
+    std::unique_ptr<GraphicsDevice> device = createDeviceOrSkip();
+    ViewportRenderer renderer(*device);
+
+    auto geometry = std::make_shared<DisplayGeometry>();
+    geometry->positions = {{0.f, 0.f, 0.f}, {1.f, 0.f, 0.f}, {0.f, 0.f, 1.f}};
+    geometry->normals = {{0.f, 1.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 1.f, 0.f}};
+    geometry->topology.triangleIndices = {0, 1, 2};
+    geometry->topology.edgeIndices = {0, 1, 1, 2, 2, 0};
+
+    FrameState frame;
+    frame.pixelSize = {64, 32};
+    frame.geometry = geometry;
+    REQUIRE(renderer.render(frame).image != nullptr);
+}

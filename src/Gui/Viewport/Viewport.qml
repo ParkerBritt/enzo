@@ -9,7 +9,14 @@ Item {
         id: surface
 
         anchors.fill: parent
+        viewModel: viewport
         backgroundColor: Theme.viewport.backgroundColor
+        geometryColor: Theme.viewport.geometryColor
+    }
+
+    Shortcut {
+        sequence: "w"
+        onActivated: surface.toggleWireframe()
     }
 
     // Orbits on left drag, pans on middle drag, and dollies on horizontal right drag or the wheel.

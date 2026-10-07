@@ -1,18 +1,53 @@
 #include "Graphics/ViewportRenderer.h"
 #include "Graphics/DiligentObjects.h"
 #include "Graphics/Passes/GridPass.h"
+#include "Graphics/Passes/MeshPass.h"
+#include "Graphics/RenderTargetFormats.h"
 
 #include <TextureVk.h>
+#include <algorithm>
+#include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
 
 namespace enzo::gfx {
 
 namespace {
 
-constexpr Diligent::TEXTURE_FORMAT colorFormat = Diligent::TEX_FORMAT_RGBA8_UNORM;
-constexpr Diligent::Uint8 sampleCount = 4;
+/// @brief The values every pass reads, laid out as `FrameConstants` in `Common.hlsli`.
+struct FrameConstants
+{
+    glm::mat4 viewProjection;
+    glm::vec4 geometryColor;
+};
 
-Diligent::RefCntAutoPtr<Diligent::ITexture> createColorTexture(
-    Diligent::IRenderDevice* device, glm::uvec2 size, Diligent::Uint8 textureSampleCount, const char* name
+Diligent::RefCntAutoPtr<Diligent::IBuffer> createFrameConstantsBuffer(Diligent::IRenderDevice* device)
+{
+    Diligent::BufferDesc bufferDesc;
+    bufferDesc.Name = "Frame constants";
+    bufferDesc.Usage = Diligent::USAGE_DEFAULT;
+    bufferDesc.BindFlags = Diligent::BIND_UNIFORM_BUFFER;
+    bufferDesc.Size = sizeof(FrameConstants);
+
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
+    device->CreateBuffer(bufferDesc, nullptr, &buffer);
+    return buffer;
+}
+
+FrameConstants getFrameConstants(const FrameState& frame)
+{
+    const float aspect = float(frame.pixelSize.x) / float(std::max(frame.pixelSize.y, 1u));
+    const glm::mat4 viewProjection =
+        frame.camera.getProjectionMatrix(aspect) * frame.camera.getViewMatrix();
+    return FrameConstants{viewProjection, frame.geometryColor};
+}
+
+Diligent::RefCntAutoPtr<Diligent::ITexture> createTargetTexture(
+    Diligent::IRenderDevice* device,
+    glm::uvec2 size,
+    Diligent::TEXTURE_FORMAT format,
+    Diligent::Uint8 textureSampleCount,
+    Diligent::BIND_FLAGS bindFlags,
+    const char* name
 )
 {
     Diligent::TextureDesc textureDesc;
@@ -20,9 +55,9 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> createColorTexture(
     textureDesc.Type = Diligent::RESOURCE_DIM_TEX_2D;
     textureDesc.Width = size.x;
     textureDesc.Height = size.y;
-    textureDesc.Format = colorFormat;
+    textureDesc.Format = format;
     textureDesc.SampleCount = textureSampleCount;
-    textureDesc.BindFlags = Diligent::BIND_RENDER_TARGET | Diligent::BIND_SHADER_RESOURCE;
+    textureDesc.BindFlags = bindFlags;
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> texture;
     device->CreateTexture(textureDesc, nullptr, &texture);
@@ -33,19 +68,26 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> createColorTexture(
 
 struct ViewportRenderer::DiligentObjects
 {
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> frameConstants;
     GridPass gridPass;
+    MeshPass meshPass;
     /// @brief The multisampled target the passes draw into.
     Diligent::RefCntAutoPtr<Diligent::ITexture> multisampleTexture;
+    /// @brief The multisampled depth the passes test against.
+    Diligent::RefCntAutoPtr<Diligent::ITexture> depthTexture;
     /// @brief The single sample texture the host samples.
     Diligent::RefCntAutoPtr<Diligent::ITexture> colorTexture;
 };
 
-ViewportRenderer::ViewportRenderer(GraphicsDevice& device)
-    : device_(device),
-      diligent_(std::make_unique<DiligentObjects>(
-          GridPass(device.getDiligentObjects().device, colorFormat, sampleCount)
-      ))
+ViewportRenderer::ViewportRenderer(GraphicsDevice& device) : device_(device)
 {
+    Diligent::IRenderDevice* renderDevice = device.getDiligentObjects().device;
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> frameConstants = createFrameConstantsBuffer(renderDevice);
+    diligent_ = std::make_unique<DiligentObjects>(DiligentObjects{
+        frameConstants,
+        GridPass(renderDevice, frameConstants),
+        MeshPass(renderDevice, frameConstants),
+    });
 }
 
 ViewportRenderer::~ViewportRenderer() = default;
@@ -62,22 +104,60 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
                               diligent_->colorTexture->GetDesc().Height != frame.pixelSize.y);
     if (!hasTexture || sizeChanged)
     {
-        diligent_->multisampleTexture =
-            createColorTexture(device, frame.pixelSize, sampleCount, "Viewport multisample colour");
-        diligent_->colorTexture = createColorTexture(device, frame.pixelSize, 1, "Viewport colour");
+        diligent_->multisampleTexture = createTargetTexture(
+            device,
+            frame.pixelSize,
+            colorFormat,
+            sampleCount,
+            Diligent::BIND_RENDER_TARGET,
+            "Viewport multisample colour"
+        );
+        diligent_->depthTexture = createTargetTexture(
+            device, frame.pixelSize, depthFormat, sampleCount, Diligent::BIND_DEPTH_STENCIL, "Viewport depth"
+        );
+        diligent_->colorTexture = createTargetTexture(
+            device,
+            frame.pixelSize,
+            colorFormat,
+            1,
+            Diligent::BIND_RENDER_TARGET | Diligent::BIND_SHADER_RESOURCE,
+            "Viewport colour"
+        );
     }
+
+    if (frame.geometry != uploadedGeometry_)
+    {
+        const DisplayGeometry noGeometry;
+        diligent_->meshPass.upload(device, frame.geometry ? *frame.geometry : noGeometry);
+        uploadedGeometry_ = frame.geometry;
+    }
+
+    const FrameConstants frameConstants = getFrameConstants(frame);
+    context->UpdateBuffer(
+        diligent_->frameConstants,
+        0,
+        sizeof(frameConstants),
+        &frameConstants,
+        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
+    );
 
     // Draws the frame.
     Diligent::ITextureView* renderTarget =
         diligent_->multisampleTexture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
+    Diligent::ITextureView* depthTarget =
+        diligent_->depthTexture->GetDefaultView(Diligent::TEXTURE_VIEW_DEPTH_STENCIL);
     context->SetRenderTargets(
-        1, &renderTarget, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
+        1, &renderTarget, depthTarget, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
     const float* backgroundColor = &frame.backgroundColor.x;
     context->ClearRenderTarget(
         renderTarget, backgroundColor, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
-    diligent_->gridPass.draw(context, frame);
+    context->ClearDepthStencil(
+        depthTarget, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
+    );
+    diligent_->gridPass.draw(context);
+    diligent_->meshPass.draw(context, frame.wireframeVisible);
     context->SetRenderTargets(0, nullptr, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
 
     // Resolves the samples into the shown texture.

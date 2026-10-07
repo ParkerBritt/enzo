@@ -25,6 +25,8 @@ class ViewportRenderer
     struct DiligentObjects;
     GraphicsDevice& device_;
     std::unique_ptr<DiligentObjects> diligent_;
+    /// @brief The geometry the mesh pass holds on the GPU.
+    std::shared_ptr<const DisplayGeometry> uploadedGeometry_;
 };
 
 } // namespace enzo::gfx
