@@ -32,10 +32,6 @@ if(MSVC)
     add_link_options($<$<NOT:$<CONFIG:Debug>>:/OPT:ICF>)
 endif()
 
-# MSVC exports nothing from a shared library unless the declaration says so,
-# leaving the node library with no engine symbols to link against.
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
 # The installed libraries sit in one directory, so they find each other next to
 # themselves. The executable overrides this, since it sits in bin.
 set(CMAKE_INSTALL_RPATH "$ORIGIN")
@@ -146,8 +142,12 @@ FetchContent_Declare(
   GIT_TAG        ${ENZO_DILIGENT_CORE_COMMIT}
 )
 set(DILIGENT_NO_OPENGL ON CACHE BOOL "" FORCE)
+set(DILIGENT_NO_DIRECT3D11 ON CACHE BOOL "" FORCE)
+set(DILIGENT_NO_DIRECT3D12 ON CACHE BOOL "" FORCE)
 set(DILIGENT_INSTALL_CORE OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(DiligentCore)
+# Builds only the Diligent libraries enzo links against.
+set_property(DIRECTORY ${diligentcore_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL ON)
 
 # daslang (das scripting language), built from the vendored submodule
 set(DASLANG_DIR "${CMAKE_SOURCE_DIR}/extern/daslang")
@@ -209,6 +209,8 @@ endif()
 add_library(enzoEngine SHARED ${ENGINE_SOURCES})
 target_link_libraries(enzoEngine PUBLIC glm::glm Eigen3::Eigen TBB::tbb Boost::filesystem Boost::system manifold::manifold libDaScript yaml-cpp::yaml-cpp)
 target_include_directories(enzoEngine PUBLIC ${ENGINE_INCLUDE_DIRECTORIES})
+# Exports every engine symbol on Windows, otherwise MSVC exports nothing from a DLL
+set_target_properties(enzoEngine PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_compile_definitions(enzoEngine PRIVATE
     ENZO_DEV_LIB_DIR="${ENZO_DEV_LIB_DIR}"
     ENZO_DEV_NODES_DIR="${ENZO_DEV_NODES_DIR}"
