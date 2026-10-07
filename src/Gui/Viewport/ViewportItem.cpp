@@ -4,9 +4,30 @@
 
 namespace enzo::ui {
 
+namespace {
+
+glm::vec4 toGlm(const QColor& colour)
+{
+    return glm::vec4(colour.redF(), colour.greenF(), colour.blueF(), colour.alphaF());
+}
+
+} // namespace
+
 ViewportItem::ViewportItem(QQuickItem* parent) : QQuickItem(parent)
 {
     setFlag(ItemHasContents);
+}
+
+void ViewportItem::setViewModel(ViewportViewModel* viewModel)
+{
+    if (viewModel_ == viewModel) return;
+    if (viewModel_) disconnect(viewModel_, nullptr, this, nullptr);
+    viewModel_ = viewModel;
+
+    if (viewModel_)
+        connect(viewModel_, &ViewportViewModel::geometryChanged, this, &QQuickItem::update);
+    update();
+    Q_EMIT viewModelChanged();
 }
 
 void ViewportItem::setBackgroundColor(const QColor& colour)
@@ -15,6 +36,20 @@ void ViewportItem::setBackgroundColor(const QColor& colour)
     backgroundColor_ = colour;
     update();
     Q_EMIT backgroundColorChanged();
+}
+
+void ViewportItem::setGeometryColor(const QColor& colour)
+{
+    if (geometryColor_ == colour) return;
+    geometryColor_ = colour;
+    update();
+    Q_EMIT geometryColorChanged();
+}
+
+void ViewportItem::toggleWireframe()
+{
+    wireframeVisible_ = !wireframeVisible_;
+    update();
 }
 
 void ViewportItem::orbit(qreal dx, qreal dy)
@@ -43,13 +78,11 @@ QSGNode* ViewportItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     const QSizeF pixelSize = size() * window()->effectiveDevicePixelRatio();
     gfx::FrameState frame;
     frame.pixelSize = glm::uvec2(pixelSize.width(), pixelSize.height());
-    frame.backgroundColor = glm::vec4(
-        backgroundColor_.redF(),
-        backgroundColor_.greenF(),
-        backgroundColor_.blueF(),
-        backgroundColor_.alphaF()
-    );
+    frame.backgroundColor = toGlm(backgroundColor_);
+    frame.geometryColor = toGlm(geometryColor_);
+    frame.wireframeVisible = wireframeVisible_;
     frame.camera = camera_;
+    frame.geometry = viewModel_ ? viewModel_->getGeometry() : nullptr;
     node->sync(frame, boundingRect());
     return node;
 }

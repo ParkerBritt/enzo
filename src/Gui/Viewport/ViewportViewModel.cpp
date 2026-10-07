@@ -8,19 +8,21 @@ ViewportViewModel::ViewportViewModel(QObject* parent) : QObject(parent)
 {
     auto& network = nt::nm();
 
-    // The display node delivers its cooked geometry directly.
     displayGeoSubscription_ =
         network.displayGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
-            packet_ = std::move(packet);
+            geometry_ = packet ? gfx::buildDisplayGeometry(*packet) : nullptr;
             Q_EMIT geometryChanged();
         });
 
     networkClearedSubscription_ = network.networkCleared.connect([this]() {
-        packet_ = nullptr;
+        geometry_ = nullptr;
         Q_EMIT geometryChanged();
     });
 }
 
-std::shared_ptr<const NodePacket> ViewportViewModel::currentGeometry() const { return packet_; }
+std::shared_ptr<const gfx::DisplayGeometry> ViewportViewModel::getGeometry() const
+{
+    return geometry_;
+}
 
 } // namespace enzo::ui

@@ -1,10 +1,5 @@
 // Draws the ground grid, fading out with distance from the origin.
 
-cbuffer Constants
-{
-    float4x4 viewProjection;
-};
-
 struct VertexOutput
 {
     float4 clipPosition : SV_Position;
