@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 namespace enzo::utils {
 
@@ -136,26 +138,33 @@ std::vector<Vector3> computeVertexNormals(const geo::Mesh& mesh, double cuspAngl
     const double minSmoothDot = std::cos(cuspAngle * std::numbers::pi / 180);
 
     std::vector<Vector3> vertexNormals(mesh.getNumVerts(), Vector3(0, 0, 0));
-    for (const Offset faceOffset : shadeableFaces)
-    {
-        const Vector3 ownNormal = faceNormals[faceOffset];
-        const Offset faceStartVertex = faceStarts[faceOffset];
-        const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
-
-        for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
-        {
-            const Offset vertexOffset = faceStartVertex + cornerIndex;
-            Vector3 summed(0, 0, 0);
-            for (const Corner& corner : cornersByPoint[vertexPoints[vertexOffset]])
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, shadeableFaces.size()),
+        [&](const tbb::blocked_range<size_t>& range) {
+            for (size_t faceIndex = range.begin(); faceIndex < range.end(); ++faceIndex)
             {
-                const Vector3 neighbourNormal = faceNormals[corner.face];
-                if (ownNormal.dot(neighbourNormal) < minSmoothDot) continue;
-                summed += neighbourNormal * corner.angle;
+                const Offset faceOffset = shadeableFaces[faceIndex];
+                const Vector3 ownNormal = faceNormals[faceOffset];
+                const Offset faceStartVertex = faceStarts[faceOffset];
+                const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
+
+                for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
+                {
+                    const Offset vertexOffset = faceStartVertex + cornerIndex;
+                    Vector3 summed(0, 0, 0);
+                    for (const Corner& corner : cornersByPoint[vertexPoints[vertexOffset]])
+                    {
+                        const Vector3 neighbourNormal = faceNormals[corner.face];
+                        if (ownNormal.dot(neighbourNormal) < minSmoothDot) continue;
+                        summed += neighbourNormal * corner.angle;
+                    }
+                    // Falls back to the face's own normal when the neighbours cancel out.
+                    vertexNormals[vertexOffset] =
+                        summed.isZero() ? ownNormal : normalizedOrZero(summed);
+                }
             }
-            // Falls back to the face's own normal when the neighbours cancel out.
-            vertexNormals[vertexOffset] = summed.isZero() ? ownNormal : normalizedOrZero(summed);
         }
-    }
+    );
     return vertexNormals;
 }
 
