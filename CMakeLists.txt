@@ -220,9 +220,11 @@ target_compile_definitions(enzoEngine PRIVATE
 # Embeds each viewport shader as a string in a header named after the file,
 # so Grid.hlsl becomes Graphics/Shaders/Grid.h holding shaders::gridSource.
 set(GRAPHICS_SHADERS
+    src/Graphics/Shaders/CameraPrim.hlsl
     src/Graphics/Shaders/Common.hlsli
     src/Graphics/Shaders/Grid.hlsl
     src/Graphics/Shaders/Mesh.hlsl
+    src/Graphics/Shaders/Points.hlsl
 )
 set(GRAPHICS_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 foreach(shaderPath ${GRAPHICS_SHADERS})
@@ -243,9 +245,11 @@ add_library(enzoGraphics STATIC
     src/Graphics/GraphicsDevice.cpp
     src/Graphics/ViewportCamera.cpp
     src/Graphics/ViewportRenderer.cpp
+    src/Graphics/Passes/CameraPrimPass.cpp
     src/Graphics/Passes/GridPass.cpp
     src/Graphics/Passes/MeshPass.cpp
     src/Graphics/Passes/PassSetup.cpp
+    src/Graphics/Passes/PointPass.cpp
 )
 target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common Vulkan::Headers)
 target_include_directories(enzoGraphics PUBLIC src PRIVATE ${GRAPHICS_GENERATED_DIR})

@@ -1,7 +1,9 @@
 #include "Graphics/ViewportRenderer.h"
 #include "Graphics/DiligentObjects.h"
+#include "Graphics/Passes/CameraPrimPass.h"
 #include "Graphics/Passes/GridPass.h"
 #include "Graphics/Passes/MeshPass.h"
+#include "Graphics/Passes/PointPass.h"
 #include "Graphics/RenderTargetFormats.h"
 
 #include <TextureVk.h>
@@ -17,6 +19,8 @@ namespace {
 struct FrameConstants
 {
     glm::mat4 viewProjection;
+    glm::mat4 view;
+    glm::vec4 cameraPosition;
     glm::vec4 geometryColor;
 };
 
@@ -36,9 +40,10 @@ Diligent::RefCntAutoPtr<Diligent::IBuffer> createFrameConstantsBuffer(Diligent::
 FrameConstants getFrameConstants(const FrameState& frame)
 {
     const float aspect = float(frame.pixelSize.x) / float(std::max(frame.pixelSize.y, 1u));
-    const glm::mat4 viewProjection =
-        frame.camera.getProjectionMatrix(aspect) * frame.camera.getViewMatrix();
-    return FrameConstants{viewProjection, frame.geometryColor};
+    const glm::mat4 view = frame.camera.getViewMatrix();
+    const glm::mat4 viewProjection = frame.camera.getProjectionMatrix(aspect) * view;
+    const glm::vec4 cameraPosition{frame.camera.getPosition(), 1.f};
+    return FrameConstants{viewProjection, view, cameraPosition, frame.geometryColor};
 }
 
 Diligent::RefCntAutoPtr<Diligent::ITexture> createTargetTexture(
@@ -71,6 +76,8 @@ struct ViewportRenderer::DiligentObjects
     Diligent::RefCntAutoPtr<Diligent::IBuffer> frameConstants;
     GridPass gridPass;
     MeshPass meshPass;
+    PointPass pointPass;
+    CameraPrimPass cameraPrimPass;
     /// @brief The multisampled target the passes draw into.
     Diligent::RefCntAutoPtr<Diligent::ITexture> multisampleTexture;
     /// @brief The multisampled depth the passes test against.
@@ -87,6 +94,8 @@ ViewportRenderer::ViewportRenderer(GraphicsDevice& device) : device_(device)
         frameConstants,
         GridPass(renderDevice, frameConstants),
         MeshPass(renderDevice, frameConstants),
+        PointPass(renderDevice, frameConstants),
+        CameraPrimPass(renderDevice, frameConstants),
     });
 }
 
@@ -128,7 +137,10 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
     if (frame.geometry != uploadedGeometry_)
     {
         const DisplayGeometry noGeometry;
-        diligent_->meshPass.upload(device, frame.geometry ? *frame.geometry : noGeometry);
+        const DisplayGeometry& geometry = frame.geometry ? *frame.geometry : noGeometry;
+        diligent_->meshPass.upload(device, geometry);
+        diligent_->pointPass.upload(device, geometry);
+        diligent_->cameraPrimPass.upload(device, geometry);
         uploadedGeometry_ = frame.geometry;
     }
 
@@ -158,6 +170,8 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
     );
     diligent_->gridPass.draw(context);
     diligent_->meshPass.draw(context, frame.wireframeVisible);
+    diligent_->pointPass.draw(context);
+    diligent_->cameraPrimPass.draw(context);
     context->SetRenderTargets(0, nullptr, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
 
     // Resolves the samples into the shown texture.

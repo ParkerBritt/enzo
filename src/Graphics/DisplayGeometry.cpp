@@ -1,6 +1,7 @@
 #include "Graphics/DisplayGeometry.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Mesh.h"
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
@@ -12,6 +13,17 @@ namespace {
 glm::vec3 toGlm(const Vector3& vector)
 {
     return glm::vec3(float(vector.x()), float(vector.y()), float(vector.z()));
+}
+
+glm::mat4 toGlm(const Matrix4& matrix)
+{
+    glm::mat4 converted;
+    for (int column = 0; column < 4; ++column)
+    {
+        for (int row = 0; row < 4; ++row)
+            converted[column][row] = float(matrix(row, column));
+    }
+    return converted;
 }
 
 /// @brief Appends the index lists of one mesh, numbered from its first display vertex.
@@ -75,6 +87,13 @@ void writeVertices(DisplayGeometry& geometry, const geo::Mesh& mesh, std::uint32
     );
 }
 
+/// @brief Appends the positions of the points of one mesh that belong to no face.
+void appendSoloPoints(std::vector<glm::vec3>& soloPointPositions, const geo::Mesh& mesh)
+{
+    for (auto pointIt = mesh.soloPointsBegin(); pointIt != mesh.soloPointsEnd(); ++pointIt)
+        soloPointPositions.push_back(toGlm(mesh.getPointPos(*pointIt)));
+}
+
 } // namespace
 
 std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& packet)
@@ -95,7 +114,14 @@ std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& pa
         const auto mesh = std::static_pointer_cast<const geo::Mesh>(prim);
         appendTopology(geometry->topology, *mesh, firstVertex);
         writeVertices(*geometry, *mesh, firstVertex);
+        appendSoloPoints(geometry->soloPointPositions, *mesh);
         firstVertex += std::uint32_t(mesh->getNumVerts());
+    }
+
+    for (const geo::PrimPtr& prim : packet.getPrimitives(geo::PrimType::CAMERA))
+    {
+        const auto camera = std::static_pointer_cast<const geo::Camera>(prim);
+        geometry->cameraTransforms.push_back(toGlm(camera->getTransform()));
     }
     return geometry;
 }

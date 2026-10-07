@@ -83,34 +83,20 @@ MeshPass::MeshPass(Diligent::IRenderDevice* device, Diligent::IBuffer* frameCons
 void MeshPass::upload(Diligent::IRenderDevice* device, const DisplayGeometry& geometry)
 {
     const DisplayTopology& topology = geometry.topology;
-    positionBuffer_ =
-        createImmutableBuffer(device, "Mesh positions", Diligent::BIND_VERTEX_BUFFER, geometry.positions);
-    normalBuffer_ = createImmutableBuffer(device, "Mesh normals", Diligent::BIND_VERTEX_BUFFER, geometry.normals);
+    positions_ = createGpuArray(device, "Mesh positions", Diligent::BIND_VERTEX_BUFFER, geometry.positions);
+    normals_ = createGpuArray(device, "Mesh normals", Diligent::BIND_VERTEX_BUFFER, geometry.normals);
 
-    triangleIndices_.buffer =
-        createImmutableBuffer(device, "Mesh triangles", Diligent::BIND_INDEX_BUFFER, topology.triangleIndices);
-    triangleIndices_.indexCount = Diligent::Uint32(topology.triangleIndices.size());
-    edgeIndices_.buffer =
-        createImmutableBuffer(device, "Mesh edges", Diligent::BIND_INDEX_BUFFER, topology.edgeIndices);
-    edgeIndices_.indexCount = Diligent::Uint32(topology.edgeIndices.size());
-    lineIndices_.buffer =
-        createImmutableBuffer(device, "Mesh open faces", Diligent::BIND_INDEX_BUFFER, topology.lineIndices);
-    lineIndices_.indexCount = Diligent::Uint32(topology.lineIndices.size());
+    triangleIndices_ =
+        createGpuArray(device, "Mesh triangles", Diligent::BIND_INDEX_BUFFER, topology.triangleIndices);
+    edgeIndices_ = createGpuArray(device, "Mesh edges", Diligent::BIND_INDEX_BUFFER, topology.edgeIndices);
+    lineIndices_ = createGpuArray(device, "Mesh open faces", Diligent::BIND_INDEX_BUFFER, topology.lineIndices);
 }
 
 void MeshPass::draw(Diligent::IDeviceContext* context, bool wireframeVisible)
 {
-    if (!positionBuffer_) return;
+    if (!positions_.buffer) return;
 
-    Diligent::IBuffer* vertexBuffers[] = {positionBuffer_, normalBuffer_};
-    context->SetVertexBuffers(
-        0,
-        2,
-        vertexBuffers,
-        nullptr,
-        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
-        Diligent::SET_VERTEX_BUFFERS_FLAG_RESET
-    );
+    setVertexBuffers(context, {positions_.buffer, normals_.buffer});
 
     drawIndexed(context, shadedTrianglePipeline_, triangleIndices_);
     drawIndexed(context, shadedLinePipeline_, lineIndices_);
@@ -118,19 +104,16 @@ void MeshPass::draw(Diligent::IDeviceContext* context, bool wireframeVisible)
 }
 
 void MeshPass::drawIndexed(
-    Diligent::IDeviceContext* context, const Pipeline& pipeline, const IndexBuffer& indices
+    Diligent::IDeviceContext* context, const Pipeline& pipeline, const GpuArray& indices
 )
 {
     if (!indices.buffer) return;
 
     context->SetIndexBuffer(indices.buffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-    context->SetPipelineState(pipeline.state);
-    context->CommitShaderResources(
-        pipeline.resources, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
-    );
+    setPipeline(context, pipeline);
 
     Diligent::DrawIndexedAttribs drawAttribs;
-    drawAttribs.NumIndices = indices.indexCount;
+    drawAttribs.NumIndices = indices.count;
     drawAttribs.IndexType = Diligent::VT_UINT32;
     context->DrawIndexed(drawAttribs);
 }

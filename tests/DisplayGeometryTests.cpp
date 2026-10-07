@@ -1,5 +1,6 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NodePacket.h"
+#include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Mesh.h"
 #include "Graphics/DisplayGeometry.h"
 #include <catch2/catch_test_macros.hpp>
@@ -94,4 +95,31 @@ TEST_CASE("Display geometry leaves out deleted faces")
 
     REQUIRE(geometry->topology.triangleIndices.size() == 6);
     REQUIRE(geometry->topology.edgeIndices.size() == 8);
+}
+
+TEST_CASE("Display geometry keeps the points that belong to no face")
+{
+    std::shared_ptr<geo::Mesh> mesh = buildSquareMesh("/square");
+    mesh->addPoint({5, 0, 0});
+    NodePacket packet;
+    packet.addPrimitive(mesh);
+
+    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+
+    REQUIRE(geometry->soloPointPositions == std::vector<glm::vec3>{{5.f, 0.f, 0.f}});
+}
+
+TEST_CASE("Display geometry places each camera by its transform")
+{
+    auto camera = std::make_shared<geo::Camera>("/camera");
+    Matrix4 transform = Matrix4::Identity();
+    transform(0, 3) = 2.f;
+    camera->setTransform(transform);
+    NodePacket packet;
+    packet.addPrimitive(camera);
+
+    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+
+    REQUIRE(geometry->cameraTransforms.size() == 1);
+    REQUIRE(geometry->cameraTransforms[0][3] == glm::vec4(2.f, 0.f, 0.f, 1.f));
 }

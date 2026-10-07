@@ -22,8 +22,7 @@ class GridPass
 
   private:
     Pipeline pipeline_;
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> vertexBuffer_;
-    Diligent::Uint32 vertexCount_ = 0;
+    GpuArray vertices_;
 };
 
 } // namespace enzo::gfx

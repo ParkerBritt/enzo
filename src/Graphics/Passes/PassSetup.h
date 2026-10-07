@@ -1,10 +1,12 @@
 #pragma once
 #include <Buffer.h>
+#include <DeviceContext.h>
 #include <PipelineState.h>
 #include <RefCntAutoPtr.hpp>
 #include <RenderDevice.h>
 #include <Shader.h>
 #include <ShaderResourceBinding.h>
+#include <initializer_list>
 #include <vector>
 
 namespace enzo::gfx {
@@ -34,16 +36,32 @@ Pipeline createPipeline(
     Diligent::IBuffer* frameConstants
 );
 
-/// @brief Returns an unchanging GPU buffer holding the values, or null when there are none.
+/// @brief Binds the vertex buffers to slots 0 onward in order and unbinds the rest.
+void setVertexBuffers(Diligent::IDeviceContext* context, std::initializer_list<Diligent::IBuffer*> vertexBuffers);
+
+/// @brief Binds the pipeline and its frame constants for the next draw.
+void setPipeline(Diligent::IDeviceContext* context, const Pipeline& pipeline);
+
+/// @brief An unchanging GPU buffer and the number of values it holds.
+struct GpuArray
+{
+    /// @brief The buffer, null when it holds no values.
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
+    Diligent::Uint32 count = 0;
+};
+
+/// @brief Returns a GPU array holding the values.
 template <typename Value>
-Diligent::RefCntAutoPtr<Diligent::IBuffer> createImmutableBuffer(
+GpuArray createGpuArray(
     Diligent::IRenderDevice* device,
     const char* name,
     Diligent::BIND_FLAGS bindFlags,
     const std::vector<Value>& values
 )
 {
-    if (values.empty()) return {};
+    GpuArray array;
+    array.count = Diligent::Uint32(values.size());
+    if (values.empty()) return array;
 
     Diligent::BufferDesc bufferDesc;
     bufferDesc.Name = name;
@@ -52,9 +70,8 @@ Diligent::RefCntAutoPtr<Diligent::IBuffer> createImmutableBuffer(
     bufferDesc.Size = values.size() * sizeof(Value);
     Diligent::BufferData bufferData{values.data(), bufferDesc.Size};
 
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
-    device->CreateBuffer(bufferDesc, &bufferData, &buffer);
-    return buffer;
+    device->CreateBuffer(bufferDesc, &bufferData, &array.buffer);
+    return array;
 }
 
 } // namespace enzo::gfx

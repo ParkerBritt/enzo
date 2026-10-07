@@ -35,9 +35,7 @@ std::vector<glm::vec3> buildGridVertices()
 GridPass::GridPass(Diligent::IRenderDevice* device, Diligent::IBuffer* frameConstants)
 {
     // Vertex buffer
-    const std::vector<glm::vec3> vertices = buildGridVertices();
-    vertexCount_ = static_cast<Diligent::Uint32>(vertices.size());
-    vertexBuffer_ = createImmutableBuffer(device, "Grid vertices", Diligent::BIND_VERTEX_BUFFER, vertices);
+    vertices_ = createGpuArray(device, "Grid vertices", Diligent::BIND_VERTEX_BUFFER, buildGridVertices());
 
     // Pipeline
     Diligent::GraphicsPipelineStateCreateInfo pipelineInfo;
@@ -71,20 +69,11 @@ GridPass::GridPass(Diligent::IRenderDevice* device, Diligent::IBuffer* frameCons
 
 void GridPass::draw(Diligent::IDeviceContext* context)
 {
-    Diligent::IBuffer* vertexBuffers[] = {vertexBuffer_};
-    context->SetVertexBuffers(
-        0,
-        1,
-        vertexBuffers,
-        nullptr,
-        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
-        Diligent::SET_VERTEX_BUFFERS_FLAG_RESET
-    );
-    context->SetPipelineState(pipeline_.state);
-    context->CommitShaderResources(pipeline_.resources, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    setVertexBuffers(context, {vertices_.buffer});
+    setPipeline(context, pipeline_);
 
     Diligent::DrawAttribs drawAttribs;
-    drawAttribs.NumVertices = vertexCount_;
+    drawAttribs.NumVertices = vertices_.count;
     context->Draw(drawAttribs);
 }
 
