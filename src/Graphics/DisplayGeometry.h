@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
 #include <vector>
@@ -21,7 +22,7 @@ struct DisplayTopology
     std::vector<std::uint32_t> lineIndices;
 };
 
-/// @brief The geometry a viewport draws, flattened from every mesh in a packet.
+/// @brief The geometry a viewport draws, flattened from every primitive in a packet.
 ///
 /// @note Display vertex n is the mesh vertex at offset n, counting on from the
 /// vertices of the meshes before it.
@@ -30,9 +31,13 @@ struct DisplayGeometry
     DisplayTopology topology;
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
+    /// @brief The positions of the mesh points that belong to no face.
+    std::vector<glm::vec3> soloPointPositions;
+    /// @brief The world transform of each camera.
+    std::vector<glm::mat4> cameraTransforms;
 };
 
-/// @brief Returns the display geometry for every mesh in the packet.
+/// @brief Returns the display geometry for every mesh and camera in the packet.
 std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& packet);
 
 } // namespace enzo::gfx

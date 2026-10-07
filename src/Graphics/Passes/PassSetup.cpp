@@ -51,4 +51,22 @@ Pipeline createPipeline(
     return pipeline;
 }
 
+void setVertexBuffers(Diligent::IDeviceContext* context, std::initializer_list<Diligent::IBuffer*> vertexBuffers)
+{
+    context->SetVertexBuffers(
+        0,
+        Diligent::Uint32(vertexBuffers.size()),
+        vertexBuffers.begin(),
+        nullptr,
+        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
+        Diligent::SET_VERTEX_BUFFERS_FLAG_RESET
+    );
+}
+
+void setPipeline(Diligent::IDeviceContext* context, const Pipeline& pipeline)
+{
+    context->SetPipelineState(pipeline.state);
+    context->CommitShaderResources(pipeline.resources, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+}
+
 } // namespace enzo::gfx

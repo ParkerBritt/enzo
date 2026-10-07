@@ -25,25 +25,18 @@ class MeshPass
     void draw(Diligent::IDeviceContext* context, bool wireframeVisible);
 
   private:
-    /// @brief A buffer of indices into the vertex buffers, empty when there are none.
-    struct IndexBuffer
-    {
-        Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
-        Diligent::Uint32 indexCount = 0;
-    };
-
     /// @brief Draws the indexed vertices with the pipeline.
-    void drawIndexed(Diligent::IDeviceContext* context, const Pipeline& pipeline, const IndexBuffer& indices);
+    void drawIndexed(Diligent::IDeviceContext* context, const Pipeline& pipeline, const GpuArray& indices);
 
     Pipeline shadedTrianglePipeline_;
     Pipeline shadedLinePipeline_;
     Pipeline wireframePipeline_;
 
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> positionBuffer_;
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> normalBuffer_;
-    IndexBuffer triangleIndices_;
-    IndexBuffer edgeIndices_;
-    IndexBuffer lineIndices_;
+    GpuArray positions_;
+    GpuArray normals_;
+    GpuArray triangleIndices_;
+    GpuArray edgeIndices_;
+    GpuArray lineIndices_;
 };
 
 } // namespace enzo::gfx
