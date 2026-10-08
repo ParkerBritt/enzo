@@ -137,8 +137,9 @@ jobs:
       - name: Install Vulkan
         uses: jakoch/install-vulkan-sdk-action@v1.6.0
         with:
-          install_runtime_only: true
+          install_runtime: true
           install_lavapipe: true
+          github_token: ${{ github.token }}
 
       # Starts the installed tree, where the libraries, plugins and qml modules
       # sit apart from the build directory they were compiled in.
