@@ -95,10 +95,12 @@ void writeVertices(DisplayGeometry& geometry, const geo::Mesh& mesh, std::uint32
 /// @brief Appends the positions of every point of one mesh.
 void appendPoints(std::vector<glm::vec3>& pointPositions, const geo::Mesh& mesh)
 {
-    for (Offset pointOffset = 0; pointOffset < mesh.getNumPoints(); ++pointOffset)
+    const std::span<const Vector3> positions = mesh.pointPosSpan();
+    pointPositions.reserve(pointPositions.size() + positions.size());
+    for (Offset pointOffset = 0; pointOffset < positions.size(); ++pointOffset)
     {
         if (!mesh.isValidPoint(pointOffset)) continue;
-        pointPositions.push_back(toGlm(mesh.getPointPos(pointOffset)));
+        pointPositions.push_back(toGlm(positions[pointOffset]));
     }
 }
 

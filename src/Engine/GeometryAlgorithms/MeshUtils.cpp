@@ -3,6 +3,8 @@
 
 #include <cmath>
 #include <numeric>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 namespace enzo::utils {
 
@@ -179,26 +181,49 @@ Vector3 polygonNormal(std::span<const Vector3> positions, std::span<const intT> 
 std::vector<std::array<Offset, 3>>
 earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffsets)
 {
-    std::vector<std::array<Offset, 3>> triangles;
-    std::vector<Vector3> corners;
-    const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
-    for (const Offset faceOffset : faceOffsets)
+    // Places each face's triangles after those of the faces before it, since a
+    // face of n corners always clips into n - 2 triangles.
+    std::vector<size_t> triangleStarts(faceOffsets.size() + 1, 0);
+    for (size_t faceIndex = 0; faceIndex < faceOffsets.size(); ++faceIndex)
     {
-        const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
-        if (cornerCount < 3) continue;
-
-        // Each corner's position lives at its vertex offset on the face.
-        const Offset faceStartVertex = faceStarts[faceOffset];
-        corners.resize(cornerCount);
-        for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
-            corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);
-
-        // Lift the per face triple back onto the mesh's vertex offsets.
-        for (const std::array<int, 3>& tri : earClipPolygon(corners))
-            triangles.push_back(
-                {faceStartVertex + tri[0], faceStartVertex + tri[1], faceStartVertex + tri[2]}
-            );
+        const unsigned int cornerCount = mesh.getFaceVertCount(faceOffsets[faceIndex]);
+        const size_t triangleCount = cornerCount >= 3 ? cornerCount - 2 : 0;
+        triangleStarts[faceIndex + 1] = triangleStarts[faceIndex] + triangleCount;
     }
+
+    std::vector<std::array<Offset, 3>> triangles(triangleStarts.back());
+    const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, faceOffsets.size()),
+        [&](const tbb::blocked_range<size_t>& range) {
+            std::vector<Vector3> corners;
+            for (size_t faceIndex = range.begin(); faceIndex < range.end(); ++faceIndex)
+            {
+                const Offset faceOffset = faceOffsets[faceIndex];
+                const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
+                const Offset faceStartVertex = faceStarts[faceOffset];
+                size_t triangleSlot = triangleStarts[faceIndex];
+
+                // Writes a triangle face as it is.
+                if (cornerCount == 3)
+                {
+                    triangles[triangleSlot] = {faceStartVertex, faceStartVertex + 1, faceStartVertex + 2};
+                    continue;
+                }
+                if (cornerCount < 3) continue;
+
+                // Each corner's position lives at its vertex offset on the face.
+                corners.resize(cornerCount);
+                for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
+                    corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);
+
+                // Lift the per face triple back onto the mesh's vertex offsets.
+                for (const std::array<int, 3>& tri : earClipPolygon(corners))
+                    triangles[triangleSlot++] =
+                        {faceStartVertex + tri[0], faceStartVertex + tri[1], faceStartVertex + tri[2]};
+            }
+        }
+    );
     return triangles;
 }
 
