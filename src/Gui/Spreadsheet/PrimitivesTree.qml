@@ -3,8 +3,8 @@ import QtQuick.Controls
 import Enzo
 import "../Components"
 
-// Sidebar listing the primitives of the selected node as a path tree. Tapping a
-// primitive leaf asks the view-model to show it in the attribute table.
+// Sidebar listing the selected node's primitives as a path tree, for choosing
+// which primitive the attribute table shows.
 Rectangle {
     id: root
 
@@ -91,11 +91,12 @@ Rectangle {
             required property int row
             required property string name
             required property string typeTag
+            required property string icon
             required property int primitiveIndex
 
-            readonly property bool isLeaf: primitiveIndex >= 0
-            readonly property bool selected: isLeaf && primitiveIndex === root.selectedIndex
-            readonly property string tag: isLeaf ? typeTag : "GROUP"
+            readonly property bool isPrimitive: primitiveIndex >= 0
+            readonly property bool selected: isPrimitive && primitiveIndex === root.selectedIndex
+            readonly property string tag: isPrimitive ? typeTag : "GROUP"
 
             implicitWidth: tree.width
             implicitHeight: 27
@@ -145,7 +146,7 @@ Rectangle {
 
                 Icon {
                     anchors.verticalCenter: parent.verticalCenter
-                    name: node.isLeaf ? (node.typeTag === "CAMERA" ? "camera" : "box") : "layers"
+                    name: node.icon
                     size: 15
                     color: node.selected ? Theme.var.textStrong : "#aab0ba"
                 }
@@ -177,7 +178,7 @@ Rectangle {
                 onTapped: {
                     if (node.hasChildren)
                         node.treeView.toggleExpanded(node.row)
-                    if (node.isLeaf) {
+                    if (node.isPrimitive) {
                         root.selectedIndex = node.primitiveIndex
                         root.viewModel.selectPrimitive(node.primitiveIndex)
                     }

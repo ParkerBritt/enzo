@@ -17,8 +17,25 @@ QString typeTag(geo::PrimType type)
         return "MESH";
     case geo::PrimType::CAMERA:
         return "CAMERA";
+    case geo::PrimType::POINT_LIGHT:
+        return "POINT LIGHT";
     }
     return "PRIM";
+}
+
+/// @brief Returns the name of the icon shown beside a primitive row.
+QString typeIcon(geo::PrimType type)
+{
+    switch (type)
+    {
+    case geo::PrimType::MESH:
+        return "box";
+    case geo::PrimType::CAMERA:
+        return "camera";
+    case geo::PrimType::POINT_LIGHT:
+        return "lightbulb";
+    }
+    return "box";
 }
 
 } // namespace
@@ -83,6 +100,7 @@ PrimitiveTreeModel::buildTree(const std::shared_ptr<const NodePacket>& packet)
 
         current->primitiveIndex = i;
         current->typeTag = typeTag(primitive->getType());
+        current->icon = typeIcon(primitive->getType());
     }
     return root;
 }
@@ -149,6 +167,8 @@ QVariant PrimitiveTreeModel::data(const QModelIndex& index, int role) const
         return node->name;
     case TypeTagRole:
         return node->typeTag;
+    case IconRole:
+        return node->icon;
     case PrimitiveIndexRole:
         return node->primitiveIndex;
     default:
@@ -161,6 +181,7 @@ QHash<int, QByteArray> PrimitiveTreeModel::roleNames() const
     return {
         {NameRole, "name"},
         {TypeTagRole, "typeTag"},
+        {IconRole, "icon"},
         {PrimitiveIndexRole, "primitiveIndex"},
     };
 }

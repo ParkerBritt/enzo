@@ -3,10 +3,10 @@
 namespace enzo {
 
 geo::Camera::Camera(std::string_view path)
-    : transformHandle_{addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true)},
-      Primitive(path)
+    : Primitive(path),
+      transformHandle_{addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true)}
 {
-    transformHandle_.addValue(Matrix4::Identity());
+    setTransform(Matrix4::Identity());
 }
 
 geo::Camera::Camera(const Camera& other)
@@ -32,7 +32,7 @@ void geo::Camera::setTransform(const Matrix4& xform) { transformHandle_.setValue
 
 void geo::Camera::applyTransform(const Matrix4& mat, TransformClass transformClass)
 {
-    if ((transformClass & TransformClass::PRIMITIVE) == TransformClass::NONE) return;
+    if (!hasFlag(transformClass, TransformClass::PRIMITIVE)) return;
     setTransform(mat * getTransform());
 }
 
