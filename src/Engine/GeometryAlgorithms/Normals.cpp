@@ -2,8 +2,10 @@
 #include "Engine/Primitives/Mesh.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <numbers>
+#include <tuple>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
@@ -81,9 +83,9 @@ CornersByPoint gatherCornersByPoint(const geo::Mesh& mesh, std::span<const Offse
     for (Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
         grouped.pointStarts[pointOffset + 1] += grouped.pointStarts[pointOffset];
 
-    // Measures the angle at every corner, stored at the corner's vertex offset.
-    const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
-    std::vector<double> cornerAngles(mesh.getNumVerts(), 0);
+    // Fills each point's run, each corner taking the next free place in it.
+    std::vector<Offset> nextFreeSlot = grouped.pointStarts;
+    grouped.corners.resize(grouped.pointStarts.back());
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, faces.size()),
         [&](const tbb::blocked_range<size_t>& range) {
@@ -91,30 +93,33 @@ CornersByPoint gatherCornersByPoint(const geo::Mesh& mesh, std::span<const Offse
             {
                 const Offset faceOffset = faces[faceIndex];
                 const std::span<const intT> facePoints = mesh.getFacePoints(faceOffset);
-                const Offset faceStartVertex = faceStarts[faceOffset];
                 for (size_t cornerIndex = 0; cornerIndex < facePoints.size(); ++cornerIndex)
-                    cornerAngles[faceStartVertex + cornerIndex] =
-                        getCornerAngle(positions, facePoints, cornerIndex);
+                {
+                    const intT pointOffset = facePoints[cornerIndex];
+                    const Offset slot = std::atomic_ref(nextFreeSlot[pointOffset]).fetch_add(1);
+                    grouped.corners[slot] = {
+                        faceOffset,
+                        getCornerAngle(positions, facePoints, cornerIndex)
+                    };
+                }
             }
         }
     );
 
-    // Walk the faces again, filling each point's run from its start.
-    std::vector<Offset> nextFreeSlot = grouped.pointStarts;
-    grouped.corners.resize(grouped.pointStarts.back());
-    for (const Offset faceOffset : faces)
-    {
-        const std::span<const intT> facePoints = mesh.getFacePoints(faceOffset);
-        const Offset faceStartVertex = faceStarts[faceOffset];
-        for (size_t cornerIndex = 0; cornerIndex < facePoints.size(); ++cornerIndex)
-        {
-            const intT pointOffset = facePoints[cornerIndex];
-            grouped.corners[nextFreeSlot[pointOffset]++] = {
-                faceOffset,
-                cornerAngles[faceStartVertex + cornerIndex]
-            };
+    // Sorts each point's run by face so the corners sum in the same order on every run.
+    tbb::parallel_for(
+        tbb::blocked_range<Offset>(0, numPoints),
+        [&](const tbb::blocked_range<Offset>& range) {
+            for (Offset pointOffset = range.begin(); pointOffset < range.end(); ++pointOffset)
+            {
+                const auto runBegin = grouped.corners.begin() + grouped.pointStarts[pointOffset];
+                const auto runEnd = grouped.corners.begin() + grouped.pointStarts[pointOffset + 1];
+                std::sort(runBegin, runEnd, [](const Corner& left, const Corner& right) {
+                    return std::tie(left.face, left.angle) < std::tie(right.face, right.angle);
+                });
+            }
         }
-    }
+    );
     return grouped;
 }
 

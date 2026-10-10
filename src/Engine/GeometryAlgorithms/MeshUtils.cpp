@@ -122,6 +122,20 @@ std::vector<std::array<int, 3>> earClipPolygon(std::span<const Vector3> corners)
     return triangles;
 }
 
+// Returns the two triangles of a quad, split across the diagonal that stays inside it.
+std::array<std::array<int, 3>, 2> splitQuad(std::span<const Vector3, 4> corners)
+{
+    const Vector3 normal = (corners[2] - corners[0]).cross(corners[3] - corners[1]);
+    auto isReflex = [&](int cornerIndex) {
+        const Vector3& prevPos = corners[(cornerIndex + 3) % 4];
+        const Vector3& nextPos = corners[(cornerIndex + 1) % 4];
+        const Vector3& cornerPos = corners[cornerIndex];
+        return (cornerPos - prevPos).cross(nextPos - cornerPos).dot(normal) < 0;
+    };
+    if (isReflex(0) || isReflex(2)) return {{{0, 1, 2}, {0, 2, 3}}};
+    return {{{3, 0, 1}, {1, 2, 3}}};
+}
+
 } // namespace
 
 TriangulatedMesh triangulateMesh(const geo::Mesh& src)
@@ -218,9 +232,18 @@ earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffset
                     corners[cornerIndex] = mesh.getPosFromVert(faceStartVertex + cornerIndex);
 
                 // Lift the per face triple back onto the mesh's vertex offsets.
-                for (const std::array<int, 3>& tri : earClipPolygon(corners))
+                auto writeTriangle = [&](const std::array<int, 3>& tri) {
                     triangles[triangleSlot++] =
                         {faceStartVertex + tri[0], faceStartVertex + tri[1], faceStartVertex + tri[2]};
+                };
+                if (cornerCount == 4)
+                {
+                    for (const std::array<int, 3>& tri : splitQuad(std::span<const Vector3, 4>(corners)))
+                        writeTriangle(tri);
+                    continue;
+                }
+                for (const std::array<int, 3>& tri : earClipPolygon(corners))
+                    writeTriangle(tri);
             }
         }
     );

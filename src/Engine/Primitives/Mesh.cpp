@@ -748,12 +748,15 @@ geo::FaceNormalHandle::FaceNormalHandle(const Mesh& mesh, bool precompute) : mes
     if (precompute)
     {
         const std::span<const Vector3> positions = mesh.posPointHandle_.getSpan();
-        const Offset numFaces = mesh.getNumFaces();
-        precomputed_.reserve(numFaces);
-        for (Offset faceOffset = 0; faceOffset < numFaces; ++faceOffset)
-        {
-            precomputed_.push_back(utils::polygonNormal(positions, mesh.getFacePoints(faceOffset)));
-        }
+        precomputed_.resize(mesh.getNumFaces());
+        tbb::parallel_for(
+            tbb::blocked_range<Offset>(0, mesh.getNumFaces()),
+            [&](const tbb::blocked_range<Offset>& range) {
+                for (Offset faceOffset = range.begin(); faceOffset < range.end(); ++faceOffset)
+                    precomputed_[faceOffset] =
+                        utils::polygonNormal(positions, mesh.getFacePoints(faceOffset));
+            }
+        );
     }
 }
 

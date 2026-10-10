@@ -31,7 +31,12 @@ class ViewportViewModel : public QObject
     void nodePathChanged();
 
   private:
-    std::shared_ptr<const gfx::DisplayGeometry> geometry_;
+    /// @brief Fills the geometry with the packet, reusing the previous geometry once the renderer has let go of it.
+    void rebuildGeometry(const NodePacket& packet);
+
+    std::shared_ptr<gfx::DisplayGeometry> geometry_;
+    /// @brief The geometry before the current one, kept so its buffers can be refilled.
+    std::shared_ptr<gfx::DisplayGeometry> previousGeometry_;
     QStringList nodePath_;
     boost::signals2::scoped_connection displayNodeSubscription_;
     boost::signals2::scoped_connection displayGeoSubscription_;

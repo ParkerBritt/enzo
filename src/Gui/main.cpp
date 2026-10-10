@@ -25,8 +25,13 @@
 #include <QSurfaceFormat>
 #include <QUrl>
 
+#include <climits>
 #include <iostream>
 #include <memory>
+
+#ifdef __GLIBC__
+#include <malloc.h>
+#endif
 
 namespace {
 
@@ -129,8 +134,25 @@ QStringList loadFonts()
 
 } // namespace
 
+namespace {
+
+/// @brief Keeps freed memory in the process so large buffers come back already mapped.
+///
+/// @note Each cook and viewport update allocates buffers of tens of megabytes.
+/// Returned to the system, every page of them faults on its next first write.
+void keepFreedMemory()
+{
+#ifdef __GLIBC__
+    mallopt(M_MMAP_THRESHOLD, INT_MAX);
+    mallopt(M_TRIM_THRESHOLD, INT_MAX);
+#endif
+}
+
+} // namespace
+
 int main(int argc, char** argv)
 {
+    keepFreedMemory();
     const QString scenePath = parseCommandLine(argc, argv);
 
     QQuickWindow::setGraphicsApi(QSGRendererInterface::Vulkan);

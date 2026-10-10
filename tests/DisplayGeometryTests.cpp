@@ -29,13 +29,14 @@ TEST_CASE("Display geometry splits a closed face into triangles with an outline"
     NodePacket packet;
     packet.addPrimitive(buildSquareMesh("/square"));
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->positions.size() == 4);
-    REQUIRE(geometry->normals.size() == 4);
-    REQUIRE(geometry->topology.triangleIndices.size() == 6);
-    REQUIRE(geometry->topology.edgeIndices.size() == 8);
-    REQUIRE(geometry->topology.lineIndices.empty());
+    REQUIRE(geometry.positions.size() == 4);
+    REQUIRE(geometry.normals.size() == 4);
+    REQUIRE(geometry.topology.triangleIndices.size() == 6);
+    REQUIRE(geometry.topology.edgeIndices.size() == 8);
+    REQUIRE(geometry.topology.lineIndices.empty());
 }
 
 TEST_CASE("Display geometry draws an open face as a line")
@@ -46,11 +47,12 @@ TEST_CASE("Display geometry draws an open face as a line")
     NodePacket packet;
     packet.addPrimitive(mesh);
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->topology.lineIndices == std::vector<std::uint32_t>{0, 1, 1, 2});
-    REQUIRE(geometry->topology.triangleIndices.empty());
-    REQUIRE(geometry->topology.edgeIndices.empty());
+    REQUIRE(geometry.topology.lineIndices == std::vector<std::uint32_t>{0, 1, 1, 2});
+    REQUIRE(geometry.topology.triangleIndices.empty());
+    REQUIRE(geometry.topology.edgeIndices.empty());
 }
 
 TEST_CASE("Display geometry numbers each mesh on from the vertices before it")
@@ -59,10 +61,11 @@ TEST_CASE("Display geometry numbers each mesh on from the vertices before it")
     packet.addPrimitive(buildSquareMesh("/first"));
     packet.addPrimitive(buildSquareMesh("/second"));
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->positions.size() == 8);
-    const std::vector<std::uint32_t>& triangleIndices = geometry->topology.triangleIndices;
+    REQUIRE(geometry.positions.size() == 8);
+    const std::vector<std::uint32_t>& triangleIndices = geometry.topology.triangleIndices;
     REQUIRE(triangleIndices.size() == 12);
     for (std::size_t corner = 0; corner < 6; ++corner)
     {
@@ -76,10 +79,11 @@ TEST_CASE("Display geometry reads each vertex position from its point")
     NodePacket packet;
     packet.addPrimitive(buildSquareMesh("/square"));
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->positions[2] == glm::vec3(1.f, 0.f, 1.f));
-    REQUIRE(geometry->normals[0].y != 0.f);
+    REQUIRE(geometry.positions[2] == glm::vec3(1.f, 0.f, 1.f));
+    REQUIRE(geometry.normals[0].y != 0.f);
 }
 
 TEST_CASE("Display geometry leaves out deleted faces")
@@ -91,10 +95,11 @@ TEST_CASE("Display geometry leaves out deleted faces")
     NodePacket packet;
     packet.addPrimitive(mesh);
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->topology.triangleIndices.size() == 6);
-    REQUIRE(geometry->topology.edgeIndices.size() == 8);
+    REQUIRE(geometry.topology.triangleIndices.size() == 6);
+    REQUIRE(geometry.topology.edgeIndices.size() == 8);
 }
 
 TEST_CASE("Display geometry keeps the points that belong to no face")
@@ -104,9 +109,10 @@ TEST_CASE("Display geometry keeps the points that belong to no face")
     NodePacket packet;
     packet.addPrimitive(mesh);
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->soloPointPositions == std::vector<glm::vec3>{{5.f, 0.f, 0.f}});
+    REQUIRE(geometry.soloPointPositions == std::vector<glm::vec3>{{5.f, 0.f, 0.f}});
 }
 
 TEST_CASE("Display geometry places each camera by its transform")
@@ -118,8 +124,27 @@ TEST_CASE("Display geometry places each camera by its transform")
     NodePacket packet;
     packet.addPrimitive(camera);
 
-    const std::shared_ptr<const DisplayGeometry> geometry = buildDisplayGeometry(packet);
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
 
-    REQUIRE(geometry->cameraTransforms.size() == 1);
-    REQUIRE(geometry->cameraTransforms[0][3] == glm::vec4(2.f, 0.f, 0.f, 1.f));
+    REQUIRE(geometry.cameraTransforms.size() == 1);
+    REQUIRE(geometry.cameraTransforms[0][3] == glm::vec4(2.f, 0.f, 0.f, 1.f));
+}
+
+TEST_CASE("Display geometry refilled from a smaller packet holds only the new contents")
+{
+    NodePacket twoSquares;
+    twoSquares.addPrimitive(buildSquareMesh("/first"));
+    twoSquares.addPrimitive(buildSquareMesh("/second"));
+    NodePacket oneSquare;
+    oneSquare.addPrimitive(buildSquareMesh("/square"));
+
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, twoSquares);
+    buildDisplayGeometry(geometry, oneSquare);
+
+    REQUIRE(geometry.positions.size() == 4);
+    REQUIRE(geometry.topology.triangleIndices.size() == 6);
+    REQUIRE(geometry.topology.edgeIndices.size() == 8);
+    REQUIRE(geometry.pointPositions.size() == 4);
 }
