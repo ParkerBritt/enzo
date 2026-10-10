@@ -42,7 +42,12 @@ struct DisplayGeometry
     std::vector<std::string> cameraPaths;
 };
 
-/// @brief Returns the display geometry for every mesh and camera in the packet.
-std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& packet);
+/**
+ * @brief Fills the geometry with every mesh and camera in the packet, replacing what it held.
+ *
+ * @note Keeps the memory of the geometry's buffers, so refilling a geometry of a
+ * similar size allocates nothing.
+ */
+void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet);
 
 } // namespace enzo::gfx

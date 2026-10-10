@@ -64,12 +64,20 @@ void appendTopology(DisplayTopology& topology, const geo::Mesh& mesh, std::uint3
     // Ear clips the closed faces so concave faces fill correctly.
     const std::vector<std::array<Offset, 3>> triangles =
         utils::earClipTriangleIndices(mesh, closedFaceOffsets);
-    topology.triangleIndices.reserve(topology.triangleIndices.size() + 3 * triangles.size());
-    for (const std::array<Offset, 3>& triangle : triangles)
-    {
-        for (const Offset vertexOffset : triangle)
-            topology.triangleIndices.push_back(firstVertex + std::uint32_t(vertexOffset));
-    }
+    const std::size_t firstTriangleIndex = topology.triangleIndices.size();
+    topology.triangleIndices.resize(firstTriangleIndex + 3 * triangles.size());
+    tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, triangles.size()),
+        [&](const tbb::blocked_range<std::size_t>& range) {
+            for (std::size_t triangleIndex = range.begin(); triangleIndex < range.end(); ++triangleIndex)
+            {
+                const std::size_t indexSlot = firstTriangleIndex + 3 * triangleIndex;
+                for (std::size_t corner = 0; corner < 3; ++corner)
+                    topology.triangleIndices[indexSlot + corner] =
+                        firstVertex + std::uint32_t(triangles[triangleIndex][corner]);
+            }
+        }
+    );
 }
 
 /// @brief Writes the position and normal of every vertex of one mesh, from its first display vertex on.
@@ -113,7 +121,7 @@ void appendSoloPoints(std::vector<glm::vec3>& soloPointPositions, const geo::Mes
 
 } // namespace
 
-std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& packet)
+void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
 {
     const std::vector<geo::PrimPtr> meshPrims = packet.getPrimitives(geo::PrimType::MESH);
 
@@ -121,28 +129,34 @@ std::shared_ptr<const DisplayGeometry> buildDisplayGeometry(const NodePacket& pa
     for (const geo::PrimPtr& prim : meshPrims)
         vertexCount += std::static_pointer_cast<const geo::Mesh>(prim)->getNumVerts();
 
-    auto geometry = std::make_shared<DisplayGeometry>();
-    geometry->positions.resize(vertexCount);
-    geometry->normals.resize(vertexCount);
+    // Empties the lists the meshes append to, which keeps their memory.
+    geometry.topology.triangleIndices.clear();
+    geometry.topology.edgeIndices.clear();
+    geometry.topology.lineIndices.clear();
+    geometry.pointPositions.clear();
+    geometry.soloPointPositions.clear();
+    geometry.cameraTransforms.clear();
+    geometry.cameraPaths.clear();
+    geometry.positions.resize(vertexCount);
+    geometry.normals.resize(vertexCount);
 
     std::uint32_t firstVertex = 0;
     for (const geo::PrimPtr& prim : meshPrims)
     {
         const auto mesh = std::static_pointer_cast<const geo::Mesh>(prim);
-        appendTopology(geometry->topology, *mesh, firstVertex);
-        writeVertices(*geometry, *mesh, firstVertex);
-        appendPoints(geometry->pointPositions, *mesh);
-        appendSoloPoints(geometry->soloPointPositions, *mesh);
+        appendTopology(geometry.topology, *mesh, firstVertex);
+        writeVertices(geometry, *mesh, firstVertex);
+        appendPoints(geometry.pointPositions, *mesh);
+        appendSoloPoints(geometry.soloPointPositions, *mesh);
         firstVertex += std::uint32_t(mesh->getNumVerts());
     }
 
     for (const geo::PrimPtr& prim : packet.getPrimitives(geo::PrimType::CAMERA))
     {
         const auto camera = std::static_pointer_cast<const geo::Camera>(prim);
-        geometry->cameraTransforms.push_back(toGlm(camera->getTransform()));
-        geometry->cameraPaths.push_back(camera->getPath());
+        geometry.cameraTransforms.push_back(toGlm(camera->getTransform()));
+        geometry.cameraPaths.push_back(camera->getPath());
     }
-    return geometry;
 }
 
 } // namespace enzo::gfx

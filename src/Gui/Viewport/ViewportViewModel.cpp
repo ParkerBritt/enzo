@@ -19,14 +19,30 @@ ViewportViewModel::ViewportViewModel(QObject* parent) : QObject(parent)
 
     displayGeoSubscription_ =
         network.displayGeoChanged.connect([this](std::shared_ptr<const NodePacket> packet) {
-            geometry_ = packet ? gfx::buildDisplayGeometry(*packet) : nullptr;
+            if (packet)
+                rebuildGeometry(*packet);
+            else
+                geometry_ = nullptr;
             Q_EMIT geometryChanged();
         });
 
     networkClearedSubscription_ = network.networkCleared.connect([this]() {
         geometry_ = nullptr;
+        previousGeometry_ = nullptr;
         Q_EMIT geometryChanged();
     });
+}
+
+void ViewportViewModel::rebuildGeometry(const NodePacket& packet)
+{
+    // Reuses the previous geometry only when nothing else holds it, since the
+    // renderer may still be drawing from it.
+    std::shared_ptr<gfx::DisplayGeometry> geometry = previousGeometry_.use_count() == 1
+        ? std::move(previousGeometry_)
+        : std::make_shared<gfx::DisplayGeometry>();
+    gfx::buildDisplayGeometry(*geometry, packet);
+    previousGeometry_ = std::move(geometry_);
+    geometry_ = std::move(geometry);
 }
 
 std::shared_ptr<const gfx::DisplayGeometry> ViewportViewModel::getGeometry() const
