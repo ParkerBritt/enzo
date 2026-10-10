@@ -1,0 +1,54 @@
+version: 1
+
+name: light
+namespace: enzo
+label: Light
+tags: [primitive, light, scene]
+
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: light
+
+icon: icon.svg
+
+parameters:
+  - name: type
+    label: Type
+    type: dropdown
+    default: point
+    tooltip: The kind of light to create.
+    options:
+      - {value: point, label: Point}
+
+  - name: translate
+    label: Translate
+    type: float
+    size: 3
+    style: xyz
+    tooltip: Where to place the light.
+
+  - name: rotate
+    label: Rotate
+    type: float
+    size: 3
+    style: xyz
+    range: {min: -360, max: 360}
+    tooltip: How far to turn the light about each axis, in degrees.
+
+  - name: color
+    label: Color
+    type: float
+    size: 3
+    default: 1
+    range: {min: 0, max: 1}
+    tooltip: The color of the light, as red, green and blue.
+
+  - name: intensity
+    label: Intensity
+    type: float
+    default: 1
+    range: {min: 0, max: 10}
+    tooltip: How bright the light is.

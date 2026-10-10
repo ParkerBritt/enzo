@@ -45,6 +45,7 @@ set(ENGINE_SOURCES
     src/Engine/Primitives/Primitive.cpp
     src/Engine/Primitives/Mesh.cpp
     src/Engine/Primitives/Camera.cpp
+    src/Engine/Primitives/PointLight.cpp
     src/Engine/Selection/PrimPath.cpp
     src/Engine/Core/InstallPaths.cpp
     src/Engine/Core/Path.cpp
@@ -489,6 +490,7 @@ if(ENZO_BUILD_TESTS)
         tests/MeshTests.cpp
         tests/BooleanUtilsTests.cpp
         tests/PrimitiveTests.cpp
+        tests/PointLightTests.cpp
         tests/AttributeTransferTests.cpp
         tests/PlaneCutTests.cpp
         tests/CellFractureNodeTests.cpp

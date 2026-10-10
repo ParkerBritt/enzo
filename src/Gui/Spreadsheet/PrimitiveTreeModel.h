@@ -24,6 +24,7 @@ class PrimitiveTreeModel : public QAbstractItemModel
     {
         NameRole = Qt::UserRole + 1,
         TypeTagRole,
+        IconRole,
         PrimitiveIndexRole,
     };
 
@@ -49,6 +50,7 @@ class PrimitiveTreeModel : public QAbstractItemModel
     {
         QString name;
         QString typeTag;
+        QString icon = "layers";
         int primitiveIndex = -1;
         Node* parent = nullptr;
         std::vector<std::unique_ptr<Node>> children;

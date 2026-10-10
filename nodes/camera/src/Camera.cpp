@@ -21,19 +21,13 @@ void Camera::cook()
 
     if (!outputRequested(0)) return;
 
-    const Vector3 translation(
-        evalParmFloat("transform", 0),
-        evalParmFloat("transform", 1),
-        evalParmFloat("transform", 2)
-    );
-    const Vector3 rotation(
-        evalParmFloat("rotate", 0),
-        evalParmFloat("rotate", 1),
-        evalParmFloat("rotate", 2)
-    );
+    const Matrix4 transform = Transform()
+                                  .translate(evalParmVector3("transform"))
+                                  .rotateEuler(evalParmVector3("rotate"))
+                                  .getMatrix();
 
     auto camera = std::make_shared<geo::Camera>();
-    camera->setTransform(Transform().translate(translation).rotateEuler(rotation).getMatrix());
+    camera->setTransform(transform);
 
     NodePacket packet;
     packet.addPrimitive(std::move(camera));

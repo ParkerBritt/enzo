@@ -125,7 +125,8 @@ namespace geo {
 enum class PrimType
 {
     MESH,
-    CAMERA
+    CAMERA,
+    POINT_LIGHT
 };
 }
 
