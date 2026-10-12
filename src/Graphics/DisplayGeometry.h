@@ -40,10 +40,16 @@ struct DisplayGeometry
     std::vector<glm::mat4> cameraTransforms;
     /// @brief The path of each camera, in the same order as the transforms.
     std::vector<std::string> cameraPaths;
+    /// @brief The position of each point light.
+    std::vector<glm::vec3> pointLightPositions;
+    /// @brief The color of each point light, in the same order as the positions.
+    std::vector<glm::vec3> pointLightColors;
+    /// @brief The intensity of each point light, in the same order as the positions.
+    std::vector<float> pointLightIntensities;
 };
 
 /**
- * @brief Fills the geometry with every mesh and camera in the packet, replacing what it held.
+ * @brief Fills the geometry with every mesh, camera and light in the packet, replacing what it held.
  *
  * @note Keeps the memory of the geometry's buffers, so refilling a geometry of a
  * similar size allocates nothing.

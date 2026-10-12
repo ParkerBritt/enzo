@@ -324,12 +324,6 @@ std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(
     return nullptr;
 }
 
-void geo::Primitive::incrementVersion()
-{
-    // TODO: temporary placeholder. Replace once PrimPath class is implemented
-    path_ += "_02";
-}
-
 attr::attribVector geo::Primitive::deepCopyAttributes(attr::attribVector originalVector)
 {
     attr::attribVector copied;

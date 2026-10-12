@@ -1,4 +1,4 @@
-// Draws the display mesh lit by a fixed light, and its wireframe in flat grey.
+// Draws the open faces of the display mesh lit by a fixed light, and the wireframe in flat grey.
 
 struct VertexOutput
 {
@@ -18,7 +18,7 @@ VertexOutput vertexMain(float3 position : ATTRIB0, float3 normal : ATTRIB1)
 }
 
 // Scales the light from 0.5 on faces turned away from it to 1 on faces facing it.
-float4 shadedPixelMain(VertexOutput input) : SV_Target
+float4 openFacePixelMain(VertexOutput input) : SV_Target
 {
     float brightness = lerp(0.5, 1.0, dot(input.normal, lightDirection) * 0.5 + 0.5);
     return float4(geometryColor.rgb * brightness, 1.0);

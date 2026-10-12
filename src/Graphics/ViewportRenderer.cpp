@@ -2,7 +2,9 @@
 #include "Graphics/DiligentObjects.h"
 #include "Graphics/Passes/CameraPrimPass.h"
 #include "Graphics/Passes/GridPass.h"
+#include "Graphics/Passes/LightPrimPass.h"
 #include "Graphics/Passes/MeshPass.h"
+#include "Graphics/Passes/PassSetup.h"
 #include "Graphics/Passes/PointPass.h"
 #include "Graphics/RenderTargetFormats.h"
 
@@ -27,33 +29,26 @@ struct FrameConstants
     float padding;
 };
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> createFrameConstantsBuffer(Diligent::IRenderDevice* device)
-{
-    Diligent::BufferDesc bufferDesc;
-    bufferDesc.Name = "Frame constants";
-    bufferDesc.Usage = Diligent::USAGE_DEFAULT;
-    bufferDesc.BindFlags = Diligent::BIND_UNIFORM_BUFFER;
-    bufferDesc.Size = sizeof(FrameConstants);
-
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
-    device->CreateBuffer(bufferDesc, nullptr, &buffer);
-    return buffer;
-}
-
-FrameConstants getFrameConstants(const FrameState& frame)
+FrameView getFrameView(const FrameState& frame)
 {
     glm::mat4 view = frame.camera.getViewMatrix();
-    glm::vec4 cameraPosition{frame.camera.getPosition(), 1.f};
+    glm::vec3 cameraPosition = frame.camera.getPosition();
     if (frame.viewCameraIndex.has_value())
     {
         const glm::mat4& viewCameraTransform = frame.geometry->cameraTransforms[*frame.viewCameraIndex];
         view = glm::inverse(viewCameraTransform);
-        cameraPosition = viewCameraTransform[3];
+        cameraPosition = glm::vec3(viewCameraTransform[3]);
     }
 
     const float aspect = float(frame.pixelSize.x) / float(std::max(frame.pixelSize.y, 1u));
-    const glm::mat4 viewProjection = frame.camera.getProjectionMatrix(aspect) * view;
-    const glm::vec2 viewportPixelSize{frame.pixelSize};
+    return FrameView{view, frame.camera.getProjectionMatrix(aspect), cameraPosition, frame.pixelSize};
+}
+
+FrameConstants getFrameConstants(const FrameState& frame, const FrameView& frameView)
+{
+    const glm::mat4 viewProjection = frameView.projection * frameView.view;
+    const glm::vec4 cameraPosition{frameView.cameraPosition, 1.f};
+    const glm::vec2 viewportPixelSize{frameView.pixelSize};
     return FrameConstants{
         viewProjection, cameraPosition, frame.geometryColor, viewportPixelSize, frame.pixelRatio, 0.f
     };
@@ -91,6 +86,7 @@ struct ViewportRenderer::DiligentObjects
     MeshPass meshPass;
     PointPass pointPass;
     CameraPrimPass cameraPrimPass;
+    LightPrimPass lightPrimPass;
     /// @brief The multisampled target the passes draw into.
     Diligent::RefCntAutoPtr<Diligent::ITexture> multisampleTexture;
     /// @brief The multisampled depth the passes test against.
@@ -102,13 +98,15 @@ struct ViewportRenderer::DiligentObjects
 ViewportRenderer::ViewportRenderer(GraphicsDevice& device) : device_(device)
 {
     Diligent::IRenderDevice* renderDevice = device.getDiligentObjects().device;
-    Diligent::RefCntAutoPtr<Diligent::IBuffer> frameConstants = createFrameConstantsBuffer(renderDevice);
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> frameConstants =
+        createConstantBuffer(renderDevice, "Frame constants", sizeof(FrameConstants));
     diligent_ = std::make_unique<DiligentObjects>(DiligentObjects{
         frameConstants,
         GridPass(renderDevice, frameConstants),
-        MeshPass(renderDevice, frameConstants),
+        MeshPass(renderDevice, device.getDiligentObjects().context, frameConstants),
         PointPass(renderDevice, frameConstants),
         CameraPrimPass(renderDevice, frameConstants),
+        LightPrimPass(renderDevice, frameConstants),
     });
 }
 
@@ -154,10 +152,12 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
         diligent_->meshPass.upload(device, geometry);
         diligent_->pointPass.upload(device, geometry);
         diligent_->cameraPrimPass.upload(device, geometry);
+        diligent_->lightPrimPass.upload(device, geometry);
         uploadedGeometry_ = frame.geometry;
     }
 
-    const FrameConstants frameConstants = getFrameConstants(frame);
+    const FrameView frameView = getFrameView(frame);
+    const FrameConstants frameConstants = getFrameConstants(frame, frameView);
     context->UpdateBuffer(
         diligent_->frameConstants,
         0,
@@ -165,6 +165,7 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
         &frameConstants,
         Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
+    diligent_->meshPass.updateShading(context, frameView, frame.geometryColor);
 
     // Draws the frame.
     Diligent::ITextureView* renderTarget =
@@ -185,6 +186,7 @@ VulkanImage ViewportRenderer::render(const FrameState& frame)
     diligent_->meshPass.draw(context, frame.wireframeVisible);
     diligent_->pointPass.draw(context, frame.pointsVisible);
     diligent_->cameraPrimPass.draw(context, frame.viewCameraIndex);
+    diligent_->lightPrimPass.draw(context);
     context->SetRenderTargets(0, nullptr, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
 
     // Resolves the samples into the shown texture.

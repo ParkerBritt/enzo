@@ -2,6 +2,7 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Primitives/Mesh.h"
+#include <algorithm>
 #include <cstddef>
 #include <span>
 #include <stdexcept>
@@ -15,8 +16,7 @@ namespace {
  */
 bool isPopulatedVector(const std::shared_ptr<attr::Attribute>& attribute)
 {
-    return attribute && attribute->getType() == attr::AttrType::vectorT &&
-           attribute->getSize() > 0;
+    return attribute && attribute->getType() == attr::AttrType::vectorT && attribute->getSize() > 0;
 }
 
 /**
@@ -187,8 +187,23 @@ void NodePacket::Transforms::Iterator::advance()
 // NodePacket
 // ---
 
+std::string NodePacket::claimPath(const std::string& path)
+{
+    const auto [taken, isFree] = nextNumberByPath_.try_emplace(path, 1);
+    if (isFree) return path;
+
+    std::size_t& nextNumber = taken->second;
+    std::string numberedPath = path + "_" + std::to_string(nextNumber++);
+    while (nextNumberByPath_.contains(numberedPath))
+        numberedPath = path + "_" + std::to_string(nextNumber++);
+
+    nextNumberByPath_.emplace(numberedPath, 1);
+    return numberedPath;
+}
+
 void NodePacket::addPrimitive(std::shared_ptr<geo::Primitive> primitive)
 {
+    primitive->setPath(claimPath(primitive->getPath()));
     primitives_.push_back(std::move(primitive));
 }
 
@@ -197,15 +212,11 @@ void NodePacket::attemptMerge(std::shared_ptr<geo::Primitive> newPrim)
     if (newPrim->canMerge())
     {
         auto existing = getPrimAtPath(newPrim->getPath());
-        if (existing)
+        if (existing && existing->canMerge())
         {
             existing->merge(newPrim);
             return;
         }
-    }
-    else if (getPrimAtPath(newPrim->getPath()))
-    {
-        newPrim->incrementVersion();
     }
     addPrimitive(newPrim);
 }
@@ -252,6 +263,21 @@ std::vector<std::shared_ptr<geo::Primitive>> NodePacket::getPrimitives(geo::Prim
     return out;
 }
 
+void NodePacket::movePrim(const geo::PrimPtr& primitive, const std::string& toPath)
+{
+    const bool isInPacket = std::ranges::find(primitives_, primitive) != primitives_.end();
+    if (!isInPacket) return;
+
+    nextNumberByPath_.erase(primitive->getPath());
+    primitive->setPath(claimPath(toPath));
+}
+
+void NodePacket::movePrim(const std::string& fromPath, const std::string& toPath)
+{
+    const geo::PrimPtr primitive = getPrimAtPath(fromPath);
+    if (primitive) movePrim(primitive, toPath);
+}
+
 size_t NodePacket::size() const { return primitives_.size(); }
 
 NodePacket NodePacket::deepCopy() const
@@ -269,6 +295,7 @@ void NodePacket::removePrim(std::string path)
     {
         if ((*it)->getPath() == path)
         {
+            nextNumberByPath_.erase(path);
             primitives_.erase(it);
             return;
         }

@@ -56,6 +56,12 @@ set(ENZO_FASTNOISE2_SHA256
 set(ENZO_DILIGENT_CORE_REPOSITORY https://github.com/DiligentGraphics/DiligentCore.git)
 set(ENZO_DILIGENT_CORE_COMMIT 18bfa7b7563a0ef5b5fe074d37c2e8304100e965)
 
+# Pins the commits of the same week as DiligentCore, for the same reasons.
+set(ENZO_DILIGENT_TOOLS_REPOSITORY https://github.com/DiligentGraphics/DiligentTools.git)
+set(ENZO_DILIGENT_TOOLS_COMMIT 9b278406f118e059f17a8cd5616254c6d1eee237)
+set(ENZO_DILIGENT_FX_REPOSITORY https://github.com/DiligentGraphics/DiligentFX.git)
+set(ENZO_DILIGENT_FX_COMMIT ce25b71ea71f1d6cdc2eda73ebf01229c7b19cce)
+
 set(ENZO_YAML_CPP_VERSION 0.8.0)
 set(ENZO_YAML_CPP_URL
     https://github.com/jbeder/yaml-cpp/archive/refs/tags/${ENZO_YAML_CPP_VERSION}.tar.gz)

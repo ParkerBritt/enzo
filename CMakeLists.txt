@@ -136,19 +136,39 @@ FetchContent_Declare(
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(yaml-cpp)
 
-# DiligentCore (viewport renderer), built with only its Vulkan backend
+# DiligentCore (viewport renderer), built with only its Vulkan backend, and
+# DiligentFX for its PBR renderer. DiligentFX includes the other modules by
+# relative path, so all three sit side by side under their own names.
+set(DILIGENT_SOURCE_DIR "${FETCHCONTENT_BASE_DIR}/diligent")
 FetchContent_Declare(
   DiligentCore
   GIT_REPOSITORY ${ENZO_DILIGENT_CORE_REPOSITORY}
   GIT_TAG        ${ENZO_DILIGENT_CORE_COMMIT}
+  SOURCE_DIR     "${DILIGENT_SOURCE_DIR}/DiligentCore"
+)
+FetchContent_Declare(
+  DiligentTools
+  GIT_REPOSITORY ${ENZO_DILIGENT_TOOLS_REPOSITORY}
+  GIT_TAG        ${ENZO_DILIGENT_TOOLS_COMMIT}
+  SOURCE_DIR     "${DILIGENT_SOURCE_DIR}/DiligentTools"
+)
+FetchContent_Declare(
+  DiligentFX
+  GIT_REPOSITORY ${ENZO_DILIGENT_FX_REPOSITORY}
+  GIT_TAG        ${ENZO_DILIGENT_FX_COMMIT}
+  SOURCE_DIR     "${DILIGENT_SOURCE_DIR}/DiligentFX"
 )
 set(DILIGENT_NO_OPENGL ON CACHE BOOL "" FORCE)
 set(DILIGENT_NO_DIRECT3D11 ON CACHE BOOL "" FORCE)
 set(DILIGENT_NO_DIRECT3D12 ON CACHE BOOL "" FORCE)
 set(DILIGENT_INSTALL_CORE OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(DiligentCore)
+set(DILIGENT_INSTALL_TOOLS OFF CACHE BOOL "" FORCE)
+set(DILIGENT_INSTALL_FX OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(DiligentCore DiligentTools DiligentFX)
 # Builds only the Diligent libraries enzo links against.
-set_property(DIRECTORY ${diligentcore_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL ON)
+foreach(diligentModule diligentcore diligenttools diligentfx)
+  set_property(DIRECTORY ${${diligentModule}_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL ON)
+endforeach()
 
 # daslang (das scripting language), built from the vendored submodule
 set(DASLANG_DIR "${CMAKE_SOURCE_DIR}/extern/daslang")
@@ -224,6 +244,7 @@ target_compile_definitions(enzoEngine PRIVATE
 # so Grid.hlsl becomes Graphics/Shaders/Grid.h holding shaders::gridSource.
 set(GRAPHICS_SHADERS
     src/Graphics/Shaders/CameraPrim.hlsl
+    src/Graphics/Shaders/LightPrim.hlsl
     src/Graphics/Shaders/Common.hlsli
     src/Graphics/Shaders/Grid.hlsl
     src/Graphics/Shaders/Mesh.hlsl
@@ -249,12 +270,14 @@ add_library(enzoGraphics STATIC
     src/Graphics/ViewportCamera.cpp
     src/Graphics/ViewportRenderer.cpp
     src/Graphics/Passes/CameraPrimPass.cpp
+    src/Graphics/Passes/LightPrimPass.cpp
     src/Graphics/Passes/GridPass.cpp
     src/Graphics/Passes/MeshPass.cpp
+    src/Graphics/Passes/NearestLights.cpp
     src/Graphics/Passes/PassSetup.cpp
     src/Graphics/Passes/PointPass.cpp
 )
-target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common Vulkan::Headers)
+target_link_libraries(enzoGraphics PUBLIC enzoEngine PRIVATE Diligent-GraphicsEngineVk-static Diligent-Common DiligentFX Vulkan::Headers)
 target_include_directories(enzoGraphics PUBLIC src PRIVATE ${GRAPHICS_GENERATED_DIR})
 
 
@@ -491,6 +514,7 @@ if(ENZO_BUILD_TESTS)
         tests/BooleanUtilsTests.cpp
         tests/PrimitiveTests.cpp
         tests/PointLightTests.cpp
+        tests/NodePacketTests.cpp
         tests/AttributeTransferTests.cpp
         tests/PlaneCutTests.cpp
         tests/CellFractureNodeTests.cpp
@@ -520,6 +544,7 @@ if(ENZO_BUILD_TESTS)
         tests/ViewportCameraTests.cpp
         tests/DisplayGeometryTests.cpp
         tests/ViewportRendererTests.cpp
+        tests/NearestLightsTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
