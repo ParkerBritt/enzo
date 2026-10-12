@@ -37,7 +37,7 @@ TEST_CASE("A viewport renderer keeps its image until the frame size changes")
     REQUIRE(resized.size == frame.pixelSize);
 }
 
-TEST_CASE("A viewport renderer draws meshes, points and cameras")
+TEST_CASE("A viewport renderer draws meshes, points, cameras and lights")
 {
     std::unique_ptr<GraphicsDevice> device = createDeviceOrSkip();
     ViewportRenderer renderer(*device);
@@ -49,6 +49,9 @@ TEST_CASE("A viewport renderer draws meshes, points and cameras")
     geometry->topology.edgeIndices = {0, 1, 1, 2, 2, 0};
     geometry->soloPointPositions = {{2.f, 0.f, 0.f}};
     geometry->cameraTransforms = {glm::mat4(1.f)};
+    geometry->pointLightPositions = {{0.f, 2.f, 0.f}};
+    geometry->pointLightColors = {{1.f, 1.f, 1.f}};
+    geometry->pointLightIntensities = {1.f};
 
     FrameState frame;
     frame.pixelSize = {64, 32};

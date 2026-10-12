@@ -1,6 +1,9 @@
 #pragma once
 #include "Engine/Primitives/Primitive.h"
+#include <cstddef>
 #include <memory>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace enzo {
@@ -58,7 +61,11 @@ class NodePacket
         TransformClass transformClass_;
     };
 
+    /// @brief Adds the primitive, numbering its path when another primitive holds it.
+    ///
+    /// Adding three primitives at `/light` gives `/light`, `/light_1` and `/light_2`.
     void addPrimitive(std::shared_ptr<enzo::geo::Primitive> primitive);
+    /// @brief Merges the primitive into the one at its path, or adds it when either cannot merge.
     void attemptMerge(geo::PrimPtr prim);
 
     std::shared_ptr<enzo::geo::Primitive> getPrimitive(unsigned int index);
@@ -71,6 +78,10 @@ class NodePacket
         return primitives_;
     }
     std::vector<geo::PrimPtr> getPrimitives(enzo::geo::PrimType type) const;
+    /// @brief Moves the primitive to the path, numbering it when another primitive holds it.
+    void movePrim(const geo::PrimPtr& primitive, const std::string& toPath);
+    /// @brief Moves the primitive at one path to another, numbering it when another primitive holds it.
+    void movePrim(const std::string& fromPath, const std::string& toPath);
     void removePrim(std::string path);
 
     Transforms getTransforms(TransformClass transformClass)
@@ -82,7 +93,12 @@ class NodePacket
     NodePacket deepCopy() const;
 
   private:
+    /// @brief Returns the path, numbered when another primitive holds it, and marks it as held.
+    std::string claimPath(const std::string& path);
+
     std::vector<geo::PrimPtr> primitives_;
+    /// @brief The path of each primitive, with the next number to try when another asks for it.
+    std::unordered_map<std::string, std::size_t> nextNumberByPath_;
 };
 
 } // namespace enzo

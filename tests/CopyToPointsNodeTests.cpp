@@ -170,3 +170,19 @@ TEST_CASE_METHOD(NMReset, "Copies carry the prototype's attributes")
     for (const Vector3& value : tint.getAllValues())
         REQUIRE(value == Vector3(1.f, 2.f, 3.f));
 }
+
+TEST_CASE_METHOD(NMReset, "Each target point gets its own copy of a light")
+{
+    nt::NodeLoader::loadNodes();
+    auto& nm = nt::nm();
+    const nt::NodeId light = nm.createNode("enzo::light");
+    const nt::NodeId targetPoints = addQuadGrid(10.f);
+    const nt::NodeId copy = nm.createNode("enzo::copyToPoints");
+    nm.connectNodes(light, 0, copy, 0);
+    nm.connectNodes(targetPoints, 0, copy, 1);
+    nm.cook(copy);
+
+    const auto lights =
+        nm.getNode(copy).getOutputPacket(0)->getPrimitives(geo::PrimType::POINT_LIGHT);
+    REQUIRE(lights.size() == 4);
+}

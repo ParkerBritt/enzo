@@ -24,6 +24,14 @@ Diligent::RefCntAutoPtr<Diligent::IShader> createShader(
     return shader;
 }
 
+void setViewportTargets(Diligent::GraphicsPipelineDesc& graphics)
+{
+    graphics.NumRenderTargets = 1;
+    graphics.RTVFormats[0] = colorFormat;
+    graphics.DSVFormat = depthFormat;
+    graphics.SmplDesc.Count = sampleCount;
+}
+
 Pipeline createPipeline(
     Diligent::IRenderDevice* device,
     Diligent::GraphicsPipelineStateCreateInfo pipelineInfo,
@@ -31,11 +39,7 @@ Pipeline createPipeline(
 )
 {
     pipelineInfo.PSODesc.PipelineType = Diligent::PIPELINE_TYPE_GRAPHICS;
-    Diligent::GraphicsPipelineDesc& graphics = pipelineInfo.GraphicsPipeline;
-    graphics.NumRenderTargets = 1;
-    graphics.RTVFormats[0] = colorFormat;
-    graphics.DSVFormat = depthFormat;
-    graphics.SmplDesc.Count = sampleCount;
+    setViewportTargets(pipelineInfo.GraphicsPipeline);
 
     Pipeline pipeline;
     device->CreateGraphicsPipelineState(pipelineInfo, &pipeline.state);
@@ -49,6 +53,22 @@ Pipeline createPipeline(
     }
     pipeline.state->CreateShaderResourceBinding(&pipeline.resources, true);
     return pipeline;
+}
+
+Diligent::RefCntAutoPtr<Diligent::IBuffer> createConstantBuffer(
+    Diligent::IRenderDevice* device, const char* name, Diligent::Uint64 size, const void* initialData
+)
+{
+    Diligent::BufferDesc bufferDesc;
+    bufferDesc.Name = name;
+    bufferDesc.Usage = initialData ? Diligent::USAGE_IMMUTABLE : Diligent::USAGE_DEFAULT;
+    bufferDesc.BindFlags = Diligent::BIND_UNIFORM_BUFFER;
+    bufferDesc.Size = size;
+    Diligent::BufferData bufferData{initialData, size};
+
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
+    device->CreateBuffer(bufferDesc, initialData ? &bufferData : nullptr, &buffer);
+    return buffer;
 }
 
 void setVertexBuffers(Diligent::IDeviceContext* context, std::initializer_list<Diligent::IBuffer*> vertexBuffers)

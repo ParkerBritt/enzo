@@ -22,10 +22,8 @@ void Path::cook()
 
     String path = evalParmString("path");
 
-    for (unsigned int p = 0; p < packet.size(); ++p)
-    {
-        packet.getPrimitive(p)->setPath(path);
-    }
+    for (const geo::PrimPtr& prim : packet.getPrimitives())
+        packet.movePrim(prim, path);
 
     setOutputPacket(0, packet);
 }

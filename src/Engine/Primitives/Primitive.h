@@ -100,7 +100,6 @@ class Primitive
     }
     virtual bool canMerge() const { return false; }
     virtual void merge(std::shared_ptr<Primitive> other) {}
-    void incrementVersion();
 
     virtual bool hasPoints() const { return false; }
     Offset getNumPoints() const { return getElementCount(attr::AttributeOwner::POINT); }

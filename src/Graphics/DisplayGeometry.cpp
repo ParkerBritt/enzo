@@ -3,6 +3,7 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Mesh.h"
+#include "Engine/Primitives/PointLight.h"
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
@@ -137,6 +138,9 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
     geometry.soloPointPositions.clear();
     geometry.cameraTransforms.clear();
     geometry.cameraPaths.clear();
+    geometry.pointLightPositions.clear();
+    geometry.pointLightColors.clear();
+    geometry.pointLightIntensities.clear();
     geometry.positions.resize(vertexCount);
     geometry.normals.resize(vertexCount);
 
@@ -156,6 +160,15 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
         const auto camera = std::static_pointer_cast<const geo::Camera>(prim);
         geometry.cameraTransforms.push_back(toGlm(camera->getTransform()));
         geometry.cameraPaths.push_back(camera->getPath());
+    }
+
+    for (const geo::PrimPtr& prim : packet.getPrimitives(geo::PrimType::POINT_LIGHT))
+    {
+        const auto light = std::static_pointer_cast<const geo::PointLight>(prim);
+        const glm::mat4 transform = toGlm(light->getTransform());
+        geometry.pointLightPositions.push_back(glm::vec3(transform[3]));
+        geometry.pointLightColors.push_back(toGlm(light->getColor()));
+        geometry.pointLightIntensities.push_back(float(light->getIntensity()));
     }
 }
 

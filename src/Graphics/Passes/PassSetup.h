@@ -26,6 +26,9 @@ Diligent::RefCntAutoPtr<Diligent::IShader> createShader(
     Diligent::IRenderDevice* device, const char* source, Diligent::SHADER_TYPE type, const char* entryPoint
 );
 
+/// @brief Sets the target formats and sample count of the viewport targets on the pipeline.
+void setViewportTargets(Diligent::GraphicsPipelineDesc& graphics);
+
 /// @brief Returns a pipeline that draws into the viewport targets and reads the frame constants.
 ///
 /// @param pipelineInfo the settings of the pass, which leave the target formats and sample count unset.
@@ -34,6 +37,11 @@ Pipeline createPipeline(
     Diligent::IRenderDevice* device,
     Diligent::GraphicsPipelineStateCreateInfo pipelineInfo,
     Diligent::IBuffer* frameConstants
+);
+
+/// @brief Returns a constant buffer of the size, filled with the initial data when there is some.
+Diligent::RefCntAutoPtr<Diligent::IBuffer> createConstantBuffer(
+    Diligent::IRenderDevice* device, const char* name, Diligent::Uint64 size, const void* initialData = nullptr
 );
 
 /// @brief Binds the vertex buffers to slots 0 onward in order and unbinds the rest.

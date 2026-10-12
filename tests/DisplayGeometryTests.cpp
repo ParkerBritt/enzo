@@ -2,6 +2,7 @@
 #include "Engine/Network/NodePacket.h"
 #include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Mesh.h"
+#include "Engine/Primitives/PointLight.h"
 #include "Graphics/DisplayGeometry.h"
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
@@ -129,6 +130,25 @@ TEST_CASE("Display geometry places each camera by its transform")
 
     REQUIRE(geometry.cameraTransforms.size() == 1);
     REQUIRE(geometry.cameraTransforms[0][3] == glm::vec4(2.f, 0.f, 0.f, 1.f));
+}
+
+TEST_CASE("Display geometry places each point light by its transform with its color and intensity")
+{
+    auto light = std::make_shared<geo::PointLight>("/light");
+    Matrix4 transform = Matrix4::Identity();
+    transform(1, 3) = 3.f;
+    light->setTransform(transform);
+    light->setColor(Vector3(1.f, 0.5f, 0.f));
+    light->setIntensity(2.f);
+    NodePacket packet;
+    packet.addPrimitive(light);
+
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
+
+    REQUIRE(geometry.pointLightPositions == std::vector<glm::vec3>{{0.f, 3.f, 0.f}});
+    REQUIRE(geometry.pointLightColors == std::vector<glm::vec3>{{1.f, 0.5f, 0.f}});
+    REQUIRE(geometry.pointLightIntensities == std::vector<float>{2.f});
 }
 
 TEST_CASE("Display geometry refilled from a smaller packet holds only the new contents")
