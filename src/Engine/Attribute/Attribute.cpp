@@ -1,5 +1,6 @@
 #include "Engine/Attribute/Attribute.h"
 #include "Engine/Core/Types.h"
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -69,6 +70,17 @@ void attr::Attribute::compact(const std::vector<bool>& keep)
 
             // Drop the trailing entries that were left behind.
             store.resize(writeIdx);
+        },
+        store_
+    );
+}
+
+void attr::Attribute::reverse(Offset start, Offset count)
+{
+    std::visit(
+        [&](auto& storePtr) {
+            auto rangeBegin = storePtr->begin() + start;
+            std::reverse(rangeBegin, rangeBegin + count);
         },
         store_
     );

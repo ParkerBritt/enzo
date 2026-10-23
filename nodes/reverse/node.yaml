@@ -1,0 +1,25 @@
+version: 1
+
+name: reverse
+namespace: enzo
+label: Reverse
+tags: [polygon, flip, winding, normal]
+
+inputs:
+  - label: Geometry
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: reverse
+
+icon: icon.svg
+
+parameters:
+  - name: selection
+    label: Selection
+    type: string
+    tooltip: >
+      The faces to reverse. Accepts a face selection or a group name. Leave
+      empty to reverse every face.

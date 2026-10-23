@@ -93,6 +93,9 @@ class Attribute
      */
     void compact(const std::vector<bool>& keep);
 
+    /// @brief Reverses the order of the entries from start to start + count.
+    void reverse(Offset start, Offset count);
+
     template <typename T> friend class AttributeHandle;
     template <typename T> friend class AttributeHandleRO;
 

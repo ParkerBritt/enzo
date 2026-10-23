@@ -663,3 +663,39 @@ TEST_CASE("Creating a group twice keeps a single group")
     attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getValue(1) == true);
 }
+
+TEST_CASE("Reverse faces flips the vertex order and carries vertex attributes")
+{
+    geo::Mesh mesh;
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+    auto pointOffset3 = mesh.addPoint(Vector3(1, 1, 0));
+    mesh.addFace({pointOffset0, pointOffset1, pointOffset2});
+    mesh.addFace({pointOffset1, pointOffset3, pointOffset2});
+
+    auto uvAttr = mesh.addAttribute<Vector3>(attr::AttrOwner::VERTEX, "uv");
+    for (Offset vertexOffset = 0; vertexOffset < 6; ++vertexOffset)
+        uvAttr.setValue(vertexOffset, Vector3(vertexOffset, 0, 0));
+    mesh.addVertexGroup("first");
+    mesh.addToVertexGroup("first", {3});
+
+    mesh.reverseFaces({1});
+
+    // The first face is left alone
+    REQUIRE(mesh.getVertexPoint(0) == pointOffset0);
+    REQUIRE(mesh.getVertexPoint(1) == pointOffset1);
+    REQUIRE(mesh.getVertexPoint(2) == pointOffset2);
+
+    // The second face runs backwards
+    REQUIRE(mesh.getVertexPoint(3) == pointOffset2);
+    REQUIRE(mesh.getVertexPoint(4) == pointOffset3);
+    REQUIRE(mesh.getVertexPoint(5) == pointOffset1);
+
+    // Vertex attributes and groups move with their vertices
+    REQUIRE(uvAttr.getValue(3) == Vector3(5, 0, 0));
+    REQUIRE(uvAttr.getValue(5) == Vector3(3, 0, 0));
+    auto group = attr::AttributeHandleBool(mesh.getGroupByName(attr::AttrOwner::VERTEX, "first"));
+    REQUIRE_FALSE(group.getValue(3));
+    REQUIRE(group.getValue(5));
+}
