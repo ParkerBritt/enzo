@@ -507,6 +507,7 @@ if(ENZO_BUILD_TESTS)
         tests/LineNodeTests.cpp
         tests/SpiralNodeTests.cpp
         tests/DuplicateNodeTests.cpp
+        tests/ReverseNodeTests.cpp
         tests/CopyToPointsNodeTests.cpp
         tests/TransformTests.cpp
         tests/ParameterItemTests.cpp

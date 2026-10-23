@@ -98,6 +98,8 @@ class Mesh : public Primitive
     }
     void deletePoints(const std::vector<Offset>& pointOffsets, bool andFaces);
     void deleteVertices(const std::vector<Offset>& vertOffsets);
+    /// @brief Reverses the vertex order of each face, carrying every vertex attribute along.
+    void reverseFaces(const std::vector<Offset>& faceOffsets);
     bool isValidFace(Offset offset) const;
     bool isValidVertex(Offset offset) const;
     bool isValidPoint(Offset offset) const override;

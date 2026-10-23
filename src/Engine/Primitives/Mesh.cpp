@@ -443,6 +443,20 @@ void geo::Mesh::deleteVertices(const std::vector<Offset>& vertOffsets)
     soloPointsDirty_ = true;
 }
 
+void geo::Mesh::reverseFaces(const std::vector<Offset>& faceOffsets)
+{
+    const std::span<const Offset> faceStarts = getFaceStartVertices();
+    for (const Offset faceOffset : faceOffsets)
+    {
+        const Offset start = faceStarts[faceOffset];
+        const Offset count = getFaceVertCount(faceOffset);
+        for (auto& attr : vertexAttributes_)
+            if (attr) attr->reverse(start, count);
+        for (auto& group : vertexGroups_)
+            if (group) group->reverse(start, count);
+    }
+}
+
 bool geo::Mesh::isValidFace(Offset offset) const { return validFaceHandle_.getValue(offset); }
 
 bool geo::Mesh::isValidVertex(Offset offset) const { return validVertexHandle_.getValue(offset); }
