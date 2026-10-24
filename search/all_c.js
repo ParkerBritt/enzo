@@ -8,5 +8,6 @@ var searchData=
   ['mesh_5',['Mesh',['../classenzo_1_1geo_1_1Mesh.html',1,'enzo::geo']]],
   ['meshattributereader_6',['MeshAttributeReader',['../classenzo_1_1script_1_1MeshAttributeReader.html',1,'enzo::script']]],
   ['movenode_7',['moveNode',['../classenzo_1_1nt_1_1NetworkManager.html#a6b138172caf5d536b850406df97d5d53',1,'enzo::nt::NetworkManager']]],
-  ['movenodecommand_8',['MoveNodeCommand',['../classenzo_1_1nt_1_1MoveNodeCommand.html',1,'enzo::nt']]]
+  ['movenodecommand_8',['MoveNodeCommand',['../classenzo_1_1nt_1_1MoveNodeCommand.html',1,'enzo::nt']]],
+  ['moveprim_9',['movePrim',['../classenzo_1_1NodePacket.html#a1345aba601e08202f27164edd1340897',1,'enzo::NodePacket::movePrim(const geo::PrimPtr &amp;primitive, const std::string &amp;toPath)'],['../classenzo_1_1NodePacket.html#a98fc6087e48afddfd941288d862573a4',1,'enzo::NodePacket::movePrim(const std::string &amp;fromPath, const std::string &amp;toPath)']]]
 ];
