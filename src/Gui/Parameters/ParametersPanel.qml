@@ -20,14 +20,14 @@ Item {
     // Extra left padding inside each parameter row. Not all parameters will use this.
     readonly property real parameterInset: 20
     readonly property real maxHeightInset: 28
-    readonly property real gripSize: 18
+    readonly property real cornerGripSize: 18
+    readonly property real edgeGripSize: 6
     readonly property real radius: Theme.var.panelRadius
 
     width: defaultWidth
     visible: parameters.hasNode
 
-    // Height follows the content until the user drags the resize grip, which
-    // assigns an explicit size and takes over.
+    // Follows the content height until a resize grip sets an explicit size.
     implicitHeight: Math.max(defaultHeight, header.height + verticalMargin * 2 + scroller.contentHeight)
     height: Math.min(implicitHeight, parent ? parent.height - maxHeightInset : implicitHeight)
 
@@ -159,16 +159,11 @@ Item {
         }
     }
 
-    // Drag the bottom left corner to resize. The top right stays pinned, so the
-    // panel grows left and down.
-    MouseArea {
-        id: grip
-
-        width: panel.gripSize
-        height: panel.gripSize
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        cursorShape: Qt.SizeBDiagCursor
+    // Grip that resizes the panel from its left or bottom side, with the top
+    // right corner held in place.
+    component ResizeGrip: MouseArea {
+        property bool resizesWidth
+        property bool resizesHeight
 
         property point origin
         property real startWidth
@@ -183,8 +178,39 @@ Item {
             if (!pressed)
                 return;
             let here = mapToItem(null, mouse.x, mouse.y);
-            panel.width = Math.max(panel.minWidth, startWidth - (here.x - origin.x));
-            panel.height = Math.max(panel.minHeight, startHeight + (here.y - origin.y));
+            if (resizesWidth)
+                panel.width = Math.max(panel.minWidth, startWidth - (here.x - origin.x));
+            if (resizesHeight)
+                panel.height = Math.max(panel.minHeight, startHeight + (here.y - origin.y));
         }
+    }
+
+    ResizeGrip {
+        width: panel.edgeGripSize
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        cursorShape: Qt.SizeHorCursor
+        resizesWidth: true
+    }
+
+    ResizeGrip {
+        height: panel.edgeGripSize
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        cursorShape: Qt.SizeVerCursor
+        resizesHeight: true
+    }
+
+    // Sits above the edge grips where they overlap, so keep it declared last.
+    ResizeGrip {
+        width: panel.cornerGripSize
+        height: panel.cornerGripSize
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        cursorShape: Qt.SizeBDiagCursor
+        resizesWidth: true
+        resizesHeight: true
     }
 }
