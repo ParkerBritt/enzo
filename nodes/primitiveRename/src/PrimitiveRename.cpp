@@ -4,7 +4,7 @@
 
 namespace {
 
-class Path : public enzo::nt::NodeImpl
+class PrimitiveRename : public enzo::nt::NodeImpl
 {
   public:
     using NodeImpl::NodeImpl;
@@ -12,7 +12,7 @@ class Path : public enzo::nt::NodeImpl
     void cook() override;
 };
 
-void Path::cook()
+void PrimitiveRename::cook()
 {
     using namespace enzo;
 
@@ -30,4 +30,4 @@ void Path::cook()
 
 } // namespace
 
-ENZO_REGISTER_NODE(path, Path)
+ENZO_REGISTER_NODE(primitiveRename, PrimitiveRename)
