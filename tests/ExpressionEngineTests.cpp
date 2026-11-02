@@ -165,13 +165,13 @@ TEST_CASE_METHOD(NMReset, "PrmS reads another node's string parameter")
     auto& nm = nt::nm();
 
     // The source node holds the string the expression should pull
-    nt::NodeId source = nm.createNode("enzo::path");
+    nt::NodeId source = nm.createNode("enzo::primitiveRename");
     nm.getNode(source).getParameter("path").lock()->setString("hello");
 
     // A second node reads the source's path through a path expression
-    nt::NodeId reader = nm.createNode("enzo::path");
+    nt::NodeId reader = nm.createNode("enzo::primitiveRename");
     auto path = nm.getNode(reader).getParameter("path").lock();
-    path->setExpression("prmS(\"path1.path\")");
+    path->setExpression("prmS(\"primitiveRename1.path\")");
 
     REQUIRE(path->evalString() == "hello");
 }
