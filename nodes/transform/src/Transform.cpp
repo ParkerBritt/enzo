@@ -46,9 +46,23 @@ void Transform::cook()
     const Vector3 rotate = evalParmVector3("rotate");
     const Vector3 scale = evalParmVector3("scale");
     const floatT uniformScale = evalParmFloat("uniform_scale");
+    const Vector3 pivot = evalParmVector3("pivot");
+    const Vector3 pivotRotate = evalParmVector3("pivot_rotate");
+    const TransformOrder order = getTransformOrder(evalParmString("transform_order"));
 
-    const enzo::Transform transform =
-        enzo::Transform::fromComponents(translate, rotate, scale * uniformScale);
+    // Build the pivot transform
+    const enzo::Transform pivotTransform =
+        enzo::Transform().translate(pivot).rotateEuler(pivotRotate);
+
+    // Build the local transform
+    const enzo::Transform pivotRotation = enzo::Transform().rotateEuler(pivotRotate);
+    const Vector3 pivotTranslate = pivotRotation.getInverse() * translate;
+    const enzo::Transform localTransform =
+        enzo::Transform::fromComponents(pivotTranslate, rotate, scale * uniformScale, order);
+
+    // Combine transforms
+    // Moves the pivot to the origin, applies the local transform, then moves the pivot back.
+    const enzo::Transform transform = pivotTransform * localTransform * pivotTransform.getInverse();
 
     Selection selection(selectionString);
     for (geo::PrimPtr prim : selection.getPrims(packet))

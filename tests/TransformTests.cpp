@@ -69,3 +69,25 @@ TEST_CASE("An unknown order name falls back to Scale Rotate Translate")
     REQUIRE(getTransformOrder("") == TransformOrder::SRT);
     REQUIRE(getTransformOrder("nonsense") == TransformOrder::SRT);
 }
+
+TEST_CASE("The inverse returns a transformed point to where it started")
+{
+    const Transform transform = Transform::fromComponents(
+        Vector3(1, 2, 3),
+        Vector3(30, 45, 60),
+        Vector3(2, 3, 4),
+        TransformOrder::SRT
+    );
+
+    const Vector3 point(5, -1, 2);
+    requirePointsMatch(transform.getInverse() * (transform * point), point);
+}
+
+TEST_CASE("Multiplying two transforms applies the right one first")
+{
+    const Transform move = Transform().translate(Vector3(5, 0, 0));
+    const Transform turn = Transform().rotateEuler(Vector3(0, 90, 0));
+
+    // Moving the origin along X then turning about Y lands it on the negative Z axis
+    requirePointsMatch((turn * move) * Vector3(0, 0, 0), Vector3(0, 0, -5));
+}
