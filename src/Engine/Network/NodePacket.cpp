@@ -118,7 +118,7 @@ NodePacket::Transforms::Iterator::Iterator(
 Transform NodePacket::Transforms::Iterator::operator*() const
 {
     Transform transform = Transform::fromAttribute(*curAttrib_, offset_);
-    if (offset_ < orientations_.size()) transform.compose(orientations_[offset_]);
+    if (offset_ < orientations_.size()) transform = transform * orientations_[offset_];
     return transform;
 }
 

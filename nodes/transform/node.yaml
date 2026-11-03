@@ -24,6 +24,29 @@ parameters:
       The points to transform. Accepts a point selection or a group name. Leave
       it empty to transform everything.
 
+  - name: transform_order
+    label: Transform Order
+    type: dropdown
+    default: srt
+    tooltip: >
+      The order a point passes through the scale, the rotation, and the
+      translation. Scale Rotate Translate turns the points around the pivot
+      before moving them, while Translate Rotate Scale swings the moved points
+      around the pivot.
+    options:
+      - value: srt
+        label: Scale Rotate Translate
+      - value: str
+        label: Scale Translate Rotate
+      - value: rst
+        label: Rotate Scale Translate
+      - value: rts
+        label: Rotate Translate Scale
+      - value: tsr
+        label: Translate Scale Rotate
+      - value: trs
+        label: Translate Rotate Scale
+
   - name: translate
     label: Translate
     type: float
@@ -52,3 +75,21 @@ parameters:
     type: float
     default: 1
     tooltip: How much to grow or shrink along every axis at once.
+
+  - name: pivot
+    label: Pivot
+    type: float
+    size: 3
+    style: xyz
+    tooltip: The point that rotation and scale happen around.
+
+  - name: pivot_rotate
+    label: Pivot Rotate
+    type: float
+    size: 3
+    style: xyz
+    range:
+      min: -360
+      max: 360
+    tooltip: >
+      How far to turn the axes that rotation and scale work along, in degrees.

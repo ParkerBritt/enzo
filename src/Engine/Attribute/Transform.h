@@ -127,11 +127,13 @@ class Transform
         return *this;
     }
 
-    /** @brief Composes another transform into this one in the local frame. */
-    Transform& compose(const Transform& other)
+    /** @brief Returns the transform that undoes this one. */
+    Transform getInverse() const { return Transform(xform_.inverse().matrix()); }
+
+    /** @brief Returns the transform of this multiplied by other. */
+    Transform operator*(const Transform& other) const
     {
-        xform_ = xform_ * other.xform_;
-        return *this;
+        return Transform((xform_ * other.xform_).matrix());
     }
 
     /**
