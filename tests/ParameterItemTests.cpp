@@ -132,6 +132,20 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its 
     REQUIRE_FALSE(name.attributeNames().contains(attr::names::position));
 }
 
+TEST_CASE_METHOD(PluginsAndReset, "An attribute list of vertices on a camera lists nothing")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId camera = networkManager.createNode("enzo::camera");
+    nt::NodeId attributeCreate = networkManager.createNode("enzo::attributeCreate");
+    networkManager.connectNodes(camera, 0, attributeCreate, 0);
+    networkManager.cook(camera);
+
+    nt::Node& node = networkManager.getNode(attributeCreate);
+    node.getParameter("attachTo").lock()->setString("vertex");
+
+    REQUIRE(makeItem(node, "name").attributeNames().isEmpty());
+}
+
 TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter with no input lists nothing")
 {
     auto& networkManager = nt::nm();

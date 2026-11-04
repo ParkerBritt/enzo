@@ -545,7 +545,9 @@ if(ENZO_BUILD_TESTS)
         tests/DisplayGeometryTests.cpp
         tests/ViewportRendererTests.cpp
         tests/NearestLightsTests.cpp
+        tests/AttributeTableModelTests.cpp
         src/Gui/Parameters/ParameterItem.cpp
+        src/Gui/Spreadsheet/AttributeTableModel.cpp
     )
     set_target_properties(${TestExec} PROPERTIES AUTOMOC ON)
     target_link_libraries(${TestExec} PRIVATE enzoEngine enzoGraphics Qt6::Core Catch2::Catch2WithMain)
