@@ -1,7 +1,6 @@
 #include "Gui/Spreadsheet/AttributeTableModel.h"
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Core/Types.h"
-#include "Engine/Primitives/Mesh.h"
 
 namespace enzo::ui {
 
@@ -97,7 +96,7 @@ std::vector<AttributeTableModel::Column>
 AttributeTableModel::buildColumns(const geo::Primitive* primitive, attr::AttributeOwner owner)
 {
     std::vector<Column> columns;
-    if (!primitive) return columns;
+    if (!primitive || !primitive->hasOwner(owner)) return columns;
 
     const size_t attribCount = primitive->getNumAttributes(owner);
     for (size_t attributeIndex = 0; attributeIndex < attribCount; ++attributeIndex)
@@ -124,22 +123,8 @@ AttributeTableModel::buildColumns(const geo::Primitive* primitive, attr::Attribu
 
 int AttributeTableModel::rowCountFor(const geo::Primitive* primitive, attr::AttributeOwner owner)
 {
-    if (!primitive) return 0;
-
-    switch (owner)
-    {
-    case attr::AttributeOwner::POINT:
-        return primitive->hasPoints() ? primitive->getNumPoints() : 0;
-    case attr::AttributeOwner::VERTEX:
-    case attr::AttributeOwner::FACE:
-        if (auto mesh = dynamic_cast<const geo::Mesh*>(primitive))
-            return owner == attr::AttributeOwner::VERTEX ? mesh->getNumVerts()
-                                                         : mesh->getNumFaces();
-        return 0;
-    case attr::AttributeOwner::PRIMITIVE:
-        return 1;
-    }
-    return 0;
+    if (!primitive || !primitive->hasOwner(owner)) return 0;
+    return primitive->getElementCount(owner);
 }
 
 int AttributeTableModel::rowCount(const QModelIndex&) const

@@ -48,7 +48,7 @@ void Delete::cook()
         }
 
         // Delete points
-        if (!keepPoints && prim->hasPoints())
+        if (!keepPoints && prim->hasOwner(attr::AttributeOwner::POINT))
         {
             prim->deletePoints(selection.getPoints(prim));
         }

@@ -120,6 +120,8 @@ QStringList getAttributeNames(
 
         for (attr::AttributeOwner owner : owners)
         {
+            if (!primitive->hasOwner(owner)) continue;
+
             const auto attributeCount =
                 static_cast<unsigned int>(primitive->getNumAttributes(owner));
             for (unsigned int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex)

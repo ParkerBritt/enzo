@@ -13,9 +13,6 @@ namespace enzo::ui {
 /// Rows are the elements of a single owner class and columns are the flattened
 /// components of each attribute, so a vector attribute such as `Position` spans three
 /// columns `Position.x Position.y Position.z`. The element index rides in the vertical header.
-///
-/// @note Only the point owner is exposed for now. Vertices, faces, and
-/// primitives follow once the spreadsheet mode control lands.
 class AttributeTableModel : public QAbstractTableModel
 {
     Q_OBJECT

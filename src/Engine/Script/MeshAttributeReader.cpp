@@ -6,21 +6,6 @@ namespace enzo::script {
 namespace {
 size_t getOwnerSlot(attr::AttributeOwner owner) { return static_cast<size_t>(owner); }
 
-Offset getElementCount(const geo::Mesh& mesh, attr::AttributeOwner owner)
-{
-    switch (owner)
-    {
-    case attr::AttributeOwner::POINT:
-        return mesh.getNumPoints();
-    case attr::AttributeOwner::VERTEX:
-        return mesh.getNumVerts();
-    case attr::AttributeOwner::FACE:
-        return mesh.getNumFaces();
-    default:
-        return 1;
-    }
-}
-
 ScriptAttributeHandle makeHandle(const std::shared_ptr<const attr::Attribute>& attribute)
 {
     switch (attribute->getType())
@@ -43,7 +28,7 @@ MeshAttributeReader::MeshAttributeReader(const geo::Mesh& mesh)
 {
     for (const attr::AttributeOwner owner : attr::getAllOwners())
     {
-        elementCounts_[getOwnerSlot(owner)] = getElementCount(mesh, owner);
+        elementCounts_[getOwnerSlot(owner)] = mesh.getElementCount(owner);
 
         std::vector<ScriptAttribute>& attributes = attributes_[getOwnerSlot(owner)];
         for (const auto& attribute : mesh.getAttributes(owner, true))

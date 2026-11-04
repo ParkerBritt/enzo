@@ -19,7 +19,7 @@ namespace enzo::geo {
  * attribute management API shared by all primitive types.
  *
  * Point attributes are stored on the base class since many primitive
- * types have points. Use hasPoints() to check before accessing them.
+ * types have points. Use hasOwner() to check before accessing them.
  *
  * Subclasses (e.g. Mesh) add their own attribute owners and geometry.
  */
@@ -101,7 +101,15 @@ class Primitive
     virtual bool canMerge() const { return false; }
     virtual void merge(std::shared_ptr<Primitive> other) {}
 
-    virtual bool hasPoints() const { return false; }
+    /// @brief Returns whether this primitive type stores elements of the owner.
+    virtual bool hasOwner(attr::AttributeOwner owner) const
+    {
+        return owner == attr::AttributeOwner::PRIMITIVE;
+    }
+
+    /// @brief Returns the number of elements in the given owner's store.
+    size_t getElementCount(const attr::AttributeOwner& owner) const;
+
     Offset getNumPoints() const { return getElementCount(attr::AttributeOwner::POINT); }
     virtual PointOffsets getPoints() { return PointOffsets(*this); }
     virtual bool isValidPoint(Offset offset) const { return true; }
@@ -294,12 +302,6 @@ class Primitive
     virtual attr::attribVector& getGroupStore(const attr::AttributeOwner& owner);
     virtual const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const;
     attr::attribVector deepCopyAttributes(attr::attribVector source);
-
-    /**
-     * @brief Returns the number of elements in the given owner's store.
-     * @return The element count.
-     */
-    size_t getElementCount(const attr::AttributeOwner& owner) const;
 
     std::string path_ = "/prim";
     attr::attribVector pointAttributes_;

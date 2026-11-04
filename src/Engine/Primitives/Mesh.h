@@ -48,7 +48,7 @@ class Mesh : public Primitive
     }
     bool canMerge() const override { return true; }
     void merge(std::shared_ptr<Primitive> other) override;
-    bool hasPoints() const override { return true; }
+    bool hasOwner(attr::AttributeOwner owner) const override { return true; }
 
     /**
      * @brief Adds a single face. Avoid for multiple faces in a loop as a single call to @ref
