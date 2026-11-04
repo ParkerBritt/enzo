@@ -2,7 +2,7 @@ var searchData=
 [
   ['operator_20std_3a_3astring_5fview_0',['string_view',['../classenzo_1_1Path.html#a6a922863b7a9915408c87d65003dc3f2',1,'enzo::Path']]],
   ['operator_28_29_1',['operator()',['../classenzo_1_1utils_1_1FaceTangents.html#abb5964daab0ef098c0c8b20173d54e82',1,'enzo::utils::FaceTangents']]],
-  ['operator_2a_2',['operator*',['../classenzo_1_1Transform.html#a9d5b54b81ecd5aa9cc235dff84c40354',1,'enzo::Transform']]],
+  ['operator_2a_2',['operator*',['../classenzo_1_1Transform.html#a02cbdb186d434944f3bd295246efb5df',1,'enzo::Transform::operator*(const Transform &amp;other) const'],['../classenzo_1_1Transform.html#a9d5b54b81ecd5aa9cc235dff84c40354',1,'enzo::Transform::operator*(const Vector3 &amp;point) const']]],
   ['operator_3d_3',['operator=',['../classenzo_1_1nt_1_1Node.html#a203df9c1d6c875c36a94c02e0a68e0e9',1,'enzo::nt::Node']]],
   ['operator_5b_5d_4',['operator[]',['../classenzo_1_1attr_1_1AttributeHandle.html#ad63cc140a4da8aa3f79490ac2324a1d7',1,'enzo::attr::AttributeHandle::operator[]()'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a690f520581dfd095e2c6e486c45adf78',1,'enzo::attr::AttributeHandleRO::operator[]()']]],
   ['options_5',['options',['../StyleAccess_8h.html#aae5a6ffbf995f2dc41d9051cf4110440',1,'enzo::prm::style']]],
