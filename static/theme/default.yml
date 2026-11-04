@@ -159,7 +159,7 @@ components:
     edgeColor:  $border
     arcColor:   $valueFill
     tickColor:  $textFaint
-    # The two handles
+    # The two handles and the grip between them
     handleColor:      $handle
     handleHoverColor: $textStrong
   codeEditor:

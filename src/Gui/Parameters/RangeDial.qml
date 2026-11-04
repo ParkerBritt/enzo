@@ -17,6 +17,11 @@ Item {
 
     readonly property real handleReach: 11
 
+    readonly property real gripSize: 12
+
+    // The shortest sweep with room for the grip between the handles.
+    readonly property real minGripSweep: 40
+
     readonly property real from: item ? item.minimum : 0
     readonly property real to: item ? item.maximum : 360
     readonly property real span: to - from
@@ -231,6 +236,22 @@ Item {
             }
         }
 
+        Icon {
+            id: grip
+
+            readonly property real angle: dial.start + dial.sweep / 2
+            readonly property point centre: dial.handlePoint(grip.angle)
+
+            visible: Math.abs(dial.sweep) >= dial.minGripSweep
+            x: grip.centre.x - width / 2
+            y: grip.centre.y - height / 2
+            rotation: -grip.angle
+            name: "grip-vertical"
+            size: dial.gripSize
+            opacity: 0.6
+            color: ringArea.bandActive ? Theme.rangeDial.handleHoverColor : Theme.rangeDial.handleColor
+        }
+
         MouseArea {
             id: ringArea
             anchors.fill: parent
@@ -256,10 +277,14 @@ Item {
 
             readonly property int hoveredHandle: turning ? grabbedHandle : (containsMouse ? dial.handleAt(mouseX, mouseY) : -1)
 
+            readonly property bool bandActive: turning ? grabbedHandle === -1 : (containsMouse && hoveredHandle < 0 && dial.onBand(mouseX, mouseY))
+
             cursorShape: {
-                if (hoveredHandle >= 0)
+                if (bandActive)
+                    return turning ? Qt.ClosedHandCursor : Qt.OpenHandCursor;
+                if (turning || hoveredHandle >= 0)
                     return Qt.SizeHorCursor;
-                return turning ? Qt.ClosedHandCursor : Qt.ArrowCursor;
+                return Qt.ArrowCursor;
             }
 
             onPressed: mouse => {
