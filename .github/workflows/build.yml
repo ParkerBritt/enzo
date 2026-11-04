@@ -68,28 +68,28 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build-super/deps
-            build-super/superbuild/Stamp
+            build/deps
+            build/superbuild/Stamp
           key: linux-deps-v1-${{ hashFiles('cmake/versions.cmake') }}
 
       - name: Build
         run: |
-          cmake -S . -B build-super -G Ninja \
+          cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DENZO_SUPERBUILD=ON \
             -DCMAKE_INSTALL_PREFIX=/usr
-          cmake --build build-super
+          cmake --build build
 
       - name: Package
         if: env.ENZO_PACKAGE == 'true'
         run: |
-          cd build-super/enzo-build
+          cd build/enzo-build
           cpack -G "RPM;DEB;TGZ" -B "$GITHUB_WORKSPACE/dist"
 
       - name: Build AppImage
         if: env.ENZO_PACKAGE == 'true'
         run: |
-          cmake --install build-super/enzo-build --prefix "$GITHUB_WORKSPACE/appdir-prefix"
+          cmake --install build/enzo-build --prefix "$GITHUB_WORKSPACE/appdir-prefix"
           curl -sSfL -o /usr/local/bin/appimagetool \
             https://github.com/AppImage/appimagetool/releases/download/1.9.0/appimagetool-x86_64.AppImage
           chmod +x /usr/local/bin/appimagetool
@@ -120,17 +120,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            build-super/deps
-            build-super/superbuild/Stamp
+            build/deps
+            build/superbuild/Stamp
           key: windows-deps-v1-${{ hashFiles('cmake/versions.cmake') }}
 
       - name: Build
         shell: cmd
         run: |
-          cmake -S . -B build-super -G Ninja ^
+          cmake -S . -B build -G Ninja ^
             -DCMAKE_BUILD_TYPE=Release ^
             -DENZO_SUPERBUILD=ON
-          cmake --build build-super
+          cmake --build build
 
       # Installs the Vulkan loader and a software Vulkan driver, since the
       # runner has no GPU.
@@ -147,7 +147,7 @@ jobs:
         shell: pwsh
         timeout-minutes: 15
         run: |
-          cmake --install build-super/enzo-build --prefix "$PWD/stage"
+          cmake --install build/enzo-build --prefix "$PWD/stage"
           $exe = "$PWD/stage/bin/enzo.exe"
 
           # A runner has no console window, so Qt writes its messages to the
@@ -165,7 +165,7 @@ jobs:
           $debuggers = "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64"
           if (Test-Path "$debuggers/cdb.exe") {
             & "$debuggers/gflags.exe" /p /enable enzo.exe /full
-            $env:_NT_SYMBOL_PATH = "$PWD/build-super/enzo-build/enzo/bin"
+            $env:_NT_SYMBOL_PATH = "$PWD/build/enzo-build/enzo/bin"
             & "$debuggers/cdb.exe" -g -G -c ".lastevent; kb; q" $exe
             & "$debuggers/gflags.exe" /p /disable enzo.exe
           }
@@ -175,7 +175,7 @@ jobs:
         if: env.ENZO_PACKAGE == 'true'
         shell: cmd
         run: |
-          cd build-super\enzo-build
+          cd build\enzo-build
           cpack -G "WIX;NSIS;ZIP" -B "%GITHUB_WORKSPACE%\dist"
 
       # Prints the makensis output, which CPack only names by path on failure.
