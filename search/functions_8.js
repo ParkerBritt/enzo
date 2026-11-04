@@ -4,7 +4,8 @@ var searchData=
   ['haselement_1',['hasElement',['../classenzo_1_1script_1_1MeshAttributeReader.html#a937a68e334b3e63a8409a8775a3fdf98',1,'enzo::script::MeshAttributeReader']]],
   ['hasinput_2',['hasInput',['../classenzo_1_1nt_1_1NodeImpl.html#a7e24c488a62f9d5dfca5279f3973f8b7',1,'enzo::nt::NodeImpl']]],
   ['hasmultiinputport_3',['hasMultiInputPort',['../structenzo_1_1nt_1_1NodeType.html#a3de9abc9122ad2706b0e0ac2ad96c131',1,'enzo::nt::NodeType']]],
-  ['hasparameter_4',['hasParameter',['../classenzo_1_1NetworkPath.html#a8c50e2f03162d37b24575f3861fd087c',1,'enzo::NetworkPath']]],
-  ['hasprefix_5',['hasPrefix',['../classenzo_1_1Path.html#a514432b8ef3825bbc53e80010dc91aba',1,'enzo::Path']]],
-  ['holds_6',['holds',['../StyleAccess_8h.html#a4aed24c694bd6b5c3f1a06a8200336b1',1,'enzo::prm::style']]]
+  ['hasowner_4',['hasOwner',['../classenzo_1_1geo_1_1Mesh.html#ac64fad95b5113e4efc51b5c9a5fc508d',1,'enzo::geo::Mesh::hasOwner()'],['../classenzo_1_1geo_1_1Primitive.html#a8c9eed189290ba666ebdf9c3fd453cae',1,'enzo::geo::Primitive::hasOwner()']]],
+  ['hasparameter_5',['hasParameter',['../classenzo_1_1NetworkPath.html#a8c50e2f03162d37b24575f3861fd087c',1,'enzo::NetworkPath']]],
+  ['hasprefix_6',['hasPrefix',['../classenzo_1_1Path.html#a514432b8ef3825bbc53e80010dc91aba',1,'enzo::Path']]],
+  ['holds_7',['holds',['../StyleAccess_8h.html#a4aed24c694bd6b5c3f1a06a8200336b1',1,'enzo::prm::style']]]
 ];

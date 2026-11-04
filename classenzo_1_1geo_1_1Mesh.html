@@ -146,8 +146,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>applyTransform</b> (c
 <tr class="separator:a2ae9f9b9ae2f45622ee7a4032ae0a310"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1977b49f6676f907cda9e4438ee4427d" id="r_a1977b49f6676f907cda9e4438ee4427d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1977b49f6676f907cda9e4438ee4427d">merge</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt; other) override</td></tr>
 <tr class="separator:a1977b49f6676f907cda9e4438ee4427d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c62270e188a10593f436f59dd36286c" id="r_a5c62270e188a10593f436f59dd36286c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c62270e188a10593f436f59dd36286c">hasPoints</a> () const override</td></tr>
-<tr class="separator:a5c62270e188a10593f436f59dd36286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac64fad95b5113e4efc51b5c9a5fc508d" id="r_ac64fad95b5113e4efc51b5c9a5fc508d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac64fad95b5113e4efc51b5c9a5fc508d">hasOwner</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner) const override</td></tr>
+<tr class="memdesc:ac64fad95b5113e4efc51b5c9a5fc508d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether this primitive type stores elements of the owner.  <br /></td></tr>
+<tr class="separator:ac64fad95b5113e4efc51b5c9a5fc508d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a443c7167414f26f605d970202e712d19" id="r_a443c7167414f26f605d970202e712d19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a443c7167414f26f605d970202e712d19">addFace</a> (const std::vector&lt; <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> &gt; &amp;pointOffsets, bool closed=true)</td></tr>
 <tr class="memdesc:a443c7167414f26f605d970202e712d19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a single face. Avoid for multiple faces in a loop as a single call to <a class="el" href="#aa21b613bd6c68e1d32847aac4b72a0be">addFaces</a> is much more performant.  <br /></td></tr>
 <tr class="separator:a443c7167414f26f605d970202e712d19"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -291,6 +292,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>computeFaceStartVerti
 <tr class="memitem:a8ffec56f03caad3ffd988c71dea2c830 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a8ffec56f03caad3ffd988c71dea2c830"><td class="memItemLeft" align="right" valign="top">
 void&#160;</td><td class="memItemRight" valign="bottom"><b>applyTransform</b> (const <a class="el" href="classenzo_1_1Transform.html">Transform</a> &amp;transform, TransformClass transformClass)</td></tr>
 <tr class="separator:a8ffec56f03caad3ffd988c71dea2c830 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a733db47967e273ab214d8a838e62b88e inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a733db47967e273ab214d8a838e62b88e"><td class="memItemLeft" align="right" valign="top">
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getElementCount</b> (const <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> &amp;owner) const</td></tr>
+<tr class="memdesc:a733db47967e273ab214d8a838e62b88e inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the given owner's store. <br /></td></tr>
+<tr class="separator:a733db47967e273ab214d8a838e62b88e inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fb22527df929e020197f8a837cd0f72 inherit pub_methods_classenzo_1_1geo_1_1Primitive" id="r_a0fb22527df929e020197f8a837cd0f72"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getNumPoints</b> () const</td></tr>
 <tr class="separator:a0fb22527df929e020197f8a837cd0f72 inherit pub_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -391,9 +396,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a4b14fd3548e951c2d82dff9b27cca332 inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_a4b14fd3548e951c2d82dff9b27cca332"><td class="memItemLeft" align="right" valign="top">
 attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopyAttributes</b> (attr::attribVector source)</td></tr>
 <tr class="separator:a4b14fd3548e951c2d82dff9b27cca332 inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a733db47967e273ab214d8a838e62b88e inherit pro_methods_classenzo_1_1geo_1_1Primitive" id="r_a733db47967e273ab214d8a838e62b88e"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classenzo_1_1geo_1_1Primitive.html#a733db47967e273ab214d8a838e62b88e">getElementCount</a> (const <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> &amp;owner) const</td></tr>
-<tr class="memdesc:a733db47967e273ab214d8a838e62b88e inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the given owner's store.  <br /></td></tr>
-<tr class="separator:a733db47967e273ab214d8a838e62b88e inherit pro_methods_classenzo_1_1geo_1_1Primitive"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -915,8 +917,8 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 
 </div>
 </div>
-<a id="a5c62270e188a10593f436f59dd36286c" name="a5c62270e188a10593f436f59dd36286c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c62270e188a10593f436f59dd36286c">&#9670;&#160;</a></span>hasPoints()</h2>
+<a id="ac64fad95b5113e4efc51b5c9a5fc508d" name="ac64fad95b5113e4efc51b5c9a5fc508d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac64fad95b5113e4efc51b5c9a5fc508d">&#9670;&#160;</a></span>hasOwner()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -925,9 +927,9 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool enzo::geo::Mesh::hasPoints </td>
+          <td class="memname">bool enzo::geo::Mesh::hasOwner </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -938,7 +940,9 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a>.</p>
+<p>Returns whether this primitive type stores elements of the owner. </p>
+
+<p>Reimplemented from <a class="el" href="classenzo_1_1geo_1_1Primitive.html#a8c9eed189290ba666ebdf9c3fd453cae">enzo::geo::Primitive</a>.</p>
 
 </div>
 </div>
