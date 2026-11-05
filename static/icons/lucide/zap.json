@@ -2,8 +2,10 @@
   "$schema": "../icon.schema.json",
   "contributors": [
     "colebemis",
-    "karsa-mistmere"
+    "karsa-mistmere",
+    "kapowaz"
   ],
+  "use-cases": [],
   "tags": [
     "flash",
     "camera",
@@ -14,9 +16,8 @@
     "quick"
   ],
   "categories": [
-    "connectivity",
-    "devices",
     "photography",
-    "weather"
+    "weather",
+    "devices"
   ]
 }

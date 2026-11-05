@@ -3,6 +3,7 @@
   "contributors": [
     "dg-ac"
   ],
+  "use-cases": [],
   "tags": [
     "line",
     "stroke",
@@ -11,7 +12,6 @@
     "border"
   ],
   "categories": [
-    "design",
-    "tools"
+    "design"
   ]
 }

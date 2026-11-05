@@ -5,7 +5,9 @@
     "karsa-mistmere",
     "ericfennis"
   ],
+  "use-cases": [],
   "tags": [
+    "$group:direction-right",
     "left",
     "in",
     "inside",
@@ -17,9 +19,7 @@
     "->"
   ],
   "categories": [
-    "arrows",
-    "shapes",
-    "layout",
-    "multimedia"
+    "$extends:square-arrow-right",
+    "account"
   ]
 }
