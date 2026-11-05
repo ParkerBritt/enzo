@@ -224,13 +224,13 @@ Column {
             }
             IconButton {
                 variant: "field"
-                name: "flip-horizontal-2"
+                name: "triangles-centerline-dashed-horizontal"
                 tooltip: "Flip Horizontal"
                 onClicked: root.flipHorizontal()
             }
             IconButton {
                 variant: "field"
-                name: "flip-vertical-2"
+                name: "triangles-centerline-dashed-vertical"
                 tooltip: "Flip Vertical"
                 onClicked: root.flipVertical()
             }
@@ -248,7 +248,7 @@ Column {
             }
             IconButton {
                 variant: "field"
-                name: "trash-2"
+                name: "trash"
                 iconColor: Theme.var.danger
                 tooltip: "Delete Point"
                 enabled: root.points.length > 2

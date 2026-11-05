@@ -141,8 +141,12 @@ parameters:
           How to close the ends of the cylinder. None leaves the ends open,
           Single Polygon fills each end with one face.
         options:
-          - {value: none, label: None}
-          - {value: single, label: Single Polygon}
+          - value: none
+            label: None
+            icon: circle-dashed
+          - value: single
+            label: Single Polygon
+            icon: circle
 
       - name: endCapGroup
         label: Cap Group

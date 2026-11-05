@@ -92,8 +92,12 @@ parameters:
     default: counterclockwise
     tooltip: Which way the spiral turns when seen from the end it rises towards.
     options:
-      - {value: counterclockwise, label: Counterclockwise}
-      - {value: clockwise, label: Clockwise}
+      - value: counterclockwise
+        label: Counterclockwise
+        icon: rotate-ccw
+      - value: clockwise
+        label: Clockwise
+        icon: rotate-cw
 
   - name: pointsPerTurn
     label: Points Per Turn
