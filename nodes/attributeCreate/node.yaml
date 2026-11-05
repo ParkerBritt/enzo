@@ -51,10 +51,18 @@ parameters:
     default: float
     tooltip: The kind of value the attribute stores.
     options:
-      - {value: float, label: Float}
-      - {value: int, label: Integer}
-      - {value: vector, label: Vector}
-      - {value: bool, label: Boolean}
+      - value: float
+        label: Float
+        icon: decimals-arrow-right
+      - value: int
+        label: Integer
+        icon: numbers
+      - value: vector
+        label: Vector
+        icon: move-3d
+      - value: bool
+        label: Boolean
+        icon: toggle-left
 
   - name: floatValue
     label: Value

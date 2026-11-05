@@ -42,8 +42,12 @@ parameters:
       The kind of value the attribute stores. A vector not moved along a vector
       attribute gets the same wave on each axis.
     options:
-      - {value: float, label: Float}
-      - {value: vector, label: Vector}
+      - value: float
+        label: Float
+        icon: decimals-arrow-right
+      - value: vector
+        label: Vector
+        icon: move-3d
 
   - name: alongVectorRow
     label: Wave Along Vector
@@ -80,12 +84,24 @@ parameters:
     default: add
     tooltip: How the wave combines with the value already on the attribute.
     options:
-      - {value: set, label: Set}
-      - {value: add, label: Add}
-      - {value: subtract, label: Subtract}
-      - {value: multiply, label: Multiply}
-      - {value: minimum, label: Minimum}
-      - {value: maximum, label: Maximum}
+      - value: set
+        label: Set
+        icon: equal
+      - value: add
+        label: Add
+        icon: plus
+      - value: subtract
+        label: Subtract
+        icon: minus
+      - value: multiply
+        label: Multiply
+        icon: x
+      - value: minimum
+        label: Minimum
+        icon: arrow-down-to-line
+      - value: maximum
+        label: Maximum
+        icon: arrow-up-to-line
 
   - name: wave_divider
     label: Wave

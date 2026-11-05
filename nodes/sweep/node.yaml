@@ -29,10 +29,18 @@ parameters:
     type: dropdown
     default: round
     options:
-      - {value: input, label: Second Input}
-      - {value: round, label: Round}
-      - {value: square, label: Square}
-      - {value: ribbon, label: Ribbon}
+      - value: input
+        label: Second Input
+        icon: import
+      - value: round
+        label: Round
+        icon: circle
+      - value: square
+        label: Square
+        icon: square
+      - value: ribbon
+        label: Ribbon
+        icon: rectangle-horizontal
 
   - name: profileScale
     label: Profile Scale
@@ -81,8 +89,12 @@ parameters:
           How to close the open ends of the swept tube. None leaves the ends open,
           Single Polygon fills each end with one face.
         options:
-          - {value: none, label: None}
-          - {value: single, label: Single Polygon}
+          - value: none
+            label: None
+            icon: circle-dashed
+          - value: single
+            label: Single Polygon
+            icon: circle
 
       - name: endCapGroup
         label: Cap Group
