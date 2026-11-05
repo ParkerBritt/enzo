@@ -137,7 +137,7 @@ bool prm::Template::isLabelHidden() const { return labelHidden_; }
 
 bool prm::Template::isLabelInline() const { return labelInline_; }
 
-String prm::Template::getIcon() const { return icon_; }
+String prm::Template::getIcon() const { return name_.getIcon(); }
 
 prm::Template& prm::Template::setTooltip(String tooltip)
 {
@@ -229,12 +229,6 @@ prm::Template& prm::Template::setLabelInline(bool isInline)
 prm::Template& prm::Template::setBackgroundEnabled(bool enabled)
 {
     backgroundEnabled_ = enabled;
-    return *this;
-}
-
-prm::Template& prm::Template::setIcon(String icon)
-{
-    icon_ = std::move(icon);
     return *this;
 }
 

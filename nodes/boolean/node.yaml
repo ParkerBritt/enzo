@@ -23,6 +23,12 @@ parameters:
     type: dropdown
     default: union
     options:
-      - {value: union, label: Union}
-      - {value: intersect, label: Intersect}
-      - {value: subtract, label: Subtract}
+      - value: union
+        label: Union
+        icon: squares-unite
+      - value: intersect
+        label: Intersect
+        icon: squares-intersect
+      - value: subtract
+        label: Subtract
+        icon: squares-subtract

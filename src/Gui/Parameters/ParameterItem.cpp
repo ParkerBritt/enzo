@@ -251,6 +251,7 @@ ParameterItem::ParameterItem(
     {
         options_.append(QString::fromStdString(option.getLabel()));
         optionTokens_.append(QString::fromStdString(option.getToken()));
+        optionIcons_.append(QString::fromStdString(option.getIcon()));
     }
 
     // An undo, direct edit, or upstream dependency can all change the value

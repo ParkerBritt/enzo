@@ -408,6 +408,22 @@ TEST_CASE("An option with no label falls back to its value")
     REQUIRE(parameter.getOptions().at(0).getLabel() == "xy");
 }
 
+TEST_CASE("An option carries an icon when the manifest names one")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: operation
+    type: dropdown
+    options:
+      - value: union
+        icon: squares-unite
+      - value: intersect
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+
+    REQUIRE(parameter.getOptions().at(0).getIcon() == "squares-unite");
+    REQUIRE(parameter.getOptions().at(1).getIcon().empty());
+}
+
 TEST_CASE("Conditions, tooltips and layout flags reach the template")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(

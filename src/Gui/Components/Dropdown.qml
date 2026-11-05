@@ -16,6 +16,9 @@ Item {
     property var labels: []
     property int currentIndex: -1
 
+    // Lucide icon names beside each label, empty for a label without one.
+    property var labelIcons: []
+
     // Icon standing in for the trigger text.
     property string icon: ""
 
@@ -36,6 +39,9 @@ Item {
 
     readonly property string currentLabel: (currentIndex >= 0 && currentIndex < labels.length) ? labels[currentIndex] : ""
 
+    // Width kept left of every label for an icon, 0 when no label has one.
+    readonly property int labelIconSlot: labelIcons.some(name => name !== "") ? 20 : 0
+
     // Room for the widest choice, so the trigger holds still as it changes.
     readonly property real widestLabelWidth: {
         let widest = 0;
@@ -44,7 +50,7 @@ Item {
         return widest;
     }
 
-    implicitWidth: icon !== "" ? implicitHeight : Math.ceil(widestLabelWidth) + 40
+    implicitWidth: icon !== "" ? implicitHeight : Math.ceil(widestLabelWidth) + labelIconSlot + 40
     implicitHeight: 30
 
     // Returns the row under a point given in this item's coordinates, or -1 when
@@ -61,6 +67,11 @@ Item {
         const localX = px - list.x - list.padding;
         const localY = py - list.y - list.padding;
         return (localX >= 0 && localX <= list.availableWidth) ? list.rowAt(localY) : -1;
+    }
+
+    // Returns the icon name beside a label, empty when it has none.
+    function getLabelIcon(index) {
+        return (index >= 0 && index < labelIcons.length) ? labelIcons[index] : "";
     }
 
     function choose(index) {
@@ -91,19 +102,17 @@ Item {
         color: Theme.parameter.backgroundColor
         border.color: list.visible ? Theme.var.accentLine : Theme.parameter.lineColor
 
-        Text {
+        ChoiceLabel {
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.right: chevron.left
             anchors.rightMargin: 6
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
             text: root.currentLabel
+            icon: root.getLabelIcon(root.currentIndex)
+            iconSlot: root.labelIconSlot
             color: Theme.var.text
-            font.family: Theme.var.fontSans
-            font.pixelSize: 12
-            font.weight: Font.Medium
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
         }
 
         Icon {
@@ -180,17 +189,14 @@ Item {
             width: list.availableWidth
             height: list.rowHeight
 
-            Text {
+            ChoiceLabel {
                 anchors.fill: parent
                 anchors.leftMargin: 10
                 anchors.rightMargin: (rowAction.visible ? rowAction.width + 14 : 10) + (selectionDot.visible ? 14 : 0)
                 text: row.modelData
+                icon: root.getLabelIcon(row.index)
+                iconSlot: root.labelIconSlot
                 color: row.index === root.currentIndex ? Theme.var.text : Theme.var.textLabel
-                font.family: Theme.var.fontSans
-                font.pixelSize: 12
-                font.weight: Font.Medium
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
             }
 
             Rectangle {
@@ -262,6 +268,37 @@ Item {
                     }
                 }
             }
+        }
+    }
+
+    // A choice's label and icon.
+    component ChoiceLabel: Item {
+        id: choice
+
+        property string text
+        property string icon
+        property int iconSlot
+        property color color
+
+        Icon {
+            visible: choice.icon !== ""
+            name: choice.icon
+            size: 14
+            color: choice.color
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Text {
+            anchors.fill: parent
+            anchors.leftMargin: choice.iconSlot
+            text: choice.text
+            color: choice.color
+            font.family: Theme.var.fontSans
+            font.pixelSize: 12
+            font.weight: Font.Medium
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
         }
     }
 }

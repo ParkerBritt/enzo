@@ -44,6 +44,7 @@ class ParameterItem : public QObject
     Q_PROPERTY(bool maxLocked READ maxLocked CONSTANT)
     Q_PROPERTY(QStringList options READ options CONSTANT)
     Q_PROPERTY(QStringList optionTokens READ optionTokens CONSTANT)
+    Q_PROPERTY(QStringList optionIcons READ optionIcons CONSTANT)
     Q_PROPERTY(QList<QObject*> children READ children CONSTANT)
     Q_PROPERTY(bool horizontal READ horizontal CONSTANT)
     Q_PROPERTY(bool labelHidden READ labelHidden CONSTANT)
@@ -84,6 +85,7 @@ class ParameterItem : public QObject
     bool maxLocked() const { return maxLocked_; }
     QStringList options() const { return options_; }
     QStringList optionTokens() const { return optionTokens_; }
+    QStringList optionIcons() const { return optionIcons_; }
     QList<QObject*> children() const { return children_; }
 
     /// @brief Whether a group lays its children side by side rather than stacked.
@@ -169,6 +171,7 @@ class ParameterItem : public QObject
     bool maxLocked_ = false;
     QStringList options_;
     QStringList optionTokens_;
+    QStringList optionIcons_;
     QList<QObject*> children_;
     bool horizontal_ = false;
     bool labelHidden_ = false;
