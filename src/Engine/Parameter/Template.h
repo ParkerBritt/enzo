@@ -109,7 +109,6 @@ class Template
     Template& setLabelHidden(bool hidden);
     Template& setLabelInline(bool isInline);
     Template& setBackgroundEnabled(bool enabled);
-    Template& setIcon(String icon);
 
     // Style structs may hold parameters with change signals, which cannot
     // be copied. Wrapping in a shared pointer lets the style live inside
@@ -134,7 +133,6 @@ class Template
     String documentation_;
     String disableCondition_;
     String hideCondition_;
-    String icon_;
 
     bool labelHidden_ = false;
     bool labelInline_ = false;

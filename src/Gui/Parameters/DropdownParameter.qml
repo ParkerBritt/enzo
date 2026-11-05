@@ -13,6 +13,7 @@ Dropdown {
     implicitHeight: Constants.parameterHeight
 
     labels: item ? item.options : []
+    labelIcons: item ? item.optionIcons : []
     currentIndex: tokens.indexOf(item ? item.value : "")
     onActivated: (index) => {
         item.beginEdit();

@@ -85,14 +85,17 @@ prm::Range readRange(const YAML::Node& range)
     );
 }
 
+// Returns the name of a parameter or option. A missing label falls back to the token.
+prm::Name readName(const YAML::Node& node, const std::string& token)
+{
+    return prm::Name(token, readString(node, "label", token), readString(node, "icon"));
+}
+
 std::vector<prm::Name> readOptions(const YAML::Node& options)
 {
     std::vector<prm::Name> names;
     for (const YAML::Node& option : options)
-    {
-        const std::string value = requireString(option, "value", "option");
-        names.emplace_back(value, readString(option, "label", value));
-    }
+        names.push_back(readName(option, requireString(option, "value", "option")));
     return names;
 }
 
@@ -170,7 +173,7 @@ prm::Template readParameter(const YAML::Node& parm)
     const std::optional<prm::Type> type = prm::toType(typeName);
     if (!type) throw std::runtime_error("parameter " + name + " has unknown type " + typeName);
 
-    const prm::Name parmName(name, readString(parm, "label", name));
+    const prm::Name parmName = readName(parm, name);
     const prm::ValueType valueType = prm::toValueType(*type);
     const unsigned int size = parm["size"] ? parm["size"].as<unsigned int>() : 1;
     const prm::Range range = readRange(parm["range"]);
@@ -194,7 +197,6 @@ prm::Template readParameter(const YAML::Node& parm)
     if (parm["labelHidden"]) parameter.setLabelHidden(parm["labelHidden"].as<bool>());
     if (parm["labelInline"]) parameter.setLabelInline(parm["labelInline"].as<bool>());
     if (parm["background"]) parameter.setBackgroundEnabled(parm["background"].as<bool>());
-    if (parm["icon"]) parameter.setIcon(parm["icon"].as<std::string>());
     if (parm["options"]) parameter.setOptions(readOptions(parm["options"]));
     if (parm["styleOptions"] && !parm["style"])
         throw std::runtime_error("parameter " + name + " has styleOptions but no style");
