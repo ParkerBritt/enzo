@@ -26,9 +26,15 @@ parameters:
     default: y
     tooltip: The axis the spiral winds around.
     options:
-      - {value: x, label: X Axis}
-      - {value: y, label: Y Axis}
-      - {value: z, label: Z Axis}
+      - value: x
+        label: X Axis
+        icon: axis-x
+      - value: y
+        label: Y Axis
+        icon: axis-y
+      - value: z
+        label: Z Axis
+        icon: axis-z
 
   - name: center
     label: Center

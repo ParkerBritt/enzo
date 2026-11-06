@@ -79,10 +79,18 @@ parameters:
     label: Arc
     type: dropdown
     options:
-      - {value: closed, label: Closed}
-      - {value: open_arc, label: Open Arc}
-      - {value: closed_arc, label: Closed Arc}
-      - {value: sliced_arc, label: Sliced Arc}
+      - value: closed
+        label: Closed
+        icon: circle
+      - value: open_arc
+        label: Open Arc
+        icon: arc-open
+      - value: closed_arc
+        label: Closed Arc
+        icon: arc-closed
+      - value: sliced_arc
+        label: Sliced Arc
+        icon: arc-sliced
 
   - name: arc_angles
     label: Arc Angles
