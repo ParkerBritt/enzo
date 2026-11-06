@@ -25,9 +25,15 @@ parameters:
     type: dropdown
     default: zx
     options:
-      - {value: xy, label: XY Plane}
-      - {value: yz, label: YZ Plane}
-      - {value: zx, label: ZX Plane}
+      - value: xy
+        label: XY Plane
+        icon: plane-xy
+      - value: yz
+        label: YZ Plane
+        icon: plane-yz
+      - value: zx
+        label: ZX Plane
+        icon: plane-zx
 
   - name: center
     label: Center
