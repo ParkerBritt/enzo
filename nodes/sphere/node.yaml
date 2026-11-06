@@ -26,9 +26,15 @@ parameters:
     default: y
     tooltip: The axis the poles sit on.
     options:
-      - {value: x, label: X Axis}
-      - {value: y, label: Y Axis}
-      - {value: z, label: Z Axis}
+      - value: x
+        label: X Axis
+        icon: axis-x
+      - value: y
+        label: Y Axis
+        icon: axis-y
+      - value: z
+        label: Z Axis
+        icon: axis-z
 
   - name: center
     label: Center
@@ -90,9 +96,15 @@ parameters:
     type: dropdown
     default: closed
     options:
-      - {value: closed, label: Closed}
-      - {value: open_arc, label: Open Arc}
-      - {value: closed_arc, label: Closed Arc}
+      - value: closed
+        label: Closed
+        icon: circle
+      - value: open_arc
+        label: Open Arc
+        icon: arc-open
+      - value: closed_arc
+        label: Closed Arc
+        icon: arc-closed
 
   - name: arcAngles
     label: Arc Angles
