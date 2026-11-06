@@ -148,8 +148,12 @@ parameters:
       The values the wave runs between before amplitude. Positive runs from zero
       to one, and zero centered runs from minus one to one.
     options:
-      - {value: positive, label: Positive}
-      - {value: zeroCentered, label: Zero Centered}
+      - value: positive
+        label: Positive
+        icon: range-positive
+      - value: zeroCentered
+        label: Zero Centered
+        icon: range-zero-centered
 
   - name: remap
     label: Remap
