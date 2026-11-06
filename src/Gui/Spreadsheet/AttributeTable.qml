@@ -12,7 +12,7 @@ Item {
     property var viewModel
     property int selectedRow: 0
 
-    readonly property var modeIcons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
+    readonly property var modeIcons: ["attributePoint", "attributeVertex", "attributeBase", "attributePrimitive"]
 
     function axisColor(axis, light) {
         if (axis === 0)

@@ -7,7 +7,7 @@
 
 namespace enzo::ui {
 
-/// @brief Shows a tinted icon from the bundled Lucide set as the mouse cursor over the item.
+/// @brief A tinted icon by name, shown as the mouse cursor over the item.
 /// @note The item takes no input, so it can sit over a MouseArea and only change the cursor.
 class IconCursor : public QQuickItem
 {

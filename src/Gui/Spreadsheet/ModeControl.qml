@@ -10,7 +10,7 @@ Rectangle {
     property int mode: 0
     signal modePicked(int mode)
 
-    readonly property var icons: ["../attributePoint", "../attributeVertex", "../attributeBase", "../attributePrimitive"]
+    readonly property var icons: ["attributePoint", "attributeVertex", "attributeBase", "attributePrimitive"]
     readonly property var labels: ["Points", "Vertices", "Faces", "Primitives"]
 
     implicitWidth: chips.width + 6
