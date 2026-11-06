@@ -13,22 +13,22 @@ namespace {
 
 Theme* themeInstance = nullptr;
 
-QString iconsDir()
-{
-    const QString dir = QString::fromStdString((getStaticDir() / "icons" / "lucide").string());
-    return QUrl::fromLocalFile(dir + QChar(u'/')).toString();
-}
-
 } // namespace
 
 Theme::Theme(QObject* parent) : QQmlPropertyMap(this, parent)
 {
     themeInstance = this;
-    insert(QStringLiteral("iconsDir"), iconsDir());
     reload(readThemeYaml(activeThemeName()));
 }
 
 Theme* Theme::instance() { return themeInstance; }
+
+QString Theme::getIconUrl(const QString& name) const
+{
+    const std::filesystem::path path = getIconPath(name.toStdString());
+    if (path.empty()) return {};
+    return QUrl::fromLocalFile(QString::fromStdString(path.string())).toString();
+}
 
 void Theme::reload(const QString& themeYaml)
 {

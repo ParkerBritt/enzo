@@ -1,9 +1,7 @@
 import QtQuick
 import Enzo
 
-// A tinted monochrome icon loaded by name from the bundled Lucide set. The SVG
-// text is recoloured to `color` and handed to the image as a data url, so the
-// glyph paints in the requested colour with no effect pipeline.
+// A tinted monochrome icon loaded by name from the Lucide set or Enzo's own icons.
 Item {
     id: root
 
@@ -35,9 +33,14 @@ Item {
     function reload() {
         if (root.name === "")
             return;
+        const url = Theme.getIconUrl(root.name);
+        if (url === "") {
+            console.warn("Icon: no icon named", root.name);
+            return;
+        }
         const hex = rgbHex(root.color);
         const request = new XMLHttpRequest();
-        request.open("GET", Theme.iconsDir + root.name + ".svg");
+        request.open("GET", url);
         request.onreadystatechange = function () {
             if (request.readyState !== XMLHttpRequest.DONE)
                 return;
@@ -46,7 +49,7 @@ Item {
             if (!image)
                 return;
             if (!request.responseText) {
-                console.warn("Icon: failed to load", Theme.iconsDir + root.name + ".svg");
+                console.warn("Icon: failed to load", url);
                 return;
             }
             const svg = request.responseText.replace(/currentColor/g, hex);

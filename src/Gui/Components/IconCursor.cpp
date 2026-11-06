@@ -33,13 +33,11 @@ void IconCursor::applyCursor()
         return;
     }
 
-    const QString path = QString::fromStdString(
-        (getStaticDir() / "icons" / "lucide" / (name_.toStdString() + ".svg")).string()
-    );
+    const QString path = QString::fromStdString(getIconPath(name_.toStdString()).string());
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly))
     {
-        qWarning("IconCursor: failed to load %s", qPrintable(path));
+        qWarning("IconCursor: failed to load %s", qPrintable(name_));
         unsetCursor();
         return;
     }
