@@ -30,7 +30,7 @@ var searchData=
   ['getgroupbyname_27',['getGroupByName',['../classenzo_1_1geo_1_1Primitive.html#a6cca3120c244c5796dc64f7ac5a0e867',1,'enzo::geo::Primitive']]],
   ['getgroups_28',['getGroups',['../classenzo_1_1geo_1_1Primitive.html#a1916e1a9364cd9e5a78d7975ce2c4869',1,'enzo::geo::Primitive']]],
   ['gethidecondition_29',['getHideCondition',['../classenzo_1_1prm_1_1Template.html#abd7352af6cc81c249d3c3e9531d094e8',1,'enzo::prm::Template']]],
-  ['geticon_30',['getIcon',['../classenzo_1_1prm_1_1Template.html#a0587724b420296b1d58093e2adbd0fac',1,'enzo::prm::Template']]],
+  ['geticon_30',['getIcon',['../classenzo_1_1prm_1_1Name.html#ad1a8f18a0fd54d5e20e1c11725fbcea9',1,'enzo::prm::Name::getIcon()'],['../classenzo_1_1prm_1_1Template.html#a0587724b420296b1d58093e2adbd0fac',1,'enzo::prm::Template::getIcon()']]],
   ['geticonfile_31',['getIconFile',['../structenzo_1_1nt_1_1NodeType.html#a5f0fa50bf5bf99b0dd98a488ee01ba24',1,'enzo::nt::NodeType']]],
   ['getinputcount_32',['getInputCount',['../classenzo_1_1nt_1_1NetworkManager.html#a86943038b1fd5e45132bd17c625fdcf3',1,'enzo::nt::NetworkManager::getInputCount()'],['../classenzo_1_1nt_1_1NodeImpl.html#a8cc09dae15dc389f1d4953a195e8f24b',1,'enzo::nt::NodeImpl::getInputCount()']]],
   ['getinputmesh_33',['getInputMesh',['../classenzo_1_1script_1_1ScriptContext.html#a557efe075619d078ec21336dfdeb433b',1,'enzo::script::ScriptContext']]],
