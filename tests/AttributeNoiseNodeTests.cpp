@@ -136,20 +136,18 @@ TEST_CASE_METHOD(NMReset, "Each noise type gives its own pattern within minus on
     auto& node = nm.getNode(attributeNoise);
 
     // Cooks one noise type and returns the values it wrote.
-    const auto cookNoiseType = [&](const String& noiseType, const String& cellularMode) {
+    const auto cookNoiseType = [&](const String& noiseType) {
         node.getParameter("noiseType").lock()->setString(noiseType);
-        node.getParameter("cellularMode").lock()->setString(cellularMode);
         nm.cook(attributeNoise);
         return getNoiseValues(nm.getNode(attributeNoise));
     };
 
     const std::vector<std::vector<floatT>> patterns = {
-        cookNoiseType("simplex", "value"),
-        cookNoiseType("superSimplex", "value"),
-        cookNoiseType("perlin", "value"),
-        cookNoiseType("value", "value"),
-        cookNoiseType("cellular", "value"),
-        cookNoiseType("cellular", "distance"),
+        cookNoiseType("simplex"),
+        cookNoiseType("perlin"),
+        cookNoiseType("value"),
+        cookNoiseType("cellular"),
+        cookNoiseType("worley"),
     };
 
     requireDistinctPatterns(patterns);

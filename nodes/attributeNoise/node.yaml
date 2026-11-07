@@ -111,25 +111,25 @@ parameters:
     label: Noise Type
     type: dropdown
     default: simplex
-    tooltip: The pattern of noise to sample.
-    options:
-      - {value: simplex, label: Simplex}
-      - {value: superSimplex, label: Super Simplex}
-      - {value: perlin, label: Perlin}
-      - {value: value, label: Value}
-      - {value: cellular, label: Cellular}
-
-  - name: cellularMode
-    label: Cellular Mode
-    type: dropdown
-    default: value
-    hideCondition: noiseType != 4
     tooltip: >
-      What each point reads from its nearest cell. Value gives every cell one flat
-      value, and distance gives how far the point is from the cell center.
+      The pattern of noise to sample. Cellular gives every cell one flat value,
+      and Worley gives how far each point is from its cell center.
     options:
-      - {value: value, label: Value}
-      - {value: distance, label: Distance}
+      - value: simplex
+        label: Simplex
+        icon: noise-simplex
+      - value: perlin
+        label: Perlin
+        icon: noise-perlin
+      - value: value
+        label: Value
+        icon: noise-value
+      - value: cellular
+        label: Cellular
+        icon: noise-cellular
+      - value: worley
+        label: Worley
+        icon: noise-worley
 
   - name: amplitude
     label: Amplitude
@@ -169,9 +169,15 @@ parameters:
       How octaves of the noise are layered. FBm adds finer detail on top of the
       base noise, and Ridged folds each octave into sharp creases.
     options:
-      - {value: none, label: None}
-      - {value: fbm, label: FBm}
-      - {value: ridged, label: Ridged}
+      - value: none
+        label: None
+        icon: fractal-none
+      - value: fbm
+        label: FBm
+        icon: fractal-fbm
+      - value: ridged
+        label: Ridged
+        icon: fractal-ridged
 
   - name: octaves
     label: Octaves
