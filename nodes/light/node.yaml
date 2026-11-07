@@ -21,7 +21,9 @@ parameters:
     default: point
     tooltip: The kind of light to create.
     options:
-      - {value: point, label: Point}
+      - value: point
+        label: Point
+        icon: light-point
 
   - name: translate
     label: Translate

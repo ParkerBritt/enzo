@@ -1,0 +1,14 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="2" fill="currentColor" />
+  <path d="M17.50 12.00 22.00 12.00 M15.89 15.89 18.01 18.01 M12.00 17.50 12.00 22.00 M8.11 15.89 5.99 18.01 M6.50 12.00 2.00 12.00 M8.11 8.11 5.99 5.99 M12.00 6.50 12.00 2.00 M15.89 8.11 18.01 5.99" />
+</svg>

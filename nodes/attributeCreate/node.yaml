@@ -40,10 +40,18 @@ parameters:
     default: point
     tooltip: The part of the geometry that holds one value each.
     options:
-      - {value: point, label: Point}
-      - {value: vertex, label: Vertex}
-      - {value: face, label: Face}
-      - {value: primitive, label: Primitive}
+      - value: point
+        label: Point
+        icon: attribute-point
+      - value: vertex
+        label: Vertex
+        icon: attribute-vertex
+      - value: face
+        label: Face
+        icon: attribute-face
+      - value: primitive
+        label: Primitive
+        icon: attribute-primitive
 
   - name: type
     label: Type

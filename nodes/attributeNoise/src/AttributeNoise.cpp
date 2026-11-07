@@ -24,18 +24,14 @@ template <typename T> FastNoise::SmartNode<> newGenerator()
     return generator;
 }
 
-/// @brief Returns the generator the noise type and cellular mode name, or nothing
-/// when they name none.
-FastNoise::SmartNode<> getGenerator(const enzo::String& noiseType, const enzo::String& cellularMode)
+/// @brief Returns the generator the noise type names, or nothing when it names none.
+FastNoise::SmartNode<> getGenerator(const enzo::String& noiseType)
 {
     if (noiseType == "simplex") return newGenerator<FastNoise::Simplex>();
-    if (noiseType == "superSimplex") return newGenerator<FastNoise::SuperSimplex>();
     if (noiseType == "perlin") return newGenerator<FastNoise::Perlin>();
     if (noiseType == "value") return newGenerator<FastNoise::Value>();
-    if (noiseType == "cellular" && cellularMode == "value")
-        return newGenerator<FastNoise::CellularValue>();
-    if (noiseType == "cellular" && cellularMode == "distance")
-        return newGenerator<FastNoise::CellularDistance>();
+    if (noiseType == "cellular") return newGenerator<FastNoise::CellularValue>();
+    if (noiseType == "worley") return newGenerator<FastNoise::CellularDistance>();
     return {};
 }
 
@@ -155,8 +151,7 @@ void AttributeNoise::cook()
         return;
     }
 
-    const FastNoise::SmartNode<> source =
-        getGenerator(evalParmString("noiseType"), evalParmString("cellularMode"));
+    const FastNoise::SmartNode<> source = getGenerator(evalParmString("noiseType"));
     if (!source)
     {
         throwError("Unknown noise type.");
