@@ -283,25 +283,12 @@ class Mesh : public Primitive
     const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const override;
 
   private:
-    void mergeAppend(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src);
-    template <typename T>
-    void mergeAppendImpl(std::shared_ptr<attr::Attribute> dst, std::shared_ptr<attr::Attribute> src)
-    {
-        auto dstHandle = attr::AttributeHandle<T>(dst);
-        auto srcHandle = attr::AttributeHandle<T>(src);
-
-        const Offset srcCount = srcHandle.getSize();
-        const Offset dstCount = dstHandle.getSize();
-
-        dstHandle.resize(dstCount + srcCount);
-
-        for (Offset i = 0; i < srcCount; ++i)
-        {
-            const T value = srcHandle.getValue(i);
-            const Offset dstOffset = dstCount + i;
-            dstHandle.setValue(dstOffset, value);
-        }
-    };
+    /// @brief Copies the values of each attribute both meshes share on the owner, from
+    /// destinationStart onward.
+    ///
+    /// @throws std::runtime_error when a shared attribute has a different type on each mesh.
+    void
+    copyAttributeValues(const Mesh& other, attr::AttributeOwner owner, Offset destinationStart);
 
     attr::attribVector vertexAttributes_;
     attr::attribVector faceAttributes_;
