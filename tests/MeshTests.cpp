@@ -699,3 +699,44 @@ TEST_CASE("Reverse faces flips the vertex order and carries vertex attributes")
     REQUIRE_FALSE(group.getValue(3));
     REQUIRE(group.getValue(5));
 }
+
+TEST_CASE("Merge keeps open faces open")
+{
+    geo::Mesh mesh;
+    mesh.addFace(mesh.addPoints(std::vector<Vector3>{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}));
+
+    geo::Mesh line;
+    constexpr bool isClosed = false;
+    line.addFace(line.addPoints(std::vector<Vector3>{{0, 0, 1}, {1, 0, 1}}), isClosed);
+
+    mesh.merge(line);
+
+    REQUIRE(mesh.getNumFaces() == 2);
+    REQUIRE(mesh.isClosed(0));
+    REQUIRE_FALSE(mesh.isClosed(1));
+}
+
+TEST_CASE("Merge places attribute values on the merged elements")
+{
+    geo::Mesh mesh;
+    mesh.addFace(mesh.addPoints(std::vector<Vector3>{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}));
+    auto meshWeights = mesh.addAttribute<floatT>(attr::AttrOwner::POINT, "weight");
+    for (Offset pointOffset = 0; pointOffset < 3; ++pointOffset)
+        meshWeights.setValue(pointOffset, 1.0f);
+
+    geo::Mesh other;
+    other.addFace(other.addPoints(std::vector<Vector3>{{0, 0, 1}, {1, 0, 1}, {0, 1, 1}}));
+    auto otherWeights = other.addAttribute<floatT>(attr::AttrOwner::POINT, "weight");
+    for (Offset pointOffset = 0; pointOffset < 3; ++pointOffset)
+        otherWeights.setValue(pointOffset, 2.0f);
+
+    mesh.merge(other);
+
+    // Check the merged points carry the other mesh's values
+    auto mergedWeights =
+        attr::AttributeHandle<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
+    REQUIRE(mergedWeights.getSize() == 6);
+    REQUIRE(mergedWeights.getValue(2) == 1.0f);
+    REQUIRE(mergedWeights.getValue(3) == 2.0f);
+    REQUIRE(mergedWeights.getValue(5) == 2.0f);
+}

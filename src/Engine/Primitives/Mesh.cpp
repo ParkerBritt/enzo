@@ -17,6 +17,29 @@
 
 namespace enzo {
 
+namespace {
+
+// Writes every source value into the destination, starting at destinationStart.
+template <typename T>
+void copyValuesAt(
+    const std::shared_ptr<const attr::Attribute>& source,
+    const std::shared_ptr<attr::Attribute>& destination,
+    Offset destinationStart
+)
+{
+    const attr::AttributeHandleRO<T> sourceValues(source);
+    attr::AttributeHandle<T> destinationValues(destination);
+
+    const Offset sourceCount = sourceValues.getSize();
+    for (Offset sourceOffset = 0; sourceOffset < sourceCount; ++sourceOffset)
+        destinationValues.setValue(
+            destinationStart + sourceOffset,
+            sourceValues.getValue(sourceOffset)
+        );
+}
+
+} // namespace
+
 geo::Mesh::Mesh(std::string_view path)
     : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true, true)},
       closedFaceHandle_{addAttribute<boolT>(attr::AttrOwner::FACE, "closed", true, true)},
@@ -111,20 +134,26 @@ geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs)
     return *this;
 }
 
-void geo::Mesh::mergeAppend(
-    std::shared_ptr<attr::Attribute> dst,
-    std::shared_ptr<attr::Attribute> src
+void geo::Mesh::copyAttributeValues(
+    const Mesh& other,
+    attr::AttributeOwner owner,
+    Offset destinationStart
 )
 {
-    if (!dst) throw std::runtime_error("Dst empty.");
-    if (!src) throw std::runtime_error("Src empty.");
+    for (const auto& sourceAttribute : other.getAttributes(owner))
+    {
+        std::shared_ptr<attr::Attribute> destinationAttribute =
+            getAttribByName(owner, sourceAttribute->getName());
+        if (!destinationAttribute) continue;
 
-    auto dstType = dst->getType();
-    auto srcType = src->getType();
+        const attr::AttributeType sourceType = sourceAttribute->getType();
+        if (destinationAttribute->getType() != sourceType)
+            throw std::runtime_error("copyAttributeValues type mismatch.");
 
-    if (dstType != srcType) throw std::runtime_error("mergeAppend type missmatch.");
-
-    attr::visitType(srcType, [&]<typename Value>() { mergeAppendImpl<Value>(dst, src); });
+        attr::visitType(sourceType, [&]<typename Value>() {
+            copyValuesAt<Value>(sourceAttribute, destinationAttribute, destinationStart);
+        });
+    }
 }
 
 void geo::Mesh::applyTransform(const Matrix4& mat, TransformClass transformClass)
@@ -158,6 +187,10 @@ void geo::Mesh::merge(std::shared_ptr<Primitive> other)
 
 void geo::Mesh::merge(Mesh& other)
 {
+    const Offset firstPointOffset = posPointHandle_.getSize();
+    const Offset firstVertexOffset = pointOffsetVertexHandle_.getSize();
+    const Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
+
     // Copy points from other to self.
     const std::vector<Offset> newPoints = addPoints(other.posPointHandle_.getSpan());
 
@@ -174,56 +207,20 @@ void geo::Mesh::merge(Mesh& other)
         const Offset vertexCount = other.getFaceVertCount(faceOffset);
         vertexCounts.push_back(vertexCount);
 
-        for (Offset i = 0; i < vertexCount; ++i)
+        for (Offset vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
         {
             const Offset otherPointOffset =
-                other.pointOffsetVertexHandle_.getValue(faceStartVertex + i);
+                other.pointOffsetVertexHandle_.getValue(faceStartVertex + vertexIndex);
             pointOffsetsFlat.push_back(newPoints[otherPointOffset]);
         }
     }
-    // TODO: check closed status
-    addFaces(pointOffsetsFlat, vertexCounts, true);
+    addFaces(pointOffsetsFlat, vertexCounts);
+    for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
+        closedFaceHandle_.setValue(firstFaceOffset + faceOffset, other.isClosed(faceOffset));
 
-    // Merge vertex attributes
-    for (std::shared_ptr<attr::Attribute> otherAttribute : other.vertexAttributes_)
-    {
-        String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute =
-            getAttribByName(attr::AttrOwner::VERTEX, otherAttributeName);
-
-        if (attribute)
-        {
-            mergeAppend(attribute, otherAttribute);
-        }
-    }
-
-    for (std::shared_ptr<attr::Attribute> otherAttribute : other.pointAttributes_)
-    {
-        String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute =
-            getAttribByName(attr::AttrOwner::POINT, otherAttributeName);
-
-        bool alreadyExists = static_cast<bool>(attribute);
-
-        if (alreadyExists)
-        {
-            mergeAppend(attribute, otherAttribute);
-        }
-    }
-
-    for (std::shared_ptr<attr::Attribute> otherAttribute : other.faceAttributes_)
-    {
-        String otherAttributeName = otherAttribute->getName();
-        std::shared_ptr<attr::Attribute> attribute =
-            getAttribByName(attr::AttrOwner::FACE, otherAttributeName);
-
-        bool alreadyExists = static_cast<bool>(attribute);
-
-        if (alreadyExists)
-        {
-            mergeAppend(attribute, otherAttribute);
-        }
-    }
+    copyAttributeValues(other, attr::AttrOwner::POINT, firstPointOffset);
+    copyAttributeValues(other, attr::AttrOwner::VERTEX, firstVertexOffset);
+    copyAttributeValues(other, attr::AttrOwner::FACE, firstFaceOffset);
 }
 
 Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)
