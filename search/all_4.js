@@ -13,5 +13,6 @@ var searchData=
   ['disconnectnodes_10',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af861822eff417ade04aad9bc3b30acff',1,'enzo::nt::NetworkManager']]],
   ['docspath_11',['docsPath',['../structenzo_1_1nt_1_1NodeType.html#a662866f5b9dacf5648f8d811f8997fd6',1,'enzo::nt::NodeType']]],
   ['documentation_12',['Documentation',['../index.html#autotoc_md4',1,'']]],
-  ['duplicatepoints_13',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]]
+  ['duplicatepoints_13',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]],
+  ['duplicatetotransforms_14',['duplicateToTransforms',['../classenzo_1_1geo_1_1Mesh.html#a0f74f1e3b876ea616d20f006aee22f52',1,'enzo::geo::Mesh']]]
 ];

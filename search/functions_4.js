@@ -7,5 +7,6 @@ var searchData=
   ['dirtynode_4',['dirtyNode',['../classenzo_1_1nt_1_1Node.html#a7c3a97ec17f7f09a42dbcde76e70e86a',1,'enzo::nt::Node']]],
   ['disconnect_5',['disconnect',['../classenzo_1_1nt_1_1NetworkGraph.html#a805635d506a07c76cc826b5d49471600',1,'enzo::nt::NetworkGraph']]],
   ['disconnectnodes_6',['disconnectNodes',['../classenzo_1_1nt_1_1NetworkManager.html#af861822eff417ade04aad9bc3b30acff',1,'enzo::nt::NetworkManager']]],
-  ['duplicatepoints_7',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]]
+  ['duplicatepoints_7',['duplicatePoints',['../classenzo_1_1geo_1_1Mesh.html#a15b42a593ccf24a9dcd51bcc228bb066',1,'enzo::geo::Mesh']]],
+  ['duplicatetotransforms_8',['duplicateToTransforms',['../classenzo_1_1geo_1_1Mesh.html#a0f74f1e3b876ea616d20f006aee22f52',1,'enzo::geo::Mesh']]]
 ];
