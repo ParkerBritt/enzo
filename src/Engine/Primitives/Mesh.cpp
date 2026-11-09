@@ -3,10 +3,12 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include "Engine/Attribute/AttributeNames.h"
 #include "Engine/Core/Types.h"
+#include "Engine/GeometryAlgorithms/AttributeTransfer.h"
 #include "Engine/GeometryAlgorithms/MeshUtils.h"
 #include "Engine/GeometryAlgorithms/Normals.h"
 #include "Engine/Primitives/Primitive.h"
 #include "icecream.hpp"
+#include <array>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -16,29 +18,6 @@
 #include <tbb/task_group.h>
 
 namespace enzo {
-
-namespace {
-
-// Writes every source value into the destination, starting at destinationStart.
-template <typename T>
-void copyValuesAt(
-    const std::shared_ptr<const attr::Attribute>& source,
-    const std::shared_ptr<attr::Attribute>& destination,
-    Offset destinationStart
-)
-{
-    const attr::AttributeHandleRO<T> sourceValues(source);
-    attr::AttributeHandle<T> destinationValues(destination);
-
-    const Offset sourceCount = sourceValues.getSize();
-    for (Offset sourceOffset = 0; sourceOffset < sourceCount; ++sourceOffset)
-        destinationValues.setValue(
-            destinationStart + sourceOffset,
-            sourceValues.getValue(sourceOffset)
-        );
-}
-
-} // namespace
 
 geo::Mesh::Mesh(std::string_view path)
     : vertexCountFaceHandle_{addAttribute<intT>(attr::AttrOwner::FACE, "vertexCount", true, true)},
@@ -134,26 +113,108 @@ geo::Mesh& geo::Mesh::operator=(const geo::Mesh& rhs)
     return *this;
 }
 
-void geo::Mesh::copyAttributeValues(
-    const Mesh& other,
-    attr::AttributeOwner owner,
-    Offset destinationStart
-)
+void geo::Mesh::copySourceToTransforms(const Mesh& source, std::span<const Transform> transforms)
 {
-    for (const auto& sourceAttribute : other.getAttributes(owner))
+    const Offset copyCount = transforms.size();
+    const Offset sourcePointCount = source.getNumPoints();
+    const Offset sourceVertexCount = source.getNumVerts();
+    const Offset sourceFaceCount = source.getNumFaces();
+    const Offset firstPointOffset = getNumPoints();
+    const Offset firstVertexOffset = getNumVerts();
+    const Offset firstFaceOffset = getNumFaces();
+
+    // Moves each copy's points by its transform
+    const std::span<const Vector3> sourcePositions = source.pointPosSpan();
+    std::vector<Vector3> positions(copyCount * sourcePointCount);
+    tbb::parallel_for(Offset{0}, copyCount, [&](Offset copyIndex) {
+        const Transform& transform = transforms[copyIndex];
+        const Offset copyStart = copyIndex * sourcePointCount;
+        for (Offset pointOffset = 0; pointOffset < sourcePointCount; ++pointOffset)
+            positions[copyStart + pointOffset] = transform * sourcePositions[pointOffset];
+    });
+
+    // Joins each copy's faces to that copy's points
+    const std::span<const intT> sourceVertexPoints = source.vertexPointSpan();
+    std::vector<Offset> facePoints(copyCount * sourceVertexCount);
+    tbb::parallel_for(Offset{0}, copyCount, [&](Offset copyIndex) {
+        const Offset pointStart = firstPointOffset + copyIndex * sourcePointCount;
+        const Offset copyStart = copyIndex * sourceVertexCount;
+        for (Offset vertexOffset = 0; vertexOffset < sourceVertexCount; ++vertexOffset)
+            facePoints[copyStart + vertexOffset] = pointStart + sourceVertexPoints[vertexOffset];
+    });
+
+    const std::span<const intT> sourceVertexCounts = source.vertexCountFaceHandle_.getSpan();
+    std::vector<Offset> vertexCounts;
+    vertexCounts.reserve(copyCount * sourceFaceCount);
+    for (Offset copyIndex = 0; copyIndex < copyCount; ++copyIndex)
+        vertexCounts
+            .insert(vertexCounts.end(), sourceVertexCounts.begin(), sourceVertexCounts.end());
+
+    addPoints(positions);
+    addFaces(facePoints, vertexCounts);
+
+    // Copies the source's closed and deleted states onto every copy
+    const auto copyFlagsRepeatedly = [&](attr::AttributeHandleBool& destFlags,
+                                         const attr::AttributeHandleBool& sourceFlags,
+                                         Offset flagCount,
+                                         Offset destStart) {
+        for (Offset copyIndex = 0; copyIndex < copyCount; ++copyIndex)
+        {
+            const Offset copyStart = destStart + copyIndex * flagCount;
+            for (Offset flagOffset = 0; flagOffset < flagCount; ++flagOffset)
+                destFlags.setValue(copyStart + flagOffset, sourceFlags.getValue(flagOffset));
+        }
+    };
+    copyFlagsRepeatedly(
+        closedFaceHandle_,
+        source.closedFaceHandle_,
+        sourceFaceCount,
+        firstFaceOffset
+    );
+
+    // Skips the deleted states when the source has no deletions, since new elements start valid
+    const bool sourceHasDeletions = source.needsDefrag_;
+    if (sourceHasDeletions)
     {
-        std::shared_ptr<attr::Attribute> destinationAttribute =
-            getAttribByName(owner, sourceAttribute->getName());
-        if (!destinationAttribute) continue;
-
-        const attr::AttributeType sourceType = sourceAttribute->getType();
-        if (destinationAttribute->getType() != sourceType)
-            throw std::runtime_error("copyAttributeValues type mismatch.");
-
-        attr::visitType(sourceType, [&]<typename Value>() {
-            copyValuesAt<Value>(sourceAttribute, destinationAttribute, destinationStart);
-        });
+        copyFlagsRepeatedly(
+            validFaceHandle_,
+            source.validFaceHandle_,
+            sourceFaceCount,
+            firstFaceOffset
+        );
+        copyFlagsRepeatedly(
+            validVertexHandle_,
+            source.validVertexHandle_,
+            sourceVertexCount,
+            firstVertexOffset
+        );
+        copyFlagsRepeatedly(
+            validPointHandle_,
+            source.validPointHandle_,
+            sourcePointCount,
+            firstPointOffset
+        );
+        needsDefrag_ = true;
     }
+
+    // Copies the source attributes and groups onto every copy
+    utils::copyAttributesRepeatedly(
+        source, *this, attr::AttributeOwner::POINT, sourcePointCount, firstPointOffset, copyCount
+    );
+    utils::copyAttributesRepeatedly(
+        source, *this, attr::AttributeOwner::VERTEX, sourceVertexCount, firstVertexOffset, copyCount
+    );
+    utils::copyAttributesRepeatedly(
+        source, *this, attr::AttributeOwner::FACE, sourceFaceCount, firstFaceOffset, copyCount
+    );
+}
+
+std::shared_ptr<geo::Mesh> geo::Mesh::copyToTransforms(std::span<const Transform> transforms) const
+{
+    auto copies = std::make_shared<Mesh>(getPath());
+    copies->copySourceToTransforms(*this, transforms);
+    utils::copyAttributesRepeatedly(*this, *copies, attr::AttributeOwner::PRIMITIVE, 1, 0, 1);
+    return copies;
 }
 
 void geo::Mesh::applyTransform(const Matrix4& mat, TransformClass transformClass)
@@ -185,42 +246,15 @@ void geo::Mesh::merge(std::shared_ptr<Primitive> other)
     merge(*otherMesh);
 }
 
+void geo::Mesh::duplicateToTransforms(std::span<const Transform> transforms)
+{
+    copySourceToTransforms(*this, transforms);
+}
+
 void geo::Mesh::merge(Mesh& other)
 {
-    const Offset firstPointOffset = posPointHandle_.getSize();
-    const Offset firstVertexOffset = pointOffsetVertexHandle_.getSize();
-    const Offset firstFaceOffset = vertexCountFaceHandle_.getSize();
-
-    // Copy points from other to self.
-    const std::vector<Offset> newPoints = addPoints(other.posPointHandle_.getSpan());
-
-    // Copy faces from other to self, remapping each point offset to its merged position.
-    const Offset srcFaceNum = other.getNumFaces();
-    std::vector<Offset> pointOffsetsFlat;
-    pointOffsetsFlat.reserve(other.pointOffsetVertexHandle_.getSize());
-    std::vector<Offset> vertexCounts;
-    vertexCounts.reserve(srcFaceNum);
-    const std::span<const Offset> otherFaceStarts = other.getFaceStartVertices();
-    for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
-    {
-        const Offset faceStartVertex = otherFaceStarts[faceOffset];
-        const Offset vertexCount = other.getFaceVertCount(faceOffset);
-        vertexCounts.push_back(vertexCount);
-
-        for (Offset vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
-        {
-            const Offset otherPointOffset =
-                other.pointOffsetVertexHandle_.getValue(faceStartVertex + vertexIndex);
-            pointOffsetsFlat.push_back(newPoints[otherPointOffset]);
-        }
-    }
-    addFaces(pointOffsetsFlat, vertexCounts);
-    for (Offset faceOffset = 0; faceOffset < srcFaceNum; ++faceOffset)
-        closedFaceHandle_.setValue(firstFaceOffset + faceOffset, other.isClosed(faceOffset));
-
-    copyAttributeValues(other, attr::AttrOwner::POINT, firstPointOffset);
-    copyAttributeValues(other, attr::AttrOwner::VERTEX, firstVertexOffset);
-    copyAttributeValues(other, attr::AttrOwner::FACE, firstFaceOffset);
+    const std::array<Transform, 1> untransformed{};
+    copySourceToTransforms(other, untransformed);
 }
 
 Offset geo::Mesh::addFace(const std::vector<Offset>& pointOffsets, bool closed)

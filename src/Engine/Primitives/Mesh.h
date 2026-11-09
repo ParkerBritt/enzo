@@ -108,6 +108,11 @@ class Mesh : public Primitive
 
     void merge(Mesh& other);
 
+    /// @brief Returns a new mesh holding one copy of this mesh for each transform.
+    std::shared_ptr<Mesh> copyToTransforms(std::span<const Transform> transforms) const;
+    /// @brief Adds a copy of this mesh for each transform, keeping the original.
+    void duplicateToTransforms(std::span<const Transform> transforms);
+
     std::unordered_set<Offset>::const_iterator soloPointsBegin() const;
     std::unordered_set<Offset>::const_iterator soloPointsEnd() const;
 
@@ -283,12 +288,8 @@ class Mesh : public Primitive
     const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const override;
 
   private:
-    /// @brief Copies the values of each attribute both meshes share on the owner, from
-    /// destinationStart onward.
-    ///
-    /// @throws std::runtime_error when a shared attribute has a different type on each mesh.
-    void
-    copyAttributeValues(const Mesh& other, attr::AttributeOwner owner, Offset destinationStart);
+    /// @brief Adds a copy of source onto the end of this mesh for each transform.
+    void copySourceToTransforms(const Mesh& source, std::span<const Transform> transforms);
 
     attr::attribVector vertexAttributes_;
     attr::attribVector faceAttributes_;

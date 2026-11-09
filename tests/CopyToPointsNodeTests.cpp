@@ -171,6 +171,24 @@ TEST_CASE_METHOD(NMReset, "Copies carry the prototype's attributes")
         REQUIRE(value == Vector3(1.f, 2.f, 3.f));
 }
 
+TEST_CASE_METHOD(NMReset, "Copies of an open face stay open")
+{
+    nt::NodeLoader::loadNodes();
+    auto& nm = nt::nm();
+
+    const nt::NodeId line = nm.createNode("enzo::line");
+    const nt::NodeId targetPoints = addQuadGrid(10.f);
+    const nt::NodeId copy = nm.createNode("enzo::copyToPoints");
+    nm.connectNodes(line, 0, copy, 0);
+    nm.connectNodes(targetPoints, 0, copy, 1);
+    nm.cook(copy);
+
+    const auto copies = getMesh(nm.getNode(copy));
+    REQUIRE(copies->getNumFaces() == 4);
+    for (const Offset faceOffset : copies->getFaces())
+        REQUIRE_FALSE(copies->isClosed(faceOffset));
+}
+
 TEST_CASE_METHOD(NMReset, "Each target point gets its own copy of a light")
 {
     nt::NodeLoader::loadNodes();

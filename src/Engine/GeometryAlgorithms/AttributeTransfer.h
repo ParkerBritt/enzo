@@ -19,10 +19,10 @@ struct ElementBlend
  * @brief Copies the attribute values and group membership of each source element into the
  * destination element at the same place in the list.
  *
- * @note Attributes and groups are matched by name. One missing on the destination or holding a
- * different type is skipped.
+ * @note Attributes and groups are matched by name. One missing on the destination is added first,
+ * and one holding a different type there is skipped.
  */
-void copyAttributeValues(
+void copyAttributes(
     const geo::Primitive& source,
     geo::Primitive& dest,
     attr::AttributeOwner owner,
@@ -35,14 +35,32 @@ void copyAttributeValues(
  * destination element.
  *
  * @note Integers round to the nearest whole number. Booleans, matrices and group membership take
- * the value of whichever source element is nearer. Attributes are matched as in
- * copyAttributeValues.
+ * the value of whichever source element is nearer. Attributes are matched and added as in
+ * copyAttributes.
  */
-void interpolateAttributeValues(
+void interpolateAttributes(
     const geo::Primitive& source,
     geo::Primitive& dest,
     attr::AttributeOwner owner,
     std::span<const ElementBlend> elementBlends
+);
+
+/**
+ * @brief Copies the first valueCount attribute values and group membership of the source into
+ * the destination copyCount times, one block after another from destStart.
+ *
+ * With valueCount 2, destStart 4 and copyCount 2, source values 0 and 1 land on 4, 5, 6 and 7.
+ *
+ * @note Attributes are matched and added as in copyAttributes. The source may be the destination
+ * when the blocks sit past its first valueCount values.
+ */
+void copyAttributesRepeatedly(
+    const geo::Primitive& source,
+    geo::Primitive& dest,
+    attr::AttributeOwner owner,
+    Offset valueCount,
+    Offset destStart,
+    Offset copyCount
 );
 
 } // namespace enzo::utils

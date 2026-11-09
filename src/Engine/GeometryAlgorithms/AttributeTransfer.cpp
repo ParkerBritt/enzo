@@ -3,6 +3,8 @@
 #include "Engine/Attribute/AttributeHandle.h"
 #include <cmath>
 #include <memory>
+#include <tbb/parallel_for.h>
+#include <type_traits>
 #include <vector>
 
 namespace enzo::utils {
@@ -39,7 +41,7 @@ getAttributePairs(const geo::Primitive& source, geo::Primitive& dest, attr::Attr
 
 // Copies each source element's value into its destination element.
 template <typename T>
-void copyValues(
+void copyAttributeValues(
     const AttributePair& pair,
     std::span<const Offset> sourceOffsets,
     std::span<const Offset> destOffsets
@@ -76,7 +78,10 @@ Matrix4 blendValues(const Matrix4& value0, const Matrix4& value1, double blend)
 
 // Writes each blend of two source values into its destination element.
 template <typename T>
-void interpolateValues(const AttributePair& pair, std::span<const ElementBlend> elementBlends)
+void interpolateAttributeValues(
+    const AttributePair& pair,
+    std::span<const ElementBlend> elementBlends
+)
 {
     attr::AttributeHandleRO<T> sourceHandle(pair.source);
     attr::AttributeHandle<T> destHandle(pair.dest);
@@ -88,9 +93,38 @@ void interpolateValues(const AttributePair& pair, std::span<const ElementBlend> 
     }
 }
 
+// Copies the first valueCount source values copyCount times, one block after another from
+// destStart.
+template <typename T>
+void copyAttributeValuesRepeatedly(
+    const AttributePair& pair,
+    Offset valueCount,
+    Offset destStart,
+    Offset copyCount
+)
+{
+    const attr::AttributeHandleRO<T> sourceHandle(pair.source);
+    attr::AttributeHandle<T> destHandle(pair.dest);
+
+    const auto writeCopy = [&](Offset copyIndex) {
+        const Offset copyStart = destStart + copyIndex * valueCount;
+        for (Offset valueIndex = 0; valueIndex < valueCount; ++valueIndex)
+            destHandle.setValue(copyStart + valueIndex, sourceHandle.getValue(valueIndex));
+    };
+
+    // Writes bools on one thread, since their storage packs neighbouring values into shared bytes.
+    if constexpr (std::is_same_v<T, boolT>)
+    {
+        for (Offset copyIndex = 0; copyIndex < copyCount; ++copyIndex)
+            writeCopy(copyIndex);
+        return;
+    }
+    tbb::parallel_for(Offset{0}, copyCount, writeCopy);
+}
+
 } // namespace
 
-void copyAttributeValues(
+void copyAttributes(
     const geo::Primitive& source,
     geo::Primitive& dest,
     attr::AttributeOwner owner,
@@ -98,25 +132,45 @@ void copyAttributeValues(
     std::span<const Offset> destOffsets
 )
 {
+    dest.addAttributesFrom(source, owner);
     for (const AttributePair& pair : getAttributePairs(source, dest, owner))
     {
         attr::visitType(pair.source->getType(), [&]<typename Value>() {
-            copyValues<Value>(pair, sourceOffsets, destOffsets);
+            copyAttributeValues<Value>(pair, sourceOffsets, destOffsets);
         });
     }
 }
 
-void interpolateAttributeValues(
+void interpolateAttributes(
     const geo::Primitive& source,
     geo::Primitive& dest,
     attr::AttributeOwner owner,
     std::span<const ElementBlend> elementBlends
 )
 {
+    dest.addAttributesFrom(source, owner);
     for (const AttributePair& pair : getAttributePairs(source, dest, owner))
     {
         attr::visitType(pair.source->getType(), [&]<typename Value>() {
-            interpolateValues<Value>(pair, elementBlends);
+            interpolateAttributeValues<Value>(pair, elementBlends);
+        });
+    }
+}
+
+void copyAttributesRepeatedly(
+    const geo::Primitive& source,
+    geo::Primitive& dest,
+    attr::AttributeOwner owner,
+    Offset valueCount,
+    Offset destStart,
+    Offset copyCount
+)
+{
+    dest.addAttributesFrom(source, owner);
+    for (const AttributePair& pair : getAttributePairs(source, dest, owner))
+    {
+        attr::visitType(pair.source->getType(), [&]<typename Value>() {
+            copyAttributeValuesRepeatedly<Value>(pair, valueCount, destStart, copyCount);
         });
     }
 }
