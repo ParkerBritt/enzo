@@ -11,6 +11,8 @@ struct FrameView
     glm::mat4 view;
     glm::mat4 projection;
     glm::vec3 cameraPosition;
+    /// @brief The unit direction the camera looks along.
+    glm::vec3 viewDirection;
     glm::uvec2 pixelSize;
 };
 

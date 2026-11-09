@@ -10,6 +10,7 @@
 
 #include <TextureVk.h>
 #include <algorithm>
+#include <glm/geometric.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/matrix.hpp>
 #include <glm/vec4.hpp>
@@ -33,15 +34,19 @@ FrameView getFrameView(const FrameState& frame)
 {
     glm::mat4 view = frame.camera.getViewMatrix();
     glm::vec3 cameraPosition = frame.camera.getPosition();
+    glm::vec3 viewDirection = frame.camera.getForward();
     if (frame.viewCameraIndex.has_value())
     {
         const glm::mat4& viewCameraTransform = frame.geometry->cameraTransforms[*frame.viewCameraIndex];
         view = glm::inverse(viewCameraTransform);
         cameraPosition = glm::vec3(viewCameraTransform[3]);
+        viewDirection = glm::normalize(-glm::vec3(viewCameraTransform[2]));
     }
 
     const float aspect = float(frame.pixelSize.x) / float(std::max(frame.pixelSize.y, 1u));
-    return FrameView{view, frame.camera.getProjectionMatrix(aspect), cameraPosition, frame.pixelSize};
+    return FrameView{
+        view, frame.camera.getProjectionMatrix(aspect), cameraPosition, viewDirection, frame.pixelSize
+    };
 }
 
 FrameConstants getFrameConstants(const FrameState& frame, const FrameView& frameView)
