@@ -299,10 +299,6 @@ void copyCutAttributes(
     const std::vector<Offset>& cutFaceOffsets
 )
 {
-    for (const attr::AttributeOwner owner :
-         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
-        cutMesh.addAttributesFrom(mesh, owner);
-
     std::vector<ElementBlend> pointBlends;
     pointBlends.reserve(pointSources.size());
     for (Offset pointIndex = 0; pointIndex < pointSources.size(); ++pointIndex)
@@ -315,7 +311,7 @@ void copyCutAttributes(
              cutPoints[pointIndex]}
         );
     }
-    interpolateAttributeValues(mesh, cutMesh, attr::AttributeOwner::POINT, pointBlends);
+    interpolateAttributes(mesh, cutMesh, attr::AttributeOwner::POINT, pointBlends);
 
     std::vector<Offset> sourceFaces;
     std::vector<ElementBlend> vertexBlends;
@@ -337,8 +333,8 @@ void copyCutAttributes(
             );
         }
     }
-    copyAttributeValues(mesh, cutMesh, attr::AttributeOwner::FACE, sourceFaces, cutFaceOffsets);
-    interpolateAttributeValues(mesh, cutMesh, attr::AttributeOwner::VERTEX, vertexBlends);
+    copyAttributes(mesh, cutMesh, attr::AttributeOwner::FACE, sourceFaces, cutFaceOffsets);
+    interpolateAttributes(mesh, cutMesh, attr::AttributeOwner::VERTEX, vertexBlends);
 }
 
 } // namespace

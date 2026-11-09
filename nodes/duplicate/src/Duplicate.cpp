@@ -2,6 +2,7 @@
 #include "Engine/Core/Types.h"
 #include "Engine/Network/NodeImpl.h"
 #include "Engine/Network/NodeRegistry.h"
+#include "Engine/Primitives/Mesh.h"
 #include "Engine/Primitives/Primitive.h"
 #include "Engine/Selection/Selection.h"
 #include <vector>
@@ -31,31 +32,34 @@ void Duplicate::cook()
     const Vector3 scalePerCopy = evalParmVector3("scale") * evalParmFloat("uniform_scale");
     const TransformOrder transformOrder = getTransformOrder(evalParmString("transform_order"));
 
-    // Clones every copy before merging any of them, since merging grows the prim
-    // the copies are taken from.
-    std::vector<geo::PrimPtr> copies;
+    // Builds the transform of each copy
+    std::vector<Transform> copyTransforms;
+    for (intT copyIndex = 1; copyIndex < count; ++copyIndex)
+    {
+        const floatT stepsFromOriginal = static_cast<floatT>(copyIndex);
+        const Vector3 translation = translatePerCopy * stepsFromOriginal;
+        const Vector3 rotation = rotatePerCopy * stepsFromOriginal;
+        const Vector3 scale = scalePerCopy.array().pow(stepsFromOriginal).matrix();
+        copyTransforms.push_back(
+            Transform::fromComponents(translation, rotation, scale, transformOrder)
+        );
+    }
+
     Selection selection(selectionString);
     for (geo::PrimPtr prim : selection.getPrims(packet))
     {
-        for (intT copyIndex = 1; copyIndex < count; ++copyIndex)
+        if (const auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim))
         {
-            const floatT stepsFromOriginal = static_cast<floatT>(copyIndex);
-            const Vector3 translation = translatePerCopy * stepsFromOriginal;
-            const Vector3 rotation = rotatePerCopy * stepsFromOriginal;
-            const Vector3 scale = scalePerCopy.array().pow(stepsFromOriginal).matrix();
+            mesh->duplicateToTransforms(copyTransforms);
+            continue;
+        }
 
-            const enzo::Transform transform =
-                enzo::Transform::fromComponents(translation, rotation, scale, transformOrder);
-
+        for (const Transform& transform : copyTransforms)
+        {
             geo::PrimPtr copy = prim->clone();
             copy->applyTransform(transform, TransformClass::POINT_PRIORITY);
-            copies.push_back(copy);
+            packet.addPrimitive(copy);
         }
-    }
-
-    for (geo::PrimPtr copy : copies)
-    {
-        packet.attemptMerge(copy);
     }
 
     setOutputPacket(0, packet);

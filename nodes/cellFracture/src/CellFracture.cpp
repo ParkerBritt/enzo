@@ -144,14 +144,14 @@ void appendPiece(
     const std::vector<Offset> fracturedFaces = fractured.addFaces(cornerPoints, cornerCounts);
 
     // Carry attributes across.
-    utils::copyAttributeValues(
+    utils::copyAttributes(
         piece,
         fractured,
         attr::AttributeOwner::POINT,
         usedPiecePoints,
         fracturedPoints
     );
-    utils::copyAttributeValues(
+    utils::copyAttributes(
         piece,
         fractured,
         attr::AttributeOwner::FACE,
@@ -173,7 +173,7 @@ void appendPiece(
             fracturedVertices.push_back(fracturedStartVertex + cornerIndex);
         }
     }
-    utils::copyAttributeValues(
+    utils::copyAttributes(
         piece,
         fractured,
         attr::AttributeOwner::VERTEX,
@@ -201,6 +201,8 @@ std::shared_ptr<geo::Mesh> fractureMesh(
 )
 {
     auto fractured = std::make_shared<geo::Mesh>(mesh.getPath());
+
+    // Adds the input's attributes ahead of the piece attribute, even when no piece has faces.
     for (const attr::AttributeOwner owner :
          {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
         fractured->addAttributesFrom(mesh, owner);

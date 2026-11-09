@@ -626,14 +626,6 @@ std::shared_ptr<geo::Mesh> assembleMesh(
         appendVertex(vertIndex);
     outputMesh->addPoints(orderedPositions);
 
-    // Add every attribute from A and B to the output.
-    for (const attr::AttributeOwner owner :
-         {attr::AttributeOwner::POINT, attr::AttributeOwner::VERTEX, attr::AttributeOwner::FACE})
-    {
-        outputMesh->addAttributesFrom(meshA, owner);
-        outputMesh->addAttributesFrom(meshB, owner);
-    }
-
     // Copy point attributes over each output point, interpolating cut points.
     std::vector<utils::ElementBlend> pointBlendsA;
     std::vector<utils::ElementBlend> pointBlendsB;
@@ -653,8 +645,8 @@ std::shared_ptr<geo::Mesh> assembleMesh(
             pointBlends.push_back({endpoint0, endpoint1, origin.t, destPointOffset});
         // NEW points keep their default initialization.
     }
-    utils::interpolateAttributeValues(meshA, *outputMesh, attr::AttributeOwner::POINT, pointBlendsA);
-    utils::interpolateAttributeValues(meshB, *outputMesh, attr::AttributeOwner::POINT, pointBlendsB);
+    utils::interpolateAttributes(meshA, *outputMesh, attr::AttributeOwner::POINT, pointBlendsA);
+    utils::interpolateAttributes(meshB, *outputMesh, attr::AttributeOwner::POINT, pointBlendsB);
 
     // Sort detriangulated faces so A faces come first in source order, then B.
     std::vector<size_t> faceOrder(faces.size());
@@ -736,14 +728,14 @@ std::shared_ptr<geo::Mesh> assembleMesh(
 
     auto copyFaceAndVertexAttributes = [&](const geo::Mesh& sourceMesh,
                                            const SourceCopies& copies) {
-        utils::copyAttributeValues(
+        utils::copyAttributes(
             sourceMesh,
             *outputMesh,
             attr::AttributeOwner::FACE,
             copies.sourceFaces,
             copies.destFaces
         );
-        utils::copyAttributeValues(
+        utils::copyAttributes(
             sourceMesh,
             *outputMesh,
             attr::AttributeOwner::VERTEX,

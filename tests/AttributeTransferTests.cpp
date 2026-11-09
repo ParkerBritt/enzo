@@ -45,7 +45,7 @@ TEST_CASE("Copying a point carries its group membership")
     mesh.addPointGroup("selected");
     mesh.addToPointGroup("selected", {1});
 
-    utils::copyAttributeValues(
+    utils::copyAttributes(
         mesh,
         mesh,
         attr::AttributeOwner::POINT,
@@ -61,9 +61,8 @@ TEST_CASE("Copying several points writes each into its own destination")
 {
     const geo::Mesh source = buildWeightedMesh();
     geo::Mesh dest = buildThreePointMesh();
-    dest.addAttributesFrom(source, attr::AttributeOwner::POINT);
 
-    utils::copyAttributeValues(
+    utils::copyAttributes(
         source,
         dest,
         attr::AttributeOwner::POINT,
@@ -79,9 +78,8 @@ TEST_CASE("Interpolating several points writes each blend into its own destinati
 {
     const geo::Mesh source = buildWeightedMesh();
     geo::Mesh dest = buildThreePointMesh();
-    dest.addAttributesFrom(source, attr::AttributeOwner::POINT);
 
-    utils::interpolateAttributeValues(
+    utils::interpolateAttributes(
         source,
         dest,
         attr::AttributeOwner::POINT,
@@ -98,7 +96,7 @@ TEST_CASE("Interpolated group membership follows the nearer source point")
     mesh.addPointGroup("selected");
     mesh.addToPointGroup("selected", {0});
 
-    utils::interpolateAttributeValues(
+    utils::interpolateAttributes(
         mesh,
         mesh,
         attr::AttributeOwner::POINT,
@@ -116,7 +114,7 @@ TEST_CASE("Interpolated float leans toward the nearer source point")
     weight.setValue(0, 0);
     weight.setValue(1, 8);
 
-    utils::interpolateAttributeValues(
+    utils::interpolateAttributes(
         mesh,
         mesh,
         attr::AttributeOwner::POINT,
@@ -133,7 +131,7 @@ TEST_CASE("Interpolated integer rounds to the nearest whole number")
     count.setValue(0, 0);
     count.setValue(1, 10);
 
-    utils::interpolateAttributeValues(
+    utils::interpolateAttributes(
         mesh,
         mesh,
         attr::AttributeOwner::POINT,
@@ -150,7 +148,7 @@ TEST_CASE("Interpolated bool takes the value of the nearer source point")
     flag.setValue(0, true);
     flag.setValue(1, false);
 
-    utils::interpolateAttributeValues(
+    utils::interpolateAttributes(
         mesh,
         mesh,
         attr::AttributeOwner::POINT,
@@ -158,4 +156,80 @@ TEST_CASE("Interpolated bool takes the value of the nearer source point")
     );
 
     REQUIRE(flag.getValue(2) == true);
+}
+
+TEST_CASE("Copying values repeatedly writes the source block once per copy")
+{
+    geo::Mesh source;
+    source.addPoints(std::vector<Vector3>{{0, 0, 0}, {1, 0, 0}});
+    auto sourceWeights = source.addAttribute<floatT>(attr::AttrOwner::POINT, "weight");
+    sourceWeights.setValue(0, 1.0f);
+    sourceWeights.setValue(1, 2.0f);
+    source.addPointGroup("selected");
+    source.addToPointGroup("selected", {1});
+
+    geo::Mesh dest;
+    dest.addPoints(std::vector<Vector3>(5, Vector3::Zero()));
+
+    utils::copyAttributesRepeatedly(source, dest, attr::AttributeOwner::POINT, 2, 1, 2);
+
+    // Check each copy lands in its own block after the start
+    const attr::AttributeHandleRO<floatT> weights(
+        dest.getAttribByName(attr::AttributeOwner::POINT, "weight")
+    );
+    REQUIRE(weights.getValue(0) == 0.0f);
+    REQUIRE(weights.getValue(1) == 1.0f);
+    REQUIRE(weights.getValue(2) == 2.0f);
+    REQUIRE(weights.getValue(3) == 1.0f);
+    REQUIRE(weights.getValue(4) == 2.0f);
+
+    const attr::AttributeHandleRO<boolT> selected(
+        dest.getGroupByName(attr::AttributeOwner::POINT, "selected")
+    );
+    REQUIRE_FALSE(selected.getValue(1));
+    REQUIRE(selected.getValue(2));
+    REQUIRE_FALSE(selected.getValue(3));
+    REQUIRE(selected.getValue(4));
+}
+
+TEST_CASE("Copying values repeatedly skips an attribute of another type on the destination")
+{
+    geo::Mesh source;
+    source.addPoints(std::vector<Vector3>{{0, 0, 0}});
+    source.addAttribute<floatT>(attr::AttrOwner::POINT, "weight").setValue(0, 1.0f);
+
+    geo::Mesh dest;
+    dest.addPoints(std::vector<Vector3>(2, Vector3::Zero()));
+    dest.addAttribute<intT>(attr::AttrOwner::POINT, "weight");
+
+    utils::copyAttributesRepeatedly(source, dest, attr::AttributeOwner::POINT, 1, 1, 1);
+
+    const attr::AttributeHandleRO<intT> weights(
+        dest.getAttribByName(attr::AttributeOwner::POINT, "weight")
+    );
+    REQUIRE(weights.getValue(1) == 0);
+}
+
+TEST_CASE("Copying attributes adds the ones the destination lacks")
+{
+    geo::Mesh source;
+    source.addPoints(std::vector<Vector3>{{0, 0, 0}});
+    source.addAttribute<floatT>(attr::AttrOwner::POINT, "weight").setValue(0, 2.0f);
+    source.addPointGroup("selected");
+
+    geo::Mesh dest;
+    dest.addPoints(std::vector<Vector3>{{0, 0, 0}});
+
+    utils::copyAttributes(
+        source,
+        dest,
+        attr::AttributeOwner::POINT,
+        std::vector<Offset>{0},
+        std::vector<Offset>{0}
+    );
+
+    const auto weight = dest.getAttribByName(attr::AttributeOwner::POINT, "weight");
+    REQUIRE(weight != nullptr);
+    REQUIRE(attr::AttributeHandleRO<floatT>(weight).getValue(0) == 2.0f);
+    REQUIRE(dest.getGroupByName(attr::AttributeOwner::POINT, "selected") != nullptr);
 }

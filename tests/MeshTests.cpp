@@ -740,3 +740,61 @@ TEST_CASE("Merge places attribute values on the merged elements")
     REQUIRE(mergedWeights.getValue(3) == 2.0f);
     REQUIRE(mergedWeights.getValue(5) == 2.0f);
 }
+
+TEST_CASE("Duplicate to transforms keeps the original and adds moved copies")
+{
+    geo::Mesh mesh;
+    constexpr bool isClosed = false;
+    mesh.addFace(mesh.addPoints(std::vector<Vector3>{{0, 0, 0}, {1, 0, 0}}), isClosed);
+    auto weights = mesh.addAttribute<floatT>(attr::AttrOwner::POINT, "weight");
+    weights.setValue(0, 1.0f);
+    weights.setValue(1, 2.0f);
+
+    const std::vector<Transform> transforms{
+        Transform::fromComponents(Vector3(0, 0, 5), Vector3::Zero(), Vector3::Ones()),
+        Transform::fromComponents(Vector3(0, 0, 10), Vector3::Zero(), Vector3::Ones())
+    };
+    mesh.duplicateToTransforms(transforms);
+
+    // Check the original is untouched and each copy follows it
+    REQUIRE(mesh.getNumPoints() == 6);
+    REQUIRE(mesh.getNumFaces() == 3);
+    REQUIRE(mesh.getPointPos(0) == Vector3(0, 0, 0));
+    REQUIRE(mesh.getPointPos(3) == Vector3(1, 0, 5));
+    REQUIRE(mesh.getPointPos(5) == Vector3(1, 0, 10));
+    REQUIRE(mesh.getFacePoints(2)[0] == 4);
+    REQUIRE(mesh.getFacePoints(2)[1] == 5);
+    REQUIRE_FALSE(mesh.isClosed(1));
+    REQUIRE_FALSE(mesh.isClosed(2));
+
+    // Check every copied point carries the original values
+    auto copiedWeights =
+        attr::AttributeHandle<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
+    REQUIRE(copiedWeights.getSize() == 6);
+    REQUIRE(copiedWeights.getValue(2) == 1.0f);
+    REQUIRE(copiedWeights.getValue(3) == 2.0f);
+    REQUIRE(copiedWeights.getValue(4) == 1.0f);
+    REQUIRE(copiedWeights.getValue(5) == 2.0f);
+}
+
+TEST_CASE("Duplicate to transforms keeps deleted faces deleted in the copies")
+{
+    geo::Mesh mesh;
+    const std::vector<Offset> pointOffsets =
+        mesh.addPoints(std::vector<Vector3>{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}});
+    mesh.addFace(pointOffsets);
+    mesh.addFace(pointOffsets);
+    mesh.deleteFaces({1});
+
+    const std::vector<Transform> transforms{Transform()};
+    mesh.duplicateToTransforms(transforms);
+
+    REQUIRE(mesh.getNumFaces() == 4);
+    REQUIRE(mesh.isValidFace(2));
+    REQUIRE_FALSE(mesh.isValidFace(3));
+    REQUIRE_FALSE(mesh.isValidVertex(9));
+
+    // Check the deleted face and its copy go when the mesh is cleaned up
+    mesh.defragment();
+    REQUIRE(mesh.getNumFaces() == 2);
+}
