@@ -9,7 +9,9 @@
 #include <cstddef>
 #include <cstring>
 #include <glm/matrix.hpp>
+#include <span>
 #include <stdexcept>
+#include <vector>
 
 namespace Diligent::HLSL {
 
@@ -30,6 +32,9 @@ const PBR_Renderer::PSO_FLAGS facePipelineFlags = PBR_Renderer::PSO_FLAG_USE_VER
 
 /// @brief The light arriving from every direction of the uniform surroundings, in linear color.
 constexpr float ambientRadiance = 0.3f;
+
+/// @brief The light shining along the camera's view when there are no point lights, in linear color.
+constexpr float headlightRadiance = 2.f;
 
 constexpr float faceRoughness = 0.5f;
 
@@ -60,6 +65,71 @@ Diligent::float4x4 toShaderMatrix(const glm::mat4& matrix)
     Diligent::float4x4 shaderMatrix;
     std::memcpy(&shaderMatrix, &transposed, sizeof(shaderMatrix));
     return shaderMatrix;
+}
+
+/// @brief Returns the camera values the face shaders read for the frame view.
+Diligent::HLSL::CameraAttribs getCameraAttribs(const FrameView& frameView)
+{
+    const glm::mat4 viewProjection = frameView.projection * frameView.view;
+    const glm::vec2 pixelSize{frameView.pixelSize};
+    Diligent::HLSL::CameraAttribs camera{};
+    camera.f4Position =
+        Diligent::float4{frameView.cameraPosition.x, frameView.cameraPosition.y, frameView.cameraPosition.z, 1.f};
+    camera.f4ViewportSize = Diligent::float4{pixelSize.x, pixelSize.y, 1.f / pixelSize.x, 1.f / pixelSize.y};
+    camera.fHandness = 1.f;
+    camera.mView = toShaderMatrix(frameView.view);
+    camera.mProj = toShaderMatrix(frameView.projection);
+    camera.mViewProj = toShaderMatrix(viewProjection);
+    camera.mViewInv = toShaderMatrix(glm::inverse(frameView.view));
+    camera.mProjInv = toShaderMatrix(glm::inverse(frameView.projection));
+    camera.mViewProjInv = toShaderMatrix(glm::inverse(viewProjection));
+    return camera;
+}
+
+/// @brief Returns a light of the type and radiance that casts no shadow.
+Diligent::HLSL::PBRLightAttribs getLightAttribs(PBR_Renderer::LIGHT_TYPE type, const glm::vec3& radiance)
+{
+    Diligent::HLSL::PBRLightAttribs light{};
+    light.Type = type;
+    light.ShadowMapIndex = -1;
+    light.IntensityR = radiance.r;
+    light.IntensityG = radiance.g;
+    light.IntensityB = radiance.b;
+    return light;
+}
+
+/// @brief Returns the lights that shade the faces, in no particular order.
+///
+/// @note A light shining along the camera's view shades the faces when there are no point lights.
+std::vector<Diligent::HLSL::PBRLightAttribs> getShadingLights(
+    std::span<const glm::vec3> pointLightPositions,
+    std::span<const glm::vec3> pointLightRadiances,
+    const FrameView& frameView
+)
+{
+    std::vector<Diligent::HLSL::PBRLightAttribs> lights;
+    for (const std::size_t lightIndex :
+         getNearestLightIndices(pointLightPositions, frameView.cameraPosition, maxShadingLightCount))
+    {
+        const glm::vec3& position = pointLightPositions[lightIndex];
+        Diligent::HLSL::PBRLightAttribs light =
+            getLightAttribs(PBR_Renderer::LIGHT_TYPE_POINT, pointLightRadiances[lightIndex]);
+        light.PosX = position.x;
+        light.PosY = position.y;
+        light.PosZ = position.z;
+        lights.push_back(light);
+    }
+
+    if (lights.empty())
+    {
+        Diligent::HLSL::PBRLightAttribs headlight =
+            getLightAttribs(PBR_Renderer::LIGHT_TYPE_DIRECTIONAL, glm::vec3{headlightRadiance});
+        headlight.DirectionX = frameView.viewDirection.x;
+        headlight.DirectionY = frameView.viewDirection.y;
+        headlight.DirectionZ = frameView.viewDirection.z;
+        lights.push_back(headlight);
+    }
+    return lights;
 }
 
 /// @brief Returns the settings of a PBR renderer that shades untextured faces from vertex positions
@@ -260,29 +330,16 @@ void MeshPass::updateShading(
     const glm::vec4& geometryColor
 )
 {
-    // Camera
-    const glm::mat4 viewProjection = frameView.projection * frameView.view;
-    const glm::vec2 pixelSize{frameView.pixelSize};
-    Diligent::HLSL::CameraAttribs camera{};
-    camera.f4Position =
-        Diligent::float4{frameView.cameraPosition.x, frameView.cameraPosition.y, frameView.cameraPosition.z, 1.f};
-    camera.f4ViewportSize = Diligent::float4{pixelSize.x, pixelSize.y, 1.f / pixelSize.x, 1.f / pixelSize.y};
-    camera.fHandness = 1.f;
-    camera.mView = toShaderMatrix(frameView.view);
-    camera.mProj = toShaderMatrix(frameView.projection);
-    camera.mViewProj = toShaderMatrix(viewProjection);
-    camera.mViewInv = toShaderMatrix(glm::inverse(frameView.view));
-    camera.mProjInv = toShaderMatrix(glm::inverse(frameView.projection));
-    camera.mViewProjInv = toShaderMatrix(glm::inverse(viewProjection));
+    const Diligent::HLSL::CameraAttribs camera = getCameraAttribs(frameView);
+    const std::vector<Diligent::HLSL::PBRLightAttribs> shadingLights =
+        getShadingLights(pointLightPositions_, pointLightRadiances_, frameView);
 
     // Renderer settings
-    const std::vector<std::size_t> shadingLightIndices =
-        getNearestLightIndices(pointLightPositions_, frameView.cameraPosition, maxShadingLightCount);
     Diligent::HLSL::PBRRendererShaderParameters renderer{};
     renderer.IBLScale = Diligent::float4{1.f};
     renderer.OcclusionStrength = 1.f;
     renderer.EmissionScale = 1.f;
-    renderer.LightCount = int(shadingLightIndices.size());
+    renderer.LightCount = int(shadingLights.size());
     pbrRenderer_->SetInternalShaderParameters(
         renderer,
         prefilteredEnvironmentCube_->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE)
@@ -292,22 +349,11 @@ void MeshPass::updateShading(
     std::vector<std::byte> frameAttribs(faceFrameAttribs_->GetDesc().Size);
     const FaceFrameAttribsHeader header{camera, camera, renderer};
     std::memcpy(frameAttribs.data(), &header, sizeof(header));
-    auto* lights = reinterpret_cast<Diligent::HLSL::PBRLightAttribs*>(frameAttribs.data() + sizeof(header));
-    for (std::size_t shadingIndex = 0; shadingIndex < shadingLightIndices.size(); ++shadingIndex)
-    {
-        const std::size_t lightIndex = shadingLightIndices[shadingIndex];
-        const glm::vec3& position = pointLightPositions_[lightIndex];
-        const glm::vec3& radiance = pointLightRadiances_[lightIndex];
-        Diligent::HLSL::PBRLightAttribs& light = lights[shadingIndex];
-        light.Type = PBR_Renderer::LIGHT_TYPE_POINT;
-        light.PosX = position.x;
-        light.PosY = position.y;
-        light.PosZ = position.z;
-        light.ShadowMapIndex = -1;
-        light.IntensityR = radiance.r;
-        light.IntensityG = radiance.g;
-        light.IntensityB = radiance.b;
-    }
+    std::memcpy(
+        frameAttribs.data() + sizeof(header),
+        shadingLights.data(),
+        shadingLights.size() * sizeof(Diligent::HLSL::PBRLightAttribs)
+    );
     context->UpdateBuffer(
         faceFrameAttribs_,
         0,

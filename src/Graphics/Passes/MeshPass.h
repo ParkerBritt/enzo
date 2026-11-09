@@ -22,6 +22,7 @@ namespace enzo::gfx {
  * @brief The display mesh, with its faces lit by the point lights and an optional wireframe over it.
  *
  * @note Only the 256 lights nearest the camera shade the faces.
+ * @note A light shining along the camera's view shades the faces when the geometry has no point lights.
  */
 class MeshPass
 {

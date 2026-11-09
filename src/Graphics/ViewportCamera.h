@@ -30,6 +30,9 @@ class ViewportCamera
     /// @brief Returns the camera position in world space.
     glm::vec3 getPosition() const;
 
+    /// @brief Returns the unit direction the camera looks along, from its position to the centre.
+    glm::vec3 getForward() const;
+
     /// @brief Returns the matrix taking world space to view space.
     glm::mat4 getViewMatrix() const;
 
@@ -41,9 +44,6 @@ class ViewportCamera
     bool operator==(const ViewportCamera&) const = default;
 
   private:
-    /// @brief Returns the unit direction the camera looks along, from its position to the centre.
-    glm::vec3 getForward() const;
-
     glm::vec3 center_{0.f, 0.f, 0.f};
     float distance_ = 15.f;
     /// @brief The angle around the vertical axis, 0 looking down negative z.
