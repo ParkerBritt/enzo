@@ -121,13 +121,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> setColor(<span class="keyword">const</span> Vector3&amp; color);</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    floatT getIntensity() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> setIntensity(floatT intensity);</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    attr::AttributeHandle&lt;Matrix4&gt; transformHandle_;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    attr::AttributeHandle&lt;Vector3&gt; colorHandle_;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    attr::AttributeHandle&lt;floatT&gt; intensityHandle_;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>};</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>} <span class="comment">// namespace enzo::geo</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    floatT getExposure() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">void</span> setExposure(floatT exposure);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    attr::AttributeHandle&lt;Matrix4&gt; transformHandle_;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    attr::AttributeHandle&lt;Vector3&gt; colorHandle_;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    attr::AttributeHandle&lt;floatT&gt; intensityHandle_;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    attr::AttributeHandle&lt;floatT&gt; exposureHandle_;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>};</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <span class="comment">// namespace enzo::geo</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
