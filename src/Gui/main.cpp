@@ -4,6 +4,7 @@
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
 #include "Gui/Spreadsheet/SpreadsheetViewModel.h"
+#include "Gui/Settings/InterfaceViewModel.h"
 #include "Gui/Style/ThemeViewModel.h"
 #include "Gui/Timeline/TimelineViewModel.h"
 #include "Gui/Viewport/QtGraphicsBridge.h"
@@ -189,6 +190,7 @@ int main(int argc, char** argv)
     enzo::ui::SceneController scene;
     enzo::ui::ThemeViewModel themeSettings;
     themeSettings.setFontFamilies(fontFamilies);
+    enzo::ui::InterfaceViewModel interfaceSettings;
 
     enzo::nt::NodeLoader::loadNodes();
 
@@ -249,6 +251,7 @@ int main(int argc, char** argv)
     engine.rootContext()->setContextProperty("timeline", &timeline);
     engine.rootContext()->setContextProperty("scene", &scene);
     engine.rootContext()->setContextProperty("themeSettings", &themeSettings);
+    engine.rootContext()->setContextProperty("interfaceSettings", &interfaceSettings);
 
     // A run from a build directory loads QML straight from the source tree and
     // reloads on edit. An installed run loads the module compiled into the binary.

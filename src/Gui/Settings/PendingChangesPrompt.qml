@@ -4,24 +4,18 @@ import QtQuick.Effects
 import Enzo
 import "../Components"
 
-// The question asked when another theme is chosen while the current one holds
-// edits that are not written yet.
+// The question asked before an action that would leave live previewed edits unapplied.
 Popup {
     id: root
 
-    // The theme waiting to be switched to.
-    property string targetTheme: ""
+    property string heading: ""
+    property string question: ""
 
-    // Apply was chosen, keeping the edits before the switch.
+    // The end of the sentence saying what Cancel does, such as "keeps the settings open".
+    property string cancelOutcome: ""
+
     signal applyChosen
-
-    // Discard was chosen, dropping the edits before the switch.
     signal discardChosen
-
-    function ask(name) {
-        root.targetTheme = name;
-        root.open();
-    }
 
     anchors.centerIn: Overlay.overlay
     modal: true
@@ -53,7 +47,7 @@ Popup {
             spacing: 4
 
             Text {
-                text: "Switching theme"
+                text: root.heading
                 color: Theme.var.textMuted
                 font.family: Theme.var.fontSans
                 font.pixelSize: 11
@@ -63,7 +57,7 @@ Popup {
             }
 
             Text {
-                text: `Apply changes to ${themeSettings.currentTheme}?`
+                text: root.question
                 color: Theme.var.textStrong
                 font.family: Theme.var.fontSans
                 font.pixelSize: 14
@@ -73,7 +67,7 @@ Popup {
             Text {
                 width: parent.width
                 topPadding: 4
-                text: `Your edits are previewing live but aren't saved yet. Apply keeps them, Discard returns to the last applied state, and Cancel keeps you on ${themeSettings.currentTheme} instead of switching to ${root.targetTheme}.`
+                text: `Your edits are previewing live but aren't saved yet. Apply keeps them, Discard returns to the last applied state, and Cancel ${root.cancelOutcome}.`
                 color: Theme.var.textLabel
                 font.family: Theme.var.fontSans
                 font.pixelSize: 12

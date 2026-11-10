@@ -58,7 +58,9 @@ Item {
         request.send();
     }
 
-    onNameChanged: reload()
-    onColorChanged: reload()
-    Component.onCompleted: reload()
+    // Waits until the icon is built before reloading, since a reload during creation can set off a nested reload that fails.
+    // Changes made in the same frame share one reload.
+    onNameChanged: Qt.callLater(root.reload)
+    onColorChanged: Qt.callLater(root.reload)
+    Component.onCompleted: Qt.callLater(root.reload)
 }

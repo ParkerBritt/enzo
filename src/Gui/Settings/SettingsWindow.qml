@@ -9,30 +9,55 @@ ScaledWindow {
 
     property int currentPage: 0
 
-    // The pages listed down the left, each with the footer's actions for the
-    // edits it holds.
+    // The settings pages, each with the view-model holding its edits or null
+    // when it has none.
     readonly property var pages: [
+        {
+            title: "Interface",
+            icon: "monitor",
+            source: "InterfacePage.qml",
+            settings: interfaceSettings
+        },
         {
             title: "Theme",
             icon: "palette",
             source: "ThemePage.qml",
-            hasPendingChanges: () => themeSettings.hasPendingChanges,
-            apply: () => themeSettings.apply(),
-            revert: () => themeSettings.revert()
+            settings: themeSettings
         },
         {
             title: "Keymap",
             icon: "keyboard",
             source: "KeymapPage.qml",
-            hasPendingChanges: () => false,
-            apply: () => {},
-            revert: () => {}
+            settings: null
         },
     ]
 
     readonly property var page: root.pages[root.currentPage]
 
-    readonly property bool pageHasPendingChanges: root.page.hasPendingChanges()
+    readonly property bool pageHasPendingChanges: root.hasPendingChanges(root.page)
+
+    // The view-models holding edits that are not applied yet.
+    readonly property var pendingSettings: root.pages.filter(page => root.hasPendingChanges(page)).map(page => page.settings)
+
+    // Returns whether a page holds edits that are not applied yet.
+    function hasPendingChanges(page) {
+        return page.settings !== null && page.settings.hasPendingChanges;
+    }
+
+    // Applies or reverts every page's edits, then closes the window.
+    function closeWith(action) {
+        const pending = root.pendingSettings;
+        for (const settings of pending)
+            settings[action]();
+        root.close();
+    }
+
+    onClosing: close => {
+        if (root.pendingSettings.length === 0)
+            return;
+        close.accepted = false;
+        closePrompt.open();
+    }
 
     width: Math.round(1040 * root.uiScale)
     height: Math.round(720 * root.uiScale)
@@ -103,7 +128,7 @@ ScaledWindow {
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: entry.modelData.hasPendingChanges()
+                        visible: root.hasPendingChanges(entry.modelData)
                         name: "pencil"
                         size: 12
                         color: Theme.var.text
@@ -178,16 +203,26 @@ ScaledWindow {
                 TextButton {
                     text: "Revert"
                     enabled: root.pageHasPendingChanges
-                    onClicked: root.page.revert()
+                    onClicked: root.page.settings.revert()
                 }
 
                 TextButton {
                     text: "Apply"
                     variant: "accent"
                     enabled: root.pageHasPendingChanges
-                    onClicked: root.page.apply()
+                    onClicked: root.page.settings.apply()
                 }
             }
         }
+    }
+
+    PendingChangesPrompt {
+        id: closePrompt
+
+        heading: "Closing settings"
+        question: "Apply your changes?"
+        cancelOutcome: "keeps the settings open"
+        onApplyChosen: root.closeWith("apply")
+        onDiscardChosen: root.closeWith("revert")
     }
 }

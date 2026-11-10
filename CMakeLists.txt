@@ -287,6 +287,7 @@ qt_add_executable(${AppExec}
     src/Gui/Style/ThemeLoader.cpp
     src/Gui/Style/ThemeStore.cpp
     src/Gui/Style/ThemeViewModel.cpp
+    src/Gui/Settings/InterfaceViewModel.cpp
     src/Gui/Spreadsheet/AttributeTableModel.cpp
     src/Gui/Spreadsheet/PrimitiveTreeModel.cpp
     src/Gui/Spreadsheet/SpreadsheetViewModel.cpp
@@ -334,6 +335,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
         src/Gui/Components/Dropdown.qml
+        src/Gui/Components/ScaledWindow.qml
         src/Gui/Components/ExpressionEditor.qml
         src/Gui/Components/FocusReclaimer.qml
         src/Gui/Components/EditDismisser.qml
@@ -395,8 +397,9 @@ qt_add_qml_module(${AppExec}
         src/Gui/Settings/NumberTrack.qml
         src/Gui/Settings/ColorPicker.qml
         src/Gui/Settings/ColorCompare.qml
-        src/Gui/Settings/SwitchThemePrompt.qml
+        src/Gui/Settings/PendingChangesPrompt.qml
         src/Gui/Settings/KeymapPage.qml
+        src/Gui/Settings/InterfacePage.qml
         src/Gui/Viewport/Viewport.qml
         src/Gui/Viewport/ViewportHud.qml
         src/Gui/Viewport/ViewportMouse.qml
