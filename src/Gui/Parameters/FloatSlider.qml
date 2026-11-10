@@ -15,7 +15,7 @@ Slider {
     expressionText: item ? item.expression : ""
     expressionInvalid: item ? item.expressionError.length > 0 : false
     paramLabel: item ? item.label : ""
-    paramKind: item ? item.kind : ""
+    paramValueType: item ? item.valueType : ""
     paramName: item ? item.name : ""
     paramNodeName: item ? item.nodeName : ""
     evaluator: (text) => item ? item.previewExpressionAt(0, text) : ({value: 0, invalid: false})

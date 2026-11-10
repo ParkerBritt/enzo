@@ -30,6 +30,7 @@ class ParameterItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString kind READ kind CONSTANT)
+    Q_PROPERTY(QString valueType READ valueType CONSTANT)
     Q_PROPERTY(QString style READ style CONSTANT)
     Q_PROPERTY(QVariantMap styleOptions READ styleOptions CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
@@ -68,6 +69,8 @@ class ParameterItem : public QObject
 
     /// @brief The type as a lowercase token the QML delegate dispatches on.
     QString kind() const { return kind_; }
+    /// @brief Returns the kind of value stored, as "float", "int" or "string".
+    QString valueType() const { return valueType_; }
     QString name() const { return name_; }
     /// @brief The owning node's name, for a prm() reference into this parameter.
     QString nodeName() const { return nodeName_; }
@@ -157,6 +160,7 @@ class ParameterItem : public QObject
 
   private:
     QString kind_;
+    QString valueType_;
     QString style_;
     QVariantMap styleOptions_;
     QString name_;

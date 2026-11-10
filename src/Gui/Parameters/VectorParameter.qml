@@ -42,7 +42,7 @@ Row {
             expressionText: vec.item ? vec.item.expressionAt(index) : ""
             expressionInvalid: vec.item ? vec.item.expressionErrorAt(index).length > 0 : false
             paramLabel: vec.item ? vec.item.label : ""
-            paramKind: vec.item ? vec.item.kind : ""
+            paramValueType: vec.item ? vec.item.valueType : ""
             paramName: vec.item ? vec.item.name : ""
             paramNodeName: vec.item ? vec.item.nodeName : ""
             componentIndex: index

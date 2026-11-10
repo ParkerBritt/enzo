@@ -95,6 +95,9 @@ variables:
   # Fill that marks a value, such as the bar in a slider
   valueFill: "#2e2e38"
 
+  # Faint fill behind a chosen option
+  chosenFill: $textStrong @ 0.12
+
   # The grip a value is dragged by
   handle: "#c8c8d2"
 
@@ -205,6 +208,8 @@ components:
     playheadColor: $accent
   toggle:
     onColor: $valueFill
+  buttonStrip:
+    selectedColor: $chosenFill
   popup:
     highlightColor: $accentDim
   tooltip:
@@ -231,4 +236,4 @@ components:
     # The panel holding the display toggles, and a toggle that is on.
     hudColor:       $fieldSurface @ 0.72
     hudBorderColor: $border
-    toggleOnColor:  $textStrong @ 0.12
+    toggleOnColor:  $chosenFill

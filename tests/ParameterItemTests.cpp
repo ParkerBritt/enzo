@@ -41,6 +41,19 @@ TEST_CASE_METHOD(PluginsAndReset, "A parameter carries its style token to the gu
     REQUIRE(makeItem(node, "uniform_scale").style() == "");
 }
 
+TEST_CASE_METHOD(PluginsAndReset, "A parameter carries the kind of value it stores to the gui")
+{
+    auto& networkManager = nt::nm();
+    nt::NodeId nodeId = networkManager.createNode("enzo::attributeCreate");
+    nt::Node& node = networkManager.getNode(nodeId);
+
+    REQUIRE(makeItem(node, "floatValue").valueType() == "float");
+    REQUIRE(makeItem(node, "boolValue").valueType() == "int");
+    REQUIRE(makeItem(node, "name").valueType() == "string");
+    REQUIRE(makeItem(node, "type").valueType() == "string");
+    REQUIRE(makeItem(node, "owner").valueType() == "string");
+}
+
 TEST_CASE_METHOD(PluginsAndReset, "Undo restores a toggle edited through its item")
 {
     auto& networkManager = nt::nm();
@@ -95,7 +108,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute name parameter lists the attribu
     networkManager.cook(grid);
 
     nt::Node& node = networkManager.getNode(attributeCreate);
-    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("owner").lock()->setString("point");
     node.getParameter("type").lock()->setString("vector");
 
     const QStringList names = makeItem(node, "name").attributeNames();
@@ -118,16 +131,16 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list follows the parameters its 
     ui::ParameterItem name = makeItem(node, "name");
 
     // The point positions are a vector held by every point.
-    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("owner").lock()->setString("point");
     node.getParameter("type").lock()->setString("vector");
     REQUIRE(name.attributeNames().contains(attr::names::position));
 
     // Faces hold no positions.
-    node.getParameter("attachTo").lock()->setString("face");
+    node.getParameter("owner").lock()->setString("face");
     REQUIRE_FALSE(name.attributeNames().contains(attr::names::position));
 
     // The positions are not floats.
-    node.getParameter("attachTo").lock()->setString("point");
+    node.getParameter("owner").lock()->setString("point");
     node.getParameter("type").lock()->setString("float");
     REQUIRE_FALSE(name.attributeNames().contains(attr::names::position));
 }
@@ -141,7 +154,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An attribute list of vertices on a camera lis
     networkManager.cook(camera);
 
     nt::Node& node = networkManager.getNode(attributeCreate);
-    node.getParameter("attachTo").lock()->setString("vertex");
+    node.getParameter("owner").lock()->setString("vertex");
 
     REQUIRE(makeItem(node, "name").attributeNames().isEmpty());
 }
@@ -162,7 +175,7 @@ TEST_CASE_METHOD(PluginsAndReset, "An empty attribute list says what it would ac
     nt::Node& node = networkManager.getNode(attributeCreate);
     ui::ParameterItem name = makeItem(node, "name");
 
-    node.getParameter("attachTo").lock()->setString("vertex");
+    node.getParameter("owner").lock()->setString("vertex");
     node.getParameter("type").lock()->setString("float");
     REQUIRE(name.noAttributesMessage() == "No float vertex attributes");
 }

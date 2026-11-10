@@ -26,7 +26,7 @@ Item {
         nodeName: trigger.item ? trigger.item.nodeName : ""
         paramName: trigger.item ? trigger.item.name : ""
         paramLabel: trigger.item ? trigger.item.label : ""
-        kind: trigger.item ? trigger.item.kind : ""
+        valueType: trigger.item ? trigger.item.valueType : ""
         hasExpression: trigger.item ? trigger.item.hasExpression : false
         value: trigger.item ? trigger.item.value : undefined
         expression: trigger.item ? trigger.item.expression : ""

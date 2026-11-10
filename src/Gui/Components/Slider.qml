@@ -22,7 +22,7 @@ Item {
 
     // Named in the floating editor's header, e.g. "Density" / "float".
     property string paramLabel: ""
-    property string paramKind: ""
+    property string paramValueType: ""
 
     // This component's own identity, used to build a prm()/prmI()/prmS()
     // reference to it when it is copied from the right-click menu.
@@ -317,7 +317,7 @@ Item {
         id: expressionEditor
         y: root.height + 6
         paramLabel: root.paramLabel
-        paramKind: root.paramKind
+        paramValueType: root.paramValueType
         evaluator: root.evaluator
         liveValue: root.value
         onCommitted: text => root.commitText(text)
@@ -336,7 +336,7 @@ Item {
         paramName: root.paramName
         paramLabel: root.paramLabel
         componentIndex: root.componentIndex
-        kind: root.paramKind
+        valueType: root.paramValueType
         hasExpression: root.hasExpression
         value: root.value
         expression: root.expressionText

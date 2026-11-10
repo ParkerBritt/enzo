@@ -358,6 +358,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Parameters/FloatSlider.qml
         src/Gui/Parameters/IntSlider.qml
         src/Gui/Parameters/Toggle.qml
+        src/Gui/Parameters/ButtonStrip.qml
         src/Gui/Parameters/VectorParameter.qml
         src/Gui/Parameters/RangeDial.qml
         src/Gui/Parameters/StringParameter.qml

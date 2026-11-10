@@ -13,7 +13,7 @@ import "../Style"
 //       id: menu
 //       paramName: "amp"
 //       paramLabel: "Density"
-//       kind: "float"
+//       valueType: "float"
 //       hasExpression: item.hasExpressionAt(0)
 //       value: item.valueAt(0)
 //       expression: item.expressionAt(0)
@@ -34,7 +34,7 @@ PopupList {
     property string paramName: ""
     property string paramLabel: ""
     property int componentIndex: 0
-    property string kind: ""
+    property string valueType: ""
 
     property bool hasExpression: false
 
@@ -57,9 +57,9 @@ PopupList {
     // The function a pasted reference must call, matching this parameter's own
     // value type since that is what its expression has to produce.
     readonly property string referenceFn: {
-        if (menu.kind === "float")
+        if (menu.valueType === "float")
             return "prm";
-        if (menu.kind === "string" || menu.kind === "dropdown")
+        if (menu.valueType === "string")
             return "prmS";
         return "prmI";
     }
@@ -188,7 +188,7 @@ PopupList {
                     iconName: "copy"
                     label: "Copy"
                     onTriggered: {
-                        ParameterClipboard.copy(menu.nodeName, menu.paramName, menu.paramLabel, menu.componentIndex, menu.kind, menu.value, menu.hasExpression ? menu.expression : "");
+                        ParameterClipboard.copy(menu.nodeName, menu.paramName, menu.paramLabel, menu.componentIndex, menu.value, menu.hasExpression ? menu.expression : "");
                         menu.close();
                     }
                 }
