@@ -8,8 +8,20 @@ Window {
     // Pixel density in px/mm that the UI is laid out for, about a 27" 1440p screen.
     readonly property real referencePixelDensity: 4.3
 
-    // Scale for the screen this window is on.
-    readonly property real uiScale: Screen.pixelDensity / referencePixelDensity / Screen.devicePixelRatio
+    // Limits the pixel scale. The minimum keeps small text readable on low density screens.
+    readonly property real minimumPixelScale: 0.9
+    readonly property real maximumPixelScale: 3
+
+    // Screen pixels per layout unit for the screen this window is on, 1 when the screen reports no size.
+    readonly property real pixelScale: {
+        const measured = Screen.pixelDensity / referencePixelDensity;
+        if (!(measured > 0) || !isFinite(measured))
+            return 1;
+        return Math.min(Math.max(measured, minimumPixelScale), maximumPixelScale);
+    }
+
+    // Scale for the screen this window is on, times the user's scale.
+    readonly property real uiScale: pixelScale / Screen.devicePixelRatio * interfaceSettings.scale
 
     default property alias content: scaledRoot.data
 

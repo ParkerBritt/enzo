@@ -14,7 +14,8 @@ Item {
             themeSettings.selectTheme(name);
             return;
         }
-        prompt.ask(name);
+        prompt.targetTheme = name;
+        prompt.open();
     }
 
     // Opens the picker under a colour row, kept inside the page.
@@ -252,8 +253,15 @@ Item {
         id: picker
     }
 
-    SwitchThemePrompt {
+    PendingChangesPrompt {
         id: prompt
+
+        // The theme waiting to be switched to.
+        property string targetTheme: ""
+
+        heading: "Switching theme"
+        question: `Apply changes to ${themeSettings.currentTheme}?`
+        cancelOutcome: `keeps using ${themeSettings.currentTheme} instead of switching to ${prompt.targetTheme}`
 
         onApplyChosen: {
             themeSettings.apply();
