@@ -16,7 +16,7 @@ Popup {
     id: root
 
     property string paramLabel: ""
-    property string paramKind: ""
+    property string paramValueType: ""
 
     // Evaluates typed text without committing it, returning {value, invalid}.
     property var evaluator: null
@@ -72,9 +72,9 @@ Popup {
         if (!root.preview)
             return "";
         const value = root.preview.value;
-        if (root.paramKind === "int")
+        if (root.paramValueType === "int")
             return Math.round(value).toString();
-        if (root.paramKind === "float")
+        if (root.paramValueType === "float")
             return Number(value).toFixed(3);
         return String(value);
     }
@@ -154,7 +154,7 @@ Popup {
                         font.weight: Font.DemiBold
                     }
                     Text {
-                        text: root.paramKind
+                        text: root.paramValueType
                         color: Theme.var.textMuted
                         font.family: Theme.var.fontMono
                         font.pixelSize: 9

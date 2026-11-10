@@ -90,7 +90,7 @@ TEST_CASE_METHOD(NMReset, "Vectors can be written on faces")
     auto& nm = nt::nm();
     const nt::NodeId attributeCreate = addAttributeCreateAfterGrid();
 
-    nm.getNode(attributeCreate).getParameter("attachTo").lock()->setString("face");
+    nm.getNode(attributeCreate).getParameter("owner").lock()->setString("face");
     nm.getNode(attributeCreate).getParameter("type").lock()->setString("vector");
 
     auto vectorValue = nm.getNode(attributeCreate).getParameter("vectorValue").lock();
@@ -110,7 +110,7 @@ TEST_CASE_METHOD(NMReset, "A primitive attribute holds one value")
     auto& nm = nt::nm();
     const nt::NodeId attributeCreate = addAttributeCreateAfterGrid();
 
-    nm.getNode(attributeCreate).getParameter("attachTo").lock()->setString("primitive");
+    nm.getNode(attributeCreate).getParameter("owner").lock()->setString("primitive");
     nm.getNode(attributeCreate).getParameter("type").lock()->setString("int");
     nm.getNode(attributeCreate).getParameter("intValue").lock()->setInt(7);
     nm.cook(attributeCreate);
@@ -126,7 +126,7 @@ TEST_CASE_METHOD(NMReset, "Booleans can be written on vertices")
     auto& nm = nt::nm();
     const nt::NodeId attributeCreate = addAttributeCreateAfterGrid();
 
-    nm.getNode(attributeCreate).getParameter("attachTo").lock()->setString("vertex");
+    nm.getNode(attributeCreate).getParameter("owner").lock()->setString("vertex");
     nm.getNode(attributeCreate).getParameter("type").lock()->setString("bool");
     nm.getNode(attributeCreate).getParameter("boolValue").lock()->setInt(1);
     nm.cook(attributeCreate);

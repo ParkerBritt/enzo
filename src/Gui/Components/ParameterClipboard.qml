@@ -13,17 +13,15 @@ QtObject {
     property string paramName: ""
     property string paramLabel: ""
     property int index: 0
-    property string kind: ""
     property var value: undefined
     // The component's raw expression source, empty when it holds a literal.
     property string expression: ""
 
-    function copy(sourceNodeName, name, label, componentIndex, componentKind, componentValue, componentExpression) {
+    function copy(sourceNodeName, name, label, componentIndex, componentValue, componentExpression) {
         nodeName = sourceNodeName;
         paramName = name;
         paramLabel = label;
         index = componentIndex;
-        kind = componentKind;
         value = componentValue;
         expression = componentExpression;
     }

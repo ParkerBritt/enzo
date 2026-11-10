@@ -222,6 +222,7 @@ ParameterItem::ParameterItem(
     : QObject(parent), parameter_(std::move(parameter))
 {
     kind_ = QString::fromStdString(prm::toString(prmTemplate.getType()));
+    valueType_ = QString::fromStdString(prm::toString(prm::toValueType(prmTemplate.getType())));
     style_ = QString::fromStdString(prm::style::toString(prmTemplate.getStyle()));
     styleOptions_ = getStyleOptions(prmTemplate.getStyle());
     name_ = QString::fromStdString(prmTemplate.getName());

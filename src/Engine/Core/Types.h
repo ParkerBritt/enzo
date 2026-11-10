@@ -232,6 +232,7 @@ enum class Type
     TOGGLE,
     GROUP,
     DROPDOWN,
+    BUTTON_STRIP,
     RAMP,
     DIVIDER
 };
@@ -253,6 +254,21 @@ enum class ValueType
     String
 };
 
+/// @brief Returns the lowercase name of a value type, e.g. "string".
+inline std::string toString(ValueType valueType)
+{
+    switch (valueType)
+    {
+    case ValueType::Float:
+        return "float";
+    case ValueType::Int:
+        return "int";
+    case ValueType::String:
+        return "string";
+    }
+    return "";
+}
+
 /// @brief The lowercase canonical name of a parameter type, e.g. "dropdown".
 inline std::string toString(Type type)
 {
@@ -273,6 +289,8 @@ inline std::string toString(Type type)
         return "group";
     case Type::DROPDOWN:
         return "dropdown";
+    case Type::BUTTON_STRIP:
+        return "buttonStrip";
     case Type::RAMP:
         return "ramp";
     case Type::DIVIDER:
@@ -290,6 +308,7 @@ inline constexpr std::array kAllTypes = {
     Type::TOGGLE,
     Type::GROUP,
     Type::DROPDOWN,
+    Type::BUTTON_STRIP,
     Type::RAMP,
     Type::DIVIDER
 };
@@ -321,6 +340,7 @@ inline ValueType toValueType(Type type)
         return ValueType::Int;
     case Type::STRING:
     case Type::DROPDOWN:
+    case Type::BUTTON_STRIP:
         return ValueType::String;
     case Type::GROUP:
         return ValueType::Float;

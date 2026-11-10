@@ -367,7 +367,7 @@ Item {
             expressionText: dial.item ? dial.item.expressionAt(field.boundIndex) : ""
             expressionInvalid: dial.item ? dial.item.expressionErrorAt(field.boundIndex).length > 0 : false
             paramLabel: dial.item ? dial.item.label : ""
-            paramKind: dial.item ? dial.item.kind : ""
+            paramValueType: dial.item ? dial.item.valueType : ""
             paramName: dial.item ? dial.item.name : ""
             paramNodeName: dial.item ? dial.item.nodeName : ""
             componentIndex: field.boundIndex

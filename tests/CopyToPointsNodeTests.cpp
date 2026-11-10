@@ -56,7 +56,7 @@ nt::NodeId addAttributeCreate(nt::NodeId input, const std::string& name, const s
     }
     else
     {
-        node.getParameter("attachTo").lock()->setString("face");
+        node.getParameter("owner").lock()->setString("face");
         auto vectorValue = node.getParameter("vectorValue").lock();
         vectorValue->setFloat(1.f, 0);
         vectorValue->setFloat(2.f, 1);

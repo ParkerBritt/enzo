@@ -395,6 +395,25 @@ TEST_CASE("A dropdown keeps its options in the order they are written")
     REQUIRE(parameter.getDefault().getString() == "zx");
 }
 
+TEST_CASE("A button strip keeps its options and stores the chosen value as text")
+{
+    const nt::NodeManifest manifest = manifestWithParameters(R"(
+  - name: owner
+    type: buttonStrip
+    default: face
+    options:
+      - {value: point, label: Point}
+      - {value: face, label: Face}
+)");
+    const prm::Template& parameter = manifest.getNodeType().templates.at(0);
+
+    REQUIRE(parameter.getType() == prm::Type::BUTTON_STRIP);
+    REQUIRE(prm::toValueType(parameter.getType()) == prm::ValueType::String);
+    REQUIRE(parameter.getNumOptions() == 2);
+    REQUIRE(parameter.getOptions().at(1).getToken() == "face");
+    REQUIRE(parameter.getDefault().getString() == "face");
+}
+
 TEST_CASE("An option with no label falls back to its value")
 {
     const nt::NodeManifest manifest = manifestWithParameters(R"(

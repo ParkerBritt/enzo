@@ -145,6 +145,8 @@ Item {
                         return stringComp;
                     case "dropdown":
                         return dropComp;
+                    case "buttonStrip":
+                        return buttonStripComp;
                     case "ramp":
                         return rampComp;
                     }
@@ -154,6 +156,12 @@ Item {
         }
     }
 
+    Component {
+        id: buttonStripComp
+        ButtonStrip {
+            item: row.item
+        }
+    }
     Component {
         id: dividerComp
         Divider {

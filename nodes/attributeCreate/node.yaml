@@ -24,19 +24,14 @@ parameters:
       The elements to write the value on. Accepts a selection or a group name.
       Leave it empty to write on everything.
 
-  - name: name
-    label: Attribute Name
-    type: string
-    default: attribute
-    style: attribute
-    styleOptions:
-      owners: prm(attachTo)
-      attributeTypes: prm(type)
-    tooltip: The name to store the attribute under.
+  - name: attribute_divider
+    label: Attribute
+    type: divider
+    icon: tag
 
-  - name: attachTo
-    label: Attach To
-    type: dropdown
+  - name: owner
+    label: Owner
+    type: buttonStrip
     default: point
     tooltip: The part of the geometry that holds one value each.
     options:
@@ -52,6 +47,16 @@ parameters:
       - value: primitive
         label: Primitive
         icon: attribute-primitive
+
+  - name: name
+    label: Attribute Name
+    type: string
+    default: attribute
+    style: attribute
+    styleOptions:
+      owners: prm(owner)
+      attributeTypes: prm(type)
+    tooltip: The name to store the attribute under.
 
   - name: type
     label: Type
@@ -71,6 +76,11 @@ parameters:
       - value: bool
         label: Boolean
         icon: toggle-left
+
+  - name: value_divider
+    label: Value
+    type: divider
+    icon: pencil-line
 
   - name: floatValue
     label: Value

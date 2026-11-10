@@ -87,10 +87,10 @@ void AttributeCreate::cook()
 
     NodePacket packet = cloneInputPacket(0);
 
-    const std::optional<attr::AttributeOwner> owner = attr::getOwner(evalParmString("attachTo"));
+    const std::optional<attr::AttributeOwner> owner = attr::getOwner(evalParmString("owner"));
     if (!owner)
     {
-        throwError("Unknown attach point.");
+        throwError("Unknown owner.");
         return;
     }
 
