@@ -4,6 +4,7 @@
 #include "Engine/Primitives/Camera.h"
 #include "Engine/Primitives/Mesh.h"
 #include "Engine/Primitives/PointLight.h"
+#include <cmath>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
@@ -140,7 +141,7 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
     geometry.cameraPaths.clear();
     geometry.pointLightPositions.clear();
     geometry.pointLightColors.clear();
-    geometry.pointLightIntensities.clear();
+    geometry.pointLightRadiances.clear();
     geometry.positions.resize(vertexCount);
     geometry.normals.resize(vertexCount);
 
@@ -167,8 +168,10 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
         const auto light = std::static_pointer_cast<const geo::PointLight>(prim);
         const glm::mat4 transform = toGlm(light->getTransform());
         geometry.pointLightPositions.push_back(glm::vec3(transform[3]));
-        geometry.pointLightColors.push_back(toGlm(light->getColor()));
-        geometry.pointLightIntensities.push_back(float(light->getIntensity()));
+        const glm::vec3 color = toGlm(light->getColor());
+        const float exposureScale = std::exp2(float(light->getExposure()));
+        geometry.pointLightColors.push_back(color);
+        geometry.pointLightRadiances.push_back(color * float(light->getIntensity()) * exposureScale);
     }
 }
 

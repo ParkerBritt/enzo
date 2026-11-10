@@ -44,8 +44,8 @@ struct DisplayGeometry
     std::vector<glm::vec3> pointLightPositions;
     /// @brief The color of each point light, in the same order as the positions.
     std::vector<glm::vec3> pointLightColors;
-    /// @brief The intensity of each point light, in the same order as the positions.
-    std::vector<float> pointLightIntensities;
+    /// @brief The radiance of each point light, as color * intensity * 2^exposure, in the same order as the positions.
+    std::vector<glm::vec3> pointLightRadiances;
 };
 
 /**

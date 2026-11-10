@@ -54,3 +54,10 @@ parameters:
     default: 1
     range: {min: 0, max: 10}
     tooltip: How bright the light is.
+
+  - name: exposure
+    label: Exposure
+    type: float
+    default: 0
+    range: {min: -10, max: 10}
+    tooltip: Scales the intensity in stops.
