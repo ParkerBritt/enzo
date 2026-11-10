@@ -338,7 +338,7 @@ Column {
                 scale: hovered ? 1.5 : 1
                 Behavior on scale {
                     NumberAnimation {
-                        duration: 90
+                        duration: 90 * interfaceSettings.durationScale
                     }
                 }
             }

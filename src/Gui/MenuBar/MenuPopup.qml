@@ -16,7 +16,7 @@ PopupList {
 
     model: entries
     rowHeight: 26
-    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
     onActivated: (index) => list.runLeafAction(index)
 

@@ -45,7 +45,7 @@ Popup {
             property: "unrollProgress"
             from: 0
             to: 1
-            duration: 300
+            duration: 300 * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
     }
@@ -54,7 +54,7 @@ Popup {
             target: root
             property: "unrollProgress"
             to: 0
-            duration: 250
+            duration: 250 * interfaceSettings.durationScale
             easing.type: Easing.InCubic
         }
     }

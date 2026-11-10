@@ -31,14 +31,14 @@ Rectangle {
 
     Behavior on scale {
         NumberAnimation {
-            duration: 200
+            duration: 200 * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
     }
 
     Behavior on color {
         ColorAnimation {
-            duration: 120
+            duration: 120 * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
     }

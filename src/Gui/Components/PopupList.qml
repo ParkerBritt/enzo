@@ -179,7 +179,7 @@ Popup {
             color: Theme.popup.highlightColor
             y: root.headerHeight + root.rowTop(root.highlightedIndex)
             visible: root.highlightedIndex >= 0 && root.canHighlight(root.highlightedIndex)
-            Behavior on y { NumberAnimation { duration: 110; easing.type: Easing.OutCubic } }
+            Behavior on y { NumberAnimation { duration: 110 * interfaceSettings.durationScale; easing.type: Easing.OutCubic } }
         }
 
         // Above the cursor area below, so a delegate can carry its own button.
@@ -240,11 +240,11 @@ Popup {
     }
 
     enter: Transition {
-        NumberAnimation { property: "height"; from: 0; to: root.fullHeight; duration: 160; easing.type: Easing.OutCubic }
-        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 110 }
+        NumberAnimation { property: "height"; from: 0; to: root.fullHeight; duration: 160 * interfaceSettings.durationScale; easing.type: Easing.OutCubic }
+        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 110 * interfaceSettings.durationScale }
     }
     exit: Transition {
-        NumberAnimation { property: "height"; to: 0; duration: 120; easing.type: Easing.InCubic }
-        NumberAnimation { property: "opacity"; to: 0; duration: 120 }
+        NumberAnimation { property: "height"; to: 0; duration: 120 * interfaceSettings.durationScale; easing.type: Easing.InCubic }
+        NumberAnimation { property: "opacity"; to: 0; duration: 120 * interfaceSettings.durationScale }
     }
 }

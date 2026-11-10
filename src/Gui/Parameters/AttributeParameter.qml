@@ -67,7 +67,7 @@ Rectangle {
             rotation: attributeList.visible ? 180 : 0
             Behavior on rotation {
                 NumberAnimation {
-                    duration: 150
+                    duration: 150 * interfaceSettings.durationScale
                     easing.type: Easing.OutCubic
                 }
             }

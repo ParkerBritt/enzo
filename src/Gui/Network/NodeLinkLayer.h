@@ -30,6 +30,9 @@ class NodeLinkLayer : public QQuickItem
     Q_PROPERTY(QColor cutColor MEMBER cutColor_ NOTIFY cutColorChanged)
     Q_PROPERTY(QColor redirectColor MEMBER redirectColor_ NOTIFY redirectColorChanged)
 
+    // How long a cut link takes to dissolve, in milliseconds.
+    Q_PROPERTY(qreal fadeDuration MEMBER fadeDuration_ NOTIFY fadeDurationChanged)
+
     // What hovering the link under the cursor previews.
     Q_PROPERTY(LinkHover hoverKind READ hoverKind NOTIFY hoverChanged)
 
@@ -125,6 +128,7 @@ class NodeLinkLayer : public QQuickItem
     void linkColorChanged();
     void cutColorChanged();
     void redirectColorChanged();
+    void fadeDurationChanged();
     void hoverChanged();
     void floatingChanged();
     void previewChanged();
@@ -153,6 +157,7 @@ class NodeLinkLayer : public QQuickItem
     QColor linkColor_;
     QColor cutColor_;
     QColor redirectColor_;
+    qreal fadeDuration_ = 150;
     int hoverLink_ = -1;
     LinkHover hoverKind_ = LinkHover::None;
     bool hoverAtOutputEnd_ = false;
