@@ -13,8 +13,6 @@ Rectangle {
     readonly property real sidebarWidth: 252
 
     color: Theme.var.surface
-    radius: Theme.var.panelRadius
-    border.color: Theme.var.border
     clip: true
 
     SpreadsheetHeader {

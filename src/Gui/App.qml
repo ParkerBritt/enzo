@@ -12,7 +12,7 @@ import "MenuBar"
 import "Timeline"
 
 // Root window of the QML application.
-ApplicationWindow {
+ScaledWindow {
     id: window
 
     width: 1280
@@ -32,14 +32,20 @@ ApplicationWindow {
         onActivated: network.redo()
     }
 
-    menuBar: AppMenuBar {}
+    AppMenuBar {
+        id: appMenuBar
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+    }
 
     SplitView {
         id: split
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: parent.top
+        anchors.top: appMenuBar.bottom
         anchors.bottom: timelinePanel.top
         anchors.margins: window.marginSize
         orientation: Qt.Vertical
@@ -106,7 +112,7 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: window.marginSize
-        height: timelineBar.implicitHeight + 2 * timelinePanel.borderWidth
+        height: timelineBar.implicitHeight + 2 * timelinePanel.contentInset
 
         Timeline {
             id: timelineBar
