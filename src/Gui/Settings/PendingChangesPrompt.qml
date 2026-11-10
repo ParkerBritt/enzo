@@ -111,14 +111,14 @@ Popup {
             property: "opacity"
             from: 0
             to: 1
-            duration: 130
+            duration: 130 * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
         NumberAnimation {
             property: "scale"
             from: 0.94
             to: 1
-            duration: 130
+            duration: 130 * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
     }
@@ -127,7 +127,7 @@ Popup {
         NumberAnimation {
             property: "opacity"
             to: 0
-            duration: 100
+            duration: 100 * interfaceSettings.durationScale
         }
     }
 }

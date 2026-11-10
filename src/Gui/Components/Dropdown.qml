@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Enzo
 
 // Picker unrolling a list of choices below or above its trigger. The trigger
@@ -127,7 +128,7 @@ Item {
             rotation: list.visible ? 180 : 0
             Behavior on rotation {
                 NumberAnimation {
-                    duration: 150
+                    duration: 150 * interfaceSettings.durationScale
                     easing.type: Easing.OutCubic
                 }
             }
@@ -143,14 +144,12 @@ Item {
         }
     }
 
-    // One area over whichever trigger is showing, opening the list on a press and
-    // carrying that press onto a row. Hover belongs to the trigger beneath.
+    // Toggles the list on a press over whichever trigger is showing and carries
+    // that press onto a row. Hover belongs to the trigger beneath.
     MouseArea {
         anchors.fill: parent
 
-        // A press on an open list already closed it on the way past.
-        onPressed: if (!list.visible)
-            list.open()
+        onPressed: list.visible ? list.close() : list.open()
 
         onPositionChanged: mouse => {
             const index = root.rowAt(mouse.x, mouse.y);
@@ -172,6 +171,7 @@ Item {
         implicitWidth: root.listWidth
         rowHeight: 30
         model: root.labels
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
         // The list opens on the current choice, then the highlight follows the cursor.
         onAboutToShow: highlightedIndex = root.currentIndex
@@ -228,7 +228,7 @@ Item {
 
                 Behavior on opacity {
                     NumberAnimation {
-                        duration: 120
+                        duration: 120 * interfaceSettings.durationScale
                     }
                 }
 

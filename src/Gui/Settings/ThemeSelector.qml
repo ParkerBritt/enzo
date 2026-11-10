@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Enzo
 import "../Components"
 
@@ -68,7 +69,7 @@ Item {
 
                 Behavior on rotation {
                     NumberAnimation {
-                        duration: 150
+                        duration: 150 * interfaceSettings.durationScale
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -78,8 +79,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onPressed: if (!list.visible)
-            list.open()
+        onPressed: list.visible ? list.close() : list.open()
     }
 
     PopupList {
@@ -88,6 +88,7 @@ Item {
         y: root.height + 4
         implicitWidth: 248
         rowHeight: 30
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         rowHeightAt: index => root.rows[index].separator ? 22 : 30
         model: root.rows
 

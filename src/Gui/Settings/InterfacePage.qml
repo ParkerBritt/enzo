@@ -6,20 +6,18 @@ import "../Components"
 Item {
     id: root
 
-    Row {
+    Grid {
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.top: parent.top
         anchors.topMargin: 11
-        spacing: 12
+        columns: 2
+        columnSpacing: 12
+        rowSpacing: 10
+        verticalItemAlignment: Grid.AlignVCenter
 
-        Text {
-            anchors.verticalCenter: parent.verticalCenter
+        SettingLabel {
             text: "UI Scale"
-            color: Theme.var.text
-            font.family: Theme.var.fontSans
-            font.pixelSize: 12
-            font.weight: Font.Medium
         }
 
         Dropdown {
@@ -27,5 +25,22 @@ Item {
             currentIndex: interfaceSettings.scaleIndex
             onActivated: index => interfaceSettings.scaleIndex = index
         }
+
+        SettingLabel {
+            text: "Animation Speed"
+        }
+
+        Dropdown {
+            labels: interfaceSettings.animationSpeedLabels
+            currentIndex: interfaceSettings.animationSpeedIndex
+            onActivated: index => interfaceSettings.animationSpeedIndex = index
+        }
+    }
+
+    component SettingLabel: Text {
+        color: Theme.var.text
+        font.family: Theme.var.fontSans
+        font.pixelSize: 12
+        font.weight: Font.Medium
     }
 }

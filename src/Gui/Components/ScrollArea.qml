@@ -31,7 +31,7 @@ Flickable {
     Behavior on contentY {
         enabled: !bar.pressed
         NumberAnimation {
-            duration: area.glideDuration
+            duration: area.glideDuration * interfaceSettings.durationScale
             easing.type: Easing.OutCubic
         }
     }

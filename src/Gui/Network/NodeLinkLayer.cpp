@@ -20,8 +20,7 @@ constexpr float kCutWidth = 1;
 constexpr float kRedirectWidth = 2;
 constexpr float kPreviewWidth = 2;
 
-// How long a cut link takes to dissolve, and how soft the dissolving edge is.
-constexpr qreal kFadeMs = 150;
+// How soft the dissolving edge of a cut link is.
 constexpr qreal kFadeSoftness = 0.2;
 
 // How far a link's rounded corners reach from their corner point, and how many
@@ -336,7 +335,7 @@ NodeLinkLayer::NodeLinkLayer(QQuickItem* parent) : QQuickItem(parent)
     fadeTimer_.setInterval(16);
     connect(&fadeTimer_, &QTimer::timeout, this, [this] {
         for (FadingLink& fade : fadingLinks_)
-            fade.progress += fadeTimer_.interval() / kFadeMs;
+            fade.progress += fadeTimer_.interval() / fadeDuration_;
         std::erase_if(fadingLinks_, [](const FadingLink& fade) { return fade.progress >= 1; });
         if (fadingLinks_.empty()) fadeTimer_.stop();
         update();
@@ -528,6 +527,7 @@ int NodeLinkLayer::linkCrossing(QPointF from, QPointF to) const
 
 void NodeLinkLayer::fadeLink(int linkIndex, QPointF cutPoint)
 {
+    if (fadeDuration_ <= 0) return;
     for (const Link& link : collectLinks())
     {
         if (link.linkIndex != linkIndex) continue;

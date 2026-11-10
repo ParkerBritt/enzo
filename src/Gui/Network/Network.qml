@@ -120,6 +120,7 @@ Rectangle {
             linkColor: Theme.nodeLink.inactiveColor
             cutColor: Theme.nodeLink.cutColor
             redirectColor: Theme.nodeLink.redirectColor
+            fadeDuration: 150 * interfaceSettings.durationScale
             previewColor: Theme.nodeLink.activeColor
             previewCutLinks: dropController.preview ? dropController.preview.cutLinks : []
             previewLinks: dropController.preview ? dropController.preview.newLinks : []

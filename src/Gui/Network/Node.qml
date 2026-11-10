@@ -159,7 +159,7 @@ Item {
             ]
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 90
+                    duration: 90 * interfaceSettings.durationScale
                 }
             }
 
@@ -234,12 +234,12 @@ Item {
             scale: portDot.active && !portDot.multiInput ? 1.5 : 1
             Behavior on color {
                 ColorAnimation {
-                    duration: 90
+                    duration: 90 * interfaceSettings.durationScale
                 }
             }
             Behavior on scale {
                 NumberAnimation {
-                    duration: 90
+                    duration: 90 * interfaceSettings.durationScale
                 }
             }
         }
