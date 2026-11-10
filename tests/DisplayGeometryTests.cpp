@@ -132,7 +132,7 @@ TEST_CASE("Display geometry places each camera by its transform")
     REQUIRE(geometry.cameraTransforms[0][3] == glm::vec4(2.f, 0.f, 0.f, 1.f));
 }
 
-TEST_CASE("Display geometry places each point light by its transform with its color and intensity")
+TEST_CASE("Display geometry places each point light by its transform with its color and radiance")
 {
     auto light = std::make_shared<geo::PointLight>("/light");
     Matrix4 transform = Matrix4::Identity();
@@ -148,7 +148,21 @@ TEST_CASE("Display geometry places each point light by its transform with its co
 
     REQUIRE(geometry.pointLightPositions == std::vector<glm::vec3>{{0.f, 3.f, 0.f}});
     REQUIRE(geometry.pointLightColors == std::vector<glm::vec3>{{1.f, 0.5f, 0.f}});
-    REQUIRE(geometry.pointLightIntensities == std::vector<float>{2.f});
+    REQUIRE(geometry.pointLightRadiances == std::vector<glm::vec3>{{2.f, 1.f, 0.f}});
+}
+
+TEST_CASE("Display geometry doubles a point light's radiance for each stop of exposure")
+{
+    auto light = std::make_shared<geo::PointLight>("/light");
+    light->setIntensity(3.f);
+    light->setExposure(2.f);
+    NodePacket packet;
+    packet.addPrimitive(light);
+
+    DisplayGeometry geometry;
+    buildDisplayGeometry(geometry, packet);
+
+    REQUIRE(geometry.pointLightRadiances == std::vector<glm::vec3>{{12.f, 12.f, 12.f}});
 }
 
 TEST_CASE("Display geometry refilled from a smaller packet holds only the new contents")

@@ -16,17 +16,20 @@ geo::PointLight::PointLight(std::string_view path)
     : Primitive(path),
       transformHandle_{addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true)},
       colorHandle_{addAttribute<Vector3>(attr::AttributeOwner::PRIMITIVE, "color", true)},
-      intensityHandle_{addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "intensity", true)}
+      intensityHandle_{addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "intensity", true)},
+      exposureHandle_{addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "exposure", true)}
 {
     setTransform(Matrix4::Identity());
     setColor(Vector3::Ones());
     setIntensity(1.f);
+    setExposure(0.f);
 }
 
 geo::PointLight::PointLight(const PointLight& other)
     : Primitive(other), transformHandle_{getIntrinsic<Matrix4>(*this, "transform")},
       colorHandle_{getIntrinsic<Vector3>(*this, "color")},
-      intensityHandle_{getIntrinsic<floatT>(*this, "intensity")}
+      intensityHandle_{getIntrinsic<floatT>(*this, "intensity")},
+      exposureHandle_{getIntrinsic<floatT>(*this, "exposure")}
 {
 }
 
@@ -37,6 +40,7 @@ geo::PointLight& geo::PointLight::operator=(const PointLight& rhs)
     transformHandle_ = getIntrinsic<Matrix4>(*this, "transform");
     colorHandle_ = getIntrinsic<Vector3>(*this, "color");
     intensityHandle_ = getIntrinsic<floatT>(*this, "intensity");
+    exposureHandle_ = getIntrinsic<floatT>(*this, "exposure");
     return *this;
 }
 
@@ -51,6 +55,10 @@ void geo::PointLight::setColor(const Vector3& color) { colorHandle_.setValue(0, 
 floatT geo::PointLight::getIntensity() const { return intensityHandle_.getValue(0); }
 
 void geo::PointLight::setIntensity(floatT intensity) { intensityHandle_.setValue(0, intensity); }
+
+floatT geo::PointLight::getExposure() const { return exposureHandle_.getValue(0); }
+
+void geo::PointLight::setExposure(floatT exposure) { exposureHandle_.setValue(0, exposure); }
 
 void geo::PointLight::applyTransform(const Matrix4& mat, TransformClass transformClass)
 {

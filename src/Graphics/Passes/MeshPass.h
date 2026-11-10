@@ -70,7 +70,6 @@ class MeshPass
     GpuArray edgeIndices_;
     GpuArray lineIndices_;
     std::vector<glm::vec3> pointLightPositions_;
-    /// @brief The color of each point light scaled by its intensity.
     std::vector<glm::vec3> pointLightRadiances_;
 };
 

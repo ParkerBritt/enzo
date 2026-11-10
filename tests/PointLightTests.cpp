@@ -5,7 +5,7 @@
 
 using namespace enzo;
 
-TEST_CASE("A new point light is white with unit intensity at the origin")
+TEST_CASE("A new point light is white with unit intensity and no exposure at the origin")
 {
     const geo::PointLight light;
 
@@ -13,6 +13,7 @@ TEST_CASE("A new point light is white with unit intensity at the origin")
     REQUIRE(light.getTransform() == Matrix4::Identity());
     REQUIRE(light.getColor() == Vector3::Ones());
     REQUIRE(light.getIntensity() == 1.f);
+    REQUIRE(light.getExposure() == 0.f);
 }
 
 TEST_CASE("Point light settings are stored as intrinsic primitive attributes")
@@ -23,6 +24,7 @@ TEST_CASE("Point light settings are stored as intrinsic primitive attributes")
     REQUIRE(light.getAttribByName(attr::AttributeOwner::PRIMITIVE, "transform", true) != nullptr);
     REQUIRE(light.getAttribByName(attr::AttributeOwner::PRIMITIVE, "color", true) != nullptr);
     REQUIRE(light.getAttribByName(attr::AttributeOwner::PRIMITIVE, "intensity", true) != nullptr);
+    REQUIRE(light.getAttribByName(attr::AttributeOwner::PRIMITIVE, "exposure", true) != nullptr);
 }
 
 TEST_CASE("A cloned point light keeps its settings and edits apart from the original")

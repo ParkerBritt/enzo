@@ -7,7 +7,7 @@ namespace enzo::geo {
  * @class enzo::geo::PointLight
  * @brief Light that shines equally in every direction from a single position.
  *
- * @note Stores its transform, color and intensity as intrinsic primitive
+ * @note Stores its transform, color, intensity and exposure as intrinsic primitive
  * attributes, and has no points, vertices or faces.
  */
 class PointLight : public Primitive
@@ -32,10 +32,13 @@ class PointLight : public Primitive
     void setColor(const Vector3& color);
     floatT getIntensity() const;
     void setIntensity(floatT intensity);
+    floatT getExposure() const;
+    void setExposure(floatT exposure);
 
   private:
     attr::AttributeHandle<Matrix4> transformHandle_;
     attr::AttributeHandle<Vector3> colorHandle_;
     attr::AttributeHandle<floatT> intensityHandle_;
+    attr::AttributeHandle<floatT> exposureHandle_;
 };
 } // namespace enzo::geo

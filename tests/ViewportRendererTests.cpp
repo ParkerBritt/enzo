@@ -51,7 +51,7 @@ TEST_CASE("A viewport renderer draws meshes, points, cameras and lights")
     geometry->cameraTransforms = {glm::mat4(1.f)};
     geometry->pointLightPositions = {{0.f, 2.f, 0.f}};
     geometry->pointLightColors = {{1.f, 1.f, 1.f}};
-    geometry->pointLightIntensities = {1.f};
+    geometry->pointLightRadiances = {{1.f, 1.f, 1.f}};
 
     FrameState frame;
     frame.pixelSize = {64, 32};

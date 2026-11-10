@@ -306,11 +306,7 @@ void MeshPass::upload(Diligent::IRenderDevice* device, const DisplayGeometry& ge
     lineIndices_ = createGpuArray(device, "Mesh open faces", Diligent::BIND_INDEX_BUFFER, topology.lineIndices);
 
     pointLightPositions_ = geometry.pointLightPositions;
-    pointLightRadiances_.clear();
-    for (std::size_t lightIndex = 0; lightIndex < geometry.pointLightColors.size(); ++lightIndex)
-        pointLightRadiances_.push_back(
-            geometry.pointLightColors[lightIndex] * geometry.pointLightIntensities[lightIndex]
-        );
+    pointLightRadiances_ = geometry.pointLightRadiances;
 }
 
 void MeshPass::draw(Diligent::IDeviceContext* context, bool wireframeVisible)

@@ -29,6 +29,7 @@ void Light::cook()
     light->setTransform(transform);
     light->setColor(evalParmVector3("color"));
     light->setIntensity(evalParmFloat("intensity"));
+    light->setExposure(evalParmFloat("exposure"));
 
     NodePacket packet;
     packet.addPrimitive(std::move(light));
