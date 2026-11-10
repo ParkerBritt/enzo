@@ -10,6 +10,9 @@ Item {
     property real borderWidth: 1
     property color borderColor: Theme.var.border
 
+    // The gap between the panel edge and its content, in whole pixels so content stays sharp.
+    readonly property int contentInset: Math.ceil(borderWidth)
+
     // Place content inside container
     default property alias content: contentContainer.data
 
@@ -22,7 +25,7 @@ Item {
     Item {
         id: contentContainer
         anchors.fill: parent
-        anchors.margins: root.borderWidth
+        anchors.margins: root.contentInset
     }
 
     // Overlays content with rounded outline.

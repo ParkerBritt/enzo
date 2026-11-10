@@ -4,7 +4,7 @@ import Enzo
 import "../Components"
 
 // The settings window, one page per section listed down the left.
-Window {
+ScaledWindow {
     id: root
 
     property int currentPage: 0
@@ -34,10 +34,10 @@ Window {
 
     readonly property bool pageHasPendingChanges: root.page.hasPendingChanges()
 
-    width: 1040
-    height: 720
-    minimumWidth: 720
-    minimumHeight: 460
+    width: Math.round(1040 * root.uiScale)
+    height: Math.round(720 * root.uiScale)
+    minimumWidth: Math.round(720 * root.uiScale)
+    minimumHeight: Math.round(460 * root.uiScale)
     title: "Enzo Settings"
     color: Theme.var.background
 

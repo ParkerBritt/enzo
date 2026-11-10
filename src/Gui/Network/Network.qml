@@ -8,8 +8,6 @@ Rectangle {
     id: root
 
     color: Theme.var.surface
-    radius: Theme.var.panelRadius
-    border.color: Theme.var.border
     focus: true
     clip: true
 

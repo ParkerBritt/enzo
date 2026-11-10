@@ -127,7 +127,10 @@ QSGNode* ViewportItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     auto* node = static_cast<ViewportNode*>(oldNode);
     if (!node) node = new ViewportNode(window());
 
-    const qreal pixelRatio = window()->effectiveDevicePixelRatio();
+    // Includes any scale on the item's ancestors so the image matches the screen pixels it covers.
+    const QSizeF sceneSize = mapRectToScene(boundingRect()).size();
+    const qreal sceneScale = width() > 0 ? sceneSize.width() / width() : 1.0;
+    const qreal pixelRatio = window()->effectiveDevicePixelRatio() * sceneScale;
     const QSizeF pixelSize = size() * pixelRatio;
     gfx::FrameState frame;
     frame.pixelSize = glm::uvec2(pixelSize.width(), pixelSize.height());
