@@ -86,11 +86,13 @@ class Primitive
         enzo::geo::Primitive& primitive_;
     };
     Primitive(std::string_view path = "/prim");
-    Primitive(const Primitive& other);
-    Primitive& operator=(const Primitive& rhs);
+    /// @brief Copies the primitive, sharing every attribute until one side writes to it.
+    Primitive(const Primitive& other) = default;
+    Primitive& operator=(const Primitive& rhs) = default;
     virtual ~Primitive() = default;
 
     virtual PrimType getType() const = 0;
+    /// @brief Returns a copy that shares every attribute until one side writes to it.
     virtual std::shared_ptr<Primitive> clone() const = 0;
     virtual TransformClass transformType() const = 0;
     virtual void applyTransform(const Matrix4& mat, TransformClass transformClass) = 0;
@@ -130,7 +132,7 @@ class Primitive
      * @note An ordinary attribute of another type under the same name is replaced,
      *       dropping its values.
      */
-    std::shared_ptr<attr::Attribute> addAttribute(
+    std::shared_ptr<const attr::Attribute> addAttribute(
         attr::AttributeOwner owner,
         std::string name,
         attr::AttributeType type,
@@ -147,7 +149,7 @@ class Primitive
      * @note An ordinary attribute of another type under the same name is replaced,
      *       dropping its values.
      */
-    std::shared_ptr<attr::Attribute> tryAddAttribute(
+    std::shared_ptr<const attr::Attribute> tryAddAttribute(
         attr::AttributeOwner owner,
         std::string name,
         attr::AttributeType type,
@@ -172,9 +174,9 @@ class Primitive
         bool isInternal = false
     )
     {
-        return attr::AttributeHandle<T>(addAttribute(
-            owner, std::move(name), attr::getAttributeType<T>(), intrinsic, isInternal
-        ));
+        const attr::AttributeType type = attr::getAttributeType<T>();
+        addAttribute(owner, name, type, intrinsic, isInternal);
+        return *getWriteHandle<T>(owner, name, true);
     }
 
     /**
@@ -194,25 +196,35 @@ class Primitive
         bool isInternal = false
     )
     {
-        const std::shared_ptr<attr::Attribute> attribute = tryAddAttribute(
-            owner,
-            std::move(name),
-            attr::getAttributeType<T>(),
-            intrinsic,
-            isInternal
-        );
-        if (!attribute) return std::nullopt;
-        return attr::AttributeHandle<T>(attribute);
+        const attr::AttributeType type = attr::getAttributeType<T>();
+        if (!tryAddAttribute(owner, name, type, intrinsic, isInternal)) return std::nullopt;
+        return getWriteHandle<T>(owner, name, true);
     }
 
-    std::shared_ptr<attr::Attribute>
-    getAttribByName(attr::AttributeOwner owner, std::string_view name, bool includeIntrinsics = false);
     /**
-     * @brief Const counterpart of @ref getAttribByName.
+     * @brief Returns a handle that writes to the attribute of this name.
      *
-     * Returns a read only shared pointer so the caller cannot mutate the
-     * attribute through a const Primitive.
+     * @return The handle, or nothing when the primitive holds no attribute of this name.
+     * @note Copies the attribute first when another primitive shares it.
+     * @note A handle writes to the attribute as it was when the handle was taken. Take the
+     *       handle again after copying the primitive, and avoid two handles on one attribute.
+     * @note Take write handles before splitting work across threads, since taking one can
+     *       replace the attribute the other threads hold.
      */
+    template <typename T>
+    std::optional<attr::AttributeHandle<T>> getWriteHandle(
+        attr::AttributeOwner owner,
+        std::string_view name,
+        bool includeIntrinsics = false
+    )
+    {
+        std::optional<size_t> index = getAttributeIndex(owner, name, includeIntrinsics);
+        if (!index) return std::nullopt;
+        attr::attribVector& attributes = getAttributeStore(owner);
+        return attr::AttributeHandle<T>(unshareAttribute(attributes, *index));
+    }
+
+    /// @brief Returns the attribute of this name, or nullptr when the primitive holds none.
     std::shared_ptr<const attr::Attribute> getAttribByName(
         attr::AttributeOwner owner,
         std::string_view name,
@@ -228,7 +240,7 @@ class Primitive
      */
     std::vector<std::shared_ptr<const attr::Attribute>>
     getAttributes(attr::AttributeOwner owner, bool includeIntrinsics = false) const;
-    bool attributeExists(attr::AttributeOwner owner, std::string_view name);
+    bool attributeExists(attr::AttributeOwner owner, std::string_view name) const;
 
     /**
      * @brief Returns the group of this name on the given owner, adding one when the
@@ -250,8 +262,16 @@ class Primitive
      * @brief Looks up a group by name.
      * @return The matching group, or nullptr if no such group exists.
      */
-    std::shared_ptr<attr::Attribute>
+    std::shared_ptr<const attr::Attribute>
     getGroupByName(attr::AttributeOwner owner, const std::string& name) const;
+    /**
+     * @brief Returns a handle that writes to the group of this name.
+     *
+     * @return The handle, or nothing when the owner holds no group of this name.
+     * @note Follows the same rules as @ref getWriteHandle.
+     */
+    std::optional<attr::AttributeHandleBool>
+    getGroupWriteHandle(attr::AttributeOwner owner, std::string_view name);
     /**
      * @brief Returns how many groups live on the given owner.
      */
@@ -301,7 +321,45 @@ class Primitive
     virtual const attr::attribVector& getAttributeStore(const attr::AttributeOwner& owner) const;
     virtual attr::attribVector& getGroupStore(const attr::AttributeOwner& owner);
     virtual const attr::attribVector& getGroupStore(const attr::AttributeOwner& owner) const;
-    attr::attribVector deepCopyAttributes(attr::attribVector source);
+    /// @brief Returns the value of the intrinsic primitive attribute of this name.
+    template <typename T> T getPrimitiveIntrinsic(std::string_view name) const
+    {
+        return getValues<T>(*getAttribByName(attr::AttributeOwner::PRIMITIVE, name, true))[0];
+    }
+
+    /// @brief Sets the value of the intrinsic primitive attribute of this name.
+    template <typename T> void setPrimitiveIntrinsic(std::string_view name, const T& value)
+    {
+        const attr::AttributeOwner owner = attr::AttributeOwner::PRIMITIVE;
+        attr::attribVector& attributes = getAttributeStore(owner);
+        getWritableValues<T>(attributes, *getAttributeIndex(owner, name, true))[0] = value;
+    }
+
+    /// @brief Copies the attribute at this index when another primitive shares it, then returns it.
+    static attr::Attribute& unshareAttribute(attr::attribVector& attributes, size_t index);
+
+    /// @brief Returns every attribute and group of the owner, each ready to write to.
+    std::vector<attr::Attribute*> getWritableAttributesAndGroups(attr::AttributeOwner owner);
+
+    /// @brief Returns the stored values of the attribute.
+    template <typename T>
+    static const attr::StoreContainer<T>& getValues(const attr::Attribute& attribute)
+    {
+        return *std::get<std::shared_ptr<attr::StoreContainer<T>>>(attribute.store_);
+    }
+
+    /// @brief Returns the values of the attribute at this index, unsharing it first.
+    template <typename T>
+    static attr::StoreContainer<T>& getWritableValues(attr::attribVector& attributes, size_t index)
+    {
+        attr::Attribute& attribute = unshareAttribute(attributes, index);
+        return *std::get<std::shared_ptr<attr::StoreContainer<T>>>(attribute.store_);
+    }
+
+    /// @brief Returns the index of the attribute of this name in the owner's attributes.
+    std::optional<size_t>
+    getAttributeIndex(attr::AttributeOwner owner, std::string_view name, bool includeIntrinsics)
+        const;
 
     std::string path_ = "/prim";
     attr::attribVector pointAttributes_;

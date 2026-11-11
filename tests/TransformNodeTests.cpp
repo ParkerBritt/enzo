@@ -56,7 +56,7 @@ Vector3 getPoint(nt::Node& node, Offset pointOffset)
     const auto mesh = std::dynamic_pointer_cast<const geo::Mesh>(node.getOutputPacket(0)->getPrimitive(0));
     REQUIRE(mesh != nullptr);
     REQUIRE(mesh->getNumPoints() > pointOffset);
-    return mesh->getPointPos(pointOffset);
+    return mesh->getPointPosition(pointOffset);
 }
 
 // Returns the first point of a cooked node's output.

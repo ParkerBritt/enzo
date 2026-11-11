@@ -79,8 +79,8 @@ TEST_CASE_METHOD(NMReset, "Importing an obj file builds its points and faces")
     REQUIRE(mesh != nullptr);
     REQUIRE(mesh->getNumPoints() == 4);
     REQUIRE(mesh->getNumFaces() == 1);
-    REQUIRE(mesh->getPointPos(0) == Vector3(-1.f, 0.f, -1.f));
-    REQUIRE(mesh->getPointPos(2) == Vector3(1.f, 0.f, 1.f));
+    REQUIRE(mesh->getPointPosition(0) == Vector3(-1.f, 0.f, -1.f));
+    REQUIRE(mesh->getPointPosition(2) == Vector3(1.f, 0.f, 1.f));
 }
 
 TEST_CASE_METHOD(NMReset, "The size parameter scales the imported points")
@@ -89,7 +89,7 @@ TEST_CASE_METHOD(NMReset, "The size parameter scales the imported points")
 
     const std::shared_ptr<const geo::Mesh> mesh = importMesh(file.getPath(), 2.f);
 
-    REQUIRE(mesh->getPointPos(2) == Vector3(2.f, 0.f, 2.f));
+    REQUIRE(mesh->getPointPosition(2) == Vector3(2.f, 0.f, 2.f));
 }
 
 TEST_CASE_METHOD(NMReset, "An open line record makes an unclosed face")

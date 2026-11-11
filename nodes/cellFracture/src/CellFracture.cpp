@@ -25,7 +25,7 @@ constexpr Offset kNoPoint = std::numeric_limits<Offset>::max();
 float getFarthestPointDistance(const geo::Mesh& mesh, const Vector3& position)
 {
     float farthestSquaredDistance = 0;
-    for (const Vector3& pointPosition : mesh.pointPosSpan())
+    for (const Vector3& pointPosition : mesh.getPointPositions())
     {
         const float squaredDistance = (pointPosition - position).squaredNorm();
         farthestSquaredDistance = std::max(farthestSquaredDistance, squaredDistance);
@@ -126,7 +126,7 @@ void appendPiece(
             if (usedIndexByPiecePoint[pointOffset] != kNoPoint) continue;
             usedIndexByPiecePoint[pointOffset] = usedPiecePoints.size();
             usedPiecePoints.push_back(pointOffset);
-            usedPositions.push_back(piece.getPointPos(pointOffset));
+            usedPositions.push_back(piece.getPointPosition(pointOffset));
         }
     }
     if (pieceFaces.empty()) return;
@@ -139,7 +139,7 @@ void appendPiece(
     {
         for (const intT pointOffset : piece.getFacePoints(faceOffset))
             cornerPoints.push_back(fracturedPoints[usedIndexByPiecePoint[pointOffset]]);
-        cornerCounts.push_back(piece.getFaceVertCount(faceOffset));
+        cornerCounts.push_back(piece.getFaceVertexCount(faceOffset));
     }
     const std::vector<Offset> fracturedFaces = fractured.addFaces(cornerPoints, cornerCounts);
 
@@ -167,7 +167,7 @@ void appendPiece(
         const Offset pieceStartVertex = piece.getFaceStartVertices()[pieceFace];
         const Offset fracturedStartVertex =
             fractured.getFaceStartVertices()[fracturedFaces[faceIndex]];
-        for (Offset cornerIndex = 0; cornerIndex < piece.getFaceVertCount(pieceFace); ++cornerIndex)
+        for (Offset cornerIndex = 0; cornerIndex < piece.getFaceVertexCount(pieceFace); ++cornerIndex)
         {
             pieceVertices.push_back(pieceStartVertex + cornerIndex);
             fracturedVertices.push_back(fracturedStartVertex + cornerIndex);

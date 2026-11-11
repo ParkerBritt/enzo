@@ -9,8 +9,8 @@ TEST_CASE("attrHandleInt")
 {
     using namespace enzo;
 
-    auto myAttrib = std::make_shared<attr::Attribute>("test", attr::AttrType::intT);
-    attr::AttributeHandleInt myHandle(myAttrib);
+    geo::Mesh mesh;
+    attr::AttributeHandleInt myHandle = mesh.addAttribute<intT>(attr::AttrOwner::POINT, "test");
     myHandle.addValue(5);
     myHandle.addValue(6);
     REQUIRE(myHandle.getValue(0) == 5);
@@ -29,14 +29,14 @@ TEST_CASE("geometry")
     REQUIRE(myHandle.getValue(1) == 6);
 
     // check getter
-    std::shared_ptr<attr::Attribute> myAttribute =
+    std::shared_ptr<const attr::Attribute> myAttribute =
         geo.getAttribByName(attr::AttrOwner::POINT, "index");
-    attr::AttributeHandle<intT> myHandle2(myAttribute);
+    attr::AttributeHandleRO<intT> myHandle2(myAttribute);
     REQUIRE(myHandle2.getValue(0) == 5);
     REQUIRE(myHandle2.getValue(1) == 6);
 
     // check failed lookup
-    std::shared_ptr<attr::Attribute> myAttribute2 =
+    std::shared_ptr<const attr::Attribute> myAttribute2 =
         geo.getAttribByName(attr::AttrOwner::POINT, "nonExistant");
     REQUIRE(myAttribute2 == nullptr);
 }
@@ -45,9 +45,8 @@ TEST_CASE("attrHandleFloat")
 {
     using namespace enzo;
 
-    std::shared_ptr<attr::Attribute> myAttrib =
-        std::make_shared<attr::Attribute>("test", attr::AttrType::floatT);
-    attr::AttributeHandleFloat myHandle(myAttrib);
+    geo::Mesh mesh;
+    attr::AttributeHandleFloat myHandle = mesh.addAttribute<floatT>(attr::AttrOwner::POINT, "test");
     myHandle.addValue(5.3f);
     myHandle.addValue(6.9f);
     REQUIRE(myHandle.getValue(0) == 5.3f);
@@ -58,9 +57,9 @@ TEST_CASE("attrHandleVector3")
 {
     using namespace enzo;
 
-    std::shared_ptr<attr::Attribute> myAttrib =
-        std::make_shared<attr::Attribute>("test", attr::AttrType::vectorT);
-    attr::AttributeHandleVector3 myHandle(myAttrib);
+    geo::Mesh mesh;
+    attr::AttributeHandleVector3 myHandle =
+        mesh.addAttribute<Vector3>(attr::AttrOwner::POINT, "test");
     myHandle.addValue(Vector3(5, 10, 15));
     myHandle.addValue(Vector3(1, 2, 3));
     REQUIRE(myHandle.getValue(0) == Vector3(5, 10, 15));

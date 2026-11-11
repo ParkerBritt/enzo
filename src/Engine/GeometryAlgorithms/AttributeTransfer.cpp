@@ -11,11 +11,13 @@ namespace enzo::utils {
 
 namespace {
 
-// A source attribute or group with the destination one its values are written into.
+// A source attribute or group whose values are written into the destination one of the same name.
 struct AttributePair
 {
-    std::shared_ptr<const attr::Attribute> source;
-    std::shared_ptr<attr::Attribute> dest;
+    const attr::Attribute* source;
+    geo::Primitive& dest;
+    attr::AttributeOwner owner;
+    bool isGroup;
 };
 
 // Returns each attribute and group of the source paired with the destination one of the same name
@@ -29,14 +31,25 @@ getAttributePairs(const geo::Primitive& source, geo::Primitive& dest, attr::Attr
         auto destAttribute = dest.getAttribByName(owner, sourceAttribute->getName());
         if (!destAttribute) continue;
         if (destAttribute->getType() != sourceAttribute->getType()) continue;
-        pairs.push_back({sourceAttribute, destAttribute});
+        pairs.push_back({sourceAttribute.get(), dest, owner, false});
     }
     for (const auto& sourceGroup : source.getGroups(owner))
     {
         auto destGroup = dest.getGroupByName(owner, sourceGroup->getName());
-        if (destGroup) pairs.push_back({sourceGroup, destGroup});
+        if (destGroup) pairs.push_back({sourceGroup.get(), dest, owner, true});
     }
     return pairs;
+}
+
+// Returns a handle that writes to the destination attribute or group of the pair.
+template <typename T> attr::AttributeHandle<T> getDestHandle(const AttributePair& pair)
+{
+    const std::string& name = pair.source->getName();
+    if constexpr (std::is_same_v<T, boolT>)
+    {
+        if (pair.isGroup) return *pair.dest.getGroupWriteHandle(pair.owner, name);
+    }
+    return *pair.dest.getWriteHandle<T>(pair.owner, name);
 }
 
 // Copies each source element's value into its destination element.
@@ -47,8 +60,8 @@ void copyAttributeValues(
     std::span<const Offset> destOffsets
 )
 {
-    attr::AttributeHandleRO<T> sourceHandle(pair.source);
-    attr::AttributeHandle<T> destHandle(pair.dest);
+    attr::AttributeHandleRO<T> sourceHandle(*pair.source);
+    attr::AttributeHandle<T> destHandle = getDestHandle<T>(pair);
     for (size_t elementIndex = 0; elementIndex < sourceOffsets.size(); ++elementIndex)
     {
         const T value = sourceHandle.getValue(sourceOffsets[elementIndex]);
@@ -83,8 +96,8 @@ void interpolateAttributeValues(
     std::span<const ElementBlend> elementBlends
 )
 {
-    attr::AttributeHandleRO<T> sourceHandle(pair.source);
-    attr::AttributeHandle<T> destHandle(pair.dest);
+    attr::AttributeHandleRO<T> sourceHandle(*pair.source);
+    attr::AttributeHandle<T> destHandle = getDestHandle<T>(pair);
     for (const ElementBlend& elementBlend : elementBlends)
     {
         const T value0 = sourceHandle.getValue(elementBlend.sourceOffset0);
@@ -103,8 +116,8 @@ void copyAttributeValuesRepeatedly(
     Offset copyCount
 )
 {
-    const attr::AttributeHandleRO<T> sourceHandle(pair.source);
-    attr::AttributeHandle<T> destHandle(pair.dest);
+    const attr::AttributeHandleRO<T> sourceHandle(*pair.source);
+    attr::AttributeHandle<T> destHandle = getDestHandle<T>(pair);
 
     const auto writeCopy = [&](Offset copyIndex) {
         const Offset copyStart = destStart + copyIndex * valueCount;

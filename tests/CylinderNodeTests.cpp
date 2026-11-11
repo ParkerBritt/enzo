@@ -133,11 +133,11 @@ TEST_CASE_METHOD(NMReset, "Uniform radius multiplies both ends")
     const auto mesh = getMesh(nm.getNode(cylinder));
 
     // The first ring is the bottom one, so its radius is 1 times 3.
-    REQUIRE(mesh->getPointPos(0).z() == Catch::Approx(3.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).z() == Catch::Approx(3.f).margin(1e-5));
 
     // The rings are built bottom first, so the top one starts at the halfway point.
     const Offset topRingStart = mesh->getNumPoints() / 2;
-    REQUIRE(mesh->getPointPos(topRingStart).z() == Catch::Approx(6.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(topRingStart).z() == Catch::Approx(6.f).margin(1e-5));
 }
 
 TEST_CASE_METHOD(NMReset, "The axis parameter stands the cylinder up")
@@ -152,6 +152,6 @@ TEST_CASE_METHOD(NMReset, "The axis parameter stands the cylinder up")
     const auto mesh = getMesh(nm.getNode(cylinder));
 
     // The first ring sits at the bottom of the cylinder, which along X is at -2.
-    REQUIRE(mesh->getPointPos(0).x() == Catch::Approx(-2.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(0.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).x() == Catch::Approx(-2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(0.f).margin(1e-5));
 }

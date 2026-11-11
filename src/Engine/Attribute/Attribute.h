@@ -8,6 +8,9 @@
 #include <vector>
 
 namespace enzo {
+namespace geo {
+class Primitive;
+}
 namespace attr {
 template <typename T> using StoreContainer = std::vector<T>;
 
@@ -98,6 +101,7 @@ class Attribute
 
     template <typename T> friend class AttributeHandle;
     template <typename T> friend class AttributeHandleRO;
+    friend class geo::Primitive;
 
   private:
     bool internal_ = false;

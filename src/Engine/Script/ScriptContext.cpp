@@ -8,7 +8,7 @@ namespace enzo::script {
 ScriptContext::ScriptContext(nt::NodeId currentNode, const NodePacket& input)
     : expr::ExpressionContext(currentNode)
 {
-    for (const std::shared_ptr<geo::Primitive>& primitive : input.getPrimitives())
+    for (const std::shared_ptr<const geo::Primitive>& primitive : input.getPrimitives())
     {
         if (primitive->getType() != geo::PrimType::MESH)
         {

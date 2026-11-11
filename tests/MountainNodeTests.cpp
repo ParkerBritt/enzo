@@ -67,7 +67,7 @@ TEST_CASE_METHOD(NMReset, "A mountain moves every point along its normal")
     for (Offset pointOffset = 0; pointOffset < inputMesh->getNumPoints(); ++pointOffset)
     {
         const Vector3 movement =
-            outputMesh->getPointPos(pointOffset) - inputMesh->getPointPos(pointOffset);
+            outputMesh->getPointPosition(pointOffset) - inputMesh->getPointPosition(pointOffset);
         REQUIRE(movement.cross(normals[pointOffset]).norm() == Catch::Approx(0.0f).margin(1e-4));
         if (!movement.isZero()) anyPointMoved = true;
     }

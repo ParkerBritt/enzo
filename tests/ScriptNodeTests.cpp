@@ -98,8 +98,8 @@ TEST_CASE_METHOD(NMReset, "A script edits the positions it reads")
 
     for (Offset pointOffset = 0; pointOffset < inputMesh->getNumPoints(); ++pointOffset)
     {
-        const Vector3 before = inputMesh->getPointPos(pointOffset);
-        const Vector3 after = outputMesh->getPointPos(pointOffset);
+        const Vector3 before = inputMesh->getPointPosition(pointOffset);
+        const Vector3 after = outputMesh->getPointPosition(pointOffset);
         REQUIRE(after.y() == Catch::Approx(before.y() + 1.0));
         REQUIRE(after.x() == Catch::Approx(before.x()));
     }
@@ -232,6 +232,6 @@ TEST_CASE_METHOD(NMReset, "A script reads its input while writing the same attri
     for (Offset pointOffset = 0; pointOffset < pointCount; ++pointOffset)
     {
         const Offset nextOffset = (pointOffset + 1) % pointCount;
-        REQUIRE(output->getPointPos(pointOffset) == input->getPointPos(nextOffset));
+        REQUIRE(output->getPointPosition(pointOffset) == input->getPointPosition(nextOffset));
     }
 }

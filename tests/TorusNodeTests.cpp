@@ -64,9 +64,9 @@ TEST_CASE_METHOD(NMReset, "The first point sits on the outer edge of the torus")
 
     const auto mesh = getMesh(nm.getNode(torus));
 
-    REQUIRE(mesh->getPointPos(0).x() == Catch::Approx(0.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(0.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).z() == Catch::Approx(2.5f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).x() == Catch::Approx(0.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(0.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).z() == Catch::Approx(2.5f).margin(1e-5));
 }
 
 TEST_CASE_METHOD(NMReset, "The axis parameter turns the hole of the torus")
@@ -80,6 +80,6 @@ TEST_CASE_METHOD(NMReset, "The axis parameter turns the hole of the torus")
     const auto mesh = getMesh(nm.getNode(torus));
 
     // Expects the first point on -Y, since putting the hole on Z turns +Z onto -Y.
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(-1.5f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).z() == Catch::Approx(0.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(-1.5f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).z() == Catch::Approx(0.f).margin(1e-5));
 }

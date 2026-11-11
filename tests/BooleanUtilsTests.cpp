@@ -20,7 +20,7 @@ size_t countFacesWithVertexCount(const geo::Mesh& mesh, unsigned int expected)
     for (Offset faceOffset = 0; faceOffset < total; ++faceOffset)
     {
         if (!mesh.isValidFace(faceOffset)) continue;
-        if (mesh.getFaceVertCount(faceOffset) == expected) ++hits;
+        if (mesh.getFaceVertexCount(faceOffset) == expected) ++hits;
     }
     return hits;
 }
@@ -76,7 +76,7 @@ TEST_CASE("Face attribute carries from source mesh to result face")
     // Look up the tag attribute on the result.
     auto tagAttr = result->getAttribByName(attr::AttrOwner::FACE, "tag");
     REQUIRE(tagAttr != nullptr);
-    attr::AttributeHandleInt tagHandle(std::const_pointer_cast<attr::Attribute>(tagAttr));
+    attr::AttributeHandleRO<intT> tagHandle(tagAttr);
 
     // Tally how many result faces carry the A tag and how many carry the B tag.
     size_t fromA = 0;
@@ -113,7 +113,7 @@ TEST_CASE("Point attribute survives on un-cut points")
 
     auto srcAttr = result->getAttribByName(attr::AttrOwner::POINT, "src");
     REQUIRE(srcAttr != nullptr);
-    attr::AttributeHandleInt srcHandle(std::const_pointer_cast<attr::Attribute>(srcAttr));
+    attr::AttributeHandleRO<intT> srcHandle(srcAttr);
 
     // Tally how many points carry A's tag versus B's tag.
     size_t fromA = 0;
@@ -141,7 +141,7 @@ TEST_CASE("Cut point interpolates point attribute from edge endpoints")
     auto attrA = cubeA->addAttribute<intT>(attr::AttrOwner::POINT, "xCoord");
     for (Offset pointOffset = 0; pointOffset < cubeA->getNumPoints(); ++pointOffset)
     {
-        const Vector3 position = cubeA->getPointPos(pointOffset);
+        const Vector3 position = cubeA->getPointPosition(pointOffset);
         attrA.setValue(pointOffset, static_cast<intT>(std::lround(position.x() * 10)));
     }
     // Mark B points so they are easy to tell apart from interpolated values.
@@ -155,14 +155,14 @@ TEST_CASE("Cut point interpolates point attribute from edge endpoints")
 
     auto attr = result->getAttribByName(attr::AttrOwner::POINT, "xCoord");
     REQUIRE(attr != nullptr);
-    attr::AttributeHandleInt handle(std::const_pointer_cast<attr::Attribute>(attr));
+    attr::AttributeHandleRO<intT> handle(attr);
 
     // Find points sitting on the x=1 cut plane and check their attribute interpolates to 10.
     size_t cutPointsAtTen = 0;
     for (Offset pointOffset = 0; pointOffset < result->getNumPoints(); ++pointOffset)
     {
         if (!result->isValidPoint(pointOffset)) continue;
-        const Vector3 position = result->getPointPos(pointOffset);
+        const Vector3 position = result->getPointPosition(pointOffset);
         if (std::abs(position.x() - 1.0) > 1e-6) continue;
         REQUIRE(handle.getValue(pointOffset) == 10);
         ++cutPointsAtTen;

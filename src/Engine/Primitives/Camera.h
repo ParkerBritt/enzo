@@ -14,8 +14,6 @@ class Camera : public Primitive
 {
   public:
     Camera(std::string_view path = "/camera");
-    Camera(const Camera& other);
-    Camera& operator=(const Camera& rhs);
     ~Camera() override = default;
 
     PrimType getType() const override { return PrimType::CAMERA; }
@@ -25,8 +23,5 @@ class Camera : public Primitive
 
     Matrix4 getTransform() const;
     void setTransform(const Matrix4& xform);
-
-  private:
-    attr::AttributeHandle<Matrix4> transformHandle_;
 };
 } // namespace enzo::geo

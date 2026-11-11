@@ -74,7 +74,7 @@ TEST_CASE_METHOD(NMReset, "A count of one passes the geometry through unchanged"
     const auto duplicated = getMesh(nm.getNode(nodes.duplicate));
 
     REQUIRE(duplicated->getNumPoints() == grid->getNumPoints());
-    requirePointsMatch(duplicated->getPointPos(0), grid->getPointPos(0));
+    requirePointsMatch(duplicated->getPointPosition(0), grid->getPointPosition(0));
 }
 
 TEST_CASE_METHOD(NMReset, "Each copy moves by the translate times its copy number")
@@ -92,10 +92,10 @@ TEST_CASE_METHOD(NMReset, "Each copy moves by the translate times its copy numbe
     const Offset pointsPerCopy = grid->getNumPoints();
     REQUIRE(duplicated->getNumPoints() == pointsPerCopy * 3);
 
-    const Vector3 first = grid->getPointPos(0);
-    requirePointsMatch(duplicated->getPointPos(0), first);
-    requirePointsMatch(duplicated->getPointPos(pointsPerCopy), first + Vector3(10, 0, 0));
-    requirePointsMatch(duplicated->getPointPos(pointsPerCopy * 2), first + Vector3(20, 0, 0));
+    const Vector3 first = grid->getPointPosition(0);
+    requirePointsMatch(duplicated->getPointPosition(0), first);
+    requirePointsMatch(duplicated->getPointPosition(pointsPerCopy), first + Vector3(10, 0, 0));
+    requirePointsMatch(duplicated->getPointPosition(pointsPerCopy * 2), first + Vector3(20, 0, 0));
 }
 
 TEST_CASE_METHOD(NMReset, "Each copy scales on top of the copy before it")
@@ -111,9 +111,9 @@ TEST_CASE_METHOD(NMReset, "Each copy scales on top of the copy before it")
     const auto duplicated = getMesh(nm.getNode(nodes.duplicate));
 
     const Offset pointsPerCopy = grid->getNumPoints();
-    const Vector3 first = grid->getPointPos(0);
-    requirePointsMatch(duplicated->getPointPos(pointsPerCopy), first * 2.f);
-    requirePointsMatch(duplicated->getPointPos(pointsPerCopy * 2), first * 4.f);
+    const Vector3 first = grid->getPointPosition(0);
+    requirePointsMatch(duplicated->getPointPosition(pointsPerCopy), first * 2.f);
+    requirePointsMatch(duplicated->getPointPosition(pointsPerCopy * 2), first * 4.f);
 }
 
 TEST_CASE_METHOD(NMReset, "A primitive outside the selection is not duplicated")
@@ -148,9 +148,9 @@ TEST_CASE_METHOD(NMReset, "The transform order decides whether a copy swings aro
 
     // Moves the copy down Z first, then the quarter turn about Y swings that
     // whole offset around the origin.
-    const Vector3 first = grid->getPointPos(0);
+    const Vector3 first = grid->getPointPosition(0);
     const Vector3 moved = first + Vector3(0, 0, 5);
     const Vector3 expected(moved.z(), moved.y(), -moved.x());
 
-    requirePointsMatch(duplicated->getPointPos(grid->getNumPoints()), expected);
+    requirePointsMatch(duplicated->getPointPosition(grid->getNumPoints()), expected);
 }

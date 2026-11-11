@@ -39,7 +39,7 @@ std::vector<Offset> getShadeableFaces(const geo::Mesh& mesh)
 {
     std::vector<Offset> shadeable;
     for (const Offset faceOffset : mesh.getFaces())
-        if (mesh.isClosed(faceOffset) && mesh.getFaceVertCount(faceOffset) >= 3)
+        if (mesh.isClosed(faceOffset) && mesh.getFaceVertexCount(faceOffset) >= 3)
             shadeable.push_back(faceOffset);
     return shadeable;
 }
@@ -67,7 +67,7 @@ double getCornerAngle(
 // Groups the corners of the given faces under the point each one sits on.
 CornersByPoint gatherCornersByPoint(const geo::Mesh& mesh, std::span<const Offset> faces)
 {
-    const std::span<const Vector3> positions = mesh.pointPosSpan();
+    const std::span<const Vector3> positions = mesh.getPointPositions();
     const Offset numPoints = mesh.getNumPoints();
 
     // Count the corners on every point, keeping a point's count one place to
@@ -154,7 +154,7 @@ std::vector<Vector3> computeVertexNormals(const geo::Mesh& mesh, double cuspAngl
     const geo::FaceNormalHandle faceNormals = mesh.getFaceNormal(true);
     const std::vector<Offset> shadeableFaces = getShadeableFaces(mesh);
     const CornersByPoint cornersByPoint = gatherCornersByPoint(mesh, shadeableFaces);
-    const std::span<const intT> vertexPoints = mesh.vertexPointSpan();
+    const std::span<const intT> vertexPoints = mesh.getVertexPoints();
     const std::span<const Offset> faceStarts = mesh.getFaceStartVertices();
 
     // Two faces count as smooth while the angle between them stays under the
@@ -170,7 +170,7 @@ std::vector<Vector3> computeVertexNormals(const geo::Mesh& mesh, double cuspAngl
                 const Offset faceOffset = shadeableFaces[faceIndex];
                 const Vector3 ownNormal = faceNormals[faceOffset];
                 const Offset faceStartVertex = faceStarts[faceOffset];
-                const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
+                const unsigned int cornerCount = mesh.getFaceVertexCount(faceOffset);
 
                 for (unsigned int cornerIndex = 0; cornerIndex < cornerCount; ++cornerIndex)
                 {

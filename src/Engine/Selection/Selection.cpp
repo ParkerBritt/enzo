@@ -36,7 +36,7 @@ Selection::Selection(std::string expression)
     // }
 }
 
-std::vector<std::shared_ptr<geo::Primitive>> Selection::getPrims(const NodePacket& packet)
+std::vector<std::shared_ptr<geo::Primitive>> Selection::getPrims(NodePacket& packet)
 {
     std::vector<std::shared_ptr<geo::Primitive>> prims;
 

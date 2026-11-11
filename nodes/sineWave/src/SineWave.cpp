@@ -33,7 +33,7 @@ sampleWave(const enzo::geo::Mesh& mesh, const WaveSettings& settings, const enzo
 {
     using namespace enzo;
 
-    const std::span<const Vector3> positions = mesh.pointPosSpan();
+    const std::span<const Vector3> positions = mesh.getPointPositions();
     std::vector<floatT> wave(positions.size());
 
     tbb::parallel_for(
@@ -123,9 +123,7 @@ void SineWave::cook()
         // Samples the wave before writing, since the attribute being written may be Position.
         const std::vector<floatT> wave = sampleWave(*mesh, settings, remap);
 
-        const std::shared_ptr<attr::Attribute> attribute =
-            mesh->tryAddAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType);
-        if (!attribute)
+        if (!mesh->tryAddAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType))
         {
             throwError("The attribute " + attributeName + " can't be written as this type.");
             return;
@@ -133,7 +131,11 @@ void SineWave::cook()
 
         if (isFloat)
         {
-            utils::applyOperation(*operation, attr::AttributeHandle<floatT>(attribute), wave);
+            utils::applyOperation(
+                *operation,
+                *mesh->getWriteHandle<floatT>(attr::AttributeOwner::POINT, attributeName, true),
+                wave
+            );
             continue;
         }
 
@@ -143,7 +145,7 @@ void SineWave::cook()
 
         if (alongVector)
         {
-            const std::shared_ptr<attr::Attribute> directionAttribute =
+            const std::shared_ptr<const attr::Attribute> directionAttribute =
                 mesh->getAttribByName(attr::AttributeOwner::POINT, directionName, true);
             const bool alongNormals = directionName == attr::names::normal;
             if (!directionAttribute && !alongNormals)
@@ -177,7 +179,11 @@ void SineWave::cook()
                 waveVectors[pointOffset] = Vector3::Constant(wave[pointOffset]);
         }
 
-        utils::applyOperation(*operation, attr::AttributeHandle<Vector3>(attribute), waveVectors);
+        utils::applyOperation(
+            *operation,
+            *mesh->getWriteHandle<Vector3>(attr::AttributeOwner::POINT, attributeName, true),
+            waveVectors
+        );
     }
 
     setOutputPacket(0, packet);

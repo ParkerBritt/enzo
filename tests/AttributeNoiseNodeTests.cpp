@@ -63,7 +63,7 @@ std::vector<Vector3> getPointMovements(const geo::Mesh& inputMesh, const geo::Me
 
     std::vector<Vector3> movements;
     for (Offset pointOffset = 0; pointOffset < inputMesh.getNumPoints(); ++pointOffset)
-        movements.push_back(outputMesh.getPointPos(pointOffset) - inputMesh.getPointPos(pointOffset));
+        movements.push_back(outputMesh.getPointPosition(pointOffset) - inputMesh.getPointPosition(pointOffset));
     return movements;
 }
 
@@ -283,7 +283,7 @@ TEST_CASE_METHOD(NMReset, "Noise along a vector moves each point along that vect
     bool anyPointMoved = false;
     for (Offset pointOffset = 0; pointOffset < movements.size(); ++pointOffset)
     {
-        const Vector3 direction = inputMesh->getPointPos(pointOffset);
+        const Vector3 direction = inputMesh->getPointPosition(pointOffset);
         const Vector3& movement = movements[pointOffset];
 
         // Checks the movement is parallel to the position it moved along.

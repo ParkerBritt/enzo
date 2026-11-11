@@ -202,7 +202,7 @@ TEST_CASE("Create face group")
     REQUIRE(mesh.getAttribByName(attr::AttrOwner::FACE, "myGroup") == nullptr);
 
     // Every existing face starts outside the group
-    attr::AttributeHandleBool handle(group);
+    attr::AttributeHandleRO<boolT> handle(group);
     REQUIRE(handle.getSize() == 2);
     REQUIRE(handle.getValue(0) == false);
     REQUIRE(handle.getValue(1) == false);
@@ -224,7 +224,7 @@ TEST_CASE("Add to face group")
     mesh.addToGroup(attr::AttrOwner::FACE, "g", {0, 2});
 
     // Faces 0 and 2 should be members, face 1 should not
-    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
+    attr::AttributeHandleRO<boolT> handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == false);
     REQUIRE(handle.getValue(2) == true);
@@ -239,13 +239,16 @@ TEST_CASE("Create primitive group")
 
     auto group = mesh.getGroupByName(attr::AttrOwner::PRIMITIVE, "selected");
     REQUIRE(group != nullptr);
-    attr::AttributeHandleBool handle(group);
+    attr::AttributeHandleRO<boolT> handle(group);
     REQUIRE(handle.getSize() == 1);
     REQUIRE(handle.getValue(0) == false);
 
     // Toggle this primitive into the group
     mesh.addToGroup(attr::AttrOwner::PRIMITIVE, "selected", {0});
-    REQUIRE(handle.getValue(0) == true);
+    const attr::AttributeHandleRO<boolT> updated(
+        mesh.getGroupByName(attr::AttrOwner::PRIMITIVE, "selected")
+    );
+    REQUIRE(updated.getValue(0) == true);
 }
 
 TEST_CASE("Group name can match attribute name")
@@ -291,7 +294,7 @@ TEST_CASE("Group survives defragment")
 
     // After defrag old face 0 stays at offset 0 and old face 2 shifts to offset 1.
     // Both should still report as members of the group.
-    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
+    attr::AttributeHandleRO<boolT> handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getSize() == 2);
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == true);
@@ -396,7 +399,7 @@ TEST_CASE("Add faces resizes group")
 
     // The group must have grown to cover the new face, and that face
     // should default to non-member.
-    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
+    attr::AttributeHandleRO<boolT> handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getSize() == 3);
     REQUIRE(handle.getValue(0) == true);
     REQUIRE(handle.getValue(1) == true);
@@ -605,8 +608,10 @@ TEST_CASE("Adding an attribute returns the intrinsic of the same name and type")
     geo::Mesh mesh;
     mesh.addPoint(Vector3(0, 0, 0));
 
-    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
-    const auto added = mesh.addAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::vectorT);
+    const auto positions =
+        mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
+    const auto added =
+        mesh.addAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::vectorT);
 
     REQUIRE(added == positions);
 }
@@ -636,10 +641,12 @@ TEST_CASE("Adding an attribute of another type gives nothing when an intrinsic h
     geo::Mesh mesh;
     mesh.addPoint(Vector3(0, 0, 0));
 
-    const auto added = mesh.tryAddAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::floatT);
+    const auto added =
+        mesh.tryAddAttribute(attr::AttrOwner::POINT, attr::names::position, attr::AttrType::floatT);
 
     REQUIRE(added == nullptr);
-    const auto positions = mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
+    const auto positions =
+        mesh.getAttribByName(attr::AttrOwner::POINT, attr::names::position, true);
     REQUIRE(positions->getType() == attr::AttrType::vectorT);
 }
 
@@ -660,7 +667,7 @@ TEST_CASE("Creating a group twice keeps a single group")
 
     // The second create finds the existing group, so face 1 stays a member
     REQUIRE(mesh.getNumGroups(attr::AttrOwner::FACE) == 1);
-    attr::AttributeHandleBool handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
+    attr::AttributeHandleRO<boolT> handle(mesh.getGroupByName(attr::AttrOwner::FACE, "g"));
     REQUIRE(handle.getValue(1) == true);
 }
 
@@ -695,7 +702,7 @@ TEST_CASE("Reverse faces flips the vertex order and carries vertex attributes")
     // Vertex attributes and groups move with their vertices
     REQUIRE(uvAttr.getValue(3) == Vector3(5, 0, 0));
     REQUIRE(uvAttr.getValue(5) == Vector3(3, 0, 0));
-    auto group = attr::AttributeHandleBool(mesh.getGroupByName(attr::AttrOwner::VERTEX, "first"));
+    auto group = attr::AttributeHandleRO<boolT>(mesh.getGroupByName(attr::AttrOwner::VERTEX, "first"));
     REQUIRE_FALSE(group.getValue(3));
     REQUIRE(group.getValue(5));
 }
@@ -734,7 +741,7 @@ TEST_CASE("Merge places attribute values on the merged elements")
 
     // Check the merged points carry the other mesh's values
     auto mergedWeights =
-        attr::AttributeHandle<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
+        attr::AttributeHandleRO<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
     REQUIRE(mergedWeights.getSize() == 6);
     REQUIRE(mergedWeights.getValue(2) == 1.0f);
     REQUIRE(mergedWeights.getValue(3) == 2.0f);
@@ -759,9 +766,9 @@ TEST_CASE("Duplicate to transforms keeps the original and adds moved copies")
     // Check the original is untouched and each copy follows it
     REQUIRE(mesh.getNumPoints() == 6);
     REQUIRE(mesh.getNumFaces() == 3);
-    REQUIRE(mesh.getPointPos(0) == Vector3(0, 0, 0));
-    REQUIRE(mesh.getPointPos(3) == Vector3(1, 0, 5));
-    REQUIRE(mesh.getPointPos(5) == Vector3(1, 0, 10));
+    REQUIRE(mesh.getPointPosition(0) == Vector3(0, 0, 0));
+    REQUIRE(mesh.getPointPosition(3) == Vector3(1, 0, 5));
+    REQUIRE(mesh.getPointPosition(5) == Vector3(1, 0, 10));
     REQUIRE(mesh.getFacePoints(2)[0] == 4);
     REQUIRE(mesh.getFacePoints(2)[1] == 5);
     REQUIRE_FALSE(mesh.isClosed(1));
@@ -769,7 +776,7 @@ TEST_CASE("Duplicate to transforms keeps the original and adds moved copies")
 
     // Check every copied point carries the original values
     auto copiedWeights =
-        attr::AttributeHandle<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
+        attr::AttributeHandleRO<floatT>(mesh.getAttribByName(attr::AttrOwner::POINT, "weight"));
     REQUIRE(copiedWeights.getSize() == 6);
     REQUIRE(copiedWeights.getValue(2) == 1.0f);
     REQUIRE(copiedWeights.getValue(3) == 2.0f);
@@ -797,4 +804,18 @@ TEST_CASE("Duplicate to transforms keeps deleted faces deleted in the copies")
     // Check the deleted face and its copy go when the mesh is cleaned up
     mesh.defragment();
     REQUIRE(mesh.getNumFaces() == 2);
+}
+
+TEST_CASE("Moving a point leaves a shared position untouched")
+{
+    geo::Mesh mesh;
+    mesh.addPoint(Vector3(0, 0, 0));
+    const geo::Mesh& meshView = mesh;
+    const std::shared_ptr<const attr::Attribute> upstreamPosition =
+        meshView.getAttribByName(attr::AttributeOwner::POINT, attr::names::position, true);
+
+    mesh.setPointPos(0, Vector3(1, 0, 0));
+
+    REQUIRE(attr::AttributeHandleRO<Vector3>(upstreamPosition).getValue(0) == Vector3(0, 0, 0));
+    REQUIRE(mesh.getPointPosition(0) == Vector3(1, 0, 0));
 }

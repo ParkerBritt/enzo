@@ -21,7 +21,7 @@ void transformPoints(
 
     for (const enzo::Offset pointOffset : pointOffsets)
     {
-        mesh->setPointPos(pointOffset, transform * mesh->getPointPos(pointOffset));
+        mesh->setPointPos(pointOffset, transform * mesh->getPointPosition(pointOffset));
     }
 }
 

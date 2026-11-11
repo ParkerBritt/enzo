@@ -95,7 +95,7 @@ manifold::MeshGL64 packMeshGL(
     meshGL.vertProperties.reserve(static_cast<size_t>(numPoints) * 3);
     for (Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
     {
-        const Vector3 pos = triangulated.getPointPos(pointOffset);
+        const Vector3 pos = triangulated.getPointPosition(pointOffset);
         meshGL.vertProperties.push_back(pos.x());
         meshGL.vertProperties.push_back(pos.y());
         meshGL.vertProperties.push_back(pos.z());
@@ -372,7 +372,7 @@ resolveOrigins(const BooleanFragments& fragments, const geo::Mesh& meshA, const 
     {
         if (!meshA.isValidPoint(pointOffset)) continue;
         positionToPoint.emplace(
-            quantizePosition(meshA.getPointPos(pointOffset)),
+            quantizePosition(meshA.getPointPosition(pointOffset)),
             std::make_pair(VertexOrigin::Side::A, pointOffset)
         );
     }
@@ -382,7 +382,7 @@ resolveOrigins(const BooleanFragments& fragments, const geo::Mesh& meshA, const 
         // Only insert if A didn't already claim the position. This isn't a
         // hard rule, but it gives A points priority on shared coordinates.
         positionToPoint.emplace(
-            quantizePosition(meshB.getPointPos(pointOffset)),
+            quantizePosition(meshB.getPointPosition(pointOffset)),
             std::make_pair(VertexOrigin::Side::B, pointOffset)
         );
     }
@@ -415,8 +415,8 @@ resolveOrigins(const BooleanFragments& fragments, const geo::Mesh& meshA, const 
                             VertexOrigin& outOrigin) -> bool {
             for (const EdgePair& edge : edges)
             {
-                const Vector3 start = sourceMesh.getPointPos(edge.endpoint0);
-                const Vector3 end = sourceMesh.getPointPos(edge.endpoint1);
+                const Vector3 start = sourceMesh.getPointPosition(edge.endpoint0);
+                const Vector3 end = sourceMesh.getPointPosition(edge.endpoint1);
                 double parametricT = 0.0;
                 if (pointOnSegment(position, start, end, parametricT))
                 {

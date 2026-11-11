@@ -119,8 +119,8 @@ TEST_CASE_METHOD(NMReset, "Each target point gets a copy moved onto it")
         {
             const Offset copiedPoint = copyIndex * prototypePointCount + pointIndex;
             const Vector3 expected =
-                targetPoints->getPointPos(copyIndex) + prototype->getPointPos(pointIndex);
-            requirePointsMatch(copies->getPointPos(copiedPoint), expected);
+                targetPoints->getPointPosition(copyIndex) + prototype->getPointPosition(pointIndex);
+            requirePointsMatch(copies->getPointPosition(copiedPoint), expected);
         }
     }
 }

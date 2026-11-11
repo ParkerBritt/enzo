@@ -149,7 +149,7 @@ TriangulatedMesh triangulateMesh(const geo::Mesh& src)
     positions.reserve(numPoints);
     for (Offset pointOffset = 0; pointOffset < numPoints; ++pointOffset)
     {
-        positions.push_back(src.getPointPos(pointOffset));
+        positions.push_back(src.getPointPosition(pointOffset));
     }
     result.mesh->addPoints(positions);
 
@@ -200,7 +200,7 @@ earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffset
     std::vector<size_t> triangleStarts(faceOffsets.size() + 1, 0);
     for (size_t faceIndex = 0; faceIndex < faceOffsets.size(); ++faceIndex)
     {
-        const unsigned int cornerCount = mesh.getFaceVertCount(faceOffsets[faceIndex]);
+        const unsigned int cornerCount = mesh.getFaceVertexCount(faceOffsets[faceIndex]);
         const size_t triangleCount = cornerCount >= 3 ? cornerCount - 2 : 0;
         triangleStarts[faceIndex + 1] = triangleStarts[faceIndex] + triangleCount;
     }
@@ -214,7 +214,7 @@ earClipTriangleIndices(const geo::Mesh& mesh, std::span<const Offset> faceOffset
             for (size_t faceIndex = range.begin(); faceIndex < range.end(); ++faceIndex)
             {
                 const Offset faceOffset = faceOffsets[faceIndex];
-                const unsigned int cornerCount = mesh.getFaceVertCount(faceOffset);
+                const unsigned int cornerCount = mesh.getFaceVertexCount(faceOffset);
                 const Offset faceStartVertex = faceStarts[faceOffset];
                 size_t triangleSlot = triangleStarts[faceIndex];
 
@@ -258,7 +258,7 @@ std::vector<std::array<Offset, 3>> earClipTriangleIndices(const geo::Mesh& mesh)
 std::span<const Vector3> FaceTangents::operator()(Offset faceOffset)
 {
     const std::span<const intT> facePoints = mesh_.getFacePoints(faceOffset);
-    const std::span<const Vector3> positions = mesh_.pointPosSpan();
+    const std::span<const Vector3> positions = mesh_.getPointPositions();
     const size_t pointCount = facePoints.size();
     const bool closed = mesh_.isClosed(faceOffset);
 

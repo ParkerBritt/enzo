@@ -448,7 +448,14 @@ bool PointScript::addWrittenAttributes(geo::Primitive& output, String& error) co
     for (const AttributeBinding& binding : bindings_)
     {
         if (!binding.written) continue;
-        if (!output.tryAddAttribute(attr::AttributeOwner::POINT, binding.name, binding.type))
+
+        // Unshares each written attribute before the threads write to it.
+        bool added = false;
+        attr::visitType(binding.type, [&]<typename Value>() {
+            added = output.tryAddAttribute<Value>(attr::AttributeOwner::POINT, binding.name)
+                        .has_value();
+        });
+        if (!added)
         {
             error = "can't write to attribute @" + binding.name;
             return false;
@@ -474,27 +481,27 @@ bool PointScript::resolveAttributes(
             input.getAttribByName(attr::AttributeOwner::POINT, binding.name, true);
         const bool inputMatches = inputAttribute && inputAttribute->getType() == binding.type;
 
-        std::shared_ptr<attr::Attribute> outputAttribute;
-        if (binding.written)
-        {
-            outputAttribute = output.getAttribByName(attr::AttributeOwner::POINT, binding.name, true);
-            if (!outputAttribute || outputAttribute->getType() != binding.type)
-            {
-                error = "the output has no " + attr::getTypeName(binding.type) + " attribute @" +
-                        binding.name;
-                return false;
-            }
-        }
-
+        bool outputMissing = false;
         visitBindingValues(binding.type, [&]<typename Value>(BindingValues<Value>& bindingValues) {
             std::optional<attr::AttributeHandleRO<Value>> inputHandle;
             if (inputMatches) inputHandle.emplace(inputAttribute);
             bindingValues.inputs.push_back(inputHandle);
 
             std::optional<attr::AttributeHandle<Value>> outputHandle;
-            if (outputAttribute) outputHandle.emplace(outputAttribute);
+            if (binding.written)
+            {
+                outputHandle =
+                    output.getWriteHandle<Value>(attr::AttributeOwner::POINT, binding.name, true);
+                outputMissing = !outputHandle;
+            }
             bindingValues.outputs.push_back(outputHandle);
         });
+        if (outputMissing)
+        {
+            error = "the output has no " + attr::getTypeName(binding.type) + " attribute @" +
+                    binding.name;
+            return false;
+        }
     }
     return true;
 }

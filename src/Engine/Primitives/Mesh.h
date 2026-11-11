@@ -1,7 +1,7 @@
 #pragma once
+#include "Engine/Core/SharedCache.h"
 #include "Engine/Primitives/Primitive.h"
 #include <span>
-#include <tbb/spin_mutex.h>
 #include <unordered_set>
 
 namespace enzo::geo {
@@ -25,8 +25,8 @@ class Mesh : public Primitive
 {
   public:
     Mesh(std::string_view path = "/mesh");
-    Mesh(const Mesh& other);
-    Mesh& operator=(const Mesh& rhs);
+    Mesh(const Mesh& other) = default;
+    Mesh& operator=(const Mesh& rhs) = default;
     ~Mesh() override = default;
 
     PrimType getType() const override { return PrimType::MESH; }
@@ -55,7 +55,7 @@ class Mesh : public Primitive
      * addFaces is much more performant.
      * @return Offset of the new face.
      */
-    // TODO: benchmark addFace vs addFaces to quantify the speedup
+    // TODO: use more efficient addFaces() function
     Offset addFace(const std::vector<Offset>& pointOffsets, bool closed = true);
     /**
      * @brief Adds many faces in a single call.
@@ -113,47 +113,65 @@ class Mesh : public Primitive
     /// @brief Adds a copy of this mesh for each transform, keeping the original.
     void duplicateToTransforms(std::span<const Transform> transforms);
 
-    std::unordered_set<Offset>::const_iterator soloPointsBegin() const;
-    std::unordered_set<Offset>::const_iterator soloPointsEnd() const;
+    /// @brief Returns the valid points that no valid vertex uses.
+    const std::unordered_set<Offset>& getSoloPoints() const;
 
     void setPointPos(const Offset offset, const Vector3& pos);
     /**
      * @brief Contiguous view of each face's starting vertex offset.
-     * @return Span indexed by face offset. Invalid after a mutation that grows storage.
+     * @return Span indexed by face offset. Invalid after any write to the mesh.
      */
     std::span<const Offset> getFaceStartVertices() const;
     Vector3 getPosFromVert(Offset vertexOffset) const;
-    Vector3 getPointPos(Offset pointOffset) const;
-    unsigned int getFaceVertCount(Offset faceOffset) const
+    Vector3 getPointPosition(Offset pointOffset) const;
+    unsigned int getFaceVertexCount(Offset faceOffset) const
     {
-        return vertexCountFaceHandle_[faceOffset];
+        return getFaceVertexCounts()[faceOffset];
     }
     unsigned int getFacePointCount(Offset faceOffset) const;
     Offset getVertexFace(Offset vertexOffset) const;
 
     Offset getVertexPoint(Offset vertexOffset) const
     {
-        return pointOffsetVertexHandle_.getValue(vertexOffset);
+        return getVertexPoints()[vertexOffset];
     }
 
     std::span<const intT> getFacePoints(Offset faceOffset) const
     {
         const Offset start = getFaceStartVertices()[faceOffset];
-        const unsigned int count = getFaceVertCount(faceOffset);
-        return pointOffsetVertexHandle_.getSpan().subspan(start, count);
+        const unsigned int count = getFaceVertexCount(faceOffset);
+        return getVertexPoints().subspan(start, count);
     }
 
     /**
-     * @brief Contiguous view mapping each vertex offset to its point offset.
-     * @return Span indexed by vertex offset. Invalid after a mutation that grows storage.
+     * @brief Returns the point of every vertex, indexed by vertex offset.
+     *
+     * @note The span is invalid after any write to the mesh.
      */
-    std::span<const intT> vertexPointSpan() const { return pointOffsetVertexHandle_.getSpan(); }
+    std::span<const intT> getVertexPoints() const
+    {
+        return getValues<intT>(*vertexAttributes_[vertexPointIndex_]);
+    }
 
     /**
-     * @brief Contiguous view of every point position.
-     * @return Span indexed by point offset. Invalid after a mutation that grows storage.
+     * @brief Returns the vertex count of every face, indexed by face offset.
+     *
+     * @note The span is invalid after any write to the mesh.
      */
-    std::span<const Vector3> pointPosSpan() const { return posPointHandle_.getSpan(); }
+    std::span<const intT> getFaceVertexCounts() const
+    {
+        return getValues<intT>(*faceAttributes_[faceVertexCountIndex_]);
+    }
+
+    /**
+     * @brief Returns the position of every point, indexed by point offset.
+     *
+     * @note The span is invalid after any write to the mesh.
+     */
+    std::span<const Vector3> getPointPositions() const
+    {
+        return getValues<Vector3>(*pointAttributes_[pointPositionIndex_]);
+    }
 
     Offset getNumFaces() const { return getElementCount(attr::AttributeOwner::FACE); }
     Offset getNumVerts() const { return getElementCount(attr::AttributeOwner::VERTEX); }
@@ -237,8 +255,6 @@ class Mesh : public Primitive
 
     boolT isClosed(Offset faceOffset) const;
 
-    void computeFaceStartVertices() const;
-
     /**
      * @brief Returns a handle for reading per-face normals.
      *
@@ -296,25 +312,76 @@ class Mesh : public Primitive
     attr::attribVector vertexGroups_;
     attr::attribVector faceGroups_;
 
-    mutable std::unordered_set<Offset> soloPoints_;
-    mutable bool soloPointsDirty_ = true;
-    void rebuildSoloPoints() const;
+    std::unordered_set<Offset> buildSoloPoints() const;
+    std::vector<Offset> buildFaceStarts() const;
     bool needsDefrag_ = false;
 
-    mutable std::vector<Offset> faceStarts_;
-    mutable std::vector<Offset> vertexFaces_;
+    SharedCache<std::vector<Offset>> faceStarts_;
+    SharedCache<std::unordered_set<Offset>> soloPoints_;
 
-    mutable std::atomic<bool> faceStartsDirty_{true};
-    mutable tbb::spin_mutex faceStartsMutex_;
+    // Indexes of the intrinsic attributes, in the order the constructor adds them to each store
+    static constexpr size_t faceVertexCountIndex_ = 0;
+    static constexpr size_t faceClosedIndex_ = 1;
+    static constexpr size_t faceValidIndex_ = 2;
+    static constexpr size_t vertexPointIndex_ = 0;
+    static constexpr size_t vertexValidIndex_ = 1;
+    static constexpr size_t vertexFaceIndex_ = 2;
+    static constexpr size_t pointPositionIndex_ = 0;
+    static constexpr size_t pointValidIndex_ = 1;
 
-    // intrinsic handles
-    enzo::attr::AttributeHandleInt vertexCountFaceHandle_;
-    enzo::attr::AttributeHandleBool closedFaceHandle_;
-    enzo::attr::AttributeHandleInt pointOffsetVertexHandle_;
-    enzo::attr::AttributeHandleVector3 posPointHandle_;
-    enzo::attr::AttributeHandleBool validFaceHandle_;
-    enzo::attr::AttributeHandleBool validVertexHandle_;
-    enzo::attr::AttributeHandleBool validPointHandle_;
+    const attr::StoreContainer<boolT>& getFaceClosedFlags() const
+    {
+        return getValues<boolT>(*faceAttributes_[faceClosedIndex_]);
+    }
+    const attr::StoreContainer<boolT>& getFaceValidFlags() const
+    {
+        return getValues<boolT>(*faceAttributes_[faceValidIndex_]);
+    }
+    const attr::StoreContainer<boolT>& getVertexValidFlags() const
+    {
+        return getValues<boolT>(*vertexAttributes_[vertexValidIndex_]);
+    }
+    const attr::StoreContainer<intT>& getVertexFaces() const
+    {
+        return getValues<intT>(*vertexAttributes_[vertexFaceIndex_]);
+    }
+    const attr::StoreContainer<boolT>& getPointValidFlags() const
+    {
+        return getValues<boolT>(*pointAttributes_[pointValidIndex_]);
+    }
+
+    attr::StoreContainer<intT>& getWritableFaceVertexCounts()
+    {
+        return getWritableValues<intT>(faceAttributes_, faceVertexCountIndex_);
+    }
+    attr::StoreContainer<boolT>& getWritableFaceClosedFlags()
+    {
+        return getWritableValues<boolT>(faceAttributes_, faceClosedIndex_);
+    }
+    attr::StoreContainer<boolT>& getWritableFaceValidFlags()
+    {
+        return getWritableValues<boolT>(faceAttributes_, faceValidIndex_);
+    }
+    attr::StoreContainer<intT>& getWritableVertexPoints()
+    {
+        return getWritableValues<intT>(vertexAttributes_, vertexPointIndex_);
+    }
+    attr::StoreContainer<boolT>& getWritableVertexValidFlags()
+    {
+        return getWritableValues<boolT>(vertexAttributes_, vertexValidIndex_);
+    }
+    attr::StoreContainer<intT>& getWritableVertexFaces()
+    {
+        return getWritableValues<intT>(vertexAttributes_, vertexFaceIndex_);
+    }
+    attr::StoreContainer<Vector3>& getWritablePointPositions()
+    {
+        return getWritableValues<Vector3>(pointAttributes_, pointPositionIndex_);
+    }
+    attr::StoreContainer<boolT>& getWritablePointValidFlags()
+    {
+        return getWritableValues<boolT>(pointAttributes_, pointValidIndex_);
+    }
 };
 
 /**

@@ -69,10 +69,10 @@ TEST_CASE_METHOD(NMReset, "The spiral rises from the start radius to the end rad
     const Offset lastPoint = mesh->getNumPoints() - 1;
 
     // Expects both ends on the Z axis, since 2 turns end at the starting angle.
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(-2.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).z() == Catch::Approx(1.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(lastPoint).y() == Catch::Approx(2.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(lastPoint).z() == Catch::Approx(3.f).margin(1e-4));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(-2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).z() == Catch::Approx(1.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(lastPoint).y() == Catch::Approx(2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(lastPoint).z() == Catch::Approx(3.f).margin(1e-4));
 }
 
 TEST_CASE_METHOD(NMReset, "A clockwise spiral turns the other way")
@@ -83,11 +83,11 @@ TEST_CASE_METHOD(NMReset, "A clockwise spiral turns the other way")
     nm.getNode(spiral).getParameter("turns").lock()->setFloat(1.f);
     nm.getNode(spiral).getParameter("pointsPerTurn").lock()->setInt(4);
     nm.cook(spiral);
-    const float counterclockwiseX = getMesh(nm.getNode(spiral))->getPointPos(1).x();
+    const float counterclockwiseX = getMesh(nm.getNode(spiral))->getPointPosition(1).x();
 
     nm.getNode(spiral).getParameter("turnDirection").lock()->setString("clockwise");
     nm.cook(spiral);
-    const float clockwiseX = getMesh(nm.getNode(spiral))->getPointPos(1).x();
+    const float clockwiseX = getMesh(nm.getNode(spiral))->getPointPosition(1).x();
 
     REQUIRE(counterclockwiseX == Catch::Approx(1.f).margin(1e-5));
     REQUIRE(clockwiseX == Catch::Approx(-1.f).margin(1e-5));

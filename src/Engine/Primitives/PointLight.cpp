@@ -2,63 +2,42 @@
 
 namespace enzo {
 
-namespace {
-
-/// @brief Returns a handle to the intrinsic primitive attribute of this name.
-template <typename T> attr::AttributeHandle<T> getIntrinsic(geo::Primitive& prim, std::string_view name)
+geo::PointLight::PointLight(std::string_view path) : Primitive(path)
 {
-    return attr::AttributeHandle<T>(prim.getAttribByName(attr::AttributeOwner::PRIMITIVE, name, true));
-}
-
-} // namespace
-
-geo::PointLight::PointLight(std::string_view path)
-    : Primitive(path),
-      transformHandle_{addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true)},
-      colorHandle_{addAttribute<Vector3>(attr::AttributeOwner::PRIMITIVE, "color", true)},
-      intensityHandle_{addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "intensity", true)},
-      exposureHandle_{addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "exposure", true)}
-{
+    addAttribute<Matrix4>(attr::AttributeOwner::PRIMITIVE, "transform", true);
+    addAttribute<Vector3>(attr::AttributeOwner::PRIMITIVE, "color", true);
+    addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "intensity", true);
+    addAttribute<floatT>(attr::AttributeOwner::PRIMITIVE, "exposure", true);
     setTransform(Matrix4::Identity());
     setColor(Vector3::Ones());
     setIntensity(1.f);
     setExposure(0.f);
 }
 
-geo::PointLight::PointLight(const PointLight& other)
-    : Primitive(other), transformHandle_{getIntrinsic<Matrix4>(*this, "transform")},
-      colorHandle_{getIntrinsic<Vector3>(*this, "color")},
-      intensityHandle_{getIntrinsic<floatT>(*this, "intensity")},
-      exposureHandle_{getIntrinsic<floatT>(*this, "exposure")}
+Matrix4 geo::PointLight::getTransform() const { return getPrimitiveIntrinsic<Matrix4>("transform"); }
+
+void geo::PointLight::setTransform(const Matrix4& xform)
 {
+    setPrimitiveIntrinsic<Matrix4>("transform", xform);
 }
 
-geo::PointLight& geo::PointLight::operator=(const PointLight& rhs)
+Vector3 geo::PointLight::getColor() const { return getPrimitiveIntrinsic<Vector3>("color"); }
+
+void geo::PointLight::setColor(const Vector3& color) { setPrimitiveIntrinsic<Vector3>("color", color); }
+
+floatT geo::PointLight::getIntensity() const { return getPrimitiveIntrinsic<floatT>("intensity"); }
+
+void geo::PointLight::setIntensity(floatT intensity)
 {
-    if (this == &rhs) return *this;
-    Primitive::operator=(rhs);
-    transformHandle_ = getIntrinsic<Matrix4>(*this, "transform");
-    colorHandle_ = getIntrinsic<Vector3>(*this, "color");
-    intensityHandle_ = getIntrinsic<floatT>(*this, "intensity");
-    exposureHandle_ = getIntrinsic<floatT>(*this, "exposure");
-    return *this;
+    setPrimitiveIntrinsic<floatT>("intensity", intensity);
 }
 
-Matrix4 geo::PointLight::getTransform() const { return transformHandle_.getValue(0); }
+floatT geo::PointLight::getExposure() const { return getPrimitiveIntrinsic<floatT>("exposure"); }
 
-void geo::PointLight::setTransform(const Matrix4& xform) { transformHandle_.setValue(0, xform); }
-
-Vector3 geo::PointLight::getColor() const { return colorHandle_.getValue(0); }
-
-void geo::PointLight::setColor(const Vector3& color) { colorHandle_.setValue(0, color); }
-
-floatT geo::PointLight::getIntensity() const { return intensityHandle_.getValue(0); }
-
-void geo::PointLight::setIntensity(floatT intensity) { intensityHandle_.setValue(0, intensity); }
-
-floatT geo::PointLight::getExposure() const { return exposureHandle_.getValue(0); }
-
-void geo::PointLight::setExposure(floatT exposure) { exposureHandle_.setValue(0, exposure); }
+void geo::PointLight::setExposure(floatT exposure)
+{
+    setPrimitiveIntrinsic<floatT>("exposure", exposure);
+}
 
 void geo::PointLight::applyTransform(const Matrix4& mat, TransformClass transformClass)
 {

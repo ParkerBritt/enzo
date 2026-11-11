@@ -91,7 +91,7 @@ void Script::cook()
     const String code = evalParmString("code");
 
     const std::shared_ptr<const NodePacket> input = getInputPacket(0);
-    NodePacket output = input->deepCopy();
+    NodePacket output = *input;
 
     if (code.empty())
     {

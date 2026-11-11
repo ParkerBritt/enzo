@@ -125,15 +125,15 @@ static void extrudeConnected(
 
         const float averageDivisor = static_cast<float>(displacementCount[oldOffset]);
         const enzo::Vector3 averagedDisplacement = dispSum / averageDivisor;
-        enzo::Vector3 newPos = mesh->getPointPos(oldOffset) + averagedDisplacement;
+        enzo::Vector3 newPos = mesh->getPointPosition(oldOffset) + averagedDisplacement;
 
         if (inset != 0.0f)
         {
             if (inIt != incomingOuter.end() && outIt != outgoingOuter.end())
             {
-                const enzo::Vector3 prevPos = mesh->getPointPos(inIt->second.neighbour);
-                const enzo::Vector3 cornerPos = mesh->getPointPos(oldOffset);
-                const enzo::Vector3 nextPos = mesh->getPointPos(outIt->second.neighbour);
+                const enzo::Vector3 prevPos = mesh->getPointPosition(inIt->second.neighbour);
+                const enzo::Vector3 cornerPos = mesh->getPointPosition(oldOffset);
+                const enzo::Vector3 nextPos = mesh->getPointPosition(outIt->second.neighbour);
                 const enzo::Vector3 inFaceNormal = faceNormals[faces[inIt->second.faceIdx]];
                 const enzo::Vector3 outFaceNormal = faceNormals[faces[outIt->second.faceIdx]];
                 newPos += cornerInsetOffset(
@@ -249,15 +249,15 @@ static void extrudeDisconnected(
         newPositionsLocal.reserve(facePointCount);
         for (size_t i = 0; i < facePointCount; ++i)
         {
-            enzo::Vector3 newPos = mesh->getPointPos(facePoints[i]) + displacement;
+            enzo::Vector3 newPos = mesh->getPointPosition(facePoints[i]) + displacement;
             if (inset != 0.0f)
             {
                 const enzo::Offset prevOffset =
                     facePoints[(i + facePointCount - 1) % facePointCount];
                 const enzo::Offset nextOffset = facePoints[(i + 1) % facePointCount];
-                const enzo::Vector3 prevPos = mesh->getPointPos(prevOffset);
-                const enzo::Vector3 cornerPos = mesh->getPointPos(facePoints[i]);
-                const enzo::Vector3 nextPos = mesh->getPointPos(nextOffset);
+                const enzo::Vector3 prevPos = mesh->getPointPosition(prevOffset);
+                const enzo::Vector3 cornerPos = mesh->getPointPosition(facePoints[i]);
+                const enzo::Vector3 nextPos = mesh->getPointPosition(nextOffset);
                 newPos +=
                     cornerInsetOffset(prevPos, cornerPos, nextPos, faceNormal, faceNormal, inset);
             }

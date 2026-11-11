@@ -84,7 +84,7 @@ getElementPositions(const enzo::geo::Primitive& prim, const enzo::attr::Attribut
 
     if (mesh && owner == attr::AttributeOwner::POINT)
     {
-        const std::span<const Vector3> pointPositions = mesh->pointPosSpan();
+        const std::span<const Vector3> pointPositions = mesh->getPointPositions();
         return std::vector<Vector3>(pointPositions.begin(), pointPositions.end());
     }
 
@@ -240,9 +240,7 @@ void AttributeNoise::cook()
         if (!prim->hasOwner(*owner)) continue;
         const auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
 
-        const std::shared_ptr<attr::Attribute> attribute =
-            prim->tryAddAttribute(*owner, attributeName, *attributeType);
-        if (!attribute)
+        if (!prim->tryAddAttribute(*owner, attributeName, *attributeType))
         {
             throwError("The attribute " + attributeName + " can't be written as this type.");
             return;
@@ -257,7 +255,9 @@ void AttributeNoise::cook()
         {
             const std::vector<float> noise = sampleNoiseAtPositions(seed);
 
-            utils::applyOperation(*operation, attr::AttributeHandle<floatT>(attribute), noise);
+            utils::applyOperation(
+                *operation, *prim->getWriteHandle<floatT>(*owner, attributeName, true), noise
+            );
             continue;
         }
 
@@ -267,7 +267,7 @@ void AttributeNoise::cook()
 
         if (alongVector)
         {
-            const std::shared_ptr<attr::Attribute> directionAttribute =
+            const std::shared_ptr<const attr::Attribute> directionAttribute =
                 prim->getAttribByName(*owner, directionName, true);
             const bool hasComputedNormals = mesh && *owner != attr::AttributeOwner::PRIMITIVE;
             const bool alongNormals = directionName == attr::names::normal && hasComputedNormals;
@@ -316,7 +316,9 @@ void AttributeNoise::cook()
                     Vector3(xNoise[elementOffset], yNoise[elementOffset], zNoise[elementOffset]);
         }
 
-        utils::applyOperation(*operation, attr::AttributeHandle<Vector3>(attribute), noiseVectors);
+        utils::applyOperation(
+            *operation, *prim->getWriteHandle<Vector3>(*owner, attributeName, true), noiseVectors
+        );
     }
 
     setOutputPacket(0, packet);

@@ -41,7 +41,7 @@ class NodePacket
             TransformClass transformClass_;
             size_t primIdx_;
             Offset offset_ = 0;
-            std::shared_ptr<attr::Attribute> curAttrib_;
+            std::shared_ptr<const attr::Attribute> curAttrib_;
             size_t curSize_ = 0;
             std::vector<Transform> orientations_;
 
@@ -61,6 +61,14 @@ class NodePacket
         TransformClass transformClass_;
     };
 
+    NodePacket() = default;
+    /// @brief Copies the packet, giving it its own primitives that share every attribute until
+    /// written.
+    NodePacket(const NodePacket& other);
+    NodePacket& operator=(const NodePacket& other);
+    NodePacket(NodePacket&& other) = default;
+    NodePacket& operator=(NodePacket&& other) = default;
+
     /// @brief Adds the primitive, numbering its path when another primitive holds it.
     ///
     /// Adding three primitives at `/light` gives `/light`, `/light_1` and `/light_2`.
@@ -73,11 +81,10 @@ class NodePacket
     geo::PrimPtr getPrimAtPath(const std::string& path);
     std::shared_ptr<const geo::Primitive> getPrimAtPath(const std::string& path) const;
 
-    const std::vector<std::shared_ptr<enzo::geo::Primitive>>& getPrimitives() const
-    {
-        return primitives_;
-    }
-    std::vector<geo::PrimPtr> getPrimitives(enzo::geo::PrimType type) const;
+    const std::vector<geo::PrimPtr>& getPrimitives() { return primitives_; }
+    std::vector<std::shared_ptr<const geo::Primitive>> getPrimitives() const;
+    std::vector<geo::PrimPtr> getPrimitives(geo::PrimType type);
+    std::vector<std::shared_ptr<const geo::Primitive>> getPrimitives(geo::PrimType type) const;
     /// @brief Moves the primitive to the path, numbering it when another primitive holds it.
     void movePrim(const geo::PrimPtr& primitive, const std::string& toPath);
     /// @brief Moves the primitive at one path to another, numbering it when another primitive holds it.
@@ -90,7 +97,6 @@ class NodePacket
     }
 
     size_t size() const;
-    NodePacket deepCopy() const;
 
   private:
     /// @brief Returns the path, numbered when another primitive holds it, and marks it as held.
