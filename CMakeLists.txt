@@ -337,6 +337,7 @@ qt_add_qml_module(${AppExec}
         src/Gui/Components/Slider.qml
         src/Gui/Components/PopupList.qml
         src/Gui/Components/Dropdown.qml
+        src/Gui/Components/DropdownChevron.qml
         src/Gui/Components/ScaledWindow.qml
         src/Gui/Components/ExpressionEditor.qml
         src/Gui/Components/FocusReclaimer.qml

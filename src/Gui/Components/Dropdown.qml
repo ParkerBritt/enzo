@@ -123,22 +123,11 @@ Item {
             color: Theme.var.text
         }
 
-        Icon {
-            id: chevron
-
-            name: "chevron-down"
-            size: 12
-            color: Theme.var.textMuted
+        DropdownChevron {
+            open: list.visible
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            rotation: list.visible ? 180 : 0
-            Behavior on rotation {
-                NumberAnimation {
-                    duration: 150 * interfaceSettings.durationScale
-                    easing.type: Easing.OutCubic
-                }
-            }
         }
 
         HoverHandler {

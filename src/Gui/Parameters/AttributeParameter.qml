@@ -67,18 +67,10 @@ Rectangle {
             attributeList.open();
         }
 
-        Icon {
-            name: "chevron-down"
-            size: 12
+        DropdownChevron {
+            open: attributeList.visible
             color: picker.containsMouse || attributeList.visible ? Theme.var.text : Theme.var.textMuted
             anchors.centerIn: parent
-            rotation: attributeList.visible ? 180 : 0
-            Behavior on rotation {
-                NumberAnimation {
-                    duration: 150 * interfaceSettings.durationScale
-                    easing.type: Easing.OutCubic
-                }
-            }
         }
     }
 
