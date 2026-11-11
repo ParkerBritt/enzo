@@ -1,6 +1,7 @@
 #include "Gui/Network/NodeListModel.h"
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
+#include "Gui/Components/IconFiles.h"
 #include <QLineF>
 #include <QRectF>
 #include <algorithm>
@@ -22,12 +23,6 @@ qreal getPortWidth(int portCount) { return NodeListModel::nodeWidth / (portCount
 qreal getPortCenter(int portIndex, int portCount)
 {
     return getPortWidth(portCount) * (portIndex + 1);
-}
-
-// Returns the icon file a node type shows on its card.
-QUrl getIconUrl(const nt::NodeType& nodeType)
-{
-    return QUrl::fromLocalFile(QString::fromStdString(nodeType.getIconFile().string()));
 }
 
 } // namespace
@@ -347,7 +342,7 @@ NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
         nodeId,
         QString::fromStdString(node.getName()),
         QString::fromStdString(node.getType().getLabel()),
-        getIconUrl(node.getType()),
+        getNodeIconUrl(node.getType()),
         position.x(),
         position.y(),
         static_cast<int>(node.getType().inputPorts.size()),

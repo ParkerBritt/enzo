@@ -70,10 +70,42 @@ float getFractalBound(const int octaves, const float gain)
     return std::max(bound, 1.0f);
 }
 
-/// @brief Returns the noise value at every point of the mesh, in point order.
+/// @brief Returns the position of every element of the owner, in offset order.
+///
+/// @note A vertex sits at its point, and a face or primitive sits at the origin.
+/// @todo Consider moving this to a virtual inside the primitives
+std::vector<enzo::Vector3>
+getElementPositions(const enzo::geo::Primitive& prim, const enzo::attr::AttributeOwner owner)
+{
+    using namespace enzo;
+
+    const auto* mesh = dynamic_cast<const geo::Mesh*>(&prim);
+    const size_t elementCount = prim.getElementCount(owner);
+
+    if (mesh && owner == attr::AttributeOwner::POINT)
+    {
+        const std::span<const Vector3> pointPositions = mesh->pointPosSpan();
+        return std::vector<Vector3>(pointPositions.begin(), pointPositions.end());
+    }
+
+    if (mesh && owner == attr::AttributeOwner::VERTEX)
+    {
+        std::vector<Vector3> vertexPositions(elementCount, Vector3::Zero());
+        for (Offset vertexOffset = 0; vertexOffset < elementCount; ++vertexOffset)
+        {
+            if (!mesh->isValidVertex(vertexOffset)) continue;
+            vertexPositions[vertexOffset] = mesh->getPosFromVert(vertexOffset);
+        }
+        return vertexPositions;
+    }
+
+    return std::vector<Vector3>(elementCount, Vector3::Zero());
+}
+
+/// @brief Returns the noise value at every position, in the same order.
 std::vector<float> sampleNoise(
     const FastNoise::Generator& generator,
-    const enzo::geo::Mesh& mesh,
+    const std::span<const enzo::Vector3> positions,
     const enzo::floatT scale,
     const enzo::floatT frequency,
     const enzo::Vector3& offset,
@@ -82,24 +114,23 @@ std::vector<float> sampleNoise(
 {
     using namespace enzo;
 
-    const std::span<const Vector3> positions = mesh.pointPosSpan();
-    const size_t pointCount = positions.size();
+    const size_t positionCount = positions.size();
 
-    std::vector<float> xPositions(pointCount);
-    std::vector<float> yPositions(pointCount);
-    std::vector<float> zPositions(pointCount);
-    for (size_t pointOffset = 0; pointOffset < pointCount; ++pointOffset)
+    std::vector<float> xPositions(positionCount);
+    std::vector<float> yPositions(positionCount);
+    std::vector<float> zPositions(positionCount);
+    for (size_t positionIndex = 0; positionIndex < positionCount; ++positionIndex)
     {
-        const Vector3 samplePosition = positions[pointOffset] * frequency + offset;
-        xPositions[pointOffset] = samplePosition.x();
-        yPositions[pointOffset] = samplePosition.y();
-        zPositions[pointOffset] = samplePosition.z();
+        const Vector3 samplePosition = positions[positionIndex] * frequency + offset;
+        xPositions[positionIndex] = samplePosition.x();
+        yPositions[positionIndex] = samplePosition.y();
+        zPositions[positionIndex] = samplePosition.z();
     }
 
-    std::vector<float> noise(pointCount);
+    std::vector<float> noise(positionCount);
     generator.GenPositionArray3D(
         noise.data(),
-        static_cast<int>(pointCount),
+        static_cast<int>(positionCount),
         xPositions.data(),
         yPositions.data(),
         zPositions.data(),
@@ -126,6 +157,14 @@ void AttributeNoise::cook()
     using namespace enzo;
 
     if (!outputRequested(0)) return;
+
+    const std::optional<attr::AttributeOwner> owner = attr::getOwner(evalParmString("owner"));
+    if (!owner)
+    {
+        throwError("Unknown owner.");
+        return;
+    }
+    const String ownerName = attr::getOwnerName(*owner);
 
     const String attributeName = evalParmString("name");
     if (attributeName.empty())
@@ -198,39 +237,45 @@ void AttributeNoise::cook()
 
     for (const geo::PrimPtr& prim : packet.getPrimitives())
     {
-        if (prim->getType() != geo::PrimType::MESH) continue;
-        const auto mesh = std::static_pointer_cast<geo::Mesh>(prim);
+        if (!prim->hasOwner(*owner)) continue;
+        const auto mesh = std::dynamic_pointer_cast<geo::Mesh>(prim);
 
         const std::shared_ptr<attr::Attribute> attribute =
-            mesh->tryAddAttribute(attr::AttributeOwner::POINT, attributeName, *attributeType);
+            prim->tryAddAttribute(*owner, attributeName, *attributeType);
         if (!attribute)
         {
             throwError("The attribute " + attributeName + " can't be written as this type.");
             return;
         }
 
+        const std::vector<Vector3> positions = getElementPositions(*prim, *owner);
+        const auto sampleNoiseAtPositions = [&](const int sampleSeed) {
+            return sampleNoise(*generator, positions, noiseScale, frequency, offset, sampleSeed);
+        };
+
         if (isFloat)
         {
-            const std::vector<float> noise =
-                sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed);
+            const std::vector<float> noise = sampleNoiseAtPositions(seed);
 
             utils::applyOperation(*operation, attr::AttributeHandle<floatT>(attribute), noise);
             continue;
         }
 
-        // The noise for every point. It is filled before any of it is written, since the
-        // noise can be built from the attribute being written.
+        // Fills the noise for every element before writing any, since the noise can read
+        // the attribute being written.
         std::vector<Vector3> noiseVectors;
 
         if (alongVector)
         {
             const std::shared_ptr<attr::Attribute> directionAttribute =
-                mesh->getAttribByName(attr::AttributeOwner::POINT, directionName, true);
-            const bool alongNormals = directionName == attr::names::normal;
+                prim->getAttribByName(*owner, directionName, true);
+            const bool hasComputedNormals = mesh && *owner != attr::AttributeOwner::PRIMITIVE;
+            const bool alongNormals = directionName == attr::names::normal && hasComputedNormals;
             if (!directionAttribute && !alongNormals)
             {
                 throwError(
-                    "Noise along vector needs a point attribute named " + directionName + "."
+                    "Noise along vector needs a " + ownerName + " attribute named " +
+                    directionName + "."
                 );
                 return;
             }
@@ -242,33 +287,33 @@ void AttributeNoise::cook()
                 return;
             }
 
-            const std::vector<float> noise =
-                sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed);
+            const std::vector<float> noise = sampleNoiseAtPositions(seed);
 
             noiseVectors.resize(noise.size());
             const auto scaleNoiseAlong = [&](const auto& directions) {
-                for (size_t pointOffset = 0; pointOffset < noise.size(); ++pointOffset)
-                    noiseVectors[pointOffset] = directions[pointOffset] * noise[pointOffset];
+                for (size_t elementOffset = 0; elementOffset < noise.size(); ++elementOffset)
+                    noiseVectors[elementOffset] = directions[elementOffset] * noise[elementOffset];
             };
 
-            if (alongNormals)
-                scaleNoiseAlong(mesh->getPointNormal());
-            else
+            if (directionAttribute)
                 scaleNoiseAlong(attr::AttributeHandleRO<Vector3>(directionAttribute));
+            else if (*owner == attr::AttributeOwner::POINT)
+                scaleNoiseAlong(mesh->getPointNormal());
+            else if (*owner == attr::AttributeOwner::VERTEX)
+                scaleNoiseAlong(mesh->getVertexNormal());
+            else
+                scaleNoiseAlong(mesh->getFaceNormal());
         }
         else
         {
-            const std::vector<float> xNoise =
-                sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed);
-            const std::vector<float> yNoise =
-                sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed + 1);
-            const std::vector<float> zNoise =
-                sampleNoise(*generator, *mesh, noiseScale, frequency, offset, seed + 2);
+            const std::vector<float> xNoise = sampleNoiseAtPositions(seed);
+            const std::vector<float> yNoise = sampleNoiseAtPositions(seed + 1);
+            const std::vector<float> zNoise = sampleNoiseAtPositions(seed + 2);
 
             noiseVectors.resize(xNoise.size());
-            for (size_t pointOffset = 0; pointOffset < xNoise.size(); ++pointOffset)
-                noiseVectors[pointOffset] =
-                    Vector3(xNoise[pointOffset], yNoise[pointOffset], zNoise[pointOffset]);
+            for (size_t elementOffset = 0; elementOffset < xNoise.size(); ++elementOffset)
+                noiseVectors[elementOffset] =
+                    Vector3(xNoise[elementOffset], yNoise[elementOffset], zNoise[elementOffset]);
         }
 
         utils::applyOperation(*operation, attr::AttributeHandle<Vector3>(attribute), noiseVectors);

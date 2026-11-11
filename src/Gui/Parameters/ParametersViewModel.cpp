@@ -2,6 +2,7 @@
 #include "Engine/Network/NetworkManager.h"
 #include "Engine/Network/Node.h"
 #include "Engine/Parameter/Template.h"
+#include "Gui/Components/IconFiles.h"
 #include "Gui/Parameters/ParameterItem.h"
 
 namespace enzo::ui {
@@ -40,7 +41,7 @@ void ParametersViewModel::rebuild()
         nt::Node& node = nt::nm().getNode(*nodeId_);
         nodeName_ = QString::fromStdString(node.getName());
         nodeType_ = QString::fromStdString(node.getType().getLabel());
-        nodeIconUrl_ = QUrl::fromLocalFile(QString::fromStdString(node.getType().getIconFile().string()));
+        nodeIconUrl_ = getNodeIconUrl(node.getType());
         for (const prm::Template& prmTemplate : node.getTemplates())
             topLevel_.append(buildItem(prmTemplate, node));
     }

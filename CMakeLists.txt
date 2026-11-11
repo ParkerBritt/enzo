@@ -298,6 +298,8 @@ qt_add_executable(${AppExec}
     src/Gui/Parameters/ParametersViewModel.cpp
     src/Gui/Timeline/TimelineViewModel.cpp
     src/Gui/Controllers/SceneController.cpp
+    src/Gui/Components/IconFiles.cpp
+    src/Gui/Components/IconImageProvider.cpp
     src/Gui/Viewport/ViewportViewModel.cpp
     src/Gui/Viewport/QtGraphicsBridge.cpp
     src/Gui/Viewport/ViewportNode.cpp
@@ -550,6 +552,8 @@ if(ENZO_BUILD_TESTS)
         tests/ViewportRendererTests.cpp
         tests/NearestLightsTests.cpp
         tests/AttributeTableModelTests.cpp
+        tests/IconFilesTests.cpp
+        src/Gui/Components/IconFiles.cpp
         src/Gui/Parameters/ParameterItem.cpp
         src/Gui/Spreadsheet/AttributeTableModel.cpp
     )

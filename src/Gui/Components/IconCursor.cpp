@@ -1,11 +1,8 @@
 #include "Gui/Components/IconCursor.h"
-#include "Engine/Core/InstallPaths.h"
+#include "Gui/Components/IconImageProvider.h"
 
-#include <QBuffer>
 #include <QCursor>
-#include <QFile>
 #include <QImage>
-#include <QImageReader>
 #include <QPixmap>
 #include <QQuickWindow>
 
@@ -33,28 +30,11 @@ void IconCursor::applyCursor()
         return;
     }
 
-    const QString path = QString::fromStdString(getIconPath(name_.toStdString()).string());
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        qWarning("IconCursor: failed to load %s", qPrintable(name_));
-        unsetCursor();
-        return;
-    }
-
-    // Lucide strokes are currentColor, so the colour is baked into the markup.
-    QByteArray svg = file.readAll();
-    svg.replace("currentColor", color_.name().toUtf8());
-
     const qreal pixelRatio = window() ? window()->devicePixelRatio() : 1.0;
     const int pixelSize = qRound(size_ * pixelRatio);
-    QBuffer buffer(&svg);
-    QImageReader reader(&buffer, "svg");
-    reader.setScaledSize(QSize(pixelSize, pixelSize));
-    const QImage image = reader.read();
+    const QImage image = renderIcon(name_, color_, QSize(pixelSize, pixelSize));
     if (image.isNull())
     {
-        qWarning("IconCursor: failed to render %s", qPrintable(path));
         unsetCursor();
         return;
     }

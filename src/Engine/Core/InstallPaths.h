@@ -13,10 +13,4 @@ std::filesystem::path getInstallRoot();
 /// directory rather than an install.
 std::filesystem::path getStaticDir();
 
-/// @brief Returns the SVG file for an icon name.
-///
-/// @note The Lucide set is searched before Enzo's own icons.
-/// @return The file, empty when neither set has the icon.
-std::filesystem::path getIconPath(const std::string& name);
-
 } // namespace enzo
