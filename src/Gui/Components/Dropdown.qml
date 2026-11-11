@@ -28,6 +28,9 @@ Item {
     // Whether the list unrolls above the trigger, for a picker near a panel floor.
     property bool opensUpward: false
 
+    // Whether the trigger's label sits in its middle rather than at its left.
+    property bool centered: false
+
     // Width of the list, which may exceed the trigger's.
     property real listWidth: Math.max(width, 150)
 
@@ -43,6 +46,12 @@ Item {
     // Width kept left of every label for an icon, 0 when no label has one.
     readonly property int labelIconSlot: labelIcons.some(name => name !== "") ? 20 : 0
 
+    // Width the chevron and its gap take at the trigger's right edge.
+    readonly property int chevronSpace: 26
+
+    // Space left of the trigger's label, matching the chevron's when centered.
+    readonly property int labelLeftMargin: centered ? chevronSpace : 10
+
     // Room for the widest choice, so the trigger holds still as it changes.
     readonly property real widestLabelWidth: {
         let widest = 0;
@@ -51,7 +60,7 @@ Item {
         return widest;
     }
 
-    implicitWidth: icon !== "" ? implicitHeight : Math.ceil(widestLabelWidth) + labelIconSlot + 40
+    implicitWidth: icon !== "" ? implicitHeight : Math.ceil(widestLabelWidth) + labelIconSlot + labelLeftMargin + chevronSpace + 4
     implicitHeight: 30
 
     // Returns the row under a point given in this item's coordinates, or -1 when
@@ -104,15 +113,13 @@ Item {
         border.color: list.visible ? Theme.var.accentLine : Theme.parameter.lineColor
 
         ChoiceLabel {
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.right: chevron.left
-            anchors.rightMargin: 6
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
+            anchors.fill: parent
+            anchors.leftMargin: root.labelLeftMargin
+            anchors.rightMargin: root.chevronSpace
             text: root.currentLabel
             icon: root.getLabelIcon(root.currentIndex)
             iconSlot: root.labelIconSlot
+            centered: root.centered
             color: Theme.var.text
         }
 
@@ -279,26 +286,39 @@ Item {
         property string icon
         property int iconSlot
         property color color
+        property bool centered: false
 
-        Icon {
-            visible: choice.icon !== ""
-            name: choice.icon
-            size: 14
-            color: choice.color
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        // Width kept before the text for an icon, 0 for a centered label without one.
+        readonly property int leadingWidth: centered && icon === "" ? 0 : iconSlot
 
-        Text {
-            anchors.fill: parent
-            anchors.leftMargin: choice.iconSlot
-            text: choice.text
-            color: choice.color
-            font.family: Theme.var.fontSans
-            font.pixelSize: 12
-            font.weight: Font.Medium
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+        Row {
+            x: choice.centered ? (choice.width - width) / 2 : 0
+            height: choice.height
+
+            Item {
+                width: choice.leadingWidth
+                height: parent.height
+
+                Icon {
+                    visible: choice.icon !== ""
+                    name: choice.icon
+                    size: 14
+                    color: choice.color
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Text {
+                width: Math.min(implicitWidth, choice.width - choice.leadingWidth)
+                height: parent.height
+                text: choice.text
+                color: choice.color
+                font.family: Theme.var.fontSans
+                font.pixelSize: 12
+                font.weight: Font.Medium
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
         }
     }
 }
