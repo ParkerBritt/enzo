@@ -199,9 +199,10 @@ Enumerations</h2></td></tr>
 &#160;&#160;<b>TOGGLE</b>
 , <b>GROUP</b>
 , <b>DROPDOWN</b>
-, <b>RAMP</b>
+, <b>BUTTON_STRIP</b>
 , <br />
-&#160;&#160;<b>DIVIDER</b>
+&#160;&#160;<b>RAMP</b>
+, <b>DIVIDER</b>
 <br />
  }</td></tr>
 <tr class="separator:a6e4b347c669dc02aa6a8f35c01e2f59a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -262,6 +263,10 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae7bc3b73326d2e90bff12d6d31d3db24">enzo::attr::visitType</a> (<a class="el" href="#a56ca0b00e293beacc2733564a2bce4e3">AttributeType</a> type, Action &amp;&amp;action)</td></tr>
 <tr class="memdesc:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls an action with the C++ type that stores an attribute type.  <br /></td></tr>
 <tr class="separator:ae7bc3b73326d2e90bff12d6d31d3db24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af142b0d741ed6c79f46529a787871334" id="r_af142b0d741ed6c79f46529a787871334"><td class="memItemLeft" align="right" valign="top"><a id="af142b0d741ed6c79f46529a787871334" name="af142b0d741ed6c79f46529a787871334"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toString</b> (<a class="el" href="#adde04662eb0d43a49d07351fd9439686">ValueType</a> valueType)</td></tr>
+<tr class="memdesc:af142b0d741ed6c79f46529a787871334"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the lowercase name of a value type, e.g. "string". <br /></td></tr>
+<tr class="separator:af142b0d741ed6c79f46529a787871334"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa747b7a013ecc2df775727846306bb4b" id="r_aa747b7a013ecc2df775727846306bb4b"><td class="memItemLeft" align="right" valign="top"><a id="aa747b7a013ecc2df775727846306bb4b" name="aa747b7a013ecc2df775727846306bb4b"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>enzo::prm::toString</b> (Type type)</td></tr>
 <tr class="memdesc:aa747b7a013ecc2df775727846306bb4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lowercase canonical name of a parameter type, e.g. "dropdown". <br /></td></tr>
@@ -517,6 +522,7 @@ template&lt;typename Action &gt; </div>
 <div class="line">    Type::TOGGLE,</div>
 <div class="line">    Type::GROUP,</div>
 <div class="line">    Type::DROPDOWN,</div>
+<div class="line">    Type::BUTTON_STRIP,</div>
 <div class="line">    Type::RAMP,</div>
 <div class="line">    Type::DIVIDER</div>
 <div class="line">}</div>
