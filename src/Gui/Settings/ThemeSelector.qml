@@ -60,19 +60,10 @@ Item {
                 elide: Text.ElideRight
             }
 
-            Icon {
+            DropdownChevron {
                 anchors.verticalCenter: parent.verticalCenter
-                name: "chevron-down"
-                size: 12
+                open: list.visible
                 color: Theme.var.textLabel
-                rotation: list.visible ? 180 : 0
-
-                Behavior on rotation {
-                    NumberAnimation {
-                        duration: 150 * interfaceSettings.durationScale
-                        easing.type: Easing.OutCubic
-                    }
-                }
             }
         }
     }
