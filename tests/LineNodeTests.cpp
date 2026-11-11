@@ -65,9 +65,9 @@ TEST_CASE_METHOD(NMReset, "The points are spread evenly from the origin")
 
     const auto mesh = getMesh(nm.getNode(line));
 
-    REQUIRE(mesh->getPointPos(0).x() == Catch::Approx(1.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(1).y() == Catch::Approx(2.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(2).y() == Catch::Approx(4.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).x() == Catch::Approx(1.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(1).y() == Catch::Approx(2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(2).y() == Catch::Approx(4.f).margin(1e-5));
 }
 
 TEST_CASE_METHOD(NMReset, "The length of the direction does not change the line")
@@ -82,5 +82,5 @@ TEST_CASE_METHOD(NMReset, "The length of the direction does not change the line"
 
     const auto mesh = getMesh(nm.getNode(line));
 
-    REQUIRE(mesh->getPointPos(1).z() == Catch::Approx(2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(1).z() == Catch::Approx(2.f).margin(1e-5));
 }

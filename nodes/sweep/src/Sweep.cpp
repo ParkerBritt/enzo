@@ -204,7 +204,7 @@ Profile buildProfileFromInput(NodePacket& packet)
         Profile profile;
         profile.closed = mesh->isClosed(0);
         for (intT pointOffset : mesh->getFacePoints(0))
-            profile.points.push_back(mesh->getPointPos(pointOffset));
+            profile.points.push_back(mesh->getPointPosition(pointOffset));
         return profile;
     }
     return {};
@@ -277,7 +277,7 @@ class Sweeper
 
         for (int relPointNum = 0; relPointNum < curvePointCount; ++relPointNum)
         {
-            const Vector3 pointPos = mesh_.getPointPos(facePoints[relPointNum]);
+            const Vector3 pointPos = mesh_.getPointPosition(facePoints[relPointNum]);
 
             // The ramp reads how far along the curve the point sits to set the
             // radius. With scaling off the profile keeps its full size.
@@ -309,17 +309,17 @@ class Sweeper
 
         const std::span<const intT> facePoints = mesh_.getFacePoints(curveFace);
         const int curvePointCount = static_cast<int>(facePoints.size());
-        const Vector3 pointPos = mesh_.getPointPos(facePoints[relPointNum]);
+        const Vector3 pointPos = mesh_.getPointPosition(facePoints[relPointNum]);
 
         // The way the curve heads on from this point. An open end has nothing
         // ahead, so it reuses the segment arriving into it.
         Vector3 onwardDirection;
         if (relPointNum + 1 < curvePointCount)
-            onwardDirection = mesh_.getPointPos(facePoints[relPointNum + 1]) - pointPos;
+            onwardDirection = mesh_.getPointPosition(facePoints[relPointNum + 1]) - pointPos;
         else if (mesh_.isClosed(curveFace))
-            onwardDirection = mesh_.getPointPos(facePoints[0]) - pointPos;
+            onwardDirection = mesh_.getPointPosition(facePoints[0]) - pointPos;
         else
-            onwardDirection = pointPos - mesh_.getPointPos(facePoints[relPointNum - 1]);
+            onwardDirection = pointPos - mesh_.getPointPosition(facePoints[relPointNum - 1]);
 
         // The profile faces along the average of the turn, so the sharper the
         // turn the more it leans away from each segment and the wider it grows.

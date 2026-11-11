@@ -182,7 +182,7 @@ TEST_CASE_METHOD(NMReset, "Two seeds split a quad into a piece on each side")
         pieceNumbers.insert(pieceNumber);
         for (const intT pointOffset : fractured->getFacePoints(faceOffset))
         {
-            const float x = fractured->getPointPos(pointOffset).x();
+            const float x = fractured->getPointPosition(pointOffset).x();
             if (pieceNumber == 0) REQUIRE(x <= 1e-5f);
             if (pieceNumber == 1) REQUIRE(x >= -1e-5f);
         }

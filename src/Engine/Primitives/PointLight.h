@@ -14,8 +14,6 @@ class PointLight : public Primitive
 {
   public:
     PointLight(std::string_view path = "/pointLight");
-    PointLight(const PointLight& other);
-    PointLight& operator=(const PointLight& rhs);
     ~PointLight() override = default;
 
     PrimType getType() const override { return PrimType::POINT_LIGHT; }
@@ -34,11 +32,5 @@ class PointLight : public Primitive
     void setIntensity(floatT intensity);
     floatT getExposure() const;
     void setExposure(floatT exposure);
-
-  private:
-    attr::AttributeHandle<Matrix4> transformHandle_;
-    attr::AttributeHandle<Vector3> colorHandle_;
-    attr::AttributeHandle<floatT> intensityHandle_;
-    attr::AttributeHandle<floatT> exposureHandle_;
 };
 } // namespace enzo::geo

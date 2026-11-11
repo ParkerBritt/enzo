@@ -522,6 +522,7 @@ if(ENZO_BUILD_TESTS)
         tests/PrimitiveTests.cpp
         tests/PointLightTests.cpp
         tests/NodePacketTests.cpp
+        tests/SharedCacheTests.cpp
         tests/AttributeTransferTests.cpp
         tests/PlaneCutTests.cpp
         tests/CellFractureNodeTests.cpp

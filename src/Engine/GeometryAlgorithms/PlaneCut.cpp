@@ -102,7 +102,7 @@ ClippedFace clipFace(
     const Vector3& keptSideNormal
 )
 {
-    const std::span<const Vector3> sourcePositions = mesh.pointPosSpan();
+    const std::span<const Vector3> sourcePositions = mesh.getPointPositions();
     const std::span<const intT> facePoints = mesh.getFacePoints(faceOffset);
     const Offset faceStartVertex = mesh.getFaceStartVertices()[faceOffset];
     const Offset faceCornerCount = facePoints.size();
@@ -342,7 +342,7 @@ void copyCutAttributes(
 std::optional<PlaneCut>
 cutMeshByPlane(const geo::Mesh& mesh, const Vector3& planePoint, const Vector3& keptSideNormal)
 {
-    const std::span<const Vector3> sourcePositions = mesh.pointPosSpan();
+    const std::span<const Vector3> sourcePositions = mesh.getPointPositions();
     const std::vector<float> distances =
         getSignedDistances(sourcePositions, planePoint, keptSideNormal);
     const bool hasPointPastPlane =

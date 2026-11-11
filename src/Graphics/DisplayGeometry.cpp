@@ -39,7 +39,7 @@ void appendTopology(DisplayTopology& topology, const geo::Mesh& mesh, std::uint3
     {
         if (!mesh.isValidFace(faceOffset)) continue;
 
-        const std::uint32_t faceVertexCount = mesh.getFaceVertCount(faceOffset);
+        const std::uint32_t faceVertexCount = mesh.getFaceVertexCount(faceOffset);
         const std::uint32_t startVertex = firstVertex + std::uint32_t(faceStarts[faceOffset]);
         const bool closed = mesh.isClosed(faceOffset);
 
@@ -85,8 +85,8 @@ void appendTopology(DisplayTopology& topology, const geo::Mesh& mesh, std::uint3
 /// @brief Writes the position and normal of every vertex of one mesh, from its first display vertex on.
 void writeVertices(DisplayGeometry& geometry, const geo::Mesh& mesh, std::uint32_t firstVertex)
 {
-    const std::span<const intT> vertexPoints = mesh.vertexPointSpan();
-    const std::span<const Vector3> pointPositions = mesh.pointPosSpan();
+    const std::span<const intT> vertexPoints = mesh.getVertexPoints();
+    const std::span<const Vector3> pointPositions = mesh.getPointPositions();
     const geo::VertexNormalHandle vertexNormals = mesh.getVertexNormal();
 
     tbb::parallel_for(
@@ -105,7 +105,7 @@ void writeVertices(DisplayGeometry& geometry, const geo::Mesh& mesh, std::uint32
 /// @brief Appends the positions of every point of one mesh.
 void appendPoints(std::vector<glm::vec3>& pointPositions, const geo::Mesh& mesh)
 {
-    const std::span<const Vector3> positions = mesh.pointPosSpan();
+    const std::span<const Vector3> positions = mesh.getPointPositions();
     pointPositions.reserve(pointPositions.size() + positions.size());
     for (Offset pointOffset = 0; pointOffset < positions.size(); ++pointOffset)
     {
@@ -117,18 +117,18 @@ void appendPoints(std::vector<glm::vec3>& pointPositions, const geo::Mesh& mesh)
 /// @brief Appends the positions of the points of one mesh that belong to no face.
 void appendSoloPoints(std::vector<glm::vec3>& soloPointPositions, const geo::Mesh& mesh)
 {
-    for (auto pointIt = mesh.soloPointsBegin(); pointIt != mesh.soloPointsEnd(); ++pointIt)
-        soloPointPositions.push_back(toGlm(mesh.getPointPos(*pointIt)));
+    for (const Offset soloPointOffset : mesh.getSoloPoints())
+        soloPointPositions.push_back(toGlm(mesh.getPointPosition(soloPointOffset)));
 }
 
 } // namespace
 
 void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
 {
-    const std::vector<geo::PrimPtr> meshPrims = packet.getPrimitives(geo::PrimType::MESH);
+    const std::vector<std::shared_ptr<const geo::Primitive>> meshPrims = packet.getPrimitives(geo::PrimType::MESH);
 
     std::size_t vertexCount = 0;
-    for (const geo::PrimPtr& prim : meshPrims)
+    for (const std::shared_ptr<const geo::Primitive>& prim : meshPrims)
         vertexCount += std::static_pointer_cast<const geo::Mesh>(prim)->getNumVerts();
 
     // Empties the lists the meshes append to, which keeps their memory.
@@ -146,7 +146,7 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
     geometry.normals.resize(vertexCount);
 
     std::uint32_t firstVertex = 0;
-    for (const geo::PrimPtr& prim : meshPrims)
+    for (const std::shared_ptr<const geo::Primitive>& prim : meshPrims)
     {
         const auto mesh = std::static_pointer_cast<const geo::Mesh>(prim);
         appendTopology(geometry.topology, *mesh, firstVertex);
@@ -156,14 +156,14 @@ void buildDisplayGeometry(DisplayGeometry& geometry, const NodePacket& packet)
         firstVertex += std::uint32_t(mesh->getNumVerts());
     }
 
-    for (const geo::PrimPtr& prim : packet.getPrimitives(geo::PrimType::CAMERA))
+    for (const std::shared_ptr<const geo::Primitive>& prim : packet.getPrimitives(geo::PrimType::CAMERA))
     {
         const auto camera = std::static_pointer_cast<const geo::Camera>(prim);
         geometry.cameraTransforms.push_back(toGlm(camera->getTransform()));
         geometry.cameraPaths.push_back(camera->getPath());
     }
 
-    for (const geo::PrimPtr& prim : packet.getPrimitives(geo::PrimType::POINT_LIGHT))
+    for (const std::shared_ptr<const geo::Primitive>& prim : packet.getPrimitives(geo::PrimType::POINT_LIGHT))
     {
         const auto light = std::static_pointer_cast<const geo::PointLight>(prim);
         const glm::mat4 transform = toGlm(light->getTransform());

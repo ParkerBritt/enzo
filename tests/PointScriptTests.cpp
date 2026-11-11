@@ -218,8 +218,8 @@ TEST_CASE("run reads the input and writes the output")
     const geo::Mesh input = buildThreePointMesh();
     geo::Mesh output = runScript(*script, input);
 
-    REQUIRE(output.getPointPos(2) == Vector3(2, 3, 0));
-    REQUIRE(input.getPointPos(2) == Vector3(2, 0, 0));
+    REQUIRE(output.getPointPosition(2) == Vector3(2, 3, 0));
+    REQUIRE(input.getPointPosition(2) == Vector3(2, 0, 0));
 }
 
 TEST_CASE("run creates an attribute written only in a branch that never runs")
@@ -281,7 +281,7 @@ TEST_CASE("A vector binding scales by a whole number")
     auto script = compileScript("@Position *= 5");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
 
-    REQUIRE(output.getPointPos(2) == Vector3(10, 0, 0));
+    REQUIRE(output.getPointPosition(2) == Vector3(10, 0, 0));
 }
 
 TEST_CASE("A vector binding adds one number to every component")
@@ -289,7 +289,7 @@ TEST_CASE("A vector binding adds one number to every component")
     auto script = compileScript("@Position += 2.5");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
 
-    REQUIRE(output.getPointPos(1) == Vector3(3.5f, 2.5f, 2.5f));
+    REQUIRE(output.getPointPosition(1) == Vector3(3.5f, 2.5f, 2.5f));
 }
 
 TEST_CASE("A vector reads either way round in a sum")
@@ -297,7 +297,7 @@ TEST_CASE("A vector reads either way round in a sum")
     auto script = compileScript("@Position = 1 + @Position - 1.0");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
 
-    REQUIRE(output.getPointPos(2) == Vector3(2, 0, 0));
+    REQUIRE(output.getPointPosition(2) == Vector3(2, 0, 0));
 }
 
 TEST_CASE("A vector binding divides by a whole number")
@@ -305,5 +305,5 @@ TEST_CASE("A vector binding divides by a whole number")
     auto script = compileScript("@Position /= 2");
     geo::Mesh output = runScript(*script, buildThreePointMesh());
 
-    REQUIRE(output.getPointPos(2) == Vector3(1, 0, 0));
+    REQUIRE(output.getPointPosition(2) == Vector3(1, 0, 0));
 }

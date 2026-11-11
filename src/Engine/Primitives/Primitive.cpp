@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -12,27 +13,6 @@
 namespace enzo {
 
 geo::Primitive::Primitive(std::string_view path) : path_(path) {}
-
-geo::Primitive::Primitive(const Primitive& other)
-    : pointAttributes_{deepCopyAttributes(other.pointAttributes_)},
-      primitiveAttributes_{deepCopyAttributes(other.primitiveAttributes_)},
-      pointGroups_{deepCopyAttributes(other.pointGroups_)},
-      primitiveGroups_{deepCopyAttributes(other.primitiveGroups_)}, path_{other.path_}
-{
-}
-
-geo::Primitive& geo::Primitive::operator=(const geo::Primitive& rhs)
-{
-    if (this == &rhs) return *this;
-
-    pointAttributes_ = deepCopyAttributes(rhs.pointAttributes_);
-    primitiveAttributes_ = deepCopyAttributes(rhs.primitiveAttributes_);
-    pointGroups_ = deepCopyAttributes(rhs.pointGroups_);
-    primitiveGroups_ = deepCopyAttributes(rhs.primitiveGroups_);
-    path_ = rhs.path_;
-
-    return *this;
-}
 
 const size_t geo::Primitive::getNumAttributes(const attr::AttributeOwner owner) const
 {
@@ -77,15 +57,15 @@ geo::Primitive::getAttributes(attr::AttributeOwner owner, bool includeIntrinsics
 namespace {
 
 /**
- * @brief Returns the attribute of this name and type from the store, adding one when
- * the name is free.
+ * @brief Returns the index of the attribute of this name and type, adding one when the name
+ * is free.
  *
- * @return The attribute, or nullptr when the name belongs to an internal attribute
- *         or to an intrinsic of another type.
+ * @return The index, or nothing when the name belongs to an internal attribute or to an
+ *         intrinsic of another type.
  * @note An ordinary attribute of another type under the same name is replaced,
  *       dropping its values.
  */
-std::shared_ptr<attr::Attribute> addToStore(
+std::optional<size_t> addToStore(
     attr::attribVector& store,
     size_t elementCount,
     const std::string& name,
@@ -97,31 +77,35 @@ std::shared_ptr<attr::Attribute> addToStore(
     const auto holdsTheName = [&](const std::shared_ptr<attr::Attribute>& stored) {
         return stored && stored->getName() == name;
     };
-    const auto takenSlot = std::ranges::find_if(store, holdsTheName);
-    const bool nameTaken = takenSlot != store.end();
+    const auto taken = std::ranges::find_if(store, holdsTheName);
+    const bool nameTaken = taken != store.end();
+    const size_t takenIndex = taken - store.begin();
 
     if (nameTaken)
     {
-        const std::shared_ptr<attr::Attribute>& stored = *takenSlot;
+        const std::shared_ptr<attr::Attribute>& stored = *taken;
         const bool typeMatches = stored->getType() == type;
-        if (stored->isInternal() && !isInternal) return nullptr;
-        if (typeMatches) return stored;
-        if (stored->isIntrinsic()) return nullptr;
+        if (stored->isInternal() && !isInternal) return std::nullopt;
+        if (typeMatches) return takenIndex;
+        if (stored->isIntrinsic()) return std::nullopt;
     }
 
     auto newAttribute = std::make_shared<attr::Attribute>(name, type, intrinsic, isInternal);
     // Match the owner's element count so existing elements get a value.
     newAttribute->resize(elementCount);
 
-    if (nameTaken) *takenSlot = newAttribute;
-    else store.push_back(newAttribute);
-
-    return newAttribute;
+    if (nameTaken)
+    {
+        *taken = newAttribute;
+        return takenIndex;
+    }
+    store.push_back(newAttribute);
+    return store.size() - 1;
 }
 
 } // namespace
 
-std::shared_ptr<attr::Attribute> geo::Primitive::addAttribute(
+std::shared_ptr<const attr::Attribute> geo::Primitive::addAttribute(
     attr::AttributeOwner owner,
     std::string name,
     attr::AttributeType type,
@@ -129,14 +113,14 @@ std::shared_ptr<attr::Attribute> geo::Primitive::addAttribute(
     bool isInternal
 )
 {
-    std::shared_ptr<attr::Attribute> attribute =
+    std::shared_ptr<const attr::Attribute> attribute =
         tryAddAttribute(owner, name, type, intrinsic, isInternal);
     if (!attribute)
         throw std::runtime_error("The attribute " + name + " can't be added as this type.");
     return attribute;
 }
 
-std::shared_ptr<attr::Attribute> geo::Primitive::tryAddAttribute(
+std::shared_ptr<const attr::Attribute> geo::Primitive::tryAddAttribute(
     attr::AttributeOwner owner,
     std::string name,
     attr::AttributeType type,
@@ -144,9 +128,32 @@ std::shared_ptr<attr::Attribute> geo::Primitive::tryAddAttribute(
     bool isInternal
 )
 {
-    return addToStore(
-        getAttributeStore(owner), getElementCount(owner), name, type, intrinsic, isInternal
-    );
+    attr::attribVector& attributes = getAttributeStore(owner);
+    std::optional<size_t> index =
+        addToStore(attributes, getElementCount(owner), name, type, intrinsic, isInternal);
+    if (!index) return nullptr;
+    return attributes[*index];
+}
+
+attr::Attribute& geo::Primitive::unshareAttribute(attr::attribVector& attributes, size_t index)
+{
+    std::shared_ptr<attr::Attribute>& attribute = attributes[index];
+    if (attribute.use_count() > 1) attribute = std::make_shared<attr::Attribute>(*attribute);
+    return *attribute;
+}
+
+std::vector<attr::Attribute*>
+geo::Primitive::getWritableAttributesAndGroups(attr::AttributeOwner owner)
+{
+    std::vector<attr::Attribute*> attributes;
+    for (attr::attribVector* store : {&getAttributeStore(owner), &getGroupStore(owner)})
+    {
+        for (size_t index = 0; index < store->size(); ++index)
+        {
+            if ((*store)[index]) attributes.push_back(&unshareAttribute(*store, index));
+        }
+    }
+    return attributes;
 }
 
 attr::attribVector& geo::Primitive::getAttributeStore(const attr::AttributeOwner& owner)
@@ -215,9 +222,11 @@ size_t geo::Primitive::getElementCount(const attr::AttributeOwner& owner) const
 
 attr::AttributeHandleBool geo::Primitive::addGroup(attr::AttributeOwner owner, std::string name)
 {
-    return attr::AttributeHandleBool(addToStore(
-        getGroupStore(owner), getElementCount(owner), name, attr::AttrType::boolT, false, false
-    ));
+    attr::attribVector& groups = getGroupStore(owner);
+    const size_t index = *addToStore(
+        groups, getElementCount(owner), name, attr::AttrType::boolT, false, false
+    );
+    return attr::AttributeHandleBool(unshareAttribute(groups, index));
 }
 
 void geo::Primitive::addToGroup(
@@ -226,16 +235,27 @@ void geo::Primitive::addToGroup(
     const std::vector<Offset>& offsets
 )
 {
-    auto group = getGroupByName(owner, name);
+    std::optional<attr::AttributeHandleBool> group = getGroupWriteHandle(owner, name);
     if (!group) throw std::runtime_error("addToGroup: no group named '" + name + "'");
-    attr::AttributeHandleBool handle(group);
     for (Offset offset : offsets)
     {
-        handle.setValue(offset, true);
+        group->setValue(offset, true);
     }
 }
 
-std::shared_ptr<attr::Attribute>
+std::optional<attr::AttributeHandleBool>
+geo::Primitive::getGroupWriteHandle(attr::AttributeOwner owner, std::string_view name)
+{
+    attr::attribVector& groups = getGroupStore(owner);
+    for (size_t index = 0; index < groups.size(); ++index)
+    {
+        const bool isTheGroup = groups[index] && groups[index]->getName() == name;
+        if (isTheGroup) return attr::AttributeHandleBool(unshareAttribute(groups, index));
+    }
+    return std::nullopt;
+}
+
+std::shared_ptr<const attr::Attribute>
 geo::Primitive::getGroupByName(attr::AttributeOwner owner, const std::string& name) const
 {
     for (const auto& group : getGroupStore(owner))
@@ -282,28 +302,26 @@ void geo::Primitive::addAttributesFrom(const Primitive& source, attr::AttributeO
         addGroup(owner, sourceGroup->getName());
 }
 
-bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string_view name)
+bool geo::Primitive::attributeExists(attr::AttributeOwner owner, std::string_view name) const
 {
     return static_cast<bool>(getAttribByName(owner, name));
 }
 
-std::shared_ptr<attr::Attribute> geo::Primitive::getAttribByName(
+std::optional<size_t> geo::Primitive::getAttributeIndex(
     attr::AttributeOwner owner,
     std::string_view name,
     bool includeIntrinsics
-)
+) const
 {
-    auto& vector = getAttributeStore(owner);
-    for (auto it = vector.begin(); it != vector.end(); ++it)
+    const attr::attribVector& attributes = getAttributeStore(owner);
+    for (size_t index = 0; index < attributes.size(); ++index)
     {
-        std::shared_ptr<attr::Attribute> attribute = (*it);
-        if (attribute->getName() == name)
-        {
-            if (!includeIntrinsics && attribute->isIntrinsic()) continue;
-            return attribute;
-        }
+        const std::shared_ptr<attr::Attribute>& attribute = attributes[index];
+        if (!attribute || attribute->getName() != name) continue;
+        if (!includeIntrinsics && attribute->isIntrinsic()) continue;
+        return index;
     }
-    return nullptr;
+    return std::nullopt;
 }
 
 std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(
@@ -312,38 +330,9 @@ std::shared_ptr<const attr::Attribute> geo::Primitive::getAttribByName(
     bool includeIntrinsics
 ) const
 {
-    const auto& vector = getAttributeStore(owner);
-    for (const std::shared_ptr<attr::Attribute>& attribute : vector)
-    {
-        if (attribute->getName() == name)
-        {
-            if (!includeIntrinsics && attribute->isIntrinsic()) continue;
-            return attribute;
-        }
-    }
-    return nullptr;
-}
-
-attr::attribVector geo::Primitive::deepCopyAttributes(attr::attribVector originalVector)
-{
-    attr::attribVector copied;
-    const size_t sourceSize = originalVector.size();
-
-    copied.reserve(sourceSize);
-
-    for (const std::shared_ptr<attr::Attribute> sourceAttrib : originalVector)
-    {
-        if (sourceAttrib)
-        {
-            copied.push_back(std::make_shared<attr::Attribute>(*sourceAttrib));
-        }
-        else
-        {
-            copied.push_back(nullptr);
-        }
-    }
-
-    return copied;
+    std::optional<size_t> index = getAttributeIndex(owner, name, includeIntrinsics);
+    if (!index) return nullptr;
+    return getAttributeStore(owner)[*index];
 }
 
 } // namespace enzo

@@ -157,8 +157,8 @@ bool isInsideFaceAlongZ(const geo::Mesh& mesh, Offset faceOffset, float x, float
     for (size_t cornerIndex = 0; cornerIndex < facePoints.size(); ++cornerIndex)
     {
         const size_t previousIndex = (cornerIndex + facePoints.size() - 1) % facePoints.size();
-        const Vector3 corner = mesh.getPointPos(facePoints[cornerIndex]);
-        const Vector3 previous = mesh.getPointPos(facePoints[previousIndex]);
+        const Vector3 corner = mesh.getPointPosition(facePoints[cornerIndex]);
+        const Vector3 previous = mesh.getPointPosition(facePoints[previousIndex]);
         const bool edgeSpansY = (corner.y() > y) != (previous.y() > y);
         if (!edgeSpansY) continue;
         const float edgeXAtY = corner.x() + (previous.x() - corner.x()) * (y - corner.y()) /
@@ -207,7 +207,7 @@ float getMaxX(const geo::Mesh& mesh)
 {
     float maxX = -INFINITY;
     for (Offset pointOffset = 0; pointOffset < mesh.getNumPoints(); ++pointOffset)
-        maxX = std::max(maxX, mesh.getPointPos(pointOffset).x());
+        maxX = std::max(maxX, mesh.getPointPosition(pointOffset).x());
     return maxX;
 }
 
@@ -220,7 +220,7 @@ TEST_CASE("Plane through a quad keeps the side the normal points toward")
     const utils::PlaneCut cut = requireCutByPlane(*quad, {1, 0, 0}, {-1, 0, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 1);
-    REQUIRE(cut.mesh->getFaceVertCount(0) == 4);
+    REQUIRE(cut.mesh->getFaceVertexCount(0) == 4);
     REQUIRE(getMaxX(*cut.mesh) == Catch::Approx(1));
 }
 
@@ -261,8 +261,8 @@ TEST_CASE("Each cut face leaves one cut edge lying on the plane")
     REQUIRE(cut.cutEdges.size() == 2);
     for (const auto& [startPoint, endPoint] : cut.cutEdges)
     {
-        REQUIRE(cut.mesh->getPointPos(startPoint).y() == Catch::Approx(0.5));
-        REQUIRE(cut.mesh->getPointPos(endPoint).y() == Catch::Approx(0.5));
+        REQUIRE(cut.mesh->getPointPosition(startPoint).y() == Catch::Approx(0.5));
+        REQUIRE(cut.mesh->getPointPosition(endPoint).y() == Catch::Approx(0.5));
         REQUIRE(startPoint != endPoint);
     }
 }
@@ -276,8 +276,8 @@ TEST_CASE("Cut edge follows the winding of the face it came from")
     // The quad winds counterclockwise, so its edge along x equal to 1 runs from y 0 up to y 2.
     REQUIRE(cut.cutEdges.size() == 1);
     const auto [startPoint, endPoint] = cut.cutEdges[0];
-    REQUIRE(cut.mesh->getPointPos(startPoint).y() == Catch::Approx(0));
-    REQUIRE(cut.mesh->getPointPos(endPoint).y() == Catch::Approx(2));
+    REQUIRE(cut.mesh->getPointPosition(startPoint).y() == Catch::Approx(0));
+    REQUIRE(cut.mesh->getPointPosition(endPoint).y() == Catch::Approx(2));
 }
 
 TEST_CASE("Point attribute is interpolated at the cut")
@@ -285,7 +285,7 @@ TEST_CASE("Point attribute is interpolated at the cut")
     auto quad = buildSingleQuad();
     auto heat = quad->addAttribute<floatT>(attr::AttributeOwner::POINT, "heat");
     for (Offset pointOffset = 0; pointOffset < quad->getNumPoints(); ++pointOffset)
-        heat.setValue(pointOffset, quad->getPointPos(pointOffset).x() * 10);
+        heat.setValue(pointOffset, quad->getPointPosition(pointOffset).x() * 10);
 
     const utils::PlaneCut cut = requireCutByPlane(*quad, {0.5, 0, 0}, {-1, 0, 0});
 
@@ -296,7 +296,7 @@ TEST_CASE("Point attribute is interpolated at the cut")
     REQUIRE(cut.mesh->getNumPoints() == 4);
     for (Offset pointOffset = 0; pointOffset < cut.mesh->getNumPoints(); ++pointOffset)
     {
-        const float x = cut.mesh->getPointPos(pointOffset).x();
+        const float x = cut.mesh->getPointPosition(pointOffset).x();
         REQUIRE(cutHeat.getValue(pointOffset) == Catch::Approx(x * 10));
     }
 }
@@ -330,12 +330,12 @@ TEST_CASE("Corners on the plane are kept without adding cut points")
     const utils::PlaneCut cut = requireCutByPlane(*diamond, {1, 0, 0}, {-1, 0, 0});
 
     REQUIRE(cut.mesh->getNumFaces() == 1);
-    REQUIRE(cut.mesh->getFaceVertCount(0) == 3);
+    REQUIRE(cut.mesh->getFaceVertexCount(0) == 3);
     REQUIRE(cut.mesh->getNumPoints() == 3);
     REQUIRE(cut.cutEdges.size() == 1);
     const auto [startPoint, endPoint] = cut.cutEdges[0];
-    REQUIRE(cut.mesh->getPointPos(startPoint).y() == Catch::Approx(0));
-    REQUIRE(cut.mesh->getPointPos(endPoint).y() == Catch::Approx(2));
+    REQUIRE(cut.mesh->getPointPosition(startPoint).y() == Catch::Approx(0));
+    REQUIRE(cut.mesh->getPointPosition(endPoint).y() == Catch::Approx(2));
 }
 
 TEST_CASE("Concave face crossing the plane four times splits into two faces")
@@ -360,13 +360,13 @@ TEST_CASE("Concave face crossing the plane four times splits into two faces")
 
     // Keeping everything above y equal to 2 leaves the two prongs of the U.
     REQUIRE(cut.mesh->getNumFaces() == 2);
-    REQUIRE(cut.mesh->getFaceVertCount(0) == 4);
-    REQUIRE(cut.mesh->getFaceVertCount(1) == 4);
+    REQUIRE(cut.mesh->getFaceVertexCount(0) == 4);
+    REQUIRE(cut.mesh->getFaceVertexCount(1) == 4);
     REQUIRE(cut.cutEdges.size() == 2);
     for (const auto& [startPoint, endPoint] : cut.cutEdges)
     {
-        const Vector3 start = cut.mesh->getPointPos(startPoint);
-        const Vector3 end = cut.mesh->getPointPos(endPoint);
+        const Vector3 start = cut.mesh->getPointPosition(startPoint);
+        const Vector3 end = cut.mesh->getPointPosition(endPoint);
         REQUIRE(start.y() == Catch::Approx(2));
         REQUIRE(end.y() == Catch::Approx(2));
         REQUIRE(std::abs(end.x() - start.x()) == Catch::Approx(1));
@@ -394,7 +394,7 @@ TEST_CASE("Concave face whose kept part stays connected remains one face")
 
     // Keeping everything below y equal to 2 leaves the base of the U with two short prongs.
     REQUIRE(cut.mesh->getNumFaces() == 1);
-    REQUIRE(cut.mesh->getFaceVertCount(0) == 8);
+    REQUIRE(cut.mesh->getFaceVertexCount(0) == 8);
     REQUIRE(cut.cutEdges.size() == 2);
 }
 
@@ -420,7 +420,7 @@ TEST_CASE("Cutting a closed cube in half caps the opening")
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(caps.size() == 1);
-    REQUIRE(cut.mesh->getFaceVertCount(caps[0]) == 4);
+    REQUIRE(cut.mesh->getFaceVertexCount(caps[0]) == 4);
     REQUIRE(isClosedSurface(*cut.mesh));
 }
 
@@ -611,7 +611,7 @@ TEST_CASE("A plane through opposite edges of a cube caps the diagonal")
     const std::vector<Offset> caps = utils::fillCutCaps(*cut.mesh, cut.cutEdges);
 
     REQUIRE(caps.size() == 1);
-    REQUIRE(cut.mesh->getFaceVertCount(caps[0]) == 4);
+    REQUIRE(cut.mesh->getFaceVertexCount(caps[0]) == 4);
     REQUIRE(isClosedSurface(*cut.mesh));
 }
 

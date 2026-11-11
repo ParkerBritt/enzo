@@ -15,7 +15,7 @@ nt::CookContext::CookContext(nt::NodeId nodeId, nt::NetworkManager& networkManag
 
 NodePacket nt::CookContext::cloneInputPacket(unsigned int inputIndex)
 {
-    return getInputPacket(inputIndex)->deepCopy();
+    return *getInputPacket(inputIndex);
 }
 
 std::shared_ptr<const NodePacket> nt::CookContext::getInputPacket(unsigned int inputIndex)

@@ -12,6 +12,10 @@
 
 #include <iostream>
 
+namespace enzo::geo {
+class Primitive;
+}
+
 namespace enzo::attr {
 
 /**
@@ -43,21 +47,6 @@ template <typename T> class AttributeHandle
 {
   public:
     attr::AttributeType type_;
-
-    /**
-     * @brief Construct a new typed handle linked to a target attribute
-     *
-     * @param attribute The target attribute this handle will modify
-     *
-     */
-    AttributeHandle(std::shared_ptr<Attribute> attribute)
-    {
-        if (attribute == nullptr)
-            throw std::runtime_error("Cannot pass empty pointer to AttributeHandle constructor");
-        type_ = attribute->getType();
-        name_ = attribute->getName();
-        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute->store_);
-    }
 
     /**
      * @brief Adds an element to the end of the attribute.
@@ -166,6 +155,16 @@ template <typename T> class AttributeHandle
     std::string getName() const { return name_; }
 
   private:
+    friend class geo::Primitive;
+
+    /// @brief Links the handle to the attribute it writes to.
+    AttributeHandle(Attribute& attribute)
+    {
+        type_ = attribute.getType();
+        name_ = attribute.getName();
+        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute.store_);
+    }
+
     std::string name_;
 
     std::shared_ptr<StoreContainer<T>> data_;
@@ -189,12 +188,15 @@ class AttributeHandleRO
   public:
     attr::AttributeType type_;
 
-    /// @copydoc AttributeHandle::AttributeHandle
-    AttributeHandleRO(std::shared_ptr<const Attribute> attribute)
+    /// @brief Links the handle to the attribute it reads from.
+    AttributeHandleRO(std::shared_ptr<const Attribute> attribute) : AttributeHandleRO(*attribute) {}
+
+    /// @brief Links the handle to the attribute it reads from.
+    AttributeHandleRO(const Attribute& attribute)
     {
-        type_ = attribute->getType();
-        name_ = attribute->getName();
-        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute->store_);
+        type_ = attribute.getType();
+        name_ = attribute.getName();
+        data_ = std::get<std::shared_ptr<StoreContainer<T>>>(attribute.store_);
     }
 
     /// @copydoc AttributeHandle::getAllValues

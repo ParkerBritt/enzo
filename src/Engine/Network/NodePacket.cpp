@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <span>
 #include <stdexcept>
+#include <utility>
 
 namespace enzo {
 
@@ -14,7 +15,7 @@ namespace {
 /**
  * @brief Returns whether an attribute exists and holds vector values.
  */
-bool isPopulatedVector(const std::shared_ptr<attr::Attribute>& attribute)
+bool isPopulatedVector(const std::shared_ptr<const attr::Attribute>& attribute)
 {
     return attribute && attribute->getType() == attr::AttrType::vectorT && attribute->getSize() > 0;
 }
@@ -26,11 +27,11 @@ bool isPopulatedVector(const std::shared_ptr<attr::Attribute>& attribute)
  */
 std::vector<Vector3> getPointVectorsFromVertices(
     geo::Mesh& mesh,
-    const std::shared_ptr<attr::Attribute>& vertexAttribute
+    const std::shared_ptr<const attr::Attribute>& vertexAttribute
 )
 {
-    const attr::AttributeHandle<Vector3> vertexValues(vertexAttribute);
-    const std::span<const intT> vertexPoints = mesh.vertexPointSpan();
+    const attr::AttributeHandleRO<Vector3> vertexValues(vertexAttribute);
+    const std::span<const intT> vertexPoints = mesh.getVertexPoints();
 
     std::vector<Vector3> pointValues(mesh.getNumPoints(), Vector3::Zero());
     for (Offset vertexOffset = 0; vertexOffset < vertexPoints.size(); ++vertexOffset)
@@ -56,17 +57,17 @@ std::vector<Vector3> getPointVectors(geo::Primitive& prim, const std::string& na
 {
     if (auto* mesh = dynamic_cast<geo::Mesh*>(&prim))
     {
-        std::shared_ptr<attr::Attribute> vertexAttribute =
+        std::shared_ptr<const attr::Attribute> vertexAttribute =
             mesh->getAttribByName(attr::AttributeOwner::VERTEX, name);
         if (isPopulatedVector(vertexAttribute))
             return getPointVectorsFromVertices(*mesh, vertexAttribute);
     }
 
-    std::shared_ptr<attr::Attribute> pointAttribute =
+    std::shared_ptr<const attr::Attribute> pointAttribute =
         prim.getAttribByName(attr::AttributeOwner::POINT, name);
     if (!isPopulatedVector(pointAttribute)) return {};
 
-    return attr::AttributeHandle<Vector3>(pointAttribute).getAllValues();
+    return attr::AttributeHandleRO<Vector3>(pointAttribute).getAllValues();
 }
 
 /**
@@ -253,9 +254,25 @@ std::shared_ptr<const geo::Primitive> NodePacket::getPrimAtPath(const std::strin
     return nullptr;
 }
 
-std::vector<std::shared_ptr<geo::Primitive>> NodePacket::getPrimitives(geo::PrimType type) const
+std::vector<geo::PrimPtr> NodePacket::getPrimitives(geo::PrimType type)
 {
-    std::vector<std::shared_ptr<geo::Primitive>> out;
+    std::vector<geo::PrimPtr> out;
+    for (const auto& prim : primitives_)
+    {
+        if (prim->getType() == type) out.push_back(prim);
+    }
+    return out;
+}
+
+std::vector<std::shared_ptr<const geo::Primitive>> NodePacket::getPrimitives() const
+{
+    return {primitives_.begin(), primitives_.end()};
+}
+
+std::vector<std::shared_ptr<const geo::Primitive>> NodePacket::getPrimitives(geo::PrimType type
+) const
+{
+    std::vector<std::shared_ptr<const geo::Primitive>> out;
     for (const auto& prim : primitives_)
     {
         if (prim->getType() == type) out.push_back(prim);
@@ -280,12 +297,19 @@ void NodePacket::movePrim(const std::string& fromPath, const std::string& toPath
 
 size_t NodePacket::size() const { return primitives_.size(); }
 
-NodePacket NodePacket::deepCopy() const
+NodePacket::NodePacket(const NodePacket& other) : nextNumberByPath_(other.nextNumberByPath_)
 {
-    NodePacket copy;
-    for (const auto& prim : primitives_)
-        copy.addPrimitive(prim->clone());
-    return copy;
+    primitives_.reserve(other.primitives_.size());
+    for (const geo::PrimPtr& prim : other.primitives_)
+        primitives_.push_back(prim->clone());
+}
+
+NodePacket& NodePacket::operator=(const NodePacket& other)
+{
+    if (this == &other) return *this;
+    NodePacket copy(other);
+    *this = std::move(copy);
+    return *this;
 }
 
 // TODO: remplace with PrimPath

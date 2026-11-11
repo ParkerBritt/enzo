@@ -118,7 +118,7 @@ TEST_CASE_METHOD(NMReset, "The radius stretches each axis on its own")
     const auto mesh = getMesh(nm.getNode(sphere));
 
     // The bottom pole is the first point, and it sits at the far end of Y.
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(-3.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(-3.f).margin(1e-5));
 }
 
 TEST_CASE_METHOD(NMReset, "The axis parameter moves the poles")
@@ -132,6 +132,6 @@ TEST_CASE_METHOD(NMReset, "The axis parameter moves the poles")
 
     const auto mesh = getMesh(nm.getNode(sphere));
 
-    REQUIRE(mesh->getPointPos(0).x() == Catch::Approx(-2.f).margin(1e-5));
-    REQUIRE(mesh->getPointPos(0).y() == Catch::Approx(0.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).x() == Catch::Approx(-2.f).margin(1e-5));
+    REQUIRE(mesh->getPointPosition(0).y() == Catch::Approx(0.f).margin(1e-5));
 }
