@@ -21,18 +21,4 @@ std::filesystem::path getStaticDir()
     return ENZO_DEV_STATIC_DIR;
 }
 
-std::filesystem::path getIconPath(const std::string& name)
-{
-    const std::filesystem::path iconsDir = getStaticDir() / "icons";
-    const std::string fileName = name + ".svg";
-
-    const std::filesystem::path lucidePath = iconsDir / "lucide" / fileName;
-    if (std::filesystem::exists(lucidePath)) return lucidePath;
-
-    const std::filesystem::path enzoPath = iconsDir / "enzo" / fileName;
-    if (std::filesystem::exists(enzoPath)) return enzoPath;
-
-    return {};
-}
-
 } // namespace enzo

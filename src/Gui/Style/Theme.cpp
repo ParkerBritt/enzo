@@ -1,9 +1,6 @@
 #include "Gui/Style/Theme.h"
-#include "Engine/Core/InstallPaths.h"
 #include "Gui/Style/ThemeLoader.h"
 #include "Gui/Style/ThemeStore.h"
-
-#include <QUrl>
 
 #include <exception>
 
@@ -22,13 +19,6 @@ Theme::Theme(QObject* parent) : QQmlPropertyMap(this, parent)
 }
 
 Theme* Theme::instance() { return themeInstance; }
-
-QString Theme::getIconUrl(const QString& name) const
-{
-    const std::filesystem::path path = getIconPath(name.toStdString());
-    if (path.empty()) return {};
-    return QUrl::fromLocalFile(QString::fromStdString(path.string())).toString();
-}
 
 void Theme::reload(const QString& themeYaml)
 {

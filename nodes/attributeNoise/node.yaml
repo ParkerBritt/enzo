@@ -22,17 +22,38 @@ parameters:
     type: divider
     icon: tag
 
+  - name: owner
+    label: Owner
+    type: buttonStrip
+    default: point
+    tooltip: >
+      The part of the geometry the attribute is on. Vertices take the noise at
+      their point, and faces and primitives take the noise at the origin.
+    options:
+      - value: point
+        label: Point
+        icon: attribute-point
+      - value: vertex
+        label: Vertex
+        icon: attribute-vertex
+      - value: face
+        label: Face
+        icon: attribute-face
+      - value: primitive
+        label: Primitive
+        icon: attribute-primitive
+
   - name: name
     label: Attribute Name
     type: string
     default: noise
     style: attribute
     styleOptions:
-      owners: point
+      owners: prm(owner)
       attributeTypes: prm(type)
     tooltip: >
-      The point attribute the noise writes to. A missing attribute is added with
-      the chosen type.
+      The attribute the noise writes to. A missing attribute is added with the
+      chosen type.
 
   - name: type
     label: Type
@@ -71,11 +92,11 @@ parameters:
         hideCondition: alongVector == 0
         style: attribute
         styleOptions:
-          owners: point
+          owners: prm(owner)
           attributeTypes: vector
         tooltip: >
-          The point vector attribute the noise moves along. When the attribute is
-          missing the smooth point normals are used.
+          The vector attribute the noise moves along. When the attribute is
+          missing the normals are used.
 
   - name: operation
     label: Operation

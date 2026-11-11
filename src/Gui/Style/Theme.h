@@ -19,10 +19,6 @@ class Theme : public QQmlPropertyMap
     /// @note Null until QML first reads it.
     static Theme* instance();
 
-    /// @brief Returns the file url of an icon by name.
-    /// @return The url, empty when no icon has the name.
-    Q_INVOKABLE QString getIconUrl(const QString& name) const;
-
     /// @brief Repaints the interface in the default theme with the given theme YAML on top.
     ///
     /// @note An empty YAML leaves the default theme as it is.

@@ -6,6 +6,7 @@
 #include "Engine/Network/Node.h"
 #include "Engine/Network/NodeLoader.h"
 #include "Engine/Primitives/Mesh.h"
+#include "Engine/Primitives/PointLight.h"
 #include <catch2/catch_approx.hpp>
 #include <algorithm>
 #include <catch2/catch_test_macros.hpp>
@@ -83,15 +84,18 @@ void requireDistinctPatterns(const std::vector<std::vector<floatT>>& patterns)
     }
 }
 
-// Returns the float noise values a cooked node wrote.
-std::vector<floatT> getNoiseValues(nt::Node& node)
+// Returns the float noise values a cooked node wrote on the owner.
+std::vector<floatT> getNoiseValues(
+    nt::Node& node,
+    const attr::AttributeOwner owner = attr::AttributeOwner::POINT
+)
 {
     const auto mesh = getMesh(node);
-    const auto attribute = mesh->getAttribByName(attr::AttributeOwner::POINT, "noise");
+    const auto attribute = mesh->getAttribByName(owner, "noise");
     REQUIRE(attribute != nullptr);
 
     const attr::AttributeHandleRO<floatT> handle(attribute);
-    REQUIRE(handle.getSize() == mesh->getNumPoints());
+    REQUIRE(handle.getSize() == mesh->getElementCount(owner));
     return handle.getAllValues();
 }
 
@@ -112,6 +116,51 @@ TEST_CASE_METHOD(NMReset, "Every point gets a noise value between minus one and 
 
     // Points at different positions get different values.
     REQUIRE(values.front() != values.back());
+}
+
+TEST_CASE_METHOD(NMReset, "Vertex noise matches the noise at each vertex's point")
+{
+    auto& nm = nt::nm();
+    const nt::NodeId grid = addGrid();
+    const nt::NodeId pointNoise = addAttributeNoiseAfter(grid);
+    const nt::NodeId vertexNoise = addAttributeNoiseAfter(grid);
+    nm.getNode(vertexNoise).getParameter("owner").lock()->setString("vertex");
+    nm.cook(pointNoise);
+    nm.cook(vertexNoise);
+
+    const std::vector<floatT> pointValues = getNoiseValues(nm.getNode(pointNoise));
+    const std::vector<floatT> vertexValues =
+        getNoiseValues(nm.getNode(vertexNoise), attr::AttributeOwner::VERTEX);
+    const auto mesh = getMesh(nm.getNode(vertexNoise));
+
+    for (Offset vertexOffset = 0; vertexOffset < vertexValues.size(); ++vertexOffset)
+    {
+        const Offset pointOffset = mesh->getVertexPoint(vertexOffset);
+        REQUIRE(vertexValues[vertexOffset] == Catch::Approx(pointValues[pointOffset]));
+    }
+}
+
+TEST_CASE_METHOD(NMReset, "Faces and primitives sample the noise at the origin")
+{
+    auto& nm = nt::nm();
+    const nt::NodeId grid = addGrid();
+
+    for (const attr::AttributeOwner owner :
+         {attr::AttributeOwner::FACE, attr::AttributeOwner::PRIMITIVE})
+    {
+        const nt::NodeId attributeNoise = addAttributeNoiseAfter(grid);
+        auto& node = nm.getNode(attributeNoise);
+        node.getParameter("owner").lock()->setString(attr::getOwnerName(owner));
+        // Shifts the sample off the origin, where the noise is zero.
+        node.getParameter("offset").lock()->setFloat(0.3f, 0);
+        nm.cook(attributeNoise);
+
+        const std::vector<floatT> values = getNoiseValues(node, owner);
+        REQUIRE_FALSE(values.empty());
+        REQUIRE(values.front() != 0.0f);
+        for (const floatT value : values)
+            REQUIRE(value == values.front());
+    }
 }
 
 TEST_CASE_METHOD(NMReset, "A different seed gives a different pattern")
@@ -323,4 +372,24 @@ TEST_CASE_METHOD(NMReset, "Each operation combines the noise with the value alre
     requireOperation("multiply", [](floatT noiseValue) { return 0.25f * noiseValue; });
     requireOperation("minimum", [](floatT noiseValue) { return std::min(0.25f, noiseValue); });
     requireOperation("maximum", [](floatT noiseValue) { return std::max(0.25f, noiseValue); });
+}
+
+TEST_CASE_METHOD(NMReset, "Primitive noise writes to a light")
+{
+    nt::NodeLoader::loadNodes();
+    auto& nm = nt::nm();
+    const nt::NodeId light = nm.createNode("enzo::light");
+    const nt::NodeId attributeNoise = addAttributeNoiseAfter(light);
+
+    auto& node = nm.getNode(attributeNoise);
+    node.getParameter("owner").lock()->setString("primitive");
+    node.getParameter("name").lock()->setString("intensity");
+    // Shifts the sample off the origin, where the noise is zero.
+    node.getParameter("offset").lock()->setFloat(0.3f, 0);
+    nm.cook(attributeNoise);
+
+    const auto pointLight =
+        std::dynamic_pointer_cast<const geo::PointLight>(node.getOutputPacket(0)->getPrimitive(0));
+    REQUIRE(pointLight != nullptr);
+    REQUIRE(pointLight->getIntensity() != 1.0f);
 }

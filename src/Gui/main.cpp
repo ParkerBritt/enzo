@@ -1,5 +1,6 @@
 #include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NodeLoader.h"
+#include "Gui/Components/IconImageProvider.h"
 #include "Gui/Controllers/SceneController.h"
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
@@ -158,9 +159,6 @@ int main(int argc, char** argv)
 
     QQuickWindow::setGraphicsApi(QSGRendererInterface::Vulkan);
 
-    // Icons recolour their SVG markup through a local file XMLHttpRequest.
-    qputenv("QML_XHR_ALLOW_FILE_READ", "1");
-
     // Takes keys straight from the keyboard rather than through a Wayland input
     // method, which repeats a held key as separate presses the network reads as
     // taps rather than a hold.
@@ -244,6 +242,7 @@ int main(int argc, char** argv)
             if (auto* window = qobject_cast<QQuickWindow*>(root)) graphicsBridge->adoptDevice(window);
         }
     );
+    engine.addImageProvider("icon", new enzo::ui::IconImageProvider);
     engine.rootContext()->setContextProperty("spreadsheet", &spreadsheet);
     engine.rootContext()->setContextProperty("network", &network);
     engine.rootContext()->setContextProperty("viewport", &viewport);
