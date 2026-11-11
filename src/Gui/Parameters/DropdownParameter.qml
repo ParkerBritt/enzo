@@ -11,6 +11,7 @@ Dropdown {
     readonly property var tokens: item ? item.optionTokens : []
 
     implicitHeight: Constants.parameterHeight
+    centered: true
 
     labels: item ? item.options : []
     labelIcons: item ? item.optionIcons : []

@@ -27,7 +27,7 @@ Rectangle {
 
         anchors.fill: parent
         anchors.leftMargin: 8
-        anchors.rightMargin: 24
+        anchors.rightMargin: picker.width + 8
         verticalAlignment: TextInput.AlignVCenter
         clip: true
         text: parameter.item ? parameter.item.value : ""
@@ -51,6 +51,14 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         hoverEnabled: true
+
+        Rectangle {
+            width: 1
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            color: Theme.parameter.lineColor
+        }
 
         // Opens the list. A press while it is open closes it before this runs.
         onPressed: {
