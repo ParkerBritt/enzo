@@ -74,10 +74,17 @@ void Circle::cook()
     // Sliced arc gets one face for every two points, creating triangles
     if (arc_type == "sliced_arc")
     {
+        std::vector<enzo::Offset> facePoints;
+        std::vector<enzo::Offset> faceVertexCounts;
         for (size_t pointOffset = 1; pointOffset < newPoints.size() - 1; ++pointOffset)
         {
-            mesh->addFace({newPoints[pointOffset], newPoints[pointOffset + 1], newPoints[0]});
+            facePoints.insert(
+                facePoints.end(),
+                {newPoints[pointOffset], newPoints[pointOffset + 1], newPoints[0]}
+            );
+            faceVertexCounts.push_back(3);
         }
+        mesh->addFaces(facePoints, faceVertexCounts);
     }
     else
     {

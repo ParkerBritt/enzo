@@ -378,6 +378,43 @@ TEST_CASE("Add faces mixed sizes")
     REQUIRE(triPoints[2] == static_cast<intT>(pointOffset4));
 }
 
+TEST_CASE("Add faces with a closed flag for each face")
+{
+    geo::Mesh mesh;
+
+    // Build the source points
+    auto pointOffset0 = mesh.addPoint(Vector3(0, 0, 0));
+    auto pointOffset1 = mesh.addPoint(Vector3(1, 0, 0));
+    auto pointOffset2 = mesh.addPoint(Vector3(0, 1, 0));
+
+    // Add a closed triangle, an open line and another closed triangle
+    std::vector<Offset> pointOffsetsFlat{
+        pointOffset0,
+        pointOffset1,
+        pointOffset2,
+        pointOffset0,
+        pointOffset1,
+        pointOffset2,
+        pointOffset1,
+        pointOffset0
+    };
+    std::vector<Offset> vertexCounts{3, 2, 3};
+    std::vector<bool> closedFlags{true, false, true};
+    auto faceOffsets = mesh.addFaces(pointOffsetsFlat, vertexCounts, closedFlags);
+
+    // Check each face keeps its own closed flag
+    REQUIRE(faceOffsets.size() == 3);
+    REQUIRE(mesh.isClosed(faceOffsets[0]));
+    REQUIRE_FALSE(mesh.isClosed(faceOffsets[1]));
+    REQUIRE(mesh.isClosed(faceOffsets[2]));
+
+    // Check the open line reads its own points
+    auto linePoints = mesh.getFacePoints(faceOffsets[1]);
+    REQUIRE(linePoints.size() == 2);
+    REQUIRE(linePoints[0] == static_cast<intT>(pointOffset0));
+    REQUIRE(linePoints[1] == static_cast<intT>(pointOffset1));
+}
+
 TEST_CASE("Add faces resizes group")
 {
     geo::Mesh mesh;

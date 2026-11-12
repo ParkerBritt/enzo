@@ -53,9 +53,10 @@ addTubeRing(enzo::geo::Mesh& mesh, const TorusSettings& settings, float columnFr
     return mesh.addPoints(positions);
 }
 
-// Adds the band of quads going around the tube between two neighbouring rings.
-void addBandFaces(
-    enzo::geo::Mesh& mesh,
+// Lists the band of quads going around the tube between two neighbouring rings.
+void listBandFaces(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
     const std::vector<enzo::Offset>& ring,
     const std::vector<enzo::Offset>& nextRing
 )
@@ -64,7 +65,11 @@ void addBandFaces(
     for (size_t rowIndex = 0; rowIndex < rowCount; ++rowIndex)
     {
         const size_t nextRow = (rowIndex + 1) % rowCount;
-        mesh.addFace({ring[rowIndex], nextRing[rowIndex], nextRing[nextRow], ring[nextRow]});
+        facePoints.insert(
+            facePoints.end(),
+            {ring[rowIndex], nextRing[rowIndex], nextRing[nextRow], ring[nextRow]}
+        );
+        faceVertexCounts.push_back(4);
     }
 }
 
@@ -106,11 +111,14 @@ void Torus::cook()
             addTubeRing(*mesh, settings, static_cast<float>(columnIndex) / settings.columns)
         );
 
+    std::vector<Offset> facePoints;
+    std::vector<Offset> faceVertexCounts;
     for (int columnIndex = 0; columnIndex < settings.columns; ++columnIndex)
     {
         const int nextColumn = (columnIndex + 1) % settings.columns;
-        addBandFaces(*mesh, rings[columnIndex], rings[nextColumn]);
+        listBandFaces(facePoints, faceVertexCounts, rings[columnIndex], rings[nextColumn]);
     }
+    mesh->addFaces(facePoints, faceVertexCounts);
 
     mesh->applyTransform(Transform()
                              .translate(evalParmVector3("center"))

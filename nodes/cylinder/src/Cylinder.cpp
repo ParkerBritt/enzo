@@ -73,28 +73,48 @@ Ring addRing(enzo::geo::Mesh& mesh, const CylinderSettings& settings, float heig
     return ring;
 }
 
-// Adds the band of quads running around the side between two rings.
-void addSideFaces(enzo::geo::Mesh& mesh, const Ring& lower, const Ring& upper, int columns)
+// Lists the band of quads running around the side between two rings.
+void listSideFaces(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
+    const Ring& lower,
+    const Ring& upper,
+    int columns
+)
 {
     const size_t rimPointCount = lower.rim.size();
     for (int columnIndex = 0; columnIndex < columns; ++columnIndex)
     {
         const size_t nextColumn = (columnIndex + 1) % rimPointCount;
-        mesh.addFace(
+        facePoints.insert(
+            facePoints.end(),
             {lower.rim[columnIndex],
              lower.rim[nextColumn],
              upper.rim[nextColumn],
              upper.rim[columnIndex]}
         );
+        faceVertexCounts.push_back(4);
     }
 }
 
-// Adds the two flat walls running from the axis to the rim that seal the open
+// Lists the two flat walls running from the axis to the rim that seal the open
 // sides of a closed arc.
-void addArcWalls(enzo::geo::Mesh& mesh, const Ring& lower, const Ring& upper)
+void listArcWalls(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
+    const Ring& lower,
+    const Ring& upper
+)
 {
-    mesh.addFace({lower.axisPoint, lower.rim.front(), upper.rim.front(), upper.axisPoint});
-    mesh.addFace({lower.rim.back(), lower.axisPoint, upper.axisPoint, upper.rim.back()});
+    facePoints.insert(
+        facePoints.end(),
+        {lower.axisPoint, lower.rim.front(), upper.rim.front(), upper.axisPoint}
+    );
+    facePoints.insert(
+        facePoints.end(),
+        {lower.rim.back(), lower.axisPoint, upper.axisPoint, upper.rim.back()}
+    );
+    faceVertexCounts.insert(faceVertexCounts.end(), {4, 4});
 }
 
 /// @brief Adds the polygon closing one end of the cylinder.
@@ -176,11 +196,16 @@ void Cylinder::cook()
             addRing(*mesh, settings, static_cast<float>(rowIndex) / settings.rows)
         );
 
+    std::vector<Offset> facePoints;
+    std::vector<Offset> faceVertexCounts;
     for (int rowIndex = 0; rowIndex < settings.rows; ++rowIndex)
     {
-        addSideFaces(*mesh, rings[rowIndex], rings[rowIndex + 1], settings.columns);
-        if (settings.sealArc) addArcWalls(*mesh, rings[rowIndex], rings[rowIndex + 1]);
+        const Ring& lower = rings[rowIndex];
+        const Ring& upper = rings[rowIndex + 1];
+        listSideFaces(facePoints, faceVertexCounts, lower, upper, settings.columns);
+        if (settings.sealArc) listArcWalls(facePoints, faceVertexCounts, lower, upper);
     }
+    mesh->addFaces(facePoints, faceVertexCounts);
 
     // A cap on an end that has come to a point would be a face with no area.
     std::vector<Offset> capFaces;

@@ -67,6 +67,11 @@ bool getPointOffset(const std::string& field, Offset pointCount, Offset& pointOf
 
 void readObjInto(std::istream& file, geo::Mesh& mesh)
 {
+    std::vector<Vector3> pointPositions;
+    std::vector<Offset> facePoints;
+    std::vector<Offset> faceVertexCounts;
+    std::vector<bool> faceClosedFlags;
+
     std::string line;
     while (std::getline(file, line))
     {
@@ -77,14 +82,16 @@ void readObjInto(std::istream& file, geo::Mesh& mesh)
 
         if (record == "v" && fields.size() >= 4)
         {
-            mesh.addPoint(Vector3(std::stof(fields[1]), std::stof(fields[2]), std::stof(fields[3])));
+            pointPositions.push_back(
+                Vector3(std::stof(fields[1]), std::stof(fields[2]), std::stof(fields[3]))
+            );
         }
         else if (record == "f" || record == "l")
         {
             std::vector<Offset> pointOffsets;
             pointOffsets.reserve(fields.size() - 1);
 
-            const Offset pointCount = mesh.getNumPoints();
+            const Offset pointCount = mesh.getNumPoints() + pointPositions.size();
             for (size_t field = 1; field < fields.size(); ++field)
             {
                 Offset pointOffset = 0;
@@ -92,9 +99,15 @@ void readObjInto(std::istream& file, geo::Mesh& mesh)
                     pointOffsets.push_back(pointOffset);
             }
 
-            if (pointOffsets.size() >= 2) mesh.addFace(pointOffsets, record == "f");
+            if (pointOffsets.size() < 2) continue;
+            facePoints.insert(facePoints.end(), pointOffsets.begin(), pointOffsets.end());
+            faceVertexCounts.push_back(pointOffsets.size());
+            faceClosedFlags.push_back(record == "f");
         }
     }
+
+    mesh.addPoints(pointPositions);
+    mesh.addFaces(facePoints, faceVertexCounts, faceClosedFlags);
 }
 
 } // namespace enzo::utils

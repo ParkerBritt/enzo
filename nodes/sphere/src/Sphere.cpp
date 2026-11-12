@@ -4,6 +4,7 @@
 #include "Engine/Network/NodeRegistry.h"
 #include "Engine/Primitives/Mesh.h"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <memory>
 #include <numbers>
@@ -71,41 +72,68 @@ Ring addRing(enzo::geo::Mesh& mesh, const SphereSettings& settings, float height
     return ring;
 }
 
-// Adds the band of quads running around the surface between two rings.
-void addSideFaces(enzo::geo::Mesh& mesh, const Ring& lower, const Ring& upper, int columns)
+// Lists the band of quads running around the surface between two rings.
+void listSideFaces(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
+    const Ring& lower,
+    const Ring& upper,
+    int columns
+)
 {
     const size_t rimPointCount = lower.rim.size();
     for (int columnIndex = 0; columnIndex < columns; ++columnIndex)
     {
         const size_t nextColumn = (columnIndex + 1) % rimPointCount;
-        mesh.addFace(
+        facePoints.insert(
+            facePoints.end(),
             {lower.rim[columnIndex],
              lower.rim[nextColumn],
              upper.rim[nextColumn],
              upper.rim[columnIndex]}
         );
+        faceVertexCounts.push_back(4);
     }
 }
 
-// Adds the two flat walls running from the axis to the rim that seal the open
+// Lists the two flat walls running from the axis to the rim that seal the open
 // sides of a closed arc.
-void addArcWalls(enzo::geo::Mesh& mesh, const Ring& lower, const Ring& upper)
+void listArcWalls(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
+    const Ring& lower,
+    const Ring& upper
+)
 {
-    mesh.addFace({lower.axisPoint, lower.rim.front(), upper.rim.front(), upper.axisPoint});
-    mesh.addFace({lower.rim.back(), lower.axisPoint, upper.axisPoint, upper.rim.back()});
+    facePoints.insert(
+        facePoints.end(),
+        {lower.axisPoint, lower.rim.front(), upper.rim.front(), upper.axisPoint}
+    );
+    facePoints.insert(
+        facePoints.end(),
+        {lower.rim.back(), lower.axisPoint, upper.axisPoint, upper.rim.back()}
+    );
+    faceVertexCounts.insert(faceVertexCounts.end(), {4, 4});
 }
 
-// Adds one triangle at a pole, wound so that it faces away from the centre.
-void addPoleFace(enzo::geo::Mesh& mesh, std::vector<enzo::Offset> points, bool isTop)
+// Lists one triangle at a pole, wound so that it faces away from the centre.
+void listPoleFace(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
+    std::array<enzo::Offset, 3> points,
+    bool isTop
+)
 {
     if (!isTop) std::reverse(points.begin(), points.end());
-    mesh.addFace(points);
+    facePoints.insert(facePoints.end(), points.begin(), points.end());
+    faceVertexCounts.push_back(3);
 }
 
-// Adds the fan of triangles joining a ring to the pole beyond it, along with
+// Lists the fan of triangles joining a ring to the pole beyond it, along with
 // the two walls that seal a closed arc there.
-void addPoleFaces(
-    enzo::geo::Mesh& mesh,
+void listPoleFaces(
+    std::vector<enzo::Offset>& facePoints,
+    std::vector<enzo::Offset>& faceVertexCounts,
     const SphereSettings& settings,
     const Ring& ring,
     enzo::Offset pole,
@@ -116,13 +144,18 @@ void addPoleFaces(
     for (int columnIndex = 0; columnIndex < settings.columns; ++columnIndex)
     {
         const size_t nextColumn = (columnIndex + 1) % rimPointCount;
-        addPoleFace(mesh, {ring.rim[columnIndex], ring.rim[nextColumn], pole}, isTop);
+        listPoleFace(
+            facePoints, faceVertexCounts, {ring.rim[columnIndex], ring.rim[nextColumn], pole},
+            isTop
+        );
     }
 
     if (settings.sealArc)
     {
-        addPoleFace(mesh, {ring.axisPoint, ring.rim.front(), pole}, isTop);
-        addPoleFace(mesh, {ring.rim.back(), ring.axisPoint, pole}, isTop);
+        listPoleFace(
+            facePoints, faceVertexCounts, {ring.axisPoint, ring.rim.front(), pole}, isTop
+        );
+        listPoleFace(facePoints, faceVertexCounts, {ring.rim.back(), ring.axisPoint, pole}, isTop);
     }
 }
 
@@ -183,13 +216,20 @@ void Sphere::cook()
     constexpr bool isBottomPole = false;
     constexpr bool isTopPole = true;
 
-    addPoleFaces(*mesh, settings, rings.front(), bottomPole, isBottomPole);
+    std::vector<Offset> facePoints;
+    std::vector<Offset> faceVertexCounts;
+    listPoleFaces(
+        facePoints, faceVertexCounts, settings, rings.front(), bottomPole, isBottomPole
+    );
     for (size_t ringIndex = 0; ringIndex + 1 < rings.size(); ++ringIndex)
     {
-        addSideFaces(*mesh, rings[ringIndex], rings[ringIndex + 1], settings.columns);
-        if (settings.sealArc) addArcWalls(*mesh, rings[ringIndex], rings[ringIndex + 1]);
+        const Ring& lower = rings[ringIndex];
+        const Ring& upper = rings[ringIndex + 1];
+        listSideFaces(facePoints, faceVertexCounts, lower, upper, settings.columns);
+        if (settings.sealArc) listArcWalls(facePoints, faceVertexCounts, lower, upper);
     }
-    addPoleFaces(*mesh, settings, rings.back(), topPole, isTopPole);
+    listPoleFaces(facePoints, faceVertexCounts, settings, rings.back(), topPole, isTopPole);
+    mesh->addFaces(facePoints, faceVertexCounts);
 
     mesh->applyTransform(Transform()
                              .translate(evalParmVector3("center"))
