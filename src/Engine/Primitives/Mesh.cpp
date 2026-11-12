@@ -183,6 +183,16 @@ std::vector<Offset> geo::Mesh::addFaces(
     bool closed
 )
 {
+    const std::vector<bool> closedFlags(vertexCounts.size(), closed);
+    return addFaces(pointOffsetsFlat, vertexCounts, closedFlags);
+}
+
+std::vector<Offset> geo::Mesh::addFaces(
+    std::span<const Offset> pointOffsetsFlat,
+    std::span<const Offset> vertexCounts,
+    const std::vector<bool>& closedFlags
+)
+{
     const Offset firstFaceOffset = getNumFaces();
     const Offset firstVertOffset = getNumVerts();
     const size_t numFacesToAdd = vertexCounts.size();
@@ -223,7 +233,7 @@ std::vector<Offset> geo::Mesh::addFaces(
         }
 
         faceVertexCounts[faceOffset] = vertexCount;
-        faceClosedFlags[faceOffset] = closed;
+        faceClosedFlags[faceOffset] = closedFlags[faceIndex];
         faceValidFlags[faceOffset] = true;
     }
 

@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <tbb/parallel_for.h>
 
 namespace {
@@ -46,27 +47,38 @@ void Grid::cook()
     const floatT columnDivisor = std::max<floatT>(columns - 1, 1);
     const floatT rowDivisor = std::max<floatT>(rows - 1, 1);
     // add points
+    std::vector<Vector3> pointPositions;
+    pointPositions.reserve(columns * rows);
     for (int i = 0; i < columns; i++)
     {
         for (int j = 0; j < rows; ++j)
         {
             const floatT x = i / columnDivisor * width - centerOffsetX;
             const floatT z = j / rowDivisor * height - centerOffsetY;
-            geo->addPoint(Vector3(x, 0, z));
+            pointPositions.push_back(Vector3(x, 0, z));
         }
     }
+    geo->addPoints(pointPositions);
 
+    std::vector<Offset> facePoints;
+    std::vector<Offset> faceVertexCounts;
     if (columns > 1 && rows > 1)
     {
         // add faces
+        facePoints.reserve((columns - 1) * (rows - 1) * 4);
+        faceVertexCounts.reserve((columns - 1) * (rows - 1));
         for (int col = 0; col < columns - 1; ++col)
         {
             for (int row = 0; row < rows - 1; ++row)
             {
                 const Offset startPt = col * rows + row;
-                geo->addFace({startPt, startPt + 1, startPt + rows + 1, startPt + rows});
+                facePoints.insert(
+                    facePoints.end(), {startPt, startPt + 1, startPt + rows + 1, startPt + rows}
+                );
+                faceVertexCounts.push_back(4);
             }
         }
+        geo->addFaces(facePoints, faceVertexCounts);
     }
     else
     {
@@ -75,8 +87,11 @@ void Grid::cook()
         for (int i = 0; i < iterationLimit; i++)
         {
             const Offset startPt = i;
-            geo->addFace({startPt, startPt + 1}, false);
+            facePoints.insert(facePoints.end(), {startPt, startPt + 1});
+            faceVertexCounts.push_back(2);
         }
+        constexpr bool isClosed = false;
+        geo->addFaces(facePoints, faceVertexCounts, isClosed);
     }
 
     packet.addPrimitive(std::move(geo));

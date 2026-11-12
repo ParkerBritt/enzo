@@ -51,11 +51,13 @@ class Mesh : public Primitive
     bool hasOwner(attr::AttributeOwner owner) const override { return true; }
 
     /**
-     * @brief Adds a single face. Avoid for multiple faces in a loop as a single call to @ref
-     * addFaces is much more performant.
+     * @brief Adds a single face.
+     *
+     * @param pointOffsets Point offsets of the face, read in order.
+     * @param closed Whether the face is closed.
      * @return Offset of the new face.
+     * @note Use @ref addFaces to add many faces at once.
      */
-    // TODO: use more efficient addFaces() function
     Offset addFace(const std::vector<Offset>& pointOffsets, bool closed = true);
     /**
      * @brief Adds many faces in a single call.
@@ -63,12 +65,27 @@ class Mesh : public Primitive
      * @param pointOffsetsFlat All point offsets for every face listed one after another.
      * @param vertexCounts How many points each face has. Read in the same order as
      * pointOffsetsFlat.
+     * @param closed Whether every face is closed.
      * @return Offsets of the newly created faces in the order they were added.
      */
     std::vector<Offset> addFaces(
         std::span<const Offset> pointOffsetsFlat,
         std::span<const Offset> vertexCounts,
         bool closed = true
+    );
+    /**
+     * @brief Adds many faces in a single call, each with its own closed flag.
+     *
+     * @param pointOffsetsFlat All point offsets for every face listed one after another.
+     * @param vertexCounts How many points each face has. Read in the same order as
+     * pointOffsetsFlat.
+     * @param closedFlags Whether each face is closed. Read in the same order as vertexCounts.
+     * @return Offsets of the newly created faces in the order they were added.
+     */
+    std::vector<Offset> addFaces(
+        std::span<const Offset> pointOffsetsFlat,
+        std::span<const Offset> vertexCounts,
+        const std::vector<bool>& closedFlags
     );
     Offset addPoint(const Vector3& pos);
     /**
