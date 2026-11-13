@@ -95,7 +95,7 @@ void Script::cook()
 
     if (code.empty())
     {
-        setOutputPacket(0, output);
+        setOutputPacket(0, std::move(output));
         return;
     }
 
@@ -124,7 +124,7 @@ void Script::cook()
         return;
     }
 
-    setOutputPacket(0, output);
+    setOutputPacket(0, std::move(output));
 }
 
 } // namespace

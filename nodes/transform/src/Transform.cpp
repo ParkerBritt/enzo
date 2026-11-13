@@ -76,7 +76,7 @@ void Transform::cook()
         transformPoints(prim, selection.getPoints(prim), transform);
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

@@ -41,7 +41,7 @@ void Line::cook()
     mesh->addFace(mesh->addPoints(positions), isClosed);
 
     packet.addPrimitive(std::move(mesh));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

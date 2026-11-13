@@ -27,7 +27,7 @@ void Merge::cook()
             output.attemptMerge(prim);
     }
 
-    setOutputPacket(0, output);
+    setOutputPacket(0, std::move(output));
 }
 
 } // namespace

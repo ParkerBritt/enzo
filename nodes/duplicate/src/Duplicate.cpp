@@ -62,7 +62,7 @@ void Duplicate::cook()
         }
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

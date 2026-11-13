@@ -95,7 +95,7 @@ void Circle::cook()
     mesh->applyTransform(enzo::Transform().translate(center).rotateEuler(rotate));
 
     packet.addPrimitive(std::move(mesh));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

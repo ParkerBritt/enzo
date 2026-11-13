@@ -21,7 +21,7 @@ bool NodeImpl::outputRequested(unsigned int outputIndex)
     return node_.outputRequested(outputIndex);
 }
 
-void NodeImpl::setOutputPacket(unsigned int outputIndex, NodePacket packet)
+void NodeImpl::setOutputPacket(unsigned int outputIndex, NodePacket&& packet)
 {
     node_.setOutputPacket(outputIndex, std::move(packet));
 }

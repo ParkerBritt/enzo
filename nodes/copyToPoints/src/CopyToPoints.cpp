@@ -53,7 +53,7 @@ void CopyToPoints::cook()
         }
     }
 
-    setOutputPacket(0, outputPacket);
+    setOutputPacket(0, std::move(outputPacket));
 }
 
 } // namespace

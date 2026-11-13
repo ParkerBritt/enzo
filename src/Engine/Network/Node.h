@@ -49,7 +49,7 @@ class Node
     std::shared_ptr<const enzo::NodePacket> getOutputPacket(unsigned int outputIndex) const;
 
     /// @brief Stores finished geometry against one of the node's outputs.
-    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
+    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket&& packet);
 
     /// @brief Returns whether anything downstream is asking for one of the node's outputs.
     /// @todo Always true until dirtiness is tracked per output.
