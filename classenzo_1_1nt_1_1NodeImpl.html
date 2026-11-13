@@ -132,9 +132,10 @@ const std::filesystem::path &amp;&#160;</td><td class="memItemRight" valign="bot
 <tr class="memitem:a25ccd08fcd7875eef7b1e6a8a99f6600" id="r_a25ccd08fcd7875eef7b1e6a8a99f6600"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25ccd08fcd7875eef7b1e6a8a99f6600">outputRequested</a> (unsigned int outputIndex)</td></tr>
 <tr class="memdesc:a25ccd08fcd7875eef7b1e6a8a99f6600"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether anything downstream is asking for this output.  <br /></td></tr>
 <tr class="separator:a25ccd08fcd7875eef7b1e6a8a99f6600"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd0fdb11f25c9ff82a366ec807cd4483" id="r_abd0fdb11f25c9ff82a366ec807cd4483"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd0fdb11f25c9ff82a366ec807cd4483">setOutputPacket</a> (unsigned int outputIndex, <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> packet)</td></tr>
-<tr class="memdesc:abd0fdb11f25c9ff82a366ec807cd4483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hands finished geometry to one of the node's outputs.  <br /></td></tr>
-<tr class="separator:abd0fdb11f25c9ff82a366ec807cd4483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad484c99c7c4f7d1510940269912a82de" id="r_ad484c99c7c4f7d1510940269912a82de"><td class="memItemLeft" align="right" valign="top"><a id="ad484c99c7c4f7d1510940269912a82de" name="ad484c99c7c4f7d1510940269912a82de"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setOutputPacket</b> (unsigned int outputIndex, <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a> &amp;&amp;packet)</td></tr>
+<tr class="memdesc:ad484c99c7c4f7d1510940269912a82de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hands finished geometry to one of the node's outputs. <br /></td></tr>
+<tr class="separator:ad484c99c7c4f7d1510940269912a82de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadc5a73e91f8ac5073f3966c1d67880d" id="r_aadc5a73e91f8ac5073f3966c1d67880d"><td class="memItemLeft" align="right" valign="top"><a id="aadc5a73e91f8ac5073f3966c1d67880d" name="aadc5a73e91f8ac5073f3966c1d67880d"></a>
 <a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a>&#160;</td><td class="memItemRight" valign="bottom"><b>cloneInputPacket</b> (unsigned int inputIndex)</td></tr>
 <tr class="memdesc:aadc5a73e91f8ac5073f3966c1d67880d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a writable copy of the geometry arriving at one input. <br /></td></tr>
@@ -196,12 +197,12 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 <div class="fragment"><div class="line"><span class="keyword">class </span>Circle : <span class="keyword">public</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NodeImpl.html">nt::NodeImpl</a></div>
 <div class="line">{</div>
 <div class="line">    <span class="keyword">using </span>NodeImpl::NodeImpl;</div>
-<div class="line">    <span class="keywordtype">void</span> <a class="code hl_function" href="#a65d99c57095048a57d9d50ee31d1209e">cook</a>()<span class="keyword"> override </span>{ <a class="code hl_function" href="#abd0fdb11f25c9ff82a366ec807cd4483">setOutputPacket</a>(0, buildMesh()); }</div>
+<div class="line">    <span class="keywordtype">void</span> <a class="code hl_function" href="#a65d99c57095048a57d9d50ee31d1209e">cook</a>()<span class="keyword"> override </span>{ <a class="code hl_function" href="#ad484c99c7c4f7d1510940269912a82de">setOutputPacket</a>(0, buildMesh()); }</div>
 <div class="line">};</div>
 <div class="line">ENZO_REGISTER_NODE(circle, Circle)</div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html"><div class="ttname"><a href="classenzo_1_1nt_1_1NodeImpl.html">enzo::nt::NodeImpl</a></div><div class="ttdoc">The base class a node author subclasses to write a node's behaviour.</div><div class="ttdef"><b>Definition</b> NodeImpl.h:40</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_a65d99c57095048a57d9d50ee31d1209e"><div class="ttname"><a href="#a65d99c57095048a57d9d50ee31d1209e">enzo::nt::NodeImpl::cook</a></div><div class="ttdeci">virtual void cook()=0</div><div class="ttdoc">Produces this node's output packets from its inputs and parameters.</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_abd0fdb11f25c9ff82a366ec807cd4483"><div class="ttname"><a href="#abd0fdb11f25c9ff82a366ec807cd4483">enzo::nt::NodeImpl::setOutputPacket</a></div><div class="ttdeci">void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet)</div><div class="ttdoc">Hands finished geometry to one of the node's outputs.</div><div class="ttdef"><b>Definition</b> NodeImpl.cpp:24</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NodeImpl_html_ad484c99c7c4f7d1510940269912a82de"><div class="ttname"><a href="#ad484c99c7c4f7d1510940269912a82de">enzo::nt::NodeImpl::setOutputPacket</a></div><div class="ttdeci">void setOutputPacket(unsigned int outputIndex, enzo::NodePacket &amp;&amp;packet)</div><div class="ttdoc">Hands finished geometry to one of the node's outputs.</div><div class="ttdef"><b>Definition</b> NodeImpl.cpp:24</div></div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Every cook time query lives here as a forwarder, so an author writes evalParmFloat("radius") and never names the context behind it. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a65d99c57095048a57d9d50ee31d1209e" name="a65d99c57095048a57d9d50ee31d1209e"></a>
@@ -313,38 +314,6 @@ Vector3&#160;</td><td class="memItemRight" valign="bottom"><b>evalParmVector3</b
 
 <p>Returns whether anything downstream is asking for this output. </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo</a></b></dt><dd>Always true until <a class="el" href="classenzo_1_1nt_1_1Node.html" title="The unique runtime representation of a node.">nt::Node</a> tracks dirtiness per output. </dd></dl>
-
-</div>
-</div>
-<a id="abd0fdb11f25c9ff82a366ec807cd4483" name="abd0fdb11f25c9ff82a366ec807cd4483"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd0fdb11f25c9ff82a366ec807cd4483">&#9670;&#160;</a></span>setOutputPacket()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void enzo::nt::NodeImpl::setOutputPacket </td>
-          <td>(</td>
-          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>outputIndex</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classenzo_1_1NodePacket.html">enzo::NodePacket</a></td>          <td class="paramname"><span class="paramname"><em>packet</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Hands finished geometry to one of the node's outputs. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo</a></b></dt><dd>std::move the geometry instead of copying it. </dd></dl>
 
 </div>
 </div>

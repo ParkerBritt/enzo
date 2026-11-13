@@ -1,12 +1,12 @@
 var searchData=
 [
   ['about_0',['About',['../index.html#autotoc_md0',1,'']]],
-  ['addattribute_1',['addAttribute',['../classenzo_1_1geo_1_1Primitive.html#a2cd6c4d1e705a3ff3e13387c6a051e5a',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, attr::AttributeType type, bool intrinsic=false, bool isInternal=false)'],['../classenzo_1_1geo_1_1Primitive.html#ab2f388e3f572241fe5bc2696f3a598c5',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic=false, bool isInternal=false)']]],
+  ['addattribute_1',['addAttribute',['../classenzo_1_1geo_1_1Primitive.html#aecf2138592a3f6aaf3354804923d4c2c',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, attr::AttributeType type, bool intrinsic=false, bool isInternal=false)'],['../classenzo_1_1geo_1_1Primitive.html#ab2f388e3f572241fe5bc2696f3a598c5',1,'enzo::geo::Primitive::addAttribute(attr::AttributeOwner owner, std::string name, bool intrinsic=false, bool isInternal=false)']]],
   ['addattributesfrom_2',['addAttributesFrom',['../classenzo_1_1geo_1_1Primitive.html#a41f82500a3fb9c4627892a7e559e7244',1,'enzo::geo::Primitive']]],
   ['addcommand_3',['addCommand',['../classenzo_1_1nt_1_1UndoGroup.html#acbbe1180d61bb0aadd5a378b7552cade',1,'enzo::nt::UndoGroup']]],
   ['addface_4',['addFace',['../classenzo_1_1geo_1_1Mesh.html#a443c7167414f26f605d970202e712d19',1,'enzo::geo::Mesh']]],
   ['addfacegroup_5',['addFaceGroup',['../classenzo_1_1geo_1_1Mesh.html#ac71587782792ef7a80bacbb7575c3fb6',1,'enzo::geo::Mesh']]],
-  ['addfaces_6',['addFaces',['../classenzo_1_1geo_1_1Mesh.html#aa21b613bd6c68e1d32847aac4b72a0be',1,'enzo::geo::Mesh']]],
+  ['addfaces_6',['addFaces',['../classenzo_1_1geo_1_1Mesh.html#aa21b613bd6c68e1d32847aac4b72a0be',1,'enzo::geo::Mesh::addFaces(std::span&lt; const Offset &gt; pointOffsetsFlat, std::span&lt; const Offset &gt; vertexCounts, bool closed=true)'],['../classenzo_1_1geo_1_1Mesh.html#a25f660659b811f4a9de9ab01830d9fe3',1,'enzo::geo::Mesh::addFaces(std::span&lt; const Offset &gt; pointOffsetsFlat, std::span&lt; const Offset &gt; vertexCounts, const std::vector&lt; bool &gt; &amp;closedFlags)']]],
   ['addgroup_7',['addGroup',['../classenzo_1_1geo_1_1Primitive.html#a0f9ebcf823dc0f40528be39d1dcbca7f',1,'enzo::geo::Primitive']]],
   ['addnodealias_8',['addNodeAlias',['../classenzo_1_1nt_1_1NodeTypeTable.html#a4e36acea74e121d8caeeef499eea033f',1,'enzo::nt::NodeTypeTable']]],
   ['addnodetype_9',['addNodeType',['../classenzo_1_1nt_1_1NodeTypeTable.html#a4fd56787271c50a8bae93d609c4494c3',1,'enzo::nt::NodeTypeTable']]],
@@ -30,12 +30,9 @@ var searchData=
   ['attemptmerge_27',['attemptMerge',['../classenzo_1_1NodePacket.html#a6ecea1c044db9e0684612f977395ac89',1,'enzo::NodePacket']]],
   ['attribute_28',['Attribute',['../classenzo_1_1attr_1_1Attribute.html',1,'enzo::attr::Attribute'],['../structenzo_1_1prm_1_1style_1_1Attribute.html',1,'enzo::prm::style::Attribute'],['../classenzo_1_1attr_1_1Attribute.html#a14421ae1ea02201285c322b564140933',1,'enzo::attr::Attribute::Attribute()']]],
   ['attributebinding_29',['AttributeBinding',['../structenzo_1_1script_1_1AttributeBinding.html',1,'enzo::script']]],
-  ['attributehandle_30',['AttributeHandle',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr::AttributeHandle&lt; T &gt;'],['../classenzo_1_1attr_1_1AttributeHandle.html#ab3dde5cfe4d9c8764eaa3d6036d95f40',1,'enzo::attr::AttributeHandle::AttributeHandle()']]],
-  ['attributehandle_3c_20floatt_20_3e_31',['AttributeHandle&lt; floatT &gt;',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr']]],
-  ['attributehandle_3c_20matrix4_20_3e_32',['AttributeHandle&lt; Matrix4 &gt;',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr']]],
-  ['attributehandle_3c_20vector3_20_3e_33',['AttributeHandle&lt; Vector3 &gt;',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr']]],
-  ['attributehandlero_34',['AttributeHandleRO',['../classenzo_1_1attr_1_1AttributeHandleRO.html',1,'enzo::attr::AttributeHandleRO&lt; T &gt;'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a2c7d6591a3e6099d1019e7cb1d3bca81',1,'enzo::attr::AttributeHandleRO::AttributeHandleRO()']]],
-  ['attributeowner_35',['AttributeOwner',['../Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303',1,'enzo::attr']]],
-  ['attributetype_36',['AttributeType',['../Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3',1,'enzo::attr']]],
-  ['attributetypes_37',['attributeTypes',['../structenzo_1_1prm_1_1style_1_1Attribute.html#a1a0d916b2cdec798243bbe048faec4d7',1,'enzo::prm::style::Attribute']]]
+  ['attributehandle_30',['AttributeHandle',['../classenzo_1_1attr_1_1AttributeHandle.html',1,'enzo::attr']]],
+  ['attributehandlero_31',['AttributeHandleRO',['../classenzo_1_1attr_1_1AttributeHandleRO.html',1,'enzo::attr::AttributeHandleRO&lt; T &gt;'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#a2c7d6591a3e6099d1019e7cb1d3bca81',1,'enzo::attr::AttributeHandleRO::AttributeHandleRO(std::shared_ptr&lt; const Attribute &gt; attribute)'],['../classenzo_1_1attr_1_1AttributeHandleRO.html#ac40eff103cc39aa8d6d9bd0f6e4379cc',1,'enzo::attr::AttributeHandleRO::AttributeHandleRO(const Attribute &amp;attribute)']]],
+  ['attributeowner_32',['AttributeOwner',['../Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303',1,'enzo::attr']]],
+  ['attributetype_33',['AttributeType',['../Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3',1,'enzo::attr']]],
+  ['attributetypes_34',['attributeTypes',['../structenzo_1_1prm_1_1style_1_1Attribute.html#a1a0d916b2cdec798243bbe048faec4d7',1,'enzo::prm::style::Attribute']]]
 ];

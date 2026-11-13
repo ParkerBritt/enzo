@@ -94,6 +94,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classenzo_1_1attr_1_1AttributeHandle-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">enzo::attr::AttributeHandle&lt; T &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -106,9 +107,6 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab3dde5cfe4d9c8764eaa3d6036d95f40" id="r_ab3dde5cfe4d9c8764eaa3d6036d95f40"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3dde5cfe4d9c8764eaa3d6036d95f40">AttributeHandle</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">Attribute</a> &gt; attribute)</td></tr>
-<tr class="memdesc:ab3dde5cfe4d9c8764eaa3d6036d95f40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new typed handle linked to a target attribute.  <br /></td></tr>
-<tr class="separator:ab3dde5cfe4d9c8764eaa3d6036d95f40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a024cb9b4a8bf06a921ba32387f12697a" id="r_a024cb9b4a8bf06a921ba32387f12697a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a024cb9b4a8bf06a921ba32387f12697a">addValue</a> (T value)</td></tr>
 <tr class="memdesc:a024cb9b4a8bf06a921ba32387f12697a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an element to the end of the attribute.  <br /></td></tr>
 <tr class="separator:a024cb9b4a8bf06a921ba32387f12697a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,6 +142,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aa901ff4d9624831d92fafee6d6c03543" id="r_aa901ff4d9624831d92fafee6d6c03543"><td class="memItemLeft" align="right" valign="top"><a id="aa901ff4d9624831d92fafee6d6c03543" name="aa901ff4d9624831d92fafee6d6c03543"></a>
 <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type_</b></td></tr>
 <tr class="separator:aa901ff4d9624831d92fafee6d6c03543"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a6bc233ed54c1b3a846bee7291d8e6ecd" id="r_a6bc233ed54c1b3a846bee7291d8e6ecd"><td class="memItemLeft" align="right" valign="top"><a id="a6bc233ed54c1b3a846bee7291d8e6ecd" name="a6bc233ed54c1b3a846bee7291d8e6ecd"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>geo::Primitive</b></td></tr>
+<tr class="separator:a6bc233ed54c1b3a846bee7291d8e6ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T&gt;<br />
@@ -157,43 +161,7 @@ class enzo::attr::AttributeHandle&lt; T &gt;</div><p>Read write accessor for <a 
 <p>An <a class="el" href="classenzo_1_1attr_1_1Attribute.html" title="Containers for geometry data.">Attribute</a> Handle is a typed view into an attribute’s storage. It binds at construction to a concrete type and exposes operations like reserving capacity, appending values, and reading/writing by index. Because the handle uses templating, most misuse is caught at compile time, and runtime guards raise errors if an attribute/handle type combination isn’t accounted for. In the future implicit casting can be added for convenience. Handles don’t own data, they just reference the attribute’s storage.</p>
 <p>There is also a read-only handle variant that provides the same typed accessors without mutation. This is useful when a node needs to inspect data but must not modify it, when the engine exposes attributes to user code with limited permissions, or when implementing const member functions that require attribute access.</p>
 <p>Together, attributes define the schema and storage, while handles provide the typed access that nodes and tools use to operate on data directly. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab3dde5cfe4d9c8764eaa3d6036d95f40" name="ab3dde5cfe4d9c8764eaa3d6036d95f40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3dde5cfe4d9c8764eaa3d6036d95f40">&#9670;&#160;</a></span>AttributeHandle()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">enzo::attr::AttributeHandle</a>&lt; T &gt;::AttributeHandle </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">Attribute</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Construct a new typed handle linked to a target attribute. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">attribute</td><td>The target attribute this handle will modify </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a024cb9b4a8bf06a921ba32387f12697a" name="a024cb9b4a8bf06a921ba32387f12697a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a024cb9b4a8bf06a921ba32387f12697a">&#9670;&#160;</a></span>addValue()</h2>
 

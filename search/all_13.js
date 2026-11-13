@@ -8,7 +8,8 @@ var searchData=
   ['unionfind_5',['UnionFind',['../classenzo_1_1util_1_1UnionFind.html',1,'enzo::util::UnionFind'],['../classenzo_1_1util_1_1UnionFind.html#a31de7e1fd032114457ad39625e743ac5',1,'enzo::util::UnionFind::UnionFind()']]],
   ['unit_6',['Unit',['../structenzo_1_1nt_1_1Unit.html',1,'enzo::nt']]],
   ['unite_7',['unite',['../classenzo_1_1util_1_1UnionFind.html#a27470f591fa30c4085705de3d903950b',1,'enzo::util::UnionFind']]],
-  ['up_8',['up',['../namespaceenzo_1_1attr_1_1names.html#a22c722df8198bbcdb0b303fc55cc06a4',1,'enzo::attr::names']]],
-  ['update_9',['update',['../classenzo_1_1nt_1_1NetworkManager.html#ae9fb66020dcbd4760aa9233bdba095fe',1,'enzo::nt::NetworkManager']]],
-  ['updatelock_10',['UpdateLock',['../classenzo_1_1nt_1_1UpdateLock.html',1,'enzo::nt']]]
+  ['unshareattribute_8',['unshareAttribute',['../classenzo_1_1geo_1_1Primitive.html#a4644ab718ce1ea84d420cc91e8fbbc40',1,'enzo::geo::Primitive']]],
+  ['up_9',['up',['../namespaceenzo_1_1attr_1_1names.html#a22c722df8198bbcdb0b303fc55cc06a4',1,'enzo::attr::names']]],
+  ['update_10',['update',['../classenzo_1_1nt_1_1NetworkManager.html#ae9fb66020dcbd4760aa9233bdba095fe',1,'enzo::nt::NetworkManager']]],
+  ['updatelock_11',['UpdateLock',['../classenzo_1_1nt_1_1UpdateLock.html',1,'enzo::nt']]]
 ];

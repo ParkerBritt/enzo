@@ -95,6 +95,7 @@ $(function(){ initResizable(false); });
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classenzo_1_1geo_1_1Primitive-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">enzo::geo::Primitive Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
@@ -127,17 +128,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a23698eca2d18589e24596579b82756b6" id="r_a23698eca2d18589e24596579b82756b6"><td class="memItemLeft" align="right" valign="top"><a id="a23698eca2d18589e24596579b82756b6" name="a23698eca2d18589e24596579b82756b6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (std::string_view path=&quot;/prim&quot;)</td></tr>
 <tr class="separator:a23698eca2d18589e24596579b82756b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d05eb9ce06179fb85925027e346cd89" id="r_a8d05eb9ce06179fb85925027e346cd89"><td class="memItemLeft" align="right" valign="top"><a id="a8d05eb9ce06179fb85925027e346cd89" name="a8d05eb9ce06179fb85925027e346cd89"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;other)</td></tr>
-<tr class="separator:a8d05eb9ce06179fb85925027e346cd89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5439c6bb1485e5e914768f2e9f3bfa43" id="r_a5439c6bb1485e5e914768f2e9f3bfa43"><td class="memItemLeft" align="right" valign="top"><a id="a5439c6bb1485e5e914768f2e9f3bfa43" name="a5439c6bb1485e5e914768f2e9f3bfa43"></a>
-<a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;rhs)</td></tr>
-<tr class="separator:a5439c6bb1485e5e914768f2e9f3bfa43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a932125386b5560872da0dce9576a38e1" id="r_a932125386b5560872da0dce9576a38e1"><td class="memItemLeft" align="right" valign="top"><a id="a932125386b5560872da0dce9576a38e1" name="a932125386b5560872da0dce9576a38e1"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Primitive</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;other)=default</td></tr>
+<tr class="memdesc:a932125386b5560872da0dce9576a38e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the primitive, sharing every attribute until one side writes to it. <br /></td></tr>
+<tr class="separator:a932125386b5560872da0dce9576a38e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b00f49d78827f6d8313983d0886b572" id="r_a8b00f49d78827f6d8313983d0886b572"><td class="memItemLeft" align="right" valign="top"><a id="a8b00f49d78827f6d8313983d0886b572" name="a8b00f49d78827f6d8313983d0886b572"></a>
+<a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &amp;rhs)=default</td></tr>
+<tr class="separator:a8b00f49d78827f6d8313983d0886b572"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a825294f98638c563a488bddc87d68a96" id="r_a825294f98638c563a488bddc87d68a96"><td class="memItemLeft" align="right" valign="top"><a id="a825294f98638c563a488bddc87d68a96" name="a825294f98638c563a488bddc87d68a96"></a>
 virtual PrimType&#160;</td><td class="memItemRight" valign="bottom"><b>getType</b> () const =0</td></tr>
 <tr class="separator:a825294f98638c563a488bddc87d68a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb408236787c0b0731f1865af7e93b83" id="r_aeb408236787c0b0731f1865af7e93b83"><td class="memItemLeft" align="right" valign="top"><a id="aeb408236787c0b0731f1865af7e93b83" name="aeb408236787c0b0731f1865af7e93b83"></a>
-virtual std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>clone</b> () const =0</td></tr>
+<tr class="memitem:aeb408236787c0b0731f1865af7e93b83" id="r_aeb408236787c0b0731f1865af7e93b83"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb408236787c0b0731f1865af7e93b83">clone</a> () const =0</td></tr>
+<tr class="memdesc:aeb408236787c0b0731f1865af7e93b83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy that shares every attribute until one side writes to it.  <br /></td></tr>
 <tr class="separator:aeb408236787c0b0731f1865af7e93b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cfa36176c92ced8ab90eb463b547ed2" id="r_a1cfa36176c92ced8ab90eb463b547ed2"><td class="memItemLeft" align="right" valign="top"><a id="a1cfa36176c92ced8ab90eb463b547ed2" name="a1cfa36176c92ced8ab90eb463b547ed2"></a>
 virtual TransformClass&#160;</td><td class="memItemRight" valign="bottom"><b>transformType</b> () const =0</td></tr>
@@ -176,12 +178,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>deletePoints<
 <tr class="memitem:af26e93804c110b1333b0dfa13a3e1ed2" id="r_af26e93804c110b1333b0dfa13a3e1ed2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af26e93804c110b1333b0dfa13a3e1ed2">defragment</a> ()</td></tr>
 <tr class="memdesc:af26e93804c110b1333b0dfa13a3e1ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compacts storage, removing entries marked invalid so offsets are contiguous again.  <br /></td></tr>
 <tr class="separator:af26e93804c110b1333b0dfa13a3e1ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cd6c4d1e705a3ff3e13387c6a051e5a" id="r_a2cd6c4d1e705a3ff3e13387c6a051e5a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cd6c4d1e705a3ff3e13387c6a051e5a">addAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool isInternal=false)</td></tr>
-<tr class="memdesc:a2cd6c4d1e705a3ff3e13387c6a051e5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute of this name and type, adding one when the name is free.  <br /></td></tr>
-<tr class="separator:a2cd6c4d1e705a3ff3e13387c6a051e5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28da46cf5b4fe61943cc536a6ab73214" id="r_a28da46cf5b4fe61943cc536a6ab73214"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28da46cf5b4fe61943cc536a6ab73214">tryAddAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool isInternal=false)</td></tr>
-<tr class="memdesc:a28da46cf5b4fe61943cc536a6ab73214"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute of this name and type, adding one when the name is free.  <br /></td></tr>
-<tr class="separator:a28da46cf5b4fe61943cc536a6ab73214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecf2138592a3f6aaf3354804923d4c2c" id="r_aecf2138592a3f6aaf3354804923d4c2c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aecf2138592a3f6aaf3354804923d4c2c">addAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool isInternal=false)</td></tr>
+<tr class="memdesc:aecf2138592a3f6aaf3354804923d4c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute of this name and type, adding one when the name is free.  <br /></td></tr>
+<tr class="separator:aecf2138592a3f6aaf3354804923d4c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a795f2ff0599da7b8740e03c96c4bebf1" id="r_a795f2ff0599da7b8740e03c96c4bebf1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a795f2ff0599da7b8740e03c96c4bebf1">tryAddAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, <a class="el" href="Types_8h.html#a56ca0b00e293beacc2733564a2bce4e3">attr::AttributeType</a> type, bool intrinsic=false, bool isInternal=false)</td></tr>
+<tr class="memdesc:a795f2ff0599da7b8740e03c96c4bebf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute of this name and type, adding one when the name is free.  <br /></td></tr>
+<tr class="separator:a795f2ff0599da7b8740e03c96c4bebf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2f388e3f572241fe5bc2696f3a598c5" id="r_ab2f388e3f572241fe5bc2696f3a598c5"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ab2f388e3f572241fe5bc2696f3a598c5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandle</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab2f388e3f572241fe5bc2696f3a598c5">addAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, bool intrinsic=false, bool isInternal=false)</td></tr>
 <tr class="memdesc:ab2f388e3f572241fe5bc2696f3a598c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle to the attribute of this type stored under this name, adding one when the name is free.  <br /></td></tr>
@@ -190,11 +192,13 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>deletePoints<
 <tr class="memitem:a8a7f563f18c19e9449569a538144bbf6"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandle</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8a7f563f18c19e9449569a538144bbf6">tryAddAttribute</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name, bool intrinsic=false, bool isInternal=false)</td></tr>
 <tr class="memdesc:a8a7f563f18c19e9449569a538144bbf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle to the attribute of this type stored under this name, adding one when the name is free.  <br /></td></tr>
 <tr class="separator:a8a7f563f18c19e9449569a538144bbf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefccd8f8096b68e56e282c44049d2062" id="r_aefccd8f8096b68e56e282c44049d2062"><td class="memItemLeft" align="right" valign="top"><a id="aefccd8f8096b68e56e282c44049d2062" name="aefccd8f8096b68e56e282c44049d2062"></a>
-std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false)</td></tr>
-<tr class="separator:aefccd8f8096b68e56e282c44049d2062"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac611a4a31ebca9d7a235e363f0ad7043" id="r_ac611a4a31ebca9d7a235e363f0ad7043"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac611a4a31ebca9d7a235e363f0ad7043">getAttribByName</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false) const</td></tr>
-<tr class="memdesc:ac611a4a31ebca9d7a235e363f0ad7043"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const counterpart of getAttribByName.  <br /></td></tr>
+<tr class="memitem:ab8beefe13047c04ba195ba3809aa4c43" id="r_ab8beefe13047c04ba195ba3809aa4c43"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab8beefe13047c04ba195ba3809aa4c43"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandle</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab8beefe13047c04ba195ba3809aa4c43">getWriteHandle</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false)</td></tr>
+<tr class="memdesc:ab8beefe13047c04ba195ba3809aa4c43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle that writes to the attribute of this name.  <br /></td></tr>
+<tr class="separator:ab8beefe13047c04ba195ba3809aa4c43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac611a4a31ebca9d7a235e363f0ad7043" id="r_ac611a4a31ebca9d7a235e363f0ad7043"><td class="memItemLeft" align="right" valign="top"><a id="ac611a4a31ebca9d7a235e363f0ad7043" name="ac611a4a31ebca9d7a235e363f0ad7043"></a>
+std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttribByName</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics=false) const</td></tr>
+<tr class="memdesc:ac611a4a31ebca9d7a235e363f0ad7043"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the attribute of this name, or nullptr when the primitive holds none. <br /></td></tr>
 <tr class="separator:ac611a4a31ebca9d7a235e363f0ad7043"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add22aecbe7fa31aee30015077dd68314" id="r_add22aecbe7fa31aee30015077dd68314"><td class="memItemLeft" align="right" valign="top"><a id="add22aecbe7fa31aee30015077dd68314" name="add22aecbe7fa31aee30015077dd68314"></a>
 const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumAttributes</b> (const <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner) const</td></tr>
@@ -205,9 +209,9 @@ std::weak_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html"
 <tr class="memitem:a486a4d4b497a4960a91bae835e3e93c7" id="r_a486a4d4b497a4960a91bae835e3e93c7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a486a4d4b497a4960a91bae835e3e93c7">getAttributes</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, bool includeIntrinsics=false) const</td></tr>
 <tr class="memdesc:a486a4d4b497a4960a91bae835e3e93c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute on the owner.  <br /></td></tr>
 <tr class="separator:a486a4d4b497a4960a91bae835e3e93c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a791bd8aeeb996c2284d9aa4b9d88e7b8" id="r_a791bd8aeeb996c2284d9aa4b9d88e7b8"><td class="memItemLeft" align="right" valign="top"><a id="a791bd8aeeb996c2284d9aa4b9d88e7b8" name="a791bd8aeeb996c2284d9aa4b9d88e7b8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name)</td></tr>
-<tr class="separator:a791bd8aeeb996c2284d9aa4b9d88e7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8435beea311149bf7f67602caeef8cce" id="r_a8435beea311149bf7f67602caeef8cce"><td class="memItemLeft" align="right" valign="top"><a id="a8435beea311149bf7f67602caeef8cce" name="a8435beea311149bf7f67602caeef8cce"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name) const</td></tr>
+<tr class="separator:a8435beea311149bf7f67602caeef8cce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f9ebcf823dc0f40528be39d1dcbca7f" id="r_a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandleBool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f9ebcf823dc0f40528be39d1dcbca7f">addGroup</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string name)</td></tr>
 <tr class="memdesc:a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the group of this name on the given owner, adding one when the name is free.  <br /></td></tr>
 <tr class="separator:a0f9ebcf823dc0f40528be39d1dcbca7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,9 +219,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>attributeExists</b> (
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addToGroup</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, const std::string &amp;name, const std::vector&lt; <a class="el" href="Types_8h.html#a2b9e720fc80cc45d06a8a364d4e87eb2">Offset</a> &gt; &amp;offsets)</td></tr>
 <tr class="memdesc:af89866c5df56c3dffde0f47d6d831115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given offsets as members of the group. <br /></td></tr>
 <tr class="separator:af89866c5df56c3dffde0f47d6d831115"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cca3120c244c5796dc64f7ac5a0e867" id="r_a6cca3120c244c5796dc64f7ac5a0e867"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cca3120c244c5796dc64f7ac5a0e867">getGroupByName</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, const std::string &amp;name) const</td></tr>
-<tr class="memdesc:a6cca3120c244c5796dc64f7ac5a0e867"><td class="mdescLeft">&#160;</td><td class="mdescRight">Looks up a group by name.  <br /></td></tr>
-<tr class="separator:a6cca3120c244c5796dc64f7ac5a0e867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d840ec10eb519483bed52b14918933e" id="r_a8d840ec10eb519483bed52b14918933e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d840ec10eb519483bed52b14918933e">getGroupByName</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, const std::string &amp;name) const</td></tr>
+<tr class="memdesc:a8d840ec10eb519483bed52b14918933e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Looks up a group by name.  <br /></td></tr>
+<tr class="separator:a8d840ec10eb519483bed52b14918933e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b72b124a3e074a4f697915c8321bfc" id="r_af2b72b124a3e074a4f697915c8321bfc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandleBool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2b72b124a3e074a4f697915c8321bfc">getGroupWriteHandle</a> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name)</td></tr>
+<tr class="memdesc:af2b72b124a3e074a4f697915c8321bfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a handle that writes to the group of this name.  <br /></td></tr>
+<tr class="separator:af2b72b124a3e074a4f697915c8321bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4ace0e2521c9e0205b35ec802ac7559" id="r_ad4ace0e2521c9e0205b35ec802ac7559"><td class="memItemLeft" align="right" valign="top"><a id="ad4ace0e2521c9e0205b35ec802ac7559" name="ad4ace0e2521c9e0205b35ec802ac7559"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNumGroups</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner) const</td></tr>
 <tr class="memdesc:ad4ace0e2521c9e0205b35ec802ac7559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how many groups live on the given owner. <br /></td></tr>
@@ -270,9 +277,41 @@ virtual attr::attribVector &amp;&#160;</td><td class="memItemRight" valign="bott
 <tr class="memitem:aba87933f8bb64658a62a107e64a5dd53" id="r_aba87933f8bb64658a62a107e64a5dd53"><td class="memItemLeft" align="right" valign="top"><a id="aba87933f8bb64658a62a107e64a5dd53" name="aba87933f8bb64658a62a107e64a5dd53"></a>
 virtual const attr::attribVector &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getGroupStore</b> (const <a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> &amp;owner) const</td></tr>
 <tr class="separator:aba87933f8bb64658a62a107e64a5dd53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b14fd3548e951c2d82dff9b27cca332" id="r_a4b14fd3548e951c2d82dff9b27cca332"><td class="memItemLeft" align="right" valign="top"><a id="a4b14fd3548e951c2d82dff9b27cca332" name="a4b14fd3548e951c2d82dff9b27cca332"></a>
-attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopyAttributes</b> (attr::attribVector source)</td></tr>
-<tr class="separator:a4b14fd3548e951c2d82dff9b27cca332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2137188d3317fd5ef36bd68efe68aecf" id="r_a2137188d3317fd5ef36bd68efe68aecf"><td class="memTemplParams" colspan="2"><a id="a2137188d3317fd5ef36bd68efe68aecf" name="a2137188d3317fd5ef36bd68efe68aecf"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a2137188d3317fd5ef36bd68efe68aecf"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getPrimitiveIntrinsic</b> (std::string_view name) const</td></tr>
+<tr class="memdesc:a2137188d3317fd5ef36bd68efe68aecf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the intrinsic primitive attribute of this name. <br /></td></tr>
+<tr class="separator:a2137188d3317fd5ef36bd68efe68aecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f6c945e224fc042a243ce29af41879b" id="r_a3f6c945e224fc042a243ce29af41879b"><td class="memTemplParams" colspan="2"><a id="a3f6c945e224fc042a243ce29af41879b" name="a3f6c945e224fc042a243ce29af41879b"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a3f6c945e224fc042a243ce29af41879b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setPrimitiveIntrinsic</b> (std::string_view name, const T &amp;value)</td></tr>
+<tr class="memdesc:a3f6c945e224fc042a243ce29af41879b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the intrinsic primitive attribute of this name. <br /></td></tr>
+<tr class="separator:a3f6c945e224fc042a243ce29af41879b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adddca087f6039944c5a94f415818c34b" id="r_adddca087f6039944c5a94f415818c34b"><td class="memItemLeft" align="right" valign="top"><a id="adddca087f6039944c5a94f415818c34b" name="adddca087f6039944c5a94f415818c34b"></a>
+std::vector&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getWritableAttributesAndGroups</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner)</td></tr>
+<tr class="memdesc:adddca087f6039944c5a94f415818c34b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns every attribute and group of the owner, each ready to write to. <br /></td></tr>
+<tr class="separator:adddca087f6039944c5a94f415818c34b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5715f678ab393929056e14f01923540e" id="r_a5715f678ab393929056e14f01923540e"><td class="memItemLeft" align="right" valign="top"><a id="a5715f678ab393929056e14f01923540e" name="a5715f678ab393929056e14f01923540e"></a>
+std::optional&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttributeIndex</b> (<a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a> owner, std::string_view name, bool includeIntrinsics) const</td></tr>
+<tr class="memdesc:a5715f678ab393929056e14f01923540e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the index of the attribute of this name in the owner's attributes. <br /></td></tr>
+<tr class="separator:a5715f678ab393929056e14f01923540e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:a4644ab718ce1ea84d420cc91e8fbbc40" id="r_a4644ab718ce1ea84d420cc91e8fbbc40"><td class="memItemLeft" align="right" valign="top"><a id="a4644ab718ce1ea84d420cc91e8fbbc40" name="a4644ab718ce1ea84d420cc91e8fbbc40"></a>
+static <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>unshareAttribute</b> (attr::attribVector &amp;attributes, size_t index)</td></tr>
+<tr class="memdesc:a4644ab718ce1ea84d420cc91e8fbbc40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the attribute at this index when another primitive shares it, then returns it. <br /></td></tr>
+<tr class="separator:a4644ab718ce1ea84d420cc91e8fbbc40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636d7ae7236c6c85baec06fb677e4902" id="r_a636d7ae7236c6c85baec06fb677e4902"><td class="memTemplParams" colspan="2"><a id="a636d7ae7236c6c85baec06fb677e4902" name="a636d7ae7236c6c85baec06fb677e4902"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a636d7ae7236c6c85baec06fb677e4902"><td class="memTemplItemLeft" align="right" valign="top">static const attr::StoreContainer&lt; T &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getValues</b> (const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &amp;attribute)</td></tr>
+<tr class="memdesc:a636d7ae7236c6c85baec06fb677e4902"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the stored values of the attribute. <br /></td></tr>
+<tr class="separator:a636d7ae7236c6c85baec06fb677e4902"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7181bcaed4e31a5b988e233d9dcfe624" id="r_a7181bcaed4e31a5b988e233d9dcfe624"><td class="memTemplParams" colspan="2"><a id="a7181bcaed4e31a5b988e233d9dcfe624" name="a7181bcaed4e31a5b988e233d9dcfe624"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a7181bcaed4e31a5b988e233d9dcfe624"><td class="memTemplItemLeft" align="right" valign="top">static attr::StoreContainer&lt; T &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getWritableValues</b> (attr::attribVector &amp;attributes, size_t index)</td></tr>
+<tr class="memdesc:a7181bcaed4e31a5b988e233d9dcfe624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the values of the attribute at this index, unsharing it first. <br /></td></tr>
+<tr class="separator:a7181bcaed4e31a5b988e233d9dcfe624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -298,14 +337,14 @@ attr::attribVector&#160;</td><td class="memItemRight" valign="bottom"><b>primiti
 <p><a class="el" href="classenzo_1_1Point.html">Point</a> attributes are stored on the base class since many primitive types have points. Use <a class="el" href="#a8c9eed189290ba666ebdf9c3fd453cae" title="Returns whether this primitive type stores elements of the owner.">hasOwner()</a> to check before accessing them.</p>
 <p>Subclasses (e.g. <a class="el" href="classenzo_1_1geo_1_1Mesh.html" title="Polygonal mesh primitive with point, vertex, and face attributes.">Mesh</a>) add their own attribute owners and geometry. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2cd6c4d1e705a3ff3e13387c6a051e5a" name="a2cd6c4d1e705a3ff3e13387c6a051e5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cd6c4d1e705a3ff3e13387c6a051e5a">&#9670;&#160;</a></span>addAttribute() <span class="overload">[1/2]</span></h2>
+<a id="aecf2138592a3f6aaf3354804923d4c2c" name="aecf2138592a3f6aaf3354804923d4c2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecf2138592a3f6aaf3354804923d4c2c">&#9670;&#160;</a></span>addAttribute() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::addAttribute </td>
+          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::addAttribute </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
         </tr>
@@ -441,6 +480,35 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="aeb408236787c0b0731f1865af7e93b83" name="aeb408236787c0b0731f1865af7e93b83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb408236787c0b0731f1865af7e93b83">&#9670;&#160;</a></span>clone()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">Primitive</a> &gt; enzo::geo::Primitive::clone </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a copy that shares every attribute until one side writes to it. </p>
+
+<p>Implemented in <a class="el" href="classenzo_1_1geo_1_1Camera.html#a627003461b7ad7d6d7c30364c19cbb15">enzo::geo::Camera</a>, <a class="el" href="classenzo_1_1geo_1_1Mesh.html#ac216b94fafd2fae854e56b6131e368fd">enzo::geo::Mesh</a>, and <a class="el" href="classenzo_1_1geo_1_1PointLight.html#a06166837fee903d7272d228dbc7c4637">enzo::geo::PointLight</a>.</p>
+
+</div>
+</div>
 <a id="af26e93804c110b1333b0dfa13a3e1ed2" name="af26e93804c110b1333b0dfa13a3e1ed2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af26e93804c110b1333b0dfa13a3e1ed2">&#9670;&#160;</a></span>defragment()</h2>
 
@@ -470,35 +538,6 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ac611a4a31ebca9d7a235e363f0ad7043" name="ac611a4a31ebca9d7a235e363f0ad7043"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac611a4a31ebca9d7a235e363f0ad7043">&#9670;&#160;</a></span>getAttribByName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::getAttribByName </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>includeIntrinsics</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;) const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Const counterpart of getAttribByName. </p>
-<p>Returns a read only shared pointer so the caller cannot mutate the attribute through a const <a class="el" href="classenzo_1_1geo_1_1Primitive.html" title="Base class for all primitive types in the engine.">Primitive</a>. </p>
-
-</div>
-</div>
 <a id="a486a4d4b497a4960a91bae835e3e93c7" name="a486a4d4b497a4960a91bae835e3e93c7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a486a4d4b497a4960a91bae835e3e93c7">&#9670;&#160;</a></span>getAttributes()</h2>
 
@@ -523,14 +562,14 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a6cca3120c244c5796dc64f7ac5a0e867" name="a6cca3120c244c5796dc64f7ac5a0e867"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cca3120c244c5796dc64f7ac5a0e867">&#9670;&#160;</a></span>getGroupByName()</h2>
+<a id="a8d840ec10eb519483bed52b14918933e" name="a8d840ec10eb519483bed52b14918933e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d840ec10eb519483bed52b14918933e">&#9670;&#160;</a></span>getGroupByName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::getGroupByName </td>
+          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::getGroupByName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
         </tr>
@@ -544,6 +583,75 @@ template&lt;typename T &gt; </div>
 
 <p>Looks up a group by name. </p>
 <dl class="section return"><dt>Returns</dt><dd>The matching group, or nullptr if no such group exists. </dd></dl>
+
+</div>
+</div>
+<a id="af2b72b124a3e074a4f697915c8321bfc" name="af2b72b124a3e074a4f697915c8321bfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b72b124a3e074a4f697915c8321bfc">&#9670;&#160;</a></span>getGroupWriteHandle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandleBool</a> &gt; enzo::geo::Primitive::getGroupWriteHandle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a handle that writes to the group of this name. </p>
+<dl class="section return"><dt>Returns</dt><dd>The handle, or nothing when the owner holds no group of this name. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Follows the same rules as <a class="el" href="#ab8beefe13047c04ba195ba3809aa4c43">getWriteHandle</a>. </dd></dl>
+
+</div>
+</div>
+<a id="ab8beefe13047c04ba195ba3809aa4c43" name="ab8beefe13047c04ba195ba3809aa4c43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8beefe13047c04ba195ba3809aa4c43">&#9670;&#160;</a></span>getWriteHandle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="classenzo_1_1attr_1_1AttributeHandle.html">attr::AttributeHandle</a>&lt; T &gt; &gt; enzo::geo::Primitive::getWriteHandle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>includeIntrinsics</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a handle that writes to the attribute of this name. </p>
+<dl class="section return"><dt>Returns</dt><dd>The handle, or nothing when the primitive holds no attribute of this name. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Copies the attribute first when another primitive shares it. </dd>
+<dd>
+A handle writes to the attribute as it was when the handle was taken. Take the handle again after copying the primitive, and avoid two handles on one attribute. </dd>
+<dd>
+Take write handles before splitting work across threads, since taking one can replace the attribute the other threads hold. </dd></dl>
 
 </div>
 </div>
@@ -576,14 +684,14 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a28da46cf5b4fe61943cc536a6ab73214" name="a28da46cf5b4fe61943cc536a6ab73214"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28da46cf5b4fe61943cc536a6ab73214">&#9670;&#160;</a></span>tryAddAttribute() <span class="overload">[1/2]</span></h2>
+<a id="a795f2ff0599da7b8740e03c96c4bebf1" name="a795f2ff0599da7b8740e03c96c4bebf1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a795f2ff0599da7b8740e03c96c4bebf1">&#9670;&#160;</a></span>tryAddAttribute() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::tryAddAttribute </td>
+          <td class="memname">std::shared_ptr&lt; const <a class="el" href="classenzo_1_1attr_1_1Attribute.html">attr::Attribute</a> &gt; enzo::geo::Primitive::tryAddAttribute </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="Types_8h.html#ab7dcfb86b7eac8d93e460f34bc678303">attr::AttributeOwner</a></td>          <td class="paramname"><span class="paramname"><em>owner</em></span>, </td>
         </tr>

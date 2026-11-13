@@ -106,6 +106,19 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a0b07115c68491e8a9b5b4af84b804fcd" id="r_a0b07115c68491e8a9b5b4af84b804fcd"><td class="memItemLeft" align="right" valign="top"><a id="a0b07115c68491e8a9b5b4af84b804fcd" name="a0b07115c68491e8a9b5b4af84b804fcd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>NodePacket</b> (const <a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;other)</td></tr>
+<tr class="memdesc:a0b07115c68491e8a9b5b4af84b804fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the packet, giving it its own primitives that share every attribute until written. <br /></td></tr>
+<tr class="separator:a0b07115c68491e8a9b5b4af84b804fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d3a22adc95de4caed78641dae7a300b" id="r_a4d3a22adc95de4caed78641dae7a300b"><td class="memItemLeft" align="right" valign="top"><a id="a4d3a22adc95de4caed78641dae7a300b" name="a4d3a22adc95de4caed78641dae7a300b"></a>
+<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;other)</td></tr>
+<tr class="separator:a4d3a22adc95de4caed78641dae7a300b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53b79131ec28a521299641ac78142afa" id="r_a53b79131ec28a521299641ac78142afa"><td class="memItemLeft" align="right" valign="top"><a id="a53b79131ec28a521299641ac78142afa" name="a53b79131ec28a521299641ac78142afa"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>NodePacket</b> (<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;&amp;other)=default</td></tr>
+<tr class="separator:a53b79131ec28a521299641ac78142afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a944d606e49b9ce49950f6c720ce067ac" id="r_a944d606e49b9ce49950f6c720ce067ac"><td class="memItemLeft" align="right" valign="top"><a id="a944d606e49b9ce49950f6c720ce067ac" name="a944d606e49b9ce49950f6c720ce067ac"></a>
+<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a> &amp;&amp;other)=default</td></tr>
+<tr class="separator:a944d606e49b9ce49950f6c720ce067ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a139acf317326ce1f7c4e615e51b1b12e" id="r_a139acf317326ce1f7c4e615e51b1b12e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a139acf317326ce1f7c4e615e51b1b12e">addPrimitive</a> (std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; primitive)</td></tr>
 <tr class="memdesc:a139acf317326ce1f7c4e615e51b1b12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the primitive, numbering its path when another primitive holds it.  <br /></td></tr>
 <tr class="separator:a139acf317326ce1f7c4e615e51b1b12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,12 +138,18 @@ geo::PrimPtr&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath
 <tr class="memitem:a8e6b7b8e404c103c5e1ff248a0db4e5e" id="r_a8e6b7b8e404c103c5e1ff248a0db4e5e"><td class="memItemLeft" align="right" valign="top"><a id="a8e6b7b8e404c103c5e1ff248a0db4e5e" name="a8e6b7b8e404c103c5e1ff248a0db4e5e"></a>
 std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimAtPath</b> (const std::string &amp;path) const</td></tr>
 <tr class="separator:a8e6b7b8e404c103c5e1ff248a0db4e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace4a25a0a4901723006ee240dce29247" id="r_ace4a25a0a4901723006ee240dce29247"><td class="memItemLeft" align="right" valign="top"><a id="ace4a25a0a4901723006ee240dce29247" name="ace4a25a0a4901723006ee240dce29247"></a>
-const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classenzo_1_1geo_1_1Primitive.html">enzo::geo::Primitive</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> () const</td></tr>
-<tr class="separator:ace4a25a0a4901723006ee240dce29247"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab445eb7bb4195a1f4ba510179eefb5a8" id="r_ab445eb7bb4195a1f4ba510179eefb5a8"><td class="memItemLeft" align="right" valign="top"><a id="ab445eb7bb4195a1f4ba510179eefb5a8" name="ab445eb7bb4195a1f4ba510179eefb5a8"></a>
-std::vector&lt; geo::PrimPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (enzo::geo::PrimType type) const</td></tr>
-<tr class="separator:ab445eb7bb4195a1f4ba510179eefb5a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae69a76f1449fa3a61f4cba496debd4a7" id="r_ae69a76f1449fa3a61f4cba496debd4a7"><td class="memItemLeft" align="right" valign="top"><a id="ae69a76f1449fa3a61f4cba496debd4a7" name="ae69a76f1449fa3a61f4cba496debd4a7"></a>
+const std::vector&lt; geo::PrimPtr &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> ()</td></tr>
+<tr class="separator:ae69a76f1449fa3a61f4cba496debd4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf4ea999fea6c1336a38166e9813f1ec" id="r_acf4ea999fea6c1336a38166e9813f1ec"><td class="memItemLeft" align="right" valign="top"><a id="acf4ea999fea6c1336a38166e9813f1ec" name="acf4ea999fea6c1336a38166e9813f1ec"></a>
+std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> () const</td></tr>
+<tr class="separator:acf4ea999fea6c1336a38166e9813f1ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ff04811288addcf10567965f2c0d2a2" id="r_a0ff04811288addcf10567965f2c0d2a2"><td class="memItemLeft" align="right" valign="top"><a id="a0ff04811288addcf10567965f2c0d2a2" name="a0ff04811288addcf10567965f2c0d2a2"></a>
+std::vector&lt; geo::PrimPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (geo::PrimType type)</td></tr>
+<tr class="separator:a0ff04811288addcf10567965f2c0d2a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e2a0e8671fb2ae0beeacb75bbe5636c" id="r_a3e2a0e8671fb2ae0beeacb75bbe5636c"><td class="memItemLeft" align="right" valign="top"><a id="a3e2a0e8671fb2ae0beeacb75bbe5636c" name="a3e2a0e8671fb2ae0beeacb75bbe5636c"></a>
+std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classenzo_1_1geo_1_1Primitive.html">geo::Primitive</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitives</b> (geo::PrimType type) const</td></tr>
+<tr class="separator:a3e2a0e8671fb2ae0beeacb75bbe5636c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1345aba601e08202f27164edd1340897" id="r_a1345aba601e08202f27164edd1340897"><td class="memItemLeft" align="right" valign="top"><a id="a1345aba601e08202f27164edd1340897" name="a1345aba601e08202f27164edd1340897"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>movePrim</b> (const geo::PrimPtr &amp;primitive, const std::string &amp;toPath)</td></tr>
 <tr class="memdesc:a1345aba601e08202f27164edd1340897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the primitive to the path, numbering it when another primitive holds it. <br /></td></tr>
@@ -148,9 +167,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>removePrim</b> (std::
 <tr class="memitem:ac4ddcc7f3e8c08271970b50e950df441" id="r_ac4ddcc7f3e8c08271970b50e950df441"><td class="memItemLeft" align="right" valign="top"><a id="ac4ddcc7f3e8c08271970b50e950df441" name="ac4ddcc7f3e8c08271970b50e950df441"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
 <tr class="separator:ac4ddcc7f3e8c08271970b50e950df441"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4e848efa69a5cfbe5a1992f1cfd6755" id="r_ab4e848efa69a5cfbe5a1992f1cfd6755"><td class="memItemLeft" align="right" valign="top"><a id="ab4e848efa69a5cfbe5a1992f1cfd6755" name="ab4e848efa69a5cfbe5a1992f1cfd6755"></a>
-<a class="el" href="classenzo_1_1NodePacket.html">NodePacket</a>&#160;</td><td class="memItemRight" valign="bottom"><b>deepCopy</b> () const</td></tr>
-<tr class="separator:ab4e848efa69a5cfbe5a1992f1cfd6755"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a139acf317326ce1f7c4e615e51b1b12e" name="a139acf317326ce1f7c4e615e51b1b12e"></a>

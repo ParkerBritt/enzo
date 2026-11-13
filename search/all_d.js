@@ -16,7 +16,7 @@ var searchData=
   ['nodelinkserializable_13',['NodeLinkSerializable',['../structNodeLinkSerializable.html',1,'']]],
   ['nodeloader_14',['NodeLoader',['../classenzo_1_1nt_1_1NodeLoader.html',1,'enzo::nt']]],
   ['nodemanifest_15',['NodeManifest',['../classenzo_1_1nt_1_1NodeManifest.html',1,'enzo::nt']]],
-  ['nodepacket_16',['NodePacket',['../classenzo_1_1NodePacket.html',1,'enzo']]],
+  ['nodepacket_16',['NodePacket',['../classenzo_1_1NodePacket.html',1,'enzo::NodePacket'],['../classenzo_1_1NodePacket.html#a0b07115c68491e8a9b5b4af84b804fcd',1,'enzo::NodePacket::NodePacket()']]],
   ['nodeparameter_17',['NodeParameter',['../classenzo_1_1prm_1_1NodeParameter.html',1,'enzo::prm']]],
   ['nodes_18',['nodes',['../classenzo_1_1nt_1_1Network.html#af3f49bf2e66c36c615b46034e4ab7dc9',1,'enzo::nt::Network::nodes()'],['../classenzo_1_1nt_1_1NetworkManager.html#a15fe3a2c1f774ee64873ee4d7dcf229d',1,'enzo::nt::NetworkManager::nodes()']]],
   ['nodesnapshot_19',['NodeSnapshot',['../classenzo_1_1nt_1_1NodeSnapshot.html',1,'enzo::nt']]],
