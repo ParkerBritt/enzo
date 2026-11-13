@@ -248,7 +248,7 @@ void CellFracture::cook()
 
     if (seedPositions.empty())
     {
-        setOutputPacket(0, packet);
+        setOutputPacket(0, std::move(packet));
         return;
     }
 
@@ -274,7 +274,7 @@ void CellFracture::cook()
         output.addPrimitive(fractured);
     }
 
-    setOutputPacket(0, output);
+    setOutputPacket(0, std::move(output));
 }
 
 } // namespace

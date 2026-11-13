@@ -37,7 +37,7 @@ void Grid::cook()
     if (columns <= 0 || rows <= 0)
     {
         packet.addPrimitive(std::move(geo));
-        setOutputPacket(0, packet);
+        setOutputPacket(0, std::move(packet));
         return;
     }
 
@@ -95,7 +95,7 @@ void Grid::cook()
     }
 
     packet.addPrimitive(std::move(geo));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

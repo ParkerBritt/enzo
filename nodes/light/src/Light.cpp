@@ -33,7 +33,7 @@ void Light::cook()
 
     NodePacket packet;
     packet.addPrimitive(std::move(light));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

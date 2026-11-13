@@ -32,7 +32,7 @@ void Reverse::cook()
         mesh->reverseFaces(selection.getFaces(prim));
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

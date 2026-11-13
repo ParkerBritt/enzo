@@ -186,7 +186,7 @@ void SineWave::cook()
         );
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

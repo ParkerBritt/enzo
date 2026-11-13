@@ -86,7 +86,7 @@ void Sweep::cook()
         sweepMesh(*mesh, profile, settings);
     }
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 /**

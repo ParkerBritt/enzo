@@ -25,7 +25,7 @@ void PrimitiveRename::cook()
     for (const geo::PrimPtr& prim : packet.getPrimitives())
         packet.movePrim(prim, path);
 
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

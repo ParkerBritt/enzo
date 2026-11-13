@@ -31,7 +31,7 @@ void Camera::cook()
 
     NodePacket packet;
     packet.addPrimitive(std::move(camera));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

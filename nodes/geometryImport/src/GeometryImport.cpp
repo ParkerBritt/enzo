@@ -64,7 +64,7 @@ void GeometryImport::cook()
 
     NodePacket packet;
     packet.addPrimitive(std::move(mesh));
-    setOutputPacket(0, packet);
+    setOutputPacket(0, std::move(packet));
 }
 
 } // namespace

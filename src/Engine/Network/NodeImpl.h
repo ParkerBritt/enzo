@@ -66,8 +66,7 @@ class BOOST_SYMBOL_EXPORT NodeImpl
     bool outputRequested(unsigned int outputIndex);
 
     /// @brief Hands finished geometry to one of the node's outputs.
-    /// @todo std::move the geometry instead of copying it.
-    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket packet);
+    void setOutputPacket(unsigned int outputIndex, enzo::NodePacket&& packet);
 
     /// @brief Returns a writable copy of the geometry arriving at one input.
     enzo::NodePacket cloneInputPacket(unsigned int inputIndex);

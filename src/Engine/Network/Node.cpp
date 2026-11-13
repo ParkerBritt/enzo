@@ -117,7 +117,7 @@ std::shared_ptr<const NodePacket> nt::Node::getOutputPacket(unsigned outputIndex
     return outputPackets_.at(outputIndex);
 }
 
-void nt::Node::setOutputPacket(unsigned int outputIndex, NodePacket packet)
+void nt::Node::setOutputPacket(unsigned int outputIndex, NodePacket&& packet)
 {
     if (outputIndex >= getMaxOutputs())
     {

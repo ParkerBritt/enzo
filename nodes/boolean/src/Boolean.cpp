@@ -64,7 +64,7 @@ void Boolean::cook()
         output.addPrimitive(meshA);
     }
 
-    setOutputPacket(0, output);
+    setOutputPacket(0, std::move(output));
 }
 
 } // namespace
