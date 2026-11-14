@@ -1,0 +1,28 @@
+version: 1
+
+name: sleep
+namespace: enzo
+label: Sleep
+tags: [debug, utility]
+
+inputs:
+  - label: Geometry
+    optional: true
+outputs: 1
+
+implementation:
+  kind: cpp
+  library: enzoOps
+  constructor: sleep
+
+icon: icon.svg
+
+parameters:
+  - name: duration
+    label: Duration
+    type: float
+    default: 1
+    range: {min: 0, max: 10, minLocked: true}
+    tooltip: >
+      How long the node stalls each cook, in seconds. The input passes through
+      unchanged.
