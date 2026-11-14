@@ -294,6 +294,7 @@ qt_add_executable(${AppExec}
     src/Gui/Network/NodeListModel.cpp
     src/Gui/Network/NodeLinkListModel.cpp
     src/Gui/Network/NetworkViewModel.cpp
+    src/Gui/Network/CookThrottle.cpp
     src/Gui/Parameters/ParameterItem.cpp
     src/Gui/Parameters/ParametersViewModel.cpp
     src/Gui/Timeline/TimelineViewModel.cpp

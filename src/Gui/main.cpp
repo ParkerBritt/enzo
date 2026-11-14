@@ -1,16 +1,17 @@
 #include "Engine/Core/InstallPaths.h"
 #include "Engine/Network/NodeLoader.h"
+#include "Graphics/GraphicsDevice.h"
 #include "Gui/Components/IconImageProvider.h"
 #include "Gui/Controllers/SceneController.h"
+#include "Gui/Network/CookThrottle.h"
 #include "Gui/Network/NetworkViewModel.h"
 #include "Gui/Parameters/ParametersViewModel.h"
-#include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Settings/InterfaceViewModel.h"
+#include "Gui/Spreadsheet/SpreadsheetViewModel.h"
 #include "Gui/Style/ThemeViewModel.h"
 #include "Gui/Timeline/TimelineViewModel.h"
 #include "Gui/Viewport/QtGraphicsBridge.h"
 #include "Gui/Viewport/ViewportViewModel.h"
-#include "Graphics/GraphicsDevice.h"
 #include <argparse/argparse.hpp>
 
 #include <QDir>
@@ -18,12 +19,12 @@
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QFontDatabase>
-#include <QSet>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
+#include <QSet>
 #include <QSurfaceFormat>
 #include <QUrl>
 
@@ -229,6 +230,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    enzo::ui::CookThrottle cookThrottle(timeline);
+
     QQmlApplicationEngine engine;
 
     // Hands the device to each root window the engine loads, before it first renders.
@@ -239,7 +242,9 @@ int main(int argc, char** argv)
         &QQmlApplicationEngine::objectCreated,
         &engine,
         [&graphicsBridge](QObject* root) {
-            if (auto* window = qobject_cast<QQuickWindow*>(root)) graphicsBridge->adoptDevice(window);
+            auto* window = qobject_cast<QQuickWindow*>(root);
+            if (!window) return;
+            graphicsBridge->adoptDevice(window);
         }
     );
     engine.addImageProvider("icon", new enzo::ui::IconImageProvider);
