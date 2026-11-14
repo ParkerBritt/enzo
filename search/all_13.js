@@ -11,5 +11,5 @@ var searchData=
   ['unshareattribute_8',['unshareAttribute',['../classenzo_1_1geo_1_1Primitive.html#a4644ab718ce1ea84d420cc91e8fbbc40',1,'enzo::geo::Primitive']]],
   ['up_9',['up',['../namespaceenzo_1_1attr_1_1names.html#a22c722df8198bbcdb0b303fc55cc06a4',1,'enzo::attr::names']]],
   ['update_10',['update',['../classenzo_1_1nt_1_1NetworkManager.html#ae9fb66020dcbd4760aa9233bdba095fe',1,'enzo::nt::NetworkManager']]],
-  ['updatelock_11',['UpdateLock',['../classenzo_1_1nt_1_1UpdateLock.html',1,'enzo::nt']]]
+  ['updatelock_11',['UpdateLock',['../classenzo_1_1nt_1_1UpdateLock.html',1,'enzo::nt::UpdateLock'],['../classenzo_1_1nt_1_1UpdateLock.html#a69ef57e804684358a12afc1533c952a1',1,'enzo::nt::UpdateLock::UpdateLock()']]]
 ];

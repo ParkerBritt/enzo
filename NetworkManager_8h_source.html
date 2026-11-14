@@ -273,51 +273,54 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span> </div>
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    <span class="comment">// @brief A signal emitted when the playback rate changes</span></div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    boost::signals2::signal&lt;void(floatT fps)&gt; fpsChanged;</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UndoStack.html">UndoStack</a>&amp; undoStack() { <span class="keywordflow">return</span> undoStack_; }</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span> </div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classenzo_1_1nt_1_1NetworkManager.html#a9e7a9d1c2907f14e96641a1e4088bfb0">_reset</a>();</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    NetworkManager() {};</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    <span class="comment">// @brief A signal emitted when an update lock first holds back an update</span></div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    boost::signals2::signal&lt;void()&gt; updateHeld;</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    <a class="code hl_class" href="classenzo_1_1nt_1_1UndoStack.html">UndoStack</a>&amp; undoStack() { <span class="keywordflow">return</span> undoStack_; }</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classenzo_1_1nt_1_1NetworkManager.html#a9e7a9d1c2907f14e96641a1e4088bfb0">_reset</a>();</div>
 <div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span> </div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    <span class="comment">// functions</span></div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    <span class="keywordtype">void</span> disconnectNode(NodeId nodeId);</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    <span class="keywordtype">void</span> openInputGap(NodeId nodeId, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fromIndex);</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    NetworkManager() {};</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span> </div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>    <span class="comment">// functions</span></div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    <span class="keywordtype">void</span> disconnectNode(NodeId nodeId);</div>
 <div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span> </div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    <span class="keywordtype">void</span> closeInputGap(NodeId nodeId, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fromIndex);</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    <span class="keywordtype">void</span> openInputGap(NodeId nodeId, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fromIndex);</div>
 <div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span> </div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    <span class="keywordtype">void</span> moveInput(<span class="keyword">const</span> nt::NodeLink&amp; nodeLink, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> inputIndex);</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    <span class="keywordtype">void</span> closeInputGap(NodeId nodeId, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fromIndex);</div>
 <div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span> </div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>    <span class="keywordtype">void</span> onNodeDirtied(nt::NodeId nodeId, <span class="keywordtype">bool</span> dirtyDependents);</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span> </div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>    <span class="keywordtype">void</span> dirtyUnits_(<span class="keyword">const</span> std::vector&lt;nt::Unit&gt;&amp; units);</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordtype">void</span> dirtyTimeDependents_();</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="keywordtype">void</span> moveInput(<span class="keyword">const</span> nt::NodeLink&amp; nodeLink, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> inputIndex);</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span> </div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    <span class="keywordtype">void</span> onNodeDirtied(nt::NodeId nodeId, <span class="keywordtype">bool</span> dirtyDependents);</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span> </div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordtype">void</span> dirtyUnits_(<span class="keyword">const</span> std::vector&lt;nt::Unit&gt;&amp; units);</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span> </div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    <span class="keywordtype">void</span> resetTime_();</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    <span class="keywordtype">void</span> dirtyTimeDependents_();</div>
 <div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span> </div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    <span class="comment">// variables</span></div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    <span class="comment">// every node, its wiring, and the scopes they live in</span></div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    nt::Network network_;</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    std::vector&lt;enzo::nt::NodeId&gt; selectedNodes_;</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="comment">// node selected for displaying in the viewport</span></div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    std::optional&lt;NodeId&gt; displayNode_ = std::nullopt;</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    <span class="comment">// the primary node that drives the parameter and geometry panes</span></div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    std::optional&lt;NodeId&gt; primaryNode_ = std::nullopt;</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span> </div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="comment">// the frame the scene sits on, and the range playback runs over</span></div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    floatT frame_ = 1;</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    intT startFrame_ = 1;</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    intT endFrame_ = 240;</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    floatT fps_ = 24;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    UndoStack undoStack_;</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>};</div>
-</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    <span class="keywordtype">void</span> resetTime_();</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span> </div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    <span class="comment">// variables</span></div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="comment">// every node, its wiring, and the scopes they live in</span></div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    nt::Network network_;</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    std::vector&lt;enzo::nt::NodeId&gt; selectedNodes_;</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    <span class="comment">// node selected for displaying in the viewport</span></div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    std::optional&lt;NodeId&gt; displayNode_ = std::nullopt;</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="comment">// the primary node that drives the parameter and geometry panes</span></div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    std::optional&lt;NodeId&gt; primaryNode_ = std::nullopt;</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    <span class="comment">// the frame the scene sits on, and the range playback runs over</span></div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    floatT frame_ = 1;</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    intT startFrame_ = 1;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    intT endFrame_ = 240;</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    floatT fps_ = 24;</div>
 <div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span> </div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span><span class="keyword">inline</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>&amp; nm() { <span class="keywordflow">return</span> <a class="code hl_function" href="classenzo_1_1nt_1_1NetworkManager.html#aff1bd35aae8e8a931bc48b573d71761e">enzo::nt::NetworkManager::getInstance</a>(); }</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>} <span class="comment">// namespace enzo::nt</span></div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    UndoStack undoStack_;</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>};</div>
+</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span> </div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span><span class="keyword">inline</span> <a class="code hl_class" href="classenzo_1_1nt_1_1NetworkManager.html">enzo::nt::NetworkManager</a>&amp; nm() { <span class="keywordflow">return</span> <a class="code hl_function" href="classenzo_1_1nt_1_1NetworkManager.html#aff1bd35aae8e8a931bc48b573d71761e">enzo::nt::NetworkManager::getInstance</a>(); }</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>} <span class="comment">// namespace enzo::nt</span></div>
 <div class="ttc" id="aTypes_8h_html"><div class="ttname"><a href="Types_8h.html">Types.h</a></div><div class="ttdoc">Basic attribute, parameter, and node types for Enzo.</div></div>
 <div class="ttc" id="aTypes_8h_html_aab12bf4b9a39db7c3a93f15e7e6f10f9"><div class="ttname"><a href="Types_8h.html#aab12bf4b9a39db7c3a93f15e7e6f10f9">enzo::nt::NodeId</a></div><div class="ttdeci">uint64_t NodeId</div><div class="ttdoc">The unique ID assigned to each node in the network.</div><div class="ttdef"><b>Definition</b> Types.h:355</div></div>
 <div class="ttc" id="aclassenzo_1_1NetworkPath_html"><div class="ttname"><a href="classenzo_1_1NetworkPath.html">enzo::NetworkPath</a></div><div class="ttdoc">A path that references a network entity, either a node or a parameter on a node.</div><div class="ttdef"><b>Definition</b> NetworkPath.h:20</div></div>
@@ -350,7 +353,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_a8ca375bc73f0ca9ac0e54d932f65ffe8"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#a8ca375bc73f0ca9ac0e54d932f65ffe8">enzo::nt::NetworkManager::setSelectedNodes</a></div><div class="ttdeci">void setSelectedNodes(std::vector&lt; enzo::nt::NodeId &gt; nodeIds)</div><div class="ttdoc">Replaces the entire selection with the given set of nodes.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:301</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_a97f7c246b46806e91d317cf4eeafc09c"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#a97f7c246b46806e91d317cf4eeafc09c">enzo::nt::NetworkManager::deleteNode</a></div><div class="ttdeci">void deleteNode(NodeId nodeId)</div><div class="ttdoc">Deletes a node, pushing an undo command.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:60</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_a994ef59b687b591288120d05d9addb30"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#a994ef59b687b591288120d05d9addb30">enzo::nt::NetworkManager::getEndFrame</a></div><div class="ttdeci">intT getEndFrame() const</div><div class="ttdoc">Returns the last frame of the playback range.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:152</div></div>
-<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_a9e7a9d1c2907f14e96641a1e4088bfb0"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#a9e7a9d1c2907f14e96641a1e4088bfb0">enzo::nt::NetworkManager::_reset</a></div><div class="ttdeci">void _reset()</div><div class="ttdoc">For use in unit tests, resets the state of the node.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:495</div></div>
+<div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_a9e7a9d1c2907f14e96641a1e4088bfb0"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#a9e7a9d1c2907f14e96641a1e4088bfb0">enzo::nt::NetworkManager::_reset</a></div><div class="ttdeci">void _reset()</div><div class="ttdoc">For use in unit tests, resets the state of the node.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:502</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_aa7cee9ee6653e1b4c577af2d036ddf42"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#aa7cee9ee6653e1b4c577af2d036ddf42">enzo::nt::NetworkManager::createNodeWithId</a></div><div class="ttdeci">void createNodeWithId(NodeId nodeId, const nt::NodeType &amp;nodeType, const Path &amp;path, Vector2 position)</div><div class="ttdoc">Creates a node with an identity the caller dictates rather than one picked here.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:91</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_ab574df7c3f60cbff540153cd42ab9190"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#ab574df7c3f60cbff540153cd42ab9190">enzo::nt::NetworkManager::getScope</a></div><div class="ttdeci">Scope * getScope(const Path &amp;path)</div><div class="ttdoc">Returns the scope at a path, or null when no scope sits there.</div><div class="ttdef"><b>Definition</b> NetworkManager.h:77</div></div>
 <div class="ttc" id="aclassenzo_1_1nt_1_1NetworkManager_html_ab9d60c92f21eff24a13329edc3ebe7d8"><div class="ttname"><a href="classenzo_1_1nt_1_1NetworkManager.html#ab9d60c92f21eff24a13329edc3ebe7d8">enzo::nt::NetworkManager::setFrame</a></div><div class="ttdeci">void setFrame(floatT frame)</div><div class="ttdoc">Moves the scene to a frame, clamped to the playback range.</div><div class="ttdef"><b>Definition</b> NetworkManager.cpp:180</div></div>
