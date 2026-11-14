@@ -29,8 +29,6 @@ unsigned int nt::UpdateLock::getNumLocks() { return lockCounter; }
 
 bool nt::UpdateLock::isLocked() { return lockCounter > 0; }
 
-bool nt::UpdateLock::isUnlocked() { return !isLocked(); }
-
 bool nt::UpdateLock::isUpdateHeld() { return updateWhenUnlocked; }
 
 } // namespace enzo

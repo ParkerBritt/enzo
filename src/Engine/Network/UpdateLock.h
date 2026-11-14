@@ -35,12 +35,6 @@ class UpdateLock
      */
     static bool isLocked();
 
-    /**
-     * @brief Returns whether the lock is active or not. The lock is active as long as #getNumLocks
-     * > 0
-     */
-    static bool isUnlocked();
-
     /// @brief Returns whether an update is waiting for the last lock to be released.
     static bool isUpdateHeld();
 

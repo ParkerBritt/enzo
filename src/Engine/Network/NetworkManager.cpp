@@ -482,14 +482,13 @@ void nt::NetworkManager::dirtyTimeDependents_()
 
 void nt::NetworkManager::onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents)
 {
-    if (!dirtyDependents) return;
+    // Holds updates until every dependent is dirty, so the network cooks once
+    auto updateLock = lockUpdates();
 
-    dirtyUnits_(graph().getDependents(nt::Unit{nodeId}));
-
-    if (nt::UpdateLock::isUnlocked())
+    if (dirtyDependents)
     {
-        update();
-        return;
+        const auto dependents = graph().getDependents(nt::Unit{nodeId});
+        dirtyUnits_(dependents);
     }
 
     if (!nt::UpdateLock::isUpdateHeld())

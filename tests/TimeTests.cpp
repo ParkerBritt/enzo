@@ -224,3 +224,44 @@ TEST_CASE_METHOD(NMReset, "a cook that no longer reads the frame stops being tim
 
     REQUIRE(nm.graph().getTimeDependents().empty());
 }
+
+TEST_CASE_METHOD(NMReset, "moving the frame recooks a display node whose expression reads it")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::transform");
+    auto translate = nm.getNode(nodeId).getParameter("translate").lock();
+    translate->setExpression("frame()");
+    nm.setDisplayNode(nodeId);
+
+    unsigned int displayGeoCount = 0;
+    auto connection = nm.displayGeoChanged.connect([&](auto) { ++displayGeoCount; });
+
+    nm.setFrame(20);
+    REQUIRE(displayGeoCount == 1);
+    REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
+
+    connection.disconnect();
+}
+
+TEST_CASE_METHOD(NMReset, "moving the frame under an update lock cooks once the lock is released")
+{
+    enzo::nt::NodeLoader::loadNodes();
+    auto& nm = enzo::nt::nm();
+
+    enzo::nt::NodeId nodeId = nm.createNode("enzo::transform");
+    auto translate = nm.getNode(nodeId).getParameter("translate").lock();
+    translate->setExpression("frame()");
+    nm.setDisplayNode(nodeId);
+
+    {
+        auto updateLock = nm.lockUpdates();
+        nm.setFrame(20);
+        REQUIRE(enzo::nt::UpdateLock::isUpdateHeld());
+        REQUIRE(nm.getNode(nodeId).isDirty());
+    }
+
+    REQUIRE_FALSE(enzo::nt::UpdateLock::isUpdateHeld());
+    REQUIRE_FALSE(nm.getNode(nodeId).isDirty());
+}
