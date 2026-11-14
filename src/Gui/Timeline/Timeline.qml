@@ -7,13 +7,11 @@ import "../Components"
 Item {
     id: root
 
-    property bool playing: false
-
     implicitHeight: 38
 
     // Moves the playhead and stops playback.
     function scrubToFrame(value) {
-        root.playing = false;
+        timeline.playing = false;
         timeline.frame = value;
     }
 
@@ -31,7 +29,7 @@ Item {
         // Part of a frame left over from the last update, carried into the next.
         property real carry: 0
 
-        running: root.playing
+        running: timeline.playing
         onRunningChanged: playback.carry = 0
         onTriggered: {
             playback.carry += playback.smoothFrameTime * timeline.fps;
@@ -66,13 +64,13 @@ Item {
                 onClicked: root.scrubToFrame(timeline.frame - 1)
             }
             TransportButton {
-                name: root.playing ? "pause" : "play"
-                tooltip: root.playing ? "Pause" : "Play"
+                name: timeline.playing ? "pause" : "play"
+                tooltip: timeline.playing ? "Pause" : "Play"
                 width: 30
                 surfaceColor: Theme.timeline.playColor
                 hoverColor: Theme.timeline.playHoverColor
                 iconColor: Theme.var.textStrong
-                onClicked: root.playing = !root.playing
+                onClicked: timeline.playing = !timeline.playing
             }
             TransportButton {
                 name: "chevron-right"

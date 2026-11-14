@@ -19,6 +19,8 @@ int TimelineViewModel::endFrame() const { return nt::nm().getEndFrame(); }
 
 qreal TimelineViewModel::fps() const { return nt::nm().getFps(); }
 
+bool TimelineViewModel::isPlaying() const { return playing_; }
+
 void TimelineViewModel::setFrame(qreal frame) { nt::nm().setFrame(static_cast<floatT>(frame)); }
 
 void TimelineViewModel::setStartFrame(int frame) { nt::nm().setStartFrame(frame); }
@@ -26,5 +28,12 @@ void TimelineViewModel::setStartFrame(int frame) { nt::nm().setStartFrame(frame)
 void TimelineViewModel::setEndFrame(int frame) { nt::nm().setEndFrame(frame); }
 
 void TimelineViewModel::setFps(qreal fps) { nt::nm().setFps(static_cast<floatT>(fps)); }
+
+void TimelineViewModel::setPlaying(bool playing)
+{
+    if (playing_ == playing) return;
+    playing_ = playing;
+    Q_EMIT playingChanged();
+}
 
 } // namespace enzo::ui

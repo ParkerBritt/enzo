@@ -337,6 +337,9 @@ class NetworkManager
 
     // @brief A signal emitted when the playback rate changes
     boost::signals2::signal<void(floatT fps)> fpsChanged;
+
+    // @brief A signal emitted when an update lock first holds back an update
+    boost::signals2::signal<void()> updateHeld;
     /** @} */
 
     UndoStack& undoStack() { return undoStack_; }

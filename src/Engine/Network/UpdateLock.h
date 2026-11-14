@@ -16,6 +16,12 @@ class UpdateLock
   public:
     ~UpdateLock();
 
+    UpdateLock(const UpdateLock&) = delete;
+    UpdateLock& operator=(const UpdateLock&) = delete;
+
+    /// @brief Takes over the other lock, which no longer holds updates.
+    UpdateLock(UpdateLock&& other);
+
     /**
      * @brief Returns the number of locks across all UpdateLock objects
      * @returns When this value is greater than 0 a lock is in place and the network cannot update,
@@ -35,10 +41,17 @@ class UpdateLock
      */
     static bool isUnlocked();
 
+    /// @brief Returns whether an update is waiting for the last lock to be released.
+    static bool isUpdateHeld();
+
   private:
     UpdateLock();
 
+    // Whether this lock counts towards the locks in place, false once moved from.
+    bool isActive_ = true;
+
     static unsigned int lockCounter;
+    static bool updateWhenUnlocked;
 
     friend nt::NetworkManager;
 };

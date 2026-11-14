@@ -15,6 +15,7 @@ class TimelineViewModel : public QObject
     Q_PROPERTY(int startFrame READ startFrame WRITE setStartFrame NOTIFY frameRangeChanged)
     Q_PROPERTY(int endFrame READ endFrame WRITE setEndFrame NOTIFY frameRangeChanged)
     Q_PROPERTY(qreal fps READ fps WRITE setFps NOTIFY fpsChanged)
+    Q_PROPERTY(bool playing READ isPlaying WRITE setPlaying NOTIFY playingChanged)
 
   public:
     explicit TimelineViewModel(QObject* parent = nullptr);
@@ -31,17 +32,23 @@ class TimelineViewModel : public QObject
     /// @brief Returns the playback frame rate.
     qreal fps() const;
 
+    /// @brief Returns whether the timeline is playing.
+    bool isPlaying() const;
+
     void setFrame(qreal frame);
     void setStartFrame(int frame);
     void setEndFrame(int frame);
     void setFps(qreal fps);
+    void setPlaying(bool playing);
 
   Q_SIGNALS:
     void frameChanged();
     void frameRangeChanged();
     void fpsChanged();
+    void playingChanged();
 
   private:
+    bool playing_ = false;
     boost::signals2::scoped_connection frameSubscription_;
     boost::signals2::scoped_connection frameRangeSubscription_;
     boost::signals2::scoped_connection fpsSubscription_;

@@ -489,6 +489,13 @@ void nt::NetworkManager::onNodeDirtied(nt::NodeId nodeId, bool dirtyDependents)
     if (nt::UpdateLock::isUnlocked())
     {
         update();
+        return;
+    }
+
+    if (!nt::UpdateLock::isUpdateHeld())
+    {
+        nt::UpdateLock::updateWhenUnlocked = true;
+        updateHeld();
     }
 }
 
