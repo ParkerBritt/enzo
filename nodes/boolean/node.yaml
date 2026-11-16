@@ -16,6 +16,7 @@ implementation:
   constructor: boolean
 
 icon: icon.svg
+color: "#4f9bea" # Model
 
 parameters:
   - name: operation

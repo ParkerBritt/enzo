@@ -16,6 +16,12 @@ Item {
     x: modelX - width / 2
     y: modelY - height / 2
 
+    property color categoryColor: "transparent"
+    readonly property bool hasCategory: categoryColor.a > 0
+
+    // The width of the category strip on the card's left edge.
+    readonly property real stripWidth: 3.5
+
     property color fillColor: Theme.node.bodyColor
     property color borderColor: Theme.node.borderColor
 
@@ -112,11 +118,29 @@ Item {
             shadowVerticalOffset: 3
         }
 
-        // Main shape
+        // Draws the color strip, or the whole card when the node has no category.
         Rectangle {
             id: nodeShape
             anchors.fill: parent
+            color: root.hasCategory ? root.categoryColor : root.fillColor
+            radius: root.radius
+            antialiasing: true
+        }
+        // Draws the body right of the category strip.
+        Rectangle {
+            visible: root.hasCategory
+            x: root.stripWidth
+            width: parent.width - x
+            height: parent.height
             color: root.fillColor
+            topRightRadius: root.radius
+            bottomRightRadius: root.radius
+            antialiasing: true
+        }
+        // Draws the card's border.
+        Rectangle {
+            anchors.fill: parent
+            color: "transparent"
             radius: root.radius
             antialiasing: true
             border.pixelAligned: false
@@ -176,7 +200,7 @@ Item {
             width: 14
             height: 14
             anchors.verticalCenter: parent.verticalCenter
-            x: 8
+            x: root.hasCategory ? 10 : 8
             preferredRendererType: VectorImage.CurveRenderer
             fillMode: VectorImage.PreserveAspectFit
             source: root.iconUrl

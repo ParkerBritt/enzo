@@ -16,5 +16,6 @@ implementation:
   constructor: copyToPoints
 
 icon: icon.svg
+color: "#4fc1c6" # Distribute
 
 parameters: []

@@ -36,6 +36,7 @@ const std::vector<NodeListModel::RoleDef>& NodeListModel::getRoleDefs()
         {"name", [](const Node& node) { return QVariant(node.name); }},
         {"type", [](const Node& node) { return QVariant(node.type); }},
         {"iconUrl", [](const Node& node) { return QVariant(node.iconUrl); }},
+        {"color", [](const Node& node) { return QVariant(node.color); }},
         {"x", [](const Node& node) { return QVariant(node.x); }},
         {"y", [](const Node& node) { return QVariant(node.y); }},
         {"inputPortCount", [](const Node& node) { return QVariant(node.inputPortCount); }},
@@ -338,11 +339,15 @@ NodeListModel::Node NodeListModel::makeNode(nt::NodeId nodeId)
 {
     nt::Node& node = nt::nm().getNode(nodeId);
     const Vector2 position = node.getPosition();
+    const std::string& declaredColor = node.getType().color;
+    const QColor color =
+        declaredColor.empty() ? QColor(Qt::transparent) : QColor(QString::fromStdString(declaredColor));
     return Node{
         nodeId,
         QString::fromStdString(node.getName()),
         QString::fromStdString(node.getType().getLabel()),
         getNodeIconUrl(node.getType()),
+        color,
         position.x(),
         position.y(),
         static_cast<int>(node.getType().inputPorts.size()),

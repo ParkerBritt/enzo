@@ -15,6 +15,7 @@ implementation:
   constructor: duplicate
 
 icon: icon.svg
+color: "#b07ce8" # Scene
 
 parameters:
   - name: selection

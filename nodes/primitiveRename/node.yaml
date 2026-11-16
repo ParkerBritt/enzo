@@ -15,6 +15,7 @@ implementation:
   constructor: primitiveRename
 
 icon: icon.svg
+color: "#b07ce8" # Scene
 
 parameters:
   - name: path
