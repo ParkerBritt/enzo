@@ -15,6 +15,7 @@ implementation:
   constructor: sineWave
 
 icon: icon.svg
+color: "#e8a23c" # Deform
 
 parameters:
   - name: attribute_divider

@@ -15,6 +15,7 @@ implementation:
   constructor: delete
 
 icon: icon.svg
+color: "#e06c75" # Group
 
 parameters:
   - name: selection

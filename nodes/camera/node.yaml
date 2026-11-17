@@ -13,6 +13,7 @@ implementation:
   constructor: camera
 
 icon: icon.svg
+color: "#b07ce8" # Scene
 
 parameters:
   - name: transform

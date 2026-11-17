@@ -335,6 +335,7 @@ void validateKeysForKind(
         "tags",
         "implementation",
         "icon",
+        "color",
         "docs",
         "childScopeType",
         "inputs",
@@ -419,6 +420,7 @@ NodeManifest NodeManifest::loadFromString(const std::string& yaml)
     validateStyles(nodeType.templates);
     nodeType.tags = readTags(document["tags"]);
     nodeType.iconPath = readString(document, "icon");
+    nodeType.color = readString(document, "color");
     nodeType.docsPath = readString(document, "docs");
     nodeType.childScopeType = readString(document, "childScopeType");
 

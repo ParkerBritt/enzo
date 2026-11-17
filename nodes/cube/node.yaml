@@ -13,6 +13,7 @@ implementation:
   constructor: cube
 
 icon: icon.svg
+color: "#6fbf73" # Create
 
 parameters:
   - name: size

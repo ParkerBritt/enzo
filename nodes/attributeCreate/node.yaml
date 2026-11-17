@@ -15,6 +15,7 @@ implementation:
   constructor: attributeCreate
 
 icon: icon.svg
+color: "#d9c85a" # Attribute
 
 parameters:
   - name: selection

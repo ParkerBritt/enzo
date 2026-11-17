@@ -16,5 +16,6 @@ implementation:
   constructor: merge
 
 icon: icon.svg
+color: "#b07ce8" # Scene
 
 parameters: []

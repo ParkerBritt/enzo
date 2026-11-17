@@ -50,6 +50,7 @@ Repeater {
         label: model.name
         typeLabel: model.type
         iconUrl: model.iconUrl
+        categoryColor: model.color
         selected: model.selected
         primary: model.primary
         display: model.display

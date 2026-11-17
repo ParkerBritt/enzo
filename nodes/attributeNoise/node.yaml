@@ -15,6 +15,7 @@ implementation:
   constructor: attributeNoise
 
 icon: icon.svg
+color: "#d9c85a" # Attribute
 
 parameters:
   - name: attribute_divider

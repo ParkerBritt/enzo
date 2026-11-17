@@ -15,6 +15,7 @@ implementation:
   constructor: reverse
 
 icon: icon.svg
+color: "#4f9bea" # Model
 
 parameters:
   - name: selection

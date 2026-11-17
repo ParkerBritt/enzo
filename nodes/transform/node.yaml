@@ -15,6 +15,7 @@ implementation:
   constructor: transform
 
 icon: icon.svg
+color: "#e8a23c" # Deform
 
 parameters:
   - name: selection

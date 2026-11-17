@@ -61,6 +61,9 @@ struct NodeType
     /// @brief The icon file relative to the folder, empty when the node ships none.
     std::string iconPath;
 
+    /// @brief The colour the network view marks the node with, such as "#4f9bea", empty for none.
+    std::string color;
+
     /// @brief The documentation file relative to the folder, empty when there is none.
     std::string docsPath;
 

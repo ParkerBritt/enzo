@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Types.h"
 #include <QAbstractListModel>
+#include <QColor>
 #include <QPointF>
 #include <QRectF>
 #include <QUrl>
@@ -105,6 +106,7 @@ class NodeListModel : public QAbstractListModel
         QString name;
         QString type;
         QUrl iconUrl;
+        QColor color;
         float x;
         float y;
         int inputPortCount;
